@@ -4,7 +4,33 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
-    // Add options here
+    sassOptions: {
+      includePaths: [
+        'app/styles'
+      ]
+    },
+    // a "bootstrap" should be imported into app.scss
+    'ember-cli-bootstrap-sassy': {
+      // import SASS styles and some JS that is used outside of ember-bootstrap components 
+      'js': [
+        // TODO: use ember-bootstrap tooltip (needs refactoring and removing own bs-tooltip component)
+        'tooltip',
+        'transition',
+        // TODO: rewrite collapses to ember-bootstrap components
+        'collapse',
+        // TODO: use bs-alert inside alert-panel component
+        'alert',
+        // TODO: rewrite dropdowns to ember-bootstrap components
+        'dropdown'
+      ],
+      'glyphicons': false
+    },
+    // import only JS
+    'ember-bootstrap': {
+      'importBootstrapCSS': false,
+      'importBootstrapTheme': false,
+      'importBootstrapFont': false
+    }
   });
 
   // Use `app.import` to add additional libraries to the generated

@@ -1,0 +1,13 @@
+<div class="container-fluid">
+  <div class="row">
+    {{!-- TODO the main-menu should be fixed or sth --}} 
+    <div class="col-xs-hidden col-sm-3 col-lg-4">
+      {{#main-sidebar}}
+        {{yield "sidebar"}}
+      {{/main-sidebar}}
+    </div>
+    <div class="col-xs-12 col-sm-9 col-lg-8">
+      {{yield "content"}}
+    </div>
+  </div>
+</div>
