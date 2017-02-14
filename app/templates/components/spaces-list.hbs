@@ -1,0 +1,13 @@
+{{#one-sidebar-ul items=items}}
+  {{#one-sidebar-li}}
+    {{search-bar search=(action (mut query))}}
+  {{/one-sidebar-li}}
+  {{#each items as |item|}}
+    {{#if (match-query item.label query)}}
+      {{!-- TODO try inject item format and make spaces-list generic searchable list --}}
+      {{#one-sidebar-li}}
+        {{item.label}}
+      {{/one-sidebar-li}}
+    {{/if}}
+  {{/each}}
+{{/one-sidebar-ul}}

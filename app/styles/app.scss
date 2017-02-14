@@ -4,11 +4,59 @@
 
 // TODO a mess
 
-$c-color: #fff;
+$color-main-menu-bg-top: #06235C;
+$color-main-menu-bg-bottom: #4686CF;
+
+$color-main-menu-fg: #FFF;
+
+html,
+body {
+  height: 100%;
+}
 
 // component
 .main-menu-item {
+  color: $color-main-menu-fg;
+  text-transform: uppercase;
+
   &.active {
     font-weight: bold;
   }
+}
+
+// component
+.app-layout {
+  // TODO real stretching
+  .row-app {
+    height: 1080px;
+  }
+
+  .col-main-menu {
+    background: linear-gradient(
+      $color-main-menu-bg-top,
+      $color-main-menu-bg-bottom
+    );
+    height: 100%;
+
+    .onedata-logo {
+      width: 150px;
+      height: 70px;
+      background-image: url('/assets/images/logo.svg');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 75%;
+    }
+  }
+}
+
+// component
+.one-sidebar-toolbar-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  line-height: 32px;
+  text-align: center;
+  font-size: 26px;
+  color: white;
+  background-color: blue;
 }

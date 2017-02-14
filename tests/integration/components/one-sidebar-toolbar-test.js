@@ -1,7 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('main-layout', 'Integration | Component | main layout', {
+moduleForComponent('one-sidebar-toolbar', 'Integration | Component | one sidebar toolbar', {
   integration: true
 });
 
@@ -10,15 +10,15 @@ test('it renders', function(assert) {
   // Set any properties with this.set('myProperty', 'value');
   // Handle any actions with this.on('myAction', function(val) { ... });
 
-  this.render(hbs`{{main-layout}}`);
+  this.render(hbs`{{one-sidebar-toolbar}}`);
 
   assert.equal(this.$().text().trim(), '');
 
   // Template block usage:
   this.render(hbs`
-    {{#main-layout}}
+    {{#one-sidebar-toolbar}}
       template block text
-    {{/main-layout}}
+    {{/one-sidebar-toolbar}}
   `);
 
   assert.equal(this.$().text().trim(), 'template block text');

@@ -3,11 +3,15 @@
 {{!-- TODO: to think about: nested yielded main content (col in col) or side-by-side? --}}
 
 <div class="container-fluid">
-  <div class="row">
-    {{!-- TODO the main-menu should be fixed or sth --}}
-    {{!-- TODO: col-main-menu --}}
+  <div class="row-app row">
+    {{!-- TODO: col-main-menu component? --}}
     <div class="col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1">
-      {{yield 'main-menu'}}
+      <div class="row">
+        <div class="onedata-logo"></div>
+      </div>
+      <div class="row">
+        {{yield 'main-menu'}}
+      </div>
     </div>
     <div class="col-sidebar hidden-xs col-sm-3 col-md-4 col-lg-2">
       {{yield 'sidebar'}}

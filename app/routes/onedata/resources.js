@@ -26,9 +26,34 @@ export default Ember.Route.extend({
     return {
       resourceType,
       collection: [
-        1,
-        2,
-        3
+        {
+          id: 1,
+          label: 'jeden'
+        },
+        {
+          id: 2,
+          label: 'dwa'
+        },
+        {
+          id: 3,
+          label: 'jeden-cztery'
+        },
+        {
+          id: 4,
+          label: 'cztery'
+        },
+      ],
+      buttons: [
+        {
+          title: 'create something',
+          icon: 'create',
+          action: 'create'
+        },
+        {
+          title: 'remove all',
+          icon: 'clear',
+          action: 'clear'
+        },
       ]
     };
   },
@@ -38,14 +63,15 @@ export default Ember.Route.extend({
     mainMenu.currentItemChanged(resourceType);
   },
 
-  renderTemplate(controller, { resourceType }) {
+  renderTemplate(controller, { resourceType, collection }) {
     this.render('onedata.resources', {
       into: 'onedata',
       outlet: 'sidebar'
     });
     this.render('onedata.' + PLURALIZE_RESOURCE[resourceType], {
       into: 'onedata.resources',
-      outlet: 'sidebar-content'
+      outlet: 'sidebar-content',
+      model: collection
     });
   }
 });

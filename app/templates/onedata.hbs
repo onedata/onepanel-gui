@@ -1,4 +1,4 @@
-{{#layout-main-menu appModel=model as |section|}}
+{{#app-layout appModel=model as |section|}}
   {{#if (eq section 'main-menu')}}
     {{main-menu
       appModel=model
@@ -9,4 +9,4 @@
   {{else if (eq section 'content')}}
     {{outlet 'content'}}
   {{/if}}
-{{/layout-main-menu}}
+{{/app-layout}}
