@@ -1,7 +1,3 @@
-{{#layout-sidebar as |section|}}
-  {{#if (eq section "sidebar")}}
-    
-  {{else if (eq section "content")}}
-    {{outlet}}
-  {{/if}}
-{{/layout-sidebar}}
+{{#one-sidebar resourcesModel=model}}
+  {{outlet 'sidebar-content'}}
+{{/one-sidebar}}

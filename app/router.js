@@ -8,8 +8,10 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('onedata', function() {
-    this.route('spaces');
-    this.route('resources');
+    this.route('resources', { path: ':resources' }, function() {
+      this.route('content', { path: ':resourceId' });
+    });
+    this.route('providers');
   });
 });
 

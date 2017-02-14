@@ -26,5 +26,5 @@ export default Route.extend({
         ].map(id => ({ id })))
       }));
     });
-  }
+  },
 });

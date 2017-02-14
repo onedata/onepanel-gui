@@ -7,10 +7,9 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
-  tagName: 'ul',
-  classNames: ['main-menu'],
+  classNames: ['main-content'],
 
-  appModel: null,
+  resource: null,
 
-  items: alias('appModel.mainMenuItems')
+  title: alias('resource.resourceId')
 });

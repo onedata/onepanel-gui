@@ -7,12 +7,13 @@
     {{!-- TODO the main-menu should be fixed or sth --}}
     {{!-- TODO: col-main-menu --}}
     <div class="col-main-menu hidden-xs hidden-sm col-md-3 col-lg-2">
-      {{#each items as |item|}}
-        {{main-menu-item item=item}}
-      {{/each}}
+      {{yield 'main-menu'}}
     </div>
-    <div class="col-xs-12 col-sm-9 col-lg-8">
-      {{yield}}
+    <div class="col-sidebar hidden-xs col-sm-3 col-md-3 col-lg-2">
+      {{yield 'sidebar'}}
+    </div>
+    <div class="col-content col-xs-12 col-sm-9 col-md-6 col-lg-8">
+      {{yield 'content'}}
     </div>
   </div>
 </div>
