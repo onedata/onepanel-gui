@@ -27,4 +27,10 @@ export default Route.extend({
       }));
     });
   },
+
+  actions: {
+    mainMenuItemChanged(itemId) {
+      this.transitionTo('onedata.resources', itemId);
+    }
+  }
 });

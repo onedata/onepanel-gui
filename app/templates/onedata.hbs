@@ -1,6 +1,9 @@
 {{#layout-main-menu appModel=model as |section|}}
   {{#if (eq section 'main-menu')}}
-    {{main-menu appModel=model}}
+    {{main-menu
+      appModel=model
+      mainMenuItemChanged="mainMenuItemChanged"
+    }}
   {{else if (eq section 'sidebar')}}
     {{outlet 'sidebar'}}
   {{else if (eq section 'content')}}

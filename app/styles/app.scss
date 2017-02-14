@@ -1,3 +1,14 @@
 @import 'bootstrap-config';
 
-@import "ember-bootstrap/bootstrap";
+@import 'ember-bootstrap/bootstrap';
+
+// TODO a mess
+
+$c-color: #fff;
+
+// component
+.main-menu-item {
+  &.active {
+    font-weight: bold;
+  }
+}
