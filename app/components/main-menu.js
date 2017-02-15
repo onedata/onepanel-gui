@@ -12,6 +12,7 @@ const {
 // singleton
 export default Ember.Component.extend({
   mainMenu: service(),
+  eventsBus: service(),
 
   tagName: 'ul',
   classNames: ['main-menu'],
@@ -23,10 +24,15 @@ export default Ember.Component.extend({
   items: readOnly('appModel.mainMenuItems'),
 
   actions: {
-    itemClicked(item) {
-      let mainMenu = this.get('mainMenu');
-      mainMenu.currentItemChanged(item);
-      this.sendAction('mainMenuItemChanged', item.id);
+    itemClicked({ id }) {
+      // TODO when to change currentItem?
+      // let mainMenu = this.get('mainMenu');
+      // mainMenu.currentItemIdChanged(item);
+      this.sendAction('currentItemChanged', id);
+
+      // FIXME: load proper view to sidenav
+
+      // this.sendAction('mainMenuItemChanged', item.id);
     }
   }
 });

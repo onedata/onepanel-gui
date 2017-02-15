@@ -1,0 +1,15 @@
+<h2>Sidebar spaces hbs</h2>
+{{#one-list-wrapper items=model as |item|}}
+  <div>{{item.label}}</div>
+  <ul class="one-list one-list-level-2">
+    <li class="one-list-item">
+      Members
+    </li>
+    <li class="one-list-item">
+      Statistics
+    </li>
+    <li class="one-list-item">
+      Providers
+    </li>
+  </ul>
+{{/one-list-wrapper}}

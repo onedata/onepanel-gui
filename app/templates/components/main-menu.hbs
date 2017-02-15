@@ -1,7 +1,7 @@
 {{#each items as |item|}}
   {{main-menu-item
     item=item
-    itemClicked=(action "itemClicked")
+    itemClicked=(action "itemClicked" bubbles=false)
     isActive=(eq _currentItem item)
   }}
 {{/each}}

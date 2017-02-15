@@ -1,10 +1,5 @@
 {{#app-layout appModel=model as |section|}}
-  {{#if (eq section 'main-menu')}}
-    {{main-menu
-      appModel=model
-      mainMenuItemChanged="mainMenuItemChanged"
-    }}
-  {{else if (eq section 'sidebar')}}
+  {{#if (eq section 'sidebar')}}
     {{outlet 'sidebar'}}
   {{else if (eq section 'content')}}
     {{outlet 'content'}}

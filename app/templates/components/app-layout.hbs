@@ -1,22 +1,39 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
-{{!-- TODO: to think about: nested yielded main content (col in col) or side-by-side? --}}
-
 <div class="container-fluid">
   <div class="row-app row">
     {{!-- TODO: col-main-menu component? --}}
-    <div class="col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1">
+    <div class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1"
+      {{action "closeSidenav" bubbles=true}}>
       <div class="row">
         <div class="onedata-logo"></div>
       </div>
       <div class="row">
-        {{yield 'main-menu'}}
+        {{main-menu
+          appModel=appModel
+          currentItemChanged="mainMenuItemChanged"
+        }}
       </div>
     </div>
-    <div class="col-sidebar hidden-xs col-sm-3 col-md-4 col-lg-2">
+    <div class="col-in-app-layout col-sidebar hidden-xs col-sm-3 col-md-4 col-lg-2">
+      {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"}}
+        {{#if tabModel.isFulfilled}}
+          {{component sidenavContentComponent model=tabModel.content}}
+        {{else if tabModel.isPending}}
+          TODO Loading...
+        {{else if tabModel.isRejected}}
+          TODO Rejected!
+        {{/if}}
+      {{/one-sidenav}}
+      {{#if sidenavSidebarOpen}}
+        <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
+      {{/if}}
       {{yield 'sidebar'}}
     </div>
-    <div class="col-content col-xs-12 col-sm-9 col-md-6 col-lg-9">
+    <div class="col-in-app-layout col-content col-xs-12 col-sm-9 col-md-6 col-lg-9">
+      {{#if sidenavSidebarOpen}}
+        <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
+      {{/if}}
       {{yield 'content'}}
     </div>
   </div>

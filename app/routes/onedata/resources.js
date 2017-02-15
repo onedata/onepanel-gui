@@ -3,6 +3,9 @@ import Ember from 'ember';
 const {
   inject: {
     service
+  },
+  RSVP: {
+    Promise
   }
 } = Ember;
 
@@ -19,43 +22,22 @@ const PLURALIZE_RESOURCE = {
 
 export default Ember.Route.extend({
   mainMenu: service(),
+  sidebarResources: service(),
 
   model({ resources }) {
-    // TODO: validate resourceType
+    // TODO: validate reource type
+    let sidebarResources = this.get('sidebarResources');
     let resourceType = SINGULARIZE_RESOURCE[resources];
-    return {
-      resourceType,
-      collection: [
-        {
-          id: 1,
-          label: 'jeden'
-        },
-        {
-          id: 2,
-          label: 'dwa'
-        },
-        {
-          id: 3,
-          label: 'jeden-cztery'
-        },
-        {
-          id: 4,
-          label: 'cztery'
-        },
-      ],
-      buttons: [
-        {
-          title: 'create something',
-          icon: 'create',
-          action: 'create'
-        },
-        {
-          title: 'remove all',
-          icon: 'clear',
-          action: 'clear'
-        },
-      ]
-    };
+    return new Promise((resolve, reject) => {
+      let gettingModel = sidebarResources.getModelFor(resources);
+      gettingModel.then(collection => {
+        resolve({
+          resourceType,
+          collection
+        });
+      });
+      gettingModel.catch(reject);
+    });
   },
 
   afterModel({ resourceType }) {

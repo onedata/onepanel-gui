@@ -8,10 +8,19 @@ $color-main-menu-bg-top: #06235C;
 $color-main-menu-bg-bottom: #4686CF;
 
 $color-main-menu-fg: #FFF;
+$color-overlay: #0a0a16;
 
 html,
 body {
   height: 100%;
+}
+
+// generic
+.overlay {
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: $color-overlay;
 }
 
 // component
@@ -29,6 +38,10 @@ body {
   // TODO real stretching
   .row-app {
     height: 1080px;
+  }
+
+  .col-in-app-layout {
+    position: relative;
   }
 
   .col-main-menu {
@@ -76,3 +89,70 @@ body {
   line-height: inherit;
   border-bottom: 1px solid $color-main-menu-bg-top;
 }
+
+/* The side navigation menu */
+
+.sidenav {
+  height: 100%;
+  /* 100% Full-height */
+  width: 0;
+  /* 0 width - change this with JavaScript */
+  position: absolute;
+  /* Overlay parent */
+  z-index: 1;
+  /* Stay on top */
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  /* Black*/
+  overflow-x: hidden;
+  /* Disable horizontal scroll */
+  padding-top: 60px;
+  /* Place content 60px from the top */
+  transition: 0.2s;
+  &.in {
+    width: 100%
+  }
+}
+
+
+/* The navigation menu links */
+
+// component
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover,
+.offcanvas a:focus {
+  color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+
+@media screen and (max-height: 450px) {
+  .sidenav {
+    padding-top: 15px;
+  }
+  .sidenav a {
+    font-size: 18px;
+  }
+}
+
+

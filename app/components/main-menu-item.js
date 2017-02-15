@@ -22,5 +22,6 @@ export default Ember.Component.extend({
   click() {
     let item = this.get('item');
     this.sendAction('itemClicked', item);
+    return false;
   }
 });
