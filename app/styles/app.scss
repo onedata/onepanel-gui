@@ -60,3 +60,19 @@ body {
   color: white;
   background-color: blue;
 }
+
+// component
+.one-list {
+  list-style-type: none;
+  line-height: 18px;
+
+  &.level-2 {
+    padding-left: 40px;
+  }
+}
+
+
+.one-list-item {
+  line-height: inherit;
+  border-bottom: 1px solid $color-main-menu-bg-top;
+}

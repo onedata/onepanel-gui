@@ -6,7 +6,7 @@
     {{#if (match-query item.label query)}}
       {{!-- TODO try inject item format and make spaces-list generic searchable list --}}
       {{#one-list-item}}
-        {{item.label}}
+        {{yield item}}
       {{/one-list-item}}
     {{/if}}
   {{/each}}
