@@ -1,14 +1,15 @@
 import Ember from 'ember';
 
 const {
-  inject,
-  computed
+  inject
 } = Ember;
+
+import { PerfectScrollbarMixin } from 'ember-perfect-scrollbar';
 
 /**
  * Based on: https://www.w3schools.com/howto/howto_js_sidenav.asp
  */
-export default Ember.Component.extend({
+export default Ember.Component.extend(PerfectScrollbarMixin, {
   classNames: ['one-sidenav', 'sidenav'],
   classNameBindings: ['isOpened:in'],
 

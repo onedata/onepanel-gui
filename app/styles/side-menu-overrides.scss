@@ -11,7 +11,10 @@
 
 .side-menu .one-list-item.main-menu-item {
   color: $color-one-graphite;
-  padding-left: 40px;
+
+  &.active {
+    background-color: $color-one-white-blue;
+  }
 
   &::after {
     @include top-line(none);

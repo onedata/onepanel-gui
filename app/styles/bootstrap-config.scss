@@ -6,4 +6,10 @@ $screen-lg-min: 1680px; // orig: 1200px
 $grid-gutter-width: 0; // on design: 14px TODO
 $grid-float-breakpoint: $screen-md-min;
 
+// TODO: controversial, because other grays are computed
+// $gray-dark: #3e3e3e;
+$text-color: #3e3e3e;
+$font-family-sans-serif: 'Open Sans', sans-serif;
+$font-size-base: 14px;
+
 @import 'bootstrap';

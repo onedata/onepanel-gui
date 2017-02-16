@@ -9,7 +9,7 @@
 {{content-backdrop}}
 
 <div class="container-fluid full-height">
-  <div class="row row-mobile-menu visible-xs-block visible-sm-block">
+  <div class="row row-mobile-menu visible-xs-block visible-sm-block disable-user-select">
     {{#side-menu-toggle}}
       <button type="button" class="navbar-toggle">
         <span class="icon-bar"></span>
@@ -19,8 +19,10 @@
     {{/side-menu-toggle}}
   </div>
   <div class="row row-app full-height">
-    <div class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1 full-height"
-      {{action "closeSidenav" bubbles=true}}>
+    {{#perfect-scrollbar-element tagName="div"
+      class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1 full-height disable-user-select"
+      click=(action "closeSidenav" bubbles=true)
+    }}
       <div class="row row-onedata-logo">
         <div class="onedata-logo"></div>
       </div>
@@ -30,8 +32,10 @@
           currentItemChanged="mainMenuItemChanged"
         }}
       </div>
-    </div>
-    <div class="col-in-app-layout col-sidebar hidden-xs col-sm-4 col-md-3 col-lg-2 full-height">
+    {{/perfect-scrollbar-element}}
+    {{#perfect-scrollbar-element tagName="div"
+      class="col-in-app-layout col-sidebar hidden-xs col-sm-4 col-md-3 col-lg-2 full-height disable-user-select"
+    }}
       {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"}}
         {{#if tabModel.isFulfilled}}
           {{component sidenavContentComponent model=tabModel.content}}
@@ -45,12 +49,14 @@
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
       {{/if}}
       {{yield 'sidebar'}}
-    </div>
-    <div class="col-in-app-layout col-content col-xs-12 col-sm-8 col-md-7 col-lg-9 full-height">
+    {{/perfect-scrollbar-element}}
+    {{#perfect-scrollbar-element
+      class="col-in-app-layout col-content col-xs-12 col-sm-8 col-md-7 col-lg-9 full-height"
+    }}
       {{#if sidenavSidebarOpen}}
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
       {{/if}}
       {{yield 'content'}}
-    </div>
+    {{/perfect-scrollbar-element}}
   </div>
 </div>

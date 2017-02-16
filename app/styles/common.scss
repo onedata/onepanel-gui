@@ -1,5 +1,6 @@
 .full-height {
   height: 100%;
+  overflow-y: auto;
 }
 
 .clickable {
@@ -14,4 +15,11 @@
 
   z-index: $zindex-layer-1-2-overlay;
   background-color: $color-overlay;
+}
+
+.disable-user-select {
+  > * {
+    @include vendor-prefix(user-select, none);
+    cursor: default;
+  }
 }
