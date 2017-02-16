@@ -1,26 +1,36 @@
 import Ember from 'ember';
 
 const {
-  inject
+  inject,
+  run: {
+    scheduleOnce
+  },
+  String: {
+    htmlSafe
+  },
+  observer
 } = Ember;
 
-import { PerfectScrollbarMixin } from 'ember-perfect-scrollbar';
+// import { PerfectScrollbarMixin } from 'ember-perfect-scrollbar';
 
 /**
  * Based on: https://www.w3schools.com/howto/howto_js_sidenav.asp
  */
-export default Ember.Component.extend(PerfectScrollbarMixin, {
+export default Ember.Component.extend({
   classNames: ['one-sidenav', 'sidenav'],
   classNameBindings: ['isOpened:in'],
+  attributeBindings: ['style'],
 
   eventsBus: inject.service(),
 
   isOpened: false,
 
+  style: '',
+  
   init() {
     this._super(...arguments);
     let eventsBus = this.get('eventsBus');
-
+    
     eventsBus.on('one-sidenav:close', (selector) => {
       if (!selector || this.element.matches(selector)) {
         this.send('close');
@@ -34,14 +44,48 @@ export default Ember.Component.extend(PerfectScrollbarMixin, {
     });
   },
 
+  didInsertElement() {
+    let coverSelector = this.get('coverSelector');
+    scheduleOnce('afterRender', this, function() {
+      this.set('$coverElement', $(coverSelector));
+      $(window).on('resize.' + this.elementId, () =>  this.changeSize());
+      this.changeSize();
+    });    
+  },
+
+  willDestroyElement() {
+    $(window).off('.' + this.elementId);
+  },
+
+  updatePosition(open) {
+    let $coverElement = this.get('$coverElement');
+    let left = $coverElement.offset().left;
+    let width = open ? $coverElement.width() : 0;
+    this.set('style', htmlSafe(`left: ${left}px; width: ${width}px;`));
+  },
+
+  changeSize: observer('isOpened', function() {
+    this.updatePosition(this.get('isOpened'));
+  }),
+
   actions: {
     open() {
       this.set('isOpened', true);
+      scheduleOnce(
+        'afterRender',
+        this,
+        () => PerfectScrollbar.initialize(this.element)
+      );
     },
 
     close() {
       this.set('isOpened', false);
       this.sendAction('closed');
+      scheduleOnce(
+        'afterRender',
+        this,
+        () => PerfectScrollbar.destroy(this.element)
+      );
     }
   }
 

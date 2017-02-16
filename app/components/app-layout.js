@@ -19,21 +19,21 @@ export default Ember.Component.extend({
 
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.readOnly('mainMenu.currentItemId'),
+  sidenavTabId: null,
 
-  sidenavContentComponent: computed('currentTabId', function() {
-    let currentTabId = this.get('currentTabId');
-    return `sidebar-${currentTabId}`;
+  sidenavContentComponent: computed('sidenavTabId', function() {
+    let sidenavTabId = this.get('sidenavTabId');
+    return `sidebar-${sidenavTabId}`;
   }),
 
-  // TODO: should loading model code be here?
-  tabModel: computed('currentTabId', function() {
+  tabModel: computed('sidenavTabId', function() {
     let {
-      currentTabId,
+      sidenavTabId,
       sidebarResources
-    } = this.getProperties('currentTabId', 'sidebarResources');
+    } = this.getProperties('sidenavTabId', 'sidebarResources');
     
     return ObjectPromiseProxy.create({
-      promise: sidebarResources.getModelFor(currentTabId)
+      promise: sidebarResources.getModelFor(sidenavTabId)
     });
   }),
 
@@ -47,6 +47,7 @@ export default Ember.Component.extend({
     this.get('eventsBus').on('one-sidenav:close', (selector) => {
       if (selector === '#sidenav-sidebar') {
         this.set('sidenavSidebarOpen', false);
+        this.set('sidenavTabId', null);
       }
     });
   },
@@ -57,12 +58,18 @@ export default Ember.Component.extend({
       this.get('eventsBus').trigger('one-sidenav:close', '#sidenav-sidebar');
     },
     // TODO IMPORTANT: inconsistent depedencies between component:main-menu, service:main-menu and component:app-layout
-    mainMenuItemChanged(/*itemId*/) {
-      this.get('eventsBus').trigger('one-sidenav:open', '#sidenav-sidebar');
+    mainMenuItemClicked(itemId) {
+      let shouldOpen = (this.get('sidenavTabId') !== itemId);
+      let action = (shouldOpen ? 'open' : 'close');
+      this.get('eventsBus').trigger('one-sidenav:' + action, '#sidenav-sidebar');
+      if (shouldOpen) {
+        this.set('sidenavTabId', itemId);
+      }
     },
     mobileMenuItemChanged() {
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
+      this.set('sidenavTabId', null);
     }
   }
 });

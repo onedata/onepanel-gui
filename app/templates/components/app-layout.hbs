@@ -29,22 +29,24 @@
       <div class="row row-main-menu">
         {{main-menu
           appModel=appModel
-          currentItemChanged="mainMenuItemChanged"
+          currentItemChanged="mainMenuItemClicked"
         }}
       </div>
     {{/perfect-scrollbar-element}}
-    {{#perfect-scrollbar-element tagName="div"
+    {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
+      coverSelector="#col-sidebar"
+    }}
+      {{#if tabModel.isFulfilled}}
+        {{component sidenavContentComponent model=tabModel.content}}
+      {{else if tabModel.isPending}}
+        TODO Loading...
+      {{else if tabModel.isRejected}}
+        TODO Rejected!
+      {{/if}}
+    {{/one-sidenav}}
+    {{#perfect-scrollbar-element tagName="div" id="col-sidebar"
       class="col-in-app-layout col-sidebar hidden-xs col-sm-4 col-md-3 col-lg-2 full-height disable-user-select"
     }}
-      {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"}}
-        {{#if tabModel.isFulfilled}}
-          {{component sidenavContentComponent model=tabModel.content}}
-        {{else if tabModel.isPending}}
-          TODO Loading...
-        {{else if tabModel.isRejected}}
-          TODO Rejected!
-        {{/if}}
-      {{/one-sidenav}}
       {{#if sidenavSidebarOpen}}
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
       {{/if}}
