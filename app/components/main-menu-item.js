@@ -9,7 +9,7 @@ const {
 
 export default Ember.Component.extend({
   tagName: 'li',
-  classNames: ['main-menu-item'],
+  classNames: ['main-menu-item', 'one-list-item', 'clickable'],
   classNameBindings: ['isActive:active'],
 
   item: null,

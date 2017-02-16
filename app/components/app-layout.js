@@ -15,6 +15,7 @@ export default Ember.Component.extend({
   mainMenu: service(),
   sidebarResources: service(),
   eventsBus: service(),
+  sideMenu: service(),
 
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.readOnly('mainMenu.currentItemId'),
@@ -58,6 +59,10 @@ export default Ember.Component.extend({
     // TODO IMPORTANT: inconsistent depedencies between component:main-menu, service:main-menu and component:app-layout
     mainMenuItemChanged(/*itemId*/) {
       this.get('eventsBus').trigger('one-sidenav:open', '#sidenav-sidebar');
+    },
+    mobileMenuItemChanged() {
+      let sideMenu = this.get('sideMenu');
+      sideMenu.close();
     }
   }
 });

@@ -15,7 +15,7 @@ export default Ember.Component.extend({
   eventsBus: service(),
 
   tagName: 'ul',
-  classNames: ['main-menu'],
+  classNames: ['main-menu', 'one-list'],
 
   appModel: null,
 

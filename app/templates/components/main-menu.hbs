@@ -2,6 +2,6 @@
   {{main-menu-item
     item=item
     itemClicked=(action "itemClicked" bubbles=false)
-    isActive=(eq _currentItem item)
+    isActive=(eq currentItemId item.id)
   }}
 {{/each}}

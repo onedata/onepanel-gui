@@ -1,17 +1,30 @@
+@import 'ember-side-menu';
+
 @import 'bootstrap-config';
 
+@import 'colors';
+
 // TODO a mess
+
+
 
 $color-main-menu-bg-top: #06235C;
 $color-main-menu-bg-bottom: #4686CF;
 
 $color-main-menu-fg: #FFF;
-$color-overlay: rgba(#0a0a16, 0.5);
+$color-overlay: $content-backdrop-bg;
 
-$z-index-layer-1-max: 999;
-$z-index-layer-1-2-overlay: $z-index-layer-1-max + 1;
-$z-index-layer-2-min: $z-index-layer-1-2-overlay + 1;
+$zindex-layer-1-2-overlay: $zindex-modal-background;
+$zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
+$zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
+// TODO: colors to distribute
+$color-one-list-item-separator: $color-one-white-blue;
+$color-main-menu-separator: rgba($color-one-list-item-separator, 0.05);
+
+$one-list-item-separator: 1px solid;
+
+$color-sidebar-background: $color-one-white-gray;
 
 html,
 body {
@@ -31,30 +44,83 @@ body {
   height: 100%;
 }
 
+.clickable {
+  cursor: hand;
+  cursor: pointer;
+}
+
 // generic
 .overlay {
   // TODO: animation
   position: absolute;
   @include fill-container();
 
-  z-index: $z-index-layer-1-2-overlay;
+  z-index: $zindex-layer-1-2-overlay;
   background-color: $color-overlay;
 }
 
-// component
-.main-menu-item {
+// component TODO a mess with style for mobile/desktop
+.col-main-menu .main-menu-item {
+  padding-left: 20px;
   color: $color-main-menu-fg;
   text-transform: uppercase;
+  font-weight: bold;
 
   &.active {
-    font-weight: bold;
+    border-left: 1px solid $color-one-azure;
+    // TODO: ask about colors, colors in variables
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0.15),
+      rgba(255,255,255,0)
+    )
   }
+
+  // style overrides for list item
+  &.one-list-item {
+    border-color: $color-main-menu-separator;
+  }
+}
+
+.side-menu .main-menu-item {
+
 }
 
 // component
 .app-layout {
   position: absolute;
   @include fill-container();
+
+  .side-menu {
+    background-color: $color-sidebar-background;
+
+    .main-menu {
+      color: $color-one-dark-1;
+    }
+  }
+
+  .row-mobile-menu {
+    height: 70px;
+    // TODO: the same as col-main-menu?
+    background: linear-gradient(
+      $color-main-menu-bg-top,
+      $color-main-menu-bg-bottom
+    );
+    color: $color-one-white;
+
+    .side-menu-toggle {
+      height: 100%;
+    }
+
+    .navbar-toggle {
+      margin: 16px;
+
+      .icon-bar {
+        background-color: $color-one-white;
+        border-radius: 0;
+      }
+    }
+  }
 
   .col-in-app-layout {
     position: relative;
@@ -65,17 +131,32 @@ body {
       $color-main-menu-bg-top,
       $color-main-menu-bg-bottom
     );
-    height: 100%;
+
+    .row-onedata-logo {
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
 
     .onedata-logo {
-      width: 150px;
-      height: 70px;
+      width: 120px;
+      height: 25px;
       background-image: url('/assets/images/logo.svg');
       background-position: center center;
       background-repeat: no-repeat;
-      background-size: 75%;
+      background-size: contain;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
+
+  .col-sidebar {
+    background: $color-sidebar-background;
+  }
+}
+
+// special for sidebar in sidenav TODO
+#sidenav-sidebar {
+  background: $color-sidebar-background;
 }
 
 // component
@@ -86,16 +167,18 @@ body {
   line-height: 32px;
   text-align: center;
   font-size: 26px;
-  color: white;
+  color: $color-one-white;
   background-color: blue;
 }
 
 // component
 .one-list {
   list-style-type: none;
-  line-height: 18px;
+  line-height: 64px;
+  margin: 0;
+  padding: 0;
 
-  &.level-2 {
+  &.one-list-level-2 {
     padding-left: 40px;
   }
 }
@@ -103,7 +186,12 @@ body {
 
 .one-list-item {
   line-height: inherit;
-  border-bottom: 1px solid $color-main-menu-bg-top;
+  border-top: $one-list-item-separator;
+  border-color: $color-one-list-item-separator;
+
+  &:last-of-type {
+    border-bottom: $one-list-item-separator;
+  }
 }
 
 /* The side navigation menu */
@@ -115,11 +203,11 @@ body {
   /* 0 width - change this with JavaScript */
   position: absolute;
   /* Overlay parent */
-  z-index: $z-index-layer-2-min;
+  z-index: $zindex-layer-2-min;
   /* Stay on top */
   top: 0;
   left: 0;
-  background-color: #fff;
+  background-color: $color-one-white;
   /* Black*/
   overflow-x: hidden;
   /* Disable horizontal scroll */
@@ -130,35 +218,6 @@ body {
     width: 100%
   }
 }
-
-
-/* The navigation menu links */
-
-// component
-.sidenav a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-  transition: 0.3s
-}
-
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover,
-.offcanvas a:focus {
-  color: #f1f1f1;
-}
-
-/* Position and style the close button (top right corner) */
-.sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
-
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 

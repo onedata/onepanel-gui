@@ -1,14 +1,30 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
+{{#side-menu width="85%"}}
+  {{main-menu
+    appModel=appModel
+    currentItemChanged="mobileMenuItemChanged"
+  }}
+{{/side-menu}}
+{{content-backdrop}}
+
 <div class="container-fluid full-height">
-  <div class="row-app row full-height">
-    {{!-- TODO: col-main-menu component? --}}
+  <div class="row row-mobile-menu visible-xs-block visible-sm-block">
+    {{#side-menu-toggle}}
+      <button type="button" class="navbar-toggle">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    {{/side-menu-toggle}}
+  </div>
+  <div class="row row-app full-height">
     <div class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1 full-height"
       {{action "closeSidenav" bubbles=true}}>
-      <div class="row">
+      <div class="row row-onedata-logo">
         <div class="onedata-logo"></div>
       </div>
-      <div class="row">
+      <div class="row row-main-menu">
         {{main-menu
           appModel=appModel
           currentItemChanged="mainMenuItemChanged"
