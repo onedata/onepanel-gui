@@ -1,0 +1,33 @@
+.one-list-item {
+  position: relative;
+  line-height: inherit;
+
+  .item-header {
+    padding-left: 30px;
+  }
+
+  &::after {
+    @include top-line(1px solid $color-one-list-item-separator)
+  }
+
+  &:last-of-type {
+    &::after {
+      @include bottom-line(1px solid $color-one-list-item-separator)
+    }
+  }
+
+  &.active {
+    &::before {
+      @include left-line(
+        $one-list-item-active-left-border-width solid $color-one-azure
+      );
+    }
+    > .item-header {
+      color: $color-one-azure;
+    }
+  }
+}
+
+.one-list-item.clickable .item-header:hover {
+  background: $color-one-white-blue;
+}

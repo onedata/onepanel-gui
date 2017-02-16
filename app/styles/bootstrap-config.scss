@@ -3,7 +3,7 @@ $screen-sm-min: 768px; // orig: 768px
 $screen-md-min: 1200px; // orig: 992px
 $screen-lg-min: 1680px; // orig: 1200px
 
-$grid-gutter-width: 14px;
+$grid-gutter-width: 0; // on design: 14px TODO
 $grid-float-breakpoint: $screen-md-min;
 
 @import 'bootstrap';

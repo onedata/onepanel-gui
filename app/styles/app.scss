@@ -1,17 +1,9 @@
+@import 'bootstrap-config';
 @import 'ember-side-menu';
 
-@import 'bootstrap-config';
-
+@import 'utils';
 @import 'colors';
 
-// TODO a mess
-
-
-
-$color-main-menu-bg-top: #06235C;
-$color-main-menu-bg-bottom: #4686CF;
-
-$color-main-menu-fg: #FFF;
 $color-overlay: $content-backdrop-bg;
 
 $zindex-layer-1-2-overlay: $zindex-modal-background;
@@ -19,12 +11,32 @@ $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
 $zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
 // TODO: colors to distribute
-$color-one-list-item-separator: $color-one-white-blue;
+$color-sidebar-background: $color-one-white-gray;
+// TODO
+$color-one-list-item-separator: darken($color-sidebar-background, 5);
+$color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
 $color-main-menu-separator: rgba($color-one-list-item-separator, 0.05);
 
 $one-list-item-separator: 1px solid;
 
-$color-sidebar-background: $color-one-white-gray;
+$color-main-menu-bg-top: #06235C;
+$color-main-menu-bg-bottom: #4686CF;
+
+$color-main-menu-fg: #FFF;
+
+$one-list-item-active-left-border-width: 8px;
+
+@import 'common';
+
+@import 'side-menu-overrides';
+@import 'app-layout';
+@import 'one-list';
+@import 'one-list-item';
+@import 'main-menu';
+@import 'main-menu-item';
+@import 'one-sidenav';
+
+// TODO a mess
 
 html,
 body {
@@ -32,134 +44,7 @@ body {
   height: 100%;
 }
 
-// SCSS utils
-@mixin fill-container() {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.full-height {
-  height: 100%;
-}
-
-.clickable {
-  cursor: hand;
-  cursor: pointer;
-}
-
-// generic
-.overlay {
-  // TODO: animation
-  position: absolute;
-  @include fill-container();
-
-  z-index: $zindex-layer-1-2-overlay;
-  background-color: $color-overlay;
-}
-
-// component TODO a mess with style for mobile/desktop
-.col-main-menu .main-menu-item {
-  padding-left: 20px;
-  color: $color-main-menu-fg;
-  text-transform: uppercase;
-  font-weight: bold;
-
-  &.active {
-    border-left: 1px solid $color-one-azure;
-    // TODO: ask about colors, colors in variables
-    background: linear-gradient(
-      90deg,
-      rgba(255,255,255,0.15),
-      rgba(255,255,255,0)
-    )
-  }
-
-  // style overrides for list item
-  &.one-list-item {
-    border-color: $color-main-menu-separator;
-  }
-}
-
-.side-menu .main-menu-item {
-
-}
-
-// component
-.app-layout {
-  position: absolute;
-  @include fill-container();
-
-  .side-menu {
-    background-color: $color-sidebar-background;
-
-    .main-menu {
-      color: $color-one-dark-1;
-    }
-  }
-
-  .row-mobile-menu {
-    height: 70px;
-    // TODO: the same as col-main-menu?
-    background: linear-gradient(
-      $color-main-menu-bg-top,
-      $color-main-menu-bg-bottom
-    );
-    color: $color-one-white;
-
-    .side-menu-toggle {
-      height: 100%;
-    }
-
-    .navbar-toggle {
-      margin: 16px;
-
-      .icon-bar {
-        background-color: $color-one-white;
-        border-radius: 0;
-      }
-    }
-  }
-
-  .col-in-app-layout {
-    position: relative;
-  }
-
-  .col-main-menu {
-    background: linear-gradient(
-      $color-main-menu-bg-top,
-      $color-main-menu-bg-bottom
-    );
-
-    .row-onedata-logo {
-      margin-top: 40px;
-      margin-bottom: 40px;
-    }
-
-    .onedata-logo {
-      width: 120px;
-      height: 25px;
-      background-image: url('/assets/images/logo.svg');
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: contain;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-
-  .col-sidebar {
-    background: $color-sidebar-background;
-  }
-}
-
-// special for sidebar in sidenav TODO
-#sidenav-sidebar {
-  background: $color-sidebar-background;
-}
-
-// component
+// component TODO
 .one-sidebar-toolbar-button {
   width: 32px;
   height: 32px;
@@ -170,64 +55,4 @@ body {
   color: $color-one-white;
   background-color: blue;
 }
-
-// component
-.one-list {
-  list-style-type: none;
-  line-height: 64px;
-  margin: 0;
-  padding: 0;
-
-  &.one-list-level-2 {
-    padding-left: 40px;
-  }
-}
-
-
-.one-list-item {
-  line-height: inherit;
-  border-top: $one-list-item-separator;
-  border-color: $color-one-list-item-separator;
-
-  &:last-of-type {
-    border-bottom: $one-list-item-separator;
-  }
-}
-
-/* The side navigation menu */
-
-.sidenav {
-  height: 100%;
-  /* 100% Full-height */
-  width: 0;
-  /* 0 width - change this with JavaScript */
-  position: absolute;
-  /* Overlay parent */
-  z-index: $zindex-layer-2-min;
-  /* Stay on top */
-  top: 0;
-  left: 0;
-  background-color: $color-one-white;
-  /* Black*/
-  overflow-x: hidden;
-  /* Disable horizontal scroll */
-  padding-top: 60px;
-  /* Place content 60px from the top */
-  transition: 0.2s;
-  &.in {
-    width: 100%
-  }
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-
-@media screen and (max-height: 450px) {
-  .sidenav {
-    padding-top: 15px;
-  }
-  .sidenav a {
-    font-size: 18px;
-  }
-}
-
 

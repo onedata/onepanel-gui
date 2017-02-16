@@ -1,13 +1,14 @@
-{{#one-list}}
-  {{#one-list-item}}
-    {{search-bar search=(action (mut query))}}
-  {{/one-list-item}}
+{{!-- TODO FIXME change to div class one list item  --}}
+<ul class="one-list">
+  <li class="one-list-item">
+    <div class="item-header">
+      {{search-bar search=(action (mut query))}}
+    </div>
+  </li>
   {{#each items as |item|}}
     {{#if (match-query item.label query)}}
       {{!-- TODO try inject item format and make spaces-list generic searchable list --}}
-      {{#one-list-item}}
-        {{yield item}}
-      {{/one-list-item}}
+      {{yield item}}
     {{/if}}
   {{/each}}
-{{/one-list}}
+</ul>

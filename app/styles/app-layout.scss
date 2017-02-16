@@ -1,0 +1,97 @@
+.app-layout {
+  position: absolute;
+  @include fill-container();
+
+  .row-mobile-menu {
+    height: 70px;
+    // TODO: the same as col-main-menu?
+    background: linear-gradient(
+      $color-main-menu-bg-top,
+      $color-main-menu-bg-bottom
+    );
+    color: $color-one-white;
+
+    .side-menu-toggle {
+      height: 100%;
+    }
+
+    .navbar-toggle {
+      margin: 16px;
+
+      .icon-bar {
+        background-color: $color-one-white;
+        border-radius: 0;
+      }
+    }
+  }
+
+  .col-in-app-layout {
+    position: relative;
+  }
+
+  .col-main-menu {
+    background: linear-gradient(
+      $color-main-menu-bg-top,
+      $color-main-menu-bg-bottom
+    );
+
+    .row-onedata-logo {
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
+
+    .onedata-logo {
+      width: 120px;
+      height: 25px;
+      background-image: url('/assets/images/logo.svg');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .col-sidebar {
+    background: $color-sidebar-background;
+  }
+}
+
+/// Desktop main menu styles
+.col-main-menu .one-list-item.main-menu-item {
+  color: $color-main-menu-fg;
+  
+  // TODO a style when a route is not opened but we have sidebar opened
+  &.opened { 
+
+  }
+
+  &.active,
+  &:hover {
+    .item-header {
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.15),
+        rgba(255,255,255,0)
+      )
+    }
+  }
+
+  // style overrides for list item
+  &.one-list-item {
+    &::after {
+      @include top-line(1px solid $color-main-menu-separator)
+    }
+
+    &:last-of-type {
+      &::after {
+        @include bottom-line(1px solid $color-main-menu-separator)
+      }
+    }
+  }
+}
+
+// special for sidebar in sidenav TODO
+#sidenav-sidebar {
+  background: $color-sidebar-background;
+}

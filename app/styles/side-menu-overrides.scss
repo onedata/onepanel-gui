@@ -1,0 +1,25 @@
+@import 'ember-side-menu';
+
+.app-layout .side-menu {
+  background-color: $color-sidebar-background;
+
+  // override side-menu default style
+  ul > li {
+    line-height: 64px;
+  }
+}
+
+.side-menu .one-list-item.main-menu-item {
+  color: $color-one-graphite;
+  padding-left: 40px;
+
+  &::after {
+    @include top-line(none);
+  }
+
+  &:last-of-type {
+    &::after {
+      @include bottom-line(none);
+    }
+  }
+}
