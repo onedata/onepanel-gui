@@ -4,7 +4,10 @@ const {
   inject: {
     service
   },
-  computed
+  computed,
+  RSVP: {
+    Promise
+  }
 } = Ember;
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
@@ -32,9 +35,20 @@ export default Ember.Component.extend({
       sidebarResources
     } = this.getProperties('sidenavTabId', 'sidebarResources');
     
-    return ObjectPromiseProxy.create({
-      promise: sidebarResources.getModelFor(sidenavTabId)
+    let resourceType = sidenavTabId;
+
+    let gettingModel = sidebarResources.getModelFor(resourceType);
+    let promise = new Promise((resolve, reject) => {
+      gettingModel.then(collection => {
+        resolve({
+          resourceType,
+          collection
+        });
+      });
+      gettingModel.catch(reject);
     });
+
+    return ObjectPromiseProxy.create({ promise });
   }),
 
   init() {

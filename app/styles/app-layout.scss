@@ -54,6 +54,22 @@
 
   .col-sidebar {
     background: $color-sidebar-background;
+    // TODO same as sidenav
+    border-right: 1px solid $color-one-list-item-separator;
+  }
+
+  .row-heading .col-title {
+    // TODO: similar to one-list-item
+    line-height: 64px;
+    text-transform: uppercase;
+    padding-left: 30px;
+    padding-right: 30px;
+    font-size: 1.25em;
+  }
+
+  .col-content {
+    // TODO similar 30px
+    padding: 30px;
   }
 }
 

@@ -27,12 +27,12 @@ export default Ember.Route.extend({
   model({ resources }) {
     // TODO: validate reource type
     let sidebarResources = this.get('sidebarResources');
-    let resourceType = SINGULARIZE_RESOURCE[resources];
+    // let resourceType = SINGULARIZE_RESOURCE[resources];
     return new Promise((resolve, reject) => {
       let gettingModel = sidebarResources.getModelFor(resources);
       gettingModel.then(collection => {
         resolve({
-          resourceType,
+          resourceType: resources,
           collection
         });
       });
@@ -45,15 +45,18 @@ export default Ember.Route.extend({
     mainMenu.currentItemIdChanged(resourceType);
   },
 
-  renderTemplate(controller, { resourceType, collection }) {
+  renderTemplate(controller, model) {
+    let {
+      resourceType
+    } = model;
     this.render('onedata.resources', {
       into: 'onedata',
       outlet: 'sidebar'
     });
-    this.render('onedata.' + PLURALIZE_RESOURCE[resourceType], {
+    this.render(`tabs.${resourceType}.sidebar`, {
       into: 'onedata.resources',
       outlet: 'sidebar-content',
-      model: collection
+      model
     });
   }
 });

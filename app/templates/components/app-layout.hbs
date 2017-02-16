@@ -34,7 +34,7 @@
       </div>
     {{/perfect-scrollbar-element}}
     {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
-      coverSelector="#col-sidebar"
+      coverSelector="#col-sidebar" model=tabModel.content
     }}
       {{#if tabModel.isFulfilled}}
         {{component sidenavContentComponent model=tabModel.content}}

@@ -16,7 +16,7 @@ export default Ember.Route.extend({
       into: 'onedata',
       outlet: 'content'
     });
-    this.render('onedata.resources.' + resourceType, {
+    this.render(`tabs.${resourceType}.content`, {
       into: 'onedata.resources.content',
       outlet: 'main-content'
     });

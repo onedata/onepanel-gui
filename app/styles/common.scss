@@ -3,6 +3,10 @@
   overflow-y: auto;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .clickable {
   cursor: hand;
   cursor: pointer;
@@ -22,4 +26,14 @@
     @include vendor-prefix(user-select, none);
     cursor: default;
   }
+}
+
+input.search-bar {
+  line-height: 17px;
+  @include vendor-prefix(border-radius, 16px);
+  @include vendor-prefix(box-shadow, none);
+  outline: 0;
+  -webkit-appearance: none;
+  border: 1px solid $color-one-list-item-separator;
+  padding: 8px 16px;
 }
