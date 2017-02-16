@@ -42,7 +42,7 @@ export default Ember.Route.extend({
 
   afterModel({ resourceType }) {
     let mainMenu = this.get('mainMenu');
-    mainMenu.currentItemChanged(resourceType);
+    mainMenu.currentItemIdChanged(resourceType);
   },
 
   renderTemplate(controller, { resourceType, collection }) {

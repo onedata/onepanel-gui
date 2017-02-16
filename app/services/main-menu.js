@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Service.extend({
   currentItemId: null,
   
-  currentItemChanged({ id }) {
+  currentItemIdChanged(id) {
     this.set('currentItemId', id);
   },
 });

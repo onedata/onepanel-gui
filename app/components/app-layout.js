@@ -16,6 +16,7 @@ export default Ember.Component.extend({
   sidebarResources: service(),
   eventsBus: service(),
 
+  // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.readOnly('mainMenu.currentItemId'),
 
   sidenavContentComponent: computed('currentTabId', function() {
@@ -37,12 +38,12 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.get('eventsBus').on('sidenav:open', (selector) => {
+    this.get('eventsBus').on('one-sidenav:open', (selector) => {
       if (selector === '#sidenav-sidebar') {
         this.set('sidenavSidebarOpen', true);
       }
     });
-    this.get('eventsBus').on('sidenav:close', (selector) => {
+    this.get('eventsBus').on('one-sidenav:close', (selector) => {
       if (selector === '#sidenav-sidebar') {
         this.set('sidenavSidebarOpen', false);
       }
@@ -50,11 +51,13 @@ export default Ember.Component.extend({
   },
 
   actions: {
+    // TODO IMPORTANT: who is receiver of eventsBus' one-sidenav:open/close?
     closeSidenav() {
       this.get('eventsBus').trigger('one-sidenav:close', '#sidenav-sidebar');
     },
-    mainMenuItemChanged(itemId) {
-      // ...
+    // TODO IMPORTANT: inconsistent depedencies between component:main-menu, service:main-menu and component:app-layout
+    mainMenuItemChanged(/*itemId*/) {
+      this.get('eventsBus').trigger('one-sidenav:open', '#sidenav-sidebar');
     }
   }
 });

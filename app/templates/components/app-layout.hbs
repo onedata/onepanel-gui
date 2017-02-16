@@ -1,9 +1,9 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
-<div class="container-fluid">
-  <div class="row-app row">
+<div class="container-fluid full-height">
+  <div class="row-app row full-height">
     {{!-- TODO: col-main-menu component? --}}
-    <div class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1"
+    <div class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1 full-height"
       {{action "closeSidenav" bubbles=true}}>
       <div class="row">
         <div class="onedata-logo"></div>
@@ -15,7 +15,7 @@
         }}
       </div>
     </div>
-    <div class="col-in-app-layout col-sidebar hidden-xs col-sm-3 col-md-4 col-lg-2">
+    <div class="col-in-app-layout col-sidebar hidden-xs col-sm-4 col-md-3 col-lg-2 full-height">
       {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"}}
         {{#if tabModel.isFulfilled}}
           {{component sidenavContentComponent model=tabModel.content}}
@@ -30,7 +30,7 @@
       {{/if}}
       {{yield 'sidebar'}}
     </div>
-    <div class="col-in-app-layout col-content col-xs-12 col-sm-9 col-md-6 col-lg-9">
+    <div class="col-in-app-layout col-content col-xs-12 col-sm-8 col-md-7 col-lg-9 full-height">
       {{#if sidenavSidebarOpen}}
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
       {{/if}}
