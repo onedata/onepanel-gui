@@ -1,11 +1,25 @@
 import Ember from 'ember';
 
+const {
+  inject: {
+    service
+  }
+} = Ember;
+
 export default Ember.Route.extend({
+  sidebar: service(),
+
   model({ resourceId }) {
     // TODO: validate resourceType
     return {
       resourceId
     };
+  },
+
+  afterModel({ resourceId }) {
+    let sidebar = this.get('sidebar');
+    // TODO
+    sidebar.set('items', [resourceId]);
   },
 
   renderTemplate() {

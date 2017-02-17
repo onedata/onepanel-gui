@@ -1,18 +1,21 @@
 {{#one-list-wrapper items=model.collection as |item|}}
-  <li class="one-list-item">
-    <div class="item-header">
+  {{!-- TODO separate component --}}
+  <li class={{concat "one-list-item clickable " (if (eq primaryItemId item.id) "active" "")}}>
+    <div class="item-header" {{action "changePrimaryItemId" item.id}}>
       {{item.label}}
     </div>
-    <ul class="one-list one-list-level-2">
-      <li class="one-list-item">
-        <div class="item-header">Members</div>
-      </li>
-      <li class="one-list-item">
-        <div class="item-header">Statistics</div>
-      </li>
-      <li class="one-list-item">
-        <div class="item-header">Something</div>
-      </li>
-    </ul>
+    {{#if (eq primaryItemId item.id)}}
+      <ul class="one-list one-list-level-2">
+        <li class="one-list-item clickable">
+          <div class="item-header">Members</div>
+        </li>
+        <li class="one-list-item clickable">
+          <div class="item-header">Statistics</div>
+        </li>
+        <li class="one-list-item clickable">
+          <div class="item-header">Something</div>
+        </li>
+      </ul>
+    {{/if}}
   </li>
 {{/one-list-wrapper}}

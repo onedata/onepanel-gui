@@ -58,5 +58,11 @@ export default Ember.Route.extend({
       outlet: 'sidebar-content',
       model
     });
+  },
+
+  actions: {
+    changeResourceId(resourceType, itemId) {
+      this.transitionTo('onedata.resources.content', resourceType, itemId);
+    }
   }
 });
