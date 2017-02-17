@@ -1,10 +1,11 @@
 {{#one-list-wrapper items=model.collection as |item|}}
   {{!-- TODO separate component --}}
-  <li class={{concat "one-list-item clickable " (if (eq primaryItemId item.id) "active" "")}}>
-    <div class="item-header" {{action "changePrimaryItemId" item.id}}>
+  {{#one-list-primary-item item=item primaryItemId=primaryItemId
+    changePrimaryItemId="changePrimaryItemId"
+    as |primarySection|}}
+    {{#if (eq primarySection 'header')}}
       {{item.label}}
-    </div>
-    {{#if (eq primaryItemId item.id)}}
+    {{else if (eq primarySection 'secondary')}}
       <ul class="one-list one-list-level-2">
         <li class="one-list-item clickable">
           <div class="item-header">Members</div>
@@ -17,5 +18,5 @@
         </li>
       </ul>
     {{/if}}
-  </li>
+  {{/one-list-primary-item}}
 {{/one-list-wrapper}}

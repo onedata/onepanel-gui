@@ -26,7 +26,7 @@ export default Ember.Component.extend({
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.readOnly('mainMenu.currentItemId'),
   sidenavTabId: null,
-  showMobileSidebar: true,
+  showMobileSidebar: false,
 
   sidenavContentComponent: computed('sidenavTabId', function() {
     let sidenavTabId = this.get('sidenavTabId');
