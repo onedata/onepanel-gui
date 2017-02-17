@@ -1,9 +1,11 @@
+$mobile-top-height: 70px;
+
 .app-layout {
   position: absolute;
   @include fill-container();
 
   .row-mobile-menu {
-    height: 70px;
+    height: $mobile-top-height;
     // TODO: the same as col-main-menu?
     background: linear-gradient(
       $color-main-menu-bg-top,
@@ -13,6 +15,7 @@
 
     .side-menu-toggle {
       height: 100%;
+      width: auto;
     }
 
     .navbar-toggle {
@@ -22,6 +25,14 @@
         background-color: $color-one-white;
         border-radius: 0;
       }
+    }
+
+    .tab-name {
+      text-transform: capitalize;
+      line-height: $mobile-top-height;
+      font-size: 1.5em;
+      margin-left: 10px;
+      margin-right: 10px;
     }
   }
 

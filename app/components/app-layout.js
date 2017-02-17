@@ -7,6 +7,9 @@ const {
   computed,
   RSVP: {
     Promise
+  },
+  String: {
+    htmlSafe
   }
 } = Ember;
 
@@ -23,13 +26,14 @@ export default Ember.Component.extend({
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.readOnly('mainMenu.currentItemId'),
   sidenavTabId: null,
+  showMobileSidebar: true,
 
   sidenavContentComponent: computed('sidenavTabId', function() {
     let sidenavTabId = this.get('sidenavTabId');
     return `sidebar-${sidenavTabId}`;
   }),
 
-  tabModel: computed('sidenavTabId', function() {
+  sidenavModel: computed('sidenavTabId', function() {
     let {
       sidenavTabId,
       sidebarResources
@@ -49,6 +53,20 @@ export default Ember.Component.extend({
     });
 
     return ObjectPromiseProxy.create({ promise });
+  }),
+
+  colSidebarClass: computed('showMobileSidebar', function() {
+    let showMobileSidebar = this.get('showMobileSidebar');
+    let base = 'col-in-app-layout col-sidebar col-sm-4 col-md-3 col-lg-2 full-height disable-user-select';
+    let xsClass = (showMobileSidebar ? 'col-xs-12' : 'hidden-xs');
+    return htmlSafe(`${base} ${xsClass}`);
+  }),
+
+  colContentClass: computed('showMobileSidebar', function() {
+    let showMobileSidebar = this.get('showMobileSidebar');
+    let base = 'col-in-app-layout col-content col-sm-8 col-md-7 col-lg-9 full-height';
+    let xsClass = (showMobileSidebar ? 'hidden-xs' : 'col-xs-12');
+    return htmlSafe(`${base} ${xsClass}`);
   }),
 
   init() {
@@ -84,6 +102,9 @@ export default Ember.Component.extend({
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
+    },
+    showMobileSidebar() {
+      this.set('showMobileSidebar', true);
     }
   }
 });

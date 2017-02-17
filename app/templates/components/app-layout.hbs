@@ -10,13 +10,20 @@
 
 <div class="container-fluid full-height">
   <div class="row row-mobile-menu visible-xs-block visible-sm-block disable-user-select">
-    {{#side-menu-toggle}}
-      <button type="button" class="navbar-toggle">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    {{/side-menu-toggle}}
+    <div class="pull-left">
+      {{#side-menu-toggle}}
+        <button type="button" class="navbar-toggle">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      {{/side-menu-toggle}}
+    </div>
+    <div class="pull-left">
+      <div class="tab-name" {{action "showMobileSidebar"}}>
+        {{currentTabId}}
+      </div>
+    </div>
   </div>
   <div class="row row-app full-height">
     {{#perfect-scrollbar-element tagName="div"
@@ -34,18 +41,18 @@
       </div>
     {{/perfect-scrollbar-element}}
     {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
-      coverSelector="#col-sidebar" model=tabModel.content
+      coverSelector="#col-sidebar" model=sidenavModel.content
     }}
-      {{#if tabModel.isFulfilled}}
-        {{component sidenavContentComponent model=tabModel.content}}
-      {{else if tabModel.isPending}}
+      {{#if sidenavModel.isFulfilled}}
+        {{component sidenavContentComponent model=sidenavModel.content}}
+      {{else if sidenavModel.isPending}}
         TODO Loading...
-      {{else if tabModel.isRejected}}
+      {{else if sidenavModel.isRejected}}
         TODO Rejected!
       {{/if}}
     {{/one-sidenav}}
     {{#perfect-scrollbar-element tagName="div" id="col-sidebar"
-      class="col-in-app-layout col-sidebar hidden-xs col-sm-4 col-md-3 col-lg-2 full-height disable-user-select"
+      class=colSidebarClass
     }}
       {{#if sidenavSidebarOpen}}
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
@@ -53,7 +60,7 @@
       {{yield 'sidebar'}}
     {{/perfect-scrollbar-element}}
     {{#perfect-scrollbar-element
-      class="col-in-app-layout col-content col-xs-12 col-sm-8 col-md-7 col-lg-9 full-height"
+      class=colContentClass
     }}
       {{#if sidenavSidebarOpen}}
         <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
