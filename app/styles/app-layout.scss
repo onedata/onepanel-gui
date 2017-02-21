@@ -1,125 +1,96 @@
 $mobile-top-height: 70px;
-
 .app-layout {
-  position: absolute;
-  @include fill-container();
-
-  .row-mobile-menu {
-    height: $mobile-top-height;
-    // TODO: the same as col-main-menu?
-    background: linear-gradient(
-      $color-main-menu-bg-top,
-      $color-main-menu-bg-bottom
-    );
-    color: $color-one-white;
-
-    .side-menu-toggle {
-      height: 100%;
-      width: auto;
+    position: absolute;
+    @include fill-container();
+    .row-mobile-menu {
+        height: $mobile-top-height;
+        // TODO: the same as col-main-menu?
+        background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
+        color: $color-one-white;
+        .side-menu-toggle {
+            height: 100%;
+            width: auto;
+        }
+        .navbar-toggle {
+            margin: 16px;
+            .icon-bar {
+                background-color: $color-one-white;
+                border-radius: 0;
+            }
+        }
+        .tab-name {
+            text-transform: capitalize;
+            line-height: $mobile-top-height;
+            font-size: 1.5em;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
     }
-
-    .navbar-toggle {
-      margin: 16px;
-
-      .icon-bar {
-        background-color: $color-one-white;
-        border-radius: 0;
-      }
+    .col-in-app-layout {
+        position: relative;
     }
-
-    .tab-name {
-      text-transform: capitalize;
-      line-height: $mobile-top-height;
-      font-size: 1.5em;
-      margin-left: 10px;
-      margin-right: 10px;
+    .col-main-menu {
+        background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
+        .row-onedata-logo {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .onedata-logo {
+            width: 120px;
+            height: 25px;
+            background-image: url('/js/panel-gui/assets/images/logo.svg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
-  }
-
-  .col-in-app-layout {
-    position: relative;
-  }
-
-  .col-main-menu {
-    background: linear-gradient(
-      $color-main-menu-bg-top,
-      $color-main-menu-bg-bottom
-    );
-
-    .row-onedata-logo {
-      margin-top: 40px;
-      margin-bottom: 40px;
+    .col-sidebar {
+        background: $color-sidebar-background;
+        // TODO same as sidenav
+        border-right: 1px solid $color-one-list-item-separator;
     }
-
-    .onedata-logo {
-      width: 120px;
-      height: 25px;
-      background-image: url('/assets/images/logo.svg');
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: contain;
-      margin-left: auto;
-      margin-right: auto;
+    .row-heading .col-title {
+        // TODO: similar to one-list-item
+        line-height: 64px;
+        text-transform: uppercase;
+        padding-left: 30px;
+        padding-right: 30px;
+        font-size: 1.25em;
     }
-  }
-
-  .col-sidebar {
-    background: $color-sidebar-background;
-    // TODO same as sidenav
-    border-right: 1px solid $color-one-list-item-separator;
-  }
-
-  .row-heading .col-title {
-    // TODO: similar to one-list-item
-    line-height: 64px;
-    text-transform: uppercase;
-    padding-left: 30px;
-    padding-right: 30px;
-    font-size: 1.25em;
-  }
-
-  .col-content {
-    // TODO similar 30px
-    padding: 30px;
-  }
+    .col-content {
+        // TODO similar 30px
+        padding: 30px;
+    }
 }
 
 /// Desktop main menu styles
 .col-main-menu .one-list-item.main-menu-item {
-  color: $color-main-menu-fg;
-  
-  // TODO a style when a route is not opened but we have sidebar opened
-  &.opened { 
-
-  }
-
-  &.active,
-  &:hover {
-    > .item-header {
-      color: $color-main-menu-fg;
-      background: linear-gradient(
-        90deg,
-        rgba(255,255,255,0.15),
-        rgba(255,255,255,0)
-      )
+    color: $color-main-menu-fg;
+    // TODO a style when a route is not opened but we have sidebar opened
+    &.opened {}
+    &.active,
+    &:hover {
+        >.item-header {
+            color: $color-main-menu-fg;
+            background: linear-gradient( 90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
+        }
     }
-  }
-
-  // style overrides for list item
-  &.one-list-item {
-    &::after {
-      @include top-line(1px solid $color-main-menu-separator)
+    // style overrides for list item
+    &.one-list-item {
+        &::after {
+            @include top-line(1px solid $color-main-menu-separator)
+        }
+        &:last-of-type {
+            &::after {
+                @include bottom-line(1px solid $color-main-menu-separator)
+            }
+        }
     }
-
-    &:last-of-type {
-      &::after {
-        @include bottom-line(1px solid $color-main-menu-separator)
-      }
-    }
-  }
 }
 
 // special for sidebar in sidenav TODO
 #sidenav-sidebar {
-  background: $color-sidebar-background;
+    background: $color-sidebar-background;
 }

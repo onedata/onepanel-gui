@@ -4,8 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'onedata-web-frontend-2',
     environment: environment,
-    rootURL: '/',
-    locationType: 'auto',
+    rootURL: '/js/panel-gui/',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
