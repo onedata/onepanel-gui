@@ -1,0 +1,12 @@
+<form {{action 'submitLogin' username password on="submit"}}>
+  {{input value=username}}
+  {{input value=password type="password"}}
+
+  <button type="submit">Submit login</button>
+</form>
+
+{{#if lastFailed}}
+<div>Login failed</div>
+{{/if}}
+
+{{yield}}

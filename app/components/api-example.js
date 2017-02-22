@@ -1,31 +1,48 @@
 import Ember from 'ember';
 
-import Onepanel from "npm:onepanel";
-
-// TODO: this all should be computed dynamically based on cookie
-
-const api = new Onepanel.OnepanelApi();
-
-const USERNAME = 'admin';
-const PASSWORD = 'password';
-
-const basicAuthEncoded = window.btoa(`${USERNAME}:${PASSWORD}`);
-
-api.defaultHeaders['Authentication'] = 'Authorization: Basic ' + basicAuthEncoded;
-
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-};
+const {
+  inject: {
+    service
+  },
+  observer,
+  computed: {
+    alias
+  },
+  assert
+} = Ember;
 
 export default Ember.Component.extend({
-  didInsertElement() {
+  onepanelServer: service(),
+
+  username: null,
+  password: null,
+
+  isAuthenticated: alias('onepanelServer.isInitialized'),
+  isLoading: alias('onepanelServer.isLoading'),
+  
+  init() {
     this._super(...arguments);
-    api.getClusterHosts({
+    this.watchAuthentication();
+  },
+  
+  watchAuthentication: observer('isAuthenticated', function() {
+    if (this.get('isAuthenticated')) {
+      this.getClusterHosts();
+    }
+  }),
+
+  getClusterHosts() {
+    let onepanelServer = this.get('onepanelServer');
+    assert('client should not be null', onepanelServer);
+    let gettingClusterHosts = onepanelServer.request('getClusterHosts', {
       discovered: true
-    }, callback);
-  }
+    });
+    gettingClusterHosts.then(data => {
+      console.log('received cluster hosts: ' + JSON.stringify(data));
+      this.set('clusterHosts', data);
+    });
+    gettingClusterHosts.catch(error => {
+      console.error('error on receiving cluster hosts: ' + JSON.stringify(error));
+    });
+  },
 });

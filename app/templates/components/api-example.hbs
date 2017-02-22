@@ -1,1 +1,15 @@
+{{#if isLoading}}
+  <div>Loading...</div>
+{{else}}
+  {{#if isAuthenticated}}
+    <ul>
+      {{#each clusterHosts as |host|}}
+        <li>{{host}}</li>
+      {{/each}}
+    </ul>
+  {{else}}
+    {{basicauth-login-form}}
+  {{/if}}
+{{/if}}
+
 {{yield}}
