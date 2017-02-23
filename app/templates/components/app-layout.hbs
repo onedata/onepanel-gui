@@ -52,20 +52,21 @@
         TODO Rejected!
       {{/if}}
     {{/one-sidenav}}
+        
+    {{content-backdrop class="sidenav-backdrop"
+      progress=(if sidenavSidebarOpen 100 0)
+      click=(action "closeSidenav" bubbles=true)
+    }}
+    
     {{#perfect-scrollbar-element tagName="div" id="col-sidebar"
       class=colSidebarClass
     }}
-      {{#if sidenavSidebarOpen}}
-        <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
-      {{/if}}
       {{yield 'sidebar'}}
     {{/perfect-scrollbar-element}}
+    
     {{#perfect-scrollbar-element
       class=colContentClass
     }}
-      {{#if sidenavSidebarOpen}}
-        <div class="overlay" {{action "closeSidenav" bubbles=true}}></div>
-      {{/if}}
       {{yield 'content'}}
     {{/perfect-scrollbar-element}}
   </div>

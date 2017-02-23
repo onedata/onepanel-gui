@@ -1,9 +1,12 @@
 @import 'bootstrap-config';
-@import 'ember-side-menu';
+@import 'side-menu';
 
 @import 'utils';
 @import 'colors';
 @import 'fonts';
+
+$mobile-top-height: 70px;
+$main-menu-width: 212px;
 
 $color-overlay: $content-backdrop-bg;
 

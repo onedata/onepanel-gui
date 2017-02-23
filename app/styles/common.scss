@@ -12,13 +12,13 @@
   cursor: pointer;
 }
 
-.overlay {
+.content-backdrop.sidenav-backdrop {
   // TODO: animation
   position: absolute;
   @include fill-container();
+  margin-left: $main-menu-width;
 
   z-index: $zindex-layer-1-2-overlay;
-  background-color: $color-overlay;
 }
 
 .disable-user-select {
