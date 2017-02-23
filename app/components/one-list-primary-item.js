@@ -15,10 +15,7 @@ export default Ember.Component.extend({
   primaryItemId: null,
 
   itemId: readOnly('item.id'),
-  isActive: computed('primaryItemId', 'itemId', function() {
-    // TODO fix string/int id mess
-    return this.get('primaryItemId') == this.get('itemId');
-  }),
+  isActive: false,
 
   actions: {
     changePrimaryItemId(itemId) {

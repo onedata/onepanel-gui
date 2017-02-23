@@ -2,20 +2,39 @@ import Ember from 'ember';
 
 const TMP_SPACES = [
   {
-    id: 1,
-    label: 'jeden'
+    id: '1',
+    label: 'Jeden'
   },
   {
-    id: 2,
-    label: 'dwa'
+    id: '2',
+    label: 'Dwa'
   },
   {
-    id: 3,
-    label: 'jeden-cztery'
+    id: '3',
+    label: 'Jeden-Cztery'
   },
   {
-    id: 4,
-    label: 'cztery'
+    id: '4',
+    label: 'Cztery'
+  },
+];
+
+const TMP_GROUPS = [
+  {
+    id: 'a',
+    label: 'Group A'
+  },
+  {
+    id: 'b',
+    label: 'Group B'
+  },
+  {
+    id: 'c',
+    label: 'Group C'
+  },
+  {
+    id: 'd',
+    label: 'Group D'
   },
 ];
 
@@ -31,6 +50,9 @@ export default Ember.Service.extend({
     switch (type) {
       case 'spaces':
         return new Promise(resolve => resolve(TMP_SPACES));
+    
+      case 'groups':
+        return new Promise(resolve => resolve(TMP_GROUPS));
     
       default:
         return new Promise((resolve, reject) => reject('No such model: ' + type));

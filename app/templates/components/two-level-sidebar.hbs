@@ -1,7 +1,7 @@
 {{#one-list-wrapper items=model.collection as |item|}}
-  {{!-- TODO separate component --}}
-  {{#one-list-primary-item item=item primaryItemId=primaryItemId
+  {{#one-list-primary-item item=item
     changePrimaryItemId="changePrimaryItemId"
+    isActive=(eq primaryItemId item.id)
     as |primarySection|}}
     {{#if (eq primarySection 'header')}}
       {{item.label}}

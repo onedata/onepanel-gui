@@ -22,6 +22,7 @@ const PLURALIZE_RESOURCE = {
 
 export default Ember.Route.extend({
   mainMenu: service(),
+  sidebar: service(),
   sidebarResources: service(),
 
   model({ resources }) {
@@ -61,8 +62,10 @@ export default Ember.Route.extend({
   },
 
   actions: {
-    changeResourceId(resourceType, itemId) {
+    changeResourceId(resourceType, itemId) {      
       this.transitionTo('onedata.resources.content', resourceType, itemId);
+      
+      // TODO: a loader for clicked sidebar item can be done here by usin transition as a promise
     }
   }
 });

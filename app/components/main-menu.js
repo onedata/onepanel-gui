@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 const {
+  computed,
   computed: {
     readOnly
   },
@@ -19,22 +20,31 @@ export default Ember.Component.extend({
 
   appModel: null,
 
-  currentItemId: readOnly('mainMenu.currentItemId'),
+  currentItemId: null,
   sidenavItemId: null,
+  
+  sidenavOpened: computed('sidenavItemId', function() {
+    return this.get(this.get('sidenavItemId')) != null;
+  }),
 
   items: readOnly('appModel.mainMenuItems'),
 
   actions: {
     itemClicked({ id }) {
-      // TODO when to change currentItem?
-      // let mainMenu = this.get('mainMenu');
-      // mainMenu.currentItemIdChanged(id);
-      this.set('sidenavItemId', id);
-      this.sendAction('currentItemChanged', id);
-
-      // FIXME: load proper view to sidenav
-
-      // this.sendAction('mainMenuItemChanged', item.id);
+      let {
+        currentItemId,
+        sidenavItemId  
+      } = this.getProperties(
+         'currentItemId', 'sidenavItemId'
+      );
+      let shouldChangeCurrentItem = (
+        (!sidenavItemId && currentItemId !== id) ||
+        (!!sidenavItemId && sidenavItemId !== id)        
+      );
+      if (shouldChangeCurrentItem) {
+        this.set('sidenavItemId', id);
+        this.sendAction('currentItemChanged', id);
+      }
     }
   }
 });

@@ -18,8 +18,8 @@ export default Ember.Route.extend({
 
   afterModel({ resourceId }) {
     let sidebar = this.get('sidebar');
-    // TODO
-    sidebar.set('items', [resourceId]);
+    // TODO only if this is content with sidebar with item
+    sidebar.changeItems(0, resourceId);
   },
 
   renderTemplate() {

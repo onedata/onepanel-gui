@@ -3,6 +3,7 @@
 {{#side-menu width="85%"}}
   {{main-menu
     appModel=appModel
+    currentItemId=currentTabId
     currentItemChanged="mobileMenuItemChanged"
   }}
 {{/side-menu}}
@@ -18,6 +19,7 @@
   <div class="row row-main-menu">
     {{main-menu
       appModel=appModel
+      currentItemId=currentTabId
       currentItemChanged="mainMenuItemClicked"
     }}
   </div>
