@@ -64,7 +64,7 @@ export default Ember.Component.extend({
 
   colContentClass: computed('showMobileSidebar', function() {
     let showMobileSidebar = this.get('showMobileSidebar');
-    let base = 'col-in-app-layout col-content col-sm-8 col-md-7 col-lg-9 full-height';
+    let base = 'col-in-app-layout col-content col-sm-8 col-md-9 col-lg-10 full-height';
     let xsClass = (showMobileSidebar ? 'hidden-xs' : 'col-xs-12');
     return htmlSafe(`${base} ${xsClass}`);
   }),

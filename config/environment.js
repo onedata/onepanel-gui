@@ -4,7 +4,9 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'onedata-web-frontend-2',
     environment: environment,
-    rootURL: '/js/panel-gui/',
+    rootURL: '/',
+    // FIXME
+    // rootURL: '/js/panel-gui/',
     locationType: 'hash',
     EmberENV: {
       FEATURES: {

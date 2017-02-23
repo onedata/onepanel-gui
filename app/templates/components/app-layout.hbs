@@ -8,7 +8,22 @@
 {{/side-menu}}
 {{content-backdrop}}
 
-<div class="container-fluid full-height">
+{{#perfect-scrollbar-element tagName="div" id="main-menu-container"
+  class="col-in-app-layout col-main-menu hidden-xs hidden-sm full-height disable-user-select"
+  click=(action "closeSidenav" bubbles=true)
+}}
+  <div class="row row-onedata-logo">
+    <div class="onedata-logo"></div>
+  </div>
+  <div class="row row-main-menu">
+    {{main-menu
+      appModel=appModel
+      currentItemChanged="mainMenuItemClicked"
+    }}
+  </div>
+{{/perfect-scrollbar-element}}
+
+<div class="container-fluid app-grid full-height">
   <div class="row row-mobile-menu visible-xs-block visible-sm-block disable-user-select">
     <div class="pull-left">
       {{#side-menu-toggle}}
@@ -26,20 +41,6 @@
     </div>
   </div>
   <div class="row row-app full-height">
-    {{#perfect-scrollbar-element tagName="div"
-      class="col-in-app-layout col-main-menu hidden-xs hidden-sm col-md-2 col-lg-1 full-height disable-user-select"
-      click=(action "closeSidenav" bubbles=true)
-    }}
-      <div class="row row-onedata-logo">
-        <div class="onedata-logo"></div>
-      </div>
-      <div class="row row-main-menu">
-        {{main-menu
-          appModel=appModel
-          currentItemChanged="mainMenuItemClicked"
-        }}
-      </div>
-    {{/perfect-scrollbar-element}}
     {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
       coverSelector="#col-sidebar" model=sidenavModel.content
     }}
