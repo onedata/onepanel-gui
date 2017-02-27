@@ -22,7 +22,7 @@ export default Route.extend({
           'groups',
           'shares',
           'tokens',
-          'cluster'
+          'clusters'
         ].map(id => ({ id })))
       }));
     });

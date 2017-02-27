@@ -28,12 +28,91 @@
   }
 }
 
-input.search-bar {
-  line-height: 17px;
-  @include vendor-prefix(border-radius, 16px);
-  @include vendor-prefix(box-shadow, none);
+$btn-bg-color: $color-one-white;
+
+// TODO color not defined
+$input-bg-color: #F9F9F9;
+// TODO color not defined
+$input-border-color: #CDCDCD;
+
+$color-one-default: $color-one-azure;
+$color-one-special: $color-one-mint;
+$color-one-danger: $color-one-red;
+
+.one-component {
+  height: 50px;
+  background-color: #F9F9F9;
+  border: 1px solid #CDCDCD;
+  @include vendor-prefix(border-radius, 100px);
   outline: 0;
+  border-style: solid;
+  padding: 8px 24px;
   -webkit-appearance: none;
-  border: 1px solid $color-one-list-item-separator;
-  padding: 8px 16px;
+  
+  // default color
+  border-color: $color-one-list-item-separator;
+  
+  // default width
+  border-width: 1px;
+  
+  &.light {
+    height: 38px;
+    background-color: $color-one-white !important;
+  }
+}
+
+.btn.one-component {
+  background-color: $btn-bg-color;
+  border-width: 2px;
+}
+
+// TODO special style for search
+
+input[type=text],
+input[type=password], 
+input[type=search] {
+  &.one-component {
+    border-width: 1px;
+    border-color: $input-border-color;
+    background-color: $input-bg-color;
+  }
+}
+
+input[type=text],
+input[type=password] {
+  &.one-component {
+    @include vendor-prefix(box-shadow, inset 0 1px 4px 0 rgba(0,0,0,0.13));
+  }
+}
+
+
+
+// TODO use for generation fb and bg
+@mixin one-fg-styles($attributes, $color) {
+  @each $attr in $attributes {
+    #{$attr}: $color;
+  }
+}
+
+.btn.one-default {
+  color: $color-one-default;
+  border-color: $color-one-default;
+}
+
+.btn.one-special {
+  color: $color-one-special;
+  border-color: $color-one-special;
+}
+
+.btn.one-danger {
+  color: $color-one-danger;
+  border-color: $color-one-danger;
+}
+
+.btn.one-component.small {
+  
+}
+
+input {
+  border-color: $color-one-list-item-separator;
 }

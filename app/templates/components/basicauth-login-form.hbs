@@ -1,8 +1,8 @@
 <form {{action 'submitLogin' username password on="submit"}}>
-  {{input value=username}}
-  {{input value=password type="password"}}
+  {{input value=username class="one-component"}}
+  {{input value=password class="one-component" type="password"}}
 
-  <button type="submit">Submit login</button>
+  <button type="submit" class="btn one-default one-component">Submit login</button>
 </form>
 
 {{#if lastFailed}}
