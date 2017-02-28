@@ -12,7 +12,7 @@ export default Ember.Route.extend({
 
   redirect({ resourceType, collection }) {
     let resourceIdToRedirect =
-      collection.length > 0 ? getDefaultResourceId(collection) : 'new';
+      collection.length > 0 ? getDefaultResourceId(collection) : 'empty';
     this.transitionTo(`onedata.sidebar.content`, resourceType, resourceIdToRedirect);
   }
 });

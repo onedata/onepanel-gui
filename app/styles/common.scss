@@ -35,16 +35,10 @@ $input-bg-color: #F9F9F9;
 // TODO color not defined
 $input-border-color: #CDCDCD;
 
-$color-one-default: $color-one-azure;
-$color-one-special: $color-one-mint;
-$color-one-danger: $color-one-red;
-
 .one-component {
   height: 50px;
   // TODO this is not working always
   line-height: 50px;
-  background-color: #F9F9F9;
-  border: 1px solid #CDCDCD;
   @include vendor-prefix(border-radius, 100px);
   outline: 0;
   border-style: solid;

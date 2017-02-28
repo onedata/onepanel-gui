@@ -11,7 +11,6 @@ Router.map(function() {
     this.route('sidebar', { path: ':type' }, function() {
       this.route('content', { path: ':resourceId' });
     });
-    this.route('providers');
   });
 });
 

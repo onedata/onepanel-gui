@@ -1,0 +1,3 @@
+{{#each steps as |step index|}}
+  {{one-step index=index isActive=(eq currentIndex index) title=step.title}}
+{{/each}}

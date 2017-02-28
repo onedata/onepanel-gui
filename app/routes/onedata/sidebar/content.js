@@ -9,8 +9,8 @@ const {
   }
 } = Ember;
 
-// TODO conside use of "empty" route instead of special "new" - all routes should have this
 const SPECIAL_IDS = [
+  'empty',
   'new'
 ];
 

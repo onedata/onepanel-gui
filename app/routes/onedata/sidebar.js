@@ -45,17 +45,10 @@ export default Ember.Route.extend({
     });
   },
 
-  afterModel(model, transition) {
+  afterModel(model) {
     let { resourceType } = model;
     let mainMenu = this.get('mainMenu');
     mainMenu.currentItemIdChanged(resourceType);
-    // TODO: to remove
-    // let fullRouteName = this.fullRouteName;
-    // if (this.fullRouteName === transition.targetName) {
-    //   let resourceIdToRedirect =
-    //     model.collection.length > 0 ? getDefaultResource(model.collection) : 'new';
-    //   this.transitionTo(`${fullRouteName}.content`, resourceIdToRedirect);
-    // }
   },
 
   renderTemplate(controller, model) {

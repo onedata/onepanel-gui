@@ -1,0 +1,15 @@
+<div class="row">
+  {{one-steps steps=steps currentIndex=currentIndex}}
+</div>
+
+<div class="row">
+  {{yield (hash step=currentStep index=currentIndex)}}  
+</div>
+
+<div class="row">
+  <button type="button" class="btn btn-default one-component one-default" {{action "next"}}>Next</button>
+</div>
+
+
+
+
