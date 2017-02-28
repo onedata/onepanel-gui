@@ -1,0 +1,24 @@
+@media only screen and (max-width: 1000px) {
+  .basic-table.no-resize {
+    thead {
+      display: none;
+    }
+
+    tbody td {
+      border: none !important;
+      display: block;
+      vertical-align: top;
+
+      &:before {
+        content: attr(data-th) ": ";
+        display: inline-block;
+        font-weight: bold;
+        width: 6.5em;
+      }
+
+      &.bt-hide {
+        display: none;
+      }
+    }
+  }
+}

@@ -48,6 +48,8 @@ module.exports = function(defaults) {
   // along with the exports of each module as its value.
 
   const BOWER_ASSETS = [
+    'basictable/jquery.basictable.min.js',
+    'basictable/basictable.css'
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
