@@ -89,9 +89,19 @@ export default Ember.Component.extend({
     closeSidenav() {
       this.get('eventsBus').trigger('one-sidenav:close', '#sidenav-sidebar');
     },
+    sidenavClosed() {
+      this.set('sidenavItemId', null);
+    },
     // TODO IMPORTANT: inconsistent depedencies between component:main-menu, service:main-menu and component:app-layout
     mainMenuItemClicked(itemId) {
-      let shouldOpen = (this.get('sidenavTabId') !== itemId);
+      let {
+        sidenavTabId,
+        currentTabId
+      } = this.getProperties('sidenavTabId', 'currentTabId');
+      let shouldOpen = (
+        (!sidenavTabId && currentTabId !== itemId) ||
+        (!!sidenavTabId && sidenavTabId !== itemId)        
+      );
       let action = (shouldOpen ? 'open' : 'close');
       this.get('eventsBus').trigger('one-sidenav:' + action, '#sidenav-sidebar');
       if (shouldOpen) {

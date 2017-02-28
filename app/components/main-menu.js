@@ -31,20 +31,7 @@ export default Ember.Component.extend({
 
   actions: {
     itemClicked({ id }) {
-      let {
-        currentItemId,
-        sidenavItemId  
-      } = this.getProperties(
-         'currentItemId', 'sidenavItemId'
-      );
-      let shouldChangeCurrentItem = (
-        (!sidenavItemId && currentItemId !== id) ||
-        (!!sidenavItemId && sidenavItemId !== id)        
-      );
-      if (shouldChangeCurrentItem) {
-        this.set('sidenavItemId', id);
-        this.sendAction('currentItemChanged', id);
-      }
+      this.sendAction('itemClicked', id);
     }
   }
 });

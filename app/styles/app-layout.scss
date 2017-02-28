@@ -83,9 +83,9 @@
 /// Desktop main menu styles
 .col-main-menu .one-list-item.main-menu-item {
   color: $color-main-menu-fg;
-  // TODO a style when a route is not opened but we have sidebar opened
-  &.opened {}
+  
   &.active,
+  &.selected,
   &:hover {
     >.item-header {
       color: $color-main-menu-fg;

@@ -19,8 +19,9 @@
   <div class="row row-main-menu">
     {{main-menu
       appModel=appModel
+      sidenavItemId=sidenavTabId
       currentItemId=currentTabId
-      currentItemChanged="mainMenuItemClicked"
+      itemClicked="mainMenuItemClicked"
     }}
   </div>
 {{/perfect-scrollbar-element}}
@@ -45,6 +46,7 @@
   <div class="row row-app full-height">
     {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
       coverSelector="#col-sidebar" model=sidenavModel.content
+      closed=(action "sidenavClosed")
     }}
       {{#if sidenavModel.isFulfilled}}
         {{component sidenavContentComponent model=sidenavModel.content}}
