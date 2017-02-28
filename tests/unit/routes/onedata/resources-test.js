@@ -1,6 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('route:onedata/resources', 'Unit | Route | onedata/resources', {
+moduleFor('route:onedata/sidebar', 'Unit | Route | onedata/sidebar', {
   // Specify the other units that are required for this test.
   // needs: ['controller:foo']
 });

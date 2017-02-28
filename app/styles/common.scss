@@ -41,12 +41,15 @@ $color-one-danger: $color-one-red;
 
 .one-component {
   height: 50px;
+  // TODO this is not working always
+  line-height: 50px;
   background-color: #F9F9F9;
   border: 1px solid #CDCDCD;
   @include vendor-prefix(border-radius, 100px);
   outline: 0;
   border-style: solid;
-  padding: 8px 24px;
+  // TODO 8px vertical padding?
+  padding: 0 24px;
   -webkit-appearance: none;
   
   // default color
@@ -61,10 +64,38 @@ $color-one-danger: $color-one-red;
   }
 }
 
-.btn.one-component {
-  background-color: $btn-bg-color;
-  border-width: 2px;
+@mixin one-btn-style($name, $color) {
+  color: $color;
+  border-color: $color;
+
+  &:hover,
+  &.active {
+    color: $color-one-white;
+    background-color: $color;
+  }
 }
+
+.btn {
+  &.one-component {
+    background-color: $btn-bg-color;
+    border-width: 2px;
+    cursor: pointer;
+    @include vendor-prefix(user-select, none);
+  }
+
+  &.one-default {
+    @include one-btn-style(one-default, $color-one-default);
+  }
+
+  &.one-special {
+    @include one-btn-style(one-special, $color-one-special);
+  }
+
+  &.one-danger {
+    @include one-btn-style(one-danger, $color-one-danger);
+  }
+}
+
 
 // TODO special style for search
 
@@ -94,24 +125,7 @@ input[type=password] {
   }
 }
 
-.btn.one-default {
-  color: $color-one-default;
-  border-color: $color-one-default;
-}
 
-.btn.one-special {
-  color: $color-one-special;
-  border-color: $color-one-special;
-}
-
-.btn.one-danger {
-  color: $color-one-danger;
-  border-color: $color-one-danger;
-}
-
-.btn.one-component.small {
-  
-}
 
 input {
   border-color: $color-one-list-item-separator;

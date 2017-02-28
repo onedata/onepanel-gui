@@ -20,20 +20,24 @@ const PLURALIZE_RESOURCE = {
   space: 'spaces'
 };
 
+// TODO: maybe separate util (maybe from GUI16) and jsdoc
+function getDefaultResource(collection) {
+  return collection.objectAt(0);
+}
+
 export default Ember.Route.extend({
   mainMenu: service(),
   sidebar: service(),
   sidebarResources: service(),
 
-  model({ resources }) {
+  model({ type }) {
     // TODO: validate reource type
     let sidebarResources = this.get('sidebarResources');
-    // let resourceType = SINGULARIZE_RESOURCE[resources];
     return new Promise((resolve, reject) => {
-      let gettingModel = sidebarResources.getModelFor(resources);
+      let gettingModel = sidebarResources.getModelFor(type);
       gettingModel.then(collection => {
         resolve({
-          resourceType: resources,
+          resourceType: type,
           collection
         });
       });
@@ -41,21 +45,29 @@ export default Ember.Route.extend({
     });
   },
 
-  afterModel({ resourceType }) {
+  afterModel(model, transition) {
+    let { resourceType } = model;
     let mainMenu = this.get('mainMenu');
     mainMenu.currentItemIdChanged(resourceType);
+    // TODO: to remove
+    // let fullRouteName = this.fullRouteName;
+    // if (this.fullRouteName === transition.targetName) {
+    //   let resourceIdToRedirect =
+    //     model.collection.length > 0 ? getDefaultResource(model.collection) : 'new';
+    //   this.transitionTo(`${fullRouteName}.content`, resourceIdToRedirect);
+    // }
   },
 
   renderTemplate(controller, model) {
     let {
       resourceType
     } = model;
-    this.render('onedata.resources', {
+    this.render('onedata.sidebar', {
       into: 'onedata',
       outlet: 'sidebar'
     });
     this.render(`tabs.${resourceType}.sidebar`, {
-      into: 'onedata.resources',
+      into: 'onedata.sidebar',
       outlet: 'sidebar-content',
       model
     });
@@ -63,7 +75,7 @@ export default Ember.Route.extend({
 
   actions: {
     changeResourceId(resourceType, itemId) {      
-      this.transitionTo('onedata.resources.content', resourceType, itemId);
+      this.transitionTo('onedata.sidebar.content', resourceType, itemId);
       
       // TODO: a loader for clicked sidebar item can be done here by usin transition as a promise
     }

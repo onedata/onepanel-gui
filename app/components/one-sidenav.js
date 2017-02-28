@@ -63,7 +63,7 @@ export default Ember.Component.extend({
     let left = $coverElement.offset().left;
     let width = open ? $coverElement.width() : 0;
     this.set('style', htmlSafe(`left: ${left}px; width: ${width}px;`));
-  },
+},
 
   changeSize: observer('isOpened', function() {
     this.updatePosition(this.get('isOpened'));

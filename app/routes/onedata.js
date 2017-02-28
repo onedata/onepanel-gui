@@ -30,7 +30,7 @@ export default Route.extend({
 
   actions: {
     mainMenuItemChanged(itemId) {
-      this.transitionTo('onedata.resources', itemId);
+      this.transitionTo('onedata.sidebar', itemId);
     }
   }
 });

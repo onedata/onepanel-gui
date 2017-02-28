@@ -11,6 +11,8 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
+  classNames: ['two-level-sidebar'],
+
   sidebar: service(),
 
   model: null,

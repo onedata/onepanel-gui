@@ -38,6 +38,9 @@ const TMP_GROUPS = [
   },
 ];
 
+const TMP_CLUSTERS = [
+];
+
 const {
   RSVP: {
     Promise
@@ -54,6 +57,9 @@ export default Ember.Service.extend({
       case 'groups':
         return new Promise(resolve => resolve(TMP_GROUPS));
     
+      case 'clusters':
+        return new Promise(resolve => resolve(TMP_CLUSTERS));
+
       default:
         return new Promise((resolve, reject) => reject('No such model: ' + type));
     }
