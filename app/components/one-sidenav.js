@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import PerfectScrollbar from 'npm:perfect-scrollbar';
 
 const {
   inject,
@@ -11,7 +12,7 @@ const {
   observer
 } = Ember;
 
-// import { PerfectScrollbarMixin } from 'ember-perfect-scrollbar';
+// TODO debug PerfectScrollbar and consider using PerfectScrollbarMixin
 
 /**
  * Based on: https://www.w3schools.com/howto/howto_js_sidenav.asp
@@ -25,7 +26,7 @@ export default Ember.Component.extend({
 
   isOpened: false,
 
-  style: '',
+  style: htmlSafe(''),
   
   init() {
     this._super(...arguments);

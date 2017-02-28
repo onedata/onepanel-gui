@@ -1,7 +1,6 @@
 {
   "name": "onedata-web-frontend-2",
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "nanoscroller": "^0.8.7"
+    "bootstrap": "^3.3.7"
   }
 }

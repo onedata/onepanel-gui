@@ -1,6 +1,8 @@
 import Ember from 'ember';
 
-import Onepanel from 'npm:onepanel';
+// FIXME
+const Onepanel = {};
+// import Onepanel from 'npm:onepanel';
 import moment from 'npm:moment';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
