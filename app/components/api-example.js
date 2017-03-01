@@ -32,9 +32,9 @@ export default Ember.Component.extend({
   }),
 
   getClusterHosts() {
-    let onepanelServer = this.get('onepanelServer');
-    assert('client should not be null', onepanelServer);
-    let gettingClusterHosts = onepanelServer.request('getClusterHosts', {
+    let onepanelApi = this.get('onepanelServer.onepanelApi');
+    assert('onepanel api object should not be null', onepanelApi);
+    let gettingClusterHosts = onepanelApi.getClusterHosts({
       discovered: true
     });
     gettingClusterHosts.then(data => {

@@ -1,8 +1,6 @@
 import Ember from 'ember';
 
-// FIXME
-const Onepanel = {};
-// import Onepanel from 'npm:onepanel';
+import Onepanel from 'npm:onepanel';
 import moment from 'npm:moment';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
@@ -27,8 +25,6 @@ const {
     readOnly
   }
 } = Ember;
-
-// TODO: set client to null if forbidden error
 
 function validateCookies(cookieValues) {
   let date = cookieValues['lastUpdate'];
@@ -57,6 +53,23 @@ export default Ember.Service.extend({
   isInitialized: computed('client', function () {
     return this.get('client') != null;
   }),
+  
+  /// APIs provided by onepanel client library
+  
+  onepanelApi: readOnly('client', function() {
+    let client = this.get('client');
+    return client ? new Onepanel.OnepanelApi(client) : null;
+  }),
+
+  onezoneApi: readOnly('client', function() {
+    let client = this.get('client');
+    return client ? new Onepanel.OnezoneApi(client) : null;
+  }),
+  
+  oneproviderApi: readOnly('client', function() {
+    let client = this.get('client');
+    return client ? new Onepanel.OneproviderApi(client) : null;
+  }),
 
   init() {
     this._super(...arguments);
@@ -78,7 +91,7 @@ export default Ember.Service.extend({
         let password = cookieValues['password'];
         let testingAuth = this.requestTestAuth(username, password);
         testingAuth.then(() => {
-          this.initializeClient(username, password);
+          this.initClient(username, password);
           resolve();
         });
         testingAuth.catch(reject);
@@ -104,52 +117,34 @@ export default Ember.Service.extend({
   },
 
   createClient(username, password, origin = null) {
-    let api = new Onepanel.OnepanelApi();
-    api.apiClient.authentications['basic']['username'] = username;
-    api.apiClient.authentications['basic']['password'] = password;
-    api.apiClient.basePath = replaceUrlOrigin(api.apiClient.basePath, origin || window.location.origin);
-    return api;
+    let client = new Onepanel.ApiClient();
+    let basic = client.authentications['basic'];
+    basic['username'] = username;
+    basic['password'] = password;
+    client.basePath = replaceUrlOrigin(client.basePath, origin || window.location.origin);
+    return client;
   },
 
-  initializeClient(username, password, origin) {
+  initClient(username, password, origin) {
     let client = this.createClient(username, password, origin);
-    this.set('client', client);
+    this.set('client', client);    
     this.writeCookies();
   },
 
-  request(methodName, params = {}) {
-    let client = this.get('client');
-    let method = client[methodName];
-    if (method) {
-      method = method.bind(client);
-    } else {
-      throw new Error('service:onepanel-server: API client has no method: ' + methodName);
-    }
-    return new Promise((resolve, reject) => {
-      method(params, function (error, data, response) {
-        if (error) {
-          console.error(`service:onepanel-server: request error: ${JSON.stringify(error)}`);
-          if (response.forbidden === true) {
-            console.error('service:onepanel-server: the request is forbidden');
-          }
-          reject(error);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-  },
-
+  /**
+   * Makes a request that will resolve if provided username, password and
+   * origin are valid.
+   * 
+   * @param {string} username 
+   * @param {string} password 
+   * @param {string} [origin] 
+   * @returns {Promise}
+   */
   requestTestAuth(username, password, origin) {
-    return new Promise((resolve, reject) => {
-      this.createClient(username, password, origin).getClusterCookie(function (error) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
+    let client = this.createClient(username, password, origin);
+    let api = new Onepanel.OnepanelApi(client);
+    // invoke any operation that requires authentication
+    return api.getClusterCookie();
   }
 
 });

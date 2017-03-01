@@ -50,7 +50,8 @@
     "ember-source": "~2.11.0",
     "ember-truth-helpers": "1.3.0",
     "ember-welcome-page": "^2.0.2",
-    "loader.js": "^4.0.10"
+    "loader.js": "^4.0.10",
+    "onepanel": "git+ssh://git@git.plgrid.pl:7999/vfs/onepanel-javascript-client.git#release/3.0.0-rc12"
   },
   "engines": {
     "node": ">= 0.12.0"
