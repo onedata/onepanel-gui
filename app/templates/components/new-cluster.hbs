@@ -1,7 +1,7 @@
 {{#one-wizard steps=steps as |w|}}
   <h1>{{w.step.title}}</h1>
   {{#if (eq w.index 0)}}
-    {{new-cluster-installation}}
+    {{new-cluster-installation nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 1)}}
     {{new-cluster-zone-registration}}
   {{else if (eq w.index 2)}}

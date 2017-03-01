@@ -1,54 +1,29 @@
-{{#basic-table}}
+{{!-- TODO i18n --}}
+
+{{!-- TODO validation - if not ready to deploy, disable button --}}
+<button class="btn one-component one-default" {{action "deploy"}}>Deploy ></button>
+<table class="table table-striped">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Gender</th>
-      <th>Height</th>
-      <th>Province</th>
-      <th>Sport</th>
+      <th>Hosts</th>
+      <th>Database</th>
+      <th>Cluster Worker</th>
+      <th>Cluster Manager</th>
+      <th>Remote Transfer</th>
+      <th>Primary Cluster Manager</th>
     </tr>
   </thead>
+  {{!-- TODO validation - highlight cols/rows if not valid --}}
   <tbody>
-    <tr>
-      <td>Jill Smith</td>
-      <td>25</td>
-      <td>Female</td>
-      <td>5'4</td>
-      <td>British Columbia</td>
-      <td>Volleyball</td>
-    </tr>
-    <tr>
-      <td>John Stone</td>
-      <td>30</td>
-      <td>Male</td>
-      <td>5'9</td>
-      <td>Ontario</td>
-      <td>Badminton</td>
-    </tr>
-    <tr>
-      <td>Jane Strip</td>
-      <td>29</td>
-      <td>Female</td>
-      <td>5'6</td>
-      <td>Manitoba</td>
-      <td>Hockey</td>
-    </tr>
-    <tr>
-      <td>Gary Mountain</td>
-      <td>21</td>
-      <td>Mail</td>
-      <td>5'8</td>
-      <td>Alberta</td>
-      <td>Curling</td>
-    </tr>
-    <tr>
-      <td>James Camera</td>
-      <td>31</td>
-      <td>Male</td>
-      <td>6'1</td>
-      <td>British Columbia</td>
-      <td>Hiking</td>
-    </tr>
+    {{#each hosts as |host|}}
+      <tr>
+        <td>{{host.hostname}}</td>
+        <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
+        <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
+        <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
+        <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
+        <td>{{one-way-radio primaryHost option=host.hostname update=(action 'primaryHostChanged')}}</td>
+      </tr>
+    {{/each}}
   </tbody>
-{{/basic-table}}
+</table>
