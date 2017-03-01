@@ -1,10 +1,15 @@
 import Ember from 'ember';
 
 const {
-  assert
+  assert,
+  inject: {
+    service
+  }
 } = Ember;
 
 export default Ember.Component.extend({
+  clusterManager: service('clusterManager'),
+  
   primaryHost: null,
   
   hosts: [
@@ -40,7 +45,22 @@ export default Ember.Component.extend({
     deploy() {
       // TODO use API
       // TODO block if not valid
-      this.sendAction('nextStep');
+      
+      // TODO get name for cluster from user
+      let id = 'x';
+      
+      
+      let creatingCluster = this.get('clusterManager').createCluster({
+        id,
+        label: 'New cluster'
+      });
+      
+      // TODO handle reject
+      
+      creatingCluster.then(cluster => {
+        this.sendAction('clusterCreated', cluster);
+        this.sendAction('nextStep');
+      });
     }
   }
 });

@@ -1,12 +1,16 @@
-{{#one-wizard steps=steps as |w|}}
+{{!-- TODO: current index is here hardcoded --}}
+{{#one-wizard steps=steps currentIndex=0 as |w|}}
   <h1>{{w.step.title}}</h1>
   {{#if (eq w.index 0)}}
-    {{new-cluster-installation nextStep=(action "next" target=w.wizard)}}
+    {{new-cluster-installation
+      clusterCreated=(action "clusterCreated")
+      nextStep=(action "next" target=w.wizard)
+    }}
   {{else if (eq w.index 1)}}
     {{new-cluster-zone-registration nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 2)}}
-    {{new-cluster-storage}}
+    {{new-cluster-storage nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 3)}}
-    {{new-cluster-summary}}
+    {{new-cluster-summary clusterId=clusterId}}
   {{/if}}
 {{/one-wizard}}

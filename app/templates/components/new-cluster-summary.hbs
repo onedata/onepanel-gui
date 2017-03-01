@@ -1,1 +1,8 @@
-{{yield}}
+{{!-- TODO link ember hrefs should be parametrized not hardcoded --}}
+
+<h1>Congratulations: {{clusterId}}</h1>
+{{#link-to 'onedata.sidebar.content' 'clusters' clusterId
+  class="btn one-component one-default"
+}}
+  Manage cluster
+{{/link-to}}

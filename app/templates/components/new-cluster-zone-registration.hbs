@@ -2,54 +2,37 @@
 
 <form {{action "submit" on="submit" bubbles=false}}>
   <div class="form-group">
-    {{one-way-select selectedStorageType
-      options=storageTypes update=(action "storageTypeChanged")
+    {{one-way-input onezoneDomain
+      update=(action "inputChanged" "onezoneDomain")
+      placeholder="Onezone domain"
     }}
   </div>
   <div class="form-group">
-    {{one-way-input storageName
-      update=(action "inputChanged" "storageName")
-      placeholder="Storage name"
+    {{one-way-input redirectionPoint
+      update=(action "inputChanged" "redirectionPoint")
+      placeholder="Redirection point"
     }}
   </div>
   <div class="form-group">
-    {{one-way-input username
-      update=(action "inputChanged" "username")
-      placeholder="Username"
+    {{one-way-input providerName
+      update=(action "inputChanged" "providerName")
+      placeholder="Provider name"
     }}
   </div>
   <div class="form-group">
-    {{one-way-password password
-      update=(action "inputChanged" "password")
-      placeholder="Password"
+    {{one-way-input latitude
+      update=(action "inputChanged" "latitude")
+      placeholder="Latitude (optional)"
     }}
   </div>
   <div class="form-group">
-    {{one-way-input bucketName
-      update=(action "inputChanged" "bucketName")
-      placeholder="Bucket name"
+    {{one-way-input longitude
+      update=(action "inputChanged" "longitude")
+      placeholder="Longitude (optional)"
     }}
   </div>
-  <div class="form-group">
-    <div class="row">
-      <div class="col-xs-12 col-md-6">
-        {{one-way-input blockSize
-          update=(action "inputChanged" "blockSize")
-          placeholder="Block size"
-        }}
-      </div>
-      <div class="col-xs-12 col-md-6">
-        {{one-way-input timeout 
-          update=(action "inputChanged" "timeout")
-          placeholder="Timeout"
-        }}
-      </div>
-    </div>
-  </div>
-  
   
   <button type="submit" class="btn one-component one-default">
     Register
   </button>
-  
 </form>

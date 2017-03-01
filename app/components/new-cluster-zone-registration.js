@@ -1,12 +1,11 @@
 import Ember from 'ember';
 
 const INPUT_TYPES = [
-  'storageName',
-  'username',
-  'password',
-  'bucketName',
-  'blockSize',
-  'timeout'
+  'onezoneDomain',
+  'redirectionPoint',
+  'providerName',
+  'latitude',
+  'longitude'
 ];
 
 function isKnownInputType(type) {
@@ -14,22 +13,13 @@ function isKnownInputType(type) {
 }
 
 export default Ember.Component.extend({
-  // TODO fetch storage types with API
-  storageTypes: ['S3', 'Super Storage', 'Other Storage'],
-  
-  selectedStorageType: null,
-  storageName: null,
-  username: null,
-  password: null,
-  bucketName: null,
-  blockSize: null,
-  timeout: null,
+  onezoneDomain: null,
+  redirectionPoint: null,
+  providerName: null,
+  latitude: null,
+  longitude: null,
   
   actions: {
-    storageTypeChanged(type) {
-      this.set('selectedStorageType', type);
-    },
-    
     inputChanged(inputType, value) {
       if (isKnownInputType(inputType)) {
         this.set(inputType, value);

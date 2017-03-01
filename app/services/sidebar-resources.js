@@ -1,5 +1,15 @@
 import Ember from 'ember';
 
+const {
+  RSVP: {
+    Promise
+  },
+  inject: {
+    service
+  },
+  A
+} = Ember;
+
 const TMP_SPACES = [
   {
     id: '1',
@@ -38,16 +48,16 @@ const TMP_GROUPS = [
   },
 ];
 
-const TMP_CLUSTERS = [
-];
-
-const {
-  RSVP: {
-    Promise
+const TMP_CLUSTERS = A([
+  {
+    id: 'x',
+    label: 'lol cluster'
   }
-} = Ember;
+]);
 
 export default Ember.Service.extend({
+  clusterManager: service(),
+    
   // TODO: should use User relations
   getModelFor(type) {
     switch (type) {
@@ -58,7 +68,9 @@ export default Ember.Service.extend({
         return new Promise(resolve => resolve(TMP_GROUPS));
     
       case 'clusters':
-        return new Promise(resolve => resolve(TMP_CLUSTERS));
+        let clusterManager = this.get('clusterManager');
+        return new Promise(resolve => resolve(clusterManager.get('clusters')));
+        // return new Promise(resolve => resolve(TMP_CLUSTERS));
 
       default:
         return new Promise((resolve, reject) => reject('No such model: ' + type));

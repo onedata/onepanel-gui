@@ -15,4 +15,11 @@ export default Ember.Component.extend({
     id: 3,
     title: 'summary'
   }],
+  
+  actions: {
+    clusterCreated(cluster) {
+      // FIXME cluster.get('id')
+      this.set('clusterId', cluster.id);
+    }
+  }
 });

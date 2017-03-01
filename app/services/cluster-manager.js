@@ -7,11 +7,34 @@ const {
   },
   RSVP: {
     Promise
-  }
+  },
+  A
 } = Ember;
 
 export default Service.extend({
   onepanelServer: service(),
+
+  /**
+   * TODO
+   * This is something like a store
+   * @return {Ember.A<Cluster>}
+   */
+  clusters: A([]),
+  
+  /**
+   * @typedef {Cluster}
+   * @param {string} name
+   */
+  
+  /**
+   * @param {Cluster} cluster 
+   */
+  createCluster(cluster) {
+    return new Promise((resolve) => {
+      this.get('clusters').pushObject(cluster);
+      resolve(cluster);
+    });
+  },
   
   /**
    * @return {HostInfo}

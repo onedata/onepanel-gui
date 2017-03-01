@@ -1,0 +1,59 @@
+{{!-- TODO: i18n --}}
+
+{{#bs-form onSubmit=(action "submit") as |form|}}
+  {{#form.group}}
+    {{one-way-select selectedStorageType
+      options=storageTypes update=(action "storageTypeChanged")
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    {{one-way-input storageName
+      update=(action "inputChanged" "storageName")
+      placeholder="Storage name"
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    {{one-way-input username
+      update=(action "inputChanged" "username")
+      placeholder="Username"
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    {{one-way-password password
+      update=(action "inputChanged" "password")
+      placeholder="Password"
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    {{one-way-input bucketName
+      update=(action "inputChanged" "bucketName")
+      placeholder="Bucket name"
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        {{one-way-input blockSize
+          update=(action "inputChanged" "blockSize")
+          placeholder="Block size [bytes] (optional)"
+        }}
+      </div>
+      <div class="col-xs-12 col-md-6">
+        {{one-way-input timeout 
+          update=(action "inputChanged" "timeout")
+          placeholder="Timeout (ms) [optional]"
+        }}
+      </div>
+    </div>
+  {{/form.group}}
+  {{#form.group}}
+    <label for={{concat elementId "-insecure-checkbox"}}>Insecure</label>
+    {{one-way-checkbox insecure
+      id=(concat elementId "-insecure-checkbox")
+      update=(action "inputChanged" "insecure")
+    }}
+  {{/form.group}}
+  <button type="submit" class="btn one-component one-default">
+    Add
+  </button>  
+{{/bs-form}}

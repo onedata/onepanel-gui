@@ -1,0 +1,23 @@
+{{!-- TODO should be responsive --}}
+
+{{!-- TODO style of list --}}
+
+{{!-- TODO i18n --}}
+
+<ul class="one-list">
+  {{#each storages as |storage|}}
+    <li class="one-list-item">
+      <div class="item-header">
+        {{storage.storageName}}
+      </div>
+      <ul class="one-list one-list-level-2">
+        <li class="one-list-item">
+          <strong>Type:</strong> {{storage.storageType}}
+        </li>
+        <li class="one-list-item">
+          <strong>Mount point:</strong> {{storage.mountPoint}}
+        </li>
+      </ul>
+    </li>
+  {{/each}}
+</ul>

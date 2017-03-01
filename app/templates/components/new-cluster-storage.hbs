@@ -1,1 +1,35 @@
-{{yield}}
+{{#if noStorages}}
+  {{cluster-storage-add-form submit="submitAddStorage"}}
+{{else}}
+  <div class="row">
+    <div class="col-xs-6 pull-right">
+      <button class="btn one-component one-special" {{action "next"}}>
+        Confirm >
+      </button>
+    </div>
+    <div class="col-xs-6 pull-right">
+      <button class="btn one-component one-special" {{action "startAddStorage"}}>
+        Add storage
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    {{cluster-storage-table storages=storages}}  
+  </div>
+{{/if}}
+
+{{#bs-modal
+  id="add-storage"
+  open=addStorageOpened
+  body=false
+  footer=true
+  onSubmit=(action "submitAddStorage")
+  as |modal|
+}}
+  {{#modal.body}}
+    {{cluster-storage-add-form submit="submitAddStorage"}}
+  {{/modal.body}}
+  {{!--{{#bs-modal-footer}}
+    
+  {{/bs-modal-footer}}--}}
+{{/bs-modal}}
