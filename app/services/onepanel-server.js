@@ -9,10 +9,6 @@ function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
 }
 
-// ONLY FOR DEVELOPMENT TESTS
-// const basicAuthEncoded = window.btoa(`${USERNAME}:${PASSWORD}`);
-// api.defaultHeaders['Authentication'] = 'Authorization: Basic ' + basicAuthEncoded;
-
 const {
   RSVP: {
     Promise
@@ -44,6 +40,9 @@ export default Ember.Service.extend({
    * @type {ObjectPromiseProxy}
    */
   cookiesReader: null,
+
+  username: null,
+  password: null,
 
   isLoading: readOnly('cookiesReader.isPending'),
 
@@ -121,6 +120,10 @@ export default Ember.Service.extend({
     let basic = client.authentications['basic'];
     basic['username'] = username;
     basic['password'] = password;
+    this.setProperties({
+      username,
+      password
+    });
     client.basePath = replaceUrlOrigin(client.basePath, origin || window.location.origin);
     return client;
   },

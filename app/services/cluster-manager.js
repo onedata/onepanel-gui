@@ -8,8 +8,11 @@ const {
   RSVP: {
     Promise
   },
-  A
+  A,
+  observer
 } = Ember;
+
+const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
 export default Service.extend({
   onepanelServer: service(),
@@ -19,7 +22,7 @@ export default Service.extend({
    * This is something like a store
    * @return {Ember.A<Cluster>}
    */
-  clusters: A([]),
+  clusters: null,
   
   /**
    * @typedef {Cluster}
@@ -58,9 +61,18 @@ export default Service.extend({
   },
   
   getHostNames() {
-    let onepanelApi = this.get('onepanelServer.onepanelApi');
-    return onepanelApi.getClusterHosts({
-      discovered: true
-    });
+    // TODO cannot get onepanelApi if not authorized -
+    // so make get onepaneApi as a promise or block whole session...
+    // FIXME TODO an ugly hack to delay use of onepanelApi
+    let onepanelServer = this.get('onepanelServer');
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let onepanelApi = onepanelServer.get('onepanelApi');
+        let gettingClusterHosts = onepanelApi.getClusterHosts({
+          discovered: true
+        });
+        gettingClusterHosts.then(resolve, reject);
+      }, 1000);      
+    });    
   }
 });
