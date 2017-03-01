@@ -3,7 +3,7 @@
   {{#if (eq w.index 0)}}
     {{new-cluster-installation nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 1)}}
-    {{new-cluster-zone-registration}}
+    {{new-cluster-zone-registration nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 2)}}
     {{new-cluster-storage}}
   {{else if (eq w.index 3)}}
