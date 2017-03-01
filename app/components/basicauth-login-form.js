@@ -12,7 +12,7 @@ export default Ember.Component.extend({
   onLoginSuccess(username, password) {
     let onepanelServer = this.get('onepanelServer');
     console.debug(`component:basicauth-login-form: Credentials provided for ${username} are valid`);
-    onepanelServer.initializeClient(username, password);
+    onepanelServer.initClient(username, password);
     this.sendAction('authenticationSuccess', { username, password });
   },
 

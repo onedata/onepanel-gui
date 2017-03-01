@@ -7,23 +7,31 @@ const {
   }
 } = Ember;
 
+let ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+
 export default Ember.Component.extend({
   clusterManager: service('clusterManager'),
   
   primaryHost: null,
   
-  hosts: [
-    {
-      hostname: 'node1'
-    },
-    {
-      hostname: 'node2'
-    }
-  ],
+  /**
+   * @type {ObjectPromiseProxy<Ember.A<HostInfo>>}
+   */
+  hosts: null,
   
+  init() {
+    this._super(...arguments);
+    this.set(
+      'hosts',
+      ObjectPromiseProxy.create({
+        promise: this.get('clusterManager').getHosts()
+      })
+    );
+  },
+    
   actions: {
     checkboxChanged(checked, event) {
-      let hosts = this.get('hosts');
+      let hosts = this.get('hosts.content');
       let checkbox = event.currentTarget;
       let hostname = checkbox.getAttribute('data-hostname');
       let option = checkbox.getAttribute('data-option');

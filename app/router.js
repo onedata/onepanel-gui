@@ -12,6 +12,7 @@ Router.map(function() {
       this.route('content', { path: ':resourceId' });
     });
   });
+  this.route('login');
 });
 
 export default Router;

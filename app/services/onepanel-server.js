@@ -56,20 +56,20 @@ export default Ember.Service.extend({
   
   /// APIs provided by onepanel client library
   
-  onepanelApi: readOnly('client', function() {
+  onepanelApi: computed('client', function() {
     let client = this.get('client');
     return client ? new Onepanel.OnepanelApi(client) : null;
-  }),
+  }).readOnly(),
 
-  onezoneApi: readOnly('client', function() {
+  onezoneApi: computed('client', function() {
     let client = this.get('client');
     return client ? new Onepanel.OnezoneApi(client) : null;
-  }),
+  }).readOnly(),
   
-  oneproviderApi: readOnly('client', function() {
+  oneproviderApi: computed('client', function() {
     let client = this.get('client');
     return client ? new Onepanel.OneproviderApi(client) : null;
-  }),
+  }).readOnly(),
 
   init() {
     this._super(...arguments);

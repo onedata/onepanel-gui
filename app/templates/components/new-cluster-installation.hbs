@@ -15,15 +15,24 @@
   </thead>
   {{!-- TODO validation - highlight cols/rows if not valid --}}
   <tbody>
-    {{#each hosts as |host|}}
+    {{#if hosts.isFulfilled}}
+      {{#each hosts.content as |host|}}
+        <tr>
+          <td>{{host.hostname}}</td>
+          <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
+          <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
+          <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
+          <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
+          <td>{{one-way-radio primaryHost option=host.hostname update=(action 'primaryHostChanged')}}</td>
+        </tr>
+      {{/each}}
+    {{else}}
       <tr>
-        <td>{{host.hostname}}</td>
-        <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
-        <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
-        <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
-        <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
-        <td>{{one-way-radio primaryHost option=host.hostname update=(action 'primaryHostChanged')}}</td>
+        <td colspan=999>
+          {{!-- TODO --}}
+          Loading... ful: {{hosts.isFulfilled}}, rej: {{hosts.isRejected}}
+        </td>
       </tr>
-    {{/each}}
+    {{/if}}
   </tbody>
 </table>

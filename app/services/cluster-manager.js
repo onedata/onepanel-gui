@@ -45,9 +45,9 @@ export default Service.extend({
       
       gettingHostNames.then(hostnames => {
         // TODO more info
-        hostnames.map(hostname => ({
+        resolve(hostnames.map(hostname => ({
           hostname
-        }));
+        })));
       });
       
       gettingHostNames.catch(error => {
