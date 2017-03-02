@@ -55,6 +55,22 @@ export default Ember.Service.extend({
   
   /// APIs provided by onepanel client library
   
+  request(api, method, ...params) {
+    // TODO protect property read
+    return new Promise((resolve, reject) => {
+      let callback = (error, data, response) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({ data, response });
+        }
+      };
+      this.get(api + 'Api')[method](...params, callback);
+    });
+  },
+
+  // TODO FIXME DO NOT USE THESE!!! use request method instead
+
   onepanelApi: computed('client', function() {
     let client = this.get('client');
     return client ? new Onepanel.OnepanelApi(client) : null;
@@ -147,7 +163,16 @@ export default Ember.Service.extend({
     let client = this.createClient(username, password, origin);
     let api = new Onepanel.OnepanelApi(client);
     // invoke any operation that requires authentication
-    return api.getClusterCookie();
+    return new Promise((resolve, reject) => {
+      let callback = function (error, data, response) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data, response);
+        }
+      };
+      api.getClusterCookie(callback);
+    });
   }
 
 });

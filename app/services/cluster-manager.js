@@ -46,7 +46,7 @@ export default Service.extend({
     return new Promise((resolve, reject) => {
       let gettingHostNames = this.getHostNames();
       
-      gettingHostNames.then(hostnames => {
+      gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
         resolve(hostnames.map(hostname => ({
           hostname
@@ -67,8 +67,7 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        let onepanelApi = onepanelServer.get('onepanelApi');
-        let gettingClusterHosts = onepanelApi.getClusterHosts({
+        let gettingClusterHosts = onepanelServer.request('onepanel', 'getClusterHosts', {
           discovered: true
         });
         gettingClusterHosts.then(resolve, reject);
