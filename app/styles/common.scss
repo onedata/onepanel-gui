@@ -39,7 +39,9 @@ $input-border-color: #CDCDCD;
   outline: none !important;
 }
 
-.one-component {  
+.one-component {
+  border-radius: 100px;
+  
   // default color
   border-color: $color-one-list-item-separator;
   

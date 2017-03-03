@@ -28,6 +28,10 @@ function getDomain(hostname) {
   return hostname.split('.').splice(1).join('.');
 }
 
+function getHostname(hostname) {
+  return hostname.split('.')[0];
+}
+
 function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
 }
@@ -153,7 +157,7 @@ export default Ember.Component.extend({
     let nodes = {};
     hostnames.forEach(hn => {
       nodes[hn] = {
-        hostname: hn
+        hostname: getHostname(hn)
       };
     });
     return nodes;

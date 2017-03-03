@@ -20,6 +20,7 @@ function isSpecialResourceId(id) {
 
 export default Ember.Route.extend({
   sidebar: service(),
+  eventsBus: service(),
 
   model({ resourceId }) {
     // TODO: validate and use resourceType
@@ -41,6 +42,9 @@ export default Ember.Route.extend({
     let sidebar = this.get('sidebar');
     // TODO only if this is content with sidebar with item
     sidebar.changeItems(0, resourceId);
+    // TODO get properties
+    // TODO transition promise wait before hide sidenav
+    this.get('eventsBus').trigger('one-sidenav:close', '#sidenav-sidebar');
   },
 
   renderTemplate(controller, model) {
