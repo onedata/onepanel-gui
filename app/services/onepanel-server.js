@@ -5,6 +5,8 @@ import moment from 'npm:moment';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
+// TODO current req timeout: 1 minute, test and handle this or increase
+
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
 }
@@ -35,7 +37,7 @@ export default Ember.Service.extend({
    * @type {Onepanel.OnepanelApi}
    */
   client: null,
-  
+
   /**
    * @type {ObjectPromiseProxy}
    */
@@ -52,9 +54,9 @@ export default Ember.Service.extend({
   isInitialized: computed('client', function () {
     return this.get('client') != null;
   }),
-  
+
   /// APIs provided by onepanel client library
-  
+
   request(api, method, ...params) {
     // TODO protect property read
     return new Promise((resolve, reject) => {
@@ -62,7 +64,10 @@ export default Ember.Service.extend({
         if (error) {
           reject(error);
         } else {
-          resolve({ data, response });
+          resolve({
+            data,
+            response
+          });
         }
       };
       this.get(api + 'Api')[method](...params, callback);
@@ -71,17 +76,17 @@ export default Ember.Service.extend({
 
   // TODO FIXME DO NOT USE THESE!!! use request method instead
 
-  onepanelApi: computed('client', function() {
+  onepanelApi: computed('client', function () {
     let client = this.get('client');
     return client ? new Onepanel.OnepanelApi(client) : null;
   }).readOnly(),
 
-  onezoneApi: computed('client', function() {
+  onezoneApi: computed('client', function () {
     let client = this.get('client');
     return client ? new Onepanel.OnezoneApi(client) : null;
   }).readOnly(),
-  
-  oneproviderApi: computed('client', function() {
+
+  oneproviderApi: computed('client', function () {
     let client = this.get('client');
     return client ? new Onepanel.OneproviderApi(client) : null;
   }).readOnly(),
@@ -147,7 +152,7 @@ export default Ember.Service.extend({
 
   initClient(username, password, origin) {
     let client = this.createClient(username, password, origin);
-    this.set('client', client);    
+    this.set('client', client);
     this.writeCookies();
   },
 
