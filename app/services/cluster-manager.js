@@ -22,7 +22,7 @@ export default Service.extend({
    * This is something like a store
    * @return {Ember.A<Cluster>}
    */
-  clusters: null,
+  clusters: A(),
   
   /**
    * @typedef {Cluster}

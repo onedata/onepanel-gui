@@ -2,6 +2,7 @@
   {{main-menu-item
     item=item
     itemClicked=(action "itemClicked" bubbles=false)
+    isDisabled=item.disabled
     isActive=(eq currentItemId item.id)
     isSelected=(eq sidenavItemId item.id)
   }}

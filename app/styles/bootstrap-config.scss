@@ -14,6 +14,10 @@ $font-size-base: 14px;
 
 $link-hover-decoration: none;
 
+$padding-base-vertical: 12px;
+$padding-base-horizontal: 24px;
+$btn-border-radius-base: 100px;
+
 // Core variables and mixins
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
@@ -30,7 +34,7 @@ $link-hover-decoration: none;
 @import "bootstrap/grid";
 @import "bootstrap/tables";
 @import "bootstrap/forms";
-// @import "bootstrap/buttons";
+@import "bootstrap/buttons";
 
 // Components
 @import "bootstrap/component-animations";

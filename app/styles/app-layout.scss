@@ -53,7 +53,7 @@
     .onedata-logo {
       width: 120px;
       height: 25px;
-      background-image: url('/assets/images/logo.svg');
+      background-image: url('/js/panel-gui/assets/images/logo.svg');
       background-position: center center;
       background-repeat: no-repeat;
       background-size: contain;
@@ -84,14 +84,23 @@
 .col-main-menu .one-list-item.main-menu-item {
   color: $color-main-menu-fg;
   
-  &.active,
-  &.selected,
-  &:hover {
-    >.item-header {
-      color: $color-main-menu-fg;
-      background: linear-gradient( 90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
+  &.enabled {
+    &.active,
+    &.selected,
+    &:hover {
+      >.item-header {
+        color: $color-main-menu-fg;
+        background: linear-gradient( 90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
+      }
     }
   }
+
+  &.disabled {
+    >.item-header {
+      color: rgba($color-main-menu-fg, 0.5);
+    }
+  }
+
   // style overrides for list item
   &.one-list-item {
     &::after {

@@ -1,10 +1,10 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
-{{#side-menu width="85%"}}
+{{#side-menu width="85%" class="disable-user-select"}}
   {{main-menu
     appModel=appModel
     currentItemId=currentTabId
-    currentItemChanged="mobileMenuItemChanged"
+    itemClicked="mobileMenuItemChanged"
   }}
 {{/side-menu}}
 {{content-backdrop}}

@@ -12,18 +12,25 @@ const {
 
 export default Route.extend({
   model() {
+    let fakeMainMenuItems = A([
+      'providers',
+      'data',
+      'promises',
+      'spaces',
+      'groups',
+      'shares',
+      'tokens',
+      'clusters'
+    ].map(id => ({
+      id,
+      disabled: true
+    })));
+
+    fakeMainMenuItems.findBy('id', 'clusters').disabled = false;
+
     return new Promise((resolve) => {
       resolve(AppModel.create({
-        mainMenuItems: A([
-          'providers',
-          'data',
-          'promises',
-          'spaces',
-          'groups',
-          'shares',
-          'tokens',
-          'clusters'
-        ].map(id => ({ id })))
+        mainMenuItems: fakeMainMenuItems
       }));
     });
   },

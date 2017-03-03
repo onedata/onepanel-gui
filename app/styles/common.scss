@@ -35,17 +35,11 @@ $input-bg-color: #F9F9F9;
 // TODO color not defined
 $input-border-color: #CDCDCD;
 
-.one-component {
-  height: 50px;
-  // TODO this is not working always
-  line-height: 50px;
-  @include vendor-prefix(border-radius, 100px);
-  outline: 0;
-  border-style: solid;
-  // TODO 8px vertical padding?
-  padding: 0 24px;
-  -webkit-appearance: none;
-  
+.btn {
+  outline: none !important;
+}
+
+.one-component {  
   // default color
   border-color: $color-one-list-item-separator;
   
@@ -68,6 +62,7 @@ $input-border-color: #CDCDCD;
     background-color: $color;
   }
 }
+
 
 .btn {
   &.one-component {

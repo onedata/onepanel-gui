@@ -48,13 +48,6 @@ const TMP_GROUPS = [
   },
 ];
 
-const TMP_CLUSTERS = A([
-  {
-    id: 'x',
-    label: 'lol cluster'
-  }
-]);
-
 export default Ember.Service.extend({
   clusterManager: service(),
     
@@ -70,7 +63,6 @@ export default Ember.Service.extend({
       case 'clusters':
         let clusterManager = this.get('clusterManager');
         return new Promise(resolve => resolve(clusterManager.get('clusters')));
-        // return new Promise(resolve => resolve(TMP_CLUSTERS));
 
       default:
         return new Promise((resolve, reject) => reject('No such model: ' + type));

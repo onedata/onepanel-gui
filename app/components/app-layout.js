@@ -108,10 +108,11 @@ export default Ember.Component.extend({
         this.set('sidenavTabId', itemId);
       }
     },
-    mobileMenuItemChanged() {
+    mobileMenuItemChanged(itemId) {
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
+      this.sendAction('changeTab', itemId);
     },
     showMobileSidebar() {
       this.set('showMobileSidebar', true);
