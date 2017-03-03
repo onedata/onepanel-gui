@@ -18,12 +18,12 @@ export default Ember.Component.extend({
 
   onLoginFailure(username, password) {
     console.debug(`component:basicauth-login-form: Credentials provided for ${username} are invalid`);
-    this.set('lastFailed', true);
     this.sendAction('authenticationFailure', { username, password });
   },
 
   actions: {
     submitLogin(username, password) {
+      this.sendAction('authenticationStarted');
       let onepanelServer = this.get('onepanelServer');
       let authTestRequest = onepanelServer.requestTestAuth(username, password);
       authTestRequest.then(() => this.onLoginSuccess(username, password));

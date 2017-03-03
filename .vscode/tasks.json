@@ -1,0 +1,17 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.1.0",
+  "command": "bash",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "echoCommand": true,
+  "tasks": [
+    {
+      "taskName": "deploy to getting started",
+      "args": ["/home/kliput/Dropbox/Skrypty/deploy-getting-started-linux.sh"],
+      "isBuildCommand": true,
+      "suppressTaskName": true
+    }
+  ]
+}

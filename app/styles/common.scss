@@ -124,3 +124,14 @@ input[type=password] {
 input {
   border-color: $color-one-list-item-separator;
 }
+
+
+/// TODO UNCLASSIFIED - to move from this ::first-letter
+
+.spinner-container {
+  position: relative;
+
+  &.big {
+    height: 200px;
+  }
+}

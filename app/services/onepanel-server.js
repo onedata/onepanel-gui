@@ -92,6 +92,7 @@ export default Ember.Service.extend({
     this.set('cookiesReader', ObjectPromiseProxy.create({
       promise: readingCookies
     }));
+    this.set('loadingPromise', readingCookies);
   },
 
   /**

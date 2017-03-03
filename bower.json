@@ -2,6 +2,7 @@
   "name": "onedata-web-frontend-2",
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "basictable": "^1.0.6"
+    "basictable": "^1.0.6",
+    "spin.js": "^2.3.2"
   }
 }

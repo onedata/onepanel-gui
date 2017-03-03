@@ -1,0 +1,18 @@
+{{!-- TODO: isLoading --}}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 text-centered">
+      {{#if isLoading}}
+        <div class="spinner-container big">
+          {{spin-spinner}}
+        </div>
+      {{else}}
+        {{basicauth-login-form
+          authenticationSuccess="authenticationSuccess"
+          authenticationFailure="authenticationFailure"
+          authenticationStarted="authenticationStarted"
+        }}
+      {{/if}}
+    </div>
+  </div>
+</div>
