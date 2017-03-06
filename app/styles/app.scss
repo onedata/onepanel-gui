@@ -1,10 +1,15 @@
 @import 'bootstrap-config';
 @import 'side-menu';
 @import '_spin-button-base';
+@import 'spin-button-overrides';
 
 @import 'utils';
 @import 'colors';
 @import 'fonts';
+
+// should be same as rootURL in environment.js
+// TODO maybe use https://github.com/davidpett/ember-cli-sass-variables
+$rootURL: '/js/panel-gui/';
 
 $mobile-top-height: 70px;
 $main-menu-width: 212px;
@@ -35,6 +40,7 @@ $one-list-item-active-left-border-width: 8px;
 
 @import 'side-menu-overrides';
 @import 'app-layout';
+@import 'login-layout';
 @import 'one-list';
 @import 'one-list-item';
 @import 'main-menu';

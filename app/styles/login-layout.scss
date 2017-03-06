@@ -1,0 +1,21 @@
+.login-layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: url($rootURL + '/assets/images/main-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: center;
+  color: $color-one-white;
+  
+  .onedata-logo-container {
+    position: absolute;
+    margin: 30px;
+  }
+  .login-box-container {
+    @include absolute-align-middle-center();
+    width: 100%;
+  }
+}

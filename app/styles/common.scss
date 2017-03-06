@@ -1,3 +1,18 @@
+.onedata-logo {
+  width: 120px;
+  height: 25px;
+  background-image: url($rootURL + '/assets/images/logo.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vertical-align-middle {
+  @include vertical-align-middle();
+}
+
 .full-height {
   height: 100%;
   overflow-y: auto;
@@ -59,9 +74,14 @@ $input-border-color: #CDCDCD;
   border-color: $color;
 
   &:hover,
-  &.active {
+  &.active,
+  &.in-flight {
     color: $color-one-white;
     background-color: $color;
+  }
+  
+  &.in-flight {
+    pointer-events: none;
   }
 }
 

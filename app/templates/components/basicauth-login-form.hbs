@@ -1,12 +1,32 @@
-<form {{action 'submitLogin' username password on="submit"}}>
-  {{input value=username class="one-component"}}
-  {{input value=password class="one-component" type="password"}}
+{{!-- TODO i18n --}}
 
-  <button type="submit" class="btn one-default one-component">Submit login</button>
-</form>
+{{#bs-form class="form-horizontal"
+  onSubmit=(action "submitLogin" username password)
+  as |form|}}
+  
+  {{#form.group}}
+    {{one-way-input username
+      class="form-control one-component"
+      update=(action (mut username))
+      placeholder="User name"
+    }}
+  {{/form.group}}
+  {{#form.group}}
+    {{one-way-password password
+      class="form-control one-component"
+      update=(action (mut password))
+      placeholder="Password"
+    }}
+  {{/form.group}}
+  <div class="row text-center">
+    {{#spin-button class="btn one-component one-default"
+      buttonStyle="expand-left"
+      action=(action "submitLogin" username password)}}
+      Sign in
+    {{/spin-button}}
+  </div>
+{{/bs-form}}
 
-{{#if lastFailed}}
+{{!--{{#if lastFailed}}
 <div>Login failed</div>
-{{/if}}
-
-{{yield}}
+{{/if}--}}

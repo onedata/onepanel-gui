@@ -15,13 +15,13 @@ export default Ember.Component.extend({
   init() {
     this._super(...arguments);
     let onepanelServer = this.get('onepanelServer');
-    
+
     this.send('authenticationStarted');
-    let authLoading = onepanelServer.get('loadingPromise');
+    let authLoading = onepanelServer.get('sessionValidator.promise');
     authLoading.then(() => this.send('authenticationSuccess'));
     authLoading.catch(() => this.send('authenticationFailure'));
   },
-  
+
   actions: {
     authenticationStarted() {
       this.set('isLoading', true);

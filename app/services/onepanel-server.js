@@ -41,12 +41,12 @@ export default Ember.Service.extend({
   /**
    * @type {ObjectPromiseProxy}
    */
-  cookiesReader: null,
+  sessionValidator: null,
 
   username: null,
   password: null,
 
-  isLoading: readOnly('cookiesReader.isPending'),
+  isLoading: readOnly('sessionValidator.isPending'),
 
   /**
    * @type {computed<Boolean>}
@@ -93,67 +93,35 @@ export default Ember.Service.extend({
 
   init() {
     this._super(...arguments);
-    let readingCookies = this.readCookies();
-    this.set('cookiesReader', ObjectPromiseProxy.create({
-      promise: readingCookies
+    let validatingSession = this.validateSession();
+    this.set('sessionValidator', ObjectPromiseProxy.create({
+      promise: validatingSession
     }));
-    this.set('loadingPromise', readingCookies);
   },
 
   /**
    * @returns {Promise}
    */
-  readCookies() {
-    let cookies = this.get('cookies');
-    let cookieValues = cookies.read();
+  validateSession() {
     return new Promise((resolve, reject) => {
-      if (validateCookies(cookieValues)) {
-        let username = cookieValues['username'];
-        let password = cookieValues['password'];
-        let testingAuth = this.requestTestAuth(username, password);
-        testingAuth.then(() => {
-          this.initClient(username, password);
-          resolve();
-        });
-        testingAuth.catch(reject);
-      } else {
-        reject();
-      }
+      let testingAuth = this.requestTestAuth();
+      testingAuth.then(() => {
+        this.initClient();
+        resolve();
+      });
+      testingAuth.catch(reject);
     });
   },
 
-  writeCookies() {
-    let {
-      cookies,
-      username,
-      password
-    } = this.getProperties(
-      'cookies',
-      'username',
-      'password'
-    );
-    cookies.write('lastUpdate', new Date());
-    cookies.write('username', username);
-    cookies.write('password', password);
-  },
-
-  createClient(username, password, origin = null) {
+  createClient(origin = null) {
     let client = new Onepanel.ApiClient();
-    let basic = client.authentications['basic'];
-    basic['username'] = username;
-    basic['password'] = password;
-    this.setProperties({
-      username,
-      password
-    });
     client.basePath = replaceUrlOrigin(client.basePath, origin || window.location.origin);
     return client;
   },
 
-  initClient(username, password, origin) {
-    let client = this.createClient(username, password, origin);
+  initClient(origin = null) {
+    let client = this.createClient(origin);
     this.set('client', client);
-    this.writeCookies();
   },
 
   /**
@@ -165,8 +133,8 @@ export default Ember.Service.extend({
    * @param {string} [origin] 
    * @returns {Promise}
    */
-  requestTestAuth(username, password, origin) {
-    let client = this.createClient(username, password, origin);
+  requestTestAuth() {
+    let client = this.createClient();
     let api = new Onepanel.OnepanelApi(client);
     // invoke any operation that requires authentication
     return new Promise((resolve, reject) => {
@@ -174,7 +142,9 @@ export default Ember.Service.extend({
         if (error) {
           reject(error);
         } else {
-          resolve(data, response);
+          resolve({
+            response
+          });
         }
       };
       api.getClusterCookie(callback);

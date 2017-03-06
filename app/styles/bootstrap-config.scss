@@ -68,3 +68,8 @@ $btn-border-radius-base: 100px;
 // Utility classes
 @import "bootstrap/utilities";
 @import "bootstrap/responsive-utilities";
+
+.col-centered {
+  @extend .center-block;
+  float: none !important;
+}
