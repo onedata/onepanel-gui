@@ -3,41 +3,41 @@
 <form {{action "submit" on="submit" bubbles=false}}>
   <div class="form-group">
     {{one-way-input onezoneDomain
-      class="one-component"
+      class="form-control one-component"
       update=(action "inputChanged" "onezoneDomain")
       placeholder="Onezone domain"
     }}
   </div>
   <div class="form-group">
     {{one-way-input redirectionPoint
-      class="one-component"
+      class="form-control one-component"
       update=(action "inputChanged" "redirectionPoint")
       placeholder="Redirection point"
     }}
   </div>
   <div class="form-group">
     {{one-way-input providerName
-      class="one-component"
+      class="form-control one-component"
       update=(action "inputChanged" "providerName")
       placeholder="Provider name"
     }}
   </div>
   <div class="form-group">
     {{one-way-input latitude
-      class="one-component"
+      class="form-control one-component"
       update=(action "inputChanged" "latitude")
       placeholder="Latitude (optional)"
     }}
   </div>
   <div class="form-group">
     {{one-way-input longitude
-      class="one-component"
+      class="form-control one-component"
       update=(action "inputChanged" "longitude")
       placeholder="Longitude (optional)"
     }}
   </div>
   
-  {{#spin-button type="submit" class="btn one-component one-default" buttonStyle="expand-left" action=(action "submit")}}
+  {{#spin-button type="submit" class="btn btn-default one-component" buttonStyle="expand-left" action=(action "submit")}}
     Register
   {{/spin-button}}
 </form>

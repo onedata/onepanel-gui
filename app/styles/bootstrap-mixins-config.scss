@@ -1,0 +1,51 @@
+// Override original Bootstrap mixins
+
+@mixin button-variant($color, $background, $border) {
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: lighten($border, 30%);
+        border-color: $border;
+  }
+  &:hover {
+    color: $color;
+    background-color: lighten($border, 33%);
+        border-color: $border;
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    color: $color;
+    background-color: lighten($border, 33%);
+        border-color: $border;
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: lighten($border, 27%);
+          border-color: $border;
+    }
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+               color: $text-color !important;
+    background-color: #b6b6b6 !important;
+        border-color: #b6b6b6 !important;
+  }
+
+  .badge {
+    color: $background;
+    background-color: $color;
+  }
+}

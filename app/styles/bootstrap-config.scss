@@ -1,26 +1,13 @@
-$screen-xs-min: 480px; // orig: 480px
-$screen-sm-min: 768px; // orig: 768px
-$screen-md-min: 1200px; // orig: 992px
-$screen-lg-min: 1680px; // orig: 1200px
-
-$grid-gutter-width: 0; // on design: 14px TODO
-$grid-float-breakpoint: $screen-md-min;
-
 // TODO: controversial, because other grays are computed
 // $gray-dark: #3e3e3e;
-$text-color: #3e3e3e;
-$font-family-sans-serif: 'Open Sans', sans-serif;
-$font-size-base: 14px;
-
-$link-hover-decoration: none;
-
-$padding-base-vertical: 12px;
-$padding-base-horizontal: 24px;
-$btn-border-radius-base: 100px;
+// $text-color: #3e3e3e;
 
 // Core variables and mixins
 @import "bootstrap/variables";
+@import "bootstrap-variables-config";
+
 @import "bootstrap/mixins";
+@import "bootstrap-mixins-config";
 
 // Reset and dependencies
 @import "bootstrap/normalize";
@@ -33,8 +20,16 @@ $btn-border-radius-base: 100px;
 @import "bootstrap/code";
 @import "bootstrap/grid";
 @import "bootstrap/tables";
+
 @import "bootstrap/forms";
+.form-control {
+  @include box-shadow(inset 0 1px 4px 0 rgba(0,0,0,0.13));
+}
+
 @import "bootstrap/buttons";
+.btn {
+  border-width: 2px;
+}
 
 // Components
 @import "bootstrap/component-animations";
