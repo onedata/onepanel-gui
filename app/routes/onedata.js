@@ -23,7 +23,8 @@ export default Route.extend({
       'clusters'
     ].map(id => ({
       id,
-      disabled: true
+      // FIXME disabled true
+      disabled: false
     })));
 
     fakeMainMenuItems.findBy('id', 'clusters').disabled = false;

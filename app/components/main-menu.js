@@ -17,20 +17,23 @@ export default Ember.Component.extend({
 
   tagName: 'ul',
   classNames: ['main-menu', 'one-list'],
+  classNameBindings: ['sidenavOpened:sidenav-opened'],
 
   appModel: null,
 
   currentItemId: null,
   sidenavItemId: null,
-  
-  sidenavOpened: computed('sidenavItemId', function() {
-    return this.get(this.get('sidenavItemId')) != null;
-  }),
+
+  sidenavOpened: computed('sidenavItemId', function () {
+    return this.get('sidenavItemId') != null;
+  }).readOnly(),
 
   items: readOnly('appModel.mainMenuItems'),
 
   actions: {
-    itemClicked({ id }) {
+    itemClicked({
+      id
+    }) {
       this.sendAction('itemClicked', id);
     }
   }

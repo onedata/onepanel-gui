@@ -1,20 +1,16 @@
 // needs: $mobile-top-height
 // needs: $main-menu-width
-
 .app-layout {
   position: absolute;
   @include fill-container();
-  
   .app-grid {
     padding-left: 0;
   }
-  
   @media (min-width: $screen-md-min) {
     .app-grid {
       padding-left: $main-menu-width;
     }
   }
-  
   .row-mobile-menu {
     height: $mobile-top-height;
     // TODO: the same as col-main-menu?
@@ -70,28 +66,53 @@
   }
 }
 
+// TODO gradient as on design - needs additional covering element
+// @mixin main-menu-item-gradient($opacity) {
+//   &::before {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     bottom: 0;
+//     right: 0;
+//     opacity: $opacity;
+//     // NOTICE changing menu background will mess up this color
+//     background: linear-gradient(90deg, #7E8EDA 0%, rgba(255,255,255,0) 100%); 
+//   }
+// }
+$color-main-menu-fg-base: $color-one-white;
+$color-main-menu-fg-active: $color-main-menu-fg-base;
+$color-main-menu-fg-default: rgba($color-main-menu-fg-base, 0.9);
+$color-main-menu-fg-disabled: rgba($color-main-menu-fg-base, 0.5);
+
+$color-main-menu-item-gradient-base: $color-main-menu-fg-base;
+@mixin main-menu-item-gradient($opacity-left, $opacity-right) {
+  background: linear-gradient(90deg, rgba($color-main-menu-item-gradient-base, $opacity-left), rgba($color-main-menu-item-gradient-base, $opacity-right));
+}
+
 /// Desktop main menu styles
 .col-main-menu .one-list-item.main-menu-item {
-  color: $color-main-menu-fg;
-  
+  >.item-header {
+    color: $color-main-menu-fg-default;
+  }
   &.enabled {
     &.active,
-    &.selected,
+    &.selected {
+      >.item-header {
+        color: $color-main-menu-fg-active;
+        @include main-menu-item-gradient(0.2, 0);
+      }
+    }
     &:hover {
       >.item-header {
-        color: $color-main-menu-fg;
-        // TODO 40 -> 30
-        background: linear-gradient( 90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
+        @include main-menu-item-gradient(0.15, 0);
       }
     }
   }
-
   &.disabled {
     >.item-header {
-      color: rgba($color-main-menu-fg, 0.5);
+      color: $color-main-menu-fg-disabled;
     }
   }
-
   // style overrides for list item
   &.one-list-item {
     &::after {
@@ -102,6 +123,15 @@
         @include bottom-line(1px solid $color-main-menu-separator)
       }
     }
+  }
+}
+.col-main-menu .main-menu.sidenav-opened .one-list-item.main-menu-item.active {
+  // color: $color-main-menu-fg-default;
+  >.item-header {
+    color: $color-main-menu-fg-default;
+  }
+  &::before {
+    @include left-line($one-list-item-active-left-border-width solid $color-main-menu-fg-disabled);
   }
 }
 
