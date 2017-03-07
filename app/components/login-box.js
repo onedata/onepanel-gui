@@ -3,6 +3,9 @@ import Ember from 'ember';
 const {
   inject: {
     service
+  },
+  computed: {
+    readOnly
   }
 } = Ember;
 
@@ -12,30 +15,32 @@ export default Ember.Component.extend({
   notify: service(),
   onepanelServer: service(),
 
+  authLoadingPromise: readOnly('onepanelServer.sessionValidator.promise'),
+
+  isLoading: readOnly('authLoadingPromise.isPending'),
+  isBusy: false,
+
   init() {
     this._super(...arguments);
-    let onepanelServer = this.get('onepanelServer');
-
-    this.send('authenticationStarted');
-    let authLoading = onepanelServer.get('sessionValidator.promise');
+    let authLoading = this.get('authLoadingPromise');
     authLoading.then(() => this.send('authenticationSuccess'));
     authLoading.catch(() => this.send('authenticationFailure'));
   },
 
   actions: {
     authenticationStarted() {
-      this.set('isLoading', true);
+      this.set('isBusy', true);
     },
 
     authenticationSuccess() {
       this.get('notify').success('Authentication succeeded!');
       this.sendAction('authenticationSuccess');
-      this.set('isLoading', false);
+      this.set('isBusy', false);
     },
 
     authenticationFailure() {
       this.get('notify').warning('Authentication failed!');
-      this.set('isLoading', false);
+      this.set('isBusy', false);
     }
   }
 });

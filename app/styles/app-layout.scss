@@ -80,6 +80,7 @@
     &:hover {
       >.item-header {
         color: $color-main-menu-fg;
+        // TODO 40 -> 30
         background: linear-gradient( 90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0))
       }
     }

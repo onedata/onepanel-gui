@@ -17,6 +17,12 @@ export default Ember.Component.extend({
   username: '',
   password: '',
 
+  isDisabled: false,
+
+  onLoginStarted() {
+    this.set('isDisabled', true);
+  },
+
   onLoginSuccess(username, password) {
     let onepanelServer = this.get('onepanelServer');
     console.debug(`component:basicauth-login-form: Credentials provided for ${username} are valid`);
@@ -25,6 +31,7 @@ export default Ember.Component.extend({
       username,
       password
     });
+    this.set('isDisabled', false);
   },
 
   onLoginFailure(username, password) {
@@ -33,11 +40,14 @@ export default Ember.Component.extend({
       username,
       password
     });
+    this.set('isDisabled', false);
   },
 
   actions: {
     submitLogin(username, password) {
+      this.onLoginStarted();
       this.sendAction('authenticationStarted');
+
       let loginCalling = new Promise((resolve, reject) => {
         let success = function (data, textStatus, jqXHR) {
           resolve({

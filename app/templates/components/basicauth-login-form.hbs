@@ -2,13 +2,15 @@
 
 {{#bs-form class="form-horizontal"
   onSubmit=(action "submitLogin" username password)
+  formLayout="horizontal"
   as |form|}}
   
   {{#form.group}}
     {{one-way-input username
       class="form-control one-component"
       update=(action (mut username))
-      placeholder="User name"
+      placeholder="Username"
+      disabled=isDisabled
     }}
   {{/form.group}}
   {{#form.group}}
@@ -16,17 +18,15 @@
       class="form-control one-component"
       update=(action (mut password))
       placeholder="Password"
+      disabled=isDisabled
     }}
   {{/form.group}}
   <div class="row text-center">
     {{#spin-button class="btn one-component one-default"
       buttonStyle="expand-left"
-      action=(action "submitLogin" username password)}}
+      action=(action "submitLogin" username password)
+    }}
       Sign in
     {{/spin-button}}
   </div>
 {{/bs-form}}
-
-{{!--{{#if lastFailed}}
-<div>Login failed</div>
-{{/if}--}}
