@@ -13,6 +13,10 @@
   @include vertical-align-middle();
 }
 
+.absolute-align-middle-center {
+  @include absolute-align-middle-center();
+}
+
 .full-height {
   height: 100%;
   overflow-y: auto;

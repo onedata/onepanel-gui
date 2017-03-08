@@ -12,6 +12,8 @@ const {
 // TODO: fake session, do it better with ember session
 
 export default Ember.Component.extend({
+  classNames: ['login-box'],
+
   notify: service(),
   onepanelServer: service(),
 
