@@ -1,6 +1,11 @@
 // requires Bootstrap 3 scaffolding, grid
 // requires onedata colors
 
+$step-circle-border-width: 4px;
+$step-circle-size: 32px;
+$color-one-step-inactive: $color-one-light-gray;
+$color-one-step-active: $color-one-default;
+
 .one-step {
   position: relative;
   float: left;
@@ -12,36 +17,41 @@
     @extend .hidden-xs
   }
 
+  .step-circle {
+    margin-left: auto;
+    margin-right: auto;
+    width: $step-circle-size;
+    height: $step-circle-size;
+    border-style: solid;
+    border-width: $step-circle-border-width;
+    border-color: $color-one-step-inactive;
+    color: $color-one-step-inactive;
+  }
+
   .step-number {
-    @extend .img-circle;
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
+    line-height: $step-circle-size - 2*$step-circle-border-width;
     // TODO consider making variable for one-component borders
     // TODO inactive color
-    border-style: solid;
-    border-width: 4px;
-    border-color: $color-one-light-gray;
-    color: $color-one-light-gray;
     text-align: center;
-    font-size: 1.25em;
+    font-size: $step-circle-size * 0.5;
+  }
+
+  .step-title {
+    text-transform: capitalize;
+    margin-top: $step-circle-size * 0.3;
+    color: $color-one-step-inactive;
   }
 
   &.active {
+    .step-circle {
+      border-color: $color-one-step-active;
+      background-color: $color-one-step-active;
+    }
     .step-number {
       color: $color-one-white;
-      border-color: $color-one-default;
-      background-color: $color-one-default;
+    }
+    .step-title {
+      color: $color-one-step-active;
     }
   }
-  
-  // &:not(:last-of-type) {
-  //   ::before {
-  //     position: absolute;
-  //     content: ' ';
-  //     height: 2px;
-  //     width: 10px;
-  //     border-top: solid 2px $color-one-default;
-  //   }
-  // }
 }
