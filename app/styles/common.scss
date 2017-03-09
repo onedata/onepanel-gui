@@ -63,65 +63,6 @@ input.light {
   background-color: $color-one-white !important;
 }
 
-@mixin one-btn-style($name, $color) {
-  color: $color;
-  border-color: $color;
-
-  &:hover,
-  &.active,
-  &.in-flight {
-    color: $color-one-white;
-    background-color: $color;
-  }
-  
-  &.in-flight {
-    pointer-events: none;
-  }
-}
-
-// .btn {
-//   &.one-component {
-//     background-color: $btn-bg-color;
-//     border-width: 2px;
-//     cursor: pointer;
-//     @include vendor-prefix(user-select, none);
-//   }
-
-//   &.one-default {
-//     @include one-btn-style(one-default, $color-one-default);
-//   }
-
-//   &.one-special {
-//     @include one-btn-style(one-special, $color-one-special);
-//   }
-
-//   &.one-danger {
-//     @include one-btn-style(one-danger, $color-one-danger);
-//   }
-// }
-
-
-// TODO special style for search
-
-// input[type=text],
-// input[type=password], 
-// input[type=search] {
-//   &.one-component {
-//     border-width: 1px;
-//     border-color: $input-border-color;
-//     background-color: $input-bg-color;
-//   }
-// }
-
-// input[type=text],
-// input[type=password] {
-//   &.one-component {
-//     @include vendor-prefix(box-shadow, inset 0 1px 4px 0 rgba(0,0,0,0.13));
-//   }
-// }
-
-
-
 // TODO use for generation fb and bg
 @mixin one-fg-styles($attributes, $color) {
   @each $attr in $attributes {

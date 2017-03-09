@@ -1,8 +1,13 @@
 {{!-- TODO FIXME change to div class one list item  --}}
 <ul class="one-list">
-  <li class="one-list-item">
-    <div class="item-header">
-      {{search-bar search=(action (mut query)) class="light full-width"}}
+  <li class="one-list-item search-bar-item">
+    <div class="item-header form-group form-group-sm form-group-light">
+      <div class="input-group">
+        {{search-bar search=(action (mut query)) class="form-control"}}
+        <div class="input-group-addon">
+          {{one-icon icon="search"}}
+        </div>
+      </div>
     </div>
   </li>
   {{#each items as |item|}}

@@ -1,5 +1,5 @@
 // Core variables and mixins
-@import "bootstrap/variables";
+// @import "bootstrap/variables";
 @import "bootstrap-variables-config";
 
 @import "bootstrap/mixins";
@@ -65,7 +65,32 @@ h4 {
     }
   }
 }
-
+.form-group-sm {
+  .input-group-addon {
+    min-width: 40px;
+    
+    .one-icon {
+      font-size: 28px;
+    }
+  }
+}
+$input-bg-light: $color-one-white;
+// FIXME color of addon on focus
+.form-group-light {
+  .input-group {
+    .form-control {
+      background-color: $input-bg-light;
+      border-right: 0;
+      @include box-shadow(none);
+    }
+    // TODO disabled?
+    .input-group-addon {
+      background-color: $input-bg-light;
+      // should be same as input box-shadow!
+      @include box-shadow(none);
+    }
+  }
+}
 
 @import "bootstrap/navs";
 @import "bootstrap/navbar";

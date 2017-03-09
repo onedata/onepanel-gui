@@ -21,8 +21,8 @@ $zindex-layer-1-2-overlay: $zindex-modal-background;
 $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
 $zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
-// TODO: colors to distribute
-$color-sidebar-background: $color-one-white-gray;
+// TODO: color not defined!
+$color-sidebar-background: #F2F4FA;
 // TODO
 $color-one-list-item-separator: darken($color-sidebar-background, 5);
 $color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
@@ -51,6 +51,8 @@ $one-list-item-active-left-border-width: 8px;
 @import 'basic-table';
 @import 'basicauth-login-form';
 @import 'login-box';
+@import 'one-list-wrapper';
+@import 'two-level-sidebar';
 
 // TODO a mess
 
