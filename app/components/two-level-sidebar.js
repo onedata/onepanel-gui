@@ -19,18 +19,20 @@ export default Ember.Component.extend({
 
   resourceType: readOnly('model.resourceType'),
 
-  primaryItemId: computed('sidebar.itemPath.[]', function() {
+  isCollectionEmpty: computed.equal('model.collection.length', 0),
+
+  primaryItemId: computed('sidebar.itemPath.[]', function () {
     return this.get('sidebar.itemPath').objectAt(0);
   }),
 
-  secondaryItemId: computed('sidebar.itemPath.[]', function() {
+  secondaryItemId: computed('sidebar.itemPath.[]', function () {
     return this.get('sidebar.itemPath').objectAt(1);
   }),
 
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');
-      
+
       this.sendAction('changeResourceId', resourceType, itemId);
     }
   }

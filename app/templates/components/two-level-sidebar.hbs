@@ -1,22 +1,52 @@
-{{#one-list-wrapper items=model.collection as |item|}}
-  {{#one-list-primary-item item=item
-    changePrimaryItemId="changePrimaryItemId"
-    isActive=(eq primaryItemId item.id)
-    as |primarySection|}}
-    {{#if (eq primarySection 'header')}}
-      {{item.label}}
-    {{else if (eq primarySection 'secondary')}}
-      <ul class="one-list one-list-level-2">
-        <li class="one-list-item clickable">
-          <div class="item-header">Members</div>
-        </li>
-        <li class="one-list-item clickable">
-          <div class="item-header">Statistics</div>
-        </li>
-        <li class="one-list-item clickable">
-          <div class="item-header">Something</div>
-        </li>
-      </ul>
-    {{/if}}
-  {{/one-list-primary-item}}
-{{/one-list-wrapper}}
+{{!-- TODO i18n --}}
+
+{{#unless isCollectionEmpty}}
+
+  {{#one-list-wrapper items=model.collection as |item|}}
+    {{#one-list-primary-item item=item
+      changePrimaryItemId="changePrimaryItemId"
+      isActive=(eq primaryItemId item.id)
+      as |primarySection|}}
+      {{#if (eq primarySection 'header')}}
+        {{item.label}}
+      {{else if (eq primarySection 'secondary')}}
+        {{!-- TODO resource type specific --}}
+        <ul class="one-list one-list-level-2">
+          <li class="one-list-item clickable">
+            <div class="item-header">Members</div>
+          </li>
+          <li class="one-list-item clickable">
+            <div class="item-header">Statistics</div>
+          </li>
+          <li class="one-list-item clickable">
+            <div class="item-header">Something</div>
+          </li>
+        </ul>
+      {{/if}}
+    {{/one-list-primary-item}}
+  {{/one-list-wrapper}}
+
+{{else}}
+  <ul class="one-list text-center">
+    <li class="one-list-item">
+      <div class="row">
+        <div class="col-xs-12">
+          {{!-- TODO translate resource name --}}
+          <p>You have no {{resourceType}} :(</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          {{#link-to "onedata.sidebar.content" resourceType "new"
+            class="btn btn-default one-component one-default"
+          }}
+            Create new
+          {{/link-to}}
+        </div>  
+      </div>
+    </li>
+  </ul>
+
+{{/unless}}
+
+
