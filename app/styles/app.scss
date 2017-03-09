@@ -1,12 +1,12 @@
 @import 'colors';
+@import 'utils';
+@import 'fonts';
 
 @import 'bootstrap-config';
 @import 'side-menu';
 @import '_spin-button-base';
 @import 'spin-button-overrides';
 
-@import 'utils';
-@import 'fonts';
 
 // should be same as rootURL in environment.js
 // TODO maybe use https://github.com/davidpett/ember-cli-sass-variables

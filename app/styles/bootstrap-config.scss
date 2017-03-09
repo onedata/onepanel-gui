@@ -43,12 +43,30 @@ h4 {
 .btn {
   border-width: 2px;
 }
+// special style for btn-primary, as it is "filled"
+.btn-primary {
+  @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+}
 
 // Components
 @import "bootstrap/component-animations";
 @import "bootstrap/dropdowns";
 @import "bootstrap/button-groups";
 @import "bootstrap/input-groups";
+// TODO make non-gray input-group-addon version for login box
+.input-group {
+  .input-group-addon {
+    position: relative;
+    min-width: 48px;
+    
+    .one-icon {
+      font-size: 32px;
+      @include absolute-align-middle-center;
+    }
+  }
+}
+
+
 @import "bootstrap/navs";
 @import "bootstrap/navbar";
 @import "bootstrap/breadcrumbs";

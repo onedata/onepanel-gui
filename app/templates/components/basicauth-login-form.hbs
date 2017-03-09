@@ -11,20 +11,30 @@
     }}
       
       {{#form.group}}
-        {{one-way-input username
-          class="form-control one-component"
-          update=(action (mut username))
-          placeholder="Username"
-          disabled=isDisabled
-        }}
+        <div class="input-group">
+          <div class="input-group-addon">
+            {{one-icon icon="user"}}
+          </div>
+          {{one-way-input username
+            class="form-control one-component"
+            update=(action (mut username))
+            placeholder="Username"
+            disabled=isDisabled
+          }}
+        </div>
       {{/form.group}}
       {{#form.group}}
-        {{one-way-password password
-          class="form-control one-component"
-          update=(action (mut password))
-          placeholder="Password"
-          disabled=isDisabled
-        }}
+        <div class="input-group">
+          <div class="input-group-addon">
+            {{one-icon icon="lock"}}
+          </div>
+          {{one-way-password password
+            class="form-control one-component"
+            update=(action (mut password))
+            placeholder="Password"
+            disabled=isDisabled
+          }}
+        </div>
       {{/form.group}}
       <div class="row text-center">
         {{#spin-button class="btn btn-primary one-component"
