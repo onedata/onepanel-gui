@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   tagName: 'input',
-  classNames: ['search-bar', 'one-component'],
+  classNames: ['search-bar'],
   attributeBindings: ['placeholder', 'type'],
 
   type: 'search',

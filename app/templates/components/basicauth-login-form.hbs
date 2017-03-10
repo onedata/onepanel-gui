@@ -16,7 +16,7 @@
             {{one-icon icon="user"}}
           </div>
           {{one-way-input username
-            class="form-control one-component"
+            class="form-control"
             update=(action (mut username))
             placeholder="Username"
             disabled=isDisabled
@@ -29,7 +29,7 @@
             {{one-icon icon="lock"}}
           </div>
           {{one-way-password password
-            class="form-control one-component"
+            class="form-control"
             update=(action (mut password))
             placeholder="Password"
             disabled=isDisabled
@@ -37,7 +37,7 @@
         </div>
       {{/form.group}}
       <div class="row text-center">
-        {{#spin-button class="btn btn-primary one-component"
+        {{#spin-button class="btn btn-primary"
           buttonStyle="expand-left"
           action=(action "submitLogin" username password)
         }}

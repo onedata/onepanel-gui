@@ -73,3 +73,12 @@ input.light {
 input {
   border-color: $color-one-list-item-separator;
 }
+
+.world-map {
+  &.light {
+    background-image: url($rootURL + '/assets/images/world-map-light.svg');
+  }
+  &.dark {
+    background-image: url($rootURL + '/assets/images/world-map-dark.svg');
+  }
+}
