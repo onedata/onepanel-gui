@@ -9,7 +9,7 @@
   "tasks": [
     {
       "taskName": "deploy to getting started",
-      "args": ["/home/kliput/Dropbox/Skrypty/deploy-getting-started-linux.sh"],
+      "args": ["/Users/kliput/Dropbox/Skrypty/deploy-getting-started-osx.sh"],
       "isBuildCommand": true,
       "suppressTaskName": true
     }
