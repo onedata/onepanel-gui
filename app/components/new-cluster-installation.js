@@ -61,28 +61,35 @@ export default Ember.Component.extend({
     );
   },
 
-  watchTaskStatus(taskId, success, error, progress, getStatusError) {
+  /**
+   * Periodically checks the status of task.
+   *
+   * Invokes passed callbacks on status events.
+   *
+   * @param {string} taskId
+   * @return {jQuery.Promise}
+   */
+  watchTaskStatus(taskId) {
+    let deferred = $.Deferred();
+
+    // TODO: should we stop on getStatusError? - maybe failure counter
+    let selfArguments = arguments;
     let onepanelServer = this.get('onepanelServer');
     let gettingTaskStatus = onepanelServer.request('onepanel', 'getTaskStatus', taskId);
     let deferSelf = (timeout) => {
-      setTimeout(() => this.watchTaskStatus(...arguments), timeout);
+      setTimeout(() => this.watchTaskStatus(...selfArguments), timeout);
     };
-    gettingTaskStatus.then(({ data: taskStatus }) => {
+
+    gettingTaskStatus.then(({
+      data: taskStatus
+    }) => {
       switch (taskStatus.status) {
         case StatusEnum.ok:
-          if (success) {
-            success(taskStatus);
-          }
-          break;
         case StatusEnum.error:
-          if (error) {
-            error(taskStatus);
-          }
+          deferred.resolve(taskStatus);
           break;
         case StatusEnum.running:
-          if (progress) {
-            progress(taskStatus);
-          }
+          deferred.notify(taskStatus);
           deferSelf(1000);
           break;
         default:
@@ -91,17 +98,17 @@ export default Ember.Component.extend({
           break;
       }
     });
+
     gettingTaskStatus.catch(error => {
       console.error('component:new-cluster-installation: getting status of configure task failed');
-      if (getStatusError) {
-        getStatusError(error);
-      }
-      deferSelf(2000);
+      deferred.reject(error);
     });
+
+    return deferred.promise();
   },
 
   /**
-   * @return {Promise}  promise resolves if configuration completes (either success or fail);
+   * @return {jQuery.Promise}  promise resolves if configuration completes (either success or fail);
    *                    rejects when getting status failed
    */
   configureProviderStarted(data, response) {
@@ -110,34 +117,15 @@ export default Ember.Component.extend({
       response && response.headers && response.headers.location
     );
     let taskId = getTaskId(response.headers.location);
-    // TODO use real location from response header
-    // let taskId = getTaskId('/api/v3/onepanel/tasks/f-qlxZUv-Qy7fbZBv4l7ekHJ4xlKES3AXS2gMYYTYf4');
-    return new Promise((resolveConfiguration, rejectConfiguration) => {
-      let onSuccess = function (taskStatus) {
-        resolveConfiguration(taskStatus);
-      };
-      let onError = function (taskStatus) {
-        rejectConfiguration(taskStatus);
-      };
-      this.watchTaskStatus(taskId, onSuccess, onError);
-    });
-
-    // TODO get "location" header, parse from /api/v3/onepanel/tasks/f-qlxZUv-Qy7fbZBv4l7ekHJ4xlKES3AXS2gMYYTYf4
-
-
-
-    // TODO handle reject
-
-
+    return this.watchTaskStatus(taskId);
   },
 
   configureProviderFinished() {
-    // TODO get name for cluster from user
-    let id = 'x';
+    let id = 'only_cluster';
 
     let creatingCluster = this.get('clusterManager').createCluster({
       id,
-      label: 'New cluster'
+      label: 'Cluster'
     });
 
     creatingCluster.then(cluster => {
@@ -146,8 +134,15 @@ export default Ember.Component.extend({
     });
   },
 
-  configureProviderFailed(error) {
-    console.error(`Configure provider failed (${error.response.statusCode}): ${error.response.text}`)
+  configureProviderFailed({
+    error,
+    taskStatus
+  }) {
+    if (error) {
+      console.error(`Configure provider failed (${error.response.statusCode}): ${error.response.text}`);
+    } else if (taskStatus) {
+      console.error(`Configure provider failed: ${JSON.stringify(taskStatus)}`);
+    }
   },
 
   getNodes() {
@@ -203,33 +198,47 @@ export default Ember.Component.extend({
   },
 
   /**
+   * Makes a backend call to start cluster deployment and watches deployment process.
+   * Returned promise resolves when deployment started (NOTE: not when it finishes).
+   * The promise resolves with a Promise of deployment progress
+   * (see: ``this.configureProviderStarted``).
    * @return {Promise}
    */
-  deploy() {
-    return new Promise((deployResolve, deployReject) => {
+  startDeploy() {
+    return new Promise((resolve, reject) => {
       // TODO use oneprovider or onezone api
       let onepanelServer = this.get('onepanelServer');
       let providerConfiguration = this.createProviderConfiguration();
-      let configuringProvider =
+      let startConfiguringProvider =
         onepanelServer.request('oneprovider', 'configureProvider', providerConfiguration);
 
-      configuringProvider.then(({ data, response }) => {
+      startConfiguringProvider.then(({
+        data,
+        response
+      }) => {
         let configuring = this.configureProviderStarted(data, response);
-        configuring.then(({ data }) => {
-          this.configureProviderFinished(data);
-          deployResolve(data);
-        });
-        configuring.catch(error => {
-          this.configureProviderFailed(error);
-          deployReject(error);
+
+        resolve({
+          data,
+          response,
+          deployment: configuring
         });
       });
 
-      configuringProvider.catch(error => {
-        this.configureProviderFailed(error);
-        deployReject(error);
-      });
+      startConfiguringProvider.catch(reject);
     });
+  },
+
+  /**
+   * Show progress of deployment using deployment task promise.
+   * @param {jQuery.Promise} deployment 
+   */
+  showDeployProgress(deployment) {
+    this.set('deploymentPromise', deployment);
+  },
+
+  hideDeployProgress() {
+    this.set('deploymentPromise', null);
   },
 
   actions: {
@@ -253,9 +262,44 @@ export default Ember.Component.extend({
       this.set('primaryClusterManager', hostname);
     },
 
+    /**
+     * Start deployment process.
+     *
+     * When process starts successfully, a deployment promise
+     * is bound to success/failure handlers and a deploy process is shown.
+     * 
+     * Returned promise resolves when backend started deployment.
+     * 
+     * @return {Promise}
+     */
     startDeploy() {
       // TODO do not allow if not valid data
-      return this.deploy();
+      let startingDeploy = this.startDeploy();
+      startingDeploy.then(({
+        data,
+        deployment
+      }) => {
+        this.showDeployProgress(deployment);
+
+        deployment.done(taskStatus => {
+          if (taskStatus.status === StatusEnum.ok) {
+            this.configureProviderFinished(taskStatus);
+          } else {
+            this.configureProviderFailed({
+              taskStatus
+            });
+          }
+
+        });
+
+        deployment.fail(error => this.configureProviderFailed({
+          error
+        }));
+
+        deployment.always(() => this.hideDeployProgress());
+      });
+
+      return startingDeploy;
     }
   }
 });

@@ -1,5 +1,5 @@
 {{!-- TODO: current index is here hardcoded --}}
-{{#one-wizard steps=steps currentIndex=1 as |w|}}
+{{#one-wizard steps=steps currentIndex=0 as |w|}}
   <h1>{{w.step.title}}</h1>
   {{#if (eq w.index 0)}}
     {{new-cluster-installation

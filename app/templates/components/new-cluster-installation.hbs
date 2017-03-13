@@ -38,3 +38,15 @@
     {{/if}}
   </tbody>
 </table>
+
+{{#bs-modal
+  id="cluster-deploy-progress"
+  open=deploymentPromise
+  body=false
+  footer=true
+  as |modal|
+}}
+  {{#modal.body}}
+    {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
+  {{/modal.body}}
+{{/bs-modal}}
