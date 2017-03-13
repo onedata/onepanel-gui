@@ -22,12 +22,18 @@ export default Ember.Route.extend({
   sidebar: service(),
   eventsBus: service(),
 
-  model({ resourceId }) {
+  model({
+    resourceId
+  }) {
     // TODO: validate and use resourceType
-    let { resourceType } = this.modelFor('onedata.sidebar');
+    let {
+      resourceType
+    } = this.modelFor('onedata.sidebar');
 
     if (isSpecialResourceId(resourceId)) {
-      return { resourceId };
+      return {
+        resourceId
+      };
     } else {
       return new Promise((resolve) => {
         resolve({
@@ -38,7 +44,9 @@ export default Ember.Route.extend({
     }
   },
 
-  afterModel({ resourceId }) {
+  afterModel({
+    resourceId
+  }) {
     let sidebar = this.get('sidebar');
     // TODO only if this is content with sidebar with item
     sidebar.changeItems(0, resourceId);
@@ -48,8 +56,12 @@ export default Ember.Route.extend({
   },
 
   renderTemplate(controller, model) {
-    let { resourceType } = this.modelFor('onedata.sidebar');
-    let { resourceId } = model;
+    let {
+      resourceType
+    } = this.modelFor('onedata.sidebar');
+    let {
+      resourceId
+    } = model;
     // render generic content template
     this.render('onedata.sidebar.content', {
       into: 'onedata',

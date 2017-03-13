@@ -1,6 +1,10 @@
 {{!-- TODO i18n --}}
 
-{{#unless isCollectionEmpty}}
+{{#if isCollectionEmpty}}
+
+  {{empty-collection-sidebar resourceType=resourceType}}
+
+{{else}}
 
   {{#one-list-wrapper items=model.collection as |item|}}
     {{#one-list-primary-item item=item
@@ -26,27 +30,6 @@
     {{/one-list-primary-item}}
   {{/one-list-wrapper}}
 
-{{else}}
-  <ul class="one-list text-center">
-    <li class="one-list-item">
-      <div class="row">
-        <div class="col-xs-12">
-          {{!-- TODO translate resource name --}}
-          <p>You have no {{resourceType}} :(</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          {{#link-to "onedata.sidebar.content" resourceType "new"
-            class="btn btn-default"
-          }}
-            Create new
-          {{/link-to}}
-        </div>  
-      </div>
-    </li>
-  </ul>
-
-{{/unless}}
+{{/if}}
 
 
