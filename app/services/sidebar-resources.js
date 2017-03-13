@@ -28,23 +28,7 @@ const TMP_SPACES = [{
   },
 ];
 
-const TMP_GROUPS = [{
-    id: 'a',
-    label: 'Group A'
-  },
-  {
-    id: 'b',
-    label: 'Group B'
-  },
-  {
-    id: 'c',
-    label: 'Group C'
-  },
-  {
-    id: 'd',
-    label: 'Group D'
-  },
-];
+const TMP_GROUPS = [];
 
 export default Ember.Service.extend({
   clusterManager: service(),
