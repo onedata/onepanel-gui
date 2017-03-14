@@ -1,6 +1,6 @@
 /* jshint node: true */
 
-module.exports = function(environment) {
+module.exports = function (environment) {
   var ENV = {
     modulePrefix: 'onedata-web-frontend-2',
     environment: environment,
@@ -25,12 +25,14 @@ module.exports = function(environment) {
     }
   };
 
-  if (environment === 'development') {
+  if (environment.startsWith('development')) {
     // ENV.APP.LOG_RESOLVER = true;
     ENV.APP.LOG_ACTIVE_GENERATION = true;
     ENV.APP.LOG_TRANSITIONS = true;
     ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     ENV.APP.LOG_VIEW_LOOKUPS = true;
+
+    ENV.APP.MOCK_BACKEND = (environment !== 'development-backend');
   }
 
   if (environment === 'test') {
@@ -42,6 +44,8 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+
+    ENV.APP.MOCK_BACKEND = true;
   }
 
   if (environment === 'production') {

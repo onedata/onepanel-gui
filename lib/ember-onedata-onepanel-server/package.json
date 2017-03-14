@@ -1,0 +1,9 @@
+{
+  "name": "ember-onedata-onepanel-server",
+  "keywords": [
+    "ember-addon"
+  ],
+  "devDependencies": {
+    "ember-get-config": "0.2.1"
+  }
+}

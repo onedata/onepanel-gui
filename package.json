@@ -40,6 +40,7 @@
     "ember-cookies": "0.0.11",
     "ember-data": "^2.11.0",
     "ember-export-application-global": "^1.0.5",
+    "ember-get-config": "0.2.1",
     "ember-i18n": "5.0.0",
     "ember-light-table": "1.8.3",
     "ember-load-initializers": "^0.6.0",
@@ -61,5 +62,10 @@
   "engines": {
     "node": ">= 0.12.0"
   },
-  "private": true
+  "private": true,
+  "ember-addon": {
+    "paths": [
+      "lib/ember-onedata-onepanel-server"
+    ]
+  }
 }

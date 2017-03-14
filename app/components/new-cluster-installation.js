@@ -1,5 +1,7 @@
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
+import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 
 const {
   assert,
@@ -36,10 +38,6 @@ function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
 }
 
-function getTaskId(location) {
-  return location.match(/^.*\/(.*)$/)[1];
-}
-
 export default Ember.Component.extend({
   onepanelServer: service(),
   clusterManager: service(),
@@ -59,65 +57,6 @@ export default Ember.Component.extend({
         promise: this.get('clusterManager').getHosts()
       })
     );
-  },
-
-  /**
-   * Periodically checks the status of task.
-   *
-   * Invokes passed callbacks on status events.
-   *
-   * @param {string} taskId
-   * @return {jQuery.Promise}
-   */
-  watchTaskStatus(taskId) {
-    let deferred = $.Deferred();
-
-    // TODO: should we stop on getStatusError? - maybe failure counter
-    let selfArguments = arguments;
-    let onepanelServer = this.get('onepanelServer');
-    let gettingTaskStatus = onepanelServer.request('onepanel', 'getTaskStatus', taskId);
-    let deferSelf = (timeout) => {
-      setTimeout(() => this.watchTaskStatus(...selfArguments), timeout);
-    };
-
-    gettingTaskStatus.then(({
-      data: taskStatus
-    }) => {
-      switch (taskStatus.status) {
-        case StatusEnum.ok:
-        case StatusEnum.error:
-          deferred.resolve(taskStatus);
-          break;
-        case StatusEnum.running:
-          deferred.notify(taskStatus);
-          deferSelf(1000);
-          break;
-        default:
-          console.warn('watchTaskStatus: invalid taskStatus: ' + JSON.serialize('taskStatus'));
-          deferSelf(1000);
-          break;
-      }
-    });
-
-    gettingTaskStatus.catch(error => {
-      console.error('component:new-cluster-installation: getting status of configure task failed');
-      deferred.reject(error);
-    });
-
-    return deferred.promise();
-  },
-
-  /**
-   * @return {jQuery.Promise}  promise resolves if configuration completes (either success or fail);
-   *                    rejects when getting status failed
-   */
-  configureProviderStarted(data, response) {
-    assert(
-      'configure provider response should have location header',
-      response && response.headers && response.headers.location
-    );
-    let taskId = getTaskId(response.headers.location);
-    return this.watchTaskStatus(taskId);
   },
 
   configureProviderFinished() {
@@ -200,8 +139,7 @@ export default Ember.Component.extend({
   /**
    * Makes a backend call to start cluster deployment and watches deployment process.
    * Returned promise resolves when deployment started (NOTE: not when it finishes).
-   * The promise resolves with a Promise of deployment progress
-   * (see: ``this.configureProviderStarted``).
+   * The promise resolves with a jq.Promise of deployment task.
    * @return {Promise}
    */
   startDeploy() {
@@ -214,14 +152,13 @@ export default Ember.Component.extend({
 
       startConfiguringProvider.then(({
         data,
-        response
+        response,
+        task: deploymentTask
       }) => {
-        let configuring = this.configureProviderStarted(data, response);
-
         resolve({
           data,
           response,
-          deployment: configuring
+          deployment: deploymentTask
         });
       });
 
