@@ -1,4 +1,8 @@
-    <h1>Deploying cluster, please wait...</h1>
-    {{ember-progress-bar progress=50}}
-    <h2><strong>Stage:</strong> {{step}}</h2>
-    
+<h1>Deploying cluster, please wait...</h1>
+{{#bs-progress as |p|}}
+  {{p.bar
+    value=progress minValue=0 maxValue=1 showLabel=false
+    type="primary" animate=true striped=true
+  }}
+{{/bs-progress}}
+<h2><strong>Stage:</strong> {{step}}</h2>

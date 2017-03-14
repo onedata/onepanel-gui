@@ -1,11 +1,10 @@
 import Ember from 'ember';
 
-import CLUSTER_DEPLOY_STEPS from 'onedata-web-frontend-2/utils/cluster-deploy-steps';
+import CLUSTER_DEPLOY_STEPS from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
   computed,
-  observer,
-  run
+  observer
 } = Ember;
 
 // TODO this can be made a generic taskStatus progress component
@@ -14,7 +13,6 @@ export default Ember.Component.extend({
 
   /**
    * Promise for watching deployment process.
-   *
    * @type {jQuery.Promise}
    */
   deploymentPromise: null,
@@ -22,6 +20,10 @@ export default Ember.Component.extend({
   step: null,
   isDone: false,
 
+  /**
+   * A progress in range 0..1 for progress bar.
+   * @type {computed<number>}
+   */
   progress: computed('step', 'isDone', function () {
     if (this.get('isDone')) {
       return 1;
@@ -42,6 +44,9 @@ export default Ember.Component.extend({
     this.bindDeploymentEvents();
   },
 
+  /**
+   * Add callbacks for deployment promise.
+   */
   bindDeploymentEvents: observer('deploymentPromise', function () {
     let deployment = this.get('deploymentPromise');
     if (deployment) {
@@ -55,7 +60,7 @@ export default Ember.Component.extend({
   }),
 
   /**
-   * 
+   * Use ``TaskStatus`` from deployment promise progress callback. 
    * @param {Onepanel.TaskStatus} taskStatus 
    */
   handleProgress(taskStatus) {
@@ -64,6 +69,9 @@ export default Ember.Component.extend({
     this.set('step', lastStep);
   },
 
+  /**
+   * Handle done event of deployment promise.
+   */
   handleDone() {
     this.set('isDone', true);
   },
