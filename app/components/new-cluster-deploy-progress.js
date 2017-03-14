@@ -4,7 +4,8 @@ import CLUSTER_DEPLOY_STEPS from 'onedata-web-frontend-2/utils/cluster-deploy-st
 
 const {
   computed,
-  observer
+  observer,
+  run
 } = Ember;
 
 // TODO this can be made a generic taskStatus progress component
@@ -44,8 +45,12 @@ export default Ember.Component.extend({
   bindDeploymentEvents: observer('deploymentPromise', function () {
     let deployment = this.get('deploymentPromise');
     if (deployment) {
-      deployment.progress(taskStatus => this.handleProgress(taskStatus));
-      deployment.done(taskStatus => this.handleDone(taskStatus));
+      deployment.progress(taskStatus => {
+        this.handleProgress(taskStatus);
+      });
+      deployment.done(taskStatus => {
+        this.handleDone(taskStatus);
+      });
     }
   }),
 

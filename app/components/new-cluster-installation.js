@@ -150,19 +150,7 @@ export default Ember.Component.extend({
       let startConfiguringProvider =
         onepanelServer.request('oneprovider', 'configureProvider', providerConfiguration);
 
-      startConfiguringProvider.then(({
-        data,
-        response,
-        task: deploymentTask
-      }) => {
-        resolve({
-          data,
-          response,
-          deployment: deploymentTask
-        });
-      });
-
-      startConfiguringProvider.catch(reject);
+      startConfiguringProvider.then(resolve, reject);
     });
   },
 
@@ -214,11 +202,11 @@ export default Ember.Component.extend({
       let startingDeploy = this.startDeploy();
       startingDeploy.then(({
         data,
-        deployment
+        task
       }) => {
-        this.showDeployProgress(deployment);
+        this.showDeployProgress(task);
 
-        deployment.done(taskStatus => {
+        task.done(taskStatus => {
           if (taskStatus.status === StatusEnum.ok) {
             this.configureProviderFinished(taskStatus);
           } else {
@@ -229,11 +217,11 @@ export default Ember.Component.extend({
 
         });
 
-        deployment.fail(error => this.configureProviderFailed({
+        task.fail(error => this.configureProviderFailed({
           error
         }));
 
-        deployment.always(() => this.hideDeployProgress());
+        task.always(() => this.hideDeployProgress());
       });
 
       return startingDeploy;
