@@ -2,65 +2,31 @@
 
 {{#bs-form onSubmit=(action "submit") as |form|}}
   {{#form.group}}
-    {{one-way-select selectedStorageType
-      class="form-control"
-      options=storageTypes update=(action "storageTypeChanged")
+    {{#power-select
+      options=storageTypes
+      selected=selectedStorageType
+      onchange=(action "storageTypeChanged")
+      searchEnabled=false
+      as |storageType|
     }}
+      {{storageType.name}}
+    {{/power-select}}
   {{/form.group}}
-  {{#form.group}}
-    {{one-way-input storageName
-      class="form-control"
-      update=(action "inputChanged" "storageName")
-      placeholder="Storage name"
-    }}
-  {{/form.group}}
-  {{#form.group}}
-    {{one-way-input username
-      class="form-control"
-      update=(action "inputChanged" "username")
-      placeholder="Username"
-    }}
-  {{/form.group}}
-  {{#form.group}}
-    {{one-way-password password
-      class="form-control"
-      update=(action "inputChanged" "password")
-      placeholder="Password"
-    }}
-  {{/form.group}}
-  {{#form.group}}
-    {{one-way-input bucketName
-      class="form-control"
-      update=(action "inputChanged" "bucketName")
-      placeholder="Bucket name"
-    }}
-  {{/form.group}}
-  {{#form.group}}
-    <div class="row">
-      <div class="col-xs-12 col-md-6">
-        {{one-way-input blockSize
-          class="form-control"
-          update=(action "inputChanged" "blockSize")
-          placeholder="Block size [bytes] (optional)"
-        }}
-      </div>
-      <div class="col-xs-12 col-md-6">
-        {{one-way-input timeout
-          class="form-control"
-          update=(action "inputChanged" "timeout")
-          placeholder="Timeout (ms) [optional]"
-        }}
-      </div>
-    </div>
-  {{/form.group}}
-  {{#form.group}}
-    <label for={{concat elementId "-insecure-checkbox"}}>Insecure</label>
-    {{one-way-checkbox insecure
-      id=(concat elementId "-insecure-checkbox")
-      update=(action "inputChanged" "insecure")
-    }}
-  {{/form.group}}
-  <button type="submit" class="btn btn-default">
+
+  {{!-- TODO make other component for creating forms from spec --}}
+
+  {{#each currentFields as |field|}}
+    {{#form.group}}
+      {{component (input-component-name field.type)
+        value=(get formValues field.name)
+        class="form-control"
+        update=(action "inputChanged" field.name)
+        placeholder=field.name
+      }}
+    {{/form.group}}
+  {{/each}}
+
+  {{#spin-button type="submit" class="btn btn-primary"}}
     Add
-  </button>  
+  {{/spin-button}}
 {{/bs-form}}
