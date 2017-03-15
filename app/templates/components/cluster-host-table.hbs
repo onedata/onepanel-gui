@@ -14,6 +14,7 @@
   {{#each hosts as |host|}}
     {{cluster-host-table-row 
       host=host
+      isPrimaryClusterManager=(eq primaryClusterManager host.hostname)
       checkboxChanged=(action "checkboxChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
     }}

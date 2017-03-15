@@ -33,9 +33,13 @@
   }}
 </td>
 <td>
-  {{one-way-radio
-    value=primaryClusterManager
-    option=host.hostname
-    update=(action 'primaryClusterManagerChanged')
+  {{x-toggle
+    value=isPrimaryClusterManager
+    showLabels=false
+    onLabel="::true"
+    offLabel="::false"
+    onToggle=(action "primaryClusterManagerChanged" host.hostname)
+    hostHostname=host.hostname
+    hostOption="primaryClusterManager"
   }}
 </td>
