@@ -5,21 +5,18 @@
     <th>Database</th>
     <th>Cluster Worker</th>
     <th>Cluster Manager</th>
-    <th>Remote Transfer</th>
     <th>Primary Cluster Manager</th>
   </tr>
 </thead>
 {{!-- TODO validation - highlight cols/rows if not valid --}}
+{{!-- TODO use checkboxes values from above --}}
 <tbody>
   {{#each hosts as |host|}}
-    <tr>
-      <td>{{host.hostname}}</td>
-      <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
-      <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
-      <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
-      <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
-      <td>{{one-way-radio primaryClusterManager option=host.hostname update=(action 'primaryClusterManagerChanged')}}</td>
-    </tr>
+    {{cluster-host-table-row 
+      host=host
+      checkboxChanged=(action "checkboxChanged")
+      primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
+    }}
   {{/each}}
 </tbody>
   

@@ -1,0 +1,41 @@
+<td>{{host.hostname}}</td>
+<td>
+  {{x-toggle
+    value=host.database
+    showLabels=false
+    onLabel="::true"
+    offLabel="::false"
+    onToggle=(action "checkboxChanged")
+    hostHostname=host.hostname
+    hostOption="database"
+  }}
+</td>
+<td>
+  {{x-toggle
+    value=host.clusterWorker
+    showLabels=false
+    onLabel="::true"
+    offLabel="::false"
+    onToggle=(action "checkboxChanged")
+    hostHostname=host.hostname
+    hostOption="clusterWorker"
+  }}
+</td>
+<td>
+  {{x-toggle
+    value=host.clusterManager
+    showLabels=false
+    onLabel="::true"
+    offLabel="::false"
+    onToggle=(action "checkboxChanged")
+    hostHostname=host.hostname
+    hostOption="clusterManager"
+  }}
+</td>
+<td>
+  {{one-way-radio
+    value=primaryClusterManager
+    option=host.hostname
+    update=(action 'primaryClusterManagerChanged')
+  }}
+</td>

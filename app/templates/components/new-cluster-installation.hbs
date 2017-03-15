@@ -16,7 +16,7 @@
 <div class="row">
   {{#if hostsProxy.isFulfilled}}
     {{cluster-host-table
-      hosts=hostsProxy.content
+      hosts=hosts
       hostOptionChanged=(action "hostOptionChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
     }}

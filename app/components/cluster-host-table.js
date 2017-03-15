@@ -13,12 +13,14 @@ export default Ember.Component.extend(InvokeActionMixin, {
   primaryClusterManager: null,
 
   actions: {
-    checkboxChanged(checked, event) {
-      let checkbox = event.currentTarget;
-      let hostname = checkbox.getAttribute('data-hostname');
-      let option = checkbox.getAttribute('data-option');
+    checkboxChanged({
+      newValue,
+      context
+    }) {
+      let hostname = context.get('hostHostname');
+      let option = context.get('hostOption');
 
-      this.invokeAction('hostOptionChanged', hostname, option, checked);
+      this.invokeAction('hostOptionChanged', hostname, option, newValue);
     },
 
     primaryClusterManagerChanged(hostname) {

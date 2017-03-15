@@ -11,7 +11,8 @@ const {
   },
   computed: {
     readOnly
-  }
+  },
+  A,
 } = Ember;
 
 const {
@@ -39,6 +40,22 @@ function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
 }
 
+/**
+ * @typedef {EmberObject} HostInfo
+ * @property {computed.string} hostname
+ * @property {computed.boolean} database true if host will run database
+ * @property {computed.boolean} clusterWorker true if host will run cluster worker
+ * @property {computed.boolean} clusterManager true if host will run cluster manager
+ */
+const HostInfo = Ember.Object.extend({
+  hostname: null,
+
+  // roles
+  database: false,
+  clusterWorker: false,
+  clusterManager: false,
+});
+
 export default Ember.Component.extend({
   classNames: ['new-cluster-installation', 'container-fluid'],
 
@@ -48,10 +65,15 @@ export default Ember.Component.extend({
   primaryClusterManager: null,
 
   /**
-   * @type {ObjectPromiseProxy<Ember.A<HostInfo>>}
+   * Resolves with EmberArray of HostInfo.
+   *
+   * @type {ObjectPromiseProxy}
    */
   hostsProxy: null,
 
+  /**
+   * @type {EmberArray.HostInfo}
+   */
   hosts: readOnly('hostsProxy.content'),
 
   init() {
@@ -59,7 +81,14 @@ export default Ember.Component.extend({
     this.set(
       'hostsProxy',
       ObjectPromiseProxy.create({
-        promise: this.get('clusterManager').getHosts()
+        promise: new Promise((resolve, reject) => {
+          let gettingHosts = this.get('clusterManager').getHosts();
+          gettingHosts.then(hosts => {
+            hosts = A(hosts.map(h => HostInfo.create(h)));
+            resolve(hosts);
+          });
+          gettingHosts.catch(reject);
+        })
       })
     );
   },
@@ -173,13 +202,13 @@ export default Ember.Component.extend({
 
   actions: {
     hostOptionChanged(hostname, option, value) {
-      let hosts = this.get('hostsProxy.content');
+      let hosts = this.get('hosts');
       let host = hosts.find(h => h.hostname === hostname);
       assert(
         host,
         'host for which option was changed, must be present in collection'
       );
-      host[option] = value;
+      host.set(option, value);
     },
 
     primaryClusterManagerChanged(hostname) {
