@@ -25,7 +25,7 @@ module.exports = function (environment) {
     }
   };
 
-  if (environment.startsWith('development')) {
+  if (environment && environment.startsWith('development')) {
     // ENV.APP.LOG_RESOLVER = true;
     ENV.APP.LOG_ACTIVE_GENERATION = true;
     ENV.APP.LOG_TRANSITIONS = true;

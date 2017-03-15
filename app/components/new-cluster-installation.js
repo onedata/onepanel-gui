@@ -1,7 +1,5 @@
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
-import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 
 const {
   assert,
@@ -10,6 +8,9 @@ const {
   },
   RSVP: {
     Promise
+  },
+  computed: {
+    readOnly
   }
 } = Ember;
 
@@ -20,7 +21,7 @@ const {
   }
 } = Onepanel;
 
-let ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
 function getClusterHostname(hostnames) {
   return hostnames.objectAt(0);
@@ -39,6 +40,8 @@ function getHostnamesOfType(hosts, type) {
 }
 
 export default Ember.Component.extend({
+  classNames: ['new-cluster-installation', 'container-fluid'],
+
   onepanelServer: service(),
   clusterManager: service(),
 
@@ -47,12 +50,14 @@ export default Ember.Component.extend({
   /**
    * @type {ObjectPromiseProxy<Ember.A<HostInfo>>}
    */
-  hosts: null,
+  hostsProxy: null,
+
+  hosts: readOnly('hostsProxy.content'),
 
   init() {
     this._super(...arguments);
     this.set(
-      'hosts',
+      'hostsProxy',
       ObjectPromiseProxy.create({
         promise: this.get('clusterManager').getHosts()
       })
@@ -85,8 +90,8 @@ export default Ember.Component.extend({
   },
 
   getNodes() {
-    let hosts = this.get('hosts');
-    hosts = hosts.content;
+    let hostsProxy = this.get('hostsProxy');
+    let hosts = hostsProxy.content;
     let hostnames = hosts.map(h => h.hostname);
     let nodes = {};
     hostnames.forEach(hn => {
@@ -167,20 +172,14 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    checkboxChanged(checked, event) {
-      let hosts = this.get('hosts.content');
-      let checkbox = event.currentTarget;
-      let hostname = checkbox.getAttribute('data-hostname');
-      let option = checkbox.getAttribute('data-option');
+    hostOptionChanged(hostname, option, value) {
+      let hosts = this.get('hostsProxy.content');
       let host = hosts.find(h => h.hostname === hostname);
       assert(
         host,
         'host for which option was changed, must be present in collection'
       );
-      host[option] = checked;
-
-      // TODO debug
-      console.debug(JSON.stringify(hosts));
+      host[option] = value;
     },
 
     primaryClusterManagerChanged(hostname) {

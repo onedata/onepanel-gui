@@ -1,52 +1,47 @@
 {{!-- TODO i18n --}}
 
 {{!-- TODO validation - if not ready to deploy, disable button --}}
-{{#spin-button class="btn btn-default" action=(action "startDeploy")}}
-  Deploy >
-{{/spin-button}}
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Hosts</th>
-      <th>Database</th>
-      <th>Cluster Worker</th>
-      <th>Cluster Manager</th>
-      <th>Remote Transfer</th>
-      <th>Primary Cluster Manager</th>
-    </tr>
-  </thead>
-  {{!-- TODO validation - highlight cols/rows if not valid --}}
-  <tbody>
-    {{#if hosts.isFulfilled}}
-      {{#each hosts.content as |host|}}
-        <tr>
-          <td>{{host.hostname}}</td>
-          <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
-          <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
-          <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
-          <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
-          <td>{{one-way-radio primaryClusterManager option=host.hostname update=(action 'primaryClusterManagerChanged')}}</td>
-        </tr>
-      {{/each}}
-    {{else}}
-      <tr>
-        <td colspan=999>
-          {{!-- TODO --}}
-          Loading... ful: {{hosts.isFulfilled}}, rej: {{hosts.isRejected}}
-        </td>
-      </tr>
-    {{/if}}
-  </tbody>
-</table>
 
-{{#bs-modal
-  id="cluster-deploy-progress"
-  open=deploymentPromise
-  body=false
-  footer=true
-  as |modal|
-}}
-  {{#modal.body}}
-    {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
-  {{/modal.body}}
-{{/bs-modal}}
+<div class="row">
+  <div class="btn-toolbar">
+    {{#spin-button class="btn btn-primary pull-right" action=(action "startDeploy")}}
+      Deploy
+    {{/spin-button}}
+    {{!-- TODO: config icon --}}
+    {{#bs-button type="default" class="pull-right"}}
+      Global settings
+    {{/bs-button}}
+  </div>
+</div>
+<div class="row">
+  {{#if hostsProxy.isFulfilled}}
+    {{cluster-host-table
+      hosts=hostsProxy.content
+      hostOptionChanged=(action "hostOptionChanged")
+      primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
+    }}
+  {{else}}
+    {{!-- TODO make a component that got a object promise proxy and watches
+    completion --}}
+    {{#if hosts.isPending}}
+      Loading...
+    {{else if hosts.isRejected}}
+      Rejected!
+    {{/if}}
+  {{/if}}
+</div>
+
+{{!-- TODO maybe keep the modal opened short after promise resolve --}}
+{{#if deploymentPromise}}
+  {{#bs-modal
+    id="cluster-deploy-progress"
+    open=deploymentPromise
+    body=false
+    footer=true
+    as |modal|
+  }}
+    {{#modal.body}}
+      {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
+    {{/modal.body}}
+  {{/bs-modal}}
+{{/if}}

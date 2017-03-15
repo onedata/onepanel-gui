@@ -1,0 +1,25 @@
+{{!-- TODO i18n --}}
+<thead>
+  <tr>
+    <th>Hosts</th>
+    <th>Database</th>
+    <th>Cluster Worker</th>
+    <th>Cluster Manager</th>
+    <th>Remote Transfer</th>
+    <th>Primary Cluster Manager</th>
+  </tr>
+</thead>
+{{!-- TODO validation - highlight cols/rows if not valid --}}
+<tbody>
+  {{#each hosts as |host|}}
+    <tr>
+      <td>{{host.hostname}}</td>
+      <td>{{one-way-checkbox data-hostname=host.hostname data-option="database" update=(action 'checkboxChanged')}}</td>
+      <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterWorker" update=(action 'checkboxChanged')}}</td>
+      <td>{{one-way-checkbox data-hostname=host.hostname data-option="clusterManager" update=(action 'checkboxChanged')}}</td>
+      <td>{{one-way-checkbox data-hostname=host.hostname data-option="remoteTransfer" update=(action 'checkboxChanged')}}</td>
+      <td>{{one-way-radio primaryClusterManager option=host.hostname update=(action 'primaryClusterManagerChanged')}}</td>
+    </tr>
+  {{/each}}
+</tbody>
+  
