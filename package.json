@@ -1,7 +1,7 @@
 {
-  "name": "onedata-web-frontend-2",
-  "version": "0.0.0",
-  "description": "Small description for onedata-web-frontend-2 goes here",
+  "name": "onepanel-web-frontend",
+  "version": "0.0.1",
+  "description": "Small description for onepanel-web-frontend goes here",
   "license": "MIT",
   "author": "",
   "directories": {

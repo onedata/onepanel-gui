@@ -1,5 +1,5 @@
-import ContentInfo from 'onedata-web-frontend-2/components/content-info';
-import layout from 'onedata-web-frontend-2/templates/components/content-info';
+import ContentInfo from 'onepanel-web-frontend/components/content-info';
+import layout from 'onepanel-web-frontend/templates/components/content-info';
 
 
 // TODO: i18n

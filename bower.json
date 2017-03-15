@@ -1,5 +1,5 @@
 {
-  "name": "onedata-web-frontend-2",
+  "name": "onepanel-web-frontend",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "basictable": "^1.0.6",

@@ -1,4 +1,4 @@
-import appModel from 'onedata-web-frontend-2/utils/app-model';
+import appModel from 'onepanel-web-frontend/utils/app-model';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | app model');

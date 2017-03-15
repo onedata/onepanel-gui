@@ -1,5 +1,5 @@
 
-import { matchQuery } from 'onedata-web-frontend-2/helpers/match-query';
+import { matchQuery } from 'onepanel-web-frontend/helpers/match-query';
 import { module, test } from 'qunit';
 
 module('Unit | Helper | match query');

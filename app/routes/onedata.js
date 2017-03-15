@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-import AppModel from 'onedata-web-frontend-2/utils/app-model';
+import AppModel from 'onepanel-web-frontend/utils/app-model';
 
 const {
   Route,

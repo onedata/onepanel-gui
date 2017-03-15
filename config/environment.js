@@ -2,7 +2,7 @@
 
 module.exports = function (environment) {
   var ENV = {
-    modulePrefix: 'onedata-web-frontend-2',
+    modulePrefix: 'onepanel-web-frontend',
     environment: environment,
     // rootURL: '/',
     // FIXME
