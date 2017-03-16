@@ -17,12 +17,22 @@
 
   {{#each currentFields as |field|}}
     {{#form.group}}
-      {{component (input-component-name field.type)
-        value=(get formValues field.name)
-        class="form-control"
-        update=(action "inputChanged" field.name)
-        placeholder=field.name
-      }}
+      {{#if (eq field.type "checkbox")}}
+        <label for={{field.name}}>{{field.placeholder}}</label>
+        {{x-toggle
+          fieldName=field.name
+          value=(get formValues field.name)
+          showLabels=false
+          onToggle=(action "toggleChanged")
+        }}
+      {{else}}
+        {{component (input-component-name field.type)
+          value=(get formValues field.name)
+          class="form-control"
+          update=(action "inputChanged" field.name)
+          placeholder=field.placeholder
+        }}
+      {{/if}}
     {{/form.group}}
   {{/each}}
 

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invoke } from 'ember-invoke-action';
 
 /**
  * @typedef {Object} FieldType
@@ -6,6 +7,7 @@ import Ember from 'ember';
  * @property {string} type
  * @property {boolean} [optional=undefined]
  * @property {*} [defaultValue=undefined]
+ * @property {string} [placeholder=undefined]
  */
 
 import GENERIC_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/generic-fields';
@@ -15,44 +17,48 @@ import S3_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/s3-fields';
 import SWIFT_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/swift-fields';
 
 const {
-  computed
+  computed,
+  inject: {
+    service
+  }
 } = Ember;
 
-export default Ember.Component.extend({
-  genericFields: GENERIC_FIELDS,
+const storageTypes = [{
+  id: 'ceph',
+  name: 'Ceph',
+  fields: CEPH_FIELDS
+}, {
+  id: 'posix',
+  name: 'POSIX',
+  fields: POSIX_FIELDS
+}, {
+  id: 's3',
+  name: 'S3',
+  fields: S3_FIELDS
+}, {
+  id: 'swift',
+  name: 'Swift',
+  fields: SWIFT_FIELDS
+}];
 
-  storageTypes: [{
-    id: 'ceph',
-    name: 'Ceph',
-    fields: CEPH_FIELDS
-  }, {
-    id: 'posix',
-    name: 'POSIX',
-    fields: POSIX_FIELDS
-  }, {
-    id: 's3',
-    name: 'S3',
-    fields: S3_FIELDS
-  }, {
-    id: 'swift',
-    name: 'Swift',
-    fields: SWIFT_FIELDS
-  }],  
-  
+export default Ember.Component.extend({
+  i18n: service(),
+
+  genericFields: computed(() => GENERIC_FIELDS).readOnly(),
+  storageTypes: computed(() => storageTypes).readOnly(),
+
   selectedStorageType: null,
   formValues: null,
 
   /**
    * @type {computed.FieldType}
    */
-  currentFields: computed('selectedStorageType', function() {
+  currentFields: computed('selectedStorageType', function () {
     let {
       genericFields,
-      storageTypes,
       selectedStorageType
     } = this.getProperties(
       'genericFields',
-      'storageTypes',
       'selectedStorageType'
     );
 
@@ -63,6 +69,32 @@ export default Ember.Component.extend({
     this._super(...arguments);
     this.set('selectedStorageType', this.get('storageTypes.firstObject'));
     this.set('formValues', Ember.Object.create({}));
+    this._addFieldsPlaceholders();
+  },
+
+  _addFieldsPlaceholders() {
+    let i18n = this.get('i18n');
+    let {
+      storageTypes,
+      genericFields,
+    } = this.getProperties('storageTypes', 'genericFields');
+    storageTypes.forEach(({ id: typeId, fields }) => {
+      fields.forEach(field =>
+        this._addFieldPlaceholderTranslation(typeId, field, i18n)
+      );
+    });
+    genericFields.forEach(field =>
+      this._addFieldPlaceholderTranslation('generic', field, i18n)
+    );
+  },
+
+  _addFieldPlaceholderTranslation(typeId, field, i18n) {
+    if (!field.placeholder) {
+      // TODO: it probably modifies imported array... do this in some initializer
+      field.placeholder = i18n.t(
+        `components.clusterStorageAddForm.${typeId}.${field.name}`
+      );
+    }
   },
 
   resetFormValues() {
@@ -87,7 +119,7 @@ export default Ember.Component.extend({
       this.resetFormValues();
       this.set('selectedStorageType', type);
     },
-    
+
     inputChanged(field, value) {
       let {
         formValues
@@ -98,10 +130,20 @@ export default Ember.Component.extend({
       if (this.isKnownField(field)) {
         formValues.set(field, value);
       } else {
-        console.warn('component:cluster-storage-add-form: attempt to change not known input type');
+        console.warn(
+          'component:cluster-storage-add-form: attempt to change not known input type'
+        );
       }
     },
-    
+
+    toggleChanged({
+      newValue,
+      context
+    }) {
+      let fieldName = context.get('fieldName');
+      invoke(this, 'inputChanged', fieldName, newValue);
+    },
+
     submit() {
       let formValues = this.get('formValues');
       // FIXME debug

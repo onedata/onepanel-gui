@@ -20,7 +20,9 @@ module.exports = function (environment) {
     },
     'ember-cli-toggle': {
       includedThemes: ['light'],
-      defaultTheme: 'light'
+      defaultTheme: 'light',
+      defaultOffLabel: '::false',
+      defaultOnLabel: '::true'
     },
 
     APP: {
