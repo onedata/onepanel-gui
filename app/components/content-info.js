@@ -1,5 +1,6 @@
 import Ember from 'ember';
 
+// TODO: make a link or action option
 export default Ember.Component.extend({
   classNames: ['content-info'],
 

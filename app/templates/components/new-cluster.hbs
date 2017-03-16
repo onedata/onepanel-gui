@@ -1,5 +1,5 @@
 {{!-- TODO: current index is here hardcoded --}}
-{{#one-wizard steps=steps currentIndex=2 as |w|}}
+{{#one-wizard steps=steps currentIndex=0 as |w|}}
   <h1>{{w.step.title}}</h1>
   {{#if (eq w.index 0)}}
     {{new-cluster-installation
@@ -11,6 +11,6 @@
   {{else if (eq w.index 2)}}
     {{new-cluster-storage nextStep=(action "next" target=w.wizard)}}
   {{else if (eq w.index 3)}}
-    {{new-cluster-summary clusterId=clusterId}}
+    {{new-cluster-summary clusterId=clusterId transitionTo=(action "transitionTo")}}
   {{/if}}
 {{/one-wizard}}

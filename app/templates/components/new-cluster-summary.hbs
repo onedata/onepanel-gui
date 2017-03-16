@@ -1,8 +1,8 @@
 {{!-- TODO link ember hrefs should be parametrized not hardcoded --}}
 
-<h1>Congratulations: {{clusterId}}</h1>
-{{#link-to 'onedata.sidebar.content' 'clusters' clusterId
-  class="btn btn-default"
+{{content-info
+  header="Cluster configuration completed"
+  text="You can now use your cluster and manage it."
+  buttonLabel="Manage the cluster"
+  buttonAction=(action "manageNewCluster")
 }}
-  Manage cluster
-{{/link-to}}

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
   // TODO: i18n
@@ -20,6 +21,9 @@ export default Ember.Component.extend({
     clusterCreated(cluster) {
       // FIXME cluster.get('id')
       this.set('clusterId', cluster.id);
+    },
+    transitionTo() {
+      return invokeAction(this, 'transitionTo', ...arguments);
     }
   }
 });
