@@ -1,7 +1,7 @@
 .onedata-logo {
   width: 120px;
   height: 25px;
-  background-image: url($rootURL + '/assets/images/logo.svg');
+  background-image: url($root-url + '/assets/images/logo.svg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -76,9 +76,9 @@ input {
 
 .world-map {
   &.light {
-    background-image: url($rootURL + '/assets/images/world-map-light.svg');
+    background-image: url($root-url + '/assets/images/world-map-light.svg');
   }
   &.dark {
-    background-image: url($rootURL + '/assets/images/world-map-dark.svg');
+    background-image: url($root-url + '/assets/images/world-map-dark.svg');
   }
 }

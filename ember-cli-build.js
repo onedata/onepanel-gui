@@ -1,5 +1,8 @@
 /*jshint node:true*/
 /* global require, module */
+
+var sass = require('node-sass');
+
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
@@ -8,7 +11,14 @@ module.exports = function (defaults) {
       includePaths: [
         'app/styles',
         'app/styles/oneicons'
-      ]
+      ],
+      functions: {
+        rootUrl: function () {
+          // temporary for testing app with old onepanel
+          var rootUrl = (app.env === 'develpment-backend' ? '/js/panel-gui' : '' );
+          return new sass.types.String(rootUrl);
+        }
+      }
     },
     // a "bootstrap" should be imported into app.scss
     'ember-cli-bootstrap-sassy': {
