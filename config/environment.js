@@ -4,9 +4,7 @@ module.exports = function (environment) {
   var ENV = {
     modulePrefix: 'onepanel-web-frontend',
     environment: environment,
-    // rootURL: '/',
-    // FIXME
-    rootURL: '/js/panel-gui/',
+    rootURL: '/',
     locationType: 'hash',
     EmberENV: {
       FEATURES: {
@@ -38,7 +36,12 @@ module.exports = function (environment) {
     ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     ENV.APP.LOG_VIEW_LOOKUPS = true;
 
-    ENV.APP.MOCK_BACKEND = (environment !== 'development-backend');
+    // to launch inside original onepanel app
+    if (environment === 'development-backend') {
+      ENV.rootURL = '/js/panel-gui/';
+    } else {
+      ENV.APP.MOCK_BACKEND = true;
+    }
   }
 
   if (environment === 'test') {

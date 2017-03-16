@@ -112,15 +112,17 @@ export default Ember.Component.extend({
     taskStatus
   }) {
     if (error) {
-      console.error(`Configure provider failed (${error.response.statusCode}): ${error.response.text}`);
+      console.error(
+        `Configure provider failed (${error.response.statusCode}): ${error.response.text}`
+      );
     } else if (taskStatus) {
-      console.error(`Configure provider failed: ${JSON.stringify(taskStatus)}`);
+      console.error(
+        `Configure provider failed: ${JSON.stringify(taskStatus)}`);
     }
   },
 
   getNodes() {
-    let hostsProxy = this.get('hostsProxy');
-    let hosts = hostsProxy.content;
+    let hosts = this.get('hosts');
     let hostnames = hosts.map(h => h.hostname);
     let nodes = {};
     hostnames.forEach(hn => {
@@ -142,8 +144,6 @@ export default Ember.Component.extend({
       'hosts',
       'primaryClusterManager'
     );
-
-    hosts = hosts.content;
 
     let nodes = this.getNodes();
     let hostnames = hosts.map(h => h.hostname);
@@ -182,7 +182,8 @@ export default Ember.Component.extend({
       let onepanelServer = this.get('onepanelServer');
       let providerConfiguration = this.createProviderConfiguration();
       let startConfiguringProvider =
-        onepanelServer.request('oneprovider', 'configureProvider', providerConfiguration);
+        onepanelServer.request('oneprovider', 'configureProvider',
+          providerConfiguration);
 
       startConfiguringProvider.then(resolve, reject);
     });

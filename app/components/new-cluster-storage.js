@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 import Onepanel from 'npm:onepanel';
 
 import { invokeAction } from 'ember-invoke-action';
@@ -15,7 +16,7 @@ const {
 } = Ember;
 
 const {
-  ClusterStorages
+  ClusterStoragesList
 } = Onepanel;
 
 export default Ember.Component.extend({
@@ -41,17 +42,20 @@ export default Ember.Component.extend({
         storages,
       } = this.getProperties('storages', 'onepanelServer');
 
-      // TODO debug code
-      console.debug(JSON.stringify(storageFormData));
+      let storageName = storageFormData.name;
+      let cs = createClusterStorageModel(storageFormData);
 
-      let cs = ClusterStorages.constructFromObject(storageFormData);
+      let csListProto = {};
+      csListProto[storageName] = cs;
+
+      let csList = ClusterStoragesList.constructFromObject(csListProto);
 
       return new Promise((resolve, reject) => {
         let addingStorage =
-          onepanelServer.request('oneprovider', 'addStorage', cs);
+          onepanelServer.request('oneprovider', 'addStorage', csList);
 
         addingStorage.then(() => {
-          storages.pushObject(storageFormData);
+          storages.pushObject(cs);
           this.set('addStorageOpened', false);
         });
         addingStorage.catch(reject);
