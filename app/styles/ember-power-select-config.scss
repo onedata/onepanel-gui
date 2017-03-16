@@ -1,1 +1,5 @@
+// above bootstrap modal
+$ember-basic-dropdown-content-z-index: $zindex-modal + 1;
+@import 'ember-power-select';
 @import 'ember-power-select/themes/bootstrap';
+

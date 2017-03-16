@@ -1,5 +1,4 @@
 export default {
-  storageName: 'Storage name',
-  insecure: 'insecure',
+  name: 'Storage name',
   optional: 'optional',
 };

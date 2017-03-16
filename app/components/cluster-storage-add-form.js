@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invoke } from 'ember-invoke-action';
+import { invoke, invokeAction } from 'ember-invoke-action';
 
 /**
  * @typedef {Object} FieldType
@@ -65,6 +65,14 @@ export default Ember.Component.extend({
     return genericFields.concat(selectedStorageType.fields);
   }),
 
+  allFields: computed('genericFields', 'currentFields', function () {
+    let {
+      genericFields,
+      currentFields,
+    } = this.getProperties('genericFields', 'currentFields');
+    return [...genericFields, ...currentFields];
+  }),
+
   init() {
     this._super(...arguments);
     this.set('selectedStorageType', this.get('storageTypes.firstObject'));
@@ -94,13 +102,20 @@ export default Ember.Component.extend({
       field.placeholder = i18n.t(
         `components.clusterStorageAddForm.${typeId}.${field.name}`
       );
+      if (field.optional) {
+        field.placeholder += (
+          ' (' +
+          i18n.t(`components.clusterStorageAddForm.generic.optional`) +
+          ')'
+        );
+      }
     }
   },
 
   resetFormValues() {
-    let currentFields = this.get('currentFields');
+    let { allFields } = this.getProperties('allFields');
     let formValues = Ember.Object.create({});
-    currentFields.forEach(({ name, defaultValue }) => {
+    allFields.forEach(({ name, defaultValue }) => {
       formValues.set(name, defaultValue);
     });
     this.set('formValues', formValues);
@@ -111,7 +126,8 @@ export default Ember.Component.extend({
    * @param {string} fieldName 
    */
   isKnownField(fieldName) {
-    return this.get('currentFields').map(cf => cf.name).indexOf(fieldName);
+    let { allFields } = this.getProperties('allFields');
+    return allFields.map(field => field.name).indexOf(fieldName) !== -1;
   },
 
   actions: {
@@ -136,20 +152,33 @@ export default Ember.Component.extend({
       }
     },
 
-    toggleChanged({
-      newValue,
-      context
-    }) {
+    toggleChanged({ newValue, context }) {
       let fieldName = context.get('fieldName');
       invoke(this, 'inputChanged', fieldName, newValue);
     },
 
     submit() {
-      let formValues = this.get('formValues');
+      let {
+        formValues,
+        allFields,
+        selectedStorageType
+      } = this.getProperties(
+        'formValues',
+        'allFields',
+        'selectedStorageType'
+      );
+
+      let formData = {
+        type: selectedStorageType.id
+      };
+
+      allFields.forEach(({ name }) => {
+        formData[name] = formValues.get(name);
+      });
+
       // FIXME debug
-      console.debug('submit: ' + JSON.stringify(formValues));
-      // this.sendAction('submit', formValues);
-      return false;
-    }
+      // TODO make regular object
+      return invokeAction(this, 'submit', formData);
+    },
   }
 });

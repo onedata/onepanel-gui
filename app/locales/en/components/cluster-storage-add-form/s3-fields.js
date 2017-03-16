@@ -1,10 +1,10 @@
 export default {
-  adminAccessKey: 'Admin access key',
-  adminSecretKey: 'Admin secret key',
+  accessKey: 'Admin access key',
+  secretKey: 'Admin secret key',
   hostname: 'Hostname',
   bucketName: 'Bucket name',
-  blockSize: 'Block size',
-  timeout: 'Timeout',
+  blockSize: 'Block size [bytes]',
+  timeout: 'Timeout [ms]',
   readonly: 'Read only',
   insecure: 'Insecure',
 };

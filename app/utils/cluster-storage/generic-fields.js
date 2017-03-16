@@ -1,3 +1,3 @@
 export default [
-  { name: 'storageName', type: 'text' }
+  { name: 'name', type: 'text' }
 ];

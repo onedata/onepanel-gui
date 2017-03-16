@@ -18,7 +18,7 @@
     "bootstrap-sass": "^3.3.7",
     "broccoli-asset-rev": "^2.4.5",
     "ember-ajax": "^2.4.1",
-    "ember-bootstrap": "1.0.0-alpha.4",
+    "ember-bootstrap": "1.0.0-alpha.5",
     "ember-browserify": "^1.1.13",
     "ember-cli": "2.11.1",
     "ember-cli-app-version": "^2.0.0",

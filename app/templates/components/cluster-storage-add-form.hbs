@@ -1,6 +1,8 @@
 {{!-- TODO: i18n --}}
 
-{{#bs-form onSubmit=(action "submit") as |form|}}
+{{!-- TODO make other component for creating forms from spec --}}
+
+{{#bs-form submitOnEnter=false as |form|}}
   {{#form.group}}
     {{#power-select
       options=storageTypes
@@ -12,8 +14,6 @@
       {{storageType.name}}
     {{/power-select}}
   {{/form.group}}
-
-  {{!-- TODO make other component for creating forms from spec --}}
 
   {{#each currentFields as |field|}}
     {{#form.group}}
@@ -35,8 +35,8 @@
       {{/if}}
     {{/form.group}}
   {{/each}}
-
-  {{#spin-button type="submit" class="btn btn-primary"}}
+  
+  {{#spin-button type="submit" class="btn btn-primary" action=(action "submit")}}
     Add
   {{/spin-button}}
 {{/bs-form}}

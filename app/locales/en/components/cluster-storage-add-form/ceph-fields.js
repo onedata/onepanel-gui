@@ -1,8 +1,10 @@
 export default {
   username: 'Username',
-  password: 'Password',
-  bucketName: 'Bucket name',
-  blockSize: 'Block size',
+  key: 'Key',
+  monitorHostname: 'Monitor hostname',
+  clusterName: 'Cluster hostname',
+  poolName: 'Cluster hostname',
   timeout: 'Timeout',
   insecure: 'Insecure',
+  readonly: 'Read only'
 };

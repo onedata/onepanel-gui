@@ -2,15 +2,13 @@
   {{cluster-storage-add-form submit="submitAddStorage"}}
 {{else}}
   <div class="row">
-    <div class="col-xs-6 pull-right">
-      <button class="btn one-special" {{action "next"}}>
-        Confirm >
-      </button>
-    </div>
-    <div class="col-xs-6 pull-right">
-      <button class="btn one-special" {{action "startAddStorage"}}>
+    <div class="btn-toolbar pull-right">
+      {{#bs-button type="default" onClick=(action "startAddStorage")}}
         Add storage
-      </button>
+      {{/bs-button}}
+      {{#bs-button type="primary" onClick=(action "next")}}
+        Finish
+      {{/bs-button}}
     </div>
   </div>
   <div class="row">
@@ -18,12 +16,12 @@
   </div>
 {{/if}}
 
+{{!-- TODO reset form values on open --}}
 {{#bs-modal
   id="add-storage"
   open=addStorageOpened
   body=false
   footer=true
-  onSubmit=(action "submitAddStorage")
   as |modal|
 }}
   {{#modal.body}}
