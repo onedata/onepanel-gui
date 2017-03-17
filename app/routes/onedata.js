@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invoke } from 'ember-invoke-action';
 
 import AppModel from 'onepanel-web-frontend/utils/app-model';
 
@@ -22,26 +23,32 @@ export default Route.extend({
   sessionValidation: readOnly('onepanelServer.sessionValidator.promise'),
 
   beforeModel() {
-    let sessionValidation = this.get('sessionValidation');
-    sessionValidation.catch(() => this.transitionTo('login'));
-    return sessionValidation;
+    let onepanelServer = this.get('onepanelServer');
+    let serverIsInitialized = onepanelServer.get('isInitialized');
+    if (!serverIsInitialized) {
+      let sessionValidation = this.get('sessionValidation');
+      sessionValidation.catch(() => this.transitionTo('login'));
+      return sessionValidation;
+    } else {
+      return undefined;
+    }
   },
 
   model() {
     let fakeMainMenuItems = A([
-      'providers',
-      'data',
-      'promises',
-      'spaces',
-      'groups',
-      'shares',
-      'tokens',
+      // 'providers',
+      // 'data',
+      // 'promises',
+      // 'spaces',
+      // 'groups',
+      // 'shares',
+      // 'tokens',
       'clusters'
-    ].map(id => ({
+    ]).map(id => ({
       id,
       // FIXME disabled true
       disabled: false
-    })));
+    }));
 
     fakeMainMenuItems.findBy('id', 'clusters').disabled = false;
 
@@ -50,6 +57,11 @@ export default Route.extend({
         mainMenuItems: fakeMainMenuItems
       }));
     });
+  },
+
+  afterModel(model) {
+    let firstItemId = model.get('mainMenuItems.firstObject').id;
+    invoke(this, 'mainMenuItemChanged', firstItemId);
   },
 
   actions: {
