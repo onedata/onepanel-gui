@@ -1,3 +1,5 @@
+$root-url: rootUrl();
+
 @import 'colors';
 @import 'utils';
 @import 'fonts';
@@ -11,8 +13,6 @@
 
 // should be same as rootURL in environment.js
 // TODO maybe use https://github.com/davidpett/ember-cli-sass-variables
-
-$root-url: rootUrl();
 
 $mobile-top-height: 70px;
 $main-menu-width: 212px;

@@ -7,10 +7,26 @@ const {
   A,
   RSVP: {
     Promise
+  },
+  inject: {
+    service
+  },
+  computed: {
+    readOnly
   }
 } = Ember;
 
 export default Route.extend({
+  onepanelServer: service(),
+
+  sessionValidation: readOnly('onepanelServer.sessionValidator.promise'),
+
+  beforeModel() {
+    let sessionValidation = this.get('sessionValidation');
+    sessionValidation.catch(() => this.transitionTo('login'));
+    return sessionValidation;
+  },
+
   model() {
     let fakeMainMenuItems = A([
       'providers',
