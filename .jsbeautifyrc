@@ -11,11 +11,11 @@
     "space_in_empty_paren": false,
     "jslint_happy": true,
     "space_after_anon_function": true,
-    "brace_style": "collapse,preserve-inline",
+    "brace_style": "collapse-preserve-inline",
     "break_chained_methods": false,
     "keep_array_indentation": false,
     "unescape_strings": false,
-    "wrap_line_length": 80,
+    "wrap_line_length": 92,
     "e4x": false,
     "comma_first": false,
     "operator_position": "before-newline"
