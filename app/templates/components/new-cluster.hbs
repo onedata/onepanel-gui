@@ -3,7 +3,7 @@
   <h1>{{w.step.title}}</h1>
   {{#if (eq w.index 0)}}
     {{new-cluster-installation
-      clusterCreated=(action "clusterCreated")
+      clusterConfigurationSuccess=(action "clusterConfigurationSuccess")
       nextStep=(action "next" target=w.wizard)
     }}
   {{else if (eq w.index 1)}}

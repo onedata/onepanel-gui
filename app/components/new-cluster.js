@@ -18,9 +18,8 @@ export default Ember.Component.extend({
   }],
 
   actions: {
-    clusterCreated(cluster) {
-      // FIXME cluster.get('id')
-      this.set('clusterId', cluster.id);
+    clusterConfigurationSuccess() {
+      // TODO currently nothing more to do
     },
     transitionTo() {
       return invokeAction(this, 'transitionTo', ...arguments);

@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   assert,
@@ -94,17 +95,9 @@ export default Ember.Component.extend({
   },
 
   configureProviderFinished() {
-    let id = 'only_cluster';
-
-    let creatingCluster = this.get('clusterManager').createCluster({
-      id,
-      label: 'Cluster'
-    });
-
-    creatingCluster.then(cluster => {
-      this.sendAction('clusterCreated', cluster);
-      this.sendAction('nextStep');
-    });
+    invokeAction(this, 'clusterConfigurationSuccess');
+    invokeAction(this, 'nextStep');
+    // });
   },
 
   configureProviderFailed({
