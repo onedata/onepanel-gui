@@ -2,7 +2,7 @@
 
 module.exports = function (environment) {
   var ENV = {
-    modulePrefix: 'onepanel-web-frontend',
+    modulePrefix: 'onepanel-gui',
     environment: environment,
     rootURL: '/',
     locationType: 'hash',
@@ -22,7 +22,9 @@ module.exports = function (environment) {
       defaultOffLabel: '::false',
       defaultOnLabel: '::true'
     },
-
+    onedataTabs: [
+      'clusters'
+    ],
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created

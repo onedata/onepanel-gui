@@ -12,7 +12,7 @@
       isActive=(eq primaryItemId item.id)
       as |primarySection|}}
       {{#if (eq primarySection 'header')}}
-        {{item.label}}
+        {{item.name}}
       {{else if (eq primarySection 'secondary')}}
         {{!-- TODO resource type specific --}}
         <ul class="one-list one-list-level-2">

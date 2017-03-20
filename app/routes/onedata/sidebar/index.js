@@ -2,7 +2,8 @@ import Ember from 'ember';
 
 function getDefaultResourceId(collection) {
   // TODO get id
-  return collection.objectAt(0).id;
+  let defaultResource = collection.objectAt(0);
+  return defaultResource.id != null ? defaultResource.id : defaultResource.get('id');
 }
 
 export default Ember.Route.extend({
@@ -10,9 +11,17 @@ export default Ember.Route.extend({
     return this.modelFor('onedata.sidebar');
   },
 
-  redirect({ resourceType, collection }) {
+  redirect({ resourceType, collection }, transition) {
     let resourceIdToRedirect =
       collection.length > 0 ? getDefaultResourceId(collection) : 'empty';
-    this.transitionTo(`onedata.sidebar.content`, resourceType, resourceIdToRedirect);
+    if (resourceIdToRedirect != null) {
+      this.transitionTo(`onedata.sidebar.content`, resourceType, resourceIdToRedirect);
+    } else {
+      // TODO notify about error
+      console.error(
+        'collection is not empty, but cannot get default resource id - this is an error unhandled error'
+      );
+      transition.abort();
+    }
   }
 });

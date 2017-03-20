@@ -1,5 +1,5 @@
 {
-  "name": "onepanel-web-frontend",
+  "name": "onepanel-gui",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "basictable": "^1.0.6",

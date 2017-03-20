@@ -1,11 +1,11 @@
 import Ember from 'ember';
 
 /**
- * @typedef {Cluster}
+ * @typedef {ClusterInfo}
  * @param {string} name
  * @param {number} initStep
  */
 export default Ember.Object.extend({
-  name: null,
-  initStep: 0,
+  id: null,
+  name: null
 });

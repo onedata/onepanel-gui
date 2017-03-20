@@ -1,5 +1,5 @@
-import ContentInfo from 'onepanel-web-frontend/components/content-info';
-import layout from 'onepanel-web-frontend/templates/components/content-info';
+import ContentInfo from 'onepanel-gui/components/content-info';
+import layout from 'onepanel-gui/templates/components/content-info';
 
 
 // TODO: i18n

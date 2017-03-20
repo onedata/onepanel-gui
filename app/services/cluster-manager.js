@@ -1,36 +1,33 @@
 import Ember from 'ember';
-import Cluster from 'onepanel-web-frontend/utils/cluster';
-import Onepanel from 'npm:onepanel';
+import ClusterInfo from 'onepanel-gui/models/cluster-info';
+import ClusterDetails from 'onepanel-gui/models/cluster-details';
 
 const {
   Service,
   inject: {
     service
   },
-  RSVP,
   RSVP: {
     Promise
   },
   A,
   computed,
+  ObjectProxy,
+  PromiseProxyMixin,
 } = Ember;
 
-const {
-  ProviderConfiguration
-} = Onepanel;
+const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+const THIS_CLUSTER_ID = 'the-cluster';
+const THIS_CLUSTER_NAME = 'The cluster';
 
 export default Service.extend({
   onepanelServer: service(),
 
-  // TODO: use clustersProxy  
-  clusters: A(),
-
   /**
    * TODO when creating "the only cluster" get info about deployment state
    * This is something like a store
-   * @return {Ember.A<Cluster>}
+   * @return {Ember.A<ClusterInfo>}
    */
   clustersProxy: computed(function () {
     return ObjectPromiseProxy.create({
@@ -39,18 +36,27 @@ export default Service.extend({
   }),
 
   getClusters() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+      let thisCluster = ClusterInfo.create({
+        id: THIS_CLUSTER_ID,
+        name: THIS_CLUSTER_NAME,
+      });
+      resolve(A([thisCluster]));
+    });
+  },
+
+  // TODO: in future this should be able to get details of any cluster 
+  // in system  
+  getClusterDetails( /*clusterId*/ ) {
+    return new Promise((resolve) => {
       let gettingInitStep = this._getThisClusterInitStep();
 
       gettingInitStep.then(step => {
-        let thisCluster = Cluster.create({
-          name: 'The Cluster',
-          initStep: step
-        });
-        resolve(A([thisCluster]));
+        resolve(ClusterDetails.create({
+          clusterInfo: this.get('clusterProxy.content'),
+          initStep: step,
+        }));
       });
-
-      gettingInitStep.catch(reject);
     });
   },
 
@@ -78,12 +84,16 @@ export default Service.extend({
     });
   },
 
+  /**
+   * @param {OnepanelServer} onepanelServer
+   * @returns {Promise}
+   */
   _checkIsProviderRegistered(onepanelServer) {
     return new Promise((resolve, reject) => {
       let gettingProvider = onepanelServer.request('oneprovider',
         'getProvider');
 
-      gettingProvider.then(providerDetails => {
+      gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
         resolve(!!providerDetails);
       });
@@ -99,11 +109,17 @@ export default Service.extend({
     });
   },
 
+  /**
+   * @param {OnepanelServer} onepanelServer
+   * @returns {Promise}
+   */
   _checkIsAnyStorage(onepanelServer) {
     return new Promise((resolve, reject) => {
       let gettingStorages = onepanelServer.request('oneprovider',
         'getStorages');
-      gettingStorages.then(() => resolve(true));
+      gettingStorages.then(({ data: storages }) => {
+        resolve(!!storages && storages.length > 0);
+      });
       gettingStorages.catch(reject);
     });
   },
@@ -111,6 +127,13 @@ export default Service.extend({
   /**
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
+   *
+   * The returned promise resolves with one of Number indicating wchich step had been done:
+   * - 0: no installation done, initial
+   * state, show "you have no cluster yet..."
+   * - 1: installation done, but not registered - show registration step
+   * - 2: installation and registration done, but no storage added yet - show add storage step
+   * - 3: all done, should not show steps
    * @returns {Promise}
    */
   _getThisClusterInitStep() {

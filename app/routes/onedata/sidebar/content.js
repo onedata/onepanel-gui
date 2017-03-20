@@ -6,7 +6,7 @@ const {
   },
   RSVP: {
     Promise
-  }
+  },
 } = Ember;
 
 const SPECIAL_IDS = [
@@ -21,32 +21,30 @@ function isSpecialResourceId(id) {
 export default Ember.Route.extend({
   sidebar: service(),
   eventsBus: service(),
+  contentResources: service(),
 
-  model({
-    resourceId
-  }) {
+  model({ resourceId }) {
     // TODO: validate and use resourceType
     let {
       resourceType
     } = this.modelFor('onedata.sidebar');
 
     if (isSpecialResourceId(resourceId)) {
-      return {
-        resourceId
-      };
+      return { resourceId };
     } else {
-      return new Promise((resolve) => {
-        resolve({
-          id: resourceId,
-          name: `Some fake ${resourceType} ${resourceId}`
-        });
+      return new Promise((resolve, reject) => {
+        let gettingResource = this.get('contentResources')
+          .getModelFor(resourceType, resourceId);
+        gettingResource.then(resource => resolve({
+          resourceId,
+          resource,
+        }));
+        gettingResource.catch(reject);
       });
     }
   },
 
-  afterModel({
-    resourceId
-  }) {
+  afterModel({ resourceId }) {
     let sidebar = this.get('sidebar');
     // TODO only if this is content with sidebar with item
     sidebar.changeItems(0, resourceId);

@@ -1,7 +1,7 @@
 {
-  "name": "onepanel-web-frontend",
+  "name": "onepanel-gui",
   "version": "0.0.1",
-  "description": "Small description for onepanel-web-frontend goes here",
+  "description": "Small description for onepanel-gui goes here",
   "license": "MIT",
   "author": "",
   "directories": {
@@ -50,6 +50,7 @@
     "ember-one-way-controls": "2.0.0",
     "ember-perfect-scrollbar": "0.0.4",
     "ember-power-select": "1.6.0",
+    "ember-redirect": "4.1.0",
     "ember-resolver": "^2.0.3",
     "ember-responsive": "2.0.2",
     "ember-side-menu": "0.0.12",

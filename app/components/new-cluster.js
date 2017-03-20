@@ -2,6 +2,8 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
+  initStepIndex: 0,
+
   // TODO: i18n
   steps: [{
     id: 0,
