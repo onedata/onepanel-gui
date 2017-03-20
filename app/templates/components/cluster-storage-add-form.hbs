@@ -18,13 +18,17 @@
   {{#each currentFields as |field|}}
     {{#form.group}}
       {{#if (eq field.type "checkbox")}}
-        <label for={{field.name}}>{{field.placeholder}}</label>
-        {{x-toggle
-          fieldName=field.name
-          value=(get formValues field.name)
-          showLabels=false
-          onToggle=(action "toggleChanged")
-        }}
+      <div class="row">
+        <div class="col-sm-3">
+          <label>{{field.placeholder}}</label>
+        </div>
+        <div class="col-sm-9">
+          {{one-way-toggle
+            checked=(get formValues field.name)
+            update=(action "inputChanged" field.name)
+          }}
+        </div>
+      </div>
       {{else}}
         {{component (input-component-name field.type)
           value=(get formValues field.name)
@@ -35,7 +39,7 @@
       {{/if}}
     {{/form.group}}
   {{/each}}
-  
+
   {{#spin-button type="submit" class="btn btn-primary" action=(action "submit")}}
     Add
   {{/spin-button}}

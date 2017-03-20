@@ -1,0 +1,69 @@
+.one-way-toggle {
+  position: relative;
+
+  input[type="checkbox"] {
+    opacity: 0;
+
+    &:focus + div::after {
+      border: 1px solid #66afe9;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(47, 153, 252, 0.6);
+    }
+
+    &:checked + div:before {
+      background-color: $brand-success;
+    }
+
+    &:checked + div:after {
+      left: 1.2em;
+    }
+  }
+
+  div:before, div:after {
+    border: 1px solid $input-border;
+    border-radius: 0.6em;
+    box-sizing: border-box;
+    content: "";
+    height: 1.2em;
+    left: 0;
+    position: absolute;
+    top: 0em;
+  }
+
+  div:before {
+    background-color: white;
+    transition: background-color 0.2s ease;
+    width: 2.4em;
+  }
+
+  div:after {
+    background-color: $input-bg;
+    transition: left 0.2s ease;
+    width: 1.2em;
+  }
+
+}
+
+// .one-way-toggle div:before {
+//   background-color: white;
+//   transition: background-color 0.2s ease;
+//   width: 2.4em;
+// }
+//
+// .one-way-toggle input[type="checkbox"]:focus + div::after {
+//   border: 1px solid #66afe9;
+//   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(47, 153, 252, 0.6);
+// }
+//
+// .one-way-toggle div:after {
+//   background-color: #f4f4f7;
+//   transition: left 0.2s ease;
+//   width: 1.2em;
+// }
+//
+// .one-way-toggle input[type="checkbox"]:checked + div:before {
+//   background-color: #75d19e;
+// }
+//
+// .one-way-toggle input[type="checkbox"]:checked + div:after {
+//   left: 1.2em;
+// }
