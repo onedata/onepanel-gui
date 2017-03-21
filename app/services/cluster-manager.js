@@ -74,7 +74,8 @@ export default Service.extend({
 
       gettingConfiguration.catch(error => {
         let statusCode = error.response.statusCode;
-        if (statusCode === 404) {
+        // TODO 406 is a temporary fix for probably faulty backend
+        if (statusCode === 404 || statusCode === 406) {
           // no configuration found - user didn't started the deployment
           resolve(false);
         } else {
