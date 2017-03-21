@@ -14,10 +14,8 @@ module.exports = function (defaults) {
       ],
       functions: {
         rootUrl: function () {
-          // temporary for testing app with old onepanel
-          var rootUrl = (app.env === 'development-backend' ?
-            '/js/panel-gui' : '');
-          return new sass.types.String(rootUrl);
+          // NOTE: remember to change this when changing in environment!
+          return new sass.types.String('/');
         }
       }
     },

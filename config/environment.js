@@ -4,6 +4,7 @@ module.exports = function (environment) {
   var ENV = {
     modulePrefix: 'onepanel-gui',
     environment: environment,
+    // NOTE: the rootURL is set also in ember-cli-build for SASS function
     rootURL: '/',
     locationType: 'hash',
     EmberENV: {
@@ -39,9 +40,7 @@ module.exports = function (environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = true;
 
     // to launch inside original onepanel app
-    if (environment === 'development-backend') {
-      ENV.rootURL = '/js/panel-gui/';
-    } else {
+    if (environment !== 'development-backend') {
       ENV.APP.MOCK_BACKEND = true;
     }
   }
