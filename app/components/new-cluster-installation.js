@@ -74,6 +74,12 @@ export default Ember.Component.extend({
   hostsProxy: null,
 
   /**
+   * If true, the deploy action can be invoked
+   * @type {boolean}
+   */
+  _canDeploy: false,
+
+  /**
    * @type {EmberArray.HostInfo}
    */
   hosts: readOnly('hostsProxy.content'),
@@ -152,6 +158,9 @@ export default Ember.Component.extend({
 
     let nodes = this.getNodes();
     let hostnames = hostsUsed.map(h => h.hostname);
+    if (!hostnames || hostnames.length === 0) {
+      throw new Error('Cannot create cluster configuration if no hosts are selected');
+    }
     let domainName = getDomain(getClusterHostname(hostnames));
 
     let configuration = ConfigurationClass.constructFromObject({
@@ -209,6 +218,23 @@ export default Ember.Component.extend({
     this.set('deploymentPromise', null);
   },
 
+  /**
+   * Bind on events of deployment task. 
+   *
+   * @param {jQuery.Promise} task 
+   */
+  watchDeployStatus(task) {
+    task.done(taskStatus => {
+      if (taskStatus.status === StatusEnum.ok) {
+        this.configureFinished(taskStatus);
+      } else {
+        this.configureFailed({ taskStatus });
+      }
+    });
+    task.fail(error => this.configureFailed({ error }));
+    task.always(() => this.hideDeployProgress());
+  },
+
   actions: {
     hostOptionChanged(hostname, option, value) {
       let hosts = this.get('hosts');
@@ -225,6 +251,15 @@ export default Ember.Component.extend({
     },
 
     /**
+     * Handle new validation state of user options in hosts table. 
+     *
+     * @param {boolean} isValid 
+     */
+    hostTableValidChanged(isValid) {
+      this.set('_canDeploy', isValid);
+    },
+
+    /**
      * Start deployment process.
      *
      * When process starts successfully, a deployment promise
@@ -236,32 +271,16 @@ export default Ember.Component.extend({
      */
     startDeploy() {
       // TODO do not allow if not valid data
-      let startingDeploy = this.startDeploy();
-      startingDeploy.then(({
-        data,
-        task
-      }) => {
-        this.showDeployProgress(task);
-
-        task.done(taskStatus => {
-          if (taskStatus.status === StatusEnum.ok) {
-            this.configureFinished(taskStatus);
-          } else {
-            this.configureFailed({
-              taskStatus
-            });
-          }
-
+      let start = this.startDeploy()
+        .then(({ data, task }) => {
+          this.showDeployProgress(task);
+          this.watchDeployStatus(task);
+        })
+        .catch(error => {
+          // TODO better error handling
+          console.error('Cannot start deploy: ' + JSON.stringify(error));
         });
-
-        task.fail(error => this.configureFailed({
-          error
-        }));
-
-        task.always(() => this.hideDeployProgress());
-      });
-
-      return startingDeploy;
+      return start;
     }
   }
 });

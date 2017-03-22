@@ -81,7 +81,7 @@ export default Service.extend({
 
       // TODO do something with fetched configuration
 
-      gettingConfiguration.then(() => resolve(true));
+      gettingConfiguration.then(({ data }) => resolve(!!data));
 
       gettingConfiguration.catch(error => {
         let statusCode = error.response.statusCode;

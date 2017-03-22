@@ -4,8 +4,14 @@
 
 <div class="row">
   <div class="btn-toolbar">
-    {{#spin-button class="btn btn-primary pull-right" action=(action "startDeploy")}}
+    {{!-- the spin-button has no disable support, so fork this or use another component... --}}
+    {{#spin-button
+      class=(concat "btn btn-primary pull-right " (unless _canDeploy "disabled"))
+      action=(action "startDeploy")
+    }}
       Deploy
+      {{!-- TODO if form is not valid, disable the button and show warn info on hover --}}
+      {{bs-tooltip title="Configuration is invalid" placement="left"}}
     {{/spin-button}}
   </div>
 </div>
@@ -16,6 +22,7 @@
       primaryClusterManager=primaryClusterManager
       hostOptionChanged=(action "hostOptionChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
+      allValidChanged=(action "hostTableValidChanged")
     }}
   {{else}}
     {{!-- TODO make a component that got a object promise proxy and watches
