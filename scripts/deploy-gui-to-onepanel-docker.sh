@@ -1,8 +1,8 @@
 #!/bin/bash
 
-[ -z $ONEPANEL_SERVICE_TYPE ] && ONEPANEL_SERVICE_TYPE=onezone
+( [ -z ${ONEPANEL_SERVICE_TYPE+x} ] && ONEPANEL_SERVICE_TYPE=zone )
 
-[ -z $TMP_GUI_PARENT_DIR ] && TMP_GUI_PARENT_DIR=./tmp
+[ -z ${TMP_GUI_PARENT_DIR+x} ] && TMP_GUI_PARENT_DIR=./tmp
 TMP_GUI_DIR=${TMP_GUI_PARENT_DIR}/gui_static
 
 DOCKER_ID=`docker ps | grep ${ONEPANEL_SERVICE_TYPE} | head -1 | cut -f1 -d" "`
