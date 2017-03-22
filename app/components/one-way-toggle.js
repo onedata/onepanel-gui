@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-import OneWayCheckboxComponent from 'ember-one-way-controls';
 
 const { Component } = Ember;
 
