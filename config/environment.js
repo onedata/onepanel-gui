@@ -1,5 +1,7 @@
 /* jshint node: true */
 
+const DEFAULT_ONEPANEL_SERVICE_TYPE = 'zone';
+
 module.exports = function (environment) {
   var ENV = {
     modulePrefix: 'onepanel-gui',
@@ -26,6 +28,19 @@ module.exports = function (environment) {
     onedataTabs: [
       'clusters'
     ],
+    onepanelConfig: {
+      // TODO: validate: onezone or oneprovider
+      /**
+       * An important switch to enable/disable features of Provider or Zone
+       * in application and make requests to proper onepanel API.
+       *
+       * One of: zone, provider
+       *
+       * @type {string}
+       */
+      ONEPANEL_SERVICE_TYPE: process.env.ONEPANEL_SERVICE_TYPE ||
+        DEFAULT_ONEPANEL_SERVICE_TYPE
+    },
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created

@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails from 'onepanel-gui/models/cluster-details';
+import config from 'ember-get-config';
 
 const {
   Service,
@@ -14,7 +15,16 @@ const {
   computed,
   ObjectProxy,
   PromiseProxyMixin,
+  String: {
+    camelize
+  }
 } = Ember;
+
+const {
+  onepanelConfig: {
+    ONEPANEL_SERVICE_TYPE
+  }
+} = config;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
@@ -66,7 +76,8 @@ export default Service.extend({
   _checkIsConfigurationDone(onepanelServer) {
     return new Promise((resolve, reject) => {
       let gettingConfiguration = onepanelServer.request(
-        'oneprovider', 'getProviderConfiguration');
+        'one' + ONEPANEL_SERVICE_TYPE, camelize(
+          `get-${ONEPANEL_SERVICE_TYPE}-configuration`));
 
       // TODO do something with fetched configuration
 
@@ -74,8 +85,7 @@ export default Service.extend({
 
       gettingConfiguration.catch(error => {
         let statusCode = error.response.statusCode;
-        // TODO 406 is a temporary fix for probably faulty backend
-        if (statusCode === 404 || statusCode === 406) {
+        if (statusCode === 404) {
           // no configuration found - user didn't started the deployment
           resolve(false);
         } else {
@@ -85,6 +95,7 @@ export default Service.extend({
     });
   },
 
+  // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
@@ -110,6 +121,7 @@ export default Service.extend({
     });
   },
 
+  // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
