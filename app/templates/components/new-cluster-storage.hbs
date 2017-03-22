@@ -14,17 +14,17 @@
   <div class="row">
     {{cluster-storage-table storages=storages}}  
   </div>
-{{/if}}
 
 {{!-- TODO reset form values on open --}}
-{{#bs-modal
-  id="add-storage"
-  open=addStorageOpened
-  body=false
-  footer=true
-  as |modal|
-}}
-  {{#modal.body}}
-    {{cluster-storage-add-form submit="submitAddStorage"}}
-  {{/modal.body}}
-{{/bs-modal}}
+  {{#bs-modal
+    id="add-storage"
+    open=addStorageOpened
+    body=false
+    footer=true
+    as |modal|
+  }}
+    {{#modal.body}}
+      {{cluster-storage-add-form submit="submitAddStorage"}}
+    {{/modal.body}}
+  {{/bs-modal}}
+{{/if}}

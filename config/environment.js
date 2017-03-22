@@ -16,12 +16,6 @@ module.exports = function (environment) {
         Date: false
       }
     },
-    'ember-cli-toggle': {
-      includedThemes: ['light'],
-      defaultTheme: 'light',
-      defaultOffLabel: '::false',
-      defaultOnLabel: '::true'
-    },
 
     APP: {
       // Here you can pass flags/options to your application instance

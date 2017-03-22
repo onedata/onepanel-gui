@@ -142,6 +142,8 @@ export default Ember.Component.extend({
       } = this.getProperties(
         'formValues'
       );
+      console.log(field);
+      console.log(value);
 
       if (this.isKnownField(field)) {
         formValues.set(field, value);
