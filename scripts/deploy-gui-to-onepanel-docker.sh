@@ -17,4 +17,4 @@ docker exec ${DOCKER_ID} rm -rf ${DOCKER_GUI_DIR} &&
 echo "Copying ${TMP_GUI_DIR} to ${DOCKER_GUI_DIR} in ${DOCKER_ID} container..."
 docker cp $TMP_GUI_DIR ${DOCKER_ID}:${DOCKER_GUI_PARENT_DIR} &&
 
-echo "Deploying to ${SERVICE_NAME} done!"
+echo "Deploying to ${ONEPANEL_SERVICE_TYPE} done!"
