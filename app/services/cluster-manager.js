@@ -157,23 +157,28 @@ export default Service.extend({
 
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {
-          let checkRegister = this._checkIsProviderRegistered(onepanelServer);
-          checkRegister.then(isProviderRegistered => {
-            if (isProviderRegistered) {
-              let checkStorage = this._checkIsAnyStorage(onepanelServer);
-              checkStorage.then(isAnyStorage => {
-                if (isAnyStorage) {
-                  resolve(3);
-                } else {
-                  resolve(2);
-                }
-              });
-              checkStorage.catch(reject);
-            } else {
-              resolve(1);
-            }
-          });
-          checkRegister.catch(reject);
+          // TODO VFS-3119
+          if (ONEPANEL_SERVICE_TYPE === 'zone') {
+            resolve(1);
+          } else {
+            let checkRegister = this._checkIsProviderRegistered(onepanelServer);
+            checkRegister.then(isProviderRegistered => {
+              if (isProviderRegistered) {
+                let checkStorage = this._checkIsAnyStorage(onepanelServer);
+                checkStorage.then(isAnyStorage => {
+                  if (isAnyStorage) {
+                    resolve(3);
+                  } else {
+                    resolve(2);
+                  }
+                });
+                checkStorage.catch(reject);
+              } else {
+                resolve(1);
+              }
+            });
+            checkRegister.catch(reject);
+          }
         } else {
           resolve(0);
         }
