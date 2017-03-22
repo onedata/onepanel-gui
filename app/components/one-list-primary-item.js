@@ -4,7 +4,6 @@ const {
   computed: {
     readOnly
   },
-  computed
 } = Ember;
 
 export default Ember.Component.extend({
