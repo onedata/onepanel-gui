@@ -1,0 +1,23 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.1.0",
+  "command": "bash",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "echoCommand": true,
+  "options": {
+    "env": {
+      "ONEPANEL_SERVICE_TYPE": "provider",
+      "TMP_GUI_PARENT_DIR": "/Users/kliput/Ubuntu/tmp"
+    }
+  },
+  "tasks": [
+    {
+      "taskName": "deploy to docker",
+      "args": ["./scripts/deploy-gui-to-onepanel-docker.sh"],
+      "isBuildCommand": true,
+      "suppressTaskName": true
+    }
+  ]
+}
