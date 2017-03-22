@@ -1,44 +1,32 @@
 <td>{{host.hostname}}</td>
 <td>
-  {{x-toggle
-    value=host.database
-    showLabels=false
-    onLabel="::true"
-    offLabel="::false"
-    onToggle=(action "checkboxChanged")
+  {{one-way-toggle
+    checked=host.database
+    update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="database"
   }}
 </td>
 <td>
-  {{x-toggle
-    value=host.clusterWorker
-    showLabels=false
-    onLabel="::true"
-    offLabel="::false"
-    onToggle=(action "checkboxChanged")
+  {{one-way-toggle
+    checked=host.clusterWorker
+    update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterWorker"
   }}
 </td>
 <td>
-  {{x-toggle
-    value=host.clusterManager
-    showLabels=false
-    onLabel="::true"
-    offLabel="::false"
-    onToggle=(action "checkboxChanged")
+  {{one-way-toggle
+    checked=host.clusterManager
+    update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterManager"
   }}
 </td>
 <td>
-  {{x-toggle
-    value=isPrimaryClusterManager
-    showLabels=false
-    onLabel="::true"
-    offLabel="::false"
-    onToggle=(action "primaryClusterManagerChanged" host.hostname)
+  {{one-way-toggle
+    checked=isPrimaryClusterManager
+    update=(action "primaryClusterManagerChanged" host.hostname)
     hostHostname=host.hostname
     hostOption="primaryClusterManager"
   }}

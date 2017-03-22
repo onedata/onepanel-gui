@@ -19,12 +19,6 @@ module.exports = function (environment) {
         Date: false
       }
     },
-    'ember-cli-toggle': {
-      includedThemes: ['light'],
-      defaultTheme: 'light',
-      defaultOffLabel: '::false',
-      defaultOnLabel: '::true'
-    },
     onedataTabs: [
       'clusters'
     ],

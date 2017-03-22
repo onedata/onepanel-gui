@@ -1,0 +1,59 @@
+$toggle-size-base: 1.4em;
+
+.one-way-toggle {
+  position: relative;
+  
+  &.form-control {
+    background-color: inherit;
+    border: 0;
+    box-shadow: none;  
+    padding-top: $padding-base-vertical + 2px;
+    padding-bottom: $padding-base-vertical - 2px;
+  }
+
+  input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+
+    &:focus + div::before {
+      border: 1px solid #66afe9;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(47, 153, 252, 0.6);
+    }
+
+    &:checked + div {
+      background-color: $brand-success;
+    }
+
+    &:checked + div:before {
+      margin-left: $toggle-size-base;
+    }
+  }
+
+  div, div:before {
+    border: 1px solid $input-border;
+    border-radius: $toggle-size-base / 2;
+    box-sizing: border-box;
+    content: "";
+    height: $toggle-size-base;
+  }
+
+  div {
+    background-color: white;
+    transition: background-color 0.2s ease;
+    width: $toggle-size-base * 2;
+  }
+
+  div:before {
+    display: block;
+    background-color: $input-bg;
+    position: relative;
+    transition: margin-left 0.2s ease;
+    width: $toggle-size-base;
+    left: -1px;
+    top: -1px;
+  }
+}
+
+.form-horizontal .control-label.toggle-label {
+  padding-top: 13px;
+}

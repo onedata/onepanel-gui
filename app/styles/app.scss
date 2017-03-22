@@ -55,6 +55,7 @@ $one-list-item-active-left-border-width: 8px;
 @import 'login-box';
 @import 'one-list-wrapper';
 @import 'two-level-sidebar';
+@import 'one-way-toggle';
 
 // TODO a mess
 
@@ -75,4 +76,3 @@ body {
   color: $color-one-white;
   background-color: blue;
 }
-
