@@ -32,7 +32,7 @@ $brand-danger:          $color-one-danger;
 //** Background color for `<body>`.
 $body-bg:               #fff !default;
 //** Global text color on `<body>`.
-$text-color:            $gray-dark !default;
+$text-color:            $gray !default;
 
 //** Global textual link color.
 $link-color:            $brand-primary !default;
@@ -123,7 +123,7 @@ $line-height-small:         1.5 !default;
 $border-radius-base:        4px !default;
 $border-radius-base:        8px;
 $border-radius-large:       6px !default;
-$border-radius-large:       8px;
+$border-radius-large:       14px;
 $border-radius-small:       3px !default;
 $border-radius-small:       8px;
 
@@ -645,17 +645,22 @@ $modal-title-line-height:     $line-height-base !default;
 $modal-content-bg:                             #fff !default;
 //** Modal content border color
 $modal-content-border-color:                   rgba(0,0,0,.2) !default;
+$modal-content-border-color:                   transparent;
 //** Modal content border color **for IE8**
 $modal-content-fallback-border-color:          #999 !default;
+$modal-content-fallback-border-color:          transparent;
 
 //** Modal backdrop background color
 $modal-backdrop-bg:           #000 !default;
 //** Modal backdrop opacity
 $modal-backdrop-opacity:      .5 !default;
+$modal-backdrop-opacity:      .55;
 //** Modal header border color
 $modal-header-border-color:   #e5e5e5 !default;
+$modal-header-border-color:   transparent;
 //** Modal footer border color
 $modal-footer-border-color:   $modal-header-border-color !default;
+$modal-footer-border-color:   transparent;
 
 $modal-lg:                    900px !default;
 $modal-md:                    600px !default;

@@ -152,11 +152,59 @@ $input-bg-light: $color-one-white;
 @import "bootstrap/wells";
 @import "bootstrap/close";
 
+.progress {
+  box-shadow: none;
+
+  .progress-bar {
+    border-radius: inherit;
+  }
+}
+
 // Components w/ JavaScript
 @import "bootstrap/modals";
 @import "bootstrap/tooltip";
 @import "bootstrap/popovers";
 @import "bootstrap/carousel";
+
+.modal {
+  &.in {
+    .modal-dialog {
+      @include absolute-align-middle-center();
+
+      margin: 0;
+      transition: initial;
+      border-radius: $border-radius-large;
+
+      .modal-content {
+        box-shadow: none;
+        padding: 0 3em 1em 3em;
+
+        .modal-header {
+          text-align: center;
+          
+          .close {
+            display: none;
+          }
+        }
+
+        h1 {
+            font-size: $font-size-base * 1.5;
+            font-family: 'Open Sans Semibold';
+            letter-spacing: 0.7px;
+            margin-bottom: 1em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+      }
+    }
+  }
+  &.fade {
+    transition: initial;
+    .modal-dialog {
+      transition: initial;
+    }
+  }
+}
 
 // Utility classes
 @import "bootstrap/utilities";

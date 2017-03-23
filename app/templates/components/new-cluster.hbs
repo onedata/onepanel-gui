@@ -1,6 +1,5 @@
 {{!-- TODO: current index is here hardcoded --}}
 {{#one-wizard steps=steps currentIndex=0 as |w|}}
-  {{!--<h1>{{w.step.title}}</h1>--}} <!-- TODO move titles into components -->
   {{#if (eq w.index 0)}}
     {{new-cluster-installation
       clusterConfigurationSuccess=(action "clusterConfigurationSuccess")
