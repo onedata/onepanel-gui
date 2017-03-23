@@ -30,6 +30,8 @@ export default Ember.Service.extend({
   alert: service(),
 
   info: aliasToShow('info'),
+  success: aliasToShow('success'),
+  warning: aliasToShow('warning'),
   error: aliasToShow('error'),
 
   /**
@@ -39,12 +41,13 @@ export default Ember.Service.extend({
   show(type, message) {
     switch (type) {
     case 'error':
-    case 'fatal':
       console.error('global-notify: Error reported: ' + message);
-      this.get('alert').error(message);
+      this.get('alert').show(type, message);
       break;
+    case 'warning':
     case 'info':
-      this.get('notify').info(message);
+    case 'success':
+      this.get('notify').show(type, message);
       break;
     default:
       break;

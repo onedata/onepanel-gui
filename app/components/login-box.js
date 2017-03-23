@@ -14,7 +14,7 @@ const {
 export default Ember.Component.extend({
   classNames: ['login-box'],
 
-  notify: service(),
+  globalNotify: service(),
   onepanelServer: service(),
 
   authLoadingPromise: readOnly('onepanelServer.sessionValidator.promise'),
@@ -35,13 +35,13 @@ export default Ember.Component.extend({
     },
 
     authenticationSuccess() {
-      this.get('notify').success('Authentication succeeded!');
+      this.get('globalNotify').success('Authentication succeeded!');
       this.sendAction('authenticationSuccess');
       this.set('isBusy', false);
     },
 
     authenticationFailure() {
-      this.get('notify').warning('Authentication failed!');
+      this.get('globalNotify').warning('Authentication failed!');
       this.set('isBusy', false);
     }
   }

@@ -21,8 +21,6 @@ function aliasToShow(type) {
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default Ember.Service.extend({
-  notify: service(),
-
   opened: false,
   type: null,
   text: null,
