@@ -1,11 +1,5 @@
 import Ember from 'ember';
 
-const {
-  inject: {
-    service
-  }
-} = Ember;
-
 function aliasToShow(type) {
   return function (message, options) {
     return this.show(type, message, options);

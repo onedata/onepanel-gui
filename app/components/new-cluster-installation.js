@@ -20,6 +20,9 @@ const {
     camelize
   },
   computed,
+  run: {
+    scheduleOnce
+  },
 } = Ember;
 
 const {
@@ -69,7 +72,6 @@ export default Ember.Component.extend({
 
   /**
    * Resolves with EmberArray of HostInfo.
-   *
    * @type {ObjectPromiseProxy}
    */
   hostsProxy: null,
@@ -78,9 +80,10 @@ export default Ember.Component.extend({
    * If true, the deploy action can be invoked
    * @type {boolean}
    */
-  _canDeploy: false,
+  canDeploy: false,
 
   /**
+   * List of hosts that should be presented to user for deployment
    * @type {EmberArray.HostInfo}
    */
   hosts: readOnly('hostsProxy.content'),
@@ -112,7 +115,6 @@ export default Ember.Component.extend({
   configureFinished() {
     invokeAction(this, 'clusterConfigurationSuccess');
     invokeAction(this, 'nextStep');
-    // });
   },
 
   configureFailed({ taskStatus }) {
@@ -135,7 +137,7 @@ export default Ember.Component.extend({
   },
 
   /**
-   * 
+   * Create an object of cluster deployment configuration using onepanel lib
    * @param {string} serviceType one of: provider, zone
    * @return {Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration}
    */
@@ -211,7 +213,6 @@ export default Ember.Component.extend({
 
   /**
    * Bind on events of deployment task. 
-   *
    * @param {jQuery.Promise} task 
    */
   watchDeployStatus(task) {
@@ -247,7 +248,7 @@ export default Ember.Component.extend({
      * @param {boolean} isValid 
      */
     hostTableValidChanged(isValid) {
-      this.set('_canDeploy', isValid);
+      scheduleOnce('afterRender', this, () => this.set('canDeploy', isValid));
     },
 
     /**
@@ -261,6 +262,10 @@ export default Ember.Component.extend({
      * @return {Promise}
      */
     startDeploy() {
+      if (this.get('canDeploy') !== true) {
+        return new Promise((_, reject) => reject());
+      }
+
       // TODO do not allow if not valid data
       let start = this.startDeploy();
       start.then(({ data, task }) => {

@@ -6,12 +6,11 @@
   <div class="btn-toolbar">
     {{!-- the spin-button has no disable support, so fork this or use another component... --}}
     {{#spin-button
-      class=(concat "btn btn-primary pull-right " (unless _canDeploy "disabled"))
+      class=(concat "btn btn-primary btn-deploy-cluster pull-right " (unless canDeploy "disabled"))
       action=(action "startDeploy")
     }}
       Deploy
-      {{!-- TODO if form is not valid, disable the button and show warn info on hover --}}
-      {{bs-tooltip title="Configuration is invalid" placement="left"}}
+      {{bs-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
     {{/spin-button}}
   </div>
 </div>
@@ -27,9 +26,10 @@
   {{else}}
     {{!-- TODO make a component that got a object promise proxy and watches
     completion --}}
-    {{#if hosts.isPending}}
-      Loading...
+    {{#if hostsProxy.isPending}}
+      {{spin-spinner-block sizeClass="md" class="centered"}}
     {{else if hosts.isRejected}}
+      {{!-- TODO --}}
       Rejected!
     {{/if}}
   {{/if}}
@@ -40,8 +40,8 @@
   {{#bs-modal
     id="cluster-deploy-progress"
     open=deploymentPromise
-    body=false
-    footer=true
+    keyboard=false
+    backdropClose=false
     as |modal|
   }}
     {{#modal.body}}
