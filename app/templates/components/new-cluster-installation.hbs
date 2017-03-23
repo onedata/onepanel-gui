@@ -2,16 +2,17 @@
 
 {{!-- TODO validation - if not ready to deploy, disable button --}}
 
-<div class="row">
-  <div class="btn-toolbar">
-    {{#spin-button class="btn btn-primary pull-right" action=(action "startDeploy")}}
-      Deploy
-    {{/spin-button}}
-    {{!-- TODO: config icon --}}
-    {{#bs-button type="default" class="pull-right"}}
-      Global settings
-    {{/bs-button}}
-  </div>
+<div class="row content-row">
+  <h1 class="">Hosts list
+    <div class="btn-toolbar">
+      {{#bs-button type="default" class="btn-sm"}}
+        {{one-icon icon="settings"}}<span>Global settings</span>
+      {{/bs-button}}
+      {{#spin-button class="btn btn-primary btn-sm" action=(action "startDeploy")}}
+        <span>Deploy</span>{{one-icon icon="arrow-right"}}
+      {{/spin-button}}
+    </div>
+  </h1>
 </div>
 <div class="row">
   {{#if hostsProxy.isFulfilled}}

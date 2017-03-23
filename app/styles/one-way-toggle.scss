@@ -2,6 +2,8 @@ $toggle-size-base: 1.4em;
 
 .one-way-toggle {
   position: relative;
+  display: inline-block;
+  height: 1em;
   
   &.form-control {
     background-color: inherit;

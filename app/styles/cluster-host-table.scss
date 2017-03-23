@@ -1,0 +1,57 @@
+.cluster-host-table {
+  &:not(.bt) {
+    .toggle-column {
+      width: 15%;
+    }
+  }
+
+  thead tr th {
+    padding-bottom: 12px;
+    padding-top: 12px;
+    vertical-align: middle;
+  }
+
+  tbody tr td:first-child {
+    padding-left: 3em !important;
+    .one-icon {
+      font-size: 1.7em;
+      position: absolute;
+      left: 0.5em;
+    }
+  }
+
+  &.bt tbody tr {
+    border-left: 8px solid transparent;
+    &.active {
+      border-left: 8px solid $color-one-azure;
+    }
+    td {
+      font-size: 0.9em;
+      text-align: right;
+      position: relative;
+      padding-left: 3em !important;
+
+      &:before {
+        content: attr(data-th) " ";
+        font-weight: normal;
+        float: left;
+        text-align: left;
+        width: auto;
+      }
+
+      &:first-child {
+        font-weight: bold;
+        text-align: left;
+        padding-left: 3em;
+        &:before {
+          display: none;
+        }
+      }
+
+      .one-way-toggle {
+        margin-top: -0.1em;
+        font-size: 1.4em;
+      }
+    }
+  }
+}

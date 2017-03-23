@@ -1,13 +1,13 @@
-import Ember from 'ember';
 import {
   InvokeActionMixin
 } from 'ember-invoke-action';
+import BasicTable from './basic-table';
 
 // TODO: validation TODO: is setting first options for some host, set this host
 // as a primary cluster manager
-export default Ember.Component.extend(InvokeActionMixin, {
+export default BasicTable.extend(InvokeActionMixin, {
   tagName: 'table',
-  classNames: ['cluster-host-table', 'table', 'table-striped'],
+  classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown'],
 
   hosts: null,
   primaryClusterManager: null,

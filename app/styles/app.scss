@@ -25,6 +25,7 @@ $zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
 // TODO: color not defined!
 $color-sidebar-background: #F2F4FA;
+$color-content-background: #F9F9FB;
 // TODO
 $color-one-list-item-separator: darken($color-sidebar-background, 5);
 $color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
@@ -36,6 +37,8 @@ $color-main-menu-bg-top: #06235C;
 $color-main-menu-bg-bottom: #4686CF;
 
 $one-list-item-active-left-border-width: 8px;
+
+$color-table-hover-row: #F2F4FA;
 
 @import 'common';
 
@@ -56,6 +59,9 @@ $one-list-item-active-left-border-width: 8px;
 @import 'one-list-wrapper';
 @import 'two-level-sidebar';
 @import 'one-way-toggle';
+@import 'main-content';
+@import 'cluster-host-table';
+@import 'cluster-host-table-row';
 
 // TODO a mess
 

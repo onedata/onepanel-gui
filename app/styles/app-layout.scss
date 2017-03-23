@@ -62,7 +62,12 @@
   }
   .col-content {
     // TODO similar 30px
+    background-color: $color-content-background;
     padding: 30px;
+
+    @media (max-width: $screen-xs-max) {
+      padding: 0px;
+    }
   }
 }
 

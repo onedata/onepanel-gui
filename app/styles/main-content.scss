@@ -1,0 +1,52 @@
+.main-content {
+  color: $gray;
+
+  .content-row {
+    border-bottom: 1px solid #e0e4f3;
+    padding: 12px 0;
+
+    h1 {
+      font-size: $font-size-base;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 2.5;
+      margin: 0;
+    }
+
+    &.no-border {
+      border-bottom: 0;
+    }
+
+    .btn-toolbar {
+      text-align: right;
+      float: right;
+      margin-left: 0;
+      .btn {
+        float: none;
+        margin-left: 1.8em;
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-sm) {
+    .content-row {
+      border-bottom: 0;
+
+      h1 {
+        padding: 0 1.5em;
+        font-size: $font-size-base * 0.9;
+      }
+      .btn-toolbar {
+        .btn {
+          font-size: 0.85em;
+          margin-left: 0.8em;
+        }
+      }
+    }
+  }
+}
