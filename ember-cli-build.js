@@ -23,8 +23,6 @@ module.exports = function (defaults) {
     'ember-cli-bootstrap-sassy': {
       // import SASS styles and some JS that is used outside of ember-bootstrap components 
       'js': [
-        // TODO: use ember-bootstrap tooltip (needs refactoring and removing own bs-tooltip component)
-        'tooltip',
         'transition',
         // TODO: rewrite collapses to ember-bootstrap components
         'collapse',
@@ -39,7 +37,8 @@ module.exports = function (defaults) {
     'ember-bootstrap': {
       'importBootstrapCSS': false,
       'importBootstrapTheme': false,
-      'importBootstrapFont': false
+      'importBootstrapFont': true,
+      'bootstrapVersion': 3
     }
   });
 
