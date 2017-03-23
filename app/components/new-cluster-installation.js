@@ -63,6 +63,7 @@ export default Ember.Component.extend({
 
   onepanelServer: service(),
   clusterManager: service(),
+  globalNotify: service(),
 
   primaryClusterManager: null,
 
@@ -114,18 +115,11 @@ export default Ember.Component.extend({
     // });
   },
 
-  configureFailed({
-    error,
-    taskStatus
-  }) {
-    if (error) {
-      console.error(
-        `Configure provider failed (${error.response.statusCode}): ${error.response.text}`
-      );
-    } else if (taskStatus) {
-      console.error(
-        `Configure provider failed: ${JSON.stringify(taskStatus)}`);
-    }
+  configureFailed({ taskStatus }) {
+    this.get('globalNotify').error(
+      'Deployment cannot complete because of error: ' +
+      taskStatus.error
+    );
   },
 
   getNodes() {
@@ -195,14 +189,11 @@ export default Ember.Component.extend({
       // TODO use oneprovider or onezone api
       let onepanelServer = this.get('onepanelServer');
       let providerConfiguration = this.createConfiguration(ONEPANEL_SERVICE_TYPE);
-      let startConfiguringProvider =
-        onepanelServer.request(
-          'one' + ONEPANEL_SERVICE_TYPE,
-          camelize(`configure-${ONEPANEL_SERVICE_TYPE}`),
-          providerConfiguration
-        );
-
-      startConfiguringProvider.then(resolve, reject);
+      onepanelServer.request(
+        'one' + ONEPANEL_SERVICE_TYPE,
+        camelize(`configure-${ONEPANEL_SERVICE_TYPE}`),
+        providerConfiguration
+      ).then(resolve, reject);
     });
   },
 
@@ -271,15 +262,17 @@ export default Ember.Component.extend({
      */
     startDeploy() {
       // TODO do not allow if not valid data
-      let start = this.startDeploy()
-        .then(({ data, task }) => {
-          this.showDeployProgress(task);
-          this.watchDeployStatus(task);
-        })
-        .catch(error => {
-          // TODO better error handling
-          console.error('Cannot start deploy: ' + JSON.stringify(error));
-        });
+      let start = this.startDeploy();
+      start.then(({ data, task }) => {
+        this.showDeployProgress(task);
+        this.watchDeployStatus(task);
+      });
+      start.catch(( /*error*/ ) => {
+        // TODO better error handling - get error type etc.
+        this.get('globalNotify').error(
+          'Deployment cannot start because of internal server error'
+        );
+      });
       return start;
     }
   }
