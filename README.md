@@ -1,52 +1,73 @@
-# onepanel-gui
+About
+=====
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+*onepanel-gui* is GUI written in Ember distributed with Onedata panels.
 
-## Prerequisites
+Goals
+-----
 
-You will need the following things properly installed on your computer.
+This repo allows to separate GUI from panel repos, which improves
+ease of maintenance and lowers build times.
 
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with NPM)
-* [Bower](https://bower.io/)
-* [Ember CLI](https://ember-cli.com/)
-* [PhantomJS](http://phantomjs.org/)
+It is able to build a release containing only compiled GUI static files
+and create a static docker with those files.
 
-## Installation
+Getting Started
+---------------
 
-* `git clone <repository-url>` this repository
-* `cd onepanel-gui`
-* `npm install`
-* `bower install`
+To build a development release of GUI:
 
-## Running / Development
+```
+make             # run natively (requires npm, bower, ember)
+./make.py        # run in docker (onedata/gui_builder) that has all deps
+```
+<br />
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
+To build a production release of GUI:
 
-### Code Generators
+```
+make rel         # run natively (requires npm, bower, ember)
+./make.py rel    # run in docker (onedata/gui_builder) that has all deps
+```
+<br />
 
-Make use of the many generators for code, try `ember help generate` for more details
+To package a built release into a static docker:
 
-### Running Tests
+```
+./sr-dockerbuild
+```
+<br />
 
-* `ember test`
-* `ember test --server`
+To package a built release into a static docker and
+push it to docker repo:
 
-### Building
+```
+./sr-dockerbuild --push --remove
+```
+<br />
 
-* `ember build` (development)
-* `ember build --environment production` (production)
+To get more info on ****sr-dockerbuild.sh**** usage:
 
-### Deploying
+```
+./sr-dockerbuild --help
+```
+<br />
 
-Specify what it takes to deploy your app.
+To start an ember build process that watches for changes and rebuilds:
 
-## Further Reading / Useful Links
+```
+./build_watch.sh
+```
+<br />
 
-* [ember.js](http://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+To find all broken symbolic links (those that point to nothing):
+
+```
+./find_broken_links.sh
+```
+<br />
+
+Support
+-------
+
+For more information visit onedata.org
