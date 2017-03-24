@@ -2,6 +2,7 @@ import {
   InvokeActionMixin
 } from 'ember-invoke-action';
 import BasicTable from './basic-table';
+import Ember from 'ember';
 
 import { validator, buildValidations } from 'ember-cp-validations';
 
