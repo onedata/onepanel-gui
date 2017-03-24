@@ -9,6 +9,7 @@
 
 import ContentInfo from 'onepanel-gui/components/content-info';
 import layout from 'onepanel-gui/templates/components/content-info';
+import { invokeAction } from 'ember-invoke-action';
 
 // TODO: i18n
 export default ContentInfo.extend({
@@ -20,6 +21,6 @@ export default ContentInfo.extend({
   buttonLabel: 'Create new cluster',
 
   buttonAction() {
-    this.sendAction('transitionTo', 'onedata.sidebar.content', 'clusters', 'new');
+    invokeAction(this, 'start', true);
   }
 });

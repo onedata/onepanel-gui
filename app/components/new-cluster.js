@@ -16,6 +16,8 @@ import { invokeAction } from 'ember-invoke-action';
 export default Ember.Component.extend({
   initStepIndex: 0,
 
+  _isInProcess: false,
+
   // TODO: i18n
   steps: [{
     id: 0,
@@ -30,6 +32,11 @@ export default Ember.Component.extend({
     id: 3,
     title: 'summary'
   }],
+
+  init() {
+    this._super(...arguments);
+    this.set('_isInProcess', this.get('initStepIndex') > 0);
+  },
 
   actions: {
     clusterConfigurationSuccess() {
