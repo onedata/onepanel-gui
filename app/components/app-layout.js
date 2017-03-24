@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -15,6 +16,21 @@ const {
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
+/**
+ * Makes layout for whole application in authorized mode.
+ *
+ * Renders a main menu, mobile menu and sidebar and content grid. Yields
+ * "sidebar" or "content" strings for placing a content for these particular
+ * parts of view.
+ *
+ * Invokes actions passed as parameters:
+ * - changeTab(itemId: string) - when a content route should be changed
+ *
+ * @module components/app-layout
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 export default Ember.Component.extend({
   classNames: ['app-layout'],
 
@@ -114,7 +130,7 @@ export default Ember.Component.extend({
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
-      this.sendAction('changeTab', itemId);
+      invokeAction(this, 'changeTab', itemId);
     },
     showMobileSidebar() {
       this.set('showMobileSidebar', true);

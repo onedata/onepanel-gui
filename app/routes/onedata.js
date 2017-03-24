@@ -1,3 +1,12 @@
+/**
+ * A parent for all routes for authenticated user
+ *
+ * @module routes/onedata
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invoke } from 'ember-invoke-action';
 import AppModel from 'onepanel-gui/utils/app-model';
@@ -6,15 +15,9 @@ import config from 'ember-get-config';
 const {
   Route,
   A,
-  RSVP: {
-    Promise
-  },
-  inject: {
-    service
-  },
-  computed: {
-    readOnly
-  }
+  RSVP: { Promise },
+  inject: { service },
+  computed: { readOnly },
 } = Ember;
 
 const {

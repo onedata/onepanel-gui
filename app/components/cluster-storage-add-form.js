@@ -1,3 +1,12 @@
+/**
+ * A form for adding new storage with all storage types available
+ *
+ * @module components/cluster-storage-add-form
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 
@@ -176,8 +185,6 @@ export default Ember.Component.extend({
         formData[name] = formValues.get(name);
       });
 
-      // FIXME debug
-      // TODO make regular object
       return invokeAction(this, 'submit', formData);
     },
   }

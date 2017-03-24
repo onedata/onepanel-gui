@@ -1,12 +1,26 @@
+/**
+ * Redirects to a default resource content view in collection or empty information
+ *
+ * @module routes/onedata/sidebar/index
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
+const {
+  inject: { service },
+} = Ember;
+
 function getDefaultResourceId(collection) {
-  // TODO get id
   let defaultResource = collection.objectAt(0);
   return defaultResource.id != null ? defaultResource.id : defaultResource.get('id');
 }
 
 export default Ember.Route.extend({
+  globalNotify: service(),
+
   model() {
     return this.modelFor('onedata.sidebar');
   },
@@ -17,9 +31,9 @@ export default Ember.Route.extend({
     if (resourceIdToRedirect != null) {
       this.transitionTo(`onedata.sidebar.content`, resourceType, resourceIdToRedirect);
     } else {
-      // TODO notify about error
-      console.error(
-        'collection is not empty, but cannot get default resource id - this is an error unhandled error'
+      // TODO i18n
+      this.get('globalNotify').error(
+        'Collection is not empty, but cannot get default resource ID - this is a fatal routing error'
       );
       transition.abort();
     }

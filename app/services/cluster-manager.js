@@ -1,3 +1,12 @@
+/**
+ * Provides data for routes and components assoctiated with clusters tab
+ *
+ * @module services/cluster-manager
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails from 'onepanel-gui/models/cluster-details';

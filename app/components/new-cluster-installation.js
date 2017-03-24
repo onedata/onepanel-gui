@@ -1,3 +1,16 @@
+/**
+ * Cluster init step: installation a.k.a. deployment
+ *
+ * Invokes passed actions:
+ * - clusterConfigurationSuccess()
+ * - nextStep() - a next step of cluster init should be presented
+ *
+ * @module components/new-cluster-installation
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
@@ -5,24 +18,14 @@ import config from 'ember-get-config';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 
 const {
-  assert,
-  inject: {
-    service
-  },
-  RSVP: {
-    Promise
-  },
-  computed: {
-    readOnly
-  },
   A,
-  String: {
-    camelize
-  },
+  assert,
+  inject: { service },
+  RSVP: { Promise },
   computed,
-  run: {
-    scheduleOnce
-  },
+  computed: { readOnly },
+  String: { camelize },
+  run: { scheduleOnce },
 } = Ember;
 
 const {

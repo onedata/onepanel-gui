@@ -43,6 +43,19 @@ let Validations = buildValidations(generateColumnValidations(roles));
 
 // TODO: validation TODO: is setting first options for some host, set this host
 // as a primary cluster manager
+
+/**
+ * Renders a table in which roles can be set to hosts for cluster deployment 
+ *
+ * Invokes passed actions:
+ * - hostOptionChanged(hostname: string, option: string, value: boolean)
+ * - primaryClusterManagerChanged(hostname: string, isSet: boolean)
+ *
+ * @module components/cluster-host-table
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 export default Ember.Component.extend(
   InvokeActionMixin,
   hostColumnComputedProperties(roles),
@@ -50,7 +63,12 @@ export default Ember.Component.extend(
     tagName: 'table',
     classNames: ['cluster-host-table', 'table', 'table-striped'],
 
+    /**
+     * To inject.
+     * @type {Array.HostInfo}
+     */
     hosts: null,
+
     primaryClusterManager: null,
 
     allValid: computed.readOnly('validations.isValid'),

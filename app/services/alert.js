@@ -6,14 +6,7 @@ function aliasToShow(type) {
   };
 }
 
-/**
- * Opens a simple alert modal using modal included in application template. 
- *
- * @module services/alert
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
- * @license This software is released under the MIT license cited in 'LICENSE.txt'.
- */
+
 export default Ember.Service.extend({
   opened: false,
   type: null,

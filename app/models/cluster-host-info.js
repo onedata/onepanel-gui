@@ -1,3 +1,14 @@
+/**
+ * A model of host that can be used for deployment of cluster
+ *
+ * Contains roles that the host will provide in cluster.
+ *
+ * @module models/cluster-host-info
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
