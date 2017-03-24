@@ -1,5 +1,5 @@
 /**
- * An abstraction layer for getting data for sidebar of various tabs
+ * An abstraction layer for getting data for content of various tabs
  *
  * @module services/content-resources
  * @author Jakub Liput
@@ -25,13 +25,13 @@ export default Ember.Service.extend({
    * @param {string} type
    * @returns {Promise}
    */
-  getCollectionFor(type) {
+  getModelFor(type, id) {
     switch (type) {
     case 'clusters':
-      return this.get('clusterManager.clustersProxy.promise');
+      return this.get('clusterManager').getClusterDetails(id);
 
     default:
-      return new Promise((resolve, reject) => reject('No such collection: ' + type));
+      return new Promise((resolve, reject) => reject('No such model type: ' + type));
     }
-  }
+  },
 });

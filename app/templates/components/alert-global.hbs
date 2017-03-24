@@ -1,0 +1,18 @@
+{{#bs-modal
+  open=open
+  size="sm"
+  onHide=(action "onHide")
+  as |modal|
+}}
+  {{#modal.body}}
+    {{text}}
+  {{/modal.body}}
+  {{#modal.footer}}
+    {{#bs-button 
+      onClick=(action modal.close)
+      class="btn-sm btn-primary"
+    }}
+      Close
+    {{/bs-button}}
+  {{/modal.footer}}
+{{/bs-modal}}

@@ -1,21 +1,28 @@
+/**
+ * A parent for all routes for authenticated user
+ *
+ * @module routes/onedata
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invoke } from 'ember-invoke-action';
-
-import AppModel from 'onepanel-web-frontend/utils/app-model';
+import AppModel from 'onepanel-gui/utils/app-model';
+import config from 'ember-get-config';
 
 const {
   Route,
   A,
-  RSVP: {
-    Promise
-  },
-  inject: {
-    service
-  },
-  computed: {
-    readOnly
-  }
+  RSVP: { Promise },
+  inject: { service },
+  computed: { readOnly },
 } = Ember;
+
+const {
+  onedataTabs
+} = config;
 
 export default Route.extend({
   onepanelServer: service(),
@@ -35,27 +42,13 @@ export default Route.extend({
   },
 
   model() {
-    let fakeMainMenuItems = A([
-      // 'providers',
-      // 'data',
-      // 'promises',
-      // 'spaces',
-      // 'groups',
-      // 'shares',
-      // 'tokens',
-      'clusters'
-    ]).map(id => ({
+    let mainMenuItems = A(onedataTabs).map(id => ({
       id,
-      // FIXME disabled true
       disabled: false
     }));
 
-    fakeMainMenuItems.findBy('id', 'clusters').disabled = false;
-
     return new Promise((resolve) => {
-      resolve(AppModel.create({
-        mainMenuItems: fakeMainMenuItems
-      }));
+      resolve(AppModel.create({ mainMenuItems }));
     });
   },
 

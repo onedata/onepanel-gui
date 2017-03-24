@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -15,6 +16,21 @@ const {
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
+/**
+ * Makes layout for whole application in authorized mode.
+ *
+ * Renders a main menu, mobile menu and sidebar and content grid. Yields
+ * "sidebar" or "content" strings for placing a content for these particular
+ * parts of view.
+ *
+ * Invokes actions passed as parameters:
+ * - changeTab(itemId: string) - when a content route should be changed
+ *
+ * @module components/app-layout
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 export default Ember.Component.extend({
   classNames: ['app-layout'],
 
@@ -28,20 +44,20 @@ export default Ember.Component.extend({
   sidenavTabId: null,
   showMobileSidebar: false,
 
-  sidenavContentComponent: computed('sidenavTabId', function() {
+  sidenavContentComponent: computed('sidenavTabId', function () {
     let sidenavTabId = this.get('sidenavTabId');
     return `sidebar-${sidenavTabId}`;
   }),
 
-  sidenavModel: computed('sidenavTabId', function() {
+  sidenavModel: computed('sidenavTabId', function () {
     let {
       sidenavTabId,
       sidebarResources
     } = this.getProperties('sidenavTabId', 'sidebarResources');
-    
+
     let resourceType = sidenavTabId;
 
-    let gettingModel = sidebarResources.getModelFor(resourceType);
+    let gettingModel = sidebarResources.getCollectionFor(resourceType);
     let promise = new Promise((resolve, reject) => {
       gettingModel.then(collection => {
         resolve({
@@ -55,16 +71,18 @@ export default Ember.Component.extend({
     return ObjectPromiseProxy.create({ promise });
   }),
 
-  colSidebarClass: computed('showMobileSidebar', function() {
+  colSidebarClass: computed('showMobileSidebar', function () {
     let showMobileSidebar = this.get('showMobileSidebar');
-    let base = 'col-in-app-layout col-sidebar col-sm-4 col-md-3 col-lg-2 full-height disable-user-select';
+    let base =
+      'col-in-app-layout col-sidebar col-sm-4 col-md-3 col-lg-2 full-height disable-user-select';
     let xsClass = (showMobileSidebar ? 'col-xs-12' : 'hidden-xs');
     return htmlSafe(`${base} ${xsClass}`);
   }),
 
-  colContentClass: computed('showMobileSidebar', function() {
+  colContentClass: computed('showMobileSidebar', function () {
     let showMobileSidebar = this.get('showMobileSidebar');
-    let base = 'col-in-app-layout col-content col-sm-8 col-md-9 col-lg-10 full-height';
+    let base =
+      'col-in-app-layout col-content col-sm-8 col-md-9 col-lg-10 full-height';
     let xsClass = (showMobileSidebar ? 'hidden-xs' : 'col-xs-12');
     return htmlSafe(`${base} ${xsClass}`);
   }),
@@ -100,7 +118,7 @@ export default Ember.Component.extend({
       } = this.getProperties('sidenavTabId', 'currentTabId');
       let shouldOpen = (
         (!sidenavTabId && currentTabId !== itemId) ||
-        (!!sidenavTabId && sidenavTabId !== itemId)        
+        (!!sidenavTabId && sidenavTabId !== itemId)
       );
       let action = (shouldOpen ? 'open' : 'close');
       this.get('eventsBus').trigger('one-sidenav:' + action, '#sidenav-sidebar');
@@ -112,7 +130,7 @@ export default Ember.Component.extend({
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
-      this.sendAction('changeTab', itemId);
+      invokeAction(this, 'changeTab', itemId);
     },
     showMobileSidebar() {
       this.set('showMobileSidebar', true);

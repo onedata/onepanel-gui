@@ -1,3 +1,12 @@
+/**
+ * A component when available login options should be presented
+ *
+ * @module components/login-box
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
@@ -14,7 +23,7 @@ const {
 export default Ember.Component.extend({
   classNames: ['login-box'],
 
-  notify: service(),
+  globalNotify: service(),
   onepanelServer: service(),
 
   authLoadingPromise: readOnly('onepanelServer.sessionValidator.promise'),
@@ -35,13 +44,13 @@ export default Ember.Component.extend({
     },
 
     authenticationSuccess() {
-      this.get('notify').success('Authentication succeeded!');
+      this.get('globalNotify').success('Authentication succeeded!');
       this.sendAction('authenticationSuccess');
       this.set('isBusy', false);
     },
 
     authenticationFailure() {
-      this.get('notify').warning('Authentication failed!');
+      this.get('globalNotify').warning('Authentication failed!');
       this.set('isBusy', false);
     }
   }

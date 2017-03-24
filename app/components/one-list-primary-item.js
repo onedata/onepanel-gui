@@ -1,10 +1,20 @@
+/**
+ * A first-level item in structurized one-list
+ *
+ * Currently used in ``two-level-sidebar``
+ *
+ * @module components/one-list-primary-item
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
   computed: {
     readOnly
   },
-  computed
 } = Ember;
 
 export default Ember.Component.extend({
