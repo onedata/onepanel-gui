@@ -1,33 +1,3 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
-
-# compiled output
-/dist
-/tmp
-
-# dependencies
-/node_modules
-/bower_components
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage/*
-/libpeerconnection.log
-npm-debug.log*
-testem.log
-
-# Visual Studio Code
-.vscodeignore
-.vscode/
-jsconfig.json
-typings/
-
-# ES Lint (currently we force developers to use only JSHint)
-.eslintrc.js
-
-# OSX
-.DS_Store
-
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
@@ -70,3 +40,33 @@ typings/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+# Created by .ignore support plugin (hsz.mobi)
+
+# docker image artefact
+docker-build-list.json
+docker-build-report.txt
+
+# compiled app
+rel
+
+# test results
+src/tests/test-results.xml
+
+# OSX
+.DS_Store
+._*
+
+# Visual Studio Code
+.vscodeignore
+.vscode/
+jsconfig.json
+typings/
+
+# ES Lint (currently we force developers to use only JSHint)
+.eslintrc.js
