@@ -1,9 +1,12 @@
 /* jshint node: true */
 
+const DEFAULT_ONEPANEL_SERVICE_TYPE = 'zone';
+
 module.exports = function (environment) {
   var ENV = {
-    modulePrefix: 'onepanel-web-frontend',
+    modulePrefix: 'onepanel-gui',
     environment: environment,
+    // NOTE: the rootURL is set also in ember-cli-build for SASS function
     rootURL: '/',
     locationType: 'hash',
     EmberENV: {
@@ -16,7 +19,22 @@ module.exports = function (environment) {
         Date: false
       }
     },
-
+    onedataTabs: [
+      'clusters'
+    ],
+    onepanelConfig: {
+      // TODO: validate: onezone or oneprovider
+      /**
+       * An important switch to enable/disable features of Provider or Zone
+       * in application and make requests to proper onepanel API.
+       *
+       * One of: zone, provider
+       *
+       * @type {string}
+       */
+      ONEPANEL_SERVICE_TYPE: process.env.ONEPANEL_SERVICE_TYPE ||
+        DEFAULT_ONEPANEL_SERVICE_TYPE
+    },
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
@@ -31,9 +49,7 @@ module.exports = function (environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = true;
 
     // to launch inside original onepanel app
-    if (environment === 'development-backend') {
-      ENV.rootURL = '/js/panel-gui/';
-    } else {
+    if (environment !== 'development-backend') {
       ENV.APP.MOCK_BACKEND = true;
     }
   }

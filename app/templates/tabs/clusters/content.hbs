@@ -1,5 +1,8 @@
-<h3>
-  Show space! Api example
-</h3>
-
-{{api-example}}
+{{#if (lt model.resource.initStep 3)}}
+  {{new-cluster
+    initStepIndex=model.resource.initStep
+    transitionTo= "transitionTo"
+  }}
+{{else}}
+  Cluster initialized! TODO
+{{/if}}

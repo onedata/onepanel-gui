@@ -3,22 +3,95 @@ import {
   InvokeActionMixin
 } from 'ember-invoke-action';
 
+import { validator, buildValidations } from 'ember-cp-validations';
+
+const {
+  computed,
+  observer,
+} = Ember;
+
+const roles = ['database', 'clusterWorker', 'clusterManager'];
+
+function hostColumnPropertyName(role) {
+  return `${role}Hosts`;
+}
+
+function hostColumnComputedProperties(roles) {
+  let columnLists = {};
+  roles.forEach(role => {
+    columnLists[hostColumnPropertyName(role)] = computed(
+      `hosts.@each.${role}`,
+      function () {
+        return this.get('hosts').filter(h => h[role]);
+      }
+    );
+  });
+  return columnLists;
+}
+
+function generateColumnValidations(roles) {
+  const roleColumns = roles.map(hostColumnPropertyName);
+  let columnValidations = {};
+  roleColumns.forEach(col => {
+    columnValidations[col] = validator('length', { min: 1 });
+  });
+  columnValidations['primaryClusterManager'] = validator('presence', true);
+  return columnValidations;
+}
+
+let Validations = buildValidations(generateColumnValidations(roles));
+
 // TODO: validation TODO: is setting first options for some host, set this host
 // as a primary cluster manager
-export default Ember.Component.extend(InvokeActionMixin, {
-  tagName: 'table',
-  classNames: ['cluster-host-table', 'table', 'table-striped'],
 
-  hosts: null,
-  primaryClusterManager: null,
+/**
+ * Renders a table in which roles can be set to hosts for cluster deployment 
+ *
+ * Invokes passed actions:
+ * - hostOptionChanged(hostname: string, option: string, value: boolean)
+ * - primaryClusterManagerChanged(hostname: string, isSet: boolean)
+ *
+ * @module components/cluster-host-table
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+export default Ember.Component.extend(
+  InvokeActionMixin,
+  hostColumnComputedProperties(roles),
+  Validations, {
+    tagName: 'table',
+    classNames: ['cluster-host-table', 'table', 'table-striped'],
 
-  actions: {
-    checkboxChanged(hostname, option, newValue) {
-      this.invokeAction('hostOptionChanged', hostname, option, newValue);
+    /**
+     * To inject.
+     * @type {Array.HostInfo}
+     */
+    hosts: null,
+
+    primaryClusterManager: null,
+
+    allValid: computed.readOnly('validations.isValid'),
+    // TODO make/use valid properties for each column
+    // databaseHostsValid: computed.readOnly('validations.attrs.databaseHosts.isValid'),
+
+    tableValidChanged: observer('allValid', function () {
+      this.invokeAction('allValidChanged', this.get('allValid') === true);
+    }),
+
+    init() {
+      this._super(...arguments);
+      this.tableValidChanged();
     },
 
-    primaryClusterManagerChanged(hostname) {
-      this.invokeAction('primaryClusterManagerChanged', hostname);
-    },
+    actions: {
+      checkboxChanged(hostname, option, newValue) {
+        this.invokeAction('hostOptionChanged', hostname, option, newValue);
+      },
+
+      primaryClusterManagerChanged(hostname, isSet) {
+        this.invokeAction('primaryClusterManagerChanged', isSet ? hostname : null);
+      },
+    }
   }
-});
+);

@@ -1,4 +1,14 @@
+/**
+ * TODO: documentation
+ *
+ * @module routes/onedata/sidebar
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
+import config from 'ember-get-config';
 
 const {
   inject: {
@@ -9,20 +19,12 @@ const {
   }
 } = Ember;
 
-// TODO better implementation
-const SINGULARIZE_RESOURCE = {
-  providers: 'provider',
-  spaces: 'space'
-};
+const {
+  onedataTabs
+} = config;
 
-const PLURALIZE_RESOURCE = {
-  provider: 'providers',
-  space: 'spaces'
-};
-
-// TODO: maybe separate util (maybe from GUI16) and jsdoc
-function getDefaultResource(collection) {
-  return collection.objectAt(0);
+function isValidTab(tabName) {
+  return onedataTabs.indexOf(tabName) !== -1;
 }
 
 export default Ember.Route.extend({
@@ -31,17 +33,20 @@ export default Ember.Route.extend({
   sidebarResources: service(),
 
   model({ type }) {
-    // TODO: validate reource type
     let sidebarResources = this.get('sidebarResources');
     return new Promise((resolve, reject) => {
-      let gettingModel = sidebarResources.getModelFor(type);
-      gettingModel.then(collection => {
-        resolve({
-          resourceType: type,
-          collection
+      if (isValidTab) {
+        let gettingCollection = sidebarResources.getCollectionFor(type);
+        gettingCollection.then(collection => {
+          resolve({
+            resourceType: type,
+            collection
+          });
         });
-      });
-      gettingModel.catch(reject);
+        gettingCollection.catch(reject);
+      } else {
+        reject({ error: 'invalid onedata tab name' });
+      }
     });
   },
 
@@ -67,9 +72,9 @@ export default Ember.Route.extend({
   },
 
   actions: {
-    changeResourceId(resourceType, itemId) {      
+    changeResourceId(resourceType, itemId) {
       this.transitionTo('onedata.sidebar.content', resourceType, itemId);
-      
+
       // TODO: a loader for clicked sidebar item can be done here by usin transition as a promise
     }
   }

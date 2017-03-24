@@ -1,3 +1,12 @@
+/**
+ * A form for adding new storage with all storage types available
+ *
+ * @module components/cluster-storage-add-form
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 
@@ -10,11 +19,11 @@ import { invoke, invokeAction } from 'ember-invoke-action';
  * @property {string} [placeholder=undefined]
  */
 
-import GENERIC_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/generic-fields';
-import CEPH_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/ceph-fields';
-import POSIX_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/posix-fields';
-import S3_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/s3-fields';
-import SWIFT_FIELDS from 'onepanel-web-frontend/utils/cluster-storage/swift-fields';
+import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
+import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
+import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
+import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
+import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 
 const {
   computed,
@@ -176,8 +185,6 @@ export default Ember.Component.extend({
         formData[name] = formValues.get(name);
       });
 
-      // FIXME debug
-      // TODO make regular object
       return invokeAction(this, 'submit', formData);
     },
   }

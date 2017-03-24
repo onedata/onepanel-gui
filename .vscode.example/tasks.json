@@ -6,10 +6,16 @@
   "isShellCommand": true,
   "showOutput": "always",
   "echoCommand": true,
+  "options": {
+    "env": {
+      "ONEPANEL_SERVICE_TYPE": "provider",
+      "TMP_GUI_PARENT_DIR": "/Users/kliput/Ubuntu/tmp"
+    }
+  },
   "tasks": [
     {
-      "taskName": "deploy to getting started",
-      "args": ["/home/kliput/Dropbox/Skrypty/deploy-getting-started-linux.sh"],
+      "taskName": "deploy to docker",
+      "args": ["./scripts/deploy-gui-to-onepanel-docker.sh"],
       "isBuildCommand": true,
       "suppressTaskName": true
     }
