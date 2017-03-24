@@ -27,6 +27,7 @@ function isKnownInputType(type) {
 }
 
 export default Ember.Component.extend({
+  globalNotify: service(),
   onepanelServer: service(),
 
   onezoneDomain: null,
@@ -34,6 +35,8 @@ export default Ember.Component.extend({
   providerName: null,
   latitude: null,
   longitude: null,
+
+  _isBusy: false,
 
   createProviderRegisterRequest() {
     let formValues = this.getProperties(...INPUT_TYPES);
@@ -59,7 +62,8 @@ export default Ember.Component.extend({
       console.debug('submit: ' + JSON.stringify(formValues));
       let providerRegisterRequest = this.createProviderRegisterRequest();
       let addingProvider =
-        onepanelServer.request('oneprovider', 'addProvider', providerRegisterRequest);
+        onepanelServer.request('oneprovider', 'addProvider',
+          providerRegisterRequest);
 
       addingProvider.then(resolve);
       addingProvider.catch(reject);
@@ -73,15 +77,24 @@ export default Ember.Component.extend({
       if (isKnownInputType(inputType)) {
         this.set(inputType, value);
       } else {
-        console.warn('component:new-cluster-zone-registration: attempt to change not known input type');
+        console.warn(
+          'component:new-cluster-zone-registration: attempt to change not known input type'
+        );
       }
     },
 
     submit() {
       let submitting = this.submit();
+      this.set('_isBusy', true);
       submitting.then(() => {
         this.sendAction('nextStep');
       });
+      submitting.catch(error => {
+        this.get('globalNotify').error(
+          'Could not register the provider in zone: ' + error
+        );
+      });
+      submitting.finally(() => this.set('_isBusy', false));
       return submitting;
     }
   }

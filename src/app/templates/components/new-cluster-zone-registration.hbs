@@ -6,6 +6,7 @@
       class="form-control"
       update=(action "inputChanged" "onezoneDomain")
       placeholder="Onezone domain"
+      disabled=_isBusy
     }}
   </div>
   <div class="form-group">
@@ -13,6 +14,7 @@
       class="form-control"
       update=(action "inputChanged" "redirectionPoint")
       placeholder="Redirection point"
+      disabled=_isBusy
     }}
   </div>
   <div class="form-group">
@@ -20,6 +22,7 @@
       class="form-control"
       update=(action "inputChanged" "providerName")
       placeholder="Provider name"
+      disabled=_isBusy
     }}
   </div>
   <div class="form-group">
@@ -27,6 +30,7 @@
       class="form-control"
       update=(action "inputChanged" "latitude")
       placeholder="Latitude (optional)"
+      disabled=_isBusy
     }}
   </div>
   <div class="form-group">
@@ -34,10 +38,16 @@
       class="form-control"
       update=(action "inputChanged" "longitude")
       placeholder="Longitude (optional)"
+      disabled=_isBusy
     }}
   </div>
   
-  {{#spin-button type="submit" class="btn btn-default" buttonStyle="expand-left" action=(action "submit")}}
+  {{#spin-button
+    type="submit"
+    class="btn btn-default"
+    buttonStyle="expand-left"
+    action=(action "submit")
+  }}
     Register
   {{/spin-button}}
 </form>
