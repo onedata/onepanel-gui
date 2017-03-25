@@ -1,5 +1,13 @@
 {{#if noStorages}}
-  {{cluster-storage-add-form submit="submitAddStorage"}}
+  <div class="row content-row no-border">
+    <h1>Registration</h1>
+    <p>Worker componets save and retrieve user's data network file system storages.</p>
+  </div>
+  <div class="row content-row">
+    {{cluster-storage-add-form 
+      class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
+      submit="submitAddStorage"}}
+  </div>
 {{else}}
   <div class="row">
     <div class="btn-toolbar pull-right">

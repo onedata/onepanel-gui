@@ -8,9 +8,8 @@ $toggle-size-base: 1.4em;
   &.form-control {
     background-color: inherit;
     border: 0;
-    box-shadow: none;  
-    padding-top: $padding-base-vertical + 2px;
-    padding-bottom: $padding-base-vertical - 2px;
+    box-shadow: none;
+    padding-top: 0;
   }
 
   input[type="checkbox"] {
@@ -55,8 +54,4 @@ $toggle-size-base: 1.4em;
     left: -1px;
     top: -1px;
   }
-}
-
-.form-horizontal .control-label.toggle-label {
-  padding-top: 13px;
 }
