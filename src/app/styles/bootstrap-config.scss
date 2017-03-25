@@ -101,6 +101,11 @@
   span + .one-icon {
     margin-left: 0.22em;
   }
+  &.big {
+    padding-left: 3em;
+    padding-right: 3em;
+  }
+
   @media (max-width: $screen-sm-max) {
     padding: 3px 8px;
     border-radius: 16px;
@@ -126,6 +131,10 @@ $input-bg-light: $color-one-white;
       @include box-shadow(none);
     }
   }
+}
+
+input[type="text"], input[type="password"], input[type="number"] {
+  box-shadow: none;
 }
 
 .table {
