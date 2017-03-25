@@ -1,43 +1,50 @@
 {{!-- TODO i18n --}}
 
-<form {{action "submit" on="submit" bubbles=false}}>
-  <div class="form-group">
-    {{one-way-input onezoneDomain
-      class="form-control"
-      update=(action "inputChanged" "onezoneDomain")
-      placeholder="Onezone domain"
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input redirectionPoint
-      class="form-control"
-      update=(action "inputChanged" "redirectionPoint")
-      placeholder="Redirection point"
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input providerName
-      class="form-control"
-      update=(action "inputChanged" "providerName")
-      placeholder="Provider name"
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input latitude
-      class="form-control"
-      update=(action "inputChanged" "latitude")
-      placeholder="Latitude (optional)"
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input longitude
-      class="form-control"
-      update=(action "inputChanged" "longitude")
-      placeholder="Longitude (optional)"
-    }}
-  </div>
-  
-  {{#spin-button type="submit" class="btn btn-default" buttonStyle="expand-left" action=(action "submit")}}
-    Register
-  {{/spin-button}}
-</form>
+<div class="content-row no-border">
+  <h1 class="">Registration</h1>
+  <p>Your software configuration has been successfully verified. 
+    Please enter your onedata provider name and optional approximate geographical location.</p>
+</div>
+<div class="content-row row">
+  <form {{action "submit" on="submit" bubbles=false}} class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered text-center">
+    <div class="form-group">
+      {{one-way-input onezoneDomain
+        class="form-control"
+        update=(action "inputChanged" "onezoneDomain")
+        placeholder="Onezone domain"
+      }}
+    </div>
+    <div class="form-group">
+      {{one-way-input redirectionPoint
+        class="form-control"
+        update=(action "inputChanged" "redirectionPoint")
+        placeholder="Redirection point"
+      }}
+    </div>
+    <div class="form-group">
+      {{one-way-input providerName
+        class="form-control"
+        update=(action "inputChanged" "providerName")
+        placeholder="Provider name"
+      }}
+    </div>
+    <div class="form-group">
+      {{one-way-input latitude
+        class="form-control"
+        update=(action "inputChanged" "latitude")
+        placeholder="Latitude (optional)"
+      }}
+    </div>
+    <div class="form-group">
+      {{one-way-input longitude
+        class="form-control"
+        update=(action "inputChanged" "longitude")
+        placeholder="Longitude (optional)"
+      }}
+    </div>
+    
+    {{#spin-button type="submit" class="btn btn-default big" buttonStyle="expand-left" action=(action "submit")}}
+      Register
+    {{/spin-button}}
+  </form>
+</div>

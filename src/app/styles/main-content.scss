@@ -1,9 +1,17 @@
+$mobile-horizontal-content-padding: 1.5em;
+
 .main-content {
   color: $gray;
 
   .content-row {
     border-bottom: 1px solid #e0e4f3;
     padding: 12px 0;
+    letter-spacing: 0.7px;
+
+    &.no-border,
+    &:last-child {
+      border-bottom: 0;
+    }
 
     h1 {
       font-size: $font-size-base;
@@ -12,10 +20,15 @@
       text-transform: uppercase;
       line-height: 2.5;
       margin: 0;
+
+      &+p {
+        margin-top: 0.7em;
+      }
     }
 
-    &.no-border {
-      border-bottom: 0;
+    form {
+      margin-top: 1.7em;
+      margin-bottom: 1.7em;
     }
 
     .btn-toolbar {
@@ -37,10 +50,16 @@
     .content-row {
       border-bottom: 0;
 
+      p,
+      h1,
+      form {
+        padding: 0 $mobile-horizontal-content-padding;
+      }
+
       h1 {
-        padding: 0 1.5em;
         font-size: $font-size-base * 0.9;
       }
+
       .btn-toolbar {
         .btn {
           font-size: 0.85em;
