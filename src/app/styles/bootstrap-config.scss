@@ -134,7 +134,7 @@ $input-bg-light: $color-one-white;
 }
 
 input[type="text"], input[type="password"], input[type="number"] {
-  box-shadow: none;
+  box-shadow: 1px 1px 2px #eee inset;
 }
 
 .table {
