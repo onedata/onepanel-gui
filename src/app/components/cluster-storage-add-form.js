@@ -10,15 +10,6 @@
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 
-/**
- * @typedef {Object} FieldType
- * @property {string} name
- * @property {string} type
- * @property {boolean} [optional=undefined]
- * @property {*} [defaultValue=undefined]
- * @property {string} [placeholder=undefined]
- */
-
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
 import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';

@@ -1,53 +1,21 @@
 {{!-- TODO i18n --}}
 
-<form {{action "submit" on="submit" bubbles=false}}>
-  <div class="form-group">
-    {{one-way-input onezoneDomain
-      class="form-control"
-      update=(action "inputChanged" "onezoneDomain")
-      placeholder="Onezone domain"
-      disabled=_isBusy
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input redirectionPoint
-      class="form-control"
-      update=(action "inputChanged" "redirectionPoint")
-      placeholder="Redirection point"
-      disabled=_isBusy
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input providerName
-      class="form-control"
-      update=(action "inputChanged" "providerName")
-      placeholder="Provider name"
-      disabled=_isBusy
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input latitude
-      class="form-control"
-      update=(action "inputChanged" "latitude")
-      placeholder="Latitude (optional)"
-      disabled=_isBusy
-    }}
-  </div>
-  <div class="form-group">
-    {{one-way-input longitude
-      class="form-control"
-      update=(action "inputChanged" "longitude")
-      placeholder="Longitude (optional)"
-      disabled=_isBusy
-    }}
-  </div>
-  
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+  {{one-form-fields
+    bsForm=form
+    fields=fields 
+    formValues=formValues 
+    inputChanged=(action "inputChanged")
+    disabled=_isBusy
+  }}
+
   {{#spin-button
     type="submit"
     class="btn btn-default"
     buttonStyle="expand-left"
     action=(action "submit")
   }}
-    Register
+    {{t 'components.newClusterZoneRegistration.register'}}
   {{/spin-button}}
-</form>
+{{/bs-form}}
+
