@@ -83,9 +83,10 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
+    let requestHandler = this.get('requestHandler');
     // TODO protect property read
     return new Promise((resolve, reject) => {
-      let handler = REQ_HANDLER[`${api}_${method}`];
+      let handler = requestHandler[`${api}_${method}`];
       if (handler) {
         if (handler.success) {
           let response = {
@@ -143,70 +144,73 @@ export default Ember.Service.extend({
     this._super(...arguments);
   },
 
+  progressMock: computed('serviceType', function () {
+    let serviceType = this.get('serviceType');
+    return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
+  }),
+
+  /**
+   * Functions returning values in callback on API call success.
+   */
+  requestHandler: computed('progressMock', function () {
+    let progressMock = this.get('progressMock');
+    return {
+      onepanel_getClusterHosts: {
+        success() {
+          return ['node1', 'node2'];
+        },
+      },
+      onepanel_getClusterCookie: {
+        success() {
+          return 'some_cluster_cookie';
+        },
+      },
+      onepanel_getTaskStatus: {
+        success(taskId) {
+          if (taskId === 'configure') {
+            return progressMock.getTaskStatusConfiguration();
+          } else {
+            return null;
+          }
+        }
+      },
+      oneprovider_configureProvider: {
+        success() {
+          return null;
+        },
+        taskId: 'configure'
+      },
+      oneprovider_addProvider: {
+        success() {
+          return null;
+        }
+      },
+      oneprovider_addStorage: {
+        success() {
+          return null;
+        }
+      },
+      oneprovider_getProviderConfiguration: {
+        statusCode: 404,
+      },
+      oneprovider_getProvider: {
+        statusCode: 404,
+      },
+      oneprovider_getStorages: {
+        success() {
+          return [];
+        }
+      },
+
+      onezone_configureZone: {
+        success() {
+          return null;
+        },
+        taskId: 'configure'
+      },
+      onezone_getZoneConfiguration: {
+        statusCode: 404,
+      },
+    };
+  }),
 });
-
-const PROGRESS_MOCK = DeploymentProgressMock.create();
-
-// TODO: make req handlers public to allow modifying mocks
-
-/**
- * Functions returning values in callback on API call success.
- */
-const REQ_HANDLER = {
-  onepanel_getClusterHosts: {
-    success() {
-      return ['node1', 'node2'];
-    },
-  },
-  onepanel_getClusterCookie: {
-    success() {
-      return 'some_cluster_cookie';
-    },
-  },
-  onepanel_getTaskStatus: {
-    success(taskId) {
-      if (taskId === 'configure') {
-        return PROGRESS_MOCK.getTaskStatusConfiguration();
-      } else {
-        return null;
-      }
-    }
-  },
-  oneprovider_configureProvider: {
-    success() {
-      return null;
-    },
-    taskId: 'configure'
-  },
-  oneprovider_addProvider: {
-    success() {
-      return null;
-    }
-  },
-  oneprovider_addStorage: {
-    success() {
-      return null;
-    }
-  },
-  oneprovider_getProviderConfiguration: {
-    statusCode: 404,
-  },
-  oneprovider_getProvider: {
-    statusCode: 404,
-  },
-  oneprovider_getStorages: {
-    success() {
-      return [];
-    }
-  },
-
-  onezone_configureZone: {
-    success() {
-      return null;
-    },
-    taskId: 'configure'
-  },
-  onezone_getZoneConfiguration: {
-    statusCode: 404,
-  },
-};
