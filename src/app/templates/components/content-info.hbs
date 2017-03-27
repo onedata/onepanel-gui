@@ -1,19 +1,21 @@
-<div class="container world-map light">
-  <div class="row text-center">
-    <div class="col-xs-12">
-      <h1>{{header}}</h1>
-      <h2>{{subheader}}</h2>
-      <p class="lead">{{text}}</p>
+<div class="world-map light">
+  <div class="absolute-align-middle-center">
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <h1>{{header}}</h1>
+        <h2>{{subheader}}</h2>
+        <p class="lead">{{text}}</p>
+      </div>
     </div>
-  </div>
-  {{#if imagePath}}
-    {{!-- TODO row with optional image --}}
-  {{/if}}
-  <div class="row text-center">
-    <div class="col-xs-12">
-      {{#spin-button class="btn btn-primary" action=(action buttonAction)}}
-        {{buttonLabel}}
-      {{/spin-button}}
+    {{#if imagePath}}
+      {{!-- TODO row with optional image --}}
+    {{/if}}
+    <div class="row text-center">
+      <div class="col-xs-12">
+        {{#spin-button class="btn btn-primary big" action=(action buttonAction)}}
+          {{buttonLabel}}
+        {{/spin-button}}
+      </div>
     </div>
   </div>
   {{!-- TODO yield content --}}
