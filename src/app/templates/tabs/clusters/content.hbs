@@ -1,6 +1,6 @@
 {{#if (lt model.resource.initStep 3)}}
   {{new-cluster
-    initStepIndex=2
+    initStepIndex=model.resource.initStep
     transitionTo= "transitionTo"
   }}
 {{else}}
