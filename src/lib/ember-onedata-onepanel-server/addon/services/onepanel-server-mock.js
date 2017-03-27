@@ -1,12 +1,19 @@
+/**
+ * Mock for REST backend of onepanel
+ *
+ * See ``REQ_HANDLER`` in this file to manipulate responses
+ *
+ * @module services/onepanel-server-mock
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
-
-import Onepanel from 'npm:onepanel';
-
-// TODO: move to this addon FIXME
-import CLUSTER_DEPLOY_STEPS from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -22,13 +29,6 @@ const {
     service
   }
 } = Ember;
-
-const {
-  TaskStatus,
-  TaskStatus: {
-    StatusEnum
-  }
-} = Onepanel;
 
 export default Ember.Service.extend({
   cookies: service(),
@@ -54,8 +54,20 @@ export default Ember.Service.extend({
    */
   isInitialized: false,
 
+  /**
+   * A onepanel typ: "provider" or "zone"
+   * @type {computed.string}
+   */
+  serviceType: 'provider',
+
+  /**
+   * @returns {Promise}
+   */
   initClient() {
-    this.set('isInitialized', true);
+    return new Promise(resolve => {
+      this.set('isInitialized', true);
+      resolve();
+    });
   },
 
   /// APIs provided by onepanel client library
@@ -106,6 +118,11 @@ export default Ember.Service.extend({
     });
   },
 
+  getServiceType() {
+    let serviceType = this.get('serviceType');
+    return new Promise(resolve => resolve(serviceType));
+  },
+
   watchTaskStatus(taskId) {
     return watchTaskStatus(this, taskId);
   },
@@ -128,6 +145,8 @@ export default Ember.Service.extend({
 
 });
 
+const PROGRESS_MOCK = DeploymentProgressMock.create();
+
 // TODO: make req handlers public to allow modifying mocks
 
 /**
@@ -146,8 +165,8 @@ const REQ_HANDLER = {
   },
   onepanel_getTaskStatus: {
     success(taskId) {
-      if (taskId === 'configureProvider') {
-        return getTaskStatusConfiguration();
+      if (taskId === 'configure') {
+        return PROGRESS_MOCK.getTaskStatusConfiguration();
       } else {
         return null;
       }
@@ -157,7 +176,7 @@ const REQ_HANDLER = {
     success() {
       return null;
     },
-    taskId: 'configureProvider'
+    taskId: 'configure'
   },
   oneprovider_addProvider: {
     success() {
@@ -179,22 +198,15 @@ const REQ_HANDLER = {
     success() {
       return [];
     }
-  }
+  },
+
+  onezone_configureZone: {
+    success() {
+      return null;
+    },
+    taskId: 'configure'
+  },
+  onezone_getZoneConfiguration: {
+    statusCode: 404,
+  },
 };
-
-let fakeProgress = 0;
-
-/**
- * Mocks getTaskStatus for cluster configuration operation.
- *
- * Every time it is invoked, it returns TaskStatus with more steps.
- * 
- * @returns {Onepanel.TaskStatus}
- */
-function getTaskStatusConfiguration() {
-  fakeProgress += 1;
-  return TaskStatus.constructFromObject({
-    status: (fakeProgress >= CLUSTER_DEPLOY_STEPS.length) ? StatusEnum.ok : StatusEnum.running,
-    steps: CLUSTER_DEPLOY_STEPS.slice(0, fakeProgress)
-  });
-}

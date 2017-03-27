@@ -10,30 +10,20 @@
 import Ember from 'ember';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails from 'onepanel-gui/models/cluster-details';
-import config from 'ember-get-config';
 
 const {
   Service,
   inject: {
     service
   },
-  RSVP: {
-    Promise
-  },
+  RSVP: { Promise },
   A,
   computed,
+  computed: { readOnly },
   ObjectProxy,
   PromiseProxyMixin,
-  String: {
-    camelize
-  }
+  String: { camelize }
 } = Ember;
-
-const {
-  onepanelConfig: {
-    ONEPANEL_SERVICE_TYPE
-  }
-} = config;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
@@ -42,6 +32,7 @@ const THIS_CLUSTER_NAME = 'The cluster';
 
 export default Service.extend({
   onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
    * TODO when creating "the only cluster" get info about deployment state
@@ -83,10 +74,12 @@ export default Service.extend({
    * @returns {Promise}
    */
   _checkIsConfigurationDone(onepanelServer) {
+    let onepanelServiceType = this.get('onepanelServiceType');
     return new Promise((resolve, reject) => {
       let gettingConfiguration = onepanelServer.request(
-        'one' + ONEPANEL_SERVICE_TYPE, camelize(
-          `get-${ONEPANEL_SERVICE_TYPE}-configuration`));
+        'one' + onepanelServiceType,
+        camelize(`get-${onepanelServiceType}-configuration`)
+      );
 
       // TODO do something with fetched configuration
 
@@ -159,15 +152,18 @@ export default Service.extend({
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
-    let onepanelServer = this.get('onepanelServer');
-    return new Promise((resolve, reject) => {
+    let {
+      onepanelServer,
+      onepanelServiceType,
+    } = this.getProperties('onepanelServer', 'onepanelServiceType');
 
+    return new Promise((resolve, reject) => {
       let checkConfig = this._checkIsConfigurationDone(onepanelServer);
 
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {
           // TODO VFS-3119
-          if (ONEPANEL_SERVICE_TYPE === 'zone') {
+          if (onepanelServiceType === 'zone') {
             resolve(1);
           } else {
             let checkRegister = this._checkIsProviderRegistered(onepanelServer);

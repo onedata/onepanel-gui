@@ -1,10 +1,22 @@
+/**
+ * View form registering oneprovider in onezone 
+ *
+ * @module components/new-cluster-zone-registration
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
+// TODO use ember-bootstrap form.element and cp-validations addon
+// import { validator, buildValidations } from 'ember-cp-validations';
 
 const {
   inject: {
     service
   },
+  computed,
   RSVP: {
     Promise
   }
@@ -14,55 +26,82 @@ const {
   ProviderRegisterRequest
 } = Onepanel;
 
-const INPUT_TYPES = [
-  'onezoneDomain',
-  'redirectionPoint',
-  'providerName',
-  'latitude',
-  'longitude'
+const FIELDS = [
+  { name: 'name', type: 'text' },
+  { name: 'onezoneDomainName', type: 'text' },
+  { name: 'redirectionPoint', type: 'text' },
+  { name: 'geoLatitude', type: 'number', step: 0.000001, optional: true },
+  { name: 'geoLongitude', type: 'number', step: 0.000001, optional: true },
 ];
 
+const INPUT_NAMES = FIELDS.map(f => f.name);
+
+// TODO use ember-bootstrap form.element and cp-validations addon
+// let Validations = buildValidations({
+//   name: validator('presence', true),
+//   onezoneDomainName: validator('presence', true),
+//   redirectionPoint: validator('presence', true),
+// });
+
 function isKnownInputType(type) {
-  return INPUT_TYPES.indexOf(type) !== -1;
+  return INPUT_NAMES.indexOf(type) !== -1;
 }
 
 export default Ember.Component.extend({
+  globalNotify: service(),
   onepanelServer: service(),
 
-  onezoneDomain: null,
-  redirectionPoint: null,
-  providerName: null,
-  latitude: null,
-  longitude: null,
+  formValues: Ember.Object.create({
+    name: null,
+    onezoneDomainName: null,
+    redirectionPoint: null,
+    geoLatitude: null,
+    geoLongitude: null,
+  }),
+
+  _isBusy: false,
+
+  fields: computed(() => FIELDS).readOnly(),
+
+  init() {
+    let i18n = this.get('i18n');
+    this._super(...arguments);
+    FIELDS.forEach(f =>
+      f.placeholder = i18n.t(`components.newClusterZoneRegistration.fields.${f.name}`)
+    );
+  },
 
   createProviderRegisterRequest() {
-    let formValues = this.getProperties(...INPUT_TYPES);
+    let {
+      name,
+      onezoneDomainName,
+      redirectionPoint,
+      geoLongitude,
+      geoLatitude,
+    } = this.get('formValues').getProperties(...INPUT_NAMES);
 
     let req = ProviderRegisterRequest.constructFromObject({
-      name: formValues.providerName,
-      redirectionPoint: formValues.redirectionPoint,
-      geoLongitude: Number.parseFloat(formValues.longitude).toFixed(20),
-      geoLatitude: Number.parseFloat(formValues.latitude).toFixed(20),
-      onezoneDomainName: formValues.onezoneDomain
+      name,
+      onezoneDomainName,
+      redirectionPoint,
+      geoLongitude: Number.parseFloat(geoLongitude),
+      geoLatitude: Number.parseFloat(geoLatitude),
     });
 
     return req;
   },
 
-  submit() {
+  _submit() {
     let submitting = new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
       // TODO validate
       // TODO use api to submit
-      let formValues = this.getProperties('selectedStorageType', ...INPUT_TYPES);
-      // FIXME debug
-      console.debug('submit: ' + JSON.stringify(formValues));
       let providerRegisterRequest = this.createProviderRegisterRequest();
       let addingProvider =
-        onepanelServer.request('oneprovider', 'addProvider', providerRegisterRequest);
+        onepanelServer.request('oneprovider', 'addProvider',
+          providerRegisterRequest);
 
-      addingProvider.then(resolve);
-      addingProvider.catch(reject);
+      addingProvider.then(resolve, reject);
     });
 
     return submitting;
@@ -71,17 +110,26 @@ export default Ember.Component.extend({
   actions: {
     inputChanged(inputType, value) {
       if (isKnownInputType(inputType)) {
-        this.set(inputType, value);
+        this.get('formValues').set(inputType, value);
       } else {
-        console.warn('component:new-cluster-zone-registration: attempt to change not known input type');
+        console.warn(
+          'component:new-cluster-zone-registration: attempt to change not known input type'
+        );
       }
     },
 
     submit() {
-      let submitting = this.submit();
+      let submitting = this._submit();
+      this.set('_isBusy', true);
       submitting.then(() => {
         this.sendAction('nextStep');
       });
+      submitting.catch(error => {
+        this.get('globalNotify').error(
+          'Could not register the provider in zone: ' + error
+        );
+      });
+      submitting.finally(() => this.set('_isBusy', false));
       return submitting;
     }
   }

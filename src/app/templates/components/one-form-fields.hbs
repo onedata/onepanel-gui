@@ -1,0 +1,31 @@
+{{#each fields as |field|}}
+  {{#bsForm.group}}
+    <div class="row">
+      {{#if (eq field.type "checkbox")}}
+        <label for= {{concat elementId (concat "-" field.name)}} class="col-xs-6 text-right control-label toggle-label">
+            {{field.placeholder}}
+          </label>
+        <div class="col-xs-6">
+          {{one-way-toggle
+            class="form-control"
+            inputId=(concat elementId (concat "-" field.name))
+            checked=(get formValues field.name)
+            update=(action "inputChanged" field.name)
+            disabled=disabled
+          }}
+        </div>
+      {{else}}
+        <div class="col-xs-12">
+          {{component (input-component-name field.type)
+            value=(get formValues field.name)
+            class="form-control"
+            update=(action "inputChanged" field.name)
+            placeholder=field.placeholder
+            step=field.step
+            disabled=disabled
+          }}
+        </div>
+      {{/if}}
+    </div>
+  {{/bsForm.group}}
+{{/each}}
