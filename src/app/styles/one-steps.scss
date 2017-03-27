@@ -1,5 +1,18 @@
 .one-steps {
+    text-align: justify;
+    padding: 0;
+    overflow: hidden;
+    margin-bottom: 0;
+    letter-spacing: 0;
+    
     @media (max-width:$screen-sm-max) {
         display: none;
+    }
+
+    // span steps to fill whole line
+    &:after {
+        content: "";
+        display: inline-block;
+        width: 100%;
     }
 }
