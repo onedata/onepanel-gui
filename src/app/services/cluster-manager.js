@@ -63,7 +63,7 @@ export default Service.extend({
 
       gettingInitStep.then(step => {
         resolve(ClusterDetails.create({
-          clusterInfo: this.get('clusterProxy.content'),
+          clusterInfo: this.get('clustersProxy.content.firstObject'),
           initStep: step,
         }));
       });

@@ -20,7 +20,9 @@ const Router = Ember.Router.extend({
 Router.map(function () {
   this.route('onedata', function () {
     this.route('sidebar', { path: ':type' }, function () {
-      this.route('content', { path: ':resourceId' });
+      this.route('content', { path: ':resourceId' }, function () {
+        this.route('aspect', { path: ':aspectId' });
+      });
     });
   });
   this.route('login');
