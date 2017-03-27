@@ -7,15 +7,6 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-/**
- * A content for single cluster
- *
- * @module components/content-cluster
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
- * @license This software is released under the MIT license cited in 'LICENSE.txt'.
- */
-
 import Ember from 'ember';
 
 const {
