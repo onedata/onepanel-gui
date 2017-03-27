@@ -1,3 +1,12 @@
+/**
+ * View form registering oneprovider in onezone 
+ *
+ * @module components/new-cluster-zone-registration
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 // TODO use ember-bootstrap form.element and cp-validations addon
