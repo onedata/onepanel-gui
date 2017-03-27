@@ -5,14 +5,9 @@
 <div class="row content-row">
   <h1>Hosts list
     <div class="btn-toolbar">
-      {{!-- Currently not used --}}
-      {{!--{{#bs-button type="default" class="btn-sm"}}
-        {{one-icon icon="settings"}}<span>Global settings</span>
-      {{/bs-button}}--}}
-      
-      {{!-- the spin-button has no disable support, so fork this or use another component... --}}
+      {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
       {{#spin-button
-        class=(concat "btn btn-primary btn-sm btn-deploy-cluster " (unless canDeploy "disabled"))
+        class=(concat "btn btn-primary btn-deploy-cluster pull-right " (unless canDeploy "disabled"))
         action=(action "startDeploy")
       }}
         <span>Deploy</span>{{one-icon icon="arrow-right"}}

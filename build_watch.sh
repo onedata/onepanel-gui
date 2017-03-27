@@ -16,7 +16,4 @@
 SRC_DIR=src
 REL_DIR=rel
 
-# please set env variable ONEPANEL_SERVICE_TYPE to "zone" or "provider"
-# the default is "zone"
-
 cd ${SRC_DIR} && ember build --watch --output-path=../${REL_DIR}

@@ -1,15 +1,29 @@
+/**
+ * Shows status of cluster deployment process
+ *
+ * @module components/new-cluster-deploy-progress
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
-import CLUSTER_DEPLOY_STEPS from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
+import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
   computed,
-  observer
+  computed: { readOnly },
+  observer,
+  inject: { service }
 } = Ember;
 
 // TODO this can be made a generic taskStatus progress component
 export default Ember.Component.extend({
   classNames: ['new-cluster-deploy-progress'],
+
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
    * Promise for watching deployment process.
@@ -20,6 +34,10 @@ export default Ember.Component.extend({
   step: null,
   isDone: false,
 
+  clusterDeploySteps: computed('onepanelServiceType', function () {
+    return generateClusterDeploySteps(this.get('onepanelServiceType'));
+  }).readOnly(),
+
   /**
    * A progress in range 0..1 for progress bar.
    * @type {computed<number>}
@@ -29,9 +47,10 @@ export default Ember.Component.extend({
       return 1;
     } else {
       let step = this.get('step');
-      let stepIndex = CLUSTER_DEPLOY_STEPS.indexOf(step);
+      let clusterDeploySteps = this.get('clusterDeploySteps');
+      let stepIndex = clusterDeploySteps.indexOf(step);
       if (stepIndex !== -1) {
-        return stepIndex / CLUSTER_DEPLOY_STEPS.length;
+        return stepIndex / clusterDeploySteps.length;
       } else {
         // TODO handle invalid/not known steps
         return undefined;

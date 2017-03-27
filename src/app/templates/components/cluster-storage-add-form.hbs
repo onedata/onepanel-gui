@@ -1,8 +1,4 @@
-{{!-- TODO: i18n --}}
-
-{{!-- TODO make other component for creating forms from spec --}}
-
-{{#bs-form submitOnEnter=false classNames="form-horizontal" as |form|}}
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#form.group}}
     {{#power-select
       options=storageTypes
@@ -15,37 +11,15 @@
       {{storageType.name}}
     {{/power-select}}
   {{/form.group}}
-
-  {{#each currentFields as |field|}}
-    {{#form.group}}
-      {{#if (eq field.type "checkbox")}}
-        <div class="row toggle-centered-form-row">
-          <label for={{concat elementId (concat "-" field.name)}} class="col-xs-6 control-label">
-            {{field.placeholder}}
-          </label>
-          <div class="col-xs-6">
-            {{one-way-toggle
-              class="form-control"
-              inputId=(concat elementId (concat "-" field.name))
-              checked=(get formValues field.name)
-              update=(action "inputChanged" field.name)
-            }}
-          </div>
-        </div>
-      {{else}}
-        <div class="col-xs-12">
-          {{component (input-component-name field.type)
-            value=(get formValues field.name)
-            class="form-control"
-            update=(action "inputChanged" field.name)
-            placeholder=field.placeholder
-          }}
-        </div>
-      {{/if}}
-    {{/form.group}}
-  {{/each}}
+  
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+  }}
   <div class="row text-center">
-    {{#spin-button type="submit" class="btn btn-default big" action=(action "submit")}}
+    {{#spin-button type="submit" class="btn btn-default" action=(action "submit")}}
       Add
     {{/spin-button}}
   </div>

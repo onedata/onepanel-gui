@@ -27,12 +27,13 @@
   {{#bs-modal
     id="add-storage"
     open=addStorageOpened
+    onHide=(action "onAddStorageHide")
     body=false
     footer=true
     as |modal|
   }}
     {{#modal.body}}
-      {{cluster-storage-add-form submit="submitAddStorage"}}
+      {{cluster-storage-add-form submit=(action "submitAddStorage")}}
     {{/modal.body}}
   {{/bs-modal}}
 {{/if}}
