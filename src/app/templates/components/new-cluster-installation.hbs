@@ -7,7 +7,7 @@
     <div class="btn-toolbar">
       {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
       {{#spin-button
-        class=(concat "btn btn-primary btn-deploy-cluster pull-right " (unless canDeploy "disabled"))
+        class=(concat "btn btn-sm btn-primary btn-deploy-cluster " (unless canDeploy "disabled"))
         action=(action "startDeploy")
       }}
         <span>Deploy</span>{{one-icon icon="arrow-right"}}
