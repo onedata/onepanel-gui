@@ -1,0 +1,8 @@
+{{#if initProcess}}
+  {{new-cluster
+    initStepIndex=cluster.initStep
+    finishInitProcess=(action "finishInitProcess")
+  }}
+{{else}}
+  Cluster initialized! TODO
+{{/if}}

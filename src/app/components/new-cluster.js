@@ -42,8 +42,8 @@ export default Ember.Component.extend({
     clusterConfigurationSuccess() {
       // TODO currently nothing more to do
     },
-    transitionTo() {
-      return invokeAction(this, 'transitionTo', ...arguments);
+    finishInitProcess() {
+      return invokeAction(this, 'finishInitProcess');
     }
   }
 });

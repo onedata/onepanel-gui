@@ -16,7 +16,7 @@
     {{else if (eq w.index 2)}}
       {{new-cluster-storage nextStep=(action "next" target=w.wizard)}}
     {{else if (eq w.index 3)}}
-      {{new-cluster-summary clusterId=clusterId transitionTo=(action "transitionTo")}}
+      {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}
     {{/if}}
   {{/one-wizard}}
 

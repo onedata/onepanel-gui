@@ -6,12 +6,7 @@ export default Ember.Component.extend({
 
   actions: {
     manageNewCluster() {
-      return invokeAction(this,
-        'transitionTo',
-        'onedata.sidebar.content',
-        'clusters',
-        this.get('clusterId')
-      );
+      return invokeAction(this, 'finish');
     }
   }
 });
