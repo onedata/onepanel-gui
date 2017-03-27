@@ -36,6 +36,9 @@ export default Ember.Component.extend({
     startAddStorage() {
       this.set('addStorageOpened', true);
     },
+    onAddStorageHide() {
+      this.set('addStorageOpened', false);
+    },
     submitAddStorage(storageFormData) {
       let {
         onepanelServer,
@@ -57,6 +60,7 @@ export default Ember.Component.extend({
         addingStorage.then(() => {
           storages.pushObject(cs);
           this.set('addStorageOpened', false);
+          resolve();
         });
         addingStorage.catch(reject);
       });
