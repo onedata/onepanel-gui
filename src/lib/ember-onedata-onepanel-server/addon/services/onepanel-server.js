@@ -36,8 +36,7 @@ export default Ember.Service.extend({
    */
   sessionValidator: null,
 
-  username: null,
-  password: null,
+  serviceType: null,
 
   isLoading: readOnly('sessionValidator.isPending'),
 
@@ -119,10 +118,9 @@ export default Ember.Service.extend({
   validateSession() {
     return new Promise((resolve, reject) => {
       let testingAuth = this.requestTestAuth();
-      testingAuth.then(() => {
-        this.initClient();
-        resolve();
-      });
+      testingAuth
+        .then(() => this.initClient())
+        .then(resolve, reject);
       testingAuth.catch(reject);
     });
   },
@@ -147,15 +145,48 @@ export default Ember.Service.extend({
    * Must be invoked before using ``request`` method!
    * 
    * @param {string} [origin]
+   * @returns {Promise} resolves with { serviceType: string }
    */
   initClient(origin = null) {
-    let client = this.createClient(origin);
-    this.set('client', client);
+    return new Promise((resolve, reject) => {
+      let client = this.createClient(origin);
+      this.set('client', client);
+      let gettingType = this.getServiceType();
+      gettingType.then(serviceType => {
+        this.set('serviceType', serviceType);
+        resolve({ serviceType });
+      });
+      gettingType.catch(reject);
+    });
+  },
+
+  /**
+   * Make request that checks if the GUI is backed by provider or zone
+   * @returns {Promise} resolves with 'provider' or 'zone'; rejects on error
+   */
+  getServiceType() {
+    return new Promise((resolve, reject) => {
+      let gettingProvider = this.request('oneprovider', 'getProvider');
+      gettingProvider.then(() => resolve('provider'));
+      gettingProvider.catch(error => {
+        let statusCode = error.response.statusCode;
+        if (statusCode === 404) {
+          resolve('provider');
+        } else if (statusCode === 406) {
+          // TODO maybe try to make request to Zone to be sure...
+          resolve('zone');
+        } else {
+          reject(error);
+        }
+      });
+    });
   },
 
   /**
    * Makes a request that will resolve if provided username, password and
    * origin are valid.
+   *
+   * This method should work both on provider and zone service types.
    * 
    * @param {string} username 
    * @param {string} password 

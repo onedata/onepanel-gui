@@ -14,7 +14,6 @@
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-import config from 'ember-get-config';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 
 const {
@@ -35,12 +34,6 @@ const {
     StatusEnum
   }
 } = Onepanel;
-
-const {
-  onepanelConfig: {
-    ONEPANEL_SERVICE_TYPE
-  }
-} = config;
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -70,6 +63,8 @@ export default Ember.Component.extend({
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
+
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   primaryClusterManager: null,
 
@@ -191,12 +186,14 @@ export default Ember.Component.extend({
    */
   startDeploy() {
     return new Promise((resolve, reject) => {
-      // TODO use oneprovider or onezone api
-      let onepanelServer = this.get('onepanelServer');
-      let providerConfiguration = this.createConfiguration(ONEPANEL_SERVICE_TYPE);
+      let {
+        onepanelServer,
+        onepanelServiceType,
+      } = this.getProperties('onepanelServer', 'onepanelServiceType');
+      let providerConfiguration = this.createConfiguration(onepanelServiceType);
       onepanelServer.request(
-        'one' + ONEPANEL_SERVICE_TYPE,
-        camelize(`configure-${ONEPANEL_SERVICE_TYPE}`),
+        'one' + onepanelServiceType,
+        camelize(`configure-${onepanelServiceType}`),
         providerConfiguration
       ).then(resolve, reject);
     });

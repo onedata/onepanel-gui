@@ -32,9 +32,11 @@ const WORKER_STEPS = [
 
 /**
  * Generate list of specific deployment steps for specific worker service
- * @param {string} typeCode allowed: "p", "z"
+ * @param {string} type one of: "zone", "provider"
  */
-function workerSteps(typeCode) {
+function workerSteps(type) {
+  // currently - just first letter
+  let typeCode = type[0];
   return WORKER_STEPS.map(ws => `service_o${typeCode}_worker:${ws}`);
 }
 

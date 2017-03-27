@@ -9,7 +9,6 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import config from 'ember-get-config';
 import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
@@ -20,20 +19,19 @@ const {
 } = Onepanel;
 
 const {
-  onepanelConfig: {
-    ONEPANEL_SERVICE_TYPE
-  }
-} = config;
-
-const {
   computed,
+  computed: { readOnly },
+  inject: { service },
 } = Ember;
 
 export default Ember.Object.extend({
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
   fakeProgress: 0,
 
   clusterDeploySteps: computed(function () {
-    return generateClusterDeploySteps(ONEPANEL_SERVICE_TYPE);
+    return generateClusterDeploySteps(this.get('onepanelServiceType'));
   }).readOnly(),
 
   /**

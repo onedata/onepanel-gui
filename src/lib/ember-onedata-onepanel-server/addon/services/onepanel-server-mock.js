@@ -54,8 +54,20 @@ export default Ember.Service.extend({
    */
   isInitialized: false,
 
+  /**
+   * A onepanel typ: "provider" or "zone"
+   * @type {computed.string}
+   */
+  serviceType: 'provider',
+
+  /**
+   * @returns {Promise}
+   */
   initClient() {
-    this.set('isInitialized', true);
+    return new Promise(resolve => {
+      this.set('isInitialized', true);
+      resolve();
+    });
   },
 
   /// APIs provided by onepanel client library
@@ -104,6 +116,11 @@ export default Ember.Service.extend({
 
       resolve();
     });
+  },
+
+  getServiceType() {
+    let serviceType = this.get('serviceType');
+    return new Promise(resolve => resolve(serviceType));
   },
 
   watchTaskStatus(taskId) {

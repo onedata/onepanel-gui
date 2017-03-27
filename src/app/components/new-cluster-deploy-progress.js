@@ -9,23 +9,21 @@
 
 import Ember from 'ember';
 
-import config from 'ember-get-config';
 import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
   computed,
-  observer
+  computed: { readOnly },
+  observer,
+  inject: { service }
 } = Ember;
-
-const {
-  onepanelConfig: {
-    ONEPANEL_SERVICE_TYPE
-  }
-} = config;
 
 // TODO this can be made a generic taskStatus progress component
 export default Ember.Component.extend({
   classNames: ['new-cluster-deploy-progress'],
+
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
    * Promise for watching deployment process.
@@ -36,8 +34,8 @@ export default Ember.Component.extend({
   step: null,
   isDone: false,
 
-  clusterDeploySteps: computed(function () {
-    return generateClusterDeploySteps(ONEPANEL_SERVICE_TYPE);
+  clusterDeploySteps: computed('onepanelServiceType', function () {
+    return generateClusterDeploySteps(this.get('onepanelServiceType'));
   }).readOnly(),
 
   /**
