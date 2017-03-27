@@ -20,14 +20,16 @@ const {
 
 const {
   computed,
-  computed: { readOnly },
-  inject: { service },
 } = Ember;
 
 export default Ember.Object.extend({
-  onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  /**
+   * To inject.
+   * @type {string}
+   */
+  onepanelServiceType: null,
 
+  onepaneServiceType: null,
   fakeProgress: 0,
 
   clusterDeploySteps: computed(function () {
