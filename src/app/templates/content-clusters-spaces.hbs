@@ -1,0 +1,19 @@
+{{#if spacesProxy.isFulfilled}}
+  <ul>
+    {{#each spacesProxy.content as |spaceProxy|}}
+      <li>
+        {{#if spaceProxy.isFulfilled}}
+          name: {{spaceProxy.content.name}}
+        {{else if spaceProxy.isRejected}}
+          error: {{spaceProxy.reason}}
+        {{/if}}
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  {{#if spacesProxy.isPending}}
+    {{spin-spinner-block sizeClass="md" class="centered"}}
+  {{else if spacesProxy.isRejected}}
+    Rejected: {{spacesProxy.reason}}
+  {{/if}}
+{{/if}}
