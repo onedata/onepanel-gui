@@ -54,10 +54,35 @@
 @import "bootstrap/buttons";
 .btn {
   border-width: 2px;
-}
-// special style for btn-primary, as it is "filled"
-.btn-primary {
-  @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  position: relative;
+  padding: 0.7em 3em;
+  font-size: 105%;
+  font-family: 'Open Sans Semibold';
+  &.btn-sm {
+    font-size: 85%;
+    padding: 0.3em 1.5em;
+  }
+  // special style for btn-primary, as it is "filled"
+  &.btn-primary {
+    @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  }
+  .one-icon {
+    font-size: 1.7em;
+    line-height: 0;
+    position: relative;
+    margin: -0.2em;
+    top: 0.3em;
+  }
+  .one-icon + span {
+    margin-left: 0.4em;
+  }
+  span + .one-icon {
+    margin-left: 0.22em;
+  }
+  @media (max-width: $screen-sm-max) {
+    border-radius: 1.6em;
+    border-width: 1px;
+  }
 }
 
 // Components
@@ -95,35 +120,6 @@
   & .one-way-toggle {
     text-align: left;
     padding-left: $padding-base-vertical / 2;
-  }
-}
-.btn {
-  position: relative;
-  .one-icon {
-    font-size: 1.7em;
-    line-height: 0;
-    position: relative;
-    margin: -0.2em;
-    top: 0.3em;
-  }
-  .one-icon + span {
-    margin-left: 0.4em;
-  }
-  span + .one-icon {
-    margin-left: 0.22em;
-  }
-  &.big {
-    padding-left: 3em;
-    padding-right: 3em;
-  }
-
-  @media (max-width: $screen-sm-max) {
-    padding: 3px 8px;
-    border-radius: 16px;
-    border-width: 1px;
-    .one-icon {
-      top: 0.3em;
-    }
   }
 }
 $input-bg-light: $color-one-white;
