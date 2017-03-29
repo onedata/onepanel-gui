@@ -1,7 +1,8 @@
-import Ember from 'ember';
 import {
   InvokeActionMixin
 } from 'ember-invoke-action';
+import BasicTable from './basic-table';
+import Ember from 'ember';
 
 import { validator, buildValidations } from 'ember-cp-validations';
 
@@ -56,12 +57,12 @@ let Validations = buildValidations(generateColumnValidations(roles));
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-export default Ember.Component.extend(
+export default BasicTable.extend(
   InvokeActionMixin,
   hostColumnComputedProperties(roles),
   Validations, {
     tagName: 'table',
-    classNames: ['cluster-host-table', 'table', 'table-striped'],
+    classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown'],
 
     /**
      * To inject.

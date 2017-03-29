@@ -39,7 +39,7 @@
   &.disabled,
   &[disabled],
   fieldset[disabled] & {
-               color: $text-color !important;
+               color: $text-color;
     background-color: #b6b6b6 !important;
         border-color: #b6b6b6 !important;
   }

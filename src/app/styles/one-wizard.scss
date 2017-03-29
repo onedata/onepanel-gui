@@ -1,0 +1,7 @@
+.one-wizard {
+    .steps-row {
+        @media (max-width:$screen-sm-max) {
+            display: none;
+        }
+    }
+}

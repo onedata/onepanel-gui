@@ -1,23 +1,56 @@
-@media only screen and (max-width: 1000px) {
-  .basic-table.no-resize {
-    thead {
-      display: none;
-    }
+.basic-table.bt {
+  thead {
+    display: none;
+  }
 
-    tbody td {
-      border: none !important;
-      display: block;
-      vertical-align: top;
+  tbody {
+    tr {
+      border-top: 1px solid #ddd;
 
-      &:before {
-        content: attr(data-th) ": ";
-        display: inline-block;
-        font-weight: bold;
-        width: 6.5em;
+      td {
+        border: none !important;
+        display: block;
+        text-align: left;
+
+        &:before {
+          content: attr(data-th) ": ";
+          display: inline-block;
+          margin-right: 1em;
+          text-align: right;
+          width: 50%;
+        }
+
+        &.bt-hide {
+          display: none;
+        }
       }
+    }
+  }
 
-      &.bt-hide {
-        display: none;
+  &.dropdown {
+    tbody {
+      tr {
+        position: relative;
+        overflow: hidden;
+        border-top: 0;
+
+        td {
+          &:not(.row-header) {
+            max-height: 0;
+            opacity: 0;
+            transition: max-height .1s ease-out, padding .2s ease-out, opacity .1s ease-out;
+            overflow: hidden;
+            padding: 0;
+          }
+        }
+        &.active {
+          td:not(.row-header) {
+            opacity: 100;
+            max-height: 10em;
+            padding: 16px;
+            overflow: visible;
+          }
+        }
       }
     }
   }

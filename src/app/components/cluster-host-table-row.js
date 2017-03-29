@@ -6,8 +6,13 @@ import {
 export default Ember.Component.extend(InvokeActionMixin, {
   tagName: 'tr',
   classNames: 'cluster-host-table-row',
+  classNameBindings: ['active'],
+  active: false,
 
   actions: {
+    headerClick() {
+      this.toggleProperty('active');
+    },
     checkboxChanged(
       newValue,
       context

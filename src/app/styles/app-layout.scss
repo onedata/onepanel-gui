@@ -63,6 +63,10 @@
   .col-content {
     // TODO similar 30px
     padding: 30px;
+
+    @media (max-width: $screen-xs-max) {
+      padding: 0px;
+    }
   }
 }
 

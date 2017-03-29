@@ -1,0 +1,59 @@
+$mobile-horizontal-content-padding: 1.5em;
+
+.main-content {
+  color: $gray;
+
+  .content-row {
+    border-bottom: 1px solid $main-content-border-color;
+    padding: 12px 0;
+    letter-spacing: 0.7px;
+
+    &.no-border,
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    h1 {
+      font-size: $font-size-base;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 2.5;
+      margin: 0;
+
+      &+p {
+        margin-top: 0.7em;
+      }
+    }
+
+    form {
+      margin-top: 1.7em;
+      margin-bottom: 1.7em;
+    }
+
+    @include btn-toolbar-float-right();
+  }
+
+  @media screen and (max-width: $screen-sm) {
+    .content-row {
+      border-bottom: 0;
+
+      p,
+      h1,
+      form {
+        padding: 0 $mobile-horizontal-content-padding;
+      }
+
+      h1 {
+        font-size: $font-size-base * 0.9;
+      }
+
+      .btn-toolbar {
+        .btn {
+          font-size: 0.85em;
+          margin-left: 0.8em;
+        }
+      }
+    }
+  }
+}

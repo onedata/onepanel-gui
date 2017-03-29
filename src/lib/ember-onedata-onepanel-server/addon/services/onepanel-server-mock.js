@@ -210,7 +210,7 @@ export default Ember.Service.extend({
       },
       onezone_getZoneConfiguration: {
         statusCode: 404,
-      },
+      }
     };
-  }),
+  })
 });
