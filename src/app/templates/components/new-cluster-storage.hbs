@@ -9,15 +9,17 @@
       submit="submitAddStorage"}}
   </div>
 {{else}}
-  <div class="row">
-    <div class="btn-toolbar pull-right">
-      {{#bs-button type="default" onClick=(action "startAddStorage")}}
-        Add storage
-      {{/bs-button}}
-      {{#bs-button type="primary" onClick=(action "next")}}
-        Finish
-      {{/bs-button}}
-    </div>
+  <div class="row content-row">
+    <h1>Storages
+      <div class="btn-toolbar">
+        {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
+          Add storage
+        {{/bs-button}}
+        {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
+          Finish
+        {{/bs-button}}
+      </div>
+    </h1>
   </div>
   <div class="row">
     {{cluster-storage-table storages=storages}}  

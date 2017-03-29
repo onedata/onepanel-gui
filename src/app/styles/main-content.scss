@@ -4,7 +4,7 @@ $mobile-horizontal-content-padding: 1.5em;
   color: $gray;
 
   .content-row {
-    border-bottom: 1px solid #e0e4f3;
+    border-bottom: 1px solid $main-content-border-color;
     padding: 12px 0;
     letter-spacing: 0.7px;
 
@@ -31,19 +31,7 @@ $mobile-horizontal-content-padding: 1.5em;
       margin-bottom: 1.7em;
     }
 
-    .btn-toolbar {
-      text-align: right;
-      float: right;
-      margin-left: 0;
-      .btn {
-        float: none;
-        margin-left: 1.8em;
-
-        &:first-child {
-          margin-left: 0;
-        }
-      }
-    }
+    @include btn-toolbar-float-right();
   }
 
   @media screen and (max-width: $screen-sm) {

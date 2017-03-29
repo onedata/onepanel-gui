@@ -38,7 +38,8 @@ $color-main-menu-bg-bottom: #4686CF;
 
 $one-list-item-active-left-border-width: 8px;
 
-$color-table-hover-row: #F2F4FA;
+$main-content-hover-background: #F2F4FA;
+$main-content-border-color: #E0E4F3;
 
 @import 'common';
 
@@ -65,6 +66,11 @@ $color-table-hover-row: #F2F4FA;
 @import 'ember-power-select-config';
 @import 'one-wizard';
 @import 'content-info';
+@import 'one-collapsible-list';
+@import 'one-collapsible-list-item';
+@import 'one-collapsible-list-item-header';
+@import 'one-collapsible-list-item-content';
+@import 'cluster-storage-table';
 
 // TODO a mess
 

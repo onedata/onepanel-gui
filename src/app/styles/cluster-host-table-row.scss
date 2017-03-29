@@ -1,7 +1,7 @@
 .cluster-host-table-row {
   table:not(.bt) & {
     &:hover {
-      background-color: $color-table-hover-row !important; //override table-striped style
+      background-color: $main-content-hover-background !important; //override table-striped style
       td {
         position: relative;
       }

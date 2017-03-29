@@ -66,6 +66,25 @@
   &.btn-primary {
     @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
   }
+  &.icon-btn {
+    border: 0;
+    background-color: transparent;
+    height: 1em;
+    position: relative;
+    padding: 0;
+    .one-icon {
+      position: relative;
+      top: 0.1em;
+    }
+    &.btn-primary {
+      color: $btn-primary-bg;
+      border: 0;
+      &:hover, &:active, &:focus {
+        background-color: transparent;
+        border: 0;
+      }
+    }
+  }
   .one-icon {
     font-size: 1.7em;
     line-height: 0;
@@ -89,6 +108,24 @@
 @import "bootstrap/component-animations";
 @import "bootstrap/dropdowns";
 @import "bootstrap/button-groups";
+@mixin btn-toolbar-float-right() {
+  .btn-toolbar {
+    text-align: right;
+    float: right;
+    margin-left: 0;
+    .btn {
+      float: none;
+      margin-left: 1.8em;
+      &:first-child {
+        margin-left: 0;
+      }
+      &.icon-btn {
+        margin-left: 1em;
+      }
+    }
+  }
+}
+
 @import "bootstrap/input-groups";
 // TODO make non-gray input-group-addon version for login box
 .input-group {
