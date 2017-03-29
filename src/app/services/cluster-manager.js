@@ -128,17 +128,14 @@ export default Service.extend({
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
    */
-  _checkIsAnyStorage( /*onepanelServer*/ ) {
-    return new Promise((resolve /*, reject*/ ) => {
-      // FIXME checking storages does not works because of bug: swagger inconsistent with real API
-
-      // let gettingStorages = onepanelServer.request('oneprovider',
-      //   'getStorages');
-      // gettingStorages.then(({ data: storages }) => {
-      //   resolve(!!storages && storages.length > 0);
-      // });
-      // gettingStorages.catch(reject);
-      resolve(true);
+  _checkIsAnyStorage(onepanelServer) {
+    return new Promise((resolve, reject) => {
+      let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
+      gettingStorages.then(({ data: storages }) => {
+        // FIXME bad REST API hack
+        resolve(storages != null && Object.keys(storages).length > 0);
+      });
+      gettingStorages.catch(reject);
     });
   },
 

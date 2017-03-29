@@ -15,17 +15,35 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
-  onepanelServer: service(),
+  storageManager: service(),
 
-  // TODO sync with API
   noStorages: computed.equal('storages.length', 0),
 
   storages: A(),
 
   addStorageOpened: false,
 
-  _submitAddStorage() {
+  _submitAddStorage(storageFormData) {
+    let {
+      storages,
+      storageManager,
+    } = this.getProperties('storages', 'storageManager');
 
+    let cs = createClusterStorageModel(storageFormData);
+
+    // FIXME a hack for future
+    cs.name = storageFormData.name;
+
+    let addingStorage = storageManager.createStorage(cs);
+
+    return new Promise((resolve, reject) => {
+      addingStorage.then(() => {
+        storages.pushObject(cs);
+        this.set('addStorageOpened', false);
+        resolve();
+      });
+      addingStorage.catch(reject);
+    });
   },
 
   actions: {
@@ -47,26 +65,7 @@ export default Ember.Component.extend({
      * @returns {subclass of ClusterStorages}
      */
     submitAddStorage(storageFormData) {
-      let {
-        storageManager,
-        storages,
-      } = this.getProperties('storages', 'storageManager');
-
-      let cs = createClusterStorageModel(storageFormData);
-
-      // FIXME a hack for future
-      cs.name = storageFormData.name;
-
-      let addingStorage = storageManager.createStorage(cs);
-
-      return new Promise((resolve, reject) => {
-        addingStorage.then(() => {
-          storages.pushObject(cs);
-          this.set('addStorageOpened', false);
-          resolve();
-        });
-        addingStorage.catch(reject);
-      });
+      return this._submitAddStorage(storageFormData);
     }
   }
 });
