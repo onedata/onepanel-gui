@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import Onepanel from 'npm:onepanel';
 
 const {
   A,
@@ -17,6 +18,10 @@ const {
   inject: { service },
   RSVP: { Promise },
 } = Ember;
+
+const {
+  SpaceSupportRequest
+} = Onepanel;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
@@ -30,10 +35,21 @@ export default Service.extend({
    * @return {ObjectPromiseProxy} resolves Ember.Array of SpaceDetails promise proxies
    */
   getSpaces() {
-    let onepanelServer = this.get('onepanelServer');
+    // FIXME using custom AJAX for spaces
+    // let onepanelServer = this.get('onepanelServer');
 
     let promise = new Promise((resolve, reject) => {
-      let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
+      // let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
+
+      let pro = $.ajax({
+        method: 'GET',
+        url: '/api/v3/onepanel/provider/spaces',
+      });
+
+      let getSpaces = new Promise((resolve) => {
+        pro.done(data => resolve({ ids: data }));
+      });
+
       getSpaces.then(({ ids }) => {
         resolve(A(ids.map(id => this.getSpaceDetails(id))));
       });
@@ -44,7 +60,7 @@ export default Service.extend({
   },
 
   /**
-   * 
+   * FIXME doc
    * 
    * @param {string} id
    * @return {ObjectPromiseProxy} resolves SpaceDetails object
@@ -53,5 +69,22 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
     let promise = onepanelServer.request('oneprovider', 'getSpaceDetails', id);
     return ObjectPromiseProxy.create({ promise });
+  },
+
+  /**
+   * FIXME doc
+   * 
+   * @param {Object} { size: Number, storageId: string, token: string, mountInRoot = false } 
+   * @returns {Promise}
+   */
+  supportSpace({ size, storageId, token, mountInRoot = false }) {
+    let onepanelServer = this.get('onepanelServer');
+    let supportReq = SpaceSupportRequest.constructFromObject({
+      size,
+      storageId,
+      token,
+      mountInRoot,
+    });
+    return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
   },
 });

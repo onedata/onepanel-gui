@@ -211,6 +211,7 @@ export default Ember.Service.extend({
     });
   },
 
+  // TODO use swagger api if available  
   /**
    * Makes a request to /login endpoint to initialize session (set-cookies).
    * @param {string} username 

@@ -1,8 +1,8 @@
 import Ember from 'ember';
-import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 import Onepanel from 'npm:onepanel';
-
 import { invokeAction } from 'ember-invoke-action';
+
+import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 const {
   computed,
@@ -15,10 +15,6 @@ const {
   A
 } = Ember;
 
-const {
-  ClusterStoragesList
-} = Onepanel;
-
 export default Ember.Component.extend({
   onepanelServer: service(),
 
@@ -28,6 +24,10 @@ export default Ember.Component.extend({
   storages: A(),
 
   addStorageOpened: false,
+
+  _submitAddStorage() {
+
+  },
 
   actions: {
     next() {
@@ -39,24 +39,28 @@ export default Ember.Component.extend({
     onAddStorageHide() {
       this.set('addStorageOpened', false);
     },
+
+    /**
+     * Create an instance of ClusterStorages using data from add storage form
+     * @param {object} formData contains attributes for specific storage type as in REST API
+     * @param {object} formData.type required attribute for storage
+     * @param {object} formData.name required attribute for storage
+     * @returns {subclass of ClusterStorages}
+     */
     submitAddStorage(storageFormData) {
       let {
-        onepanelServer,
+        storageManager,
         storages,
-      } = this.getProperties('storages', 'onepanelServer');
+      } = this.getProperties('storages', 'storageManager');
 
-      let storageName = storageFormData.name;
       let cs = createClusterStorageModel(storageFormData);
 
-      let csListProto = {};
-      csListProto[storageName] = cs;
+      // FIXME a hack for future
+      cs.name = storageFormData.name;
 
-      let csList = ClusterStoragesList.constructFromObject(csListProto);
+      let addingStorage = storageManager.createStorage(cs);
 
       return new Promise((resolve, reject) => {
-        let addingStorage =
-          onepanelServer.request('oneprovider', 'addStorage', csList);
-
         addingStorage.then(() => {
           storages.pushObject(cs);
           this.set('addStorageOpened', false);

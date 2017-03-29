@@ -1,0 +1,24 @@
+FIXME content clusters spaces
+{{!-- FIXME in modal? --}}
+{{one-way-input value=_currentToken update=(action (mut _currentToken))}}
+<div class="btn-toolbar">
+  {{#spin-button action=(action "updateSpacesList") class="btn btn-default"}}
+    Update
+  {{/spin-button}}
+  {{#spin-button action=(action "createSpace") class="btn btn-primary"}}
+    Create
+  {{/spin-button}}
+</div>
+
+{{#if _spacesProxy.isFulfilled}}
+
+<ul>
+  {{#each _spacesProxy.content as |spaceProxy|}}
+  <li>
+    {{#if _spacesProxy.isFulfilled}} name: {{spaceProxy.content.name}} {{else if spaceProxy.isRejected}} error: {{spaceProxy.reason}}
+    {{/if}}
+  </li>
+  {{/each}}
+</ul>
+{{else}} {{#if _spacesProxy.isPending}} {{spin-spinner-block sizeClass="md" class="centered"}} {{else if spacesProxy.isRejected}}
+Rejected: {{_spacesProxy.reason}} {{/if}} {{/if}}

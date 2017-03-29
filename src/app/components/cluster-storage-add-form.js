@@ -80,6 +80,7 @@ export default Ember.Component.extend({
     this._addFieldsPlaceholders();
   },
 
+  // FIXME move to some helper or something  
   _addFieldsPlaceholders() {
     let i18n = this.get('i18n');
     let {
