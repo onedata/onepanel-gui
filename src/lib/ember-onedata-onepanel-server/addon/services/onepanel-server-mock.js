@@ -202,13 +202,15 @@ export default Ember.Service.extend({
         }
       },
 
-  onezone_configureZone: {
-    success() {
-      return null;
-    },
-    taskId: 'configure'
-  },
-  onezone_getZoneConfiguration: {
-    statusCode: 404,
-  },
-};
+      onezone_configureZone: {
+        success() {
+          return null;
+        },
+        taskId: 'configure'
+      },
+      onezone_getZoneConfiguration: {
+        statusCode: 404,
+      }
+    };
+  })
+});

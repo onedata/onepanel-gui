@@ -26,6 +26,6 @@ export default Ember.Component.extend({
     this.$(".btn-toolbar").click((event) => {
       event.preventDefault();
       event.stopPropagation();
-    })
+    });
   }
 });
