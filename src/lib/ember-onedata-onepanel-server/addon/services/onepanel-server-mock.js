@@ -149,6 +149,9 @@ export default Ember.Service.extend({
     return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
   }),
 
+  /**
+   * Functions returning values in callback on API call success.
+   */
   requestHandler: computed('progressMock', function () {
     let progressMock = this.get('progressMock');
     return {
@@ -199,22 +202,13 @@ export default Ember.Service.extend({
         }
       },
 
-      onezone_configureZone: {
-        success() {
-          return null;
-        },
-        taskId: 'configure'
-      },
-      onezone_getZoneConfiguration: {
-        statusCode: 404,
-      },
-    };
-  }),
-});
-
-// TODO: make req handlers public to allow modifying mocks
-
-/**
- * Functions returning values in callback on API call success.
- */
-
+  onezone_configureZone: {
+    success() {
+      return null;
+    },
+    taskId: 'configure'
+  },
+  onezone_getZoneConfiguration: {
+    statusCode: 404,
+  },
+};
