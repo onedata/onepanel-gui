@@ -4,6 +4,7 @@ import { invokeAction } from 'ember-invoke-action';
 const {
   Component,
   inject: { service },
+  computed: { readOnly },
 } = Ember;
 
 // TODO MB, GB, TB - selector
@@ -21,6 +22,9 @@ export default Component.extend({
 
   // TODO maybe injected in future  
   storagesProxy: null, // FIXME proxy
+  formFields: readOnly(() => FORM_FIELDS),
+
+  selectedStorageId: null,
 
   init() {
     this._super(...arguments);
@@ -33,9 +37,11 @@ export default Component.extend({
   },
 
   actions: {
-    submit({}) {
+    // FIXME unfinished
+    submit({ name, storageId }) {
       invokeAction(this, 'supportSpace', {
-
+        name,
+        storageId
       });
     },
     storageChanged() {

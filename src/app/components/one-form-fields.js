@@ -38,11 +38,6 @@ export default Ember.Component.extend({
    */
   fields: null,
 
-  /**
-   * @type {string}
-   */
-  i18nPrefix: null,
-
   actions: {
     inputChanged() {
       invokeAction(this, 'inputChanged', ...arguments);

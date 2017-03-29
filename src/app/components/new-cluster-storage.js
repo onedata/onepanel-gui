@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
 
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
