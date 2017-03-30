@@ -13,29 +13,49 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
+const {
+  inject: { service },
+  computed: { readOnly },
+} = Ember;
+
+const STEPS_PROVIDER = [{
+  id: 'installation',
+  title: 'cluster installation'
+}, {
+  id: 'provider-registration',
+  title: 'zone registration'
+}, {
+  id: 'provider-storage',
+  title: 'storage configuration'
+}, {
+  id: 'summary',
+  title: 'summary'
+}];
+
+const STEPS_ZONE = [{
+  id: 'installation',
+  title: 'cluster installation'
+}, {
+  id: 'summary',
+  title: 'summary'
+}];
+
 export default Ember.Component.extend({
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
   initStepIndex: 0,
 
   _isInProcess: false,
 
   // TODO: i18n
-  steps: [{
-    id: 0,
-    title: 'cluster installation'
-  }, {
-    id: 1,
-    title: 'zone registration'
-  }, {
-    id: 2,
-    title: 'storage configuration'
-  }, {
-    id: 3,
-    title: 'summary'
-  }],
+  steps: [],
 
   init() {
     this._super(...arguments);
+    let onepanelServiceType = this.get('onepanelServiceType');
     this.set('_isInProcess', this.get('initStepIndex') > 0);
+    this.set('steps', onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE);
   },
 
   actions: {

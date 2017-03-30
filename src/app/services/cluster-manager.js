@@ -63,6 +63,7 @@ export default Service.extend({
 
       gettingInitStep.then(step => {
         resolve(ClusterDetails.create({
+          onepanelServiceType: this.get('onepanelServiceType'),
           clusterInfo: this.get('clustersProxy.content.firstObject'),
           initStep: step,
         }));

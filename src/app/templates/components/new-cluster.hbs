@@ -5,16 +5,16 @@
 {{else}}
 
   {{#one-wizard steps=steps currentIndex=(readonly initStepIndex) as |w|}}
-    {{#if (eq w.index 0)}}
+    {{#if (eq w.step.id "installation")}}
       {{new-cluster-installation
         clusterConfigurationSuccess=(action "clusterConfigurationSuccess")
         nextStep=(action "next" target=w.wizard)
       }}
-    {{else if (eq w.index 1)}}
+    {{else if (eq w.step.id "provider-registration")}}
       {{new-cluster-zone-registration nextStep=(action "next" target=w.wizard)}}
-    {{else if (eq w.index 2)}}
+    {{else if (eq w.step.id "provider-storage")}}
       {{new-cluster-storage nextStep=(action "next" target=w.wizard)}}
-    {{else if (eq w.index 3)}}
+    {{else if (eq w.step.id "summary")}}
       {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}
     {{/if}}
   {{/one-wizard}}
