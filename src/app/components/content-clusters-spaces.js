@@ -9,8 +9,9 @@ export default Component.extend({
   classNames: ['content-clusters-spaces'],
 
   spaceManager: service(),
+  globalNotify: service(),
 
-  _spacesProxy: null,
+  spacesProxy: null,
 
   _supportSpaceOpened: false,
   _currentToken: '',
@@ -23,7 +24,7 @@ export default Component.extend({
   _updateSpacesList() {
     let spaceManager = this.get('spaceManager');
     let spacesProxy = spaceManager.getSpaces();
-    this.set('_spacesProxy', spacesProxy);
+    this.set('spacesProxy', spacesProxy);
     return spacesProxy.get('promise');
   },
 
@@ -58,7 +59,16 @@ export default Component.extend({
     },
     revokeSpace(spaceId) {
       // FIXME handle errors
-      return this._revokeSpace(spaceId);
+      let globalNotify = this.get('globalNotify');
+      let revoking = this._revokeSpace(spaceId);
+      revoking.then(() => {
+        this._updateSpacesList();
+        globalNotify.info(`Space support revoked`);
+      });
+      revoking.catch(error => {
+        globalNotify.error('Space revoking failed: ' + error);
+      });
+      return revoking;
     },
   },
 });

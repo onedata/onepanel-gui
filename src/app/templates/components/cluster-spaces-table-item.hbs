@@ -1,0 +1,30 @@
+{{!-- TODO change .storage-table class or make generic --}}
+{{!-- TODO i18n --}}
+
+{{#listItem.header}}
+  {{space.name}}
+  <div class="btn-toolbar">
+    <button class="btn icon-btn" {{action (action "revokeSpace")}}>
+      {{one-icon icon="remove"}}
+      {{bs-tooltip
+        title="Revoke space support from this provider"
+        placement="bottom"
+      }}
+    </button>
+  </div>
+{{/listItem.header}}
+{{#listItem.content}}
+  <table class="storage-table">
+    <tr>
+      <td class="storage-table-img-cell"></td>
+      <td class="storage-table-content-cell">
+        <div class="row content-row">
+          <strong>Name:</strong> {{space.name}}
+        </div>
+        <div class="row content-row">
+          <strong>Id:</strong> {{space.id}}
+        </div>
+      </td>
+    </tr>
+  </table>
+{{/listItem.content}}

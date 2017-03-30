@@ -1,3 +1,4 @@
+{{!-- TODO i18n --}}
 {{#if noStorages}}
   <div class="row content-row no-border">
     <h1>Registration</h1>
@@ -35,6 +36,7 @@
     as |modal|
   }}
     {{#modal.body}}
+      <h1>Add storage</h1>
       {{cluster-storage-add-form submit=(action "submitAddStorage")}}
     {{/modal.body}}
   {{/bs-modal}}

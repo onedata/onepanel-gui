@@ -1,0 +1,10 @@
+{{#if proxy.isFulfilled}}
+  {{yield}}
+{{else}}
+  {{#if proxy.isPending}}
+    {{spin-spinner-block sizeClass="md" class="centered"}}
+  {{else if proxy.isRejected}}
+    {{!-- TODO style --}}
+    Error fetching resource.
+  {{/if}}
+{{/if}}

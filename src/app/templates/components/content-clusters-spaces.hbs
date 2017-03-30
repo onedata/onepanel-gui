@@ -1,38 +1,26 @@
-FIXME content clusters spaces
-{{!-- FIXME in modal? --}}
-{{one-way-input value=_currentToken update=(action (mut _currentToken))}}
-<div class="btn-toolbar">
-  {{#spin-button action=(action "updateSpacesList") class="btn btn-default"}}
-    Update
-  {{/spin-button}}
-  {{#bs-button onClick=(action "supportSpace") type="primary"}}
-    Support space
-  {{/bs-button}}
+  {{!-- TODO i18n --}}
+  
+<div class="row content-row">
+  <h1>Spaces
+    <div class="btn-toolbar">
+      {{#spin-button action=(action "updateSpacesList") class="btn btn-default"}}
+        Refresh list
+      {{/spin-button}}
+      {{#bs-button onClick=(action "supportSpace") type="primary"}}
+        Support space
+      {{/bs-button}}
+    </div>
+  </h1>
 </div>
 
-{{#if _spacesProxy.isFulfilled}}
-
-<ul>
-  {{#each _spacesProxy.content as |spaceProxy|}}
-  <li>
-    {{#if _spacesProxy.isFulfilled}}
-      name: {{spaceProxy.content.name}}, id: {{spaceProxy.content.id}}
-      {{#spin-button class="btn btn-default" action=(action "revokeSpace" spaceProxy.content.id)}}
-        Revoke
-      {{/spin-button}}
-    {{else if spaceProxy.isRejected}} 
-      error: {{spaceProxy.reason}}
-    {{/if}}
-  </li>
-  {{/each}}
-</ul>
-{{else}}
-  {{#if _spacesProxy.isPending}}
-    {{spin-spinner-block sizeClass="md" class="centered"}}
-  {{else if _spacesProxy.isRejected}}
-    Rejected: {{_spacesProxy.reason}}
-  {{/if}}
-{{/if}}
+<div class="row">
+  {{#promise-proxy-container proxy=spacesProxy}}
+    {{cluster-spaces-table
+      spaces=spacesProxy.content
+      revokeSpace=(action "revokeSpace")
+    }}
+  {{/promise-proxy-container}}
+</div>
 
 {{#bs-modal
   id="support-space"

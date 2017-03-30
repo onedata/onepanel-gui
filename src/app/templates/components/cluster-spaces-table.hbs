@@ -1,0 +1,23 @@
+{{#one-collapsible-list as |list|}}
+  {{#each spaces as |spaceProxy|}}
+    {{!-- TODO error handling, loading indicators? --}}
+    {{#if spaceProxy.isFulfilled}}
+      {{#list.item as |listItem|}}
+        {{cluster-spaces-table-item
+          oneListItem=listItem
+          space=spaceProxy.content
+          revokeSpace=(action "revokeSpace")
+        }}
+      {{/list.item}}
+    {{/if}}
+  {{/each}}
+  {{#list.item as |listItem|}}
+    {{#listItem.header}}
+      
+    {{/listItem.header}}
+    {{#listItem.content}}
+      Hiddent content.
+    {{/listItem.content}}
+  {{/listItem}}
+  {{!-- other items... --}}
+{{/one-collapsible-list}}

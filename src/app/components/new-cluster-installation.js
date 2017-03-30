@@ -70,7 +70,7 @@ export default Ember.Component.extend({
 
   /**
    * Resolves with EmberArray of HostInfo.
-   * @type {ObjectPromiseProxy}
+   * @type {ObjectPromiseProxy.EmberArray.HostInfo}
    */
   hostsProxy: null,
 
@@ -79,12 +79,6 @@ export default Ember.Component.extend({
    * @type {boolean}
    */
   canDeploy: false,
-
-  /**
-   * List of hosts that should be presented to user for deployment
-   * @type {EmberArray.HostInfo}
-   */
-  hosts: readOnly('hostsProxy.content'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
