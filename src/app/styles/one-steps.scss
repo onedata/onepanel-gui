@@ -11,4 +11,9 @@
     display: inline-block;
     width: 100%;
   }
+
+  @media (max-width: $screen-xs-max) {
+    margin: $mobile-horizontal-content-padding;
+    margin-bottom: 0;
+  }
 }

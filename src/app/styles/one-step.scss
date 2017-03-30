@@ -6,17 +6,37 @@ $step-circle-size: 30px;
 $color-one-step-inactive: $color-one-light-gray;
 $color-one-step-active: $color-one-default;
 
+$step-width: 350px;
+$max-steps: 10;
+
 .one-step {
   position: relative;
   width: 200px;
   list-style: none;
   display: inline-block;
   min-width: 20%;
-  margin-bottom: 1em;
-  
-  &:not(.active) {
-    // TODO maybe move this to dynamic class
-    @extend .hidden-xs
+
+  @for $i from 1 through $max-steps {
+    .steps-#{$i} & {
+      @media (max-width: $i * $step-width) {
+        &:not(.active) {
+          display: none;
+        }
+        .step-separator {
+          $width: ($i / 2) * $step-width;
+          width: $width;
+          &.separator-right {
+            left: 75%;
+          }
+          &.separator-left {
+            left: initial;
+            right: 75%;
+          }
+        }
+        display: block; 
+        margin: 0 auto;
+      }
+    }
   }
 
   .step-circle {
@@ -31,7 +51,7 @@ $color-one-step-active: $color-one-default;
   }
 
   .step-number {
-    line-height: $step-circle-size - 2*$step-circle-border-width + 1px;
+    line-height: $step-circle-size - 2 * $step-circle-border-width + 1px;
     // TODO consider making variable for one-component borders
     // TODO inactive color
     text-align: center;
