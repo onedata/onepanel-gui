@@ -1,4 +1,6 @@
 .cluster-host-table {
+  position: relative;
+
   &:not(.bt) {
     .toggle-column {
       width: 15%;
@@ -21,9 +23,10 @@
   }
 
   &.bt tbody tr {
-    border-left: 8px solid transparent;
-    &.active {
-      border-left: 8px solid $color-one-azure;
+    &.active td:after {
+      @include left-line(
+        $one-list-item-active-left-border-width solid $color-one-azure
+      );
     }
     td {
       font-size: 0.9em;

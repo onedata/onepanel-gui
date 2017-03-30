@@ -4,7 +4,10 @@ $root-url: rootUrl();
 @import 'utils';
 @import 'fonts';
 
+$control-box-shadow: inset 1px 1px 2px #eee;
+
 @import 'bootstrap-config';
+@import 'bootstrap-addons';
 @import 'ember-power-select-config';
 @import 'side-menu';
 @import '_spin-button-base';
@@ -25,7 +28,6 @@ $zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
 // TODO: color not defined!
 $color-sidebar-background: #F2F4FA;
-$color-content-background: #F9F9FB;
 // TODO
 $color-one-list-item-separator: darken($color-sidebar-background, 5);
 $color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
@@ -38,20 +40,22 @@ $color-main-menu-bg-bottom: #4686CF;
 
 $one-list-item-active-left-border-width: 8px;
 
-$main-content-hover-background: #F2F4FA;
-$main-content-border-color: #E0E4F3;
+$main-content-hover-background: $color-one-white-gray;
+$main-content-border-color: darken($color-one-white-gray, 8);
 
 @import 'common';
 
 @import 'spin-spinner-extensions';
 @import 'side-menu-overrides';
 @import 'app-layout';
+@import 'main-content';
 @import 'login-layout';
 @import 'one-list';
 @import 'one-list-item';
 @import 'main-menu';
 @import 'main-menu-item';
 @import 'one-sidenav';
+@import 'one-wizard';
 @import 'one-steps';
 @import 'one-step';
 @import 'basic-table';
@@ -60,11 +64,9 @@ $main-content-border-color: #E0E4F3;
 @import 'one-list-wrapper';
 @import 'two-level-sidebar';
 @import 'one-way-toggle';
-@import 'main-content';
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
 @import 'ember-power-select-config';
-@import 'one-wizard';
 @import 'content-info';
 @import 'one-collapsible-list';
 @import 'one-collapsible-list-item';

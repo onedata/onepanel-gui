@@ -48,42 +48,23 @@
 
 @import "bootstrap/forms";
 .form-control {
-  @include box-shadow(inset 0 1px 4px 0 rgba(0,0,0,0.13));
+  @include box-shadow($control-box-shadow);
 }
 
 @import "bootstrap/buttons";
 .btn {
   border-width: 2px;
   position: relative;
-  padding: 0.7em 3em;
+  padding: $padding-large-vertical $padding-large-horizontal * 2;
   font-size: 105%;
   font-family: 'Open Sans Semibold';
   &.btn-sm {
     font-size: 85%;
-    padding: 0.3em 1.5em;
+    padding: $padding-small-vertical $padding-base-horizontal;
   }
   // special style for btn-primary, as it is "filled"
   &.btn-primary {
     @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
-  }
-  &.icon-btn {
-    border: 0;
-    background-color: transparent;
-    height: 1em;
-    position: relative;
-    padding: 0;
-    .one-icon {
-      position: relative;
-      top: 0.1em;
-    }
-    &.btn-primary {
-      color: $btn-primary-bg;
-      border: 0;
-      &:hover, &:active, &:focus {
-        background-color: transparent;
-        border: 0;
-      }
-    }
   }
   .one-icon {
     font-size: 1.7em;
@@ -99,7 +80,7 @@
     margin-left: 0.22em;
   }
   @media (max-width: $screen-sm-max) {
-    border-radius: 1.6em;
+    border-radius: $border-radius-large * 2;
     border-width: 1px;
   }
 }
@@ -108,24 +89,6 @@
 @import "bootstrap/component-animations";
 @import "bootstrap/dropdowns";
 @import "bootstrap/button-groups";
-@mixin btn-toolbar-float-right() {
-  .btn-toolbar {
-    text-align: right;
-    float: right;
-    margin-left: 0;
-    .btn {
-      float: none;
-      margin-left: 1.8em;
-      &:first-child {
-        margin-left: 0;
-      }
-      &.icon-btn {
-        margin-left: 1em;
-      }
-    }
-  }
-}
-
 @import "bootstrap/input-groups";
 // TODO make non-gray input-group-addon version for login box
 .input-group {
@@ -148,17 +111,6 @@
     }
   }
 }
-.toggle-centered-form-row {
-  & .control-label {
-    text-align: right;
-    padding-right: $padding-base-vertical / 2;
-    padding-top: 0;
-  }
-  & .one-way-toggle {
-    text-align: left;
-    padding-left: $padding-base-vertical / 2;
-  }
-}
 $input-bg-light: $color-one-white;
 // FIXME color of addon on focus
 .form-group-light {
@@ -175,10 +127,6 @@ $input-bg-light: $color-one-white;
       @include box-shadow(none);
     }
   }
-}
-
-input[type="text"], input[type="password"], input[type="number"] {
-  box-shadow: 1px 1px 2px #eee inset;
 }
 
 .table {

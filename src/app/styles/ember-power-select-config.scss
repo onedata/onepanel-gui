@@ -34,7 +34,7 @@ $ember-power-select-selected-background: $ember-power-select-background-color;
   }
 
   &:not([aria-expanded]) {
-    box-shadow: 1px 1px 2px #eee inset;
+    @include box-shadow($control-box-shadow);
   }
 
   &[aria-expanded="true"] {

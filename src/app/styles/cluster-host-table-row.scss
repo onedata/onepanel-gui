@@ -1,24 +1,18 @@
-.cluster-host-table-row {
-  table:not(.bt) & {
-    &:hover {
-      background-color: $main-content-hover-background !important; //override table-striped style
-      td {
-        position: relative;
-      }
+table:not(.bt) .cluster-host-table-row {
+  &:hover {
+    //override table-striped style
+    background-color: $main-content-hover-background !important;
+    td {
+      position: relative;
+    }
 
-      td:first-child:before {
-        content: '';
-        border-left: 8px solid $color-one-azure;
-        display: block;
-        position: absolute;
-        height: 100%;
-        top: 0;
-        left: 0;
-        width: 8px;
-      }
+    td:first-child:before {
+      @include left-line(
+        $one-list-item-active-left-border-width solid $color-one-azure
+      );
     }
-    td:first-child {
-      padding-left: 16px;
-    }
+  }
+  td:first-child {
+    padding-left: 16px;
   }
 }
