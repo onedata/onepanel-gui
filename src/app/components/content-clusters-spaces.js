@@ -12,6 +12,7 @@ export default Component.extend({
 
   _spacesProxy: null,
 
+  _supportSpaceOpened: false,
   _currentToken: '',
 
   init() {
@@ -26,23 +27,38 @@ export default Component.extend({
     return spacesProxy.get('promise');
   },
 
-  _supportSpace() {
-    let spaceManager = this.get('spaceManager');
-    let token = this.get('_currentToken');
-    return spaceManager.supportSpace({
-      size: 1000000000,
-      storageId: 'Storydz',
-      token: token,
-      mountInRoot: true,
-    });
+  /**
+   * @param {Object} supportSpaceData
+   * @param {string} supportSpaceData.storageId
+   * @param {string} supportSpaceData.token
+   * @param {number} supportSpaceData.size
+   * @param {boolean} supportSpaceData.mountInRoot
+   */
+  _supportSpace(supportSpaceData) {
+    return this.get('spaceManager').supportSpace(supportSpaceData);
+  },
+
+  _revokeSpace(spaceId) {
+    return this.get('spaceManager').revokeSpaceSupport(spaceId);
   },
 
   actions: {
     updateSpacesList() {
       return this._updateSpacesList();
     },
-    createSpace() {
-      return this._supportSpace();
+    supportSpace() {
+      return this.set('_supportSpaceOpened', true);
+    },
+    onSupportSpaceHide() {
+      return this.set('_supportSpaceOpened', false);
+    },
+    submitSupportSpace(supportSpaceData) {
+      // FIXME handle errors
+      return this._supportSpace(supportSpaceData);
+    },
+    revokeSpace(spaceId) {
+      // FIXME handle errors
+      return this._revokeSpace(spaceId);
     },
   },
 });

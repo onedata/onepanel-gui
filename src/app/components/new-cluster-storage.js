@@ -31,9 +31,6 @@ export default Ember.Component.extend({
 
     let cs = createClusterStorageModel(storageFormData);
 
-    // FIXME a hack for future
-    cs.name = storageFormData.name;
-
     let addingStorage = storageManager.createStorage(cs);
 
     return new Promise((resolve, reject) => {

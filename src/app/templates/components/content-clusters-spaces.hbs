@@ -5,9 +5,9 @@ FIXME content clusters spaces
   {{#spin-button action=(action "updateSpacesList") class="btn btn-default"}}
     Update
   {{/spin-button}}
-  {{#spin-button action=(action "createSpace") class="btn btn-primary"}}
-    Create
-  {{/spin-button}}
+  {{#bs-button onClick=(action "supportSpace") type="primary"}}
+    Support space
+  {{/bs-button}}
 </div>
 
 {{#if _spacesProxy.isFulfilled}}
@@ -15,10 +15,35 @@ FIXME content clusters spaces
 <ul>
   {{#each _spacesProxy.content as |spaceProxy|}}
   <li>
-    {{#if _spacesProxy.isFulfilled}} name: {{spaceProxy.content.name}} {{else if spaceProxy.isRejected}} error: {{spaceProxy.reason}}
+    {{#if _spacesProxy.isFulfilled}}
+      name: {{spaceProxy.content.name}}, id: {{spaceProxy.content.id}}
+      {{#spin-button class="btn btn-default" action=(action "revokeSpace" spaceProxy.content.id)}}
+        Revoke
+      {{/spin-button}}
+    {{else if spaceProxy.isRejected}} 
+      error: {{spaceProxy.reason}}
     {{/if}}
   </li>
   {{/each}}
 </ul>
-{{else}} {{#if _spacesProxy.isPending}} {{spin-spinner-block sizeClass="md" class="centered"}} {{else if spacesProxy.isRejected}}
-Rejected: {{_spacesProxy.reason}} {{/if}} {{/if}}
+{{else}}
+  {{#if _spacesProxy.isPending}}
+    {{spin-spinner-block sizeClass="md" class="centered"}}
+  {{else if _spacesProxy.isRejected}}
+    Rejected: {{_spacesProxy.reason}}
+  {{/if}}
+{{/if}}
+
+{{#bs-modal
+  id="support-space"
+  open=_supportSpaceOpened
+  onHide=(action "onSupportSpaceHide")
+  body=false
+  footer=true
+  as |modal|
+}}
+  {{#modal.body}}
+    <h1>Support a space</h1>
+    {{support-space-form submitSupportSpace=(action "submitSupportSpace")}}
+  {{/modal.body}}
+{{/bs-modal}}

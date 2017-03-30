@@ -3,6 +3,7 @@ import loginBox from './components/login-box';
 import emptyCollectionSidebar from './components/empty-collection-sidebar';
 import clusterStorageAddForm from './components/cluster-storage-add-form';
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
+import supportSpaceForm from './components/support-space-form';
 
 const translations = {
   components: {
@@ -11,6 +12,7 @@ const translations = {
     emptyCollectionSidebar,
     clusterStorageAddForm,
     newClusterZoneRegistration,
+    supportSpaceForm,
   }
 };
 

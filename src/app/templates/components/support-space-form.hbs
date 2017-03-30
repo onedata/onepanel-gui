@@ -1,0 +1,36 @@
+{{!-- TODO i18n --}}
+
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+  {{#form.group}}
+    {{#power-select
+      loadingMessage='Loading...'
+      options=allStoragesProxy
+      selected=_selectedStorage
+      onchange=(action "storageChanged")
+      searchEnabled=false
+      renderInPlace=true
+      placeholder="Select a storage..."
+      as |storage|
+    }}
+      {{storage.name}}
+    {{/power-select}}
+  {{/form.group}}
+
+  {{one-form-fields
+    bsForm=form
+    fields=formFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+  }}
+
+  <div class="row text-center">
+    {{#spin-button
+      type="submit"
+      class="btn btn-primary"
+      action=(action "submit")
+      disabled=(not canSubmit)
+    }}
+      Add
+    {{/spin-button}}
+  </div>
+{{/bs-form}}

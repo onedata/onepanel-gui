@@ -128,31 +128,12 @@ export default Service.extend({
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
    */
-  _checkIsAnyStorage( /*onepanelServer*/ ) {
+  _checkIsAnyStorage(onepanelServer) {
     return new Promise((resolve, reject) => {
-      // FIXME proper API call
-      // let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
+      let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
 
-      // FIXME bad API hack
-      let pro = $.ajax({
-        method: 'GET',
-        url: '/api/v3/onepanel/provider/storages',
-      });
-
-      // FIXME bad API hack      
-      let gettingStorages = new Promise((resolveList) => {
-        pro.done(storages => {
-          // FIXME ensure polyfills for IE/Edge - but this is for future, so will be removed anyway
-          let futureStorages = Object.keys(storages).map(id =>
-            Object.assign({ name: id }, storages[id])
-          );
-          resolveList(futureStorages);
-        });
-      });
-
-      gettingStorages.then(({ data: storages }) => {
-        // FIXME bad REST API hack
-        resolve(storages != null && Object.keys(storages).length > 0);
+      gettingStorages.then(({ data: { ids } }) => {
+        resolve(ids != null && ids.length > 0);
       });
       gettingStorages.catch(reject);
     });

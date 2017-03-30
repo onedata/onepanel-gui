@@ -12,6 +12,7 @@ import Onepanel from 'npm:onepanel';
 
 const {
   A,
+  assert,
   Service,
   ObjectProxy,
   PromiseProxyMixin,
@@ -21,7 +22,7 @@ const {
 
 // FIXME
 const {
-  ClusterStoragesList,
+  StorageCreateRequest,
 } = Onepanel;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
@@ -36,29 +37,12 @@ export default Service.extend({
    * @return {ObjectPromiseProxy} resolves Ember.Array of SpaceDetails promise proxies
    */
   getStorages() {
-    // FIXME using custom AJAX for spaces
-    // let onepanelServer = this.get('onepanelServer');
+    let onepanelServer = this.get('onepanelServer');
 
     let promise = new Promise((resolve, reject) => {
-      // let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
+      let getStorages = onepanelServer.request('oneprovider', 'getStorages');
 
-      let pro = $.ajax({
-        method: 'GET',
-        url: '/api/v3/onepanel/provider/storages',
-      });
-
-      // FIXME future      
-      let getStorages = new Promise((resolveList) => {
-        pro.done(storages => {
-          // FIXME ensure polyfills for IE/Edge - but this is for future, so will be removed anyway
-          let futureStorages = Object.keys(storages).map(id =>
-            Object.assign({ name: id }, storages[id])
-          );
-          resolveList(futureStorages);
-        });
-      });
-
-      getStorages.then(({ ids }) => {
+      getStorages.then(({ data: { ids } }) => {
         resolve(A(ids.map(id => this.getStorageDetails(id))));
       });
       getStorages.catch(reject);
@@ -74,28 +58,38 @@ export default Service.extend({
    * @return {ObjectPromiseProxy} resolves ClusterStorage object
    */
   getStorageDetails(id) {
-    let onepanelServer = this.get('onepanelServer');
-    let promise = onepanelServer.request('oneprovider', 'getStorageDetails', id);
+    assert('storage id cannot be null', id);
+    let promise = new Promise((resolve, reject) => {
+      let req = $.ajax({
+        url: `/api/v3/onepanel/provider/storages/${id}`,
+        method: 'GET',
+      });
+      req.done(data => resolve(data));
+      req.fail((xhr, textStatus) => reject({ error: textStatus }));
+    });
+    // FIXME workaround for faulty API/Swagger
+    // let onepanelServer = this.get('onepanelServer');
+    // let promise = new Promise((resolve, reject) => {
+    //   let req = onepanelServer.request('oneprovider', 'getStorageDetails', id);
+    //   req.then(({ data }) => resolve(data));
+    //   req.catch(reject);
+    // });
     return ObjectPromiseProxy.create({ promise });
   },
 
   /**
    * FIXME doc
    * 
-   * @param {object} formData contains attributes for specific storage type as in REST API
-   * @param {object} formData.type required attribute for storage
-   * @param {object} formData.name required attribute for storage
+   * @param {ClusterStorage} clusterStorage
    * @returns {Promise}
    */
   createStorage(clusterStorage) {
     let onepanelServer = this.get('onepanelServer');
 
-    let csListProto = {};
-    // FIXME for now: fake name field
-    csListProto[clusterStorage.name] = clusterStorage;
+    let createReqProto = {};
+    createReqProto[clusterStorage.name] = clusterStorage;
+    let createReq = StorageCreateRequest.constructFromObject(createReqProto);
 
-    let csList = ClusterStoragesList.constructFromObject(csListProto);
-
-    return onepanelServer.request('oneprovider', 'addStorage', csList);
+    return onepanelServer.request('oneprovider', 'addStorage', createReq);
   },
 });

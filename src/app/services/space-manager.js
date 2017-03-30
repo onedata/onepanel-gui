@@ -35,22 +35,12 @@ export default Service.extend({
    * @return {ObjectPromiseProxy} resolves Ember.Array of SpaceDetails promise proxies
    */
   getSpaces() {
-    // FIXME using custom AJAX for spaces
-    // let onepanelServer = this.get('onepanelServer');
+    let onepanelServer = this.get('onepanelServer');
 
     let promise = new Promise((resolve, reject) => {
-      // let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
+      let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
 
-      let pro = $.ajax({
-        method: 'GET',
-        url: '/api/v3/onepanel/provider/spaces',
-      });
-
-      let getSpaces = new Promise((resolve) => {
-        pro.done(data => resolve({ ids: data }));
-      });
-
-      getSpaces.then(({ ids }) => {
+      getSpaces.then(({ data: { ids } }) => {
         resolve(A(ids.map(id => this.getSpaceDetails(id))));
       });
       getSpaces.catch(reject);
@@ -67,7 +57,11 @@ export default Service.extend({
    */
   getSpaceDetails(id) {
     let onepanelServer = this.get('onepanelServer');
-    let promise = onepanelServer.request('oneprovider', 'getSpaceDetails', id);
+    let promise = new Promise((resolve, reject) => {
+      let req = onepanelServer.request('oneprovider', 'getSpaceDetails', id);
+      req.then(({ data }) => resolve(data));
+      req.catch(reject);
+    });
     return ObjectPromiseProxy.create({ promise });
   },
 
@@ -86,5 +80,10 @@ export default Service.extend({
       mountInRoot,
     });
     return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
+  },
+
+  revokeSpaceSupport(spaceId) {
+    let onepanelServer = this.get('onepanelServer');
+    return onepanelServer.request('oneprovider', 'revokeSpaceSupport', spaceId);
   },
 });
