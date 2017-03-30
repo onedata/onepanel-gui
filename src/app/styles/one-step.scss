@@ -2,9 +2,9 @@
 // requires onedata colors
 
 $step-circle-border-width: 3px;
-$step-circle-size: 30px;
-$color-one-step-inactive: $color-one-light-gray;
-$color-one-step-active: $color-one-default;
+$step-circle-size: 32px;
+$color-one-step-inactive: $color-one-gray-1;
+$color-one-step-active: $color-one-7;
 
 $step-width: 350px;
 $max-steps: 10;
@@ -14,10 +14,11 @@ $max-steps: 10;
   width: 200px;
   list-style: none;
   display: inline-block;
-  min-width: 20%;
+  vertical-align: top;
 
-  @for $i from 1 through $max-steps {
+  @for $i from 2 through $max-steps {
     .steps-#{$i} & {
+      min-width: 100% / ($i + 1);
       @media (max-width: $i * $step-width) {
         &:not(.active) {
           display: none;
@@ -39,7 +40,7 @@ $max-steps: 10;
     }
   }
 
-  .step-circle {
+  .step-number {
     margin-left: auto;
     margin-right: auto;
     width: $step-circle-size;
@@ -48,10 +49,8 @@ $max-steps: 10;
     border-width: $step-circle-border-width;
     border-color: $color-one-step-inactive;
     color: $color-one-step-inactive;
-  }
-
-  .step-number {
-    line-height: $step-circle-size - 2 * $step-circle-border-width + 1px;
+    line-height: $step-circle-size - 2 * $step-circle-border-width;
+    font-size: 120%;
     // TODO consider making variable for one-component borders
     // TODO inactive color
     text-align: center;
@@ -61,6 +60,9 @@ $max-steps: 10;
     text-transform: capitalize;
     margin-top: $step-circle-size * 0.5;
     color: $color-one-step-inactive;
+    font-family: 'Open Sans Semibold';
+    white-space: nowrap;
+    letter-spacing: 1px;
   }
 
   .step-separator {
@@ -89,11 +91,9 @@ $max-steps: 10;
   }
 
   &.active, &.done {
-    .step-circle {
+    .step-number {
       border-color: $color-one-step-active;
       background-color: $color-one-step-active;
-    }
-    .step-number {
       color: $color-one-white;
     }
     .step-title {
@@ -107,12 +107,6 @@ $max-steps: 10;
   &.done {
     .step-separator.separator-right {
       background-color: $color-one-step-active;
-    }
-  }
-
-  &.active {
-    .step-number {
-      font-weight: bold;
     }
   }
 }
