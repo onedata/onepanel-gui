@@ -4,6 +4,9 @@
   &:not(.bt) {
     .toggle-column {
       width: 15%;
+      .one-way-toggle{
+        font-size: 1.2em;
+      }
     }
   }
 
