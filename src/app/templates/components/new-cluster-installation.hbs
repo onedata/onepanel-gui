@@ -19,7 +19,7 @@
 <div class="row">
   {{#promise-proxy-container proxy=hostsProxy}}
     {{cluster-host-table
-      hosts=hosts.content
+      hosts=hosts
       primaryClusterManager=primaryClusterManager
       hostOptionChanged=(action "hostOptionChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")

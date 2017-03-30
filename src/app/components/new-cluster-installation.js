@@ -74,6 +74,8 @@ export default Ember.Component.extend({
    */
   hostsProxy: null,
 
+  hosts: readOnly('hostsProxy.content'),
+
   /**
    * If true, the deploy action can be invoked
    * @type {boolean}
