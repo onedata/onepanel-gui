@@ -1,7 +1,7 @@
 import {
   InvokeActionMixin
 } from 'ember-invoke-action';
-import BasicTable from './basic-table';
+import BasicTable from 'onepanel-gui/components/basic-table';
 import Ember from 'ember';
 
 import { validator, buildValidations } from 'ember-cp-validations';
@@ -62,7 +62,7 @@ export default BasicTable.extend(
   hostColumnComputedProperties(roles),
   Validations, {
     tagName: 'table',
-    classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown'],
+    classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown-table-rows'],
 
     /**
      * To inject.

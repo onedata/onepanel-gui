@@ -5,7 +5,7 @@
 
   tbody {
     tr {
-      border-top: 1px solid #ddd;
+      border-top: 1px solid $main-content-border-color;
 
       td {
         border: none !important;
@@ -27,7 +27,7 @@
     }
   }
 
-  &.dropdown {
+  &.dropdown-table-rows {
     tbody {
       tr {
         position: relative;
@@ -45,8 +45,8 @@
         }
         &.active {
           td:not(.row-header) {
-            opacity: 100;
-            max-height: 10em;
+            opacity: 1;
+            max-height: 9999em;
             padding: 16px;
             overflow: visible;
           }

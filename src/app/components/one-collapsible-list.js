@@ -7,6 +7,7 @@ import Ember from 'ember';
  * Lists can be nested.
  * 
  * Example:
+ * ```
  * {{#one-collapsible-list as |list|}}
  *   {{#list.item as |listItem|}}
  *     {{#listItem.header}}
@@ -18,6 +19,7 @@ import Ember from 'ember';
  *   {{/listItem}}
  *   {{!-- other items... --}}
  * {{/one-collapsible-list}}
+ * ```
  *
  * @module components/one-collapsible-list.js
  * @author Michał Borzęcki

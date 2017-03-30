@@ -1,0 +1,39 @@
+@mixin btn-toolbar-float-right() {
+  .btn-toolbar {
+    text-align: right;
+    float: right;
+    margin-left: 0;
+    .btn {
+      float: none;
+      margin-left: 1.8em;
+      &:first-child {
+        margin-left: 0;
+      }
+      &.icon-btn {
+        margin-left: 1em;
+      }
+    }
+  }
+}
+
+.icon-btn {
+  border: 0;
+  background-color: transparent;
+  height: 1em;
+  position: relative;
+  padding: 0;
+  .one-icon {
+    position: relative;
+    top: 0.1em;
+  }
+  &.btn-primary {
+    color: $btn-primary-bg;
+    border: 0;
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: transparent;
+      border: 0;
+    }
+  }
+}

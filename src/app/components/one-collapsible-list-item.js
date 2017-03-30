@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+const { computed } = Ember;
 
 /**
  * Item class of the collapsible list. For example of use case see 
@@ -17,13 +18,17 @@ export default Ember.Component.extend({
   classNames: ['one-collapsible-list-item'],
   classNameBindings: ['isActive:active'],
   isCollapsible: true,
-  isActive: false,
   accordionMode: false,
   activeElementId: '',
 
-  activeElementIdObserver: Ember.observer('activeElementId', 'accordionMode', function () {
+  isActive: computed('activeElementId', 'accordionMode', function () {
+    let {
+      activeElementId, elementId
+    } = this.getProperties([
+      'activeElementId', 'elementId'
+    ]);
     if (this.get('accordionMode')) {
-      this.set('isActive', this.get('activeElementId') === this.get('elementId'));
+      return activeElementId === elementId;
     }
   }),
 
