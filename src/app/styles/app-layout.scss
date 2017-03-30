@@ -1,3 +1,5 @@
+$content-col-padding: $padding-large-horizontal * 1.5;
+
 // needs: $mobile-top-height
 // needs: $main-menu-width
 .app-layout {
@@ -62,7 +64,11 @@
   }
   .col-content {
     // TODO similar 30px
-    padding: 30px;
+    padding: $content-col-padding;
+
+    @media (max-width: $screen-xs-max) {
+      padding: 0px;
+    }
   }
 }
 

@@ -1,0 +1,18 @@
+table:not(.bt) .cluster-host-table-row {
+  &:hover {
+    //override table-striped style
+    background-color: $main-content-hover-background !important;
+    td {
+      position: relative;
+    }
+
+    td:first-child:before {
+      @include left-line(
+        $one-list-item-active-left-border-width solid $color-one-azure
+      );
+    }
+  }
+  td:first-child {
+    padding-left: 16px;
+  }
+}

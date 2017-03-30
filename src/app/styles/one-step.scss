@@ -1,20 +1,42 @@
 // requires Bootstrap 3 scaffolding, grid
 // requires onedata colors
 
-$step-circle-border-width: 4px;
-$step-circle-size: 32px;
+$step-circle-border-width: 3px;
+$step-circle-size: 30px;
 $color-one-step-inactive: $color-one-light-gray;
 $color-one-step-active: $color-one-default;
 
+$step-width: 350px;
+$max-steps: 10;
+
 .one-step {
   position: relative;
-  float: left;
   width: 200px;
   list-style: none;
-  
-  &:not(.active) {
-    // TODO maybe move this to dynamic class
-    @extend .hidden-xs
+  display: inline-block;
+  min-width: 20%;
+
+  @for $i from 1 through $max-steps {
+    .steps-#{$i} & {
+      @media (max-width: $i * $step-width) {
+        &:not(.active) {
+          display: none;
+        }
+        .step-separator {
+          $width: ($i / 2) * $step-width;
+          width: $width;
+          &.separator-right {
+            left: 75%;
+          }
+          &.separator-left {
+            left: initial;
+            right: 75%;
+          }
+        }
+        display: block; 
+        margin: 0 auto;
+      }
+    }
   }
 
   .step-circle {
@@ -29,20 +51,44 @@ $color-one-step-active: $color-one-default;
   }
 
   .step-number {
-    line-height: $step-circle-size - 2*$step-circle-border-width;
+    line-height: $step-circle-size - 2 * $step-circle-border-width + 1px;
     // TODO consider making variable for one-component borders
     // TODO inactive color
     text-align: center;
-    font-size: $step-circle-size * 0.5;
   }
 
   .step-title {
     text-transform: capitalize;
-    margin-top: $step-circle-size * 0.3;
+    margin-top: $step-circle-size * 0.5;
     color: $color-one-step-inactive;
   }
 
-  &.active {
+  .step-separator {
+    border-radius: $step-circle-border-width / 2;
+    position: absolute;
+    top: 1em;
+    width:60%;
+    height: $step-circle-border-width;
+    background-color: $color-one-step-inactive;
+
+    &.separator-left {
+      left: -30%;
+    }
+
+    &.separator-right {
+      left: 70%;
+    }
+  }
+
+  &:first-child .separator-left {
+    display: none;
+  }
+
+  &:last-child .separator-right {
+    display: none;
+  }
+
+  &.active, &.done {
     .step-circle {
       border-color: $color-one-step-active;
       background-color: $color-one-step-active;
@@ -52,6 +98,21 @@ $color-one-step-active: $color-one-default;
     }
     .step-title {
       color: $color-one-step-active;
+    }
+    .step-separator.separator-left {
+      background-color: $color-one-step-active;
+    }
+  }
+
+  &.done {
+    .step-separator.separator-right {
+      background-color: $color-one-step-active;
+    }
+  }
+
+  &.active {
+    .step-number {
+      font-weight: bold;
     }
   }
 }

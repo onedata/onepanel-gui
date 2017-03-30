@@ -1,0 +1,8 @@
+{{yield (hash 
+  header=(component 'one-collapsible-list-item-header' 
+    isCollapsible=isCollapsible 
+    isOpened=isActive 
+    click=(action 'toggle')
+  )
+  content=(component 'one-collapsible-list-item-content' isOpened=isActive)
+)}}

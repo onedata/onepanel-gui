@@ -1,5 +1,7 @@
-<td>{{host.hostname}}</td>
-<td>
+<td class="row-header" {{action "headerClick" on="click"}}>
+  {{!--{{one-icon icon="arrow-down"}}--}}{{host.hostname}} {{!-- TODO clusters icon --}}
+</td>
+<td class="text-center toggle-column">
   {{one-way-toggle
     checked=host.database
     update=(action "checkboxChanged")
@@ -7,7 +9,7 @@
     hostOption="database"
   }}
 </td>
-<td>
+<td class="text-center toggle-column">
   {{one-way-toggle
     checked=host.clusterWorker
     update=(action "checkboxChanged")
@@ -15,7 +17,7 @@
     hostOption="clusterWorker"
   }}
 </td>
-<td>
+<td class="text-center toggle-column">
   {{one-way-toggle
     checked=host.clusterManager
     update=(action "checkboxChanged")
@@ -23,7 +25,7 @@
     hostOption="clusterManager"
   }}
 </td>
-<td>
+<td class="text-center toggle-column">
   {{one-way-toggle
     checked=isPrimaryClusterManager
     update=(action "primaryClusterManagerChanged" host.hostname)

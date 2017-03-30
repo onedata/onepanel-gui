@@ -1,11 +1,26 @@
 .content-info {
+  .world-map {
+    position: absolute;
+    @include fill-container();
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
   h1 {
-    // TODO
+    font-weight: bold;
+    font-size: 24pt;
+    letter-spacing: 3px;
+    margin-bottom: 1.2em;
+    margin-top: 0;
+    text-transform: uppercase;
   }
   h2 {
-    // TODO
+    font-size: 12pt;
+    text-transform: uppercase;
+    margin-bottom: 2em;
   }
   p.lead {
-    // TODO
+    font-size: 12pt;
+    margin-bottom: 2.5em;
   }
 }

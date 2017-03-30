@@ -8,7 +8,7 @@ const {
 export default Ember.Component.extend({
   tagName: 'li',
   classNames: ['one-step'],
-  classNameBindings: ['isActive:active'],
+  classNameBindings: ['isActive:active', 'isDone:done'],
 
   index: null,
   title: null,

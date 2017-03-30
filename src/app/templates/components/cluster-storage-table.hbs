@@ -1,23 +1,35 @@
-{{!-- TODO should be responsive --}}
-
-{{!-- TODO style of list --}}
-
 {{!-- TODO i18n --}}
 
-<ul class="one-list">
+{{#one-collapsible-list as |list|}}
   {{#each storages as |storage|}}
-    <li class="one-list-item">
-      <div class="item-header">
-        {{storage.name}}
-      </div>
-      <ul class="one-list one-list-level-2">
-        <li class="one-list-item">
-          <strong>Type:</strong> {{storage.type}}
-        </li>
-        <li class="one-list-item">
-          <strong>Mount point:</strong> {{storage.mountPoint}}
-        </li>
-      </ul>
-    </li>
+    {{#list.item as |listItem|}}
+    
+      {{#listItem.header toolbarWhenOpened=true}}
+        {{storage.name}}Storage 1
+        <div class="btn-toolbar">
+          <button class="btn icon-btn">{{one-icon icon="star"}}</button>
+          <button class="btn btn-primary icon-btn">{{one-icon icon="space"}}</button>
+          <button class="btn icon-btn">{{one-icon icon="rename"}}</button>
+          <button class="btn icon-btn">{{one-icon icon="remove"}}</button>
+        </div>
+      {{/listItem.header}}
+
+      {{#listItem.content}}
+        <table class="storage-table">
+          <tr>
+            <td class="storage-table-img-cell"></td>
+            <td class="storage-table-content-cell">
+              <div class="row content-row">
+                <strong>Type:</strong> {{storage.type}}
+              </div>
+              <div class="row content-row">
+                <strong>Mount point:</strong> {{storage.mountPoint}}
+              </div>
+            </td>
+          </tr>
+        </table>
+      {{/listItem.content}}
+
+    {{/list.item}}
   {{/each}}
-</ul>
+{{/one-collapsible-list}}

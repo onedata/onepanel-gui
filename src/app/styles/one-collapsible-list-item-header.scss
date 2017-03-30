@@ -1,0 +1,37 @@
+.one-collapsible-list-item-header {
+  border-bottom: 1px solid $main-content-border-color;
+  letter-spacing: 0.7px;
+  position: relative;
+  .toggle-icon {
+    display: none;
+    font-size: 1.7em;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform .2s ease;
+  }
+  @include btn-toolbar-float-right();
+  &.toolbar-when-opened {
+    .btn-toolbar {
+      display: none;
+    }
+  }
+  &.opened {
+    .toggle-icon {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    .btn-toolbar {
+      display: block;
+    }
+  }
+  &.collapsible {
+    .toggle-icon {
+      display: block;
+    }
+    .btn-toolbar {
+      margin-right: 4em;
+    }
+  }
+}

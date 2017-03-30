@@ -48,16 +48,41 @@
 
 @import "bootstrap/forms";
 .form-control {
-  @include box-shadow(inset 0 1px 4px 0 rgba(0,0,0,0.13));
+  @include box-shadow($control-box-shadow);
 }
 
 @import "bootstrap/buttons";
 .btn {
   border-width: 2px;
-}
-// special style for btn-primary, as it is "filled"
-.btn-primary {
-  @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  position: relative;
+  padding: $padding-large-vertical $padding-large-horizontal * 2;
+  font-size: 105%;
+  font-family: 'Open Sans Semibold';
+  &.btn-sm {
+    font-size: 85%;
+    padding: $padding-small-vertical $padding-base-horizontal;
+  }
+  // special style for btn-primary, as it is "filled"
+  &.btn-primary {
+    @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  }
+  .one-icon {
+    font-size: 1.7em;
+    line-height: 0;
+    position: relative;
+    margin: -0.2em;
+    top: 0.3em;
+  }
+  .one-icon + span {
+    margin-left: 0.4em;
+  }
+  span + .one-icon {
+    margin-left: 0.22em;
+  }
+  @media (max-width: $screen-sm-max) {
+    border-radius: $border-radius-large * 2;
+    border-width: 1px;
+  }
 }
 
 // Components
@@ -104,6 +129,12 @@ $input-bg-light: $color-one-white;
   }
 }
 
+.table {
+  thead > tr > th {
+    border-bottom: 0;
+  }
+}
+
 @import "bootstrap/navs";
 @import "bootstrap/navbar";
 @import "bootstrap/breadcrumbs";
@@ -122,11 +153,63 @@ $input-bg-light: $color-one-white;
 @import "bootstrap/wells";
 @import "bootstrap/close";
 
+.progress {
+  box-shadow: none;
+
+  .progress-bar {
+    border-radius: inherit;
+  }
+}
+
 // Components w/ JavaScript
 @import "bootstrap/modals";
 @import "bootstrap/tooltip";
 @import "bootstrap/popovers";
 @import "bootstrap/carousel";
+
+.modal {
+  &.in {
+    .modal-dialog {
+      @include absolute-align-middle-center();
+
+      margin: 0;
+      transition: initial;
+      border-radius: $border-radius-large;
+
+      @media (max-width: $screen-xs-max) {
+        width: 90%;
+      }
+
+      .modal-content {
+        box-shadow: none;
+        padding: 0 3em 1em 3em;
+
+        .modal-header {
+          text-align: center;
+          
+          .close {
+            display: none;
+          }
+        }
+
+        h1 {
+            font-size: $font-size-base * 1.5;
+            font-family: 'Open Sans Semibold';
+            letter-spacing: 0.7px;
+            margin-bottom: 1em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+      }
+    }
+  }
+  &.fade {
+    transition: initial;
+    .modal-dialog {
+      transition: initial;
+    }
+  }
+}
 
 // Utility classes
 @import "bootstrap/utilities";

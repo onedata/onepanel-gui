@@ -1,21 +1,27 @@
 {{!-- TODO i18n --}}
 
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
-  {{one-form-fields
-    bsForm=form
-    fields=fields 
-    formValues=formValues 
-    inputChanged=(action "inputChanged")
-    disabled=_isBusy
-  }}
+<div class="content-row no-border">
+  <h1 class="">Registration</h1>
+  <p>Your software configuration has been successfully verified. 
+    Please enter your onedata provider name and optional approximate geographical location.</p>
+</div>
+<div class="content-row row">
+  {{#bs-form submitOnEnter=false class="form-horizontal col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered text-center" as |form|}}
+    {{one-form-fields
+      bsForm=form
+      fields=fields 
+      formValues=formValues 
+      inputChanged=(action "inputChanged")
+      disabled=_isBusy
+    }}
 
-  {{#spin-button
-    type="submit"
-    class="btn btn-default"
-    buttonStyle="expand-left"
-    action=(action "submit")
-  }}
-    {{t 'components.newClusterZoneRegistration.register'}}
-  {{/spin-button}}
-{{/bs-form}}
-
+    {{#spin-button
+      type="submit"
+      class="btn btn-primary"
+      buttonStyle="expand-left"
+      action=(action "submit")
+    }}
+      {{t 'components.newClusterZoneRegistration.register'}}
+    {{/spin-button}}
+  {{/bs-form}}
+</div>
