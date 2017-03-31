@@ -4,7 +4,7 @@
     {{#if spaceProxy.isFulfilled}}
       {{#list.item as |listItem|}}
         {{cluster-spaces-table-item
-          oneListItem=listItem
+          listItem=listItem
           space=spaceProxy.content
           revokeSpace=(action "revokeSpace")
         }}

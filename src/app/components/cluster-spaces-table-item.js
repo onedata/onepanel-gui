@@ -6,6 +6,8 @@ const {
 } = Ember;
 
 export default Component.extend({
+  classNames: ['cluster-spaces-table-item'],
+
   /**
    * @type {Component.OneCollapsibleListItem}
    */
