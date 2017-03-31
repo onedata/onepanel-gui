@@ -14,6 +14,8 @@ export default Ember.Component.extend({
   classNames: ['two-level-sidebar'],
 
   sidebar: service(),
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   model: null,
 
@@ -35,5 +37,24 @@ export default Ember.Component.extend({
 
       this.sendAction('changeResourceId', resourceType, itemId);
     }
-  }
+  },
+
+  // TODO only for cluster-specific - make more generic
+
+  cluster: readOnly('model.collection.firstObject'),
+
+  secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
+    let {
+      onepanelServiceType,
+      cluster,
+    } = this.getProperties('onepanelServiceType', 'cluster');
+    if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
+      return [{
+        id: 'spaces',
+        label: 'Spaces',
+      }];
+    } else {
+      return [];
+    }
+  }).readOnly(),
 });

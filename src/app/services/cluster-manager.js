@@ -28,7 +28,6 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const THIS_CLUSTER_ID = 'the-cluster';
-const THIS_CLUSTER_NAME = 'The cluster';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -47,11 +46,9 @@ export default Service.extend({
 
   getClusters() {
     return new Promise((resolve) => {
-      let thisCluster = ClusterInfo.create({
-        id: THIS_CLUSTER_ID,
-        name: THIS_CLUSTER_NAME,
+      this.getClusterDetails().then(thisCluster => {
+        resolve(A([thisCluster]));
       });
-      resolve(A([thisCluster]));
     });
   },
 
@@ -62,9 +59,13 @@ export default Service.extend({
       let gettingInitStep = this._getThisClusterInitStep();
 
       gettingInitStep.then(step => {
+        let thisCluster = ClusterInfo.create({
+          id: THIS_CLUSTER_ID,
+        });
+
         resolve(ClusterDetails.create({
           onepanelServiceType: this.get('onepanelServiceType'),
-          clusterInfo: this.get('clustersProxy.content.firstObject'),
+          clusterInfo: thisCluster,
           initStep: step,
         }));
       });

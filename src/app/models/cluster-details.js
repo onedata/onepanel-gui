@@ -42,4 +42,8 @@ export default Ember.ObjectProxy.extend({
     } = this.getProperties('initStep', 'onepanelServiceType');
     return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
   }),
+
+  name: computed('isInitialized', function () {
+    return this.get('isInitialized') ? 'This cluster' : 'New cluster';
+  }),
 });

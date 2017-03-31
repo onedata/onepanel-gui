@@ -17,9 +17,21 @@
         {{!-- TODO resource type specific --}}
         {{!-- TODO isActive secondary --}}
         <ul class="one-list one-list-level-2">
-          <li class="one-list-item clickable">
-            <div class="item-header">Spaces</div>
-          </li>
+          {{#each secondLevelItems as |sli|}}
+            <li class={{concat "one-list-item clickable " (if (eq secondaryItemId sli.id) "active" "")}}>
+              {{!-- TODO only for clusters --}}
+              {{#link-to
+                "onedata.sidebar.content.aspect"
+                "clusters"
+                "the-cluster"
+                sli.id
+                tagName="div"
+                class="item-header"
+              }}
+                {{sli.label}}
+              {{/link-to}}
+            </li>
+          {{/each}}
         </ul>
       {{/if}}
     {{/one-list-primary-item}}
