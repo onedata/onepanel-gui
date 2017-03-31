@@ -33,8 +33,14 @@
         position: relative;
         overflow: hidden;
         border-top: 0;
-
         td {
+          &.row-header:before {
+            @include icon-toggle-float-right();
+            margin-right: 0;
+            content: $oneicon-arrow-down;
+            transform: translateY(-50%) rotate(0deg);
+            transition: transform .2s ease;
+          }
           &:not(.row-header) {
             max-height: 0;
             opacity: 0;
@@ -44,11 +50,16 @@
           }
         }
         &.active {
-          td:not(.row-header) {
-            opacity: 1;
-            max-height: 9999em;
-            padding: 16px;
-            overflow: visible;
+          td {
+            &.row-header:before {
+              transform: translateY(-50%) rotate(180deg);
+            }
+            &:not(.row-header) {
+              opacity: 1;
+              max-height: 9999em;
+              padding: 16px;
+              overflow: visible;
+            }
           }
         }
       }

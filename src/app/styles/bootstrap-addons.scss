@@ -18,6 +18,16 @@ $input-bg-light: $color-one-white;
   }
 }
 
+@mixin icon-toggle-float-right() {
+  position: absolute;
+  right: 1.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'oneicons' !important;
+  font-size: 1.7em;
+  font-weight: bold;
+}
+
 .form-group-light {
   .input-group {
     .form-control {
