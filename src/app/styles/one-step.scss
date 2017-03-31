@@ -15,10 +15,11 @@ $max-steps: 10;
   list-style: none;
   display: inline-block;
   vertical-align: top;
+  font-size: $font-size-base;
 
   @for $i from 2 through $max-steps {
     .steps-#{$i} & {
-      min-width: 100% / ($i + 1);
+      min-width: 100% / $i;
       @media (max-width: $i * $step-width) {
         &:not(.active) {
           display: none;

@@ -79,10 +79,6 @@
   span + .one-icon {
     margin-left: 0.22em;
   }
-  @media (max-width: $screen-sm-max) {
-    border-radius: $border-radius-large * 2;
-    border-width: 1px;
-  }
 }
 
 // Components
