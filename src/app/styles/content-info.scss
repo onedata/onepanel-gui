@@ -8,20 +8,25 @@
     background-size: cover;
   }
   h1 {
-    font-weight: bold;
-    font-size: 24pt;
-    letter-spacing: 3px;
-    margin-bottom: 1.2em;
+    margin-bottom: 1em;
     margin-top: 0;
+    font-weight: bold;
+    font-size: 27pt;
+    letter-spacing: 3px;
     text-transform: uppercase;
   }
   h2 {
     font-size: 12pt;
+    letter-spacing: 1px;
     text-transform: uppercase;
     margin-bottom: 2em;
   }
   p.lead {
-    font-size: 12pt;
     margin-bottom: 2.5em;
+    font-size: 13pt;
+    letter-spacing: 1px;
+  }
+  .btn-primary {
+    font-size: 130%;
   }
 }
