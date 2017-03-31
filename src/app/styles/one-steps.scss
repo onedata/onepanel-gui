@@ -4,6 +4,8 @@
   overflow: hidden;
   margin-bottom: 0;
   letter-spacing: 0; 
+  // hide space characters between li elements
+  font-size: 0;
   
   // span steps to fill whole line
   &:after {

@@ -79,10 +79,6 @@
   span + .one-icon {
     margin-left: 0.22em;
   }
-  @media (max-width: $screen-sm-max) {
-    border-radius: $border-radius-large * 2;
-    border-width: 1px;
-  }
 }
 
 // Components
@@ -90,44 +86,6 @@
 @import "bootstrap/dropdowns";
 @import "bootstrap/button-groups";
 @import "bootstrap/input-groups";
-// TODO make non-gray input-group-addon version for login box
-.input-group {
-  .input-group-addon {
-    position: relative;
-    min-width: 48px;
-    
-    .one-icon {
-      font-size: 32px;
-      @include absolute-align-middle-center;
-    }
-  }
-}
-.form-group-sm {
-  .input-group-addon {
-    min-width: 40px;
-    
-    .one-icon {
-      font-size: 28px;
-    }
-  }
-}
-$input-bg-light: $color-one-white;
-// FIXME color of addon on focus
-.form-group-light {
-  .input-group {
-    .form-control {
-      background-color: $input-bg-light;
-      border-right: 0;
-      @include box-shadow(none);
-    }
-    // TODO disabled?
-    .input-group-addon {
-      background-color: $input-bg-light;
-      // should be same as input box-shadow!
-      @include box-shadow(none);
-    }
-  }
-}
 
 .table {
   thead > tr > th {

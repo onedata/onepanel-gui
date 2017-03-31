@@ -5,12 +5,6 @@ table:not(.bt) .cluster-host-table-row {
     td {
       position: relative;
     }
-
-    td:first-child:before {
-      @include left-line(
-        $one-list-item-active-left-border-width solid $color-one-azure
-      );
-    }
   }
   td:first-child {
     padding-left: 16px;

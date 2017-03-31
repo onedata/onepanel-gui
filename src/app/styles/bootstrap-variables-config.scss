@@ -110,7 +110,7 @@ $padding-large-horizontal:  16px !default;
 $padding-large-horizontal:  22px;
 
 $padding-small-vertical:    5px !default;
-$padding-small-vertical:    3px;
+$padding-small-vertical:    4px;
 $padding-small-horizontal:  10px !default;
 $padding-small-horizontal:  14px;
 
@@ -253,7 +253,7 @@ $input-height-base:              ($line-height-computed + ($padding-base-vertica
 //** Large `.form-control` height
 $input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2) !default;
 //** Small `.form-control` height
-$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2) !default;
+$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 3) + 2) !default;
 
 //** `.form-group` margin
 $form-group-margin-bottom:       20px !default;
@@ -263,6 +263,7 @@ $legend-border-color:            #e5e5e5 !default;
 
 //** Background color for textual input addons
 $input-group-addon-bg:           $gray-lighter !default;
+$input-group-addon-bg:           $input-bg;
 //** Border color for textual input addons
 $input-group-addon-border-color: $input-border !default;
 
