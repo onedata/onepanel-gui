@@ -2,6 +2,7 @@
   .world-map {
     position: absolute;
     @include fill-container();
+    overflow: hidden;
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
