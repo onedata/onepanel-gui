@@ -1,7 +1,7 @@
-$mobile-horizontal-content-padding: 1.5em;
+$mobile-horizontal-content-padding: $padding-large-horizontal;
 
 .main-content {
-  color: $gray;
+  color: $color-one-steel;
 
   .content-row {
     border-bottom: 1px solid $main-content-border-color;

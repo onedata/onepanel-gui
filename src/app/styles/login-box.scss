@@ -3,10 +3,21 @@
     height: 130px;
     margin-bottom: 10px;
     .one-icon {
-      font-size: 130px;
+      opacity: 0.8;
+      font-size: 120px;
     }
   }
   .row-login-header {
     margin-bottom: 30px;
+    h4 {
+      font-family: 'Open Sans Semibold';
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+  // TODO: remove class after icons resize
+  .additional-bottom-margin {
+    margin-bottom: 25px;
   }
 }
