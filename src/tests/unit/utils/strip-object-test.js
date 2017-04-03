@@ -10,7 +10,7 @@ describe('Unit | Utility | strip object', function () {
     expect(result).to.be.not.null;
     expect(result).to.not.be.equal(obj);
   });
-  it('removes keys with undefined or null values', function () {
+  it('by default removes keys with undefined or null values', function () {
     let obj = {
       one: 1,
       two: 'two2',
@@ -22,5 +22,22 @@ describe('Unit | Utility | strip object', function () {
     expect(result).to.have.property('two');
     expect(result).to.not.have.property('three');
     expect(result).to.not.have.property('four');
+  });
+  it('removes keys with values given in parameter', function () {
+    let obj = {
+      one: 1,
+      two: 'two2',
+      three: undefined,
+      four: null,
+      five: '',
+      six: 0,
+    };
+    let result = stripObject(obj, [undefined, null, '']);
+    expect(result).to.have.property('one');
+    expect(result).to.have.property('two');
+    expect(result).to.not.have.property('three');
+    expect(result).to.not.have.property('four');
+    expect(result).to.not.have.property('five');
+    expect(result).to.have.property('six');
   });
 });

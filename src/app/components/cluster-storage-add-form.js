@@ -41,7 +41,16 @@ const storageTypes = [{
   fields: SWIFT_FIELDS
 }];
 
+const storageTypesFields = {
+  ceph: CEPH_FIELDS,
+  posix: POSIX_FIELDS,
+  s3: S3_FIELDS,
+  swift: SWIFT_FIELDS,
+};
+
 export default Ember.Component.extend({
+  classNames: ['cluster-storage-add-form'],
+
   i18n: service(),
 
   genericFields: computed(() => GENERIC_FIELDS).readOnly(),
@@ -50,19 +59,23 @@ export default Ember.Component.extend({
   selectedStorageType: null,
   formValues: null,
 
+  specificFields: computed('selectedStorageType.id', function () {
+    return storageTypesFields[this.get('selectedStorageType.id')];
+  }),
+
   /**
    * @type {computed.FieldType}
    */
-  currentFields: computed('selectedStorageType', function () {
+  currentFields: computed('genericFields.[]', 'specificFields.[]', function () {
     let {
       genericFields,
-      selectedStorageType
+      specificFields,
     } = this.getProperties(
       'genericFields',
-      'selectedStorageType'
+      'specificFields'
     );
 
-    return genericFields.concat(selectedStorageType.fields);
+    return genericFields.concat(specificFields);
   }),
 
   allFields: computed('genericFields', 'currentFields', function () {
@@ -75,7 +88,9 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.set('selectedStorageType', this.get('storageTypes.firstObject'));
+    if (this.get('selectedStorageType') == null) {
+      this.set('selectedStorageType', this.get('storageTypes.firstObject'));
+    }
     this.set('formValues', Ember.Object.create({}));
     this._addFieldsPlaceholders();
   },
