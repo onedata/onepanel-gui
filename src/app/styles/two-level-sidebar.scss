@@ -1,3 +1,15 @@
 .two-level-sidebar {
+  font-size: 13px;
+  font-family: 'Open Sans Semibold';
+  letter-spacing: 0.1px;
 
+  input {
+    font-family: 'Open Sans';
+  }
+
+  .one-list-item {
+    &.active {
+      background-color: $color-one-15;
+    }
+  }
 }

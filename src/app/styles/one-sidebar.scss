@@ -1,0 +1,20 @@
+$one-sidebar-item-padding: $padding-large-horizontal;
+
+.one-sidebar {
+  .row-heading {
+    .col-title {
+      padding: $one-sidebar-item-padding;
+      font-family: 'Open Sans Semibold';
+      line-height: initial;
+    }
+  }
+  .row-body {
+    .search-bar-item {
+      padding-top: $one-sidebar-item-padding;
+      .item-header {
+        padding: 0 $one-sidebar-item-padding;
+        margin-bottom: $one-sidebar-item-padding;
+      }
+    }
+  }
+}
