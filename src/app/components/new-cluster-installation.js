@@ -84,9 +84,7 @@ export default Ember.Component.extend({
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
-    return hosts.filter(h => {
-      return h.clusterManager || h.clusterWorker || h.database;
-    });
+    return hosts.filter(h => h.get('isUsed'));
   }).readOnly(),
 
   init() {
@@ -180,7 +178,7 @@ export default Ember.Component.extend({
    * The promise resolves with a jq.Promise of deployment task.
    * @return {Promise}
    */
-  startDeploy() {
+  _startDeploy() {
     return new Promise((resolve, reject) => {
       let {
         onepanelServer,
@@ -262,16 +260,15 @@ export default Ember.Component.extend({
         return new Promise((_, reject) => reject());
       }
 
-      // TODO do not allow if not valid data
-      let start = this.startDeploy();
+      let start = this._startDeploy();
       start.then(({ data, task }) => {
         this.showDeployProgress(task);
         this.watchDeployStatus(task);
       });
-      start.catch(( /*error*/ ) => {
+      start.catch((error) => {
         // TODO better error handling - get error type etc.
         this.get('globalNotify').error(
-          'Deployment cannot start because of internal server error'
+          'Deployment cannot start because of server error: ' + error
         );
       });
       return start;

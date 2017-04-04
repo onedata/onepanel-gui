@@ -12,6 +12,8 @@ import Onepanel from 'npm:onepanel';
 // TODO use ember-bootstrap form.element and cp-validations addon
 // import { validator, buildValidations } from 'ember-cp-validations';
 
+import stripObject from 'onepanel-gui/utils/strip-object';
+
 const {
   inject: {
     service
@@ -80,13 +82,15 @@ export default Ember.Component.extend({
       geoLatitude,
     } = this.get('formValues').getProperties(...INPUT_NAMES);
 
-    let req = ProviderRegisterRequest.constructFromObject({
+    let reqProto = stripObject({
       name,
       onezoneDomainName,
       redirectionPoint,
       geoLongitude: Number.parseFloat(geoLongitude),
-      geoLatitude: Number.parseFloat(geoLatitude),
-    });
+      geoLatitude: Number.parseFloat(geoLatitude)
+    }, [undefined, null, NaN, '']);
+
+    let req = ProviderRegisterRequest.constructFromObject(reqProto);
 
     return req;
   },
@@ -122,6 +126,8 @@ export default Ember.Component.extend({
       let submitting = this._submit();
       this.set('_isBusy', true);
       submitting.then(() => {
+        // TODO i18n
+        this.get('globalNotify').info('Provider registered successfully');
         this.sendAction('nextStep');
       });
       submitting.catch(error => {

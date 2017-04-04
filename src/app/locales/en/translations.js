@@ -5,6 +5,7 @@ import clusterStorageAddForm from './components/cluster-storage-add-form';
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import supportSpaceForm from './components/support-space-form';
 import brandInfo from './components/brand-info';
+import oneFormFields from './components/one-form-fields';
 
 const translations = {
   components: {
@@ -15,6 +16,7 @@ const translations = {
     newClusterZoneRegistration,
     supportSpaceForm,
     brandInfo,
+    oneFormFields,
   }
 };
 

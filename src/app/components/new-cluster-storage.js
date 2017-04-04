@@ -16,6 +16,7 @@ const {
 
 export default Ember.Component.extend({
   storageManager: service(),
+  globalNotify: service(),
 
   noStorages: computed.equal('storages.length', 0),
 
@@ -62,7 +63,17 @@ export default Ember.Component.extend({
      * @returns {subclass of ClusterStorages}
      */
     submitAddStorage(storageFormData) {
-      return this._submitAddStorage(storageFormData);
+      let { name } = storageFormData;
+      let submitting = this._submitAddStorage(storageFormData);
+      submitting.then(() => {
+        // TODO i18n
+        this.get('globalNotify').info(`Storage "${name}" added`);
+      });
+      submitting.catch(error => {
+        // TODO i18n
+        this.get('globalNotify').error(`Failed to add storage "${name}": ${error}`);
+      });
+      return submitting;
     }
   }
 });

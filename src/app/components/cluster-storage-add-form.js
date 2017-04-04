@@ -120,13 +120,6 @@ export default Ember.Component.extend({
       field.placeholder = i18n.t(
         `components.clusterStorageAddForm.${typeId}.${field.name}`
       );
-      if (field.optional) {
-        field.placeholder += (
-          ' (' +
-          i18n.t(`components.clusterStorageAddForm.generic.optional`) +
-          ')'
-        );
-      }
     }
   },
 

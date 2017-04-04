@@ -11,9 +11,20 @@
  */
 export default function stripObject(orig, falsyValues = [undefined, null]) {
   let stripped = {};
+  let testForNan = false;
+  // TODO IMPORTANT ensure polyfill (work in IE)
+  let nanIndex = falsyValues.findIndex(fv => Number.isNaN(fv));
+  if (nanIndex !== -1) {
+    testForNan = true;
+    delete falsyValues[nanIndex];
+  }
   for (let key in orig) {
-    if (falsyValues.indexOf(orig[key]) === -1) {
-      stripped[key] = orig[key];
+    let value = orig[key];
+    if (
+      (testForNan ? !Number.isNaN(value) : true) &&
+      falsyValues.indexOf(value) === -1
+    ) {
+      stripped[key] = value;
     }
   }
   return stripped;
