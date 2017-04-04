@@ -3,10 +3,17 @@
 <div class="row content-row">
   <h1>Spaces
     <div class="btn-toolbar">
-      {{#spin-button action=(action "updateSpacesList") class="btn btn-default"}}
+      {{#spin-button
+        action=(action "updateSpacesList")
+        class="btn btn-default btn-update-spaces-list"
+      }}
         Refresh list
       {{/spin-button}}
-      {{#bs-button onClick=(action "supportSpace") type="primary"}}
+      {{#bs-button
+        onClick=(action "supportSpace")
+        type="primary"
+        class="btn-support-space"
+      }}
         Support space
       {{/bs-button}}
     </div>

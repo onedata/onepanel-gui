@@ -19,8 +19,9 @@ const FORM_FIELDS = [
 ];
 
 export default Component.extend({
-  classNames: 'support-space',
+  classNames: 'support-space-form',
 
+  i18n: service(),
   storageManager: service(),
 
   formFields: computed(() => FORM_FIELDS).readOnly(),
