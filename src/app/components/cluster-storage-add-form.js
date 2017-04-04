@@ -10,6 +10,8 @@
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 
+import stripObject from 'onepanel-gui/utils/strip-object';
+
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
 import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
@@ -191,8 +193,7 @@ export default Ember.Component.extend({
       allFields.forEach(({ name }) => {
         formData[name] = formValues.get(name);
       });
-
-      return invokeAction(this, 'submit', formData);
+      return invokeAction(this, 'submit', stripObject(formData, [undefined, null, '']));
     },
   }
 });
