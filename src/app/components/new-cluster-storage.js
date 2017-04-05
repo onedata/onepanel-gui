@@ -27,7 +27,7 @@ export default Ember.Component.extend({
 
   storages: A(),
 
-  addStorageOpened: false,
+  addStorageOpened: computed.oneWay('noStorages'),
 
   actions: {
     next() {

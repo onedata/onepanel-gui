@@ -1,17 +1,7 @@
-{{#if noStorages}}
-  <div class="row content-row no-border">
-    <h1>Registration</h1>
-    <p>Worker componets save and retrieve user's data network file system storages.</p>
-  </div>
-  <div class="row content-row">
-    {{cluster-storage-add-form 
-      class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
-      submit="submitAddStorage"}}
-  </div>
-{{else}}
-  <div class="row content-row">
-    <h1>Storages
-      <div class="btn-toolbar">
+<div class="row content-row">
+  <h1>Storages
+    <div class="btn-toolbar">
+      {{#unless noStorages}}
         {{#unless addStorageOpened}}
           {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
             Add storage
@@ -24,17 +14,17 @@
         {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
           Finish
         {{/bs-button}}
-      </div>
-    </h1>
-  </div>
-  <div class="row content-row row-small {{unless addStorageOpened 'row-hidden'}}">
-    {{#if addStorageOpened}}
-      {{cluster-storage-add-form 
-        class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
-        submit=(action "submitAddStorage")}}
-    {{/if}}
-  </div>
-  <div class="row">
-    {{cluster-storage-table storages=storages}}  
-  </div>
-{{/if}}
+      {{/unless}}
+    </div>
+  </h1>
+</div>
+<div class="row content-row row-small {{unless addStorageOpened 'row-hidden'}}">
+  {{#if addStorageOpened}}
+    {{cluster-storage-add-form 
+      class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
+      submit=(action "submitAddStorage")}}
+  {{/if}}
+</div>
+<div class="row">
+  {{cluster-storage-table storages=storages}}  
+</div>
