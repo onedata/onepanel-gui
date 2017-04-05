@@ -91,6 +91,9 @@
   thead > tr > th {
     border-bottom: 0;
   }
+  tbody tr.active td {
+    background-color: inherit;
+  }
 }
 
 @import "bootstrap/navs";

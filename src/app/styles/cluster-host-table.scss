@@ -8,14 +8,6 @@
         font-size: 1.2em;
       }
     }
-    tr:hover td:first-child {
-      &:before {
-        @include left-line(
-          $one-list-item-active-left-border-width solid $color-one-azure
-        );
-      }
-      font-weight: bold;
-    }
   }
 
   thead tr th {
@@ -38,6 +30,9 @@
       @include left-line(
         $one-list-item-active-left-border-width solid $color-one-azure
       );
+    }
+    &.active td {
+      background-color: $color-one-15;
     }
     td {
       font-size: 0.9em;
