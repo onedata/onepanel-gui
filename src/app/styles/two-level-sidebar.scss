@@ -11,5 +11,22 @@
     &.active {
       background-color: $color-one-15;
     }
+    .one-icon {
+      display: inline-block;
+      position: relative;
+      margin-right: 0.3em;
+      top: 0.3em;
+    }
+    .item-header {
+      padding: 0 $one-sidebar-item-padding;
+      .one-icon {
+        font-size: 2.2em;
+      }
+    }
+    .one-list-level-2 {
+      .item-header {
+        padding: 0 $one-sidebar-item-padding * 2.2;
+      }
+    }
   }
 }

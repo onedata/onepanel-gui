@@ -1,5 +1,3 @@
-$one-sidebar-item-padding: $padding-large-horizontal;
-
 .one-sidebar {
   .row-heading {
     .col-title {
@@ -12,7 +10,6 @@ $one-sidebar-item-padding: $padding-large-horizontal;
     .search-bar-item {
       padding-top: $one-sidebar-item-padding;
       .item-header {
-        padding: 0 $one-sidebar-item-padding;
         margin-bottom: $one-sidebar-item-padding;
       }
     }
