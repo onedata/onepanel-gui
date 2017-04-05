@@ -19,9 +19,15 @@
     }
     .item-header {
       padding: 0 $one-sidebar-item-padding;
+      &:hover {
+        background-color: darken($color-one-15, 3%);
+      }
       .one-icon {
         font-size: 2.2em;
       }
+    }
+    &.search-bar-item .item-header:hover {
+      background-color: initial;
     }
     .one-list-level-2 {
       .item-header {
