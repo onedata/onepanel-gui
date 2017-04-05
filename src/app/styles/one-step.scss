@@ -62,6 +62,7 @@ $max-steps: 10;
     margin-top: $step-circle-size * 0.5;
     color: $color-one-step-inactive;
     font-family: 'Open Sans Semibold';
+    font-size: $font-size-small;
     white-space: nowrap;
     letter-spacing: 1px;
   }
