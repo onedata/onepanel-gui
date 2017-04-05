@@ -5,15 +5,12 @@ import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import waitFor from 'onepanel-gui/utils/wait-for';
 
-const {
-  A,
-  Service,
-  ObjectProxy,
-  PromiseProxyMixin,
-  RSVP: { Promise },
-} = Ember;
+import spaceManagerStub from '../../helpers/space-manager-stub';
+import storageManagerStub from '../../helpers/storage-manager-stub';
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+const {
+  Service,
+} = Ember;
 
 const SPACES = {
   a1: {
@@ -33,31 +30,6 @@ const SPACES = {
   }
 };
 
-const spaceManagerStub = Service.extend({
-  getSpaces() {
-    return ObjectPromiseProxy.create({
-      promise: new Promise((resolve) => resolve(A([
-        this.getSpaceDetails('a1'),
-        this.getSpaceDetails('b2'),
-        this.getSpaceDetails('c3'),
-      ])))
-    });
-  },
-  getSpaceDetails(id) {
-    return ObjectPromiseProxy.create({
-      promise: new Promise((resolve) => resolve(SPACES[id]))
-    });
-  },
-});
-
-const storageManagerStub = Service.extend({
-  getStorages() {
-    return ObjectPromiseProxy.create({
-      promise: new Promise((resolve) => resolve(A([])))
-    });
-  }
-});
-
 const i18nStub = Service.extend({
   t() {
     return 'translation-mock';
@@ -67,9 +39,6 @@ const i18nStub = Service.extend({
 describe('Integration | Component | content clusters spaces', function () {
   setupComponentTest('content-clusters-spaces', {
     integration: true,
-    // setup() {
-    //   i18nInitializer.initialize(this);
-    // },
   });
 
   beforeEach(function () {
@@ -81,18 +50,10 @@ describe('Integration | Component | content clusters spaces', function () {
     this.inject.service('space-manager', { as: 'spaceManager' });
     this.inject.service('i18n', { as: 'i18n' });
     this.inject.service('storage-manager', { as: 'storageManager' });
+
+    let spaceManager = this.container.lookup('service:space-manager');
+    spaceManager.set('__spaces', SPACES);
   });
-
-  // it('renders list of space names', function () {
-  //   this.render(hbs `{{content-clusters-spaces}}`);
-  //   let $component = this.$('.content-clusters-spaces');
-  //   let htmlCode = $component.html();
-
-  //   for (let spaceId in SPACES) {
-  //     let space = SPACES[spaceId];
-  //     expect(htmlCode).matches(new RegExp(`.*${space.name}.*`));
-  //   }
-  // });
 
   it('shows support space form when clicking on support space button', function (done) {
     this.render(hbs `{{content-clusters-spaces}}`);

@@ -49,6 +49,8 @@ export default Ember.Service.extend({
     });
   }).readOnly(),
 
+  mockInitializedCluster: false,
+
   /**
    * @type {computed<Boolean>}
    */
@@ -83,16 +85,15 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
-    let requestHandler = this.get('requestHandler');
     // TODO protect property read
     return new Promise((resolve, reject) => {
-      let handler = requestHandler[`${api}_${method}`];
+      let handler = this.get(`_req_${api}_${method}`);
       if (handler) {
         if (handler.success) {
           let response = {
-            statusCode: handler.statusCode || 200,
+            statusCode: handler.statusCode && handler.statusCode() || 200,
             headers: {
-              location: handler.taskId ? ('https://something/' +
+              location: handler.taskId ? ('https://something/tasks/' +
                 handler.taskId) : undefined
             }
           };
@@ -104,7 +105,7 @@ export default Ember.Service.extend({
           });
         } else {
           let response = {
-            statusCode: handler.statusCode,
+            statusCode: handler.statusCode && handler.statusCode(),
           };
           reject({ response });
         }
@@ -149,68 +150,124 @@ export default Ember.Service.extend({
     return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
   }),
 
-  /**
-   * Functions returning values in callback on API call success.
-   */
-  requestHandler: computed('progressMock', function () {
+  /// mocked request handlers - override to change server behaviour
+
+  _req_onepanel_getClusterHosts: computed(function () {
+    return {
+      success() {
+        return ['node1', 'node2'];
+      },
+    };
+  }),
+
+  _req_onepanel_getClusterCookie: computed(function () {
+    return {
+      success() {
+        return 'some_cluster_cookie';
+      },
+    };
+  }),
+
+  _req_onepanel_getTaskStatus: computed('progressMock', function () {
     let progressMock = this.get('progressMock');
     return {
-      onepanel_getClusterHosts: {
-        success() {
-          return ['node1', 'node2'];
-        },
-      },
-      onepanel_getClusterCookie: {
-        success() {
-          return 'some_cluster_cookie';
-        },
-      },
-      onepanel_getTaskStatus: {
-        success(taskId) {
-          if (taskId === 'configure') {
-            return progressMock.getTaskStatusConfiguration();
-          } else {
-            return null;
-          }
-        }
-      },
-      oneprovider_configureProvider: {
-        success() {
-          return null;
-        },
-        taskId: 'configure'
-      },
-      oneprovider_addProvider: {
-        success() {
+      success(taskId) {
+        if (taskId === 'configure') {
+          return progressMock.getTaskStatusConfiguration();
+        } else {
           return null;
         }
-      },
-      oneprovider_addStorage: {
-        success() {
-          return null;
-        }
-      },
-      oneprovider_getProviderConfiguration: {
-        statusCode: 404,
-      },
-      oneprovider_getProvider: {
-        statusCode: 404,
-      },
-      oneprovider_getStorages: {
-        success() {
-          return [];
-        }
-      },
-
-      onezone_configureZone: {
-        success() {
-          return null;
-        },
-        taskId: 'configure'
-      },
-      onezone_getZoneConfiguration: {
-        statusCode: 404,
       }
     };
-  })
+  }),
+
+  _req_oneprovider_configureProvider: computed(function () {
+    return {
+      success: () => null,
+      taskId: 'configure'
+    };
+  }),
+
+  _req_oneprovider_addProvider: computed(function () {
+    return {
+      success: () => null,
+    };
+  }),
+
+  _req_oneprovider_addStorage: computed(function () {
+    return {
+      success: () => null,
+    };
+  }),
+
+  _req_oneprovider_getProviderConfiguration: computed('mockInitializedCluster',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          success: () => ({})
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
+
+  _req_oneprovider_getProvider: computed('mockInitializedCluster',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          success: () => ({})
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
+
+  _req_oneprovider_getStorages: computed('mockInitializedCluster',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          success: () => ({
+            ids: ['storage1']
+          })
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
+
+  _req_oneprovider_getStorageDetails: computed('mockInitializedCluster',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          success: () => ({
+            name: 'First storage',
+            type: 'posix',
+            mountPoint: '/mnt/one'
+          })
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
+
+  _req_onezone_configureZone: computed(function () {
+    return {
+      success: () => null,
+      taskId: 'configure'
+    };
+  }),
+
+  _req_onezone_getZoneConfiguration: computed(function () {
+    return {
+      statusCode: () => 404
+    };
+  }),
 });

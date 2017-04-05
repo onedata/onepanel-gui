@@ -12,11 +12,20 @@ const {
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
-// TODO MB, GB, TB - selector
 const FORM_FIELDS = [
   { name: 'token', type: 'text' },
-  { name: 'size', type: 'number' },
+  // the size field is inserted manually because of MB/GB/TB radio buttons
 ];
+
+const MEGA = Math.pow(10, 6);
+const GIGA = Math.pow(10, 9);
+const TERA = Math.pow(10, 12);
+
+const UNITS = {
+  mb: MEGA,
+  gb: GIGA,
+  tb: TERA,
+};
 
 export default Component.extend({
   classNames: 'support-space-form',
@@ -35,6 +44,7 @@ export default Component.extend({
   formValues: Ember.Object.create({
     token: '',
     size: '',
+    sizeUnit: 'mb',
   }),
 
   // TODO change to ember-cp-validations  
@@ -51,9 +61,11 @@ export default Component.extend({
       this._initStoragesProxy();
     }
     let i18n = this.get('i18n');
-    FORM_FIELDS.forEach(f =>
-      f.placeholder = i18n.t(`components.supportSpaceForm.fields.${f.name}`)
-    );
+    FORM_FIELDS.forEach(f => {
+      if (!f.placeholder) {
+        f.placeholder = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
+      }
+    });
   },
 
   _initStoragesProxy() {
@@ -77,7 +89,10 @@ export default Component.extend({
       let {
         token,
         size,
-      } = this.get('formValues').getProperties('name', 'token', 'size');
+        sizeUnit,
+      } = this.get('formValues').getProperties('name', 'token', 'size', 'sizeUnit');
+
+      size = size * UNITS[sizeUnit];
 
       let storageId = this.get('_selectedStorage.id');
 

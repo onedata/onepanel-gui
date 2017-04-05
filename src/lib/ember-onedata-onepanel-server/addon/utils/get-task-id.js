@@ -1,6 +1,7 @@
 export default function (response) {
   if (response && response.headers && response.headers.location) {
-    return response.headers.location.match(/^.*\/tasks\/(.*)$/)[1];
+    let match = response.headers.location.match(/^.*\/tasks\/(.*)$/);
+    return match && match[1];
   } else {
     return undefined;
   }

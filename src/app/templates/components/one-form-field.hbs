@@ -1,0 +1,9 @@
+{{component (input-component-name field.type)
+  id=inputId
+  value=value
+  class=(concat "form-control " inputClass)
+  update=(action "inputChanged" field.name)
+  placeholder=(concat field.placeholder (concat " " (if field.optional (t "components.oneFormFields.optional"))))
+  step=field.step
+  disabled=disabled
+}}

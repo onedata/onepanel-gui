@@ -1,31 +1,17 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
+import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
+
+import FormHelper from '../../helpers/form';
 
 import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 
-class ClusterStorageAddHelper {
+class ClusterStorageAddHelper extends FormHelper {
   constructor($template) {
-    this.$template = $template;
-    this.$form = $template.find('.cluster-storage-add-form form');
-  }
-
-  /**
-   * @param {string} fieldName
-   * @return {string}
-   */
-  _getInputId(fieldName) {
-    return `${this.$form.attr('id')}-${fieldName}`;
-  }
-
-  /**
-   * @param {string} fieldName
-   * @return {JQuery}
-   */
-  getInput(fieldName) {
-    return this.$template.find('#' + this._getInputId(fieldName));
+    super($template, '.cluster-storage-add-form');
   }
 }
 
@@ -88,6 +74,6 @@ describe('Integration | Component | cluster storage add form', function () {
 
     helper.getInput('name').val('some name').change();
     helper.getInput('mountPoint').val('/mnt/st1').change();
-    this.$('button[type=submit]').click();
+    wait().then(() => helper.submit());
   });
 });

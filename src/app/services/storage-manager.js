@@ -12,7 +12,6 @@ import Onepanel from 'npm:onepanel';
 
 const {
   A,
-  assert,
   Service,
   ObjectProxy,
   PromiseProxyMixin,
@@ -58,22 +57,12 @@ export default Service.extend({
    * @return {ObjectPromiseProxy} resolves ClusterStorage object
    */
   getStorageDetails(id) {
-    assert('storage id cannot be null', id);
+    let onepanelServer = this.get('onepanelServer');
     let promise = new Promise((resolve, reject) => {
-      let req = $.ajax({
-        url: `/api/v3/onepanel/provider/storages/${id}`,
-        method: 'GET',
-      });
-      req.done(data => resolve(data));
-      req.fail((xhr, textStatus) => reject({ error: textStatus }));
+      let req = onepanelServer.request('oneprovider', 'getStorageDetails', id);
+      req.then(({ data }) => resolve(data));
+      req.catch(reject);
     });
-    // FIXME workaround for faulty API/Swagger
-    // let onepanelServer = this.get('onepanelServer');
-    // let promise = new Promise((resolve, reject) => {
-    //   let req = onepanelServer.request('oneprovider', 'getStorageDetails', id);
-    //   req.then(({ data }) => resolve(data));
-    //   req.catch(reject);
-    // });
     return ObjectPromiseProxy.create({ promise });
   },
 

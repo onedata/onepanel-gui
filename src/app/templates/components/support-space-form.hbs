@@ -3,7 +3,7 @@
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#form.group}}
     {{#power-select
-      loadingMessage='Loading...'
+      loadingMessage="Loading..."
       options=allStoragesProxy
       selected=_selectedStorage
       onchange=(action "storageChanged")
@@ -22,6 +22,51 @@
     formValues=formValues
     inputChanged=(action "inputChanged")
   }}
+
+  {{#form.group}}
+    <div class="row">
+      <div class="col-xs-9">
+        {{one-form-field
+          inputId=(concat elementId (concat "-size"))
+          field=(hash
+            name="size"
+            type="number"
+            placeholder=(t "components.supportSpaceForm.fields.size")
+          )
+          value=(get formValues "size")
+          disabled=disabled
+          inputChanged=(action "inputChanged")
+        }}
+      </div>
+      <div class="col-xs-3">
+        {{!-- TODO component for inline radios --}}
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-mb"))
+            class="one-form-field-sizeUnit-mb"
+            option="mb"
+            update=(action "inputChanged")
+          }} MB
+        </label>
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-gb"))
+            class="one-form-field-sizeUnit-gb"
+            option="gb"
+            update=(action "inputChanged")
+          }} GB
+        </label>
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-tb"))
+            class="one-form-field-sizeUnit-tb"
+            option="tb"
+            update=(action "inputChanged")
+          }} TB
+        </label>
+      </div>
+    </div>
+  {{/form.group}}
 
   <div class="row text-center">
     {{#spin-button
