@@ -49,6 +49,12 @@
 @import "bootstrap/forms";
 .form-control {
   @include box-shadow($control-box-shadow);
+  &:focus {
+    @include box-shadow($control-box-shadow-focus);
+  }
+  &[disabled] {
+    @include box-shadow(none);
+  }
 }
 
 @import "bootstrap/buttons";
