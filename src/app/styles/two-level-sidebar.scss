@@ -1,3 +1,26 @@
 .two-level-sidebar {
+  font-size: 13px;
+  font-family: 'Open Sans Semibold';
+  letter-spacing: 0.1px;
 
+  input {
+    font-family: 'Open Sans';
+  }
+
+  .one-list-item {
+    &.active {
+      background-color: $color-one-light-bluegray;
+    }
+    .item-header {
+      &:hover {
+        background-color: darken($color-one-light-bluegray, 3%);
+      }
+      .one-icon {
+        font-size: 2.2em;
+      }
+    }
+    &.search-bar-item .item-header:hover {
+      background-color: initial;
+    }
+  }
 }

@@ -18,6 +18,7 @@ $ember-power-select-selected-background: $ember-power-select-background-color;
 
 .ember-power-select-trigger {
   transition: all 0.2s ease;
+  min-height: $line-height-computed + 2 * $padding-base-vertical + 2px;
 
   .ember-power-select-status-icon {
     font-family: 'oneicons' !important;

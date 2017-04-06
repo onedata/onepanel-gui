@@ -12,6 +12,8 @@
       isActive=(eq primaryItemId item.id)
       as |primarySection|}}
       {{#if (eq primarySection 'header')}}
+        {{!-- TODO Add icon here and below --}}
+        {{!-- {{one-icon icon="sth"}} --}}
         {{item.name}}
       {{else if (eq primarySection 'secondary')}}
         {{!-- TODO resource type specific --}}

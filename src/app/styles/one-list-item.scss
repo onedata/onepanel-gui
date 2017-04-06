@@ -3,8 +3,8 @@
   line-height: inherit;
 
   .item-header {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: $one-list-item-padding;
+    padding-right: $one-list-item-padding;
   }
 
   &::after {
@@ -27,6 +27,13 @@
       color: $color-one-azure;
     }
   }
+
+  .one-icon {
+      display: inline-block;
+      position: relative;
+      margin-right: 0.3em;
+      top: 0.3em;
+    }
 }
 
 .one-list-item.clickable .item-header:hover {

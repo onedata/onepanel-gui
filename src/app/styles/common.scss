@@ -1,6 +1,6 @@
 .onedata-logo {
-  width: 120px;
-  height: 25px;
+  width: 150px;
+  height: $onedata-logo-height;
   background-image: url($root-url + 'assets/images/logo.svg');
   background-position: center center;
   background-repeat: no-repeat;
