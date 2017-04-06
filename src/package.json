@@ -53,7 +53,7 @@
     "ember-responsive": "2.0.2",
     "ember-side-menu": "0.0.12",
     "ember-source": "2.12.0",
-    "ember-spin-button": "git+git@github.com:kliput/ember-spin-button.git#onedata",
+    "ember-spin-button": "git+https://github.com/kliput/ember-spin-button.git#onedata",
     "ember-spin-spinner": "0.3.1",
     "ember-truth-helpers": "1.3.0",
     "loader.js": "4.2.3",
