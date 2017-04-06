@@ -41,13 +41,12 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
     &.row-small {
       max-height: 70em;
     }
-  }
-
-  .row.row-hidden {
-    max-height: 0;
-    padding: 0;
-    overflow: hidden;
-    opacity: 0;
+    &.row-hidden {
+      max-height: 0;
+      padding: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
   }
 
   @media screen and (max-width: $screen-sm) {
