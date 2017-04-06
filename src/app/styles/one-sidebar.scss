@@ -1,18 +1,17 @@
 .one-sidebar {
   .row-heading {
+    position: relative;
     .col-title {
-      padding: $one-sidebar-item-padding;
-      padding-top: 30px;
-      padding-bottom: 30px;
+      padding: $onedata-logo-margin-top $one-list-item-padding;
+      line-height: $onedata-logo-height;
       font-family: 'Open Sans Semibold';
-      line-height: initial;
     }
   }
   .row-body {
     .search-bar-item {
-      padding-top: $one-sidebar-item-padding;
+      padding-top: $one-list-item-padding;
       .item-header {
-        margin-bottom: $one-sidebar-item-padding;
+        margin-bottom: $one-list-item-padding;
       }
     }
   }
