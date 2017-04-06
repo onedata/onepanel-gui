@@ -45,8 +45,19 @@ $content-col-padding: $padding-large-horizontal * 1.5;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     width: $main-menu-width;
     .row-onedata-logo {
+      position: relative;
       margin-top: $onedata-logo-margin-top;
       margin-bottom: $onedata-logo-margin-bottom;
+      
+      .brand-info {
+        position: absolute;
+        top: 100%;
+        left: 0px;
+        // slight padding from logo
+        width: 110%;
+        left: 0;
+        right: 0;
+      }
     }
   }
   .col-sidebar {
