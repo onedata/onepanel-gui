@@ -4,20 +4,23 @@
 {{#listItem.header}}
   {{space.name}}
   <div class="btn-toolbar">
-    <button class="btn icon-btn" {{action (action "revokeSpace")}}>
+    {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
+    <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
       {{bs-tooltip
+        visible=revokeTooltipVisible
         title="Revoke space support from this provider"
         placement="bottom"
+        triggerEvents="hover"
       }}
     </button>
   </div>
 {{/listItem.header}}
 {{#listItem.content}}
-  <table class="storage-table full-width">
+  <table class="item-table">
     <tr>
-      <td class="storage-table-img-cell"></td>
-      <td class="storage-table-content-cell">
+      <td class="item-table-img-cell"></td>
+      <td class="item-table-content-cell">
         <div class="row content-row">
           <strong>Name:</strong> {{space.name}}
         </div>
@@ -28,3 +31,35 @@
     </tr>
   </table>
 {{/listItem.content}}
+
+{{#confirm-box
+  title="Revoke space support?"
+  class="confirm-box-revoke-space-support"
+  triggerElement=(concat "#" (concat elementId "-btn-revoke-space"))
+  cancelLabel="No, don't revoke"
+  confirmLabel="Yes, revoke"
+}}
+  <p>
+    When space support will be revoked, data from this space that is not replicated among other providers will be lost.
+  </p>
+{{/confirm-box}}
+
+{{!--
+{{#bs-popover
+  title="Revoke space support?"
+  autoPlacement=true
+  class="popover-confirmation popover-revoke-space-support"
+  renderInPlace=true
+  
+  onShow=(action (mut revokeTooltipVisible false))
+}}
+  
+  <div class="btn-toolbar">
+    {{#bs-button type="info"}}
+      No, don't revoke
+    {{/bs-button}}
+    {{#spin-button class="btn btn-danger"}}
+      Yes, revoke
+    {{/spin-button}}
+  </div>
+{{/bs-popover}}--}}

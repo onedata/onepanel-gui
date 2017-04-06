@@ -49,7 +49,7 @@ export default Ember.Service.extend({
     });
   }).readOnly(),
 
-  mockInitializedCluster: false,
+  mockInitializedCluster: true,
 
   /**
    * @type {computed<Boolean>}
@@ -91,7 +91,8 @@ export default Ember.Service.extend({
       if (handler) {
         if (handler.success) {
           let response = {
-            statusCode: handler.statusCode && handler.statusCode() || 200,
+            statusCode: handler.statusCode &&
+              handler.statusCode(...params) || 200,
             headers: {
               location: handler.taskId ? ('https://something/tasks/' +
                 handler.taskId) : undefined
@@ -105,7 +106,7 @@ export default Ember.Service.extend({
           });
         } else {
           let response = {
-            statusCode: handler.statusCode && handler.statusCode(),
+            statusCode: handler.statusCode && handler.statusCode(...params),
           };
           reject({ response });
         }
@@ -246,6 +247,7 @@ export default Ember.Service.extend({
       if (this.get('mockInitializedCluster')) {
         return {
           success: () => ({
+            id: 'storage1',
             name: 'First storage',
             type: 'posix',
             mountPoint: '/mnt/one'
@@ -257,6 +259,38 @@ export default Ember.Service.extend({
         };
       }
     }),
+
+  _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster', function () {
+    if (this.get('mockInitializedCluster')) {
+      // TODO use Object.keys if available
+      let spaceIds = [];
+      for (let sid in SPACES) {
+        spaceIds.push(sid);
+      }
+      return {
+        success: () => ({
+          ids: spaceIds,
+        })
+      };
+    } else {
+      return {
+        statusCode: () => 404
+      };
+    }
+  }),
+
+  _req_oneprovider_getSpaceDetails: computed('mockInitializedCluster', function () {
+    if (this.get('mockInitializedCluster')) {
+      return {
+        success: (id) => SPACES[id],
+        statusCode: (id) => SPACES[id] ? 200 : 404
+      };
+    } else {
+      return {
+        statusCode: () => 404
+      };
+    }
+  }),
 
   _req_onezone_configureZone: computed(function () {
     return {
@@ -271,3 +305,14 @@ export default Ember.Service.extend({
     };
   }),
 });
+
+const SPACES = {
+  space1: {
+    id: 'space1',
+    name: 'Space One',
+  },
+  space2: {
+    id: 'space2',
+    name: 'Space Two',
+  }
+};
