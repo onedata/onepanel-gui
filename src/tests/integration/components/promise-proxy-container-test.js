@@ -4,6 +4,8 @@ import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 
+import Ember from 'ember';
+
 describe('Integration | Component | promise proxy container', function () {
   setupComponentTest('promise-proxy-container', {
     integration: true
@@ -11,13 +13,13 @@ describe('Integration | Component | promise proxy container', function () {
 
   it('renders error alert if promise has been rejected', function (done) {
     let rejectReason = 'some reason';
-    let fakeProxy = {
+    let fakeProxy = Ember.Object.create({
       isSettled: true,
       ifFulfilled: false,
       isRejected: true,
       reason: rejectReason,
       content: 'some content',
-    };
+    });
 
     this.set('proxy', fakeProxy);
 
@@ -31,13 +33,13 @@ describe('Integration | Component | promise proxy container', function () {
 
   it('shows error details when clicking on show details', function (done) {
     let rejectReason = 'some reason';
-    let fakeProxy = {
+    let fakeProxy = Ember.Object.create({
       isSettled: true,
       ifFulfilled: false,
       isRejected: true,
       reason: rejectReason,
       content: 'some content',
-    };
+    });
 
     this.set('proxy', fakeProxy);
 

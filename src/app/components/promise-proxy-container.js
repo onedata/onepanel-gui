@@ -11,10 +11,4 @@ export default Component.extend({
    * @type {ObjectPromiseProxy}
    */
   proxy: null,
-
-  actions: {
-    toggleShowDetails() {
-      this.toggleProperty('showDetails');
-    },
-  }
 });

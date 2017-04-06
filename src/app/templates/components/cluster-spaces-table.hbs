@@ -1,3 +1,11 @@
+{{#if anySpaceRejected}}
+  {{resource-load-error
+    class="alert-some-spaces-rejected"
+    message="Some of space details cannot be loaded."
+    reason=rejectedSpacesReason
+  }}
+{{/if}}
+
 {{#one-collapsible-list as |list|}}
   {{#each spaces as |spaceProxy|}}
     {{!-- TODO error handling, loading indicators? --}}

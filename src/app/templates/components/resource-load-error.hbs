@@ -1,0 +1,10 @@
+{{!-- TODO i18n --}}
+<strong>{{message}}</strong>
+{{#if reason}}
+  <a href="javascript(0);" class="promise-error-show-details"{{action "toggleShowDetails"}}>{{if showDetails "Hide details" "Show details..."}}</a>
+  {{#if showDetails}}
+    <div class="error-details">
+      {{reason}}
+    </div>
+  {{/if}}
+{{/if}}

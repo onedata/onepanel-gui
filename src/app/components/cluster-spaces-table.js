@@ -2,14 +2,20 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
 const {
-  Component
+  Component,
+  computed,
 } = Ember;
 
 export default Component.extend({
   /**
-   * @type {ObjectPromiseProxy.SpaceDetails}
+   * @type {Array.SpaceDetails}
    */
   spaces: null,
+
+  anySpaceRejected: computed('spaces', function () {
+    let spaces = this.get('spaces');
+    return spaces.some(s => s.get('isRejected'));
+  }),
 
   actions: {
     revokeSpace(spaceId) {

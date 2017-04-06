@@ -4,15 +4,6 @@
   {{#if proxy.isPending}}
     {{spin-spinner-block sizeClass="md" class="centered"}}
   {{else if proxy.isRejected}}
-    {{!-- TODO style, i18n --}}
-    <div class="alert alert-danger alert-promise-error">
-      <strong>Sorry, but this resource didn't load properly.</strong>
-      <a href="javascript(0);" class="promise-error-show-details"{{action "toggleShowDetails"}}>{{if showDetails "Hide details" "Show details..."}}</a>
-      {{#if showDetails}}
-        <div class="error-details">
-          {{proxy.reason}}
-        </div>
-      {{/if}}
-    </div>
+    {{resource-load-error reason=proxy.reason}}
   {{/if}}
 {{/if}}
