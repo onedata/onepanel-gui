@@ -45,8 +45,8 @@ $content-col-padding: $padding-large-horizontal * 1.5;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     width: $main-menu-width;
     .row-onedata-logo {
-      margin-top: 40px;
-      margin-bottom: 40px;
+      margin-top: $onedata-logo-margin-top;
+      margin-bottom: $onedata-logo-margin-bottom;
     }
   }
   .col-sidebar {
