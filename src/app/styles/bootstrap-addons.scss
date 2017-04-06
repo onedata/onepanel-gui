@@ -135,3 +135,11 @@ $input-bg-light: $color-one-white;
   padding-left: $form-group-margin-bottom;
   padding-right: $form-group-margin-bottom;
 }
+
+// change alert look when using as error report
+.alert.alert-promise-error {
+  margin: $alert-padding;
+  .error-details {
+    margin-top: $alert-padding;
+  }
+}
