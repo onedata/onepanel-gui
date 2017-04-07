@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invoke, invokeAction } from 'ember-invoke-action';
+import { invokeAction } from 'ember-invoke-action';
 const { computed } = Ember;
 
 /**
@@ -23,8 +23,7 @@ export default Ember.Component.extend({
 
   isActive: computed('activeElementId', 'accordionMode', function () {
     let {
-      activeElementId,
-      elementId
+      activeElementId, elementId
     } = this.getProperties([
       'activeElementId', 'elementId'
     ]);
@@ -32,14 +31,6 @@ export default Ember.Component.extend({
       return activeElementId === elementId;
     }
   }),
-
-  click(event) {
-    if (event.target.matches('.btn-toolbar *')) {
-      event.stopPropagation();
-    } else {
-      invoke(this, 'toggle');
-    }
-  },
 
   actions: {
     toggle() {
