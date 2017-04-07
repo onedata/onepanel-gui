@@ -3,7 +3,14 @@
 
 {{#listItem.header}}
   {{space.name}}
+  {{#bs-button type="info" onClick=(action "somaa")}}
+  in header
+{{/bs-button}}
   <div class="btn-toolbar">
+    {{#bs-button type="info" onClick=(action "somaa")}}
+  in toolbar
+{{/bs-button}}
+<button {{action "somaa"}}>Lolo</button>
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
@@ -14,7 +21,29 @@
         triggerEvents="hover"
       }}
     </button>
+      {{#one-webui-popover
+        class="one-popover-test"
+        triggerSelector=(concat "#" (concat elementId "-btn-revoke-space"))
+        as |popover|
+      }}
+
+        <h2>{{close}}</h2>
+        <h1>Revoke space support?</h1>
+        <p>When space support will be revoked, data from this space that is not replicated among other providers will be lost.</p>
+        <div class="btn-toolbar">
+          <button {{action "cztery"}}>Jeden</button>
+          
+          <a {{action (action popover.close)}}>Noo</a>
+          {{#spin-button class="btn btn-danger"}}
+            Yes, revoke
+          {{/spin-button}}
+        </div>
+      {{/one-webui-popover}}
   </div>
+  {{!--{{#webui-popover}}
+    Some text
+  {{/webui-popover}}--}}
+  
 {{/listItem.header}}
 {{#listItem.content}}
   <table class="item-table">
@@ -32,34 +61,9 @@
   </table>
 {{/listItem.content}}
 
-{{#confirm-box
-  title="Revoke space support?"
-  class="confirm-box-revoke-space-support"
-  triggerElement=(concat "#" (concat elementId "-btn-revoke-space"))
+{{!--{{#confirmation-box
+  class="revoke-space-support-box"
   cancelLabel="No, don't revoke"
   confirmLabel="Yes, revoke"
 }}
-  <p>
-    When space support will be revoked, data from this space that is not replicated among other providers will be lost.
-  </p>
-{{/confirm-box}}
-
-{{!--
-{{#bs-popover
-  title="Revoke space support?"
-  autoPlacement=true
-  class="popover-confirmation popover-revoke-space-support"
-  renderInPlace=true
-  
-  onShow=(action (mut revokeTooltipVisible false))
-}}
-  
-  <div class="btn-toolbar">
-    {{#bs-button type="info"}}
-      No, don't revoke
-    {{/bs-button}}
-    {{#spin-button class="btn btn-danger"}}
-      Yes, revoke
-    {{/spin-button}}
-  </div>
-{{/bs-popover}}--}}
+{{/confirmation-box}}--}}

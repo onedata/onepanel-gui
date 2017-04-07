@@ -19,13 +19,4 @@ export default Ember.Component.extend({
   classNameBindings: ['isOpened:opened', 'isCollapsible:collapsible',
     'toolbarWhenOpened:toolbar-when-opened'
   ],
-
-  didInsertElement() {
-    this._super(...arguments);
-
-    this.$(".btn-toolbar").click((event) => {
-      event.preventDefault();
-      event.stopPropagation();
-    });
-  }
 });

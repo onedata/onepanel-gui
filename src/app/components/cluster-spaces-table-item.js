@@ -22,5 +22,8 @@ export default Component.extend({
     revokeSpace() {
       return invokeAction(this, 'revokeSpace', this.get('space.id'));
     },
+    somaa() {
+      alert('lol');
+    }
   },
 });
