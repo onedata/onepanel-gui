@@ -3,6 +3,7 @@ import Ember from 'ember';
 const {
   Component,
   inject: { service },
+  get,
 } = Ember;
 
 export default Component.extend({
@@ -57,13 +58,16 @@ export default Component.extend({
       // FIXME handle errors
       return this._supportSpace(supportSpaceData);
     },
-    revokeSpace(spaceId) {
+    // TODO currently space can be either object or ember object
+    revokeSpace(space) {
       // FIXME handle errors
       let globalNotify = this.get('globalNotify');
-      let revoking = this._revokeSpace(spaceId);
+      let revoking = this._revokeSpace(get(space, 'id'));
       revoking.then(() => {
         this._updateSpacesList();
-        globalNotify.info(`Space support revoked`);
+        globalNotify.info(
+          `Support for space "${get(space, 'name')}" has been revoked`
+        );
       });
       revoking.catch(error => {
         globalNotify.error('Space revoking failed: ' + error);

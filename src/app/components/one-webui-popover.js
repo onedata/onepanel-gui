@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invoke, invokeAction } from 'ember-invoke-action';
 
 const {
   Component,
@@ -7,9 +8,17 @@ const {
 } = Ember;
 
 export default Component.extend({
-  classNames: ['one-webui-popover'],
+  classNames: ['one-webui-popover', 'webui-popover-content'],
 
   triggerSelector: null,
+
+  /**
+   * Values: auto, top, right, bottom, left, top-right, top-left, bottom-right,
+   *  bottom-left, auto-top, auto-right, auto-bottom, auto-left, horizontal,
+   *  vertical
+   * @type {string}
+   */
+  placement: 'auto',
 
   /**
    * One of: pop, fade
@@ -28,31 +37,59 @@ export default Component.extend({
       triggerSelector,
       animation,
       popoverTrigger,
-    } = this.getProperties('triggerSelector', 'animation', 'popoverTrigger');
+      placement,
+      elementId,
+    } = this.getProperties(
+      'triggerSelector',
+      'animation',
+      'popoverTrigger',
+      'placement',
+      'elementId'
+    );
 
     let $triggerElement = $(triggerSelector);
-
-    this.set('$triggerElement', $triggerElement);
 
     assert(
       'triggerElement should match at least one element',
       $triggerElement.length >= 1
     );
 
+    this.set('$triggerElement', $triggerElement);
+
     $triggerElement.webuiPopover({
-      url: '#' + this.get('elementId'),
+      url: `#${elementId}`,
       animation,
       trigger: popoverTrigger,
+      placement,
     });
+
+    // FIXME it doesn't work
+    // window.addEventListener('resize', () => invoke(this, 'refresh'));
   },
 
-  killPopover: on("willDestroyElement", function () {
-    this.get('$triggerElement').webuiPopover("destroy");
+  _popover() {
+    this.get('$triggerElement').webuiPopover(...arguments);
+  },
+
+  killPopover: on('willDestroyElement', function () {
+    this._popover('destroy');
   }),
 
   actions: {
-    close() {
-      this.get('$triggerElement').webuiPopover('hide');
+    hide() {
+      this._popover('hide');
+    },
+    submit() {
+      this._popover({ dismissible: false });
+      let submitPromise = invokeAction(this, 'submit');
+      submitPromise.finally(() => {
+        invoke(this, 'hide');
+      });
+      return submitPromise;
+    },
+    // FIXME it doesn't work
+    refresh() {
+      this._popover('show');
     },
   },
 

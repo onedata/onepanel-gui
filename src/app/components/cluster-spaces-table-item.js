@@ -20,10 +20,7 @@ export default Component.extend({
 
   actions: {
     revokeSpace() {
-      return invokeAction(this, 'revokeSpace', this.get('space.id'));
+      return invokeAction(this, 'revokeSpace', this.get('space'));
     },
-    somaa() {
-      alert('lol');
-    }
   },
 });

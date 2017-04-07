@@ -39,7 +39,7 @@ describe('Integration | Component | one collapsible list item header', function 
     });
   });
 
-  it('don\'t propagates click events outside btn-toolbar', function () {
+  it('doesn\'t propagate click events outside btn-toolbar', function () {
     let actionOneInvoked = false;
     this.on('actionOne', function () {
       actionOneInvoked = true;

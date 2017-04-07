@@ -18,8 +18,8 @@ export default Component.extend({
   }),
 
   actions: {
-    revokeSpace(spaceId) {
-      return invokeAction(this, 'revokeSpace', spaceId);
+    revokeSpace(space) {
+      return invokeAction(this, 'revokeSpace', space);
     },
   },
 });

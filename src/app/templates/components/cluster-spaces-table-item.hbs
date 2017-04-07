@@ -3,14 +3,7 @@
 
 {{#listItem.header}}
   {{space.name}}
-  {{#bs-button type="info" onClick=(action "somaa")}}
-  in header
-{{/bs-button}}
   <div class="btn-toolbar">
-    {{#bs-button type="info" onClick=(action "somaa")}}
-  in toolbar
-{{/bs-button}}
-<button {{action "somaa"}}>Lolo</button>
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
@@ -22,27 +15,27 @@
       }}
     </button>
       {{#one-webui-popover
-        class="one-popover-test"
+        class="popover-revoke-space"
+        placement="bottom-left"
         triggerSelector=(concat "#" (concat elementId "-btn-revoke-space"))
+        submit=(action "revokeSpace")
         as |popover|
       }}
-
-        <h2>{{close}}</h2>
         <h1>Revoke space support?</h1>
-        <p>When space support will be revoked, data from this space that is not replicated among other providers will be lost.</p>
+        <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
         <div class="btn-toolbar">
-          <button {{action "cztery"}}>Jeden</button>
-          
-          <a {{action (action popover.close)}}>Noo</a>
-          {{#spin-button class="btn btn-danger"}}
+          {{#bs-button type="info" onClick=(action popover.hide)}}
+            No, keep the support
+          {{/bs-button}}
+          {{#spin-button
+            class="btn btn-danger"
+            action=(action popover.submit)
+          }}
             Yes, revoke
           {{/spin-button}}
         </div>
       {{/one-webui-popover}}
   </div>
-  {{!--{{#webui-popover}}
-    Some text
-  {{/webui-popover}}--}}
   
 {{/listItem.header}}
 {{#listItem.content}}

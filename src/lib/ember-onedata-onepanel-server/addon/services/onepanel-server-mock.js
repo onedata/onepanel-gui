@@ -292,6 +292,14 @@ export default Ember.Service.extend({
     }
   }),
 
+  // TODO: after revoking space support, do not return the space in getSpaces  
+  _req_oneprovider_revokeSpaceSupport: computed(function () {
+    return {
+      success: () => null,
+      statusCode: () => 204,
+    };
+  }),
+
   _req_onezone_configureZone: computed(function () {
     return {
       success: () => null,
