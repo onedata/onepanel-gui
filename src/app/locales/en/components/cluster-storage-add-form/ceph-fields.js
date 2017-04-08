@@ -3,7 +3,7 @@ export default {
   key: 'Key',
   monitorHostname: 'Monitor hostname',
   clusterName: 'Cluster hostname',
-  poolName: 'Cluster hostname',
+  poolName: 'Pool name',
   timeout: 'Timeout',
   insecure: 'Insecure',
   readonly: 'Read only'
