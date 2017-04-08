@@ -49,7 +49,7 @@ export default Ember.Service.extend({
     });
   }).readOnly(),
 
-  mockInitializedCluster: true,
+  mockInitializedCluster: false,
 
   /**
    * @type {computed<Boolean>}
