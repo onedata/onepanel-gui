@@ -34,6 +34,12 @@ export default Service.extend({
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
+   * Stores the fetched cluster
+   * @type {ClusterDetails}
+   */
+  clusterCache: null,
+
+  /**
    * TODO when creating "the only cluster" get info about deployment state
    * This is something like a store
    * @return {Ember.A<ClusterInfo>}
@@ -56,19 +62,28 @@ export default Service.extend({
   // in system  
   getClusterDetails( /*clusterId*/ ) {
     return new Promise((resolve) => {
-      let gettingInitStep = this._getThisClusterInitStep();
+      let clusterCache = this.get('clusterCache');
+      if (clusterCache) {
+        resolve(clusterCache);
+      } else {
+        let gettingInitStep = this._getThisClusterInitStep();
 
-      gettingInitStep.then(step => {
-        let thisCluster = ClusterInfo.create({
-          id: THIS_CLUSTER_ID,
+        gettingInitStep.then(step => {
+          let thisCluster = ClusterInfo.create({
+            id: THIS_CLUSTER_ID,
+          });
+
+          let clusterDetails = ClusterDetails.create({
+            onepanelServiceType: this.get('onepanelServiceType'),
+            clusterInfo: thisCluster,
+            initStep: step,
+          });
+
+          this.set('clusterCache', clusterDetails);
+
+          resolve(clusterDetails);
         });
-
-        resolve(ClusterDetails.create({
-          onepanelServiceType: this.get('onepanelServiceType'),
-          clusterInfo: thisCluster,
-          initStep: step,
-        }));
-      });
+      }
     });
   },
 

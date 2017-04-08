@@ -105,7 +105,8 @@ export default Ember.Component.extend({
   },
 
   configureFinished() {
-    invokeAction(this, 'clusterConfigurationSuccess');
+    // TODO i18n
+    this.get('globalNotify').info('Cluster deployed successfully');
     invokeAction(this, 'nextStep');
   },
 

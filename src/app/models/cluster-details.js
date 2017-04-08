@@ -43,6 +43,7 @@ export default Ember.ObjectProxy.extend({
     return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
   }),
 
+  // TODO i18n  
   name: computed('isInitialized', function () {
     return this.get('isInitialized') ? 'This cluster' : 'New cluster';
   }),

@@ -41,20 +41,5 @@ export default Ember.Component.extend({
 
   // TODO only for cluster-specific - make more generic
 
-  cluster: readOnly('model.collection.firstObject'),
 
-  secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
-    let {
-      onepanelServiceType,
-      cluster,
-    } = this.getProperties('onepanelServiceType', 'cluster');
-    if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
-      return [{
-        id: 'spaces',
-        label: 'Spaces',
-      }];
-    } else {
-      return [];
-    }
-  }).readOnly(),
 });

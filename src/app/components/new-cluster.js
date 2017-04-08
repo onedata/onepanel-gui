@@ -44,7 +44,7 @@ export default Ember.Component.extend({
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
-  initStepIndex: 0,
+  currentStepIndex: 0,
 
   _isInProcess: false,
 
@@ -54,13 +54,16 @@ export default Ember.Component.extend({
   init() {
     this._super(...arguments);
     let onepanelServiceType = this.get('onepanelServiceType');
-    this.set('_isInProcess', this.get('initStepIndex') > 0);
+    let clusterInitStep = this.get('cluster.initStep');
+    this.set('currentStepIndex', clusterInitStep);
+    this.set('_isInProcess', clusterInitStep > 0);
     this.set('steps', onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE);
   },
 
   actions: {
-    clusterConfigurationSuccess() {
-      // TODO currently nothing more to do
+    next() {
+      this.set('cluster.initStep', this.get('currentStepIndex') + 1);
+      this.incrementProperty('currentStepIndex');
     },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');
