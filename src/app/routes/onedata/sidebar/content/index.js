@@ -1,3 +1,12 @@
+/**
+ * Open default content for loaded resource
+ *
+ * @module routes/onedata/sidebar/content/index
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 // TODO copied from content route

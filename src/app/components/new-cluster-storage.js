@@ -1,3 +1,12 @@
+/**
+ * A storage management content for wizard of creating new cluster
+ *
+ * @module components/new-cluster-storage.js
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 

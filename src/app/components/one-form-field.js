@@ -1,3 +1,12 @@
+/**
+ * A form field tailored for Onedata application, used mainly in ``one-form-fields``
+ *
+ * @module components/one-form-field.js
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 

@@ -1,3 +1,22 @@
+/**
+ * An Ember component wrapper for webui-popover: https://github.com/sandywalker/webui-popover
+ *
+ * Requires installation and usage of webui-popover Bower package.
+ *
+ * There is an alternative implementation in: https://github.com/parablesoft/ember-webui-popover
+ * but it renders ``<a>`` element with each component instance and assumes
+ * that the pover conent will be bound to this anchor, so binding a custom
+ * trigger element will be somewhat hacky.
+ *
+ * In contrast, this wrapper allows to bind popover open to any element with
+ * ``triggerSelector`` property.
+ *
+ * @module components/one-webui-popover
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 

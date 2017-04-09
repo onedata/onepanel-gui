@@ -14,6 +14,7 @@
         triggerEvents="hover"
       }}
     </button>
+      {{!-- TODO make a generic component for confirmations --}}
       {{#one-webui-popover
         class="popover-revoke-space"
         placement="bottom-left"
@@ -53,10 +54,3 @@
     </tr>
   </table>
 {{/listItem.content}}
-
-{{!--{{#confirmation-box
-  class="revoke-space-support-box"
-  cancelLabel="No, don't revoke"
-  confirmLabel="Yes, revoke"
-}}
-{{/confirmation-box}}--}}
