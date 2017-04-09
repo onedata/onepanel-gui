@@ -51,10 +51,9 @@ $content-col-padding: $padding-large-horizontal * 1.5;
       
       .brand-info {
         position: absolute;
-        top: 100%;
-        left: 0px;
         // slight padding from logo
-        width: 110%;
+        top: 110%;
+        width: 100%;
         left: 0;
         right: 0;
       }
