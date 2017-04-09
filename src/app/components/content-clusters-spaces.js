@@ -68,9 +68,14 @@ export default Component.extend({
       return this.set('_supportSpaceOpened', false);
     },
     submitSupportSpace(supportSpaceData) {
+      let globalNotify = this.get('globalNotify');
       let supportingSpace = this._supportSpace(supportSpaceData);
       supportingSpace.then(() => {
+        this._updateSpacesList();
         this.set('_supportSpaceOpened', false);
+        globalNotify.info(
+          `Added a new support for space`
+        );
       });
       return supportingSpace;
     },
