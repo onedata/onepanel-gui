@@ -5,6 +5,7 @@ $toggle-size-base: 1.4em;
   display: inline-block;
   height: 1em;
   margin-top: -.1em;
+  cursor: pointer;
 
   &.form-control {
     background-color: inherit;
@@ -41,7 +42,7 @@ $toggle-size-base: 1.4em;
   }
 
   div {
-    background-color: white;
+    background-color: $color-one-light-gray;
     transition: background-color 0.2s ease;
     width: $toggle-size-base * 2;
   }

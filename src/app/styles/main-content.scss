@@ -34,6 +34,21 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
     @include btn-toolbar-float-right();
   }
 
+  .row {
+    max-height: 99999em;
+    opacity: 1;
+    transition: max-height .2s linear, padding .1s linear, opacity .1s linear;
+    &.row-small {
+      max-height: 70em;
+    }
+    &.row-hidden {
+      max-height: 0;
+      padding: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+  }
+
   @media screen and (max-width: $screen-sm) {
     .content-row {
       border-bottom: 0;

@@ -1,43 +1,30 @@
-{{!-- TODO i18n --}}
-{{#if noStorages}}
-  <div class="row content-row no-border">
-    <h1>Storage configuration</h1>
-    <p>Worker componets save and retrieve user's data network file system storages.</p>
-  </div>
-  <div class="row content-row">
-    {{cluster-storage-add-form 
-      class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
-      submit=(action "submitAddStorage")}}
-  </div>
-{{else}}
-  <div class="row content-row">
-    <h1>Storages
-      <div class="btn-toolbar">
-        {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
-          Add storage
-        {{/bs-button}}
+<div class="row content-row">
+  <h1>Storages
+    <div class="btn-toolbar">
+      {{#unless noStorages}}
+        {{#unless addStorageOpened}}
+          {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
+            Add storage
+          {{/bs-button}}
+        {{else}}
+          {{#bs-button type="default" class="btn-sm" onClick=(action "onAddStorageHide")}}
+            Cancel
+          {{/bs-button}}
+        {{/unless}}
         {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
           Finish
         {{/bs-button}}
-      </div>
-    </h1>
-  </div>
-  <div class="row">
-    {{cluster-storage-table storages=storages}}  
-  </div>
-
-{{!-- TODO reset form values on open --}}
-  {{#bs-modal
-    id="add-storage"
-    open=addStorageOpened
-    onHide=(action "onAddStorageHide")
-    body=false
-    footer=true
-    as |modal|
-  }}
-    {{#modal.body}}
-      <h1>Add storage</h1>
-      {{cluster-storage-add-form submit=(action "submitAddStorage")}}
-    {{/modal.body}}
-  {{/bs-modal}}
-{{/if}}
+      {{/unless}}
+    </div>
+  </h1>
+</div>
+<div class="row content-row row-small {{unless addStorageOpened 'row-hidden'}}">
+  {{#if addStorageOpened}}
+    {{cluster-storage-add-form 
+      class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 
+      submit=(action "submitAddStorage")}}
+  {{/if}}
+</div>
+<div class="row">
+  {{cluster-storage-table storages=storages}}  
+</div>
