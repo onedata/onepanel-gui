@@ -4,6 +4,7 @@ const {
   Component,
   inject: { service },
   get,
+  computed,
 } = Ember;
 
 export default Component.extend({
@@ -16,6 +17,17 @@ export default Component.extend({
 
   _supportSpaceOpened: false,
   _currentToken: '',
+
+  // TODO maybe generic component for opening/closing forms inline 
+  _supportSpaceButtonLabel: computed('_supportSpaceOpened', function () {
+    // TODO i18n
+    return this.get('_supportSpaceOpened') ?
+      'Cancel supporting space' : 'Support space';
+  }).readOnly(),
+
+  _supportSpaceButtonType: computed('_supportSpaceOpened', function () {
+    return this.get('_supportSpaceOpened') ? 'default' : 'primary';
+  }),
 
   init() {
     this._super(...arguments);
@@ -48,15 +60,19 @@ export default Component.extend({
     updateSpacesList() {
       return this._updateSpacesList();
     },
-    supportSpace() {
-      return this.set('_supportSpaceOpened', true);
+    toggleSupportSpaceForm() {
+      // TODO inform user about cancelling?
+      this.toggleProperty('_supportSpaceOpened');
     },
     onSupportSpaceHide() {
       return this.set('_supportSpaceOpened', false);
     },
     submitSupportSpace(supportSpaceData) {
-      // FIXME handle errors
-      return this._supportSpace(supportSpaceData);
+      let supportingSpace = this._supportSpace(supportSpaceData);
+      supportingSpace.then(() => {
+        this.set('_supportSpaceOpened', false);
+      });
+      return supportingSpace;
     },
     // TODO currently space can be either object or ember object
     revokeSpace(space) {

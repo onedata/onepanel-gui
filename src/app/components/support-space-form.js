@@ -32,6 +32,7 @@ export default Component.extend({
 
   i18n: service(),
   storageManager: service(),
+  globalNotify: service(),
 
   formFields: computed(() => FORM_FIELDS).readOnly(),
 
@@ -96,11 +97,17 @@ export default Component.extend({
 
       let storageId = this.get('_selectedStorage.id');
 
-      return invokeAction(this, 'submitSupportSpace', {
+      let submitting = invokeAction(this, 'submitSupportSpace', {
         token,
         size,
         storageId,
       });
+
+      submitting.catch(error => {
+        this.get('globalNotify').error(`Supporting space failed: ${error}`);
+      });
+
+      return submitting;
     },
     // TODO input changed should be some generic mixin method
     inputChanged(field, value) {

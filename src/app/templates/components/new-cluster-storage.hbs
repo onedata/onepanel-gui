@@ -1,6 +1,7 @@
 <div class="row content-row">
   <h1>Storages
     <div class="btn-toolbar">
+      <h1>Add a new storage</h1>
       {{#unless noStorages}}
         {{#unless addStorageOpened}}
           {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
@@ -8,7 +9,7 @@
           {{/bs-button}}
         {{else}}
           {{#bs-button type="default" class="btn-sm" onClick=(action "onAddStorageHide")}}
-            Cancel
+            Cancel adding storage
           {{/bs-button}}
         {{/unless}}
         {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}

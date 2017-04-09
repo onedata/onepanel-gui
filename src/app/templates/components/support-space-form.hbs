@@ -25,7 +25,7 @@
 
   {{#form.group}}
     <div class="row">
-      <div class="col-xs-12 col-sm-6">
+      <div class="col-xs-12 col-sm-4">
         {{one-form-field
           inputId=(concat elementId (concat "-size"))
           field=(hash
@@ -38,7 +38,7 @@
           inputChanged=(action "inputChanged")
         }}
       </div>
-      <div class="col-xs-12 col-sm-6 radio-group radio-group-inline">
+      <div class="col-xs-12 col-sm-8 radio-group radio-group-inline">
         {{!-- TODO component for inline radios --}}
         <label class="radio-inline">
           {{one-way-radio (get formValues "sizeUnit")
@@ -75,7 +75,7 @@
       action=(action "submit")
       disabled=(not canSubmit)
     }}
-      Add
+      Support space
     {{/spin-button}}
   </div>
 {{/bs-form}}
