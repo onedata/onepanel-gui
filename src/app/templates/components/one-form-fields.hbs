@@ -1,7 +1,7 @@
 {{!-- TODO make some helper for generating input ids --}}
 
 {{#each fields as |field|}}
-  {{#bsForm.group}}
+  {{#bsForm.group validation=(if field.isInvalid "error" (if field.isValid "success")) class="col-xs-12"}}
     {{#if (eq field.type "checkbox")}}
       <div class="row toggle-centered-form-row">
         <label for={{concat parentView.elementId (concat "-" field.name)}} class="col-xs-6 control-label">
@@ -14,19 +14,19 @@
             checked=(get formValues field.name)
             update=(action "inputChanged" field.name)
             disabled=disabled
+            onFocusOut=(action "onFocusOut" field)
           }}
         </div>
       </div>
     {{else}}
-      <div class="col-xs-12">
-        {{one-form-field
-          inputId=(concat parentView.elementId (concat "-" field.name))
-          field=field
-          value=(get formValues field.name)
-          disabled=disabled
-          inputChanged=(action "inputChanged")
-        }}
-      </div>
+      {{one-form-field
+        inputId=(concat parentView.elementId (concat "-" field.name))
+        field=field
+        value=(get formValues field.name)
+        disabled=disabled
+        inputChanged=(action "inputChanged")
+        onFocusOut=(action "onFocusOut" field)
+      }}
     {{/if}}
   {{/bsForm.group}}
 {{/each}}

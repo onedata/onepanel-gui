@@ -28,6 +28,15 @@ $input-bg-light: $color-one-white;
   font-weight: bold;
 }
 
+form {
+  .has-error label.control-label .form-message {
+    color: $state-danger-text;
+  }
+  .has-success label.control-label .form-message {
+    color: $state-success-text;
+  }
+}
+
 .form-group-light {
   .input-group {
     .form-control {

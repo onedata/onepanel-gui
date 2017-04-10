@@ -47,6 +47,14 @@
 @import "bootstrap/tables";
 
 @import "bootstrap/forms";
+.has-success label.control-label, 
+.has-error label.control-label {
+  color: inherit;
+}
+label {
+  display: block;
+  font-weight: normal;
+}
 .form-control {
   @include box-shadow($control-box-shadow);
   &:focus {

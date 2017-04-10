@@ -9,8 +9,10 @@
 
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
+import { validator, buildValidations } from 'ember-cp-validations';
 
 import stripObject from 'onepanel-gui/utils/strip-object';
+import OneForm from 'onepanel-gui/components/one-form';
 
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
@@ -43,26 +45,48 @@ const storageTypes = [{
   fields: SWIFT_FIELDS
 }];
 
-const storageTypesFields = {
-  ceph: CEPH_FIELDS,
-  posix: POSIX_FIELDS,
-  s3: S3_FIELDS,
-  swift: SWIFT_FIELDS,
-};
+function createValidations(storageTypes, genericFields) {
+  let validations = {};
+  storageTypes.forEach(type => {
+    type.fields.concat(genericFields).forEach(field => {
+      let fieldName = 'allFieldsValues.' + type.id + '.' + field.name;
+      validations[fieldName] = [];
+      if (!field.optional) {
+        validations[fieldName].push(validator('presence', true));
+      }
+    });
+  });
+  return validations;
+}
 
-export default Ember.Component.extend({
+const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS));
+
+export default OneForm.extend(Validations, {
+  unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
+  currentFieldsPrefix: computed.alias('selectedStorageType.id'),
+  allFields: computed('storageTypes.@each.fields', 'genericFields', function() {
+    let {
+      storageTypes,
+      genericFields
+    } = this.getProperties('storageTypes', 'genericFields');
+    return storageTypes
+      .concat({ fields: genericFields })
+      .map(type => type.fields)
+      .reduce((a, b) => a.concat(b));
+  }),
+
   classNames: ['cluster-storage-add-form'],
 
   i18n: service(),
 
-  genericFields: computed(() => GENERIC_FIELDS).readOnly(),
+  genericFields: null,
   storageTypes: computed(() => storageTypes).readOnly(),
 
   selectedStorageType: null,
-  formValues: null,
 
-  specificFields: computed('selectedStorageType.id', function () {
-    return storageTypesFields[this.get('selectedStorageType.id')];
+  specificFields: computed('selectedStorageType', function () {
+    return this.get('storageTypes')
+      .filter(type => type.id === this.get('selectedStorageType.id'))[0].fields;
   }),
 
   /**
@@ -80,12 +104,19 @@ export default Ember.Component.extend({
     return genericFields.concat(specificFields);
   }),
 
-  allFields: computed('genericFields', 'currentFields', function () {
+  allFieldsValues: computed('genericFields', 'storageTypes', function () {
+    let fields = Ember.Object.create({});
     let {
       genericFields,
-      currentFields,
-    } = this.getProperties('genericFields', 'currentFields');
-    return [...genericFields, ...currentFields];
+      storageTypes
+    } = this.getProperties('genericFields', 'storageTypes');
+    storageTypes.forEach(type => {
+      fields.set(type.id, Ember.Object.create({}));
+      type.fields.concat(genericFields).forEach(field => {
+        fields.set(type.id + "." + field.get('name'), null);
+      });
+    });
+    return fields;
   }),
 
   init() {
@@ -93,7 +124,11 @@ export default Ember.Component.extend({
     if (this.get('selectedStorageType') == null) {
       this.set('selectedStorageType', this.get('storageTypes.firstObject'));
     }
-    this.set('formValues', Ember.Object.create({}));
+    this.set('genericFields', GENERIC_FIELDS.map(fields => Ember.Object.create(fields)));
+    this.get('storageTypes').forEach(type => type.fields = type.fields.map(field =>
+      Ember.Object.create(field)));
+
+    this.prepareFields();
     this._addFieldsPlaceholders();
   },
 
@@ -116,29 +151,10 @@ export default Ember.Component.extend({
 
   _addFieldPlaceholderTranslation(typeId, field, i18n) {
     if (!field.placeholder) {
-      // TODO: it probably modifies imported array... do this in some initializer
-      field.placeholder = i18n.t(
+      field.set('placeholder', i18n.t(
         `components.clusterStorageAddForm.${typeId}.${field.name}`
-      );
+      ));
     }
-  },
-
-  resetFormValues() {
-    let { allFields } = this.getProperties('allFields');
-    let formValues = Ember.Object.create({});
-    allFields.forEach(({ name, defaultValue }) => {
-      formValues.set(name, defaultValue);
-    });
-    this.set('formValues', formValues);
-  },
-
-  /**
-   * Is the field present in current form?
-   * @param {string} fieldName 
-   */
-  isKnownField(fieldName) {
-    let { allFields } = this.getProperties('allFields');
-    return allFields.map(field => field.name).indexOf(fieldName) !== -1;
   },
 
   actions: {
@@ -147,20 +163,8 @@ export default Ember.Component.extend({
       this.set('selectedStorageType', type);
     },
 
-    inputChanged(field, value) {
-      let {
-        formValues
-      } = this.getProperties(
-        'formValues'
-      );
-
-      if (this.isKnownField(field)) {
-        formValues.set(field, value);
-      } else {
-        console.warn(
-          'component:cluster-storage-add-form: attempt to change not known input type'
-        );
-      }
+    inputChanged(fieldName, value) {
+      this.changeFormValue(fieldName, value);
     },
 
     toggleChanged({ newValue, context }) {
@@ -168,14 +172,19 @@ export default Ember.Component.extend({
       invoke(this, 'inputChanged', fieldName, newValue);
     },
 
+    focusOut(field) {
+      field.set('changed', true);
+      this.recalculateErrors();
+    },
+
     submit() {
       let {
         formValues,
-        allFields,
+        currentFields,
         selectedStorageType
       } = this.getProperties(
         'formValues',
-        'allFields',
+        'currentFields',
         'selectedStorageType'
       );
 
@@ -183,7 +192,7 @@ export default Ember.Component.extend({
         type: selectedStorageType.id
       };
 
-      allFields.forEach(({ name }) => {
+      currentFields.forEach(({ name }) => {
         formData[name] = formValues.get(name);
       });
       return invokeAction(this, 'submit', stripObject(formData, [undefined, null, '']));

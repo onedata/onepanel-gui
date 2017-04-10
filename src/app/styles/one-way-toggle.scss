@@ -68,4 +68,8 @@ $toggle-size-base: 1.4em;
     text-align: left;
     padding-left: $padding-base-vertical / 2;
   }
+  & + .form-control-feedback {
+    height: $toggle-size-base;
+    line-height: $toggle-size-base;
+  }
 }

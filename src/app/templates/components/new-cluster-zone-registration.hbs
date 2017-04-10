@@ -6,22 +6,25 @@
     Please enter your onedata provider name and optional approximate geographical location.</p>
 </div>
 <div class="content-row row">
-  {{#bs-form submitOnEnter=false class="form-horizontal col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered text-center" as |form|}}
+  {{#bs-form submitOnEnter=false class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" as |form|}}
     {{one-form-fields
       bsForm=form
-      fields=fields 
+      fields=currentFields 
       formValues=formValues 
       inputChanged=(action "inputChanged")
       disabled=_isBusy
+      onFocusOut=(action "focusOut")
     }}
-
-    {{#spin-button
-      type="submit"
-      class="btn btn-primary"
-      buttonStyle="expand-left"
-      action=(action "submit")
-    }}
-      {{t 'components.newClusterZoneRegistration.register'}}
-    {{/spin-button}}
+    <div class="row text-center">
+      {{#spin-button
+        type="submit"
+        class="btn btn-primary"
+        buttonStyle="expand-left"
+        action=(action "submit")
+        disabled=(not isValid)
+      }}
+        {{t 'components.newClusterZoneRegistration.register'}}
+      {{/spin-button}}
+    </div>
   {{/bs-form}}
 </div>
