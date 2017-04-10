@@ -1,10 +1,13 @@
+{{!-- TODO i18n --}}
+
 {{#bs-modal
   open=open
-  size="sm"
   onHide=(action "onHide")
   as |modal|
 }}
   {{#modal.body}}
+    {{!-- TODO not only error... --}}
+    <h1>Error</h1>
     {{text}}
   {{/modal.body}}
   {{#modal.footer}}

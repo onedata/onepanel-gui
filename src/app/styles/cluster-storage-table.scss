@@ -1,24 +1,3 @@
 .cluster-storage-table {
-  .storage-table {
-    width: 100%;
-    .storage-table-img-cell {
-      width: 30%;
-      border-right: 1px solid $main-content-border-color;
-    }
-    .storage-table-content-cell {
-      .row {
-        margin: 0 2em;
-        padding-left: 0;
-        padding-right: 0;
-      }
-    }
-  }
-  @media screen and (max-width: $screen-md) {
-    .storage-table {
-      .storage-table-img-cell {
-        width: 0;
-        border-right: 0;
-      }
-    }
-  }
+
 }

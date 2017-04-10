@@ -5,7 +5,7 @@
     {{#list.item as |listItem|}}
     
       {{#listItem.header toolbarWhenOpened=true}}
-        {{storage.name}}Storage 1
+        {{storage.name}}
         <div class="btn-toolbar">
           <button class="btn icon-btn">{{one-icon icon="star"}}</button>
           <button class="btn btn-primary icon-btn">{{one-icon icon="space"}}</button>
@@ -15,10 +15,10 @@
       {{/listItem.header}}
 
       {{#listItem.content}}
-        <table class="storage-table">
+        <table class="item-table">
           <tr>
-            <td class="storage-table-img-cell"></td>
-            <td class="storage-table-content-cell">
+            <td class="item-table-img-cell"></td>
+            <td class="item-table-content-cell">
               <div class="row content-row">
                 <strong>Type:</strong> {{storage.type}}
               </div>

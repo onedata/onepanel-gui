@@ -13,6 +13,7 @@
 import Ember from 'ember';
 
 const {
+  computed,
   computed: {
     alias,
   },
@@ -22,10 +23,28 @@ export default Ember.ObjectProxy.extend({
   content: alias('clusterInfo'),
 
   /**
+   * @type {string}
+   */
+  onepanelServiceType: null,
+
+  /**
    * To inject.
    * @type {ClusterInfo}
    */
   clusterInfo: null,
 
   initStep: 0,
+
+  isInitialized: computed('initStep', 'onepanelServiceType', function () {
+    let {
+      initStep,
+      onepanelServiceType
+    } = this.getProperties('initStep', 'onepanelServiceType');
+    return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
+  }),
+
+  // TODO i18n  
+  name: computed('isInitialized', function () {
+    return this.get('isInitialized') ? 'This cluster' : 'New cluster';
+  }),
 });

@@ -18,8 +18,30 @@ const {
   computed,
   computed: {
     readOnly
-  }
+  },
+  assert,
 } = Ember;
+
+// TODO these requests are workarounds for faulty onepanel client library
+/**
+ * Contains alternative implementation of onepanel client methods
+ *
+ * Each method should have the same signature as a onepanel client method.
+ * The ``callback`` that is passed as a last parameter should take:
+ * ``error, data, response``.
+ */
+const CUSTOM_REQUESTS = {
+  // TODO maybe usage of superagent lib
+  onepanel_getStorageDetails(id, callback) {
+    assert('storage id cannot be null', id);
+    let req = $.ajax({
+      url: `/api/v3/onepanel/provider/storages/${id}`,
+      method: 'GET',
+    });
+    req.done((data, _, xhr) => callback(null, data, xhr));
+    req.fail((xhr, textStatus, errorThrown) => callback(errorThrown, null, xhr));
+  }
+};
 
 export default Ember.Service.extend({
   /**
@@ -104,7 +126,12 @@ export default Ember.Service.extend({
           });
         }
       };
-      this.get('_' + api + 'Api')[method](...params, callback);
+      let customHandler = CUSTOM_REQUESTS[`${api}_${method}`];
+      if (customHandler) {
+        customHandler(...params, callback);
+      } else {
+        this.get('_' + api + 'Api')[method](...params, callback);
+      }
     });
   },
 
@@ -211,6 +238,7 @@ export default Ember.Service.extend({
     });
   },
 
+  // TODO use swagger api if available  
   /**
    * Makes a request to /login endpoint to initialize session (set-cookies).
    * @param {string} username 

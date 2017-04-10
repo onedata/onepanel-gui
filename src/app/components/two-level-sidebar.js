@@ -1,3 +1,12 @@
+/**
+ * A base component for building a sidebar view with two-level list
+ *
+ * @module components/two-level-sidebar
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
@@ -14,6 +23,8 @@ export default Ember.Component.extend({
   classNames: ['two-level-sidebar'],
 
   sidebar: service(),
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   model: null,
 
@@ -35,5 +46,8 @@ export default Ember.Component.extend({
 
       this.sendAction('changeResourceId', resourceType, itemId);
     }
-  }
+  },
+
+  // TODO only for cluster-specific - make more generic
+
 });

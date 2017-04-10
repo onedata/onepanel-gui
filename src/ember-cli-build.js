@@ -7,6 +7,9 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
   var app = new EmberApp(defaults, {
+    'ember-cli-babel': {
+      includePolyfill: true
+    },
     sassOptions: {
       includePaths: [
         'app/styles',
@@ -25,11 +28,9 @@ module.exports = function (defaults) {
       'js': [
         'transition',
         // TODO: rewrite collapses to ember-bootstrap components
+        'tooltip',
         'collapse',
-        // TODO: use bs-alert inside alert-panel component
-        'alert',
-        // TODO: rewrite dropdowns to ember-bootstrap components
-        'dropdown'
+        'popover',
       ],
       'glyphicons': false
     },
@@ -57,7 +58,9 @@ module.exports = function (defaults) {
 
   const BOWER_ASSETS = [
     'basictable/jquery.basictable.min.js',
-    'basictable/basictable.css'
+    'basictable/basictable.css',
+    'webui-popover/dist/jquery.webui-popover.css',
+    'webui-popover/dist/jquery.webui-popover.js',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));

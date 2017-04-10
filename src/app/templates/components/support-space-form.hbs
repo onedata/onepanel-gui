@@ -1,0 +1,81 @@
+{{!-- TODO i18n --}}
+
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+  {{#form.group}}
+    {{#power-select
+      loadingMessage="Loading..."
+      options=allStoragesProxy
+      selected=_selectedStorage
+      onchange=(action "storageChanged")
+      searchEnabled=false
+      renderInPlace=true
+      placeholder="Select a storage..."
+      as |storage|
+    }}
+      {{storage.name}}
+    {{/power-select}}
+  {{/form.group}}
+
+  {{one-form-fields
+    bsForm=form
+    fields=formFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+  }}
+
+  {{#form.group}}
+    <div class="row">
+      <div class="col-xs-12 col-sm-4">
+        {{one-form-field
+          inputId=(concat elementId (concat "-size"))
+          field=(hash
+            name="size"
+            type="number"
+            placeholder=(t "components.supportSpaceForm.fields.size")
+          )
+          value=(get formValues "size")
+          disabled=disabled
+          inputChanged=(action "inputChanged")
+        }}
+      </div>
+      <div class="col-xs-12 col-sm-8 radio-group radio-group-inline">
+        {{!-- TODO component for inline radios --}}
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-mb"))
+            class="one-form-field-sizeUnit-mb"
+            option="mb"
+            update=(action "inputChanged" "sizeUnit")
+          }} MB
+        </label>
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-gb"))
+            class="one-form-field-sizeUnit-gb"
+            option="gb"
+            update=(action "inputChanged" "sizeUnit")
+          }} GB
+        </label>
+        <label class="radio-inline">
+          {{one-way-radio (get formValues "sizeUnit")
+            id=(concat elementId (concat "-sizeUnit-tb"))
+            class="one-form-field-sizeUnit-tb"
+            option="tb"
+            update=(action "inputChanged" "sizeUnit")
+          }} TB
+        </label>
+      </div>
+    </div>
+  {{/form.group}}
+
+  <div class="row text-center">
+    {{#spin-button
+      type="submit"
+      class="btn btn-primary"
+      action=(action "submit")
+      disabled=(not canSubmit)
+    }}
+      Support space
+    {{/spin-button}}
+  </div>
+{{/bs-form}}

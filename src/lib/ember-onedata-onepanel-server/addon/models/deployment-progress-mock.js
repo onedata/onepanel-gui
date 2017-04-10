@@ -22,6 +22,12 @@ const {
   computed,
 } = Ember;
 
+/**
+ * How many steps should be done in one progress state fetch
+ * @type {number}
+ */
+const PROGRESS_SPEED = 4;
+
 export default Ember.Object.extend({
   /**
    * To inject.
@@ -46,7 +52,7 @@ export default Ember.Object.extend({
   getTaskStatusConfiguration() {
     let clusterDeploySteps = this.get('clusterDeploySteps');
     let fakeProgress = this.get('fakeProgress');
-    this.incrementProperty('fakeProgress');
+    this.incrementProperty('fakeProgress', PROGRESS_SPEED);
     return TaskStatus.constructFromObject({
       status: (fakeProgress >= clusterDeploySteps.length) ?
         StatusEnum.ok : StatusEnum.running,

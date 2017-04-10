@@ -75,19 +75,11 @@ export default Ember.Route.extend({
     this.get('eventsBus').trigger('one-sidenav:close', '#sidenav-sidebar');
   },
 
-  renderTemplate(controller, model) {
-    let { resourceType } = this.modelFor('onedata.sidebar');
-    let { resourceId } = model;
+  renderTemplate() {
     // render generic content template
     this.render('onedata.sidebar.content', {
       into: 'onedata',
       outlet: 'content'
-    });
-    // then render specific content into generic content template
-    let specificContent = isSpecialResourceId(resourceId) ? resourceId : 'content';
-    this.render(`tabs.${resourceType}.${specificContent}`, {
-      into: 'onedata.sidebar.content',
-      outlet: 'main-content'
     });
   },
 });

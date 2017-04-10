@@ -10,6 +10,8 @@
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 
+import stripObject from 'onepanel-gui/utils/strip-object';
+
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
 import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
@@ -41,7 +43,16 @@ const storageTypes = [{
   fields: SWIFT_FIELDS
 }];
 
+const storageTypesFields = {
+  ceph: CEPH_FIELDS,
+  posix: POSIX_FIELDS,
+  s3: S3_FIELDS,
+  swift: SWIFT_FIELDS,
+};
+
 export default Ember.Component.extend({
+  classNames: ['cluster-storage-add-form'],
+
   i18n: service(),
 
   genericFields: computed(() => GENERIC_FIELDS).readOnly(),
@@ -50,19 +61,23 @@ export default Ember.Component.extend({
   selectedStorageType: null,
   formValues: null,
 
+  specificFields: computed('selectedStorageType.id', function () {
+    return storageTypesFields[this.get('selectedStorageType.id')];
+  }),
+
   /**
    * @type {computed.FieldType}
    */
-  currentFields: computed('selectedStorageType', function () {
+  currentFields: computed('genericFields.[]', 'specificFields.[]', function () {
     let {
       genericFields,
-      selectedStorageType
+      specificFields,
     } = this.getProperties(
       'genericFields',
-      'selectedStorageType'
+      'specificFields'
     );
 
-    return genericFields.concat(selectedStorageType.fields);
+    return genericFields.concat(specificFields);
   }),
 
   allFields: computed('genericFields', 'currentFields', function () {
@@ -75,11 +90,14 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.set('selectedStorageType', this.get('storageTypes.firstObject'));
+    if (this.get('selectedStorageType') == null) {
+      this.set('selectedStorageType', this.get('storageTypes.firstObject'));
+    }
     this.set('formValues', Ember.Object.create({}));
     this._addFieldsPlaceholders();
   },
 
+  // FIXME move to some helper or something  
   _addFieldsPlaceholders() {
     let i18n = this.get('i18n');
     let {
@@ -102,13 +120,6 @@ export default Ember.Component.extend({
       field.placeholder = i18n.t(
         `components.clusterStorageAddForm.${typeId}.${field.name}`
       );
-      if (field.optional) {
-        field.placeholder += (
-          ' (' +
-          i18n.t(`components.clusterStorageAddForm.generic.optional`) +
-          ')'
-        );
-      }
     }
   },
 
@@ -175,8 +186,7 @@ export default Ember.Component.extend({
       allFields.forEach(({ name }) => {
         formData[name] = formValues.get(name);
       });
-
-      return invokeAction(this, 'submit', formData);
+      return invokeAction(this, 'submit', stripObject(formData, [undefined, null, '']));
     },
   }
 });

@@ -2,7 +2,7 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
 
 /**
  * Create an instance of ClusterStorages using data from add storage form
- * @param {object} formData
+ * @param {object} formData contains attributes for specific storage type as in REST API
  * @returns {subclass of ClusterStorages}
  */
 function createClusterStorage(formData) {

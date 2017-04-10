@@ -1,0 +1,56 @@
+{{!-- TODO change .storage-table class or make generic --}}
+{{!-- TODO i18n --}}
+
+{{#listItem.header}}
+  {{space.name}}
+  <div class="btn-toolbar">
+    {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
+    <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
+      {{one-icon icon="remove"}}
+      {{bs-tooltip
+        visible=revokeTooltipVisible
+        title="Revoke space support from this provider"
+        placement="bottom"
+        triggerEvents="hover"
+      }}
+    </button>
+      {{!-- TODO make a generic component for confirmations --}}
+      {{#one-webui-popover
+        class="popover-revoke-space"
+        placement="bottom-left"
+        triggerSelector=(concat "#" (concat elementId "-btn-revoke-space"))
+        submit=(action "revokeSpace")
+        as |popover|
+      }}
+        <h1>Revoke space support?</h1>
+        <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
+        <div class="btn-toolbar">
+          {{#bs-button type="info" onClick=(action popover.hide)}}
+            No, keep the support
+          {{/bs-button}}
+          {{#spin-button
+            class="btn btn-danger"
+            action=(action popover.submit)
+          }}
+            Yes, revoke
+          {{/spin-button}}
+        </div>
+      {{/one-webui-popover}}
+  </div>
+  
+{{/listItem.header}}
+{{#listItem.content}}
+  <table class="item-table">
+    <tr>
+      <td class="item-table-img-cell"></td>
+      <td class="item-table-content-cell">
+        <div class="row content-row">
+          <strong>Name:</strong> {{space.name}}
+        </div>
+        <div class="row content-row">
+          <strong>Id:</strong> {{space.id}}
+        </div>
+      </td>
+    </tr>
+  </table>
+{{/listItem.content}}

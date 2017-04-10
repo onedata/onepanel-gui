@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 /**
  * Item header class of the collapsible list. For example of use case see 
@@ -20,12 +21,11 @@ export default Ember.Component.extend({
     'toolbarWhenOpened:toolbar-when-opened'
   ],
 
-  didInsertElement() {
-    this._super(...arguments);
-
-    this.$(".btn-toolbar").click((event) => {
-      event.preventDefault();
+  click(event) {
+    if (event.target.matches('.btn-toolbar *')) {
       event.stopPropagation();
-    });
-  }
+    } else {
+      invokeAction(this, 'toggle');
+    }
+  },
 });

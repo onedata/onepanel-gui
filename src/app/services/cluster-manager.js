@@ -28,11 +28,16 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const THIS_CLUSTER_ID = 'the-cluster';
-const THIS_CLUSTER_NAME = 'The cluster';
 
 export default Service.extend({
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
+  /**
+   * Stores the fetched cluster
+   * @type {ClusterDetails}
+   */
+  clusterCache: null,
 
   /**
    * TODO when creating "the only cluster" get info about deployment state
@@ -47,11 +52,9 @@ export default Service.extend({
 
   getClusters() {
     return new Promise((resolve) => {
-      let thisCluster = ClusterInfo.create({
-        id: THIS_CLUSTER_ID,
-        name: THIS_CLUSTER_NAME,
+      this.getClusterDetails().then(thisCluster => {
+        resolve(A([thisCluster]));
       });
-      resolve(A([thisCluster]));
     });
   },
 
@@ -59,14 +62,28 @@ export default Service.extend({
   // in system  
   getClusterDetails( /*clusterId*/ ) {
     return new Promise((resolve) => {
-      let gettingInitStep = this._getThisClusterInitStep();
+      let clusterCache = this.get('clusterCache');
+      if (clusterCache) {
+        resolve(clusterCache);
+      } else {
+        let gettingInitStep = this._getThisClusterInitStep();
 
-      gettingInitStep.then(step => {
-        resolve(ClusterDetails.create({
-          clusterInfo: this.get('clusterProxy.content'),
-          initStep: step,
-        }));
-      });
+        gettingInitStep.then(step => {
+          let thisCluster = ClusterInfo.create({
+            id: THIS_CLUSTER_ID,
+          });
+
+          let clusterDetails = ClusterDetails.create({
+            onepanelServiceType: this.get('onepanelServiceType'),
+            clusterInfo: thisCluster,
+            initStep: step,
+          });
+
+          this.set('clusterCache', clusterDetails);
+
+          resolve(clusterDetails);
+        });
+      }
     });
   },
 
@@ -130,10 +147,10 @@ export default Service.extend({
    */
   _checkIsAnyStorage(onepanelServer) {
     return new Promise((resolve, reject) => {
-      let gettingStorages = onepanelServer.request('oneprovider',
-        'getStorages');
-      gettingStorages.then(({ data: storages }) => {
-        resolve(!!storages && storages.length > 0);
+      let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
+
+      gettingStorages.then(({ data: { ids } }) => {
+        resolve(ids != null && ids.length > 0);
       });
       gettingStorages.catch(reject);
     });

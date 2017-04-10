@@ -17,9 +17,11 @@ const {
 export default Component.extend({
   initProcess: false,
 
+  cluster: null,
+
   init() {
     this._super(...arguments);
-    if (this.get('cluster.initStep') < 3) {
+    if (!this.get('cluster.isInitialized')) {
       this.set('initProcess', true);
     }
   },

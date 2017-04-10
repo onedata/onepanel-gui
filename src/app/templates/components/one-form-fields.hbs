@@ -1,14 +1,16 @@
+{{!-- TODO make some helper for generating input ids --}}
+
 {{#each fields as |field|}}
   {{#bsForm.group}}
     {{#if (eq field.type "checkbox")}}
       <div class="row toggle-centered-form-row">
-        <label for={{concat elementId (concat "-" field.name)}} class="col-xs-6 control-label">
-            {{field.placeholder}}
+        <label for={{concat parentView.elementId (concat "-" field.name)}} class="col-xs-6 control-label">
+            {{field.placeholder}} {{if field.optional (concat " " (t "components.oneFormFields.optional"))}}
           </label>
         <div class="col-xs-6">
           {{one-way-toggle
             class="form-control"
-            inputId=(concat elementId (concat "-" field.name))
+            inputId=(concat parentView.elementId (concat "-" field.name))
             checked=(get formValues field.name)
             update=(action "inputChanged" field.name)
             disabled=disabled
@@ -17,13 +19,12 @@
       </div>
     {{else}}
       <div class="col-xs-12">
-        {{component (input-component-name field.type)
+        {{one-form-field
+          inputId=(concat parentView.elementId (concat "-" field.name))
+          field=field
           value=(get formValues field.name)
-          class="form-control"
-          update=(action "inputChanged" field.name)
-          placeholder=field.placeholder
-          step=field.step
           disabled=disabled
+          inputChanged=(action "inputChanged")
         }}
       </div>
     {{/if}}

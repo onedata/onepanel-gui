@@ -86,3 +86,29 @@ input {
     background-image: url($root-url + 'assets/images/world-map-dark.svg');
   }
 }
+
+// TODO this should be separate component
+
+.item-table {
+  width: 100%;
+  .item-table-img-cell {
+    width: 30%;
+    border-right: 1px solid $main-content-border-color;
+  }
+  .item-table-content-cell {
+    .row {
+      margin: 0 2em;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+@media screen and (max-width: $screen-md) {
+  .item-table {
+    .item-table-img-cell {
+      width: 0;
+      border-right: 0;
+    }
+  }
+}
+  

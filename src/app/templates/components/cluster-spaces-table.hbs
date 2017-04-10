@@ -1,0 +1,22 @@
+{{#if anySpaceRejected}}
+  {{resource-load-error
+    class="alert-some-spaces-rejected"
+    message="Some of space details cannot be loaded."
+    reason=rejectedSpacesReason
+  }}
+{{/if}}
+
+{{#one-collapsible-list as |list|}}
+  {{#each spaces as |spaceProxy|}}
+    {{!-- TODO error handling, loading indicators? --}}
+    {{#if spaceProxy.isFulfilled}}
+      {{#list.item as |listItem|}}
+        {{cluster-spaces-table-item
+          listItem=listItem
+          space=spaceProxy.content
+          revokeSpace=(action "revokeSpace")
+        }}
+      {{/list.item}}
+    {{/if}}
+  {{/each}}
+{{/one-collapsible-list}}
