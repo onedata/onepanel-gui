@@ -48,6 +48,8 @@ $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $o
 $main-content-hover-background: $color-one-white-gray;
 $main-content-border-color: darken($color-one-white-gray, 8);
 
+$collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
+
 @import 'common';
 
 @import 'spin-spinner-extensions';
