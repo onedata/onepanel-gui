@@ -3,15 +3,9 @@
     <div class="btn-toolbar">
       <h1>Add a new storage</h1>
       {{#unless noStorages}}
-        {{#unless addStorageOpened}}
-          {{#bs-button type="default" class="btn-sm" onClick=(action "startAddStorage")}}
-            Add storage
-          {{/bs-button}}
-        {{else}}
-          {{#bs-button type="default" class="btn-sm" onClick=(action "onAddStorageHide")}}
-            Cancel adding storage
-          {{/bs-button}}
-        {{/unless}}
+        {{#bs-button type="default" class="btn-sm" onClick=(action "toggleAddStorageForm")}}
+          {{_addStorageButtonLabel}}
+        {{/bs-button}}
         {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
           Finish
         {{/bs-button}}
@@ -19,7 +13,7 @@
     </div>
   </h1>
 </div>
-<div class="row content-row row-small {{unless addStorageOpened 'row-hidden'}}">
+<div class="row content-row row-small {{unless addStorageOpened "row-hidden"}}">
   {{#if addStorageOpened}}
     {{cluster-storage-add-form 
       class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 

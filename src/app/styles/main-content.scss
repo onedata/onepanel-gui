@@ -35,9 +35,10 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
   }
 
   .row {
+    // needs to be set for animation purposes
     max-height: 99999em;
     opacity: 1;
-    transition: max-height .2s linear, padding .1s linear, opacity .1s linear;
+    transition: $collapse-transition;
     &.row-small {
       max-height: 70em;
     }

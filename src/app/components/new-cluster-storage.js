@@ -53,15 +53,16 @@ export default Ember.Component.extend({
     });
   },
 
+  _addStorageButtonLabel: computed('addStorageOpened', function () {
+    return this.get('addStorageOpened') ? 'Cancel' : 'Add storage';
+  }),
+
   actions: {
     next() {
       invokeAction(this, 'nextStep');
     },
-    startAddStorage() {
-      this.set('addStorageOpened', true);
-    },
-    onAddStorageHide() {
-      this.set('addStorageOpened', false);
+    toggleAddStorageForm() {
+      this.toggleProperty('addStorageOpened');
     },
 
     /**
