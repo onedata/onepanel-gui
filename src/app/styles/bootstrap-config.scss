@@ -49,6 +49,12 @@
 @import "bootstrap/forms";
 .form-control {
   @include box-shadow($control-box-shadow);
+  &:focus {
+    @include box-shadow($control-box-shadow-focus);
+  }
+  &[disabled] {
+    @include box-shadow(none);
+  }
 }
 
 @import "bootstrap/buttons";
@@ -90,6 +96,9 @@
 .table {
   thead > tr > th {
     border-bottom: 0;
+  }
+  tbody tr.active td {
+    background-color: inherit;
   }
 }
 

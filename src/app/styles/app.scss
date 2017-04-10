@@ -5,6 +5,7 @@ $root-url: rootUrl();
 @import 'fonts';
 
 $control-box-shadow: inset 1px 1px 2px #eee;
+$control-box-shadow-focus: inset 0 1px 1px #eee, 0 0 8px rgba(47, 153, 252, 0.2);
 
 @import 'bootstrap-config';
 @import 'bootstrap-addons';
@@ -46,6 +47,8 @@ $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $o
 
 $main-content-hover-background: $color-one-white-gray;
 $main-content-border-color: darken($color-one-white-gray, 8);
+
+$collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
 
 @import 'common';
 

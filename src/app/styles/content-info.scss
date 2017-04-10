@@ -5,7 +5,7 @@
     overflow: hidden;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
   }
   h1 {
     margin-bottom: 1em;
@@ -19,7 +19,7 @@
     font-size: 12pt;
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 2em;
+    margin-bottom: 0.8em;
   }
   p.lead {
     margin-bottom: 2.5em;
