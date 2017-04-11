@@ -66,8 +66,8 @@ export default Ember.Component.extend({
       loginCalling.then(( /*data, textStatus, jqXHR*/ ) => {
         let initializing = onepanelServer.initClient();
         initializing.then(() => {
-          let authTestRequest = onepanelServer.request('onepanel',
-            'getClusterCookie');
+          let authTestRequest =
+            onepanelServer.request('onepanel', 'getClusterCookie');
           authTestRequest.then(() => this.onLoginSuccess(username, password));
           authTestRequest.catch(() => this.onLoginFailure(username, password));
         });

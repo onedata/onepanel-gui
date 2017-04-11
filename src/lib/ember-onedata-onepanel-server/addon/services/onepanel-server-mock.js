@@ -49,6 +49,8 @@ export default Ember.Service.extend({
     });
   }).readOnly(),
 
+  username: 'mock_admin',
+
   mockInitializedCluster: true,
 
   /**

@@ -24,12 +24,16 @@ const {
   Component,
   assert,
   on,
+  observer,
+  run: { scheduleOnce },
 } = Ember;
 
 export default Component.extend({
-  classNames: ['one-webui-popover', 'webui-popover-content'],
+  classNames: ['one-webui-popover'],
 
   triggerSelector: null,
+
+  open: undefined,
 
   /**
    * Values: auto, top, right, bottom, left, top-right, top-left, bottom-right,
@@ -38,6 +42,9 @@ export default Component.extend({
    * @type {string}
    */
   placement: 'auto',
+
+  selector: false,
+  padding: true,
 
   /**
    * One of: pop, fade
@@ -51,6 +58,24 @@ export default Component.extend({
    */
   popoverTrigger: 'click',
 
+  init() {
+    this._super(...arguments);
+    let open = this.get('open');
+    if (open != null) {
+      this.set('popoverTrigger', 'manual');
+      scheduleOnce('afterRender', () => this.triggerOpen());
+    }
+  },
+
+  triggerOpen: observer('open', function () {
+    let open = this.get('open');
+    if (open === true) {
+      this._popover('show');
+    } else if (open === false) {
+      this._popover('hide');
+    }
+  }),
+
   didInsertElement() {
     let {
       triggerSelector,
@@ -58,11 +83,13 @@ export default Component.extend({
       popoverTrigger,
       placement,
       elementId,
+      padding,
     } = this.getProperties(
       'triggerSelector',
       'animation',
       'popoverTrigger',
       'placement',
+      'padding',
       'elementId'
     );
 
@@ -80,6 +107,7 @@ export default Component.extend({
       animation,
       trigger: popoverTrigger,
       placement,
+      padding,
     });
 
     // FIXME it doesn't work

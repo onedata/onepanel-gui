@@ -60,6 +60,12 @@ export default Ember.Service.extend({
 
   serviceType: null,
 
+  /**
+   * A user username that is set after successful login
+   * @type {string}
+   */
+  username: null,
+
   isLoading: readOnly('sessionValidator.isPending'),
 
   /**
@@ -234,7 +240,7 @@ export default Ember.Service.extend({
           });
         }
       };
-      api.getClusterCookie(callback);
+      api.login(callback);
     });
   },
 
@@ -246,23 +252,7 @@ export default Ember.Service.extend({
    * @returns {Promise}
    */
   login(username, password) {
-    return new Promise((resolve, reject) => {
-      let success = function (data, textStatus, jqXHR) {
-        resolve({
-          data,
-          textStatus,
-          jqXHR
-        });
-      };
-
-      let error = function (jqXHR, textStatus, errorThrown) {
-        reject({
-          jqXHR,
-          textStatus,
-          errorThrown
-        });
-      };
-
+    let loginCall = new Promise((resolve, reject) => {
       $.ajax('/api/v3/onepanel/login', {
         method: 'POST',
         contentType: 'application/json',
@@ -270,11 +260,20 @@ export default Ember.Service.extend({
           xhr.setRequestHeader("Authorization", "Basic " + btoa(
             username + ":" + password));
         },
-        success,
-        error
+        success: (data, textStatus, jqXHR) =>
+          resolve({ data, textStatus, jqXHR }),
+        error: (jqXHR, textStatus, errorThrown) =>
+          reject({ jqXHR, textStatus, errorThrown }),
       });
-
     });
+
+    // TODO use a session Ember addon for storing this
+
+    // TODO a little HACK to save username after successful login
+    // will be changed in future onepanel backend API to some GET method
+    loginCall.then(({ username }) => this.set('username', username));
+
+    return loginCall;
   }
 
 });
