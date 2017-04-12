@@ -184,6 +184,16 @@ export default Ember.Service.extend({
     };
   }),
 
+  // currently mocked - waiting for real logout method
+  _req_onepanel_logout: computed(function () {
+    return {
+      success() {
+        document.cookie = 'fakeLoginFlag=false; Max-Age=0';
+        return null;
+      }
+    };
+  }),
+
   _req_oneprovider_configureProvider: computed(function () {
     return {
       success: () => null,

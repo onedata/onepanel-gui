@@ -40,7 +40,18 @@ const CUSTOM_REQUESTS = {
     });
     req.done((data, _, xhr) => callback(null, data, xhr));
     req.fail((xhr, textStatus, errorThrown) => callback(errorThrown, null, xhr));
-  }
+  },
+  onepanel_getSessionDetails(callback) {
+    let req = this.request('onepanel', 'getClusterCookie');
+    req.then(({ data, response }) => {
+      callback(null, data, response);
+    });
+    req.catch(error => callback(error, null, error.response));
+  },
+  // currently mocked - waiting for real logout method
+  onepanel_logout(callback) {
+    callback('Logging out is currently not supported', null, {});
+  },
 };
 
 export default Ember.Service.extend({
@@ -150,9 +161,13 @@ export default Ember.Service.extend({
    */
   validateSession() {
     return new Promise((resolve, reject) => {
-      let testingAuth = this.requestTestAuth();
+      let testingAuth = this.trySession();
       testingAuth
-        .then(() => this.initClient())
+        .then(() => {
+          // TODO hacky way to workaround lack od getSessionDetails REST method
+          this.set('username', 'username');
+          return this.initClient();
+        })
         .then(resolve, reject);
       testingAuth.catch(reject);
     });
@@ -226,7 +241,7 @@ export default Ember.Service.extend({
    * @param {string} [origin] 
    * @returns {Promise}
    */
-  requestTestAuth() {
+  trySession() {
     let client = this.createClient();
     let api = new Onepanel.OnepanelApi(client);
     // invoke any operation that requires authentication
@@ -240,7 +255,7 @@ export default Ember.Service.extend({
           });
         }
       };
-      api.login(callback);
+      api.getClusterCookie().then(callback);
     });
   },
 
@@ -271,7 +286,10 @@ export default Ember.Service.extend({
 
     // TODO a little HACK to save username after successful login
     // will be changed in future onepanel backend API to some GET method
-    loginCall.then(({ username }) => this.set('username', username));
+    // TODO currently username is fully mocked to "username"
+    loginCall.then(({ username = 'username' }) => {
+      this.set('username', username);
+    });
 
     return loginCall;
   }

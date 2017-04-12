@@ -12,6 +12,7 @@ export default Component.extend({
   classNames: ['user-account-button'],
 
   onepanelServer: service(),
+  globalNotify: service(),
 
   menuOpen: false,
 
@@ -26,10 +27,18 @@ export default Component.extend({
       this.toggleProperty('menuOpen');
     },
     manageAccount() {
-      return invokeAction(this, 'manageAccount');
+      let startingManageAccount = invokeAction(this, 'manageAccount');
+      startingManageAccount.finally(() => this.set('menuOpen', false));
     },
     logout() {
-      return invokeAction(this, 'logout');
+      let onepanelServer = this.get('onepanelServer');
+      let loggingOut = onepanelServer.request('onepanel', 'logout');
+      loggingOut.then(() => window.location.reload());
+      loggingOut.catch(error => {
+        this.get('globalNotify').error(`We are sorry, but logout failed: ${error}`);
+      });
+      loggingOut.finally(() => this.set('menuOpen', false));
+      return loggingOut;
     },
   },
 });
