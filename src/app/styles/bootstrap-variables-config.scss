@@ -187,9 +187,11 @@ $btn-success-border:             darken($btn-success-bg, 5%) !default;
 $btn-success-border:             $btn-success-bg;
 
 $btn-info-color:                 #fff !default;
+$btn-info-color:                 $color-one-info;
 $btn-info-bg:                    $brand-info !default;
+$btn-info-bg:                    $color-one-white;
 $btn-info-border:                darken($btn-info-bg, 5%) !default;
-$btn-info-border:                $btn-info-bg;
+$btn-info-border:                $color-one-info;
 
 $btn-warning-color:              #fff !default;
 $btn-warning-bg:                 $brand-warning !default;

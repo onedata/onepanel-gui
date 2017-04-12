@@ -77,8 +77,14 @@ label {
     padding: $padding-small-vertical $padding-base-horizontal;
   }
   // special style for btn-primary, as it is "filled"
-  &.btn-primary {
-    @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  &.btn-primary { 
+    @include button-variant-filled($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  }
+  &.btn-info {
+    @include button-variant-info($btn-info-color, $btn-info-bg, $btn-info-border); 
+  }
+  &.btn-danger {
+    @include button-variant-filled($btn-danger-color, $btn-danger-bg, $btn-danger-border); 
   }
   .one-icon {
     font-size: 1.7em;

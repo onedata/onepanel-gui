@@ -25,14 +25,14 @@
         <h1>Revoke space support?</h1>
         <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
         <div class="btn-toolbar">
-          {{#bs-button type="info" onClick=(action popover.hide)}}
+          {{#bs-button class="btn btn-sm" type="info" onClick=(action popover.hide)}}
             No, keep the support
           {{/bs-button}}
           {{#spin-button
-            class="btn btn-danger"
+            class="btn btn-sm btn-danger"
             action=(action popover.submit)
           }}
-            Yes, revoke
+            {{one-icon icon="remove"}} <span>Yes, revoke</span>
           {{/spin-button}}
         </div>
       {{/one-webui-popover}}
