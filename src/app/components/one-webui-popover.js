@@ -62,6 +62,7 @@ export default Component.extend({
     this._super(...arguments);
     let open = this.get('open');
     if (open != null) {
+      // FIXME when using manual, clicking somewhere does not close popover
       this.set('popoverTrigger', 'manual');
       scheduleOnce('afterRender', () => this.triggerOpen());
     }
@@ -82,6 +83,7 @@ export default Component.extend({
       animation,
       popoverTrigger,
       placement,
+      popoverStyle,
       elementId,
       padding,
     } = this.getProperties(
@@ -89,6 +91,7 @@ export default Component.extend({
       'animation',
       'popoverTrigger',
       'placement',
+      'popoverStyle',
       'padding',
       'elementId'
     );
@@ -108,6 +111,7 @@ export default Component.extend({
       trigger: popoverTrigger,
       placement,
       padding,
+      style: popoverStyle,
     });
 
     // FIXME it doesn't work
