@@ -1,4 +1,9 @@
-{{#app-layout changeTab="mainMenuItemChanged" appModel=model as |section|}}
+{{#app-layout
+  changeTab="mainMenuItemChanged"
+  manageAccount="manageAccount"
+  appModel=model
+  as |section|
+}}
   {{#if (eq section 'sidebar')}}
     {{outlet 'sidebar'}}
   {{else if (eq section 'content')}}

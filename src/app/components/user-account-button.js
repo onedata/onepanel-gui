@@ -26,9 +26,10 @@ export default Component.extend({
     toggleMenu() {
       this.toggleProperty('menuOpen');
     },
+    // TODO handle error if manage account cannot be displayed
     manageAccount() {
-      let startingManageAccount = invokeAction(this, 'manageAccount');
-      startingManageAccount.finally(() => this.set('menuOpen', false));
+      invokeAction(this, 'manageAccount');
+      this.set('menuOpen', false);
     },
     logout() {
       let onepanelServer = this.get('onepanelServer');

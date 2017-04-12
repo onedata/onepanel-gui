@@ -28,6 +28,9 @@ export default Ember.Component.extend({
 
   model: null,
 
+  // TODO some generic icon
+  resourceIcon: 'checkbox-option',
+
   resourceType: readOnly('model.resourceType'),
 
   isCollectionEmpty: computed.equal('model.collection.length', 0),
@@ -47,7 +50,4 @@ export default Ember.Component.extend({
       this.sendAction('changeResourceId', resourceType, itemId);
     }
   },
-
-  // TODO only for cluster-specific - make more generic
-
 });

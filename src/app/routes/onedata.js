@@ -60,6 +60,9 @@ export default Route.extend({
   actions: {
     mainMenuItemChanged(itemId) {
       this.transitionTo('onedata.sidebar', itemId);
-    }
+    },
+    manageAccount() {
+      this.transitionTo('onedata.sidebar', 'users');
+    },
   }
 });

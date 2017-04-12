@@ -18,7 +18,6 @@ const {
   },
   RSVP: { Promise },
   A,
-  computed,
   computed: { readOnly },
   ObjectProxy,
   PromiseProxyMixin,
@@ -40,28 +39,23 @@ export default Service.extend({
   clusterCache: null,
 
   /**
-   * TODO when creating "the only cluster" get info about deployment state
-   * This is something like a store
-   * @return {Ember.A<ClusterInfo>}
+   * Promise proxy resolves with array of promise proxies for ClusterDetails
+   * @returns {ObjectPromiseProxy}
    */
-  clustersProxy: computed(function () {
-    return ObjectPromiseProxy.create({
-      promise: this.getClusters()
-    });
-  }),
-
   getClusters() {
-    return new Promise((resolve) => {
-      this.getClusterDetails().then(thisCluster => {
-        resolve(A([thisCluster]));
-      });
+    let promise = new Promise((resolve) => {
+      resolve(A([this.getClusterDetails()]));
     });
+    return ObjectPromiseProxy.create({ promise });
   },
 
   // TODO: in future this should be able to get details of any cluster 
-  // in system  
+  // in system 
+  /**
+   * @returns {ObjectPromiseProxy}
+   */
   getClusterDetails( /*clusterId*/ ) {
-    return new Promise((resolve) => {
+    let promise = new Promise((resolve) => {
       let clusterCache = this.get('clusterCache');
       if (clusterCache) {
         resolve(clusterCache);
@@ -85,6 +79,7 @@ export default Service.extend({
         });
       }
     });
+    return ObjectPromiseProxy.create({ promise });
   },
 
   /**

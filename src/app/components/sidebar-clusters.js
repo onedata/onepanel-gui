@@ -21,6 +21,9 @@ export default TwoLevelSidebar.extend({
 
   classNames: ['sidebar-clusters'],
 
+  // TODO cluster icon
+  resourceIcon: 'view-grid',
+
   // TODO this will not work in generic multi-clusters menu  
   cluster: readOnly('model.collection.firstObject'),
 

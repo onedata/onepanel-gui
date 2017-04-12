@@ -134,6 +134,9 @@ export default Ember.Component.extend({
     },
     showMobileSidebar() {
       this.set('showMobileSidebar', true);
-    }
+    },
+    manageAccount() {
+      invokeAction(this, 'manageAccount');
+    },
   }
 });

@@ -37,12 +37,16 @@ export default Ember.Route.extend({
     return new Promise((resolve, reject) => {
       if (isValidTab) {
         let gettingCollection = sidebarResources.getCollectionFor(type);
-        gettingCollection.then(collection => {
-          resolve({
-            resourceType: type,
-            collection
+        gettingCollection
+          .then(proxyCollection => {
+            return Promise.all(proxyCollection);
+          })
+          .then(collection => {
+            resolve({
+              resourceType: type,
+              collection
+            });
           });
-        });
         gettingCollection.catch(reject);
       } else {
         reject({ error: 'invalid onedata tab name' });

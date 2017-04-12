@@ -165,7 +165,7 @@ export default Ember.Service.extend({
       testingAuth
         .then(() => {
           // TODO hacky way to workaround lack od getSessionDetails REST method
-          this.set('username', 'username');
+          this.set('username', 'admin');
           return this.initClient();
         })
         .then(resolve, reject);
@@ -255,7 +255,7 @@ export default Ember.Service.extend({
           });
         }
       };
-      api.getClusterCookie().then(callback);
+      api.getClusterCookie(callback);
     });
   },
 
@@ -287,7 +287,7 @@ export default Ember.Service.extend({
     // TODO a little HACK to save username after successful login
     // will be changed in future onepanel backend API to some GET method
     // TODO currently username is fully mocked to "username"
-    loginCall.then(({ username = 'username' }) => {
+    loginCall.then(({ username = 'admin' }) => {
       this.set('username', username);
     });
 

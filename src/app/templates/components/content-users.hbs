@@ -1,0 +1,58 @@
+{{#bs-form as |form|}}
+  {{#form.group}}
+    <label>Username</label>
+    <span class="form-control form-control-static">
+      {{user.name}}
+    </span>
+  {{/form.group}}
+  {{#form.group}}
+    <label>{{if _editingPassword "Current password" "Password"}}</label>
+    {{#if _editingPassword}}
+      {{one-way-password currentPassword
+        update=(action (mut currentPassword))
+        class="form-control"
+      }}
+    {{else}}
+      <span class="form-control form-control-static">
+        *****
+      </span>
+      {{!-- FIXME cancel changing password --}}
+      {{#bs-button
+        class="btn-change-password"
+        onClick=(action "startChangePassword")
+      }}
+        Change password
+      {{/bs-button}}
+    {{/if}}
+  {{/form.group}}
+  
+  {{!-- TODO use form-field components --}}
+  
+  {{#if _editingPassword}}
+    {{#form.group}}
+      <label>New password</label>
+      {{one-way-password newPassword
+        update=(action (mut newPassword))
+        class="form-control"
+      }}
+    {{/form.group}}
+    
+    {{#form.group}}
+      <label>Retype new password</label>
+      {{one-way-password retypedNewPassword
+        update=(action (mut retypedNewPassword))
+        class="form-control"
+      }}
+    {{/form.group}}
+    
+    {{!-- FIXME disable on not valid --}}
+    
+    {{#spin-button
+      class="btn btn-primary"
+      action=(action "submitChangePassword")
+    }}
+      Change password
+    {{/spin-button}}
+  {{/if}}
+{{/bs-form}}
+

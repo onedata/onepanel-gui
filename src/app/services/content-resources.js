@@ -20,6 +20,7 @@ const {
 
 export default Ember.Service.extend({
   clusterManager: service(),
+  userManager: service(),
 
   /**
    * @param {string} type
@@ -28,7 +29,9 @@ export default Ember.Service.extend({
   getModelFor(type, id) {
     switch (type) {
     case 'clusters':
-      return this.get('clusterManager').getClusterDetails(id);
+      return this.get('clusterManager').getClusterDetails(id).get('promise');
+    case 'users':
+      return this.get('userManager').getUserDetails(id).get('promise');
 
     default:
       return new Promise((resolve, reject) => reject('No such model type: ' + type));

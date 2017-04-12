@@ -30,6 +30,8 @@ const {
   }
 } = Ember;
 
+const MOCK_USERNAME = 'mock_admin';
+
 export default Ember.Service.extend({
   cookies: service(),
 
@@ -49,7 +51,7 @@ export default Ember.Service.extend({
     });
   }).readOnly(),
 
-  username: 'mock_admin',
+  username: MOCK_USERNAME,
 
   mockInitializedCluster: true,
 
@@ -190,6 +192,16 @@ export default Ember.Service.extend({
       success() {
         document.cookie = 'fakeLoginFlag=false; Max-Age=0';
         return null;
+      }
+    };
+  }),
+
+  _req_onepanel_getUser: computed(function () {
+    return {
+      success() {
+        return {
+          username: MOCK_USERNAME,
+        };
       }
     };
   }),
