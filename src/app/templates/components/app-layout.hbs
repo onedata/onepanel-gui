@@ -18,13 +18,16 @@
     {{brand-info}}
   </div>
   <div class="row row-main-menu full-width">
-    {{user-account-button}}
     {{main-menu
       appModel=appModel
       sidenavItemId=sidenavTabId
       currentItemId=currentTabId
       itemClicked="mainMenuItemClicked"
     }}
+  </div>
+  <div class="row row-account-button full-width">
+    <div class="groove-border"></div>
+    {{user-account-button}}
   </div>
 {{/perfect-scrollbar-element}}
 

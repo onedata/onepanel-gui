@@ -1,11 +1,6 @@
 .one-list-item {
   position: relative;
-  line-height: inherit;
-
-  .item-header {
-    padding-left: $one-list-item-padding;
-    padding-right: $one-list-item-padding;
-  }
+  line-height: 64px;
 
   &::after {
     @include top-line(1px solid $color-one-list-item-separator)
@@ -34,6 +29,11 @@
       margin-right: 0.3em;
       top: 0.3em;
     }
+}
+
+.item-header {
+  padding-left: $one-list-item-padding;
+  padding-right: $one-list-item-padding;
 }
 
 .one-list-item.clickable .item-header:hover {

@@ -3,17 +3,21 @@
     // TODO a style from list item, list header
     width: 100%;
   }
-  .webui-popover {
-    width: 200px;
+  .user-account-button-main {
+    &::after {
+      @include top-line(none)
+    }
   }
   .user-toggle-icon {
-    // TODO temporary style, use margin of popover arrow
-    margin-right: 20px;
+    position: absolute;
+    // TODO right should be taken from popover arrow right margin
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
-.dropdown-menu {
-  li {
-    width: 100%;
-  }
+// TODO maybe it should be moved to main menu styles
+.webui-popover-user-account {
+  width: $main-menu-width;
 }
