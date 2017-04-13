@@ -43,6 +43,12 @@ function createValidations(fields) {
       if (!field.optional) {
         validations[fieldName].push(validator('presence', true));
       }
+      if (field.type === 'number') {
+        validations[fieldName].push(validator('number', Ember.Object.create({
+          allowString: true,
+          allowBlank: field.optional
+        })));
+      }
     });
   return validations;
 }
