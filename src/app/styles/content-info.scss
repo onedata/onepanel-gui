@@ -7,24 +7,24 @@
     background-repeat: no-repeat;
     background-size: contain;
   }
+  h1, h2, p {
+    letter-spacing: $letter-spacing-base;
+  }
   h1 {
     margin-bottom: 1em;
     margin-top: 0;
     font-weight: bold;
     font-size: 27pt;
-    letter-spacing: 3px;
     text-transform: uppercase;
   }
   h2 {
     font-size: 12pt;
-    letter-spacing: 1px;
     text-transform: uppercase;
     margin-bottom: 0.8em;
   }
   p.lead {
     margin-bottom: 2.5em;
     font-size: 13pt;
-    letter-spacing: 1px;
   }
   .btn-primary {
     font-size: 130%;

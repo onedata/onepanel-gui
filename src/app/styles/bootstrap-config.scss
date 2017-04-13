@@ -47,6 +47,14 @@
 @import "bootstrap/tables";
 
 @import "bootstrap/forms";
+.has-success label.control-label, 
+.has-error label.control-label {
+  color: inherit;
+}
+label {
+  display: block;
+  font-weight: normal;
+}
 .form-control {
   @include box-shadow($control-box-shadow);
   &:focus {
@@ -69,8 +77,14 @@
     padding: $padding-small-vertical $padding-base-horizontal;
   }
   // special style for btn-primary, as it is "filled"
-  &.btn-primary {
-    @include button-variant-primary($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  &.btn-primary { 
+    @include button-variant-filled($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+  }
+  &.btn-info {
+    @include button-variant-info($btn-info-color, $btn-info-bg, $btn-info-border); 
+  }
+  &.btn-danger {
+    @include button-variant-filled($btn-danger-color, $btn-danger-bg, $btn-danger-border); 
   }
   .one-icon {
     font-size: 1.7em;
@@ -112,6 +126,12 @@
 @import "bootstrap/jumbotron";
 @import "bootstrap/thumbnails";
 @import "bootstrap/alerts";
+.alert {
+  position: relative;
+  margin: $alert-padding 0;
+  border-radius: 0;
+  letter-spacing: $letter-spacing-base;
+}
 @import "bootstrap/progress-bars";
 @import "bootstrap/media";
 @import "bootstrap/list-group";
@@ -158,11 +178,14 @@
             display: none;
           }
         }
+        .modal-footer {
+          text-align: center;
+        }
 
         h1 {
             font-size: $font-size-base * 1.5;
             font-family: 'Open Sans Semibold';
-            letter-spacing: 0.7px;
+            letter-spacing: $letter-spacing-base;;
             margin-bottom: 1em;
             text-transform: uppercase;
             text-align: center;

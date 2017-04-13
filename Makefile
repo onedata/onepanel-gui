@@ -31,6 +31,3 @@ test: deps
 
 test_xunit_output: deps
 	cd $(SRC_DIR) && xvfb-run ember test -r xunit
-
-test_rel_xunit_output:
-	cd $(SRC_DIR) && xvfb-run ember test -r xunit --path ../rel

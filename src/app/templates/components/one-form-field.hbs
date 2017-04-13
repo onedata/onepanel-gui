@@ -1,9 +1,13 @@
+<label for={{inputId}} class="control-label">
+  {{concat field.placeholder (concat " " (if field.optional (t "components.oneFormFields.optional")))}}
+  <span class="form-message pull-right">{{field.message}}</span>
+</label>
 {{component (input-component-name field.type)
   id=inputId
   value=value
   class=(concat "form-control " inputClass)
   update=(action "inputChanged" field.name)
-  placeholder=(concat field.placeholder (concat " " (if field.optional (t "components.oneFormFields.optional"))))
   step=field.step
   disabled=disabled
+  focusOut=(action "onFocusOut")
 }}
