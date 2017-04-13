@@ -30,7 +30,7 @@ const {
 } = Ember;
 
 export default Component.extend({
-  classNames: ['one-webui-popover'],
+  classNames: ['one-webui-popover', 'webui-popover-content'],
 
   triggerSelector: null,
 

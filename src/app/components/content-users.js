@@ -4,6 +4,7 @@ import Onepanel from 'npm:onepanel';
 const {
   Component,
   inject: { service },
+  computed,
 } = Ember;
 
 const {
@@ -20,15 +21,26 @@ export default Component.extend({
    */
   user: null,
 
-  _editingPassword: false,
+  _changingPassword: false,
 
   currentPassword: null,
   newPassword: null,
   retypedNewPassword: null,
 
+  // TODO i18n  
+  _changePasswordButtonLabel: computed('_changingPassword', function () {
+    return this.get('_changingPassword') ?
+      'Cancel password change' :
+      'Change password';
+  }),
+
+  _changePasswordButtonType: computed('_changingPassword', function () {
+    return this.get('_changingPassword') ? 'default' : 'primary';
+  }),
+
   actions: {
-    startChangePassword() {
-      this.set('_editingPassword', true);
+    toggleChangePassword() {
+      this.toggleProperty('_changingPassword');
     },
     submitChangePassword() {
       let {

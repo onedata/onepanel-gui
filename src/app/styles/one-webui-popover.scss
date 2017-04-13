@@ -30,3 +30,8 @@
     max-width: 70%;
   }
 }
+
+// bringing back no-padding style
+.webui-popover.webui-no-padding .webui-popover-content {
+  padding: 0;
+}
