@@ -1,6 +1,6 @@
 .one-collapsible-list-item-header {
   border-bottom: 1px solid $main-content-border-color;
-  letter-spacing: 0.7px;
+  letter-spacing: $letter-spacing-base;
   position: relative;
   .toggle-icon {
     display: none;

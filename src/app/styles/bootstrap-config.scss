@@ -130,7 +130,7 @@ label {
   position: relative;
   margin: $alert-padding 0;
   border-radius: 0;
-  letter-spacing: 0.07em;
+  letter-spacing: $letter-spacing-base;
 }
 @import "bootstrap/progress-bars";
 @import "bootstrap/media";
@@ -182,7 +182,7 @@ label {
         h1 {
             font-size: $font-size-base * 1.5;
             font-family: 'Open Sans Semibold';
-            letter-spacing: 0.7px;
+            letter-spacing: $letter-spacing-base;;
             margin-bottom: 1em;
             text-transform: uppercase;
             text-align: center;
