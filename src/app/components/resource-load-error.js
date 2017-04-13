@@ -17,6 +17,13 @@ const {
 export default Component.extend({
   classNames: ['alert', 'alert-danger', 'alert-promise-error'],
 
+  /**
+   * Action to invoke on alert panel close.
+   * If not null - show a close button in alert panel.
+   * @type {function|undefined}
+   */
+  onClose: undefined,
+
   init() {
     this._super(...arguments);
     if (!this.get('message')) {

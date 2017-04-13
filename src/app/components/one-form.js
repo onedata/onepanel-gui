@@ -3,7 +3,8 @@
  * 
  * Fields used in that component should be in format:
  * `{ name: 'someName', type: 'text', ...moreFieldOptions }`
- * and be a regular Ember object.
+ * and be a regular Ember object. See also FieldType type in 
+ * components/one-form-fields.
  * 
  * Proper validations mixin should be included to handle validation.
  * Validations object should use fields defined in allFieldsValues, e.g.
@@ -36,11 +37,13 @@ export default Ember.Component.extend({
    * @type {string}
    */
   unknownFieldErrorMsg: 'component:form-component: attempt to change not known input type',
+
   /**
    * Array of all fields used in the form (both active and inactive)
    * @type {Array[Ember.Object]}
    */
   allFields: null,
+
   /**
    * Object with all fields values in the form (both active and inactive). 
    * @type {Object}
@@ -58,12 +61,14 @@ export default Ember.Component.extend({
    * If there is only one prefix, it is recommended to name it `main`.
    */
   allFieldsValues: null,
+
   /**
    * Array of active (usually visible) form fields. All should
    * be used within the same prefix.
    * @type {Array[Ember.Object]}
    */
   currentFields: null,
+
   /**
    * Prefix for the active group of fields.
    * @type {string}
@@ -104,7 +109,7 @@ export default Ember.Component.extend({
     this.recalculateErrors();
   }),
 
-   /**
+  /**
    * Sets all fields to its initial state
    */
   prepareFields() {

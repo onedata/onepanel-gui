@@ -2,7 +2,7 @@
  * View form registering oneprovider in onezone 
  *
  * @module components/new-cluster-zone-registration
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

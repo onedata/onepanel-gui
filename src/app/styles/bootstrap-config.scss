@@ -178,6 +178,9 @@ label {
             display: none;
           }
         }
+        .modal-footer {
+          text-align: center;
+        }
 
         h1 {
             font-size: $font-size-base * 1.5;

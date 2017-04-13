@@ -2,7 +2,7 @@
  * A form for adding new storage with all storage types available
  *
  * @module components/cluster-storage-add-form
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -84,7 +84,7 @@ export default OneForm.extend(Validations, {
 
   selectedStorageType: null,
 
-  specificFields: computed('selectedStorageType', function () {
+  specificFields: computed('selectedStorageType.id', 'storageTypes', function () {
     return this.get('storageTypes')
       .filter(type => type.id === this.get('selectedStorageType.id'))[0].fields;
   }),

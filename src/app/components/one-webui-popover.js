@@ -53,7 +53,7 @@ export default Component.extend({
   popoverTrigger: 'click',
 
   _isPopoverVisible: false,
-  _debounceTimerActive: false,
+  _debounceTimerEnabled: false,
 
   didInsertElement() {
     let {
@@ -102,7 +102,7 @@ export default Component.extend({
 
   _debounceResizeRefresh() {
     this._popover('show');
-    this.set('_debounceTimerActive', false);
+    this.set('_debounceTimerEnabled', false);
   },
 
   actions: {
@@ -120,13 +120,13 @@ export default Component.extend({
     refresh() {
       let {
         _isPopoverVisible,
-        _debounceTimerActive
-      } = this.getProperties('_isPopoverVisible', '_debounceTimerActive');
+        _debounceTimerEnabled
+      } = this.getProperties('_isPopoverVisible', '_debounceTimerEnabled');
       if (_isPopoverVisible) {
         this._popover('hide');
-        this.set('_debounceTimerActive', true);
+        this.set('_debounceTimerEnabled', true);
       }
-      if (_isPopoverVisible || _debounceTimerActive) {
+      if (_isPopoverVisible || _debounceTimerEnabled) {
         run.debounce(this, this._debounceResizeRefresh, 500);
        }
     },
