@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   Component,
@@ -28,5 +29,8 @@ export default Component.extend({
     toggleShowDetails() {
       this.toggleProperty('showDetails');
     },
+    close() {
+      invokeAction(this, 'onClose');
+    }
   }
 });

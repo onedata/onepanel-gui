@@ -126,6 +126,12 @@ label {
 @import "bootstrap/jumbotron";
 @import "bootstrap/thumbnails";
 @import "bootstrap/alerts";
+.alert {
+  position: relative;
+  margin: $alert-padding 0;
+  border-radius: 0;
+  letter-spacing: 0.07em;
+}
 @import "bootstrap/progress-bars";
 @import "bootstrap/media";
 @import "bootstrap/list-group";

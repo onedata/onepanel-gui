@@ -2,7 +2,7 @@
   {{resource-load-error
     class="alert-some-spaces-rejected"
     message="Some of space details cannot be loaded."
-    reason=rejectedSpacesReason
+    onClose=(action "closeRejectedError")
   }}
 {{/if}}
 
