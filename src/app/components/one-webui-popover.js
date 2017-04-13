@@ -59,8 +59,6 @@ export default Component.extend({
    */
   popoverTrigger: 'click',
 
-  <<
-  << << < HEAD
   init() {
     this._super(...arguments);
     let open = this.get('open');
@@ -79,12 +77,9 @@ export default Component.extend({
       this._popover('hide');
     }
   }),
-  ===
-  === =
+
   _isPopoverVisible: false,
   _debounceTimerEnabled: false,
-  >>>
-  >>> > f3234963d51f314da28154a56d3813e544817a1e
 
   didInsertElement() {
     let {
@@ -119,16 +114,11 @@ export default Component.extend({
       animation,
       trigger: popoverTrigger,
       placement,
-      <<
-      << << < HEAD
-      padding,
       style: popoverStyle,
-      ===
-      === =
+      padding,
       container: this.parentView.$(),
       onShow: () => this.set('_isPopoverVisible', true),
-      onHide: () => this.set('_isPopoverVisible', false) >>>
-        >>> > f3234963d51f314da28154a56d3813e544817a1e
+      onHide: () => this.set('_isPopoverVisible', false),
     });
 
     window.addEventListener('resize', () => this.send('refresh'));
