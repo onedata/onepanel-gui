@@ -30,5 +30,8 @@ export default Component.extend({
     revokeSpace(space) {
       return invokeAction(this, 'revokeSpace', space);
     },
+    closeRejectedError() {
+      this.set('anySpaceRejected', false);
+    }
   },
 });

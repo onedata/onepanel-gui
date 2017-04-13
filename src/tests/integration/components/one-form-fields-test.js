@@ -24,8 +24,8 @@ describe('Integration | Component | one form fields', function () {
     `);
 
     let formId = this.$('form').attr('id');
-    let inputId = '#' + formId + '-one';
+    let inputId = formId + '-one';
 
-    expect(this.$(inputId).attr('placeholder')).to.match(/optional/);
+    expect(this.$(`label[for='${inputId}']`).text()).to.match(/optional/);
   });
 });

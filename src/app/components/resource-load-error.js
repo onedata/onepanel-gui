@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   Component,
@@ -15,6 +16,13 @@ const {
 
 export default Component.extend({
   classNames: ['alert', 'alert-danger', 'alert-promise-error'],
+
+  /**
+   * Action to invoke on alert panel close.
+   * If not null - show a close button in alert panel.
+   * @type {function|undefined}
+   */
+  onClose: undefined,
 
   init() {
     this._super(...arguments);
@@ -28,5 +36,8 @@ export default Component.extend({
     toggleShowDetails() {
       this.toggleProperty('showDetails');
     },
+    close() {
+      invokeAction(this, 'onClose');
+    }
   }
 });

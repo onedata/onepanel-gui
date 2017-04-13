@@ -50,7 +50,30 @@
   }
 }
 
-@mixin button-variant-primary($color, $background, $border) {
+@mixin button-variant-info($color, $background, $border) {
+  &:focus,
+  &.focus {
+    background-color: lighten($border, 45%);
+  }
+  &:hover {
+    color: $color;
+    background-color: lighten($border, 50%);
+        border-color: $border;
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    background-color: lighten($border, 50%);
+
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: lighten($border, 45%);
+    }
+  }
+}
+
+@mixin button-variant-filled($color, $background, $border) {
   color: $color;
   background-color: $background;
   border-color: $border;

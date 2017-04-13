@@ -2,16 +2,15 @@
  * View form registering oneprovider in onezone 
  *
  * @module components/new-cluster-zone-registration
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-// TODO use ember-bootstrap form.element and cp-validations addon
-// import { validator, buildValidations } from 'ember-cp-validations';
-
+import { validator, buildValidations } from 'ember-cp-validations';
+import OneForm from 'onepanel-gui/components/one-form';
 import stripObject from 'onepanel-gui/utils/strip-object';
 
 const {
@@ -36,41 +35,55 @@ const FIELDS = [
   { name: 'geoLongitude', type: 'number', step: 0.000001, optional: true },
 ];
 
-const INPUT_NAMES = FIELDS.map(f => f.name);
-
-// TODO use ember-bootstrap form.element and cp-validations addon
-// let Validations = buildValidations({
-//   name: validator('presence', true),
-//   onezoneDomainName: validator('presence', true),
-//   redirectionPoint: validator('presence', true),
-// });
-
-function isKnownInputType(type) {
-  return INPUT_NAMES.indexOf(type) !== -1;
+function createValidations(fields) {
+  let validations = {};
+    fields.forEach(field => {
+      let fieldName = 'allFieldsValues.main.' + field.name;
+      validations[fieldName] = [];
+      if (!field.optional) {
+        validations[fieldName].push(validator('presence', true));
+      }
+      if (field.type === 'number') {
+        validations[fieldName].push(validator('number', Ember.Object.create({
+          allowString: true,
+          allowBlank: field.optional
+        })));
+      }
+    });
+  return validations;
 }
 
-export default Ember.Component.extend({
+const Validations = buildValidations(createValidations(FIELDS));
+
+export default OneForm.extend(Validations, {
+  unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
+  currentFieldsPrefix: 'main',
+  currentFields: computed.alias('allFields'),
+  allFields: null,
+  allFieldsValues: computed('allFields', function () {
+    let {
+      allFields
+    } = this.getProperties('allFields');
+    let fields = Ember.Object.create({});
+    fields.set('main', Ember.Object.create({}));
+    allFields.forEach(field => {
+      fields.set('main.' + field.get('name'), null);
+    });
+    return fields;
+  }),
+  formValues: computed.alias('allFieldsValues.main'),
   globalNotify: service(),
   onepanelServer: service(),
 
-  formValues: Ember.Object.create({
-    name: null,
-    onezoneDomainName: null,
-    redirectionPoint: null,
-    geoLatitude: null,
-    geoLongitude: null,
-  }),
-
   _isBusy: false,
-
-  fields: computed(() => FIELDS).readOnly(),
 
   init() {
     let i18n = this.get('i18n');
     this._super(...arguments);
-    FIELDS.forEach(f =>
-      f.placeholder = i18n.t(`components.newClusterZoneRegistration.fields.${f.name}`)
-    );
+    this.set('allFields', FIELDS.map(field => Ember.Object.create(field)));
+    this.get('allFields').forEach(field => field.set(
+      'placeholder', i18n.t(`components.newClusterZoneRegistration.fields.${field.get('name')}`)));
+    this.prepareFields();
   },
 
   createProviderRegisterRequest() {
@@ -80,7 +93,8 @@ export default Ember.Component.extend({
       redirectionPoint,
       geoLongitude,
       geoLatitude,
-    } = this.get('formValues').getProperties(...INPUT_NAMES);
+    } = this.get('formValues').getProperties(
+      this.get('currentFields').map(f => f.get('name')));
 
     let reqProto = stripObject({
       name,
@@ -113,13 +127,12 @@ export default Ember.Component.extend({
 
   actions: {
     inputChanged(inputType, value) {
-      if (isKnownInputType(inputType)) {
-        this.get('formValues').set(inputType, value);
-      } else {
-        console.warn(
-          'component:new-cluster-zone-registration: attempt to change not known input type'
-        );
-      }
+      this.changeFormValue(inputType, value);
+    },
+
+    focusOut(field) {
+      field.set('changed', true);
+      this.recalculateErrors();
     },
 
     submit() {

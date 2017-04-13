@@ -41,6 +41,9 @@ export default Ember.Component.extend({
   actions: {
     inputChanged() {
       invokeAction(this, 'inputChanged', ...arguments);
+    },
+    onFocusOut() {
+      invokeAction(this, 'onFocusOut', ...arguments);
     }
   },
 });

@@ -24,6 +24,7 @@ const {
   Component,
   assert,
   on,
+  run
 } = Ember;
 
 export default Component.extend({
@@ -50,6 +51,9 @@ export default Component.extend({
    * @type {string}
    */
   popoverTrigger: 'click',
+
+  _isPopoverVisible: false,
+  _debounceTimerEnabled: false,
 
   didInsertElement() {
     let {
@@ -80,10 +84,12 @@ export default Component.extend({
       animation,
       trigger: popoverTrigger,
       placement,
+      container: this.parentView.$(),
+      onShow: () => this.set('_isPopoverVisible', true),
+      onHide: () => this.set('_isPopoverVisible', false)
     });
 
-    // FIXME it doesn't work
-    // window.addEventListener('resize', () => invoke(this, 'refresh'));
+    window.addEventListener('resize', () => this.send('refresh'));
   },
 
   _popover() {
@@ -93,6 +99,11 @@ export default Component.extend({
   killPopover: on('willDestroyElement', function () {
     this._popover('destroy');
   }),
+
+  _debounceResizeRefresh() {
+    this._popover('show');
+    this.set('_debounceTimerEnabled', false);
+  },
 
   actions: {
     hide() {
@@ -106,9 +117,18 @@ export default Component.extend({
       });
       return submitPromise;
     },
-    // FIXME it doesn't work
     refresh() {
-      this._popover('show');
+      let {
+        _isPopoverVisible,
+        _debounceTimerEnabled
+      } = this.getProperties('_isPopoverVisible', '_debounceTimerEnabled');
+      if (_isPopoverVisible) {
+        this._popover('hide');
+        this.set('_debounceTimerEnabled', true);
+      }
+      if (_isPopoverVisible || _debounceTimerEnabled) {
+        run.debounce(this, this._debounceResizeRefresh, 500);
+       }
     },
   },
 

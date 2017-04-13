@@ -1,5 +1,6 @@
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+{{#bs-form submitOnEnter=false as |form|}}
   {{#form.group}}
+    <label class="control-label">Storage type</label>
     {{#power-select
       options=storageTypes
       selected=selectedStorageType
@@ -17,9 +18,10 @@
     fields=currentFields
     formValues=formValues
     inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
   }}
   <div class="row text-center">
-    {{#spin-button type="submit" class="btn btn-primary" action=(action "submit")}}
+    {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
       Add
     {{/spin-button}}
   </div>
