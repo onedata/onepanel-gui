@@ -13,6 +13,10 @@
   </h1>
 </div>
 <div class="row content-row">
-  {{user-credentials-form username=user.name _changingPassword=_changingPassword}}
+  {{user-credentials-form
+    username=user.name
+    changingPassword=_changingPassword
+    submit=(action "submitChangePassword")
+  }}
 </div>
 

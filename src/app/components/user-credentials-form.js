@@ -8,6 +8,7 @@ const {
   String: { htmlSafe },
 } = Ember;
 
+// TODO validations
 // function createValidations(storageTypes, genericFields) {
 //   let validations = {};
 //   storageTypes.forEach(type => {
@@ -27,7 +28,6 @@ const {
 //   });
 //   return validations;
 // }
-
 // const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS));
 
 const Validations = {};
@@ -66,7 +66,11 @@ const CHANGE_PASSWORD_FIELDS = [{
 export default OneForm.extend(Validations, {
   username: null,
 
-  _changingPassword: false,
+  /**
+   * If true, show form fields and buttojn for chane current password
+   * @type {boolean}
+   */
+  changingPassword: false,
 
   usernameField: computed(() => USERNAME_FIELD).readOnly(),
   secretPasswordField: computed(() => SECRET_PASSWORD_FIELD).readOnly(),
@@ -84,8 +88,8 @@ export default OneForm.extend(Validations, {
     this.set('formValues.username', this.get('username'));
   },
 
-  currentFields: computed('_changingPassword', function () {
-    if (this.get('_changingPassword')) {
+  currentFields: computed('changingPassword', function () {
+    if (this.get('changingPassword')) {
       return [USERNAME_FIELD, ...CHANGE_PASSWORD_FIELDS];
     } else {
       return [USERNAME_FIELD, SECRET_PASSWORD_FIELD];
@@ -98,7 +102,7 @@ export default OneForm.extend(Validations, {
     },
 
     startChangePassword() {
-      this.set('_changingPassword', true);
+      this.set('changingPassword', true);
     },
 
     inputChanged(fieldName, value) {

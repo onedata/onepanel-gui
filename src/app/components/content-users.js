@@ -23,10 +23,6 @@ export default Component.extend({
 
   _changingPassword: false,
 
-  currentPassword: null,
-  newPassword: null,
-  retypedNewPassword: null,
-
   // TODO i18n  
   _changePasswordButtonLabel: computed('_changingPassword', function () {
     return this.get('_changingPassword') ?
@@ -42,24 +38,26 @@ export default Component.extend({
     toggleChangePassword() {
       this.toggleProperty('_changingPassword');
     },
-    submitChangePassword() {
+
+    /**
+     * Make an API call to change password of current user
+     * 
+     * @param {object} { oldPassword: string, newPassword: string }
+     * @returns {Promise} an API call promise
+     */
+    submitChangePassword({ oldPassword, newPassword }) {
       let {
         user,
-        // currentPassword,
-        newPassword,
-        // retypedNewPassword,
       } = this.getProperties(
-        'user',
-        'currentPassword',
-        'newPassword',
-        'retypedNewPassword'
+        'user'
       );
-      // FIXME validation check
       let changingPassword = this.get('onepanelServer').request(
         'onepanel',
         'modifyUser',
         user.get('id'),
         UserModifyRequest.constructFromObject({
+          // TODO a future parameter for onepanel API
+          currentPassword: oldPassword,
           password: newPassword
         })
       );
