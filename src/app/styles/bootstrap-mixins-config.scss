@@ -83,6 +83,7 @@
     color: $color;
     background-color: darken($background, 7%);
         border-color: darken($border, 7%);
+    @include box-shadow($button-box-shadow-focus);
   }
   &:hover {
     color: $color;
@@ -95,6 +96,7 @@
     color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 10%);
+    @include box-shadow($button-box-shadow-focus);
 
     &:hover,
     &:focus,
