@@ -6,6 +6,7 @@ $content-col-padding: $padding-large-horizontal * 1.5;
   position: absolute;
   @include fill-container();
   .app-grid {
+    position: relative;
     padding-left: 0;
   }
   @media (min-width: $screen-md-min) {
@@ -13,8 +14,18 @@ $content-col-padding: $padding-large-horizontal * 1.5;
       padding-left: $main-menu-width;
     }
   }
+  @media (max-width: $screen-sm-max) {
+    .app-grid {
+      padding-top: $mobile-top-height;
+    }
+  }
   .row-mobile-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
     height: $mobile-top-height;
+    z-index: 1;
     // TODO: the same as col-main-menu?
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     color: $color-one-white;
