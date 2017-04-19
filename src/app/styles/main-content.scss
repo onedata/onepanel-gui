@@ -8,6 +8,14 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
     padding: 12px 0;
     letter-spacing: $letter-spacing-base;
 
+    @media screen and (min-width: $screen-sm-min) {
+      &.header-row {
+        min-height: $onedata-logo-margin-top * 2 + $onedata-logo-height - $content-col-padding;
+        padding-top: 0;
+        padding-bottom: 12px;
+      }
+    }
+
     &.no-border,
     &:last-child {
       border-bottom: 0;
