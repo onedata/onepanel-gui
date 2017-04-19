@@ -40,6 +40,8 @@ export default Ember.Component.extend({
     return this.get('sidebar.itemPath').objectAt(1);
   }),
 
+  firstLevelItemIcon: null,
+
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');

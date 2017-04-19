@@ -17,8 +17,8 @@
   }
 
   tbody tr td:first-child {
-    padding-left: 3em !important;
-    .one-icon {
+    padding-left: 3.5em !important;
+    .row-icon {
       font-size: 1.7em;
       position: absolute;
       left: 0.5em;
@@ -38,7 +38,7 @@
       font-size: 0.9em;
       text-align: right;
       position: relative;
-      padding-left: 3em !important;
+      padding-left: 4em !important;
 
       &:before {
         content: attr(data-th) " ";
@@ -52,6 +52,11 @@
         font-weight: bold;
         text-align: left;
         padding-left: 3em;
+      }
+
+      .row-icon {
+        left: 0.8em;
+        top: 0.9em;
       }
 
       .one-way-toggle {

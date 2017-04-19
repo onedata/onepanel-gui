@@ -1,5 +1,6 @@
 <td class="row-header" {{action "headerClick" on="click"}}>
-  {{!--{{one-icon icon="arrow-down"}}--}}{{host.hostname}} {{!-- TODO clusters icon --}}
+  {{one-icon class="row-icon" icon="node"}}
+  {{host.hostname}}
 </td>
 <td class="text-center toggle-column">
   {{one-way-toggle
