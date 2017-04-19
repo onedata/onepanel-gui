@@ -5,7 +5,6 @@ $root-url: rootUrl();
 @import 'fonts';
 
 $letter-spacing-base: 0.07em;
-$button-box-shadow-focus: 0 0 8px rgba(47, 153, 252, 0.5);
 $control-box-shadow: inset 1px 1px 2px #eee;
 $control-box-shadow-focus: inset 0 1px 1px #eee, 0 0 8px rgba(47, 153, 252, 0.2);
 $control-focus-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
