@@ -22,7 +22,7 @@ export default Ember.Component.extend({
   ],
 
   click(event) {
-    if (event.target.matches('.btn-toolbar *')) {
+    if (event.target.matches('.btn-toolbar *') || event.target.matches('.webui-popover *')) {
       event.stopPropagation();
     } else {
       invokeAction(this, 'toggle');
