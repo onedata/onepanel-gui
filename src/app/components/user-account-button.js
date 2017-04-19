@@ -33,7 +33,7 @@ export default Component.extend({
     },
     logout() {
       let onepanelServer = this.get('onepanelServer');
-      let loggingOut = onepanelServer.request('onepanel', 'logout');
+      let loggingOut = onepanelServer.request('onepanel', 'removeSession');
       loggingOut.then(() => window.location.reload());
       loggingOut.catch(error => {
         this.get('globalNotify').error(`We are sorry, but logout failed: ${error}`);

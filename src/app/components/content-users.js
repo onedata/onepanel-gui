@@ -56,7 +56,6 @@ export default Component.extend({
         'modifyUser',
         user.get('id'),
         UserModifyRequest.constructFromObject({
-          // TODO a future parameter for onepanel API
           currentPassword: oldPassword,
           password: newPassword
         })

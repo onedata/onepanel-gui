@@ -187,7 +187,7 @@ export default Ember.Service.extend({
   }),
 
   // currently mocked - waiting for real logout method
-  _req_onepanel_logout: computed(function () {
+  _req_onepanel_removeSession: computed(function () {
     return {
       success() {
         document.cookie = 'fakeLoginFlag=false; Max-Age=0';
