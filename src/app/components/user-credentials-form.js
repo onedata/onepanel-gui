@@ -1,36 +1,15 @@
 import Ember from 'ember';
 import OneForm from 'onepanel-gui/components/one-form';
+import { validator, buildValidations } from 'ember-cp-validations';
+import { invokeAction } from 'ember-invoke-action';
 
 const PASSWORD_DOT = '&#9679';
 
 const {
   computed,
+  computed: { readOnly },
   String: { htmlSafe },
 } = Ember;
-
-// TODO validations
-// function createValidations(storageTypes, genericFields) {
-//   let validations = {};
-//   storageTypes.forEach(type => {
-//     type.fields.concat(genericFields).forEach(field => {
-//       let fieldName = 'allFieldsValues.' + type.id + '.' + field.name;
-//       validations[fieldName] = [];
-//       if (!field.optional) {
-//         validations[fieldName].push(validator('presence', true));
-//       }
-//       if (field.type === 'number') {
-//         validations[fieldName].push(validator('number', Ember.Object.create({
-//           allowString: true,
-//           allowBlank: field.optional
-//         })));
-//       }
-//     });
-//   });
-//   return validations;
-// }
-// const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS));
-
-const Validations = {};
 
 // TODO i18n
 
@@ -47,7 +26,7 @@ const SECRET_PASSWORD_FIELD = {
 };
 
 const CHANGE_PASSWORD_FIELDS = [{
-    name: 'oldPassword',
+    name: 'currentPassword',
     placeholder: 'Current password',
     type: 'password',
   },
@@ -57,11 +36,58 @@ const CHANGE_PASSWORD_FIELDS = [{
     type: 'password',
   },
   {
-    nmae: 'newPasswordRetype',
+    name: 'newPasswordRetype',
     placeholder: 'Retype new password',
     type: 'password',
   },
 ];
+
+// TODO this should be a generic util
+/**
+ * Creates an ``ember-cp-validations`` validators for given field specification
+ * 
+ * @param {FieldType} field
+ * @returns {Array.Validator}
+ */
+function createFieldValidator(field) {
+  let validations = [];
+  if (!field.optional) {
+    validations.push(validator('presence', {
+      presence: true,
+      ignoreBlank: true,
+    }));
+  }
+  if (field.type === 'number') {
+    validations.push(validator('number', Ember.Object.create({
+      allowString: true,
+      allowBlank: field.optional
+    })));
+  }
+  return validations;
+}
+
+function createValidations() {
+  let validations = {};
+  CHANGE_PASSWORD_FIELDS.forEach(field => {
+    let thisValidations = validations['allFieldsValues.main.' + field.name] =
+      createFieldValidator(field);
+    switch (field.name) {
+    case 'newPasswordRetype':
+      // TODO i18n    
+      thisValidations.push(validator('confirmation', {
+        on: 'allFieldsValues.main.newPassword',
+        message: 'Retyped password does not match'
+      }));
+      break;
+
+    default:
+      break;
+    }
+  });
+  return validations;
+}
+
+const Validations = buildValidations(createValidations());
 
 export default OneForm.extend(Validations, {
   username: null,
@@ -72,33 +98,88 @@ export default OneForm.extend(Validations, {
    */
   changingPassword: false,
 
-  usernameField: computed(() => USERNAME_FIELD).readOnly(),
-  secretPasswordField: computed(() => SECRET_PASSWORD_FIELD).readOnly(),
+  /**
+   * @type {FieldType}
+   */
+  usernameField: computed(() => Ember.Object.create(USERNAME_FIELD)).readOnly(),
 
-  formValues: Ember.Object.create({
-    username: null,
-    secretPassword: htmlSafe(PASSWORD_DOT.repeat(5)),
-    oldPassword: null,
-    newPassword: null,
-    newPasswordRetype: null,
+  /**
+   * @type {FieldType}
+   */
+  secretPasswordField: computed(() => Ember.Object.create(SECRET_PASSWORD_FIELD)).readOnly(),
+
+  /**
+   * @type {Array.FieldType}
+   */
+  changePasswordFields: computed(() => CHANGE_PASSWORD_FIELDS.map(f =>
+    Ember.Object.create(f)
+  )).readOnly(),
+
+  allFieldsValues: Ember.Object.create({
+    main: Ember.Object.create({
+      username: null,
+      secretPassword: htmlSafe(PASSWORD_DOT.repeat(5)),
+      currentPassword: null,
+      newPassword: null,
+      newPasswordRetype: null,
+    }),
   }),
+
+  currentFieldsPrefix: 'main',
+  formValues: computed.alias('allFieldsValues.main'),
+
+  allFields: computed('usernameField', 'changePasswordFields', 'secretPasswordField',
+    function () {
+      let {
+        usernameField,
+        changePasswordFields,
+        secretPasswordField,
+      } = this.getProperties(
+        'usernameField',
+        'changePasswordFields',
+        'secretPasswordField'
+      );
+      return [usernameField, secretPasswordField, ...changePasswordFields];
+    }),
+
+  currentFields: computed('usernameField', 'changePasswordFields',
+    'secretPasswordField', 'changingPassword',
+    function () {
+      let {
+        changingPassword,
+        usernameField,
+        changePasswordFields,
+        secretPasswordField,
+      } = this.getProperties(
+        'changingPassword',
+        'usernameField',
+        'changePasswordFields',
+        'secretPasswordField'
+      );
+
+      if (changingPassword) {
+        return [usernameField, ...changePasswordFields];
+      } else {
+        return [usernameField, secretPasswordField];
+      }
+    }),
+
+  submitEnabled: readOnly('validations.isValid'),
 
   init() {
     this._super(...arguments);
     this.set('formValues.username', this.get('username'));
+    this.prepareFields();
   },
 
-  currentFields: computed('changingPassword', function () {
-    if (this.get('changingPassword')) {
-      return [USERNAME_FIELD, ...CHANGE_PASSWORD_FIELDS];
-    } else {
-      return [USERNAME_FIELD, SECRET_PASSWORD_FIELD];
-    }
-  }),
-
   actions: {
-    submitChangePassword() {
-      // FIXME
+    submit() {
+      if (this.get('submitEnabled')) {
+        return invokeAction(this, 'submit', {
+          currentPassword: this.get('formValues.currentPassword'),
+          newPassword: this.get('formValues.newPassword'),
+        });
+      }
     },
 
     startChangePassword() {

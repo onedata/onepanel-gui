@@ -45,7 +45,7 @@ export default Component.extend({
      * @param {object} { oldPassword: string, newPassword: string }
      * @returns {Promise} an API call promise
      */
-    submitChangePassword({ oldPassword, newPassword }) {
+    submitChangePassword({ currentPassword, newPassword }) {
       let {
         user,
       } = this.getProperties(
@@ -56,14 +56,16 @@ export default Component.extend({
         'modifyUser',
         user.get('id'),
         UserModifyRequest.constructFromObject({
-          currentPassword: oldPassword,
-          password: newPassword
+          currentPassword,
+          newPassword,
         })
       );
 
       // TODO i18n
-      changingPassword.catch(error =>
-        this.get('globalNotify').error(`Failed changing password: ${error}`)
+      changingPassword.catch(({ message, response: { body: { description } } }) =>
+        this.get('globalNotify').error(
+          `Failed changing password: ${description || message}`
+        )
       );
 
       changingPassword.then(() =>
