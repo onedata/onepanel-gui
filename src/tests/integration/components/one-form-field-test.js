@@ -20,4 +20,16 @@ describe('Integration | Component | one form field', function () {
     expect(this.$('input[type=text]')).to.have.length(1);
     expect(this.$('input').val()).to.be.equal('hello');
   });
+
+  it('renders an input with a class with field name', function () {
+    this.set('field', {
+      name: 'one',
+      type: 'text',
+    });
+    this.render(hbs `
+      {{one-form-field field=field}}
+    `);
+    let $field = this.$('input');
+    expect($field).to.have.class('field-one');
+  });
 });

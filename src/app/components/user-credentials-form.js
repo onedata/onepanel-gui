@@ -90,6 +90,8 @@ function createValidations() {
 const Validations = buildValidations(createValidations());
 
 export default OneForm.extend(Validations, {
+  classNames: ['user-credentials-form'],
+
   username: null,
 
   /**

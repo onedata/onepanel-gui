@@ -2,7 +2,14 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-// import wait from 'ember-test-helpers/wait';
+import wait from 'ember-test-helpers/wait';
+import FormHelper from '../../helpers/form';
+
+class UserCredentialsFormHelper extends FormHelper {
+  constructor($template) {
+    super($template, '.user-credentials-form');
+  }
+}
 
 describe('Integration | Component | user credentials form', function () {
   setupComponentTest('user-credentials-form', {
@@ -15,87 +22,94 @@ describe('Integration | Component | user credentials form', function () {
 
     this.render(hbs `{{user-credentials-form username=username}}`);
 
-    expect(this.$('.field-username'), 'username field exists ')
+    let form = new UserCredentialsFormHelper(this.$());
+
+    expect(form.getInput('username'), 'username field exists ')
       .to.exist;
-    expect(this.$('.field-secretPassword'), 'secret password field exists')
+    expect(form.getInput('secretPassword'), 'secret password field exists')
       .to.exist;
-    expect(this.$('.field-username'), 'username field contains username')
+    expect(form.getInput('username'), 'username field contains username')
       .to.contain(USERNAME);
   });
 
-  // it(
-  //   'shows old password, new password and retype new password fields in change password mode',
-  //   function (done) {
-  //     const USERNAME = 'Johnny';
-  //     this.set('username', USERNAME);
+  it(
+    'shows old password, new password and retype new password fields in change password mode',
+    function (done) {
+      const USERNAME = 'Johnny';
+      this.set('username', USERNAME);
 
-  //     this.render(hbs `{{user-credentials-form username=username}}`);
+      this.render(hbs `{{user-credentials-form username=username changingPassword=true}}`);
 
-  //     expect(this.$('.btn-change-password')).to.exist;
+      let form = new UserCredentialsFormHelper(this.$());
 
-  //     this.$('.btn-change-password').click();
+      expect(form.getInput('username'), 'username field')
+        .to.exist;
+      expect(form.getInput('secretPassword'), 'secret pass field')
+        .to.not.exist;
+      expect(form.getInput('currentPassword'), 'current password field')
+        .to.exist;
+      expect(form.getInput('newPassword'), 'new password field')
+        .to.exist;
+      expect(form.getInput('newPasswordRetype'), 'new pass retype field')
+        .to.exist;
 
-  //     wait().then(() => {
-  //       expect(this.$('.field-username'), 'username field exists')
-  //         .to.exist;
-  //       expect(this.$('.field-secretPassword'), 'secret pass field not exists')
-  //         .to.not.exist;
-  //       expect(this.$('.field-oldPassword'), 'old password field exists')
-  //         .to.exist;
-  //       expect(this.$('.field-newPassword'), 'new password field exists')
-  //         .to.exist;
-  //       expect(this.$('.field-newPasswordRetype'), 'new pass retype field exists')
-  //         .to.exist;
+      done();
+    });
 
-  //       done();
-  //     });
-  //   });
+  it('submits current and new password', function (done) {
+    const OLD_PASSWORD = 'one123456789';
+    const NEW_PASSWORD = 'one987654321';
 
-  // it('allows to submits old and new password', function (done) {
-  //   const OLD_PASSWORD = 'one123456789';
-  //   const NEW_PASSWORD = 'one987654321';
+    let submitted = false;
+    this.on('submit', function ({ currentPassword, newPassword }) {
+      expect(currentPassword).to.be.equal(OLD_PASSWORD);
+      expect(newPassword).to.be.equal(NEW_PASSWORD);
+      submitted = true;
+    });
 
-  //   let submitted = false;
-  //   this.on('submit', function ({ oldPassword, newPassword }) {
-  //     expect(oldPassword).to.be.equal(OLD_PASSWORD);
-  //     expect(newPassword).to.be.equal(NEW_PASSWORD);
-  //     submitted = true;
-  //   });
+    this.render(hbs `
+    {{user-credentials-form
+      username="Test"
+      changingPassword=true
+      submit=(action "submit")
+    }}
+    `);
 
-  //   this.render(hbs `{{user-credentials-form changePassword=true submit=submit}}`);
+    let form = new UserCredentialsFormHelper(this.$());
 
-  //   this.$('input.field-old-password').val(OLD_PASSWORD).change();
-  //   this.$('input.field-new-password').val(NEW_PASSWORD).change();
-  //   this.$('input.field-new-password-retype').val(NEW_PASSWORD).change();
+    form.getInput('currentPassword').val(OLD_PASSWORD).change();
+    form.getInput('newPassword').val(NEW_PASSWORD).change();
+    form.getInput('newPasswordRetype').val(NEW_PASSWORD).change();
 
-  //   this.$('button[type=submit]').click();
+    wait().then(() => {
+      this.$('button[type=submit]').click();
+      wait().then(() => {
+        expect(submitted).to.be.true;
+        done();
+      });
+    });
+  });
 
-  //   wait().then(() => {
-  //     expect(submitted).to.be.true;
-  //     done();
-  //   });
-  // });
+  it('disabled submit button when new passwords do not match', function (done) {
+    const OLD_PASSWORD = 'one123456789';
+    const NEW_PASSWORD = 'one987654321';
 
-  // it('does not allow to submit if new passwords do not match', function (done) {
-  //   const OLD_PASSWORD = 'one123456789';
-  //   const NEW_PASSWORD = 'one987654321';
+    this.render(hbs `
+    {{user-credentials-form
+      username="Test"
+      changingPassword=true
+    }}
+    `);
 
-  //   let submitted = false;
-  //   this.on('submit', function () {
-  //     submitted = true;
-  //   });
+    let form = new UserCredentialsFormHelper(this.$());
 
-  //   this.render(hbs `{{user-credentials-form changePassword=true submit=submit}}`);
+    form.getInput('currentPassword').val(OLD_PASSWORD).change();
+    form.getInput('newPassword').val(NEW_PASSWORD).change();
+    form.getInput('newPasswordRetype').val(NEW_PASSWORD + 'x').change();
 
-  //   this.$('input.field-old-password').val(OLD_PASSWORD).change();
-  //   this.$('input.field-new-password').val(NEW_PASSWORD).change();
-  //   this.$('input.field-new-password-retype').val(NEW_PASSWORD + 'other').change();
-
-  //   this.$('button[type=submit]').click();
-
-  //   wait().then(() => {
-  //     expect(submitted).to.be.false;
-  //     done();
-  //   });
-  // });
+    wait().then(() => {
+      expect(this.$('button[type=submit]')).to.have.attr('disabled');
+      done();
+    });
+  });
 });

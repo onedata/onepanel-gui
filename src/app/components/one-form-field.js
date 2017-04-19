@@ -20,7 +20,7 @@ export default Ember.Component.extend({
 
   field: null,
   inputClass: computed('field.name', function () {
-    return htmlSafe(`one-form-field-${this.get('field.name')}`);
+    return htmlSafe(`field-${this.get('field.name')}`);
   }),
 
   actions: {

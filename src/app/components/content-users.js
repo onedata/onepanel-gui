@@ -1,3 +1,12 @@
+/**
+ * Main view for single user account
+ *
+ * @module components/content-users
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 
