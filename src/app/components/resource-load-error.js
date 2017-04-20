@@ -15,7 +15,7 @@ const {
 } = Ember;
 
 export default Component.extend({
-  classNames: ['alert', 'alert-danger', 'alert-promise-error'],
+  classNames: ['alert', 'alert-danger', 'alert-promise-error', 'resource-load-error'],
 
   /**
    * Action to invoke on alert panel close.

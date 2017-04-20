@@ -49,6 +49,10 @@ export default Ember.Component.extend({
     return `sidebar-${sidenavTabId}`;
   }),
 
+  /**
+   * Creates a proxy model for floating sidebar based on selected sidenavTabId
+   * @type {ObjectPromiseProxy|null}
+   */
   sidenavModel: computed('sidenavTabId', function () {
     let {
       sidenavTabId,
@@ -57,18 +61,22 @@ export default Ember.Component.extend({
 
     let resourceType = sidenavTabId;
 
-    let gettingModel = sidebarResources.getCollectionFor(resourceType);
-    let promise = new Promise((resolve, reject) => {
-      gettingModel.then(collection => {
-        resolve({
-          resourceType,
-          collection
+    if (resourceType != null) {
+      let gettingModel = sidebarResources.getCollectionFor(resourceType);
+      let promise = new Promise((resolve, reject) => {
+        gettingModel.then(collection => {
+          resolve({
+            resourceType,
+            collection
+          });
         });
+        gettingModel.catch(reject);
       });
-      gettingModel.catch(reject);
-    });
+      return ObjectPromiseProxy.create({ promise });
+    } else {
+      return null;
+    }
 
-    return ObjectPromiseProxy.create({ promise });
   }),
 
   colSidebarClass: computed('showMobileSidebar', function () {

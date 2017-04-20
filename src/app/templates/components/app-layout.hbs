@@ -56,16 +56,12 @@
       coverSelector="#col-sidebar" model=sidenavModel.content
       closed=(action "sidenavClosed")
     }}
-      {{#if sidenavModel.isFulfilled}}
+      {{#promise-proxy-container proxy=sidenavModel}}
         {{component sidenavContentComponent
           model=sidenavModel.content
           changeResourceId=(action "changeResourceId")
         }}
-      {{else if sidenavModel.isPending}}
-        TODO Loading...
-      {{else if sidenavModel.isRejected}}
-        TODO Rejected!
-      {{/if}}
+      {{/promise-proxy-container}}
     {{/one-sidenav}}
         
     {{content-backdrop class="sidenav-backdrop"
