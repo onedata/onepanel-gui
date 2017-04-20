@@ -73,6 +73,8 @@
   }
 }
 
+
+$btn-filled-active-boxshadow-size: 0 0 8px;
 @mixin button-variant-filled($color, $background, $border) {
   color: $color;
   background-color: $background;
@@ -83,6 +85,7 @@
     color: $color;
     background-color: darken($background, 7%);
         border-color: darken($border, 7%);
+    @include box-shadow($btn-filled-active-boxshadow-size darken($border, 40%));
   }
   &:hover {
     color: $color;
@@ -95,6 +98,7 @@
     color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 10%);
+    @include box-shadow($btn-filled-active-boxshadow-size darken($border, 40%));
 
     &:hover,
     &:focus,

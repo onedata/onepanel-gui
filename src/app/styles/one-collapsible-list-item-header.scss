@@ -28,6 +28,9 @@
   }
   &.collapsible {
     cursor: pointer;
+    &:hover {
+      background-color: $main-content-hover-background;
+    }
     .toggle-icon {
       display: block;
     }

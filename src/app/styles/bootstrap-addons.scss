@@ -143,4 +143,10 @@ form {
 .radio-group-inline {
   padding-left: $form-group-margin-bottom;
   padding-right: $form-group-margin-bottom;
+  padding-top: ($font-size-base * $line-height-base + $input-height-base) / 2;
+  text-align: center;
+  white-space: nowrap;
+  @media (max-width: $screen-xs-max) {
+    padding-top: $form-group-margin-bottom;
+  } 
 }

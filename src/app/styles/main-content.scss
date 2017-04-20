@@ -1,12 +1,21 @@
 $mobile-horizontal-content-padding: $padding-large-horizontal;
+$content-row-vertical-padding: $padding-base-vertical;
 
 .main-content {
   color: $color-one-steel;
 
   .content-row {
     border-bottom: 1px solid $main-content-border-color;
-    padding: 12px 0;
+    padding: $content-row-vertical-padding 0;
     letter-spacing: $letter-spacing-base;
+
+    @media screen and (min-width: $screen-sm-min) {
+      &.header-row {
+        min-height: $onedata-logo-margin-top * 2 + $onedata-logo-height - $content-col-padding;
+        padding-top: 0;
+        padding-bottom: $content-row-vertical-padding;
+      }
+    }
 
     &.no-border,
     &:last-child {
@@ -23,11 +32,20 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
       &+p {
         margin-top: 0.7em;
       }
+      .btn-toolbar button {
+        // vertical align floating toolbar
+        margin-bottom: 0.3em;
+      }
+    }
+
+    .form-title {
+      margin-top: $content-row-vertical-padding;
+      text-align: center;
     }
 
     form {
-      margin-top: 1.7em;
-      margin-bottom: 1.7em;
+      margin-top: 2 * $content-row-vertical-padding;
+      margin-bottom: 2 * $content-row-vertical-padding;
     }
 
     @include btn-toolbar-float-right();
@@ -49,7 +67,7 @@ $mobile-horizontal-content-padding: $padding-large-horizontal;
     }
   }
 
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     .content-row {
       border-bottom: 0;
 

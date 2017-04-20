@@ -15,13 +15,6 @@ const { Component } = Ember;
 export default Component.extend({
   classNames: ['one-way-toggle'],
 
-  /**
-   * Pass click handling to underlying one-way-checkbox
-   */
-  click() {
-    this.$('input').click();
-  },
-
   didInsertElement() {
     this._super(...arguments);
 
@@ -38,6 +31,12 @@ export default Component.extend({
   },
 
   actions: {
+    /**
+     * Pass click handling to underlying one-way-checkbox
+     */
+    toggle() {
+      this.$('input').click();
+    },
     updateHandler(value) {
       invokeAction(this, 'update', value, this);
     }

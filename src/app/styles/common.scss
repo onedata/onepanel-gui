@@ -1,3 +1,5 @@
+$table-item-border: 1px solid $main-content-border-color;
+
 .onedata-logo {
   width: 150px;
   height: $onedata-logo-height;
@@ -93,13 +95,16 @@ input {
   width: 100%;
   .item-table-img-cell {
     width: 30%;
-    border-right: 1px solid $main-content-border-color;
+    border-right: $table-item-border;
   }
   .item-table-content-cell {
     .row {
       margin: 0 2em;
       padding-left: 0;
       padding-right: 0;
+      @media screen and (max-width: $screen-md) {
+        border-bottom: $table-item-border;
+      }
     }
   }
 }
