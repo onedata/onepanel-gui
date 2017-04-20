@@ -1,7 +1,6 @@
 <div class="row content-row">
   <h1>Storages
     <div class="btn-toolbar">
-      <h1>Add a new storage</h1>
       {{#unless noStorages}}
         {{#bs-button type="default" class="btn-sm" onClick=(action "toggleAddStorageForm")}}
           {{_addStorageButtonLabel}}
@@ -14,6 +13,7 @@
   </h1>
 </div>
 <div class="row content-row row-small {{unless addStorageOpened "row-hidden"}}">
+  <h1 class="form-title">Add a new storage</h1>
   {{#if addStorageOpened}}
     {{cluster-storage-add-form 
       class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered" 

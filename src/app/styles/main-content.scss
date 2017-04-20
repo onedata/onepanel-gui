@@ -32,6 +32,10 @@ $content-row-vertical-padding: $padding-base-vertical;
       &+p {
         margin-top: 0.7em;
       }
+      .btn-toolbar button {
+        // vertical align floating toolbar
+        margin-bottom: 0.3em;
+      }
     }
 
     .form-title {
