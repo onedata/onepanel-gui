@@ -1,5 +1,14 @@
 /**
- * FIXME
+ * A wrapper for Onepanel.UserDetails type
+ *
+ * Uses fields from UserDetails:
+ * - userId
+ * - userRole
+ * - username
+ *
+ * Adds:
+ * - id: alias to username
+ * - name: alias to username
  *
  * @module models/user-details
  * @author Jakub Liput

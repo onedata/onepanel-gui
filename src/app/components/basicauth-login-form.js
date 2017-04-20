@@ -1,3 +1,12 @@
+/**
+ * A form that is used to login with username and password 
+ *
+ * @module components/basicauth-login-form
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 

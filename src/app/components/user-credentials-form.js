@@ -1,3 +1,14 @@
+/**
+ * A form for displaying basic auth user credentials and modify them 
+ *
+ * See ``changingPassword`` property to set 
+ *
+ * @module 
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import OneForm from 'onepanel-gui/components/one-form';
 import { validator, buildValidations } from 'ember-cp-validations';
