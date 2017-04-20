@@ -2,14 +2,6 @@
   border-bottom: 1px solid $main-content-border-color;
   letter-spacing: $letter-spacing-base;
   position: relative;
-  .item-icon {
-    display: inline-block;
-    position: relative;
-    top: 0.3em;
-    margin-right: 0.6em;
-    line-height: 0;
-    font-size: 2em;
-  }
   .toggle-icon {
     display: none;
     font-size: 1.7em;
