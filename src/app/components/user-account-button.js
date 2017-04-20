@@ -1,14 +1,17 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import ClickOutside from 'ember-click-outside/mixins/click-outside';
 
 const {
   Component,
   inject: { service },
   computed,
   computed: { alias },
+  on,
+  run: { next },
 } = Ember;
 
-export default Component.extend({
+export default Component.extend(ClickOutside, {
   classNames: ['user-account-button'],
 
   onepanelServer: service(),
@@ -21,6 +24,18 @@ export default Component.extend({
   menuTriggerSelector: computed(function () {
     return `#${this.get('elementId')} .user-toggle-icon`;
   }),
+
+  _attachClickOutsideHandler: on('didInsertElement', function () {
+    next(this, this.addClickOutsideListener);
+  }),
+
+  _removeClickOutsideHandler: on('willDestroyElement', function () {
+    this.removeClickOutsideListener();
+  }),
+
+  clickOutside() {
+    this.set('menuOpen', false);
+  },
 
   actions: {
     toggleMenu() {
