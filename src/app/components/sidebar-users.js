@@ -22,7 +22,7 @@ export default TwoLevelSidebar.extend({
 
   classNames: ['sidebar-account'],
 
-  resourceIcon: 'user',
+  firstLevelItemIcon: 'user',
 
   secondLevelItems: computed(() => []).readOnly(),
 });
