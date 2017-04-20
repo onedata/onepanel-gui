@@ -54,6 +54,6 @@ export default Route.extend({
 
   afterModel(model) {
     let firstItemId = model.get('mainMenuItems.firstObject').id;
-    invoke(this, 'mainMenuItemChanged', firstItemId);
+    this.controllerFor('onedata').send('mainMenuItemChanged', firstItemId);
   },
 });
