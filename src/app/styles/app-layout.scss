@@ -19,9 +19,12 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
     position: relative;
     padding-left: 0;
   }
-  @media (min-width: $screen-md-min) {
-    .app-grid {
-      padding-left: $main-menu-width;
+  .app-grid {
+    @media (min-width: $screen-md-min) {
+      padding-left: $main-menu-width + $sidebar-menu-width;
+    }
+    @media (min-width: $screen-lg-min) {
+      padding-left: $main-menu-width + $sidebar-menu-width-lg;
     }
   }
   @media (max-width: $screen-sm-max) {
@@ -58,14 +61,22 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
       margin-right: 10px;
     }
   }
+  
   .row-account-button {
     position: absolute;
     bottom: 0;
+  }
+  
+  .row-app {
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      padding-left: $sidebar-menu-width;
+    }
   }
   .col-in-app-layout {
     position: relative;
   }
   .col-main-menu {
+    z-index: 1;
     position: absolute;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     color: $color-main-menu-fg-default;
@@ -92,9 +103,22 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
     }
   }
   .col-sidebar {
+    z-index: 1;
     background: $color-sidebar-background;
     // TODO same as sidenav
     border-right: 1px solid $color-one-list-item-separator;
+    @media (min-width: $screen-sm-min) {
+      position: absolute;
+      left: $main-menu-width;
+      width: $sidebar-menu-width;
+    }
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      left: 0px;
+      padding-top: $mobile-top-height;
+    }
+    @media (min-width: $screen-lg-min) {
+      width: $sidebar-menu-width-lg;
+    }
   }
   .row-heading .col-title {
     // TODO: similar to one-list-item

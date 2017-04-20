@@ -6,7 +6,7 @@ const {
 
 export default Ember.Component.extend({
   classNames: ['one-wizard'],
-  classNameBindings: ['stepsNumClassName'],
+  classNameBindings: ['stepsNumClassName', 'activeStepClassName'],
   currentIndex: 0,
 
   steps: null,
@@ -15,6 +15,9 @@ export default Ember.Component.extend({
       className = "steps-";
     className += steps !== null ? steps.length : 0;
     return className;
+  }),
+  activeStepClassName: computed('currentIndex', function() {
+    return "step-active-" + (this.get('currentIndex') + 1);
   }),
 
   init() {
