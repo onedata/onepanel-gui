@@ -60,6 +60,7 @@ $content-col-padding: $padding-large-horizontal * 1.5;
     position: relative;
   }
   .col-main-menu {
+    z-index: 1;
     position: absolute;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     width: $main-menu-width;
