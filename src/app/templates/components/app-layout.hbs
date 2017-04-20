@@ -26,6 +26,9 @@
     }}
   </div>
 {{/perfect-scrollbar-element}}
+{{#perfect-scrollbar-element tagName="div" id="col-sidebar" class=colSidebarClass}}
+  {{yield 'sidebar'}}
+{{/perfect-scrollbar-element}}
 
 <div class="container-fluid app-grid full-height">
   <div class="row row-mobile-menu visible-xs-block visible-sm-block disable-user-select">
@@ -62,12 +65,6 @@
       progress=(if sidenavSidebarOpen 100 0)
       click=(action "closeSidenav" bubbles=true)
     }}
-    
-    {{#perfect-scrollbar-element tagName="div" id="col-sidebar"
-      class=colSidebarClass
-    }}
-      {{yield 'sidebar'}}
-    {{/perfect-scrollbar-element}}
     
     {{#perfect-scrollbar-element
       class=colContentClass
