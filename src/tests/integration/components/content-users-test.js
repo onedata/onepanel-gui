@@ -50,16 +50,18 @@ describe('Integration | Component | content users', function () {
 
       this.$('.btn-change-password').click();
 
+      let form = new UserCredentialsFormHelper(this.$());
+
       wait().then(() => {
-        expect(this.$('.field-username'), 'field username')
+        expect(form.getInput('username'), 'field username')
           .to.exist;
-        expect(this.$('.field-secretPassword'), 'field secretPassword').to
-          .not.exist;
-        expect(this.$('.field-currentPassword'), 'field currentPassword')
+        expect(form.getInput('secretPassword'), 'field secretPassword')
+          .to.not.exist;
+        expect(form.getInput('currentPassword'), 'field currentPassword')
           .to.exist;
-        expect(this.$('.field-newPassword'), 'field newPassword')
+        expect(form.getInput('newPassword'), 'field newPassword')
           .to.exist;
-        expect(this.$('.field-newPasswordRetype'), 'field newPasswordRetype')
+        expect(form.getInput('newPasswordRetype'), 'field newPasswordRetype')
           .to.exist;
 
         done();

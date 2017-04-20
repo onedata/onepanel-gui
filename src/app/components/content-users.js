@@ -30,6 +30,10 @@ export default Component.extend({
    */
   user: null,
 
+  /**
+   * If true, set credentials form to changingPassword mode
+   * @type {boolean}
+   */
   _changingPassword: false,
 
   // TODO i18n  
@@ -41,6 +45,11 @@ export default Component.extend({
 
   _changePasswordButtonType: computed('_changingPassword', function () {
     return this.get('_changingPassword') ? 'default' : 'primary';
+  }),
+
+  _changePasswordButtonClass: computed('_changingPassword', function () {
+    return this.get('_changingPassword') ?
+      'btn-change-password-cancel' : 'btn-change-password-start';
   }),
 
   actions: {
@@ -71,15 +80,17 @@ export default Component.extend({
       );
 
       // TODO i18n
-      changingPassword.catch(({ message, response: { body: { description } } }) =>
+      changingPassword.catch(({ message, response }) => {
+        let description = response && response.body && response.body.description;
         this.get('globalNotify').error(
           `Failed changing password: ${description || message}`
-        )
-      );
+        );
+      });
 
-      changingPassword.then(() =>
-        this.get('globalNotify').info(`Password changed sucessfully`)
-      );
+      changingPassword.then(() => {
+        this.get('globalNotify').info(`Password changed sucessfully`);
+        this.set('_changingPassword', false);
+      });
 
       return changingPassword;
     },

@@ -206,6 +206,14 @@ export default Ember.Service.extend({
     };
   }),
 
+  _req_onepanel_modifyUser: computed(function () {
+    return {
+      success( /* ignore password */ ) {
+        return null;
+      }
+    };
+  }),
+
   _req_oneprovider_configureProvider: computed(function () {
     return {
       success: () => null,
