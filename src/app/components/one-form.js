@@ -25,28 +25,30 @@
 
 import Ember from 'ember';
 
-const { 
+const {
   computed,
   observer
 } = Ember;
 
-
 export default Ember.Component.extend({
   /**
    * Message used as a warning message after unknown field change.
+   * @abstract
    * @type {string}
    */
   unknownFieldErrorMsg: 'component:form-component: attempt to change not known input type',
 
   /**
    * Array of all fields used in the form (both active and inactive)
-   * @type {Array[Ember.Object]}
+   * @abstract
+   * @type {Array.FieldType}
    */
   allFields: null,
 
   /**
-   * Object with all fields values in the form (both active and inactive). 
-   * @type {Object}
+   * Object with all fields values in the form (both active and inactive).
+   * @abstract
+   * @type {Ember.Object}
    * 
    * Uses prefixes to distinct different field groups. Almost one group 
    * (prefix) must be defined. Example with two prefixes - group1 and group2:
@@ -65,12 +67,14 @@ export default Ember.Component.extend({
   /**
    * Array of active (usually visible) form fields. All should
    * be used within the same prefix.
-   * @type {Array[Ember.Object]}
+   * @abstract
+   * @type {Array.Ember.Object}
    */
   currentFields: null,
 
   /**
    * Prefix for the active group of fields.
+   * @abstract
    * @type {string}
    * 
    * While validation all values from that prefix are being checked
@@ -105,7 +109,7 @@ export default Ember.Component.extend({
    */
   isValid: computed.empty('errors'),
 
-  currentFieldsPrefixObserver: observer('currentFieldsPrefix', function() {
+  currentFieldsPrefixObserver: observer('currentFieldsPrefix', function () {
     this.recalculateErrors();
   }),
 
@@ -117,8 +121,8 @@ export default Ember.Component.extend({
       allFields
     } = this.getProperties('allFields');
     allFields.forEach(field => {
-        this._resetField(field);
-      });
+      this._resetField(field);
+    });
   },
 
   /**
@@ -140,7 +144,7 @@ export default Ember.Component.extend({
       formValues,
       unknownFieldErrorMsg
     } = this.getProperties(
-      'formValues', 
+      'formValues',
       'unknownFieldErrorMsg'
     );
     if (this.isKnownField(fieldName)) {
@@ -204,9 +208,11 @@ export default Ember.Component.extend({
    * @param {string} field
    */
   _resetField(field) {
-    field.set('changed', false);
-    field.set('isValid', false);
-    field.set('isInvalid', false);
-    field.set('message', '');
+    field.setProperties({
+      changed: false,
+      isValid: false,
+      isInvalid: false,
+      message: '',
+    });
   },
 });

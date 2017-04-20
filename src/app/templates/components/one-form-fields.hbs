@@ -18,6 +18,11 @@
           }}
         </div>
       </div>
+    {{else if (eq field.type "static")}}
+      {{one-form-field-static
+        field=field
+        value=(get formValues field.name)
+      }}
     {{else}}
       {{one-form-field
         inputId=(concat parentView.elementId (concat "-" field.name))

@@ -25,6 +25,10 @@
       itemClicked="mainMenuItemClicked"
     }}
   </div>
+  <div class="row row-account-button full-width">
+    <div class="groove-border"></div>
+    {{user-account-button manageAccount=(action "manageAccount")}}
+  </div>
 {{/perfect-scrollbar-element}}
 {{#perfect-scrollbar-element tagName="div" id="col-sidebar" class=colSidebarClass}}
   {{yield 'sidebar'}}

@@ -24,13 +24,17 @@ const {
   Component,
   assert,
   on,
-  run
+  observer,
+  run: { scheduleOnce },
+  run,
 } = Ember;
 
 export default Component.extend({
   classNames: ['one-webui-popover', 'webui-popover-content'],
 
   triggerSelector: null,
+
+  open: undefined,
 
   /**
    * Values: auto, top, right, bottom, left, top-right, top-left, bottom-right,
@@ -39,6 +43,9 @@ export default Component.extend({
    * @type {string}
    */
   placement: 'auto',
+
+  selector: false,
+  padding: true,
 
   /**
    * One of: pop, fade
@@ -52,6 +59,25 @@ export default Component.extend({
    */
   popoverTrigger: 'click',
 
+  init() {
+    this._super(...arguments);
+    let open = this.get('open');
+    if (open != null) {
+      // FIXME when using manual, clicking somewhere does not close popover
+      this.set('popoverTrigger', 'manual');
+      scheduleOnce('afterRender', () => this.triggerOpen());
+    }
+  },
+
+  triggerOpen: observer('open', function () {
+    let open = this.get('open');
+    if (open === true) {
+      this._popover('show');
+    } else if (open === false) {
+      this._popover('hide');
+    }
+  }),
+
   _isPopoverVisible: false,
   _debounceTimerEnabled: false,
 
@@ -61,12 +87,16 @@ export default Component.extend({
       animation,
       popoverTrigger,
       placement,
+      popoverStyle,
       elementId,
+      padding,
     } = this.getProperties(
       'triggerSelector',
       'animation',
       'popoverTrigger',
       'placement',
+      'popoverStyle',
+      'padding',
       'elementId'
     );
 
@@ -84,9 +114,11 @@ export default Component.extend({
       animation,
       trigger: popoverTrigger,
       placement,
+      style: popoverStyle,
+      padding,
       container: this.parentView.$(),
       onShow: () => this.set('_isPopoverVisible', true),
-      onHide: () => this.set('_isPopoverVisible', false)
+      onHide: () => this.set('_isPopoverVisible', false),
     });
 
     window.addEventListener('resize', () => this.send('refresh'));
@@ -128,7 +160,7 @@ export default Component.extend({
       }
       if (_isPopoverVisible || _debounceTimerEnabled) {
         run.debounce(this, this._debounceResizeRefresh, 500);
-       }
+      }
     },
   },
 

@@ -70,7 +70,7 @@ const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIE
 export default OneForm.extend(Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
   currentFieldsPrefix: computed.alias('selectedStorageType.id'),
-  allFields: computed('storageTypes.@each.fields', 'genericFields', function() {
+  allFields: computed('storageTypes.@each.fields', 'genericFields', function () {
     let {
       storageTypes,
       genericFields

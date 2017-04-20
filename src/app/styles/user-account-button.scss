@@ -1,0 +1,23 @@
+.user-account-button {
+  .user-account-button-main {
+    // TODO a style from list item, list header
+    width: 100%;
+  }
+  .user-account-button-main {
+    &::after {
+      @include top-line(none)
+    }
+  }
+  .user-toggle-icon {
+    position: absolute;
+    // TODO right should be taken from popover arrow right margin
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+// TODO maybe it should be moved to main menu styles
+.webui-popover-user-account {
+  width: $main-menu-width;
+}

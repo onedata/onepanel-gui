@@ -5,20 +5,11 @@ export default class FormHelper {
   }
 
   /**
-   * DEPRECATED
-   * @param {string} fieldName
-   * @return {string}
-   */
-  _getInputId(fieldName) {
-    return `${this.$form.attr('id')}-${fieldName}`;
-  }
-
-  /**
    * @param {string} fieldName
    * @return {JQuery}
    */
   getInput(fieldName) {
-    return this.$form.find('.one-form-field-' + fieldName);
+    return this.$form.find('.field-' + fieldName);
   }
 
   submit() {

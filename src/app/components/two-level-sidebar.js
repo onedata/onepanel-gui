@@ -34,7 +34,8 @@ export default Ember.Component.extend({
    * 
    * @type {string}
    */
-  firstLevelItemIcon: null,
+  // TODO some generic icon
+  firstLevelItemIcon: 'chceckbox-option',
 
   resourceType: readOnly('model.resourceType'),
 
@@ -47,7 +48,7 @@ export default Ember.Component.extend({
   secondaryItemId: computed('sidebar.itemPath.[]', function () {
     return this.get('sidebar.itemPath').objectAt(1);
   }),
-  
+
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');
@@ -55,7 +56,4 @@ export default Ember.Component.extend({
       this.sendAction('changeResourceId', resourceType, itemId);
     }
   },
-
-  // TODO only for cluster-specific - make more generic
-
 });

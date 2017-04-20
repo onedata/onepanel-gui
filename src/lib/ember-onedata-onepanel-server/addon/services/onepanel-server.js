@@ -32,6 +32,13 @@ const {
  */
 const CUSTOM_REQUESTS = {
   // TODO maybe usage of superagent lib
+  /**
+   * This method is wrapped because generated JS client narrows (removes)
+   * some fields provided by storage details for particular storage types.
+   * 
+   * @param {any} id storage id
+   * @param {any} callback a callback like in other JS client methods
+   */
   onepanel_getStorageDetails(id, callback) {
     assert('storage id cannot be null', id);
     let req = $.ajax({
@@ -40,7 +47,7 @@ const CUSTOM_REQUESTS = {
     });
     req.done((data, _, xhr) => callback(null, data, xhr));
     req.fail((xhr, textStatus, errorThrown) => callback(errorThrown, null, xhr));
-  }
+  },
 };
 
 export default Ember.Service.extend({
@@ -59,6 +66,12 @@ export default Ember.Service.extend({
   sessionValidator: null,
 
   serviceType: null,
+
+  /**
+   * A user username that is set after successful login
+   * @type {string}
+   */
+  username: null,
 
   isLoading: readOnly('sessionValidator.isPending'),
 
@@ -136,17 +149,20 @@ export default Ember.Service.extend({
   },
 
   /**
-   * Checks if cookies-based session is valid by doing test request.
+   * Checks if cookies-based session is valid by trying to get session.
    * 
-   * If the session is valid it automatically initializes the main client.
+   * If the session is valid, it automatically initializes the main client.
    * 
-   * @returns {Promise}
+   * @returns {Promise} an ``initClient`` promise if ``getSession`` succeeds
    */
   validateSession() {
     return new Promise((resolve, reject) => {
-      let testingAuth = this.requestTestAuth();
+      let testingAuth = this.getSession();
       testingAuth
-        .then(() => this.initClient())
+        .then(({ data: { username } }) => {
+          this.set('username', username);
+          return this.initClient();
+        })
         .then(resolve, reject);
       testingAuth.catch(reject);
     });
@@ -210,21 +226,46 @@ export default Ember.Service.extend({
   },
 
   /**
-   * Makes a request that will resolve if provided username, password and
-   * origin are valid.
+   * Tries to get a session to check if session stored in cookies are valid
    *
-   * This method should work both on provider and zone service types.
+   * This method should work both on provider and zone service types in both
+   * unauthenticated or authenticated mode.
    * 
-   * @param {string} username 
-   * @param {string} password 
-   * @param {string} [origin] 
-   * @returns {Promise}
+   * @returns {Promise} resolves with { data: { username: string } }
    */
-  requestTestAuth() {
+  getSession() {
     let client = this.createClient();
     let api = new Onepanel.OnepanelApi(client);
-    // invoke any operation that requires authentication
+
     return new Promise((resolve, reject) => {
+      let callback = function (error, data, response) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({
+            data,
+            response,
+          });
+        }
+      };
+      api.getSession(callback);
+    });
+  },
+
+  /**
+   * Makes a request to backend to create session using basic auth.
+   *
+   * @param {string} username 
+   * @param {string} password
+   * @returns {Promise}
+   */
+  login(username, password) {
+    let client = this.createClient();
+    client.defaultHeaders['Authorization'] =
+      'Basic ' + btoa(username + ":" + password);
+    let api = new Onepanel.OnepanelApi(client);
+
+    let loginCall = new Promise((resolve, reject) => {
       let callback = function (error, data, response) {
         if (error) {
           reject(error);
@@ -234,47 +275,15 @@ export default Ember.Service.extend({
           });
         }
       };
-      api.getClusterCookie(callback);
+      api.createSession(callback);
     });
-  },
 
-  // TODO use swagger api if available  
-  /**
-   * Makes a request to /login endpoint to initialize session (set-cookies).
-   * @param {string} username 
-   * @param {string} password
-   * @returns {Promise}
-   */
-  login(username, password) {
-    return new Promise((resolve, reject) => {
-      let success = function (data, textStatus, jqXHR) {
-        resolve({
-          data,
-          textStatus,
-          jqXHR
-        });
-      };
-
-      let error = function (jqXHR, textStatus, errorThrown) {
-        reject({
-          jqXHR,
-          textStatus,
-          errorThrown
-        });
-      };
-
-      $.ajax('/api/v3/onepanel/login', {
-        method: 'POST',
-        contentType: 'application/json',
-        beforeSend: function (xhr) {
-          xhr.setRequestHeader("Authorization", "Basic " + btoa(
-            username + ":" + password));
-        },
-        success,
-        error
-      });
-
+    // TODO use a session Ember addon for storing this
+    loginCall.then(() => {
+      return this.validateSession();
     });
+
+    return loginCall;
   }
 
 });

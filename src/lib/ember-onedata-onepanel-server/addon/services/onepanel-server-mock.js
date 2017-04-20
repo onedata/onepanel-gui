@@ -30,6 +30,8 @@ const {
   }
 } = Ember;
 
+const MOCK_USERNAME = 'mock_admin';
+
 export default Ember.Service.extend({
   cookies: service(),
 
@@ -48,6 +50,8 @@ export default Ember.Service.extend({
       })
     });
   }).readOnly(),
+
+  username: MOCK_USERNAME,
 
   mockInitializedCluster: true,
 
@@ -178,6 +182,34 @@ export default Ember.Service.extend({
         } else {
           return null;
         }
+      }
+    };
+  }),
+
+  // currently mocked - waiting for real logout method
+  _req_onepanel_removeSession: computed(function () {
+    return {
+      success() {
+        document.cookie = 'fakeLoginFlag=false; Max-Age=0';
+        return null;
+      }
+    };
+  }),
+
+  _req_onepanel_getUser: computed(function () {
+    return {
+      success() {
+        return {
+          username: MOCK_USERNAME,
+        };
+      }
+    };
+  }),
+
+  _req_onepanel_modifyUser: computed(function () {
+    return {
+      success( /* ignore password */ ) {
+        return null;
       }
     };
   }),

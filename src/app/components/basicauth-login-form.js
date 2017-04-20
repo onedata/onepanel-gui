@@ -1,3 +1,12 @@
+/**
+ * A form that is used to login with username and password 
+ *
+ * @module components/basicauth-login-form
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
@@ -66,8 +75,8 @@ export default Ember.Component.extend({
       loginCalling.then(( /*data, textStatus, jqXHR*/ ) => {
         let initializing = onepanelServer.initClient();
         initializing.then(() => {
-          let authTestRequest = onepanelServer.request('onepanel',
-            'getClusterCookie');
+          let authTestRequest =
+            onepanelServer.request('onepanel', 'getClusterCookie');
           authTestRequest.then(() => this.onLoginSuccess(username, password));
           authTestRequest.catch(() => this.onLoginFailure(username, password));
         });

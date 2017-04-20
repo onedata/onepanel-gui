@@ -1,0 +1,36 @@
+{{!-- TODO i18n --}}
+
+<div class="user-account-button-main one-list-item item-header clickable" {{action 'toggleMenu'}}>
+  {{one-icon
+    class="user-profile-icon item-icon"
+    icon="user-profile"
+  }}
+  {{username}}
+  {{one-icon
+    class="user-toggle-icon"
+    icon="arrow-up"
+  }}
+</div>
+
+{{#one-webui-popover
+  class="user-account-menu"
+  placement="top-left"
+  open=menuOpen
+  padding=false
+  triggerSelector=menuTriggerSelector
+  popoverStyle="user-account"
+  as |popover|
+}}
+  <ul class="dropdown-menu">
+    <li>
+      <a class="manage-account-action clickable" {{action "manageAccount"}}>
+        Manage account
+      </a>
+    </li>
+    <li >
+      <a class="clickable" {{action "logout"}}>
+        Logout
+      </a>
+    </li>
+  </ul>
+{{/one-webui-popover}}

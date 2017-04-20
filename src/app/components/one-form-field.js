@@ -1,7 +1,7 @@
 /**
  * A form field tailored for Onedata application, used mainly in ``one-form-fields``
  *
- * @module components/one-form-field.js
+ * @module components/one-form-field
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -20,7 +20,7 @@ export default Ember.Component.extend({
 
   field: null,
   inputClass: computed('field.name', function () {
-    return htmlSafe(`one-form-field-${this.get('field.name')}`);
+    return htmlSafe(`field-${this.get('field.name')}`);
   }),
 
   actions: {

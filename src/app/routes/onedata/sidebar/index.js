@@ -11,11 +11,12 @@ import Ember from 'ember';
 
 const {
   inject: { service },
+  get,
 } = Ember;
 
 function getDefaultResourceId(collection) {
   let defaultResource = collection.objectAt(0);
-  return defaultResource.id != null ? defaultResource.id : defaultResource.get('id');
+  return get(defaultResource, 'id');
 }
 
 export default Ember.Route.extend({

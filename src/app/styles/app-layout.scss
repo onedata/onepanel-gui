@@ -1,5 +1,15 @@
 $content-col-padding: $padding-large-horizontal * 1.5;
 
+$color-main-menu-fg-base: $color-one-white;
+$color-main-menu-fg-active: $color-main-menu-fg-base;
+$color-main-menu-fg-default: rgba($color-main-menu-fg-base, 0.9);
+$color-main-menu-fg-disabled: rgba($color-main-menu-fg-base, 0.5);
+
+$color-main-menu-item-gradient-base: $color-main-menu-fg-base;
+@mixin main-menu-item-gradient($opacity-left, $opacity-right) {
+  background: linear-gradient(90deg, rgba($color-main-menu-item-gradient-base, $opacity-left), rgba($color-main-menu-item-gradient-base, $opacity-right));
+}
+
 // needs: $mobile-top-height
 // needs: $main-menu-width
 .app-layout {
@@ -51,6 +61,12 @@ $content-col-padding: $padding-large-horizontal * 1.5;
       margin-right: 10px;
     }
   }
+  
+  .row-account-button {
+    position: absolute;
+    bottom: 0;
+  }
+  
   .row-app {
     @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
       padding-left: $sidebar-menu-width;
@@ -63,6 +79,7 @@ $content-col-padding: $padding-large-horizontal * 1.5;
     z-index: 1;
     position: absolute;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
+    color: $color-main-menu-fg-default;
     width: $main-menu-width;
     .row-onedata-logo {
       position: relative;
@@ -77,6 +94,12 @@ $content-col-padding: $padding-large-horizontal * 1.5;
         left: 0;
         right: 0;
       }
+    }
+    .item-icon {
+      position: relative;
+      margin-right: 0.6rem;
+      transform: translateY(0.1rem);
+      font-size: 3.2rem;
     }
   }
   .col-sidebar {
@@ -128,15 +151,6 @@ $content-col-padding: $padding-large-horizontal * 1.5;
 //     background: linear-gradient(90deg, #7E8EDA 0%, rgba(255,255,255,0) 100%); 
 //   }
 // }
-$color-main-menu-fg-base: $color-one-white;
-$color-main-menu-fg-active: $color-main-menu-fg-base;
-$color-main-menu-fg-default: rgba($color-main-menu-fg-base, 0.9);
-$color-main-menu-fg-disabled: rgba($color-main-menu-fg-base, 0.5);
-
-$color-main-menu-item-gradient-base: $color-main-menu-fg-base;
-@mixin main-menu-item-gradient($opacity-left, $opacity-right) {
-  background: linear-gradient(90deg, rgba($color-main-menu-item-gradient-base, $opacity-left), rgba($color-main-menu-item-gradient-base, $opacity-right));
-}
 
 /// Desktop main menu styles
 .col-main-menu .one-list-item.main-menu-item {
@@ -175,7 +189,6 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
   }
 }
 .col-main-menu .main-menu.sidenav-opened .one-list-item.main-menu-item.active {
-  // color: $color-main-menu-fg-default;
   >.item-header {
     color: $color-main-menu-fg-default;
   }
