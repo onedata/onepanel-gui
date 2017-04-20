@@ -130,13 +130,16 @@ export default Ember.Component.extend({
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
-      invokeAction(this, 'changeTab', itemId);
+      return invokeAction(this, 'changeTab', itemId);
     },
     showMobileSidebar() {
-      this.set('showMobileSidebar', true);
+      return this.set('showMobileSidebar', true);
     },
     manageAccount() {
-      invokeAction(this, 'manageAccount');
+      return invokeAction(this, 'manageAccount');
+    },
+    changeResourceId() {
+      return invokeAction(this, 'changeResourceId', ...arguments);
     },
   }
 });

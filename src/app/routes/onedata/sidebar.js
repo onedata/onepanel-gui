@@ -74,12 +74,4 @@ export default Ember.Route.extend({
       model
     });
   },
-
-  actions: {
-    changeResourceId(resourceType, itemId) {
-      this.transitionTo('onedata.sidebar.content', resourceType, itemId);
-
-      // TODO: a loader for clicked sidebar item can be done here by usin transition as a promise
-    }
-  }
 });

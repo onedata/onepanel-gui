@@ -56,13 +56,4 @@ export default Route.extend({
     let firstItemId = model.get('mainMenuItems.firstObject').id;
     invoke(this, 'mainMenuItemChanged', firstItemId);
   },
-
-  actions: {
-    mainMenuItemChanged(itemId) {
-      this.transitionTo('onedata.sidebar', itemId);
-    },
-    manageAccount() {
-      this.transitionTo('onedata.sidebar', 'users');
-    },
-  }
 });

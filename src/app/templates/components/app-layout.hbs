@@ -57,7 +57,10 @@
       closed=(action "sidenavClosed")
     }}
       {{#if sidenavModel.isFulfilled}}
-        {{component sidenavContentComponent model=sidenavModel.content}}
+        {{component sidenavContentComponent
+          model=sidenavModel.content
+          changeResourceId=(action "changeResourceId")
+        }}
       {{else if sidenavModel.isPending}}
         TODO Loading...
       {{else if sidenavModel.isRejected}}
