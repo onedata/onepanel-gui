@@ -28,6 +28,14 @@ export default Ember.Component.extend({
 
   model: null,
 
+  /**
+   * Name of oneicon that should be displayed for each first-level element
+   * To inject.
+   * 
+   * @type {string}
+   */
+  firstLevelItemIcon: null,
+
   resourceType: readOnly('model.resourceType'),
 
   isCollectionEmpty: computed.equal('model.collection.length', 0),
@@ -39,7 +47,7 @@ export default Ember.Component.extend({
   secondaryItemId: computed('sidebar.itemPath.[]', function () {
     return this.get('sidebar.itemPath').objectAt(1);
   }),
-
+  
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');

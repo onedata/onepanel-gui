@@ -16,15 +16,6 @@
     vertical-align: middle;
   }
 
-  tbody tr td:first-child {
-    padding-left: 3em !important;
-    .one-icon {
-      font-size: 1.7em;
-      position: absolute;
-      left: 0.5em;
-    }
-  }
-
   &.bt tbody tr {
     &.active td:after {
       @include left-line(
@@ -38,7 +29,7 @@
       font-size: 0.9em;
       text-align: right;
       position: relative;
-      padding-left: 3em !important;
+      padding-left: 5em !important;
 
       &:before {
         content: attr(data-th) " ";
@@ -51,7 +42,11 @@
       &:first-child {
         font-weight: bold;
         text-align: left;
-        padding-left: 3em;
+        .item-icon {
+          position: absolute;
+          top: 3rem;
+          left: 2.5rem;
+        }
       }
 
       .one-way-toggle {
