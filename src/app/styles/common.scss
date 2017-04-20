@@ -1,3 +1,5 @@
+$table-item-border: 1px solid $main-content-border-color;
+
 .onedata-logo {
   width: 150px;
   height: $onedata-logo-height;
@@ -93,13 +95,16 @@ input {
   width: 100%;
   .item-table-img-cell {
     width: 30%;
-    border-right: 1px solid $main-content-border-color;
+    border-right: $table-item-border;
   }
   .item-table-content-cell {
     .row {
       margin: 0 2em;
       padding-left: 0;
       padding-right: 0;
+      @media screen and (max-width: $screen-md) {
+        border-bottom: $table-item-border;
+      }
     }
   }
 }
@@ -117,4 +122,13 @@ input {
   height: 0px;
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.item-icon {
+  display: inline-block;
+  position: relative;
+  top: 0.3em;
+  margin-right: 0.6em;
+  line-height: 0;
+  font-size: 2em;
 }

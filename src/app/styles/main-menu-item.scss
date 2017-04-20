@@ -4,4 +4,11 @@
   font-family: 'Open Sans Semibold';
   font-size: 13px;
   letter-spacing: $letter-spacing-base;
+  
+  .one-icon {
+    position: relative;
+    top: 0.4em;
+    margin-right: 0.2em;
+    font-size: 3em;
+  }
 }

@@ -12,8 +12,8 @@
       isActive=(eq primaryItemId item.id)
       as |primarySection|}}
       {{#if (eq primarySection 'header')}}
-        {{#if resourceIcon}}
-          {{one-icon icon=resourceIcon}}
+        {{#if firstLevelItemIcon}}
+          {{one-icon icon=firstLevelItemIcon}} 
         {{/if}}
         {{item.name}}
       {{else if (eq primarySection 'secondary')}}
@@ -31,6 +31,9 @@
                 tagName="div"
                 class="item-header"
               }}
+                {{#if sli.icon}}
+                  {{one-icon icon=sli.icon}} 
+                {{/if}}
                 {{sli.label}}
               {{/link-to}}
             </li>

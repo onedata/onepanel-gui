@@ -27,6 +27,8 @@ export default TwoLevelSidebar.extend({
   // TODO this will not work in generic multi-clusters menu  
   cluster: readOnly('model.collection.firstObject'),
 
+  firstLevelItemIcon: 'menu-clusters',
+
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
       onepanelServiceType,
@@ -37,6 +39,7 @@ export default TwoLevelSidebar.extend({
       return [{
         id: 'spaces',
         label: 'Spaces',
+        icon: 'space'
       }];
     } else {
       return [];

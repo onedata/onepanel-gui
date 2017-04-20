@@ -28,8 +28,14 @@ export default Ember.Component.extend({
 
   model: null,
 
+  /**
+   * Name of oneicon that should be displayed for each first-level element
+   * To inject.
+   * 
+   * @type {string}
+   */
   // TODO some generic icon
-  resourceIcon: 'checkbox-option',
+  firstLevelItemIcon: 'chceckbox-option',
 
   resourceType: readOnly('model.resourceType'),
 
