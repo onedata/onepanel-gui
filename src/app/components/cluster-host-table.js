@@ -70,6 +70,12 @@ export default BasicTable.extend(
      */
     hosts: null,
 
+    /**
+     * If true, do not allow to edit cluster
+     * @type {boolean}
+     */
+    isReadOnly: false,
+
     primaryClusterManager: null,
 
     allValid: computed.readOnly('validations.isValid'),

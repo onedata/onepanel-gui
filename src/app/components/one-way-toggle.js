@@ -3,7 +3,6 @@ import { invokeAction } from 'ember-invoke-action';
 
 const { Component } = Ember;
 
-
 /**
  * Creates toggle-like checkbox based one the one-toggle-checkbox component.
  *
@@ -15,6 +14,12 @@ const { Component } = Ember;
 export default Component.extend({
   classNames: ['one-way-toggle'],
 
+  /**
+   * If true, user couldn't change value of toggle
+   * @type {boolean}
+   */
+  isReadOnly: false,
+
   didInsertElement() {
     this._super(...arguments);
 
@@ -23,7 +28,7 @@ export default Component.extend({
     this.$('input').change((event) => {
       let originalTarget = event.originalEvent.explicitOriginalTarget;
       // originalTarget == undefined in Chrome, nodeType == 3 is text node (label)
-      if (originalTarget && 
+      if (originalTarget &&
         (originalTarget.tagName === "INPUT" || originalTarget.nodeType === 3)) {
         this.click();
       }
@@ -35,7 +40,9 @@ export default Component.extend({
      * Pass click handling to underlying one-way-checkbox
      */
     toggle() {
-      this.$('input').click();
+      if (!this.get('isReadOnly')) {
+        this.$('input').click();
+      }
     },
     updateHandler(value) {
       invokeAction(this, 'update', value, this);

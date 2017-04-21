@@ -8,6 +8,7 @@
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="database"
+    isReadOnly=isReadOnly
   }}
 </td>
 <td class="text-center toggle-column">
@@ -16,6 +17,7 @@
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterWorker"
+    isReadOnly=isReadOnly
   }}
 </td>
 <td class="text-center toggle-column">
@@ -24,6 +26,7 @@
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterManager"
+    isReadOnly=isReadOnly
   }}
 </td>
 <td class="text-center toggle-column">
@@ -32,5 +35,6 @@
     update=(action "primaryClusterManagerChanged" host.hostname)
     hostHostname=host.hostname
     hostOption="primaryClusterManager"
+    isReadOnly=isReadOnly
   }}
 </td>
