@@ -19,7 +19,7 @@ const {
 } = Ember;
 
 export default Component.extend({
-  classNames: ['brand-info', 'text-center'],
+  classNames: ['brand-info'],
 
   i18n: service(),
   onepanelServer: service(),

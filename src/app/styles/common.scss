@@ -1,16 +1,5 @@
 $table-item-border: 1px solid $main-content-border-color;
 
-.onedata-logo {
-  width: 150px;
-  height: $onedata-logo-height;
-  background-image: url($root-url + 'assets/images/logo.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .vertical-align-middle {
   @include vertical-align-middle();
 }
