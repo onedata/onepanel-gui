@@ -8,7 +8,6 @@
  */
 
 import Ember from 'ember';
-import { invoke } from 'ember-invoke-action';
 import AppModel from 'onepanel-gui/utils/app-model';
 import config from 'ember-get-config';
 
