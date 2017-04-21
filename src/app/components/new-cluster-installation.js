@@ -93,7 +93,7 @@ export default Ember.Component.extend({
       'hostsProxy',
       ObjectPromiseProxy.create({
         promise: new Promise((resolve, reject) => {
-          let gettingHosts = this.get('clusterManager').getHosts();
+          let gettingHosts = this.get('clusterManager').getHosts(true);
           gettingHosts.then(hosts => {
             hosts = A(hosts.map(h => ClusterHostInfo.create(h)));
             resolve(hosts);

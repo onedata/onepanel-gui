@@ -159,8 +159,12 @@ export default Ember.Service.extend({
 
   _req_onepanel_getClusterHosts: computed(function () {
     return {
-      success() {
-        return ['node1', 'node2'];
+      success({ discovered }) {
+        if (discovered) {
+          return ['node1', 'node2'];
+        } else {
+          return ['node1'];
+        }
       },
     };
   }),

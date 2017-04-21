@@ -205,11 +205,11 @@ export default Service.extend({
   },
 
   /**
-   * @return {HostInfo}
+   * @return {Promise} resolves with Array.{ hostname: string }
    */
-  getHosts() {
+  getHosts(discovered = false) {
     return new Promise((resolve, reject) => {
-      let gettingHostNames = this.getHostNames();
+      let gettingHostNames = this.getHostNames(discovered);
 
       gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
@@ -227,14 +227,13 @@ export default Service.extend({
     });
   },
 
-  getHostNames() {
+  getHostNames(discovered = false) {
     let onepanelServer = this.get('onepanelServer');
     return new Promise((resolve, reject) => {
       let gettingClusterHosts = onepanelServer.request(
         'onepanel',
-        'getClusterHosts', {
-          discovered: true
-        });
+        'getClusterHosts', { discovered }
+      );
       gettingClusterHosts.then(resolve, reject);
     });
   }
