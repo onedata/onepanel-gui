@@ -8,10 +8,12 @@
  */
 
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   Component,
-  RSVP: { Promise }
+  RSVP: { Promise },
+  run: { scheduleOnce },
 } = Ember;
 
 export default Component.extend({
@@ -23,6 +25,8 @@ export default Component.extend({
     this._super(...arguments);
     if (!this.get('cluster.isInitialized')) {
       this.set('initProcess', true);
+    } else {
+      scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
     }
   },
 
@@ -30,6 +34,7 @@ export default Component.extend({
     finishInitProcess() {
       return new Promise(resolve => {
         this.set('initProcess', false);
+        scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
         resolve();
       });
     },
