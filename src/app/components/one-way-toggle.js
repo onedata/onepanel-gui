@@ -7,12 +7,24 @@ const { Component } = Ember;
  * Creates toggle-like checkbox based one the one-toggle-checkbox component.
  *
  * @module components/one-way-toggle.js
- * @author Michał Borzęcki
+ * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default Component.extend({
   classNames: ['one-way-toggle'],
+
+  /**
+   * Element ID for rendered invisible input element
+   * @type {string}
+   */
+  inputId: null,
+
+  /**
+   * If true, toggle is in enabled state
+   * @type {boolean}
+   */
+  checked: false,
 
   /**
    * If true, user couldn't change value of toggle
