@@ -13,6 +13,7 @@ const { Component } = Ember;
  */
 export default Component.extend({
   classNames: ['one-way-toggle'],
+  attributeBindings: ['dataOption:data-option'],
 
   /**
    * Element ID for rendered invisible input element
@@ -31,6 +32,12 @@ export default Component.extend({
    * @type {boolean}
    */
   isReadOnly: false,
+
+  /**
+   * Optional - data-option attribute for rendered component
+   * @type {string}
+   */
+  dataOption: null,
 
   didInsertElement() {
     this._super(...arguments);

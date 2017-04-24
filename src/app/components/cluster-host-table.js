@@ -66,7 +66,7 @@ export default BasicTable.extend(
 
     /**
      * To inject.
-     * @type {Array.HostInfo}
+     * @type {Array.ClusterHostInfo}
      */
     hosts: null,
 
