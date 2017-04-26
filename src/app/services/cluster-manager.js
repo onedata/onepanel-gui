@@ -10,6 +10,7 @@
 import Ember from 'ember';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails from 'onepanel-gui/models/cluster-details';
+import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 
 const {
   Service,
@@ -27,6 +28,12 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const THIS_CLUSTER_ID = 'the-cluster';
+
+const _ROLE_COLLECTIONS = {
+  databases: 'database',
+  managers: 'clusterManager',
+  workers: 'clusterWorker',
+};
 
 export default Service.extend({
   onepanelServer: service(),
@@ -83,18 +90,75 @@ export default Service.extend({
   },
 
   /**
+   * Fetch info about deployed cluster and create ClusterHostInfo objects
+   * @returns {Promise} resolves with
+   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   */
+  getClusterHostsInfo() {
+    return new Promise((resolve, reject) => {
+      let gettingConfiguration = this._getConfiguration();
+      gettingConfiguration.then(({ data: { cluster } }) => {
+        resolve(this._clusterConfigurationToHostsInfo(cluster));
+      });
+      gettingConfiguration.catch(reject);
+    });
+  },
+
+  /**
+   * Converts response data from API about clusters to array of ``ClusterHostInfo``
+   * @param {object} cluster cluster attribute of GET configuration from API
+   * @returns {object}
+   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   */
+  _clusterConfigurationToHostsInfo(cluster) {
+    let types = ['databases', 'managers', 'workers'];
+    // maps: host -> ClusterHostInfo
+    let clusterHostsInfo = {};
+    types.forEach(type => {
+      cluster[type].hosts.forEach(host => {
+        if (clusterHostsInfo[host] == null) {
+          clusterHostsInfo[host] = ClusterHostInfo.create({
+            hostname: host
+          });
+        }
+        clusterHostsInfo[host].set(_ROLE_COLLECTIONS[type], true);
+      });
+    });
+
+    // TODO use Array.prototype.values if available
+    let clusterHostsInfoArray = [];
+    for (let host in clusterHostsInfo) {
+      clusterHostsInfoArray.push(clusterHostsInfo[host]);
+    }
+
+    return {
+      mainManagerHostname: cluster.managers.mainHost,
+      clusterHostsInfo: clusterHostsInfoArray,
+    };
+
+  },
+
+  /**
+   * Get a cluster configuration for current service type
+   * @returns {Promise} result of GET configuration request
+   */
+  _getConfiguration() {
+    let {
+      onepanelServer,
+      onepanelServiceType,
+    } = this.getProperties('onepanelServer', 'onepanelServiceType');
+    return onepanelServer.request(
+      'one' + onepanelServiceType,
+      camelize(`get-${onepanelServiceType}-configuration`)
+    );
+  },
+
+  /**
    * @returns {Promise}
    */
-  _checkIsConfigurationDone(onepanelServer) {
-    let onepanelServiceType = this.get('onepanelServiceType');
+  _checkIsConfigurationDone() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`get-${onepanelServiceType}-configuration`)
-      );
-
-      // TODO do something with fetched configuration
-
+      let gettingConfiguration = this._getConfiguration();
       gettingConfiguration.then(({ data }) => resolve(!!data));
 
       gettingConfiguration.catch(error => {

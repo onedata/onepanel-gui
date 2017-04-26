@@ -1,9 +1,15 @@
+/**
+ * Shows deployment table - used as a view for nodes aspect of cluster resource
+ *
+ * @module components/content-cluster-nodes
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
-import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
-
 const {
-  A,
   Component,
   inject: { service },
   ObjectProxy,
@@ -19,24 +25,41 @@ export default Component.extend({
   globalNotify: service(),
 
   /**
-   * Resolves with EmberArray of HostInfo.
-   * @type {ObjectPromiseProxy.EmberArray.HostInfo}
+   * Resolves with EmberArray of ClusterHostInfo.
+   * @type {ObjectPromiseProxy.Array.ClusterHostInfo} hostsProxy
    */
   hostsProxy: null,
 
+  /**
+   * Hostname of primary cluster manager
+   * @type {string}
+   */
+  primaryClusterManager: null,
+
   init() {
     this._super(...arguments);
+    let resolveClusterHosts, rejectClusterHosts;
+
+    let clusterHostsPromise = new Promise((resolve, reject) => {
+      resolveClusterHosts = resolve;
+      rejectClusterHosts = reject;
+    });
+
+    let gettingHostsInfo = this.get('clusterManager').getClusterHostsInfo();
+
+    gettingHostsInfo.then(({ mainManagerHostname, clusterHostsInfo }) => {
+      resolveClusterHosts(clusterHostsInfo);
+      this.set('primaryClusterManager', mainManagerHostname);
+    });
+
+    gettingHostsInfo.catch(error => {
+      rejectClusterHosts(error);
+    });
+
     this.set(
       'hostsProxy',
       ObjectPromiseProxy.create({
-        promise: new Promise((resolve, reject) => {
-          let gettingHosts = this.get('clusterManager').getHosts();
-          gettingHosts.then(hosts => {
-            hosts = A(hosts.map(h => ClusterHostInfo.create(h)));
-            resolve(hosts);
-          });
-          gettingHosts.catch(reject);
-        })
+        promise: clusterHostsPromise
       })
     );
   },
