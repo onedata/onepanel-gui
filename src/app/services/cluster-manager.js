@@ -62,28 +62,50 @@ export default Service.extend({
    * @returns {ObjectPromiseProxy}
    */
   getClusterDetails( /*clusterId*/ ) {
-    let promise = new Promise((resolve) => {
-      let clusterCache = this.get('clusterCache');
+    let {
+      onepanelServiceType,
+      clusterCache,
+    } = this.getProperties('onepanelServiceType', 'clusterCache');
+
+    let promise = new Promise((resolve, reject) => {
       if (clusterCache) {
         resolve(clusterCache);
       } else {
-        let gettingInitStep = this._getThisClusterInitStep();
+        let clusterStep;
 
-        gettingInitStep.then(step => {
+        let gettingStep = this._getThisClusterInitStep();
+
+        gettingStep.then(step => {
+          clusterStep = step;
+
+          let gettingConfiguration = this._getConfiguration();
+
+          return new Promise(resolveName => {
+            gettingConfiguration.then(({ data: configuration }) => {
+              let name = configuration['one' + onepanelServiceType].name;
+              resolveName(name);
+            });
+
+            gettingConfiguration.catch(() => {
+              resolveName(null);
+            });
+          });
+
+        }).then((name) => {
           let thisCluster = ClusterInfo.create({
             id: THIS_CLUSTER_ID,
           });
 
           let clusterDetails = ClusterDetails.create({
-            onepanelServiceType: this.get('onepanelServiceType'),
+            name,
+            onepanelServiceType: onepanelServiceType,
             clusterInfo: thisCluster,
-            initStep: step,
+            initStep: clusterStep,
           });
 
           this.set('clusterCache', clusterDetails);
-
           resolve(clusterDetails);
-        });
+        }).catch(reject);
       }
     });
     return ObjectPromiseProxy.create({ promise });

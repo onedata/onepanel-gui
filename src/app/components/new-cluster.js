@@ -65,6 +65,9 @@ export default Ember.Component.extend({
       this.set('cluster.initStep', this.get('currentStepIndex') + 1);
       this.incrementProperty('currentStepIndex');
     },
+    changeClusterName(name) {
+      this.set('cluster.name', name);
+    },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');
     }

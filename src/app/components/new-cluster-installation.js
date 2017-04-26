@@ -123,8 +123,20 @@ export default Ember.Component.extend({
   },
 
   configureFinished() {
+    let {
+      globalNotify,
+      onepanelServiceType,
+      _zoneName,
+    } = this.getProperties(
+      'globalNotify',
+      'onepanelServiceType',
+      '_zoneName'
+    );
     // TODO i18n
-    this.get('globalNotify').info('Cluster deployed successfully');
+    globalNotify.info('Cluster deployed successfully');
+    if (onepanelServiceType === 'zone') {
+      invokeAction(this, 'changeClusterName', _zoneName);
+    }
     invokeAction(this, 'nextStep');
   },
 
@@ -168,7 +180,8 @@ export default Ember.Component.extend({
     let nodes = this.getNodes();
     let hostnames = hostsUsed.map(h => h.hostname);
     if (!hostnames || hostnames.length === 0) {
-      throw new Error('Cannot create cluster configuration if no hosts are selected');
+      throw new Error(
+        'Cannot create cluster configuration if no hosts are selected');
     }
     let domainName = getDomain(getClusterHostname(hostnames));
 
@@ -251,10 +264,11 @@ export default Ember.Component.extend({
     task.always(() => this.hideDeployProgress());
   },
 
-  changeCanDeploy: on('init', observer('_hostTableValid', '_zoneOptionsValid', function () {
-    let canDeploy = this.get('_hostTableValid') && this.get('_zoneOptionsValid');
-    scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
-  })),
+  changeCanDeploy: on('init', observer('_hostTableValid', '_zoneOptionsValid',
+    function () {
+      let canDeploy = this.get('_hostTableValid') && this.get('_zoneOptionsValid');
+      scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
+    })),
 
   actions: {
     zoneFormChanged(fieldName, value) {

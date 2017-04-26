@@ -12,6 +12,7 @@ import Onepanel from 'npm:onepanel';
 import { validator, buildValidations } from 'ember-cp-validations';
 import OneForm from 'onepanel-gui/components/one-form';
 import stripObject from 'onepanel-gui/utils/strip-object';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -37,19 +38,19 @@ const FIELDS = [
 
 function createValidations(fields) {
   let validations = {};
-    fields.forEach(field => {
-      let fieldName = 'allFieldsValues.main.' + field.name;
-      validations[fieldName] = [];
-      if (!field.optional) {
-        validations[fieldName].push(validator('presence', true));
-      }
-      if (field.type === 'number') {
-        validations[fieldName].push(validator('number', Ember.Object.create({
-          allowString: true,
-          allowBlank: field.optional
-        })));
-      }
-    });
+  fields.forEach(field => {
+    let fieldName = 'allFieldsValues.main.' + field.name;
+    validations[fieldName] = [];
+    if (!field.optional) {
+      validations[fieldName].push(validator('presence', true));
+    }
+    if (field.type === 'number') {
+      validations[fieldName].push(validator('number', Ember.Object.create({
+        allowString: true,
+        allowBlank: field.optional
+      })));
+    }
+  });
   return validations;
 }
 
@@ -82,7 +83,8 @@ export default OneForm.extend(Validations, {
     this._super(...arguments);
     this.set('allFields', FIELDS.map(field => Ember.Object.create(field)));
     this.get('allFields').forEach(field => field.set(
-      'placeholder', i18n.t(`components.newClusterZoneRegistration.fields.${field.get('name')}`)));
+      'placeholder', i18n.t(
+        `components.newClusterZoneRegistration.fields.${field.get('name')}`)));
     this.prepareFields();
   },
 
@@ -136,12 +138,14 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
+      let name = this.get('formValues.name');
       let submitting = this._submit();
       this.set('_isBusy', true);
       submitting.then(() => {
         // TODO i18n
         this.get('globalNotify').info('Provider registered successfully');
-        this.sendAction('nextStep');
+        invokeAction(this, 'changeClusterName', name);
+        invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
         this.get('globalNotify').error(
