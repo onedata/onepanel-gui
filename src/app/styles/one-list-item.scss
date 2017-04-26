@@ -1,6 +1,6 @@
 .one-list-item {
   position: relative;
-  line-height: 64px;
+  line-height: $one-list-item-line-height;
 
   &::after {
     @include top-line(1px solid $color-one-list-item-separator)

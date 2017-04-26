@@ -78,6 +78,7 @@ $onedata-logo-width: 150px;
   .row-account-button {
     position: absolute;
     bottom: 0;
+    width: $main-menu-width;
   }
   
   .row-app {
@@ -94,6 +95,12 @@ $onedata-logo-width: 150px;
     background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
     color: $color-main-menu-fg-default;
     width: $main-menu-width;
+
+    .main-menu-content {
+      position: absolute;
+      @include fill-container();
+      bottom: $one-list-item-line-height;
+    }
     .row-onedata-logo {
       position: relative;
       margin-top: $onedata-logo-margin-top;
@@ -114,7 +121,6 @@ $onedata-logo-width: 150px;
     .item-icon {
       position: relative;
       margin-right: 0.6rem;
-      transform: translateY(0.1rem);
       font-size: 3.2rem;
     }
   }
@@ -169,6 +175,10 @@ $onedata-logo-width: 150px;
 // }
 
 /// Desktop main menu styles
+.main-menu {
+  // an additional space to preserve place for the user-account-button
+  padding-bottom: $one-list-item-line-height;
+}
 .col-main-menu .one-list-item.main-menu-item {
   >.item-header {
     color: $color-main-menu-fg-default;

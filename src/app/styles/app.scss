@@ -8,6 +8,7 @@ $letter-spacing-base: 0.07em;
 $control-box-shadow: inset 1px 1px 2px #eee;
 $control-box-shadow-focus: inset 0 1px 1px #eee, 0 0 8px rgba(47, 153, 252, 0.2);
 $control-focus-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+$main-content-border-color: darken($color-one-white-gray, 8);
 
 @import 'bootstrap-config';
 @import 'bootstrap-addons';
@@ -37,6 +38,7 @@ $color-sidebar-background: #F2F4FA;
 $color-one-list-item-separator: darken($color-sidebar-background, 5);
 $color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
 $color-main-menu-separator: rgba($color-one-list-item-separator, 0.05);
+$one-list-item-line-height: 64px;
 $one-list-item-separator: 1px solid;
 $one-list-item-padding: $padding-large-horizontal;
 
@@ -51,7 +53,6 @@ $onedata-logo-margin-top: 30px;
 $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $one-list-item-padding * 2 - $onedata-brand-info-height;
 
 $main-content-hover-background: $color-one-white-gray;
-$main-content-border-color: darken($color-one-white-gray, 8);
 
 $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
 

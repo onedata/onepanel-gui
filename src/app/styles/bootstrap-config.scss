@@ -104,6 +104,22 @@ label {
 // Components
 @import "bootstrap/component-animations";
 @import "bootstrap/dropdowns";
+.dropdown-menu {
+  padding: 0;
+  margin: 0;
+  letter-spacing: $letter-spacing-base;
+  font-family: "Open Sans Semibold";
+  font-size: 90%;
+  li {
+    border-bottom: 1px solid $main-content-border-color;
+    &:last-child {
+      border-bottom: 0;
+    }
+    a {
+      padding: $padding-base-vertical * 0.8;
+    }
+  }
+}
 @import "bootstrap/button-groups";
 @import "bootstrap/input-groups";
 

@@ -9,10 +9,10 @@
 {{/side-menu}}
 {{content-backdrop}}
 
-{{#perfect-scrollbar-element tagName="div" id="main-menu-container"
-  class="col-in-app-layout col-main-menu hidden-xs hidden-sm full-height disable-user-select"
-  click=(action "closeSidenav" bubbles=true)
-}}
+<div id="main-menu-container" 
+  class="col-in-app-layout col-main-menu hidden-xs hidden-sm full-height disable-user-select" 
+  {{action "closeSidenav" bubbles=true}}>
+{{#perfect-scrollbar-element tagName="div" class="main-menu-content"}}
   <div class="row row-onedata-logo full-width">
     <div class="onedata-logo"></div>
     {{brand-info}}
@@ -25,11 +25,12 @@
       itemClicked="mainMenuItemClicked"
     }}
   </div>
-  <div class="row row-account-button full-width">
-    <div class="groove-border"></div>
-    {{user-account-button manageAccount=(action "manageAccount")}}
-  </div>
 {{/perfect-scrollbar-element}}
+  <div class="row row-account-button">
+    <div class="groove-border"></div>
+    {{user-account-button isActive=(eq mainMenu.currentItemId "users") manageAccount=(action "manageAccount")}}
+  </div>
+</div>
 {{#perfect-scrollbar-element tagName="div" id="col-sidebar" class=colSidebarClass}}
   {{yield 'sidebar'}}
 {{/perfect-scrollbar-element}}

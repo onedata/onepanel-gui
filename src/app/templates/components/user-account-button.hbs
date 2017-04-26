@@ -1,6 +1,7 @@
 {{!-- TODO i18n --}}
 
 <div class={{menuItemClasses}} {{action 'toggleMenu' bubbles=false}}>
+  <div class="item-header">
   {{one-icon
     class="user-profile-icon item-icon"
     icon="user-profile"
@@ -8,8 +9,9 @@
   {{username}}
   {{one-icon
     class="user-toggle-icon"
-    icon="arrow-up"
+    icon=(if menuOpen "arrow-down" "arrow-up")
   }}
+  </div>
 </div>
 
 {{#one-webui-popover

@@ -36,8 +36,7 @@ export default Component.extend(ClickOutside, {
 
   menuItemClasses: computed('isActive', function () {
     let isActive = this.get('isActive'),
-      classes =
-      'user-account-button-main one-list-item item-header clickable';
+      classes = 'one-list-item enabled clickable main-menu-item user-account-button-main';
     if (isActive) {
       classes += ' active';
     }
@@ -58,6 +57,8 @@ export default Component.extend(ClickOutside, {
 
   actions: {
     toggleMenu() {
+      // prevent click from being catched by global popover handlers
+      event.stopPropagation();
       this.toggleProperty('menuOpen');
     },
     // TODO handle error if manage account cannot be displayed
