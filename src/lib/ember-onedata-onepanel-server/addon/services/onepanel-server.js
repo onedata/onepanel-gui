@@ -19,10 +19,8 @@ const {
   computed: {
     readOnly
   },
-  assert,
 } = Ember;
 
-// TODO these requests are workarounds for faulty onepanel client library
 /**
  * Contains alternative implementation of onepanel client methods
  *
@@ -30,25 +28,7 @@ const {
  * The ``callback`` that is passed as a last parameter should take:
  * ``error, data, response``.
  */
-const CUSTOM_REQUESTS = {
-  // TODO maybe usage of superagent lib
-  /**
-   * This method is wrapped because generated JS client narrows (removes)
-   * some fields provided by storage details for particular storage types.
-   * 
-   * @param {any} id storage id
-   * @param {any} callback a callback like in other JS client methods
-   */
-  onepanel_getStorageDetails(id, callback) {
-    assert('storage id cannot be null', id);
-    let req = $.ajax({
-      url: `/api/v3/onepanel/provider/storages/${id}`,
-      method: 'GET',
-    });
-    req.done((data, _, xhr) => callback(null, data, xhr));
-    req.fail((xhr, textStatus, errorThrown) => callback(errorThrown, null, xhr));
-  },
-};
+const CUSTOM_REQUESTS = {};
 
 export default Ember.Service.extend({
   /**

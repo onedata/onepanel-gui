@@ -66,9 +66,15 @@ export default BasicTable.extend(
 
     /**
      * To inject.
-     * @type {Array.HostInfo}
+     * @type {Array.ClusterHostInfo}
      */
     hosts: null,
+
+    /**
+     * If true, do not allow to edit cluster
+     * @type {boolean}
+     */
+    isReadOnly: false,
 
     primaryClusterManager: null,
 

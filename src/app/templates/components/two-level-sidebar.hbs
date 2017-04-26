@@ -8,7 +8,7 @@
 
   {{#one-list-wrapper items=model.collection as |item|}}
     {{#one-list-primary-item item=item
-      changePrimaryItemId="changePrimaryItemId"
+      changePrimaryItemId=(action "changePrimaryItemId")
       isActive=(eq primaryItemId item.id)
       as |primarySection|}}
       {{#if (eq primarySection 'header')}}

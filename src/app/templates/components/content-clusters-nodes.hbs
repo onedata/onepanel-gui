@@ -1,0 +1,15 @@
+{{!-- TODO i18n --}}
+
+<div class="row content-row header-row">
+  <h1>Nodes of "{{cluster.name}}"</h1>
+</div>
+
+<div class="row">
+  {{#promise-proxy-container proxy=hostsProxy}}
+    {{cluster-host-table
+      hosts=hostsProxy.content
+      primaryClusterManager=primaryClusterManager
+      isReadOnly=true
+    }}
+  {{/promise-proxy-container}}
+</div>

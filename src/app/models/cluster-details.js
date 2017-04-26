@@ -35,16 +35,24 @@ export default Ember.ObjectProxy.extend({
 
   initStep: 0,
 
+  /**
+   * @type {string|null}
+   */
+  name: null,
+
+  init() {
+    this._super(...arguments);
+    // TODO i18n or set default name in some view
+    if (this.get('name') == null) {
+      this.set('name', 'New cluster');
+    }
+  },
+
   isInitialized: computed('initStep', 'onepanelServiceType', function () {
     let {
       initStep,
       onepanelServiceType
     } = this.getProperties('initStep', 'onepanelServiceType');
     return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
-  }),
-
-  // TODO i18n  
-  name: computed('isInitialized', function () {
-    return this.get('isInitialized') ? 'This cluster' : 'New cluster';
   }),
 });

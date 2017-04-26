@@ -8,9 +8,13 @@
     {{#if (eq w.step.id "installation")}}
       {{new-cluster-installation
         nextStep=(action "next")
+        changeClusterName=(action "changeClusterName")
       }}
     {{else if (eq w.step.id "provider-registration")}}
-      {{new-cluster-zone-registration nextStep=(action "next")}}
+      {{new-cluster-zone-registration
+        nextStep=(action "next")
+        changeClusterName=(action "changeClusterName")
+      }}
     {{else if (eq w.step.id "provider-storage")}}
       {{new-cluster-storage nextStep=(action "next")}}
     {{else if (eq w.step.id "summary")}}

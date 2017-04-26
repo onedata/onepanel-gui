@@ -1,5 +1,5 @@
 export default {
-  panelOf: 'onepanel of',
+  panel: 'panel',
   serviceType: {
     provider: 'provider',
     zone: 'zone',

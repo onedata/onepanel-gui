@@ -106,7 +106,7 @@ export default Component.extend({
 
       size = size * UNITS[sizeUnit];
 
-      let storageId = this.get('_selectedStorage.id');
+      let storageId = this.get('_selectedStorage.name');
 
       let submitting = invokeAction(this, 'submitSupportSpace', {
         token,

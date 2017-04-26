@@ -2,12 +2,14 @@
   {{one-icon class="item-icon" icon="node"}}
   {{host.hostname}}
 </td>
-<td class="text-center toggle-column">
+<td class="text-center toggle-column" data-option="database">
   {{one-way-toggle
     checked=host.database
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="database"
+    dataOption="database"
+    isReadOnly=isReadOnly
   }}
 </td>
 <td class="text-center toggle-column">
@@ -16,21 +18,27 @@
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterWorker"
+    dataOption="clusterWorker"
+    isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center toggle-column">
+<td class="text-center toggle-column" data-option="clusterManager">
   {{one-way-toggle
     checked=host.clusterManager
     update=(action "checkboxChanged")
     hostHostname=host.hostname
     hostOption="clusterManager"
+    dataOption="clusterManager"
+    isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center toggle-column">
+<td class="text-center toggle-column" data-option=="primaryClusterManager">
   {{one-way-toggle
     checked=isPrimaryClusterManager
     update=(action "primaryClusterManagerChanged" host.hostname)
     hostHostname=host.hostname
     hostOption="primaryClusterManager"
+    dataOption="primaryClusterManager"
+    isReadOnly=isReadOnly
   }}
 </td>

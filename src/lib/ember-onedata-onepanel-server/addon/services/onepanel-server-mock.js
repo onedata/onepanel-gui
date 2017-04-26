@@ -159,8 +159,12 @@ export default Ember.Service.extend({
 
   _req_onepanel_getClusterHosts: computed(function () {
     return {
-      success() {
-        return ['node1', 'node2'];
+      success({ discovered }) {
+        if (discovered) {
+          return ['node1.example.com', 'node2.example.com'];
+        } else {
+          return ['node1.example.com'];
+        }
       },
     };
   }),
@@ -237,7 +241,7 @@ export default Ember.Service.extend({
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => ({})
+          success: () => CONFIGURATION_RESP
         };
       } else {
         return {
@@ -346,11 +350,18 @@ export default Ember.Service.extend({
     };
   }),
 
-  _req_onezone_getZoneConfiguration: computed(function () {
-    return {
-      statusCode: () => 404
-    };
-  }),
+  _req_onezone_getZoneConfiguration: computed('mockInitializedCluster',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          success: () => CONFIGURATION_RESP
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
 });
 
 const SPACES = {
@@ -362,4 +373,27 @@ const SPACES = {
     id: 'space2',
     name: 'Space Two',
   }
+};
+
+const CONFIGURATION_RESP = {
+  cluster: {
+    databases: {
+      hosts: ['node1.example.com'],
+    },
+    managers: {
+      mainHost: 'node2.example.com',
+      hosts: ['node1.example.com', 'node2.example.com'],
+    },
+    workers: {
+      hosts: ['node2.example.com'],
+    }
+  },
+  // TODO add this only in zone mode
+  onezone: {
+    name: 'hello zone',
+  },
+  // TODO add this only in provider mode
+  oneprovider: {
+    name: 'helo provider',
+  },
 };

@@ -34,10 +34,26 @@ export default TwoLevelSidebar.extend({
     if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
       // TODO i18n
       return [{
-        id: 'spaces',
-        label: 'Spaces',
-        icon: 'space'
-      }];
+          id: 'nodes',
+          label: 'Nodes',
+          icon: 'node',
+        },
+        {
+          id: 'provider',
+          label: 'Provider',
+          icon: 'provider'
+        },
+        {
+          id: 'storages',
+          label: 'Storages',
+          icon: 'support',
+        },
+        {
+          id: 'spaces',
+          label: 'Spaces',
+          icon: 'space'
+        },
+      ];
     } else {
       return [];
     }

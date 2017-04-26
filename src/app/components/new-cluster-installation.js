@@ -25,6 +25,8 @@ const {
   computed: { readOnly },
   String: { camelize },
   run: { scheduleOnce },
+  on,
+  observer,
 } = Ember;
 
 const {
@@ -87,13 +89,25 @@ export default Ember.Component.extend({
     return hosts.filter(h => h.get('isUsed'));
   }).readOnly(),
 
+  _zoneName: '',
+
+  /**
+   * @type {boolean}
+   */
+  _zoneOptionsValid: false,
+  /**
+   * @type {boolean}
+   */
+  _hostTableValid: false,
+
   init() {
     this._super(...arguments);
+
     this.set(
       'hostsProxy',
       ObjectPromiseProxy.create({
         promise: new Promise((resolve, reject) => {
-          let gettingHosts = this.get('clusterManager').getHosts();
+          let gettingHosts = this.get('clusterManager').getHosts(true);
           gettingHosts.then(hosts => {
             hosts = A(hosts.map(h => ClusterHostInfo.create(h)));
             resolve(hosts);
@@ -102,11 +116,27 @@ export default Ember.Component.extend({
         })
       })
     );
+
+    if (this.get('onepanelServiceType') === 'provider') {
+      this.set('_zoneOptionsValid', true);
+    }
   },
 
   configureFinished() {
+    let {
+      globalNotify,
+      onepanelServiceType,
+      _zoneName,
+    } = this.getProperties(
+      'globalNotify',
+      'onepanelServiceType',
+      '_zoneName'
+    );
     // TODO i18n
-    this.get('globalNotify').info('Cluster deployed successfully');
+    globalNotify.info('Cluster deployed successfully');
+    if (onepanelServiceType === 'zone') {
+      invokeAction(this, 'changeClusterName', _zoneName);
+    }
     invokeAction(this, 'nextStep');
   },
 
@@ -137,10 +167,12 @@ export default Ember.Component.extend({
   createConfiguration(serviceType) {
     let {
       hostsUsed,
-      primaryClusterManager
+      primaryClusterManager,
+      _zoneName,
     } = this.getProperties(
       'hostsUsed',
-      'primaryClusterManager'
+      'primaryClusterManager',
+      '_zoneName'
     );
 
     const ConfigurationClass = configurationClass(serviceType);
@@ -148,11 +180,12 @@ export default Ember.Component.extend({
     let nodes = this.getNodes();
     let hostnames = hostsUsed.map(h => h.hostname);
     if (!hostnames || hostnames.length === 0) {
-      throw new Error('Cannot create cluster configuration if no hosts are selected');
+      throw new Error(
+        'Cannot create cluster configuration if no hosts are selected');
     }
     let domainName = getDomain(getClusterHostname(hostnames));
 
-    let configuration = ConfigurationClass.constructFromObject({
+    let configProto = {
       cluster: {
         autoDeploy: true,
         domainName,
@@ -168,7 +201,16 @@ export default Ember.Component.extend({
           nodes: getHostnamesOfType(hostsUsed, 'database')
         }
       }
-    });
+    };
+
+    // in zone mode, add zone name    
+    if (serviceType === 'zone') {
+      configProto.onezone = {
+        name: _zoneName,
+      };
+    }
+
+    let configuration = ConfigurationClass.constructFromObject(configProto);
 
     return configuration;
   },
@@ -222,7 +264,21 @@ export default Ember.Component.extend({
     task.always(() => this.hideDeployProgress());
   },
 
+  changeCanDeploy: on('init', observer('_hostTableValid', '_zoneOptionsValid',
+    function () {
+      let canDeploy = this.get('_hostTableValid') && this.get('_zoneOptionsValid');
+      scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
+    })),
+
   actions: {
+    zoneFormChanged(fieldName, value) {
+      if (fieldName === 'name') {
+        this.set('_zoneName', value);
+      } else {
+        throw 'Unexpected field changed in zone installation form: ' + fieldName;
+      }
+    },
+
     hostOptionChanged(hostname, option, value) {
       let hosts = this.get('hosts');
       let host = hosts.find(h => h.hostname === hostname);
@@ -243,7 +299,11 @@ export default Ember.Component.extend({
      * @param {boolean} isValid 
      */
     hostTableValidChanged(isValid) {
-      scheduleOnce('afterRender', this, () => this.set('canDeploy', isValid));
+      this.set('_hostTableValid', isValid);
+    },
+
+    zoneOptionsValidChanged(isValid) {
+      this.set('_zoneOptionsValid', isValid);
     },
 
     /**
@@ -273,6 +333,6 @@ export default Ember.Component.extend({
         );
       });
       return start;
-    }
+    },
   }
 });

@@ -18,6 +18,12 @@ const {
 export default Ember.Route.extend({
   sidebar: service(),
 
+  /**
+   * @param {object} { aspectId: string } - aspectId is a name of some "aspect"
+   *  of resource to present. E.g. it can be storages (aspect) list view
+   *  for cluster (resource)
+   * @returns {object} { resource: Model, aspectId: string }
+   */
   model({ aspectId }) {
     let { resource } = this.modelFor('onedata.sidebar.content');
     return { resource, aspectId };

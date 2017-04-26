@@ -139,7 +139,6 @@ export default OneForm.extend(Validations, {
   }),
 
   currentFieldsPrefix: 'main',
-  formValues: computed.alias('allFieldsValues.main'),
 
   allFields: computed('usernameField', 'changePasswordFields', 'secretPasswordField',
     function () {

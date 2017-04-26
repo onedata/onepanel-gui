@@ -8,7 +8,6 @@
  */
 
 import Ember from 'ember';
-import { invoke } from 'ember-invoke-action';
 import AppModel from 'onepanel-gui/utils/app-model';
 import config from 'ember-get-config';
 
@@ -54,15 +53,6 @@ export default Route.extend({
 
   afterModel(model) {
     let firstItemId = model.get('mainMenuItems.firstObject').id;
-    invoke(this, 'mainMenuItemChanged', firstItemId);
+    this.controllerFor('onedata').send('mainMenuItemChanged', firstItemId);
   },
-
-  actions: {
-    mainMenuItemChanged(itemId) {
-      this.transitionTo('onedata.sidebar', itemId);
-    },
-    manageAccount() {
-      this.transitionTo('onedata.sidebar', 'users');
-    },
-  }
 });

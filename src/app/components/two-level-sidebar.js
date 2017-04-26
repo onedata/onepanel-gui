@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -53,7 +54,7 @@ export default Ember.Component.extend({
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');
 
-      this.sendAction('changeResourceId', resourceType, itemId);
+      return invokeAction(this, 'changeResourceId', resourceType, itemId);
     }
   },
 });

@@ -27,7 +27,7 @@ export default ContentInfo.extend({
 
   header: 'welcome',
   subheader: computed('onepanelServiceType', function () {
-    return `to onepanel of ${this.get('onepanelServiceType')}`;
+    return `to ${this.get('onepanelServiceType')} panel`;
   }),
   text: 'You had not deployed any cluster yet.',
   buttonLabel: 'Create new cluster',

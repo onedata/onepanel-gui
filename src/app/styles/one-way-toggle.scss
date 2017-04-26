@@ -39,7 +39,7 @@ $toggle-size-base: 1.4em;
     box-sizing: border-box;
     content: "";
     height: $toggle-size-base;
-    cursor: pointer;
+    // cursor: pointer;
     @include box-shadow(none);
   }
 
@@ -57,6 +57,10 @@ $toggle-size-base: 1.4em;
     width: $toggle-size-base;
     left: -1px;
     top: -1px;
+  }
+
+  div.clickable::before {
+    cursor: pointer;
   }
 }
 

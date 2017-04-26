@@ -10,6 +10,19 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
   background: linear-gradient(90deg, rgba($color-main-menu-item-gradient-base, $opacity-left), rgba($color-main-menu-item-gradient-base, $opacity-right));
 }
 
+$onedata-logo-width: 150px;
+
+.onedata-logo {
+  width: $onedata-logo-width;
+  height: $onedata-logo-height;
+  background-image: url($root-url + 'assets/images/logo.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 // needs: $mobile-top-height
 // needs: $main-menu-width
 .app-layout {
@@ -85,15 +98,18 @@ $color-main-menu-item-gradient-base: $color-main-menu-fg-base;
       position: relative;
       margin-top: $onedata-logo-margin-top;
       margin-bottom: $onedata-logo-margin-bottom;
+    }
       
-      .brand-info {
-        position: absolute;
-        // slight padding from logo
-        top: 110%;
-        width: 100%;
-        left: 0;
-        right: 0;
-      }
+    .row-onedata-logo .brand-info {
+      margin-left: auto;
+      margin-right: auto;
+      height: $onedata-brand-info-height;
+      width: $onedata-logo-width;
+      line-height: $onedata-brand-info-height;
+      vertical-align: middle;
+      text-transform: uppercase;
+      font-family: "Open Sans Semibold";
+      color: $color-main-menu-fg-default;
     }
     .item-icon {
       position: relative;
