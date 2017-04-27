@@ -47,6 +47,15 @@
 @import "bootstrap/tables";
 
 @import "bootstrap/forms";
+.form-horizontal {
+  .control-label {
+    padding-right: $padding-large-horizontal;
+    font-family: 'Open Sans Semibold';
+  }
+  .form-control {
+    padding-left: $padding-large-horizontal;
+  }
+}
 .has-success label.control-label, 
 .has-error label.control-label {
   color: inherit;

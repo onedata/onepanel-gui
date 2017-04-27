@@ -9,6 +9,11 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import config from 'ember-get-config';
+
+const { 
+  layout 
+} = config;
 
 /**
  * @typedef {Object} FieldType
@@ -22,6 +27,7 @@ import { invokeAction } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
   tagName: '',
+  layout: layout,
 
   /**
    * @type {ember-bootstrap.Components.FormGroup}

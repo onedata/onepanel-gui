@@ -9,6 +9,11 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import config from 'ember-get-config';
+
+const { 
+  layout 
+} = config;
 
 const {
   computed,
@@ -16,6 +21,7 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
+  layout: layout,
   tagName: '',
 
   field: null,

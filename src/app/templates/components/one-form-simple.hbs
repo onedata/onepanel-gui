@@ -1,6 +1,6 @@
 {{#bs-form
   submitOnEnter=false
-  class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered form-horizontal"
+  class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
   as |form|
 }}  
   {{one-form-fields
@@ -14,13 +14,15 @@
   
   {{#if submitButton}}
     <div class="row text-center">
-      {{#spin-button
-        class="btn btn-primary"
-        action=(action "submit")
-        disabled=(not _submitEnabled)
-      }}
-        {{submitText}}
-      {{/spin-button}}
+      <div class={{layout.formSubmitColumns}}>
+        {{#spin-button
+          class="btn btn-primary"
+          action=(action "submit")
+          disabled=(not _submitEnabled)
+        }}
+          {{submitText}}
+        {{/spin-button}}
+      </div>
     </div>
   {{/if}}
 {{/bs-form}}

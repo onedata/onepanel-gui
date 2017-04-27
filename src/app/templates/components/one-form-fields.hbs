@@ -3,11 +3,11 @@
 {{#each fields as |field|}}
   {{#bsForm.group validation=(if field.isInvalid "error" (if field.isValid "success")) class="col-xs-12"}}
     {{#if (eq field.type "checkbox")}}
-      <div class="row toggle-centered-form-row">
-        <label for={{concat parentView.elementId (concat "-" field.name)}} class="col-xs-6 control-label">
+      <div class="row toggle-form-row">
+        <label for={{concat parentView.elementId (concat "-" field.name)}} class={{concat "control-label text-right " layout.formToggleLabelColumns}}>
             {{field.placeholder}} {{if field.optional (concat " " (t "components.oneFormFields.optional"))}}
           </label>
-        <div class="col-xs-6">
+        <div class={{layout.formToggleInputColumns}}>
           {{one-way-toggle
             class=(concat "form-control toggle-field-" field.name)
             inputId=(concat parentView.elementId (concat "-" field.name))

@@ -11,9 +11,9 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import OneForm from 'onepanel-gui/components/one-form';
 
 const {
-  Component,
   inject: { service },
   computed,
   ObjectProxy,
@@ -38,7 +38,7 @@ const UNITS = {
   tb: TERA,
 };
 
-export default Component.extend({
+export default OneForm.extend({
   classNames: 'support-space-form',
 
   i18n: service(),

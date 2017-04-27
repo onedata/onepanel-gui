@@ -20,6 +20,13 @@ module.exports = function (environment) {
     onedataTabs: [
       'clusters'
     ],
+    layout: {
+      formLabelColumns: 'col-xs-12 col-sm-5',
+      formInputColumns: 'col-xs-12 col-sm-7',
+      formSubmitColumns: 'col-xs-12 col-sm-7 col-sm-offset-5',
+      formToggleLabelColumns: 'col-xs-6 col-sm-5',
+      formToggleInputColumns: 'col-xs-6 col-sm-7',
+    },
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created

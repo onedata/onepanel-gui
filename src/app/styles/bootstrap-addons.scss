@@ -29,12 +29,29 @@ $input-bg-light: $color-one-white;
 }
 
 form {
-  .has-error label.control-label .form-message {
-    color: $state-danger-text;
+  .form-message {
+    padding-top: $padding-small-vertical;
+    text-align: right;
+    font-size: $font-size-small;
   }
-  .has-success label.control-label .form-message {
+  .has-error {
+    .form-message {
+      color: $state-danger-text;
+    }
+  }
+  @media (max-width: $screen-xs-max) {
+    .form-control-feedback {
+      // 5px from hard-coded value of bootstrap label bottom margin
+      margin-top: $line-height-computed + 5px;
+    }
+  }
+  .has-success .form-message {
     color: $state-success-text;
   }
+}
+
+.form-control-static {
+  min-height: 1em;
 }
 
 .form-group-light {
@@ -163,5 +180,11 @@ form {
     &:last-of-type {
       padding-right: 0;
     }
+  }
+}
+
+.text-xs-center {
+  @media (max-width: $screen-xs-max) {
+    text-align: center;
   }
 }

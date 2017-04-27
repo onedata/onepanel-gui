@@ -1,16 +1,18 @@
-{{#bs-form submitOnEnter=false as |form|}}
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#form.group}}
-    <label class="control-label">Storage type</label>
-    {{#power-select
-      options=storageTypes
-      selected=selectedStorageType
-      onchange=(action "storageTypeChanged")
-      searchEnabled=false
-      renderInPlace=true
-      as |storageType|
-    }}
-      {{storageType.name}}
-    {{/power-select}}
+    <label class={{concat "control-label " layout.formLabelColumns}}>Storage type</label>
+    <div class={{layout.formInputColumns}}>
+      {{#power-select
+        options=storageTypes
+        selected=selectedStorageType
+        onchange=(action "storageTypeChanged")
+        searchEnabled=false
+        renderInPlace=true
+        as |storageType|
+      }}
+        {{storageType.name}}
+      {{/power-select}}
+    </div>
   {{/form.group}}
   
   {{one-form-fields
@@ -20,9 +22,11 @@
     inputChanged=(action "inputChanged")
     onFocusOut=(action "focusOut")
   }}
-  <div class="row text-center">
-    {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-      Add
-    {{/spin-button}}
+  <div class="row">
+    <div class={{concat "text-xs-center " layout.formSubmitColumns}}>
+      {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+        Add
+      {{/spin-button}}
+    </div>
   </div>
 {{/bs-form}}

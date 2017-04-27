@@ -24,13 +24,20 @@
  */
 
 import Ember from 'ember';
+import config from 'ember-get-config';
 
 const {
   computed,
   observer
 } = Ember;
 
+const { 
+  layout 
+} = config;
+
 export default Ember.Component.extend({
+  layout: layout,
+
   /**
    * Message used as a warning message after unknown field change.
    * @abstract

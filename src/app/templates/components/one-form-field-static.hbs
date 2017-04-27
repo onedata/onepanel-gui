@@ -1,10 +1,12 @@
-<label>
-  {{field.placeholder}} {{if field.optional (concat " " (t "components.oneFormFields.optional"))}}
-</label>
-<span class={{concat "form-control form-control-static one-form-field-static " fieldNameClass}}>
-  {{#if fakePassword}}
-    {{fake-password}}
-  {{else}}
-    {{value}}
-  {{/if}}
-</span>
+<div class="row">
+  <label class={{concat "control-label " layout.formLabelColumns}}>
+    {{field.placeholder}}:
+  </label>
+  <span class={{concat (concat (concat "form-control-static one-form-field-static " fieldNameClass) " ") layout.formInputColumns}}>
+    {{#if fakePassword}}
+      {{fake-password}}
+    {{else}}
+      {{value}}
+    {{/if}}
+  </span>
+</div>
