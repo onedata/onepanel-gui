@@ -1,2 +1,7 @@
-{{one-way-checkbox id=inputId checked=checked update=(action "updateHandler") focusOut=onFocusOut}}
-<div onClick={{action 'toggle'}} class={{if isReadOnly "" "clickable"}}></div>
+{{one-way-checkbox 
+  id=inputId 
+  checked=checked 
+  update=(action "updateHandler") 
+  focusOut=onFocusOut 
+  disabled=isReadOnly}}
+<div class="one-way-toggle-control"></div>

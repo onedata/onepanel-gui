@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import { invokeAction, invoke } from 'ember-invoke-action';
 
 const { Component } = Ember;
 
@@ -13,6 +13,7 @@ const { Component } = Ember;
  */
 export default Component.extend({
   classNames: ['one-way-toggle'],
+  classNameBindings: ['isReadOnly:disabled', 'isReadOnly::clickable'],
   attributeBindings: ['dataOption:data-option'],
 
   /**
@@ -49,9 +50,13 @@ export default Component.extend({
       // originalTarget == undefined in Chrome, nodeType == 3 is text node (label)
       if (originalTarget &&
         (originalTarget.tagName === "INPUT" || originalTarget.nodeType === 3)) {
-        this.click();
+        invoke(this, 'toggle');
       }
     });
+  },
+
+  click() {
+    invoke(this, 'toggle');
   },
 
   actions: {
