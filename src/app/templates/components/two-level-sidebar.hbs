@@ -15,7 +15,7 @@
         {{#if firstLevelItemIcon}}
           {{one-icon icon=firstLevelItemIcon}} 
         {{/if}}
-        {{item.name}}
+        <span class="one-label">{{item.name}}</span>
       {{else if (eq primarySection 'secondary')}}
         {{!-- TODO resource type specific --}}
         {{!-- TODO isActive secondary --}}
@@ -34,7 +34,7 @@
                 {{#if sli.icon}}
                   {{one-icon icon=sli.icon}} 
                 {{/if}}
-                {{sli.label}}
+                <span class="one-label">{{sli.label}}</span>
               {{/link-to}}
             </li>
           {{/each}}

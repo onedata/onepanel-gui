@@ -3,7 +3,7 @@
 
 {{#listItem.header}}
   {{one-icon class="item-icon" icon="space"}}
-  {{space.name}}
+  <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
@@ -46,10 +46,10 @@
       <td class="item-table-img-cell"></td>
       <td class="item-table-content-cell">
         <div class="row content-row">
-          <strong>Name:</strong> {{space.name}}
+          <strong>Name:</strong> <span class="one-label">{{space.name}}</span>
         </div>
         <div class="row content-row">
-          <strong>Id:</strong> {{space.id}}
+          <strong>Id:</strong> <span class="one-label">{{space.id}}</span>
         </div>
       </td>
     </tr>

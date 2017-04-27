@@ -6,7 +6,7 @@
     
       {{#listItem.header toolbarWhenOpened=true}}
         {{one-icon class="item-icon" icon="provider"}}
-        {{storage.name}}
+        <span class="one-label">{{storage.name}}</span>
         <div class="btn-toolbar">
           <button class="btn icon-btn">{{one-icon icon="star"}}</button>
           <button class="btn btn-primary icon-btn">{{one-icon icon="space"}}</button>
@@ -21,10 +21,10 @@
             <td class="item-table-img-cell"></td>
             <td class="item-table-content-cell">
               <div class="row content-row">
-                <strong>Type:</strong> {{storage.type}}
+                <strong>Type:</strong> <span class="one-label">{{storage.type}}</span>
               </div>
               <div class="row content-row">
-                <strong>Mount point:</strong> {{storage.mountPoint}}
+                <strong>Mount point:</strong> <span class="one-label">{{storage.mountPoint}}</span>
               </div>
             </td>
           </tr>
