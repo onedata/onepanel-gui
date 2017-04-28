@@ -38,6 +38,14 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
+  _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened', function() {
+    let {
+      content,
+      _supportSpaceOpened
+    } = this.getProperties('spacesProxy.content', '_supportSpaceOpened');
+    return !content && !_supportSpaceOpened;
+  }),
+
   init() {
     this._super(...arguments);
     this._updateSpacesList();

@@ -20,6 +20,8 @@ const {
 
 // TODO: i18n
 export default ContentInfo.extend({
+  classNames: ['scroll-breakpoint-300'],
+  
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 

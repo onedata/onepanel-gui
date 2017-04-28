@@ -1,5 +1,6 @@
 $mobile-horizontal-content-padding: $padding-large-horizontal;
 $content-row-vertical-padding: $padding-base-vertical;
+$content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height - $content-col-padding;
 
 .main-content {
   color: $color-one-steel;
@@ -11,7 +12,7 @@ $content-row-vertical-padding: $padding-base-vertical;
 
     @media screen and (min-width: $screen-sm-min) {
       &.header-row {
-        min-height: $onedata-logo-margin-top * 2 + $onedata-logo-height - $content-col-padding;
+        height: $content-header-row-height;
         padding-top: 0;
         padding-bottom: $content-row-vertical-padding;
       }

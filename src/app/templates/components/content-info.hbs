@@ -1,14 +1,19 @@
 <div class="world-map light">
-  <div class="absolute-align-middle-center">
+  <div class="content-info-content-container">
     <div class="row text-center">
       <div class="col-xs-12">
         <h1>{{header}}</h1>
-        <h2>{{subheader}}</h2>
+        {{#if subheader}}
+          <h2>{{subheader}}</h2>
+        {{/if}}
         <p class="lead">{{text}}</p>
       </div>
     </div>
     {{#if imagePath}}
-      {{!-- TODO row with optional image --}}
+      {{one-image 
+        imagePath=imagePath 
+        imageTextClass=imageTextClass 
+        imageText=imageText}}
     {{/if}}
     <div class="row text-center">
       <div class="col-xs-12">

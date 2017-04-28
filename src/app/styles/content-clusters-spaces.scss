@@ -1,0 +1,12 @@
+.content-clusters-spaces {
+  .empty-spaces-image-text {
+    position: absolute;
+    bottom: 16%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 42%;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: darken($color-one-steel, 8);
+  }
+}

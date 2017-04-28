@@ -2,39 +2,54 @@
   
 <div class="row content-row header-row">
   <h1>Spaces
-    <div class="btn-toolbar">
-      {{!-- Only for development --}}
-      {{!--{{#spin-button
-        action=(action "updateSpacesList")
-        class="btn btn-sm btn-default btn-update-spaces-list"
-      }}
-        Refresh list
-      {{/spin-button}}--}}
-      {{#bs-button
-        onClick=(action "toggleSupportSpaceForm")
-        type=_supportSpaceButtonType
-        class="btn-sm btn-support-space"
-      }}
-        {{_supportSpaceButtonLabel}}
-      {{/bs-button}}
-    </div>
+    {{#unless _isEmptySpacesInfoVisible}}
+      <div class="btn-toolbar">
+        {{!-- Only for development --}}
+        {{!--{{#spin-button
+          action=(action "updateSpacesList")
+          class="btn btn-sm btn-default btn-update-spaces-list"
+        }}
+          Refresh list
+        {{/spin-button}}--}}
+        {{#bs-button
+          onClick=(action "toggleSupportSpaceForm")
+          type=_supportSpaceButtonType
+          class="btn-sm btn-support-space"
+        }}
+          {{_supportSpaceButtonLabel}}
+        {{/bs-button}}
+      </div>
+    {{/unless}}
   </h1>
 </div>
 
-<div class="row">
-  <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
-    {{#if _supportSpaceOpened}}
-      <h1 class="form-title">Add support for a space</h1>
-      {{support-space-form
-        submitSupportSpace=(action "submitSupportSpace")
-        class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered"
+{{#if _isEmptySpacesInfoVisible}}
+  {{content-info
+    class="preserve-header scroll-breakpoint-700"
+    header="Nothing here yet"
+    imagePath="assets/images/empty-spaces.svg"
+    imageText="Empty spaces"
+    imageTextClass="empty-spaces-image-text"
+    text="Currently this provider does not support any space"
+    buttonLabel="Support space"
+    buttonAction=(action "toggleSupportSpaceForm")
+  }}
+{{else}}
+  <div class="row">
+    <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
+      {{#if _supportSpaceOpened}}
+        <h1 class="form-title">Add support for a space</h1>
+        {{support-space-form
+          submitSupportSpace=(action "submitSupportSpace")
+          class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered"
+        }}
+      {{/if}}
+    </div>
+    {{#promise-proxy-container proxy=spacesProxy}}
+      {{cluster-spaces-table
+        spaces=spacesProxy.content
+        revokeSpace=(action "revokeSpace")
       }}
-    {{/if}}
+    {{/promise-proxy-container}}
   </div>
-  {{#promise-proxy-container proxy=spacesProxy}}
-    {{cluster-spaces-table
-      spaces=spacesProxy.content
-      revokeSpace=(action "revokeSpace")
-    }}
-  {{/promise-proxy-container}}
-</div>
+{{/if}}
