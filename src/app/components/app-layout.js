@@ -110,6 +110,12 @@ export default Ember.Component.extend({
     });
   },
 
+  didInsertElement() {
+    this.$('.col-content').on('scroll', () => {
+      this.get('eventsBus').trigger('one-webui-popover:update');
+    });
+  },
+
   actions: {
     // TODO IMPORTANT: who is receiver of eventsBus' one-sidenav:open/close?
     closeSidenav() {

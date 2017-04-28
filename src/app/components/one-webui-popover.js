@@ -25,12 +25,16 @@ const {
   assert,
   on,
   observer,
+  computed,
   run: { scheduleOnce },
   run,
+  inject: { service },
 } = Ember;
 
 export default Component.extend({
   classNames: ['one-webui-popover', 'webui-popover-content'],
+
+  eventsBus: service(),
 
   triggerSelector: null,
 
@@ -97,7 +101,8 @@ export default Component.extend({
       'placement',
       'popoverStyle',
       'padding',
-      'elementId'
+      'elementId',
+      'eventsBus'
     );
 
     let $triggerElement = $(triggerSelector);
@@ -116,12 +121,35 @@ export default Component.extend({
       placement,
       style: popoverStyle,
       padding,
-      container: this.parentView.$(),
+      container: document.body,
       onShow: () => this.set('_isPopoverVisible', true),
       onHide: () => this.set('_isPopoverVisible', false),
     });
 
     window.addEventListener('resize', () => this.send('refresh'));
+    this._registerEventsBus();
+  },
+
+  _onUpdateEvent: computed(function () {
+    return (selector) => {
+      if (!selector || this.$().is(selector)) {
+        invoke(this, 'refresh');
+      }
+    };
+  }),
+
+  _registerEventsBus() {
+    this.get('eventsBus').on(
+      'one-webui-popover:update',
+      this.get('_onUpdateEvent')
+    );
+  },
+
+  _deregisterEventsBus() {
+    this.get('eventsBus').off(
+      'one-webui-popover:update',
+      this.get('_onUpdateEvent')
+    );
   },
 
   _popover() {
