@@ -16,7 +16,7 @@
             {{one-icon icon="user"}}
           </div>
           {{one-way-input username
-            class="form-control"
+            class="form-control login-username"
             update=(action (mut username))
             placeholder="Username"
             disabled=isDisabled
@@ -26,7 +26,7 @@
       {{#form.group}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
-            {{one-icon icon="lock"}}
+            {{one-icon icon="lock login-lock"}}
           </div>
           {{one-way-password password
             class="form-control"

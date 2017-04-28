@@ -27,6 +27,11 @@ export default Ember.Component.extend({
 
   isDisabled: false,
 
+  didInsertElement() {
+    this._super(...arguments);
+    this.$('.login-username').focus();
+  },
+
   onLoginStarted() {
     this.set('isDisabled', true);
   },
