@@ -8,7 +8,7 @@ import { validator } from 'ember-cp-validations';
  */
 export default function createFieldValidator(field) {
   let validations = [];
-  if (!field.optional) {
+  if (!field.optional && field.type !== 'static') {
     validations.push(validator('presence', {
       presence: true,
       ignoreBlank: true,
