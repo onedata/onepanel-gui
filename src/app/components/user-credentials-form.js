@@ -13,6 +13,7 @@ import Ember from 'ember';
 import OneForm from 'onepanel-gui/components/one-form';
 import { validator, buildValidations } from 'ember-cp-validations';
 import { invokeAction } from 'ember-invoke-action';
+import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 const PASSWORD_DOT = '&#9679';
 
@@ -52,30 +53,6 @@ const CHANGE_PASSWORD_FIELDS = [{
     type: 'password',
   },
 ];
-
-// TODO this should be a generic util
-/**
- * Creates an ``ember-cp-validations`` validators for given field specification
- * 
- * @param {FieldType} field
- * @returns {Array.Validator}
- */
-function createFieldValidator(field) {
-  let validations = [];
-  if (!field.optional) {
-    validations.push(validator('presence', {
-      presence: true,
-      ignoreBlank: true,
-    }));
-  }
-  if (field.type === 'number') {
-    validations.push(validator('number', Ember.Object.create({
-      allowString: true,
-      allowBlank: field.optional
-    })));
-  }
-  return validations;
-}
 
 function createValidations() {
   let validations = {};
