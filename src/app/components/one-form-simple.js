@@ -5,7 +5,8 @@
  *
  * Usage:
  * - create a new component that extends ``one-form-simple`` and uses its layout
- * - set``fields`` property, that is an array of FieldType (it will be copied)
+ * - set ``fields`` property, that is an array of FieldType (it will be copied)
+ * - set ``values`` object with: key (field name) -> value to present data
  * - add ``Validations`` mixin to enable validations
  * - set ``submitButton`` to true/false and ``submitText`` to configure submit button
  *   (by default the button is present)
@@ -26,18 +27,27 @@ import { invoke, invokeAction } from 'ember-invoke-action';
 
 const {
   assert,
+  computed,
   computed: { readOnly },
   observer,
   on,
+  RSVP: { Promise },
 } = Ember;
 
 export default OneForm.extend({
-  /**component
+  /**
    * To inject.
    * @abstract
    * @type {Array.FieldType}
    */
   fields: null,
+
+  /**
+   * To inject.
+   * @abstract
+   * @type {Ember.Object}
+   */
+  values: null,
 
   currentFieldsPrefix: 'main',
 
@@ -45,13 +55,17 @@ export default OneForm.extend({
    * Will be initialized from injected ``fields``
    * @type {Array.EmberObject}
    */
-  allFields: null,
+  allFields: computed('fields', function () {
+    return this.get('fields').map(f => Ember.Object.create(f));
+  }),
+
   currentFields: readOnly('allFields'),
 
-  allFieldsValues: Ember.Object.create({
-    main: Ember.Object.create({
-      name: '',
-    }),
+  allFieldsValues: computed('_values', function () {
+    let values = this.get('_values');
+    return Ember.Object.create({
+      main: values,
+    });
   }),
 
   /**
@@ -67,15 +81,29 @@ export default OneForm.extend({
   submitText: 'Submit',
 
   /**
+   * To inject.
+   * If true, all fields and submit button will be disabled
+   * @type {boolean}
+   */
+  disabled: false,
+
+  /**
    * If true, the submit button will be enabled
    * @type {computed.boolean}
    */
   _submitEnabled: readOnly('validations.isValid'),
 
+  /**
+   * Local copy of injected values
+   * @type {computed.Ember.Object}
+   */
+  _values: computed('values', function () {
+    return this._getValuesClone();
+  }),
+
   init() {
     this._super(...arguments);
     this._validateAttributes();
-    this.set('allFields', this.get('fields').map(f => Ember.Object.create(f)));
     this.isValidChanged();
     this.prepareFields();
   },
@@ -94,6 +122,14 @@ export default OneForm.extend({
     );
   },
 
+  _getValuesClone() {
+    return Ember.merge(Ember.Object.create(), this.get('values'));
+  },
+
+  updateValues() {
+    this.notifyPropertyChange('_values');
+  },
+  
   isValidChanged: on('init', observer('isValid', function () {
     invoke(this, 'allValidChanged', this.get('isValid'));
   })),
@@ -104,9 +140,15 @@ export default OneForm.extend({
      * values of form. The receiver should know what field to get from it.
      */
     submit() {
-      if (this.get('_submitEnabled')) {
-        invokeAction(this, 'submit', this.get('allFieldsValues.main'));
-      }
+      let submitting = this.get('_submitEnabled') ?
+        invokeAction(this, 'submit', this.get('allFieldsValues.main')) :
+        new Promise((resolve, reject) => reject());
+      this.set('_disabled', true);
+      submitting.finally(() => {
+        this.set('_disabled', false);
+        this.updateValues();
+      });
+      return submitting;
     },
 
     inputChanged(fieldName, value) {
@@ -119,7 +161,7 @@ export default OneForm.extend({
     },
 
     allValidChanged(isValid) {
-      invokeAction(this, 'allValidChanged', isValid);
+      return invokeAction(this, 'allValidChanged', isValid);
     },
   }
 });

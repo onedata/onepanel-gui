@@ -1,6 +1,6 @@
 {{#bs-form
   submitOnEnter=false
-  class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered"
+  class="col-xs-12 col-sm-8 col-md-6 col-lg-4 col-centered form-horizontal"
   as |form|
 }}  
   {{one-form-fields
@@ -9,6 +9,7 @@
     formValues=formValues
     inputChanged=(action "inputChanged")
     onFocusOut=(action "focusOut")
+    disabled=_disabled
   }}
   
   {{#if submitButton}}
