@@ -68,7 +68,8 @@
   "private": true,
   "ember-addon": {
     "paths": [
-      "lib/ember-onedata-onepanel-server"
+      "lib/ember-onedata-onepanel-server",
+      "lib/ember-plainable"
     ]
   }
 }
