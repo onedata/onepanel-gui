@@ -1,6 +1,6 @@
 {{!-- TODO i18n --}}
 
-<div class="user-account-button-main one-list-item item-header clickable" {{action 'toggleMenu'}}>
+<div class={{menuItemClasses}} {{action 'toggleMenu' bubbles=false}}>
   {{one-icon
     class="user-profile-icon item-icon"
     icon="user-profile"
