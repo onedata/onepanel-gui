@@ -47,7 +47,7 @@ export default OneForm.extend({
    * @abstract
    * @type {Ember.Object}
    */
-  values: null,
+  values: Ember.Object.create(),
 
   currentFieldsPrefix: 'main',
 
@@ -81,11 +81,10 @@ export default OneForm.extend({
   submitText: 'Submit',
 
   /**
-   * To inject.
    * If true, all fields and submit button will be disabled
    * @type {boolean}
    */
-  disabled: false,
+  _disabled: false,
 
   /**
    * If true, the submit button will be enabled
@@ -123,13 +122,15 @@ export default OneForm.extend({
   },
 
   _getValuesClone() {
-    return Ember.merge(Ember.Object.create(), this.get('values'));
+    let valuesProperty = Ember.ObjectProxy.detectInstance(this.get('values')) ?
+      'values.content' : 'values';
+    return Ember.merge(Ember.Object.create(), this.get(valuesProperty));
   },
 
   updateValues() {
     this.notifyPropertyChange('_values');
   },
-  
+
   isValidChanged: on('init', observer('isValid', function () {
     invoke(this, 'allValidChanged', this.get('isValid'));
   })),
