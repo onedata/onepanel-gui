@@ -28,7 +28,9 @@ export default Ember.Component.extend({
       invokeAction(this, 'inputChanged', ...arguments);
     },
     onFocusOut() {
-      invokeAction(this, 'onFocusOut', ...arguments);
+      // prevents double render issue by scheduling focusout event handler on
+      // events' loop end
+      setTimeout(() => invokeAction(this, 'onFocusOut', ...arguments), 0);
     }
   }
 });
