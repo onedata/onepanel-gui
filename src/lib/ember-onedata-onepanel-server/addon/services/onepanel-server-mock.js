@@ -14,6 +14,7 @@ import Ember from 'ember';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
+import Plainable from 'ember-plainable/mixins/plainable';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -23,7 +24,7 @@ const {
   },
   computed,
   computed: {
-    readOnly
+    readOnly,
   },
   inject: {
     service
@@ -31,6 +32,8 @@ const {
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
+
+const PlainableObject = Ember.Object.extend(Plainable);
 
 export default Ember.Service.extend({
   cookies: service(),
@@ -220,8 +223,36 @@ export default Ember.Service.extend({
 
   _req_oneprovider_configureProvider: computed(function () {
     return {
-      success: () => null,
+      success: (data) => {
+        let __provider = this.get('__provider');
+        for (let prop in data) {
+          __provider.set(prop, data[prop]);
+        }
+      },
       taskId: 'configure'
+    };
+  }),
+
+  _req_oneprovider_modifyProvider: computed(function () {
+    return {
+      success: (data) => {
+        let __provider = this.get('__provider');
+        for (let prop in data) {
+          __provider.set(prop, data[prop]);
+          if (prop === 'name') {
+            this.set('__configuration.oneprovider.name', data[prop]);
+          }
+        }
+
+      },
+      statusCode: () => 204,
+    };
+  }),
+
+  _req_oneprovider_removeProvider: computed(function () {
+    return {
+      success: () => null,
+      statusCode: () => 204,
     };
   }),
 
@@ -238,10 +269,11 @@ export default Ember.Service.extend({
   }),
 
   _req_oneprovider_getProviderConfiguration: computed('mockInitializedCluster',
+    '__configuration',
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => CONFIGURATION_RESP
+          success: () => this.get('__configuration').plainCopy()
         };
       } else {
         return {
@@ -250,11 +282,11 @@ export default Ember.Service.extend({
       }
     }),
 
-  _req_oneprovider_getProvider: computed('mockInitializedCluster',
+  _req_oneprovider_getProvider: computed('mockInitializedCluster', '__provider',
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => ({})
+          success: () => this.get('__provider').plainCopy(),
         };
       } else {
         return {
@@ -351,10 +383,11 @@ export default Ember.Service.extend({
   }),
 
   _req_onezone_getZoneConfiguration: computed('mockInitializedCluster',
+    '__configuration',
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => CONFIGURATION_RESP
+          success: () => this.get('__configuration').plainCopy()
         };
       } else {
         return {
@@ -362,6 +395,40 @@ export default Ember.Service.extend({
         };
       }
     }),
+
+  // -- MOCKED RESOURCE STORE --
+
+  __provider: PlainableObject.create({
+    id: 'dfhiufhqw783t462rniw39r-hq27d8gnf8',
+    name: 'Some provider 1',
+    urls: ['172.17.0.4'],
+    redirectionPoint: 'https://172.17.0.4',
+    geoLatitude: 49.698284,
+    geoLongitude: 21.898093,
+  }),
+
+  __configuration: PlainableObject.create({
+    cluster: {
+      databases: {
+        hosts: ['node1.example.com'],
+      },
+      managers: {
+        mainHost: 'node2.example.com',
+        hosts: ['node1.example.com', 'node2.example.com'],
+      },
+      workers: {
+        hosts: ['node2.example.com'],
+      }
+    },
+    // TODO add this only in zone mode
+    onezone: {
+      name: null,
+    },
+    // TODO add this only in provider mode
+    oneprovider: {
+      name: null,
+    },
+  }),
 });
 
 const SPACES = {
@@ -373,27 +440,4 @@ const SPACES = {
     id: 'space2',
     name: 'Space Two',
   }
-};
-
-const CONFIGURATION_RESP = {
-  cluster: {
-    databases: {
-      hosts: ['node1.example.com'],
-    },
-    managers: {
-      mainHost: 'node2.example.com',
-      hosts: ['node1.example.com', 'node2.example.com'],
-    },
-    workers: {
-      hosts: ['node2.example.com'],
-    }
-  },
-  // TODO add this only in zone mode
-  onezone: {
-    name: 'hello zone',
-  },
-  // TODO add this only in provider mode
-  oneprovider: {
-    name: 'helo provider',
-  },
 };

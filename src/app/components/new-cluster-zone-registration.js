@@ -1,5 +1,5 @@
 /**
- * View form registering oneprovider in onezone 
+ * A container for register provider form in installation steps
  *
  * @module components/new-cluster-zone-registration
  * @author Jakub Liput, Michal Borzecki
@@ -9,8 +9,6 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import { validator, buildValidations } from 'ember-cp-validations';
-import OneForm from 'onepanel-gui/components/one-form';
 import stripObject from 'onepanel-gui/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 
@@ -18,85 +16,38 @@ const {
   inject: {
     service
   },
-  computed,
   RSVP: {
     Promise
-  }
+  },
+  Component,
 } = Ember;
 
 const {
   ProviderRegisterRequest
 } = Onepanel;
 
-const FIELDS = [
-  { name: 'name', type: 'text' },
-  { name: 'onezoneDomainName', type: 'text' },
-  { name: 'redirectionPoint', type: 'text' },
-  { name: 'geoLatitude', type: 'number', step: 0.000001, optional: true },
-  { name: 'geoLongitude', type: 'number', step: 0.000001, optional: true },
-];
-
-function createValidations(fields) {
-  let validations = {};
-  fields.forEach(field => {
-    let fieldName = 'allFieldsValues.main.' + field.name;
-    validations[fieldName] = [];
-    if (!field.optional) {
-      validations[fieldName].push(validator('presence', true));
-    }
-    if (field.type === 'number') {
-      validations[fieldName].push(validator('number', Ember.Object.create({
-        allowString: true,
-        allowBlank: field.optional
-      })));
-    }
-  });
-  return validations;
-}
-
-const Validations = buildValidations(createValidations(FIELDS));
-
-export default OneForm.extend(Validations, {
-  unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
-  currentFieldsPrefix: 'main',
-  currentFields: computed.alias('allFields'),
-  allFields: null,
-  allFieldsValues: computed('allFields', function () {
-    let {
-      allFields
-    } = this.getProperties('allFields');
-    let fields = Ember.Object.create({});
-    fields.set('main', Ember.Object.create({}));
-    allFields.forEach(field => {
-      fields.set('main.' + field.get('name'), null);
-    });
-    return fields;
-  }),
-  formValues: computed.alias('allFieldsValues.main'),
+export default Component.extend({
   globalNotify: service(),
   onepanelServer: service(),
 
-  _isBusy: false,
-
-  init() {
-    let i18n = this.get('i18n');
-    this._super(...arguments);
-    this.set('allFields', FIELDS.map(field => Ember.Object.create(field)));
-    this.get('allFields').forEach(field => field.set(
-      'placeholder', i18n.t(
-        `components.newClusterZoneRegistration.fields.${field.get('name')}`)));
-    this.prepareFields();
-  },
-
-  createProviderRegisterRequest() {
+  /**
+   * @param {Ember.Object} providerData data from provider registration form
+   * @returns {Onepanel.ProviderRegisterRequest}
+   */
+  createProviderRegisterRequest(providerData) {
     let {
       name,
       onezoneDomainName,
       redirectionPoint,
       geoLongitude,
       geoLatitude,
-    } = this.get('formValues').getProperties(
-      this.get('currentFields').map(f => f.get('name')));
+    } = providerData.getProperties(
+      'name',
+      'onezoneDomainName',
+      'redirectionPoint',
+      'geoLongitude',
+      'geoLatitude'
+    );
 
     let reqProto = stripObject({
       name,
@@ -111,12 +62,15 @@ export default OneForm.extend(Validations, {
     return req;
   },
 
-  _submit() {
+  /**
+   * Use API to register provider
+   * @param {Ember.Object} providerData 
+   * @returns {Promise} resolves when provider was registered; otherwise rejects
+   */
+  _submit(providerData) {
     let submitting = new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
-      // TODO validate
-      // TODO use api to submit
-      let providerRegisterRequest = this.createProviderRegisterRequest();
+      let providerRegisterRequest = this.createProviderRegisterRequest(providerData);
       let addingProvider =
         onepanelServer.request('oneprovider', 'addProvider',
           providerRegisterRequest);
@@ -128,19 +82,14 @@ export default OneForm.extend(Validations, {
   },
 
   actions: {
-    inputChanged(inputType, value) {
-      this.changeFormValue(inputType, value);
-    },
-
-    focusOut(field) {
-      field.set('changed', true);
-      this.recalculateErrors();
-    },
-
-    submit() {
-      let name = this.get('formValues.name');
-      let submitting = this._submit();
-      this.set('_isBusy', true);
+    /**
+     * Start registering provider
+     * @param {Ember.Object} providerData 
+     * @returns {Promise} ``_submit`` promise
+     */
+    submit(providerData) {
+      let name = providerData.get('name');
+      let submitting = this._submit(providerData);
       submitting.then(() => {
         // TODO i18n
         this.get('globalNotify').info('Provider registered successfully');
@@ -152,7 +101,6 @@ export default OneForm.extend(Validations, {
           'Could not register the provider in zone: ' + error
         );
       });
-      submitting.finally(() => this.set('_isBusy', false));
       return submitting;
     }
   }

@@ -1,0 +1,66 @@
+{{!-- TODO i18n --}}
+  
+<div class="row content-row header-row">
+  <h1>Provider
+    <div class="btn-toolbar">
+      {{#bs-button
+        type="danger"
+        class="btn-sm btn-deregister-provider"
+      }}
+        Deregister provider
+      {{/bs-button}}
+      
+      {{!-- FIXME popover is rendering in wrong place --}}
+      {{#one-webui-popover
+        class="popover-deregister-provider"
+        placement="bottom-left"
+        triggerSelector=(concat "#" (concat elementId " .btn-deregister-provider"))
+        submit=(action "deregister")
+        as |popover|
+      }}
+        <h1>Deregister provider?</h1>
+        <p>
+          Deregistering provider from Zone will cause drop spaces support on 
+          this provider and lost of access to data kept only in this provider.
+        </p>
+        <p>
+          After leaving a Zone you can register again, but current support 
+          provided for spaces will be lost.
+        </p>
+        <div class="btn-toolbar">
+          {{#bs-button class="btn btn-sm" type="info" onClick=(action popover.hide)}}
+            No, keep it registered
+          {{/bs-button}}
+          {{#spin-button
+            class="btn btn-sm btn-danger"
+            action=(action popover.submit)
+          }}
+            {{one-icon icon="remove"}} <span>Yes, deregister</span>
+          {{/spin-button}}
+        </div>
+      {{/one-webui-popover}}
+      
+      {{#bs-button
+        onClick=(action "toggleModifyProvider")
+        type=_editProviderButtonType
+        class="btn-sm btn-modify-provider"
+      }}
+        {{_editProviderButtonLabel}}
+      {{/bs-button}}
+    </div>
+  </h1>
+</div>
+
+<div class="row">
+  <div class="row content-row row-small">
+    <h1 class="form-title">{{_formTitle}}</h1>
+    <p class="form-description">{{_formDescription}}</p>
+    {{#promise-proxy-container proxy=providerProxy}}
+      {{provider-registration-form
+        mode=_providerFormMode
+        provider=providerProxy.content
+        submit=(action "submitModify")
+      }}
+    {{/promise-proxy-container}}
+  </div>
+</div>

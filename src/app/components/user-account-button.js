@@ -34,6 +34,16 @@ export default Component.extend(ClickOutside, {
     return `#${this.get('elementId')} .user-toggle-icon`;
   }),
 
+  menuItemClasses: computed('isActive', function () {
+    let isActive = this.get('isActive'),
+      classes =
+      'user-account-button-main one-list-item item-header clickable';
+    if (isActive) {
+      classes += ' active';
+    }
+    return classes;
+  }),
+
   _attachClickOutsideHandler: on('didInsertElement', function () {
     next(this, this.addClickOutsideListener);
   }),

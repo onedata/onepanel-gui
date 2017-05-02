@@ -19,7 +19,7 @@ const {
   },
   RSVP: { Promise },
   A,
-  computed: { readOnly },
+  computed: { alias, readOnly },
   ObjectProxy,
   PromiseProxyMixin,
   String: { camelize }
@@ -40,10 +40,16 @@ export default Service.extend({
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
-   * Stores the fetched cluster
+   * Contains latest fetched ClusterDetails
+   * @type {ObjectProxy.ClusterDetails}
+   */
+  defaultCache: ObjectProxy.create({ content: null }),
+
+  /**
+   * Last feched ClusterDetails
    * @type {ClusterDetails}
    */
-  clusterCache: null,
+  _defaultCache: alias('defaultCache.content'),
 
   /**
    * Promise proxy resolves with array of promise proxies for ClusterDetails
@@ -51,9 +57,13 @@ export default Service.extend({
    */
   getClusters() {
     let promise = new Promise((resolve) => {
-      resolve(A([this.getClusterDetails()]));
+      resolve(A([this.getDefaultRecord()]));
     });
     return ObjectPromiseProxy.create({ promise });
+  },
+
+  getDefaultRecord(reload = false) {
+    return this.getClusterDetails(undefined, reload);
   },
 
   // TODO: in future this should be able to get details of any cluster 
@@ -61,15 +71,20 @@ export default Service.extend({
   /**
    * @returns {ObjectPromiseProxy}
    */
-  getClusterDetails( /*clusterId*/ ) {
+  getClusterDetails(clusterId, reload = false) {
     let {
       onepanelServiceType,
-      clusterCache,
-    } = this.getProperties('onepanelServiceType', 'clusterCache');
+      defaultCache,
+      _defaultCache,
+    } = this.getProperties(
+      'onepanelServiceType',
+      'defaultCache',
+      '_defaultCache'
+    );
 
     let promise = new Promise((resolve, reject) => {
-      if (clusterCache) {
-        resolve(clusterCache);
+      if (_defaultCache && !reload) {
+        resolve(defaultCache);
       } else {
         let clusterStep;
 
@@ -103,8 +118,8 @@ export default Service.extend({
             initStep: clusterStep,
           });
 
-          this.set('clusterCache', clusterDetails);
-          resolve(clusterDetails);
+          this.set('_defaultCache', clusterDetails);
+          resolve(defaultCache);
         }).catch(reject);
       }
     });

@@ -1,0 +1,9 @@
+{
+  "name": "ember-plainable",
+  "keywords": [
+    "ember-addon"
+  ],
+  "dependencies": {
+    "ember-cli-babel": "5.2.4"
+  }
+}

@@ -29,7 +29,7 @@ export default Ember.Service.extend({
   getModelFor(type, id) {
     switch (type) {
     case 'clusters':
-      return this.get('clusterManager').getClusterDetails(id).get('promise');
+      return this.get('clusterManager').getDefaultRecord(id).get('promise');
     case 'users':
       return this.get('userManager').getUserDetails(id).get('promise');
 
