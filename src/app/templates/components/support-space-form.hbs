@@ -2,10 +2,10 @@
 
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#form.group}}
-    <label class={{concat "control-label " layout.formLabelColumns}}>
+    <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
       Storage:
     </label>
-    <div class={{layout.formInputColumns}}>
+    <div class={{layoutConfig.formInputColumns}}>
       {{#power-select
         loadingMessage="Loading..."
         options=allStoragesProxy
@@ -41,7 +41,7 @@
       inputChanged=(action "inputChanged")
     }}
     {{!-- TODO component for inline radios --}}
-    <div class={{layout.formSubmitColumns}}>
+    <div class={{layoutConfig.formSubmitColumns}}>
       <label class="radio-inline">
         {{one-way-radio (get formValues "sizeUnit")
           id=(concat elementId (concat "-sizeUnit-mb"))
@@ -70,7 +70,7 @@
   {{/form.group}}
 
   <div class="row">
-    <div class={{concat "text-xs-center " layout.formSubmitColumns}}>
+    <div class={{layoutConfig.formSubmitColumns}}>
       {{#spin-button
         type="submit"
         class="btn btn-primary"

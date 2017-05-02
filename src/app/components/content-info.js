@@ -54,6 +54,12 @@ export default Ember.Component.extend({
    * @type {string}
    */
   buttonLabel: '',
+
+  /**
+   * CSS class for primary button
+   * @type {string}
+   */
+  buttonClass: '',
   
   /**
    * A function on click primary button.

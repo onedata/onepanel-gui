@@ -1,8 +1,8 @@
 <div class="row">
-  <label for={{inputId}} class={{concat "control-label " layout.formLabelColumns}}>
+  <label for={{inputId}} class={{concat "control-label " layoutConfig.formLabelColumns}}>
     {{concat field.placeholder (if field.optional (concat " " (t "components.oneFormFields.optional") ""))}}:
   </label>
-  <div class={{layout.formInputColumns}}>
+  <div class={{layoutConfig.formInputColumns}}>
     {{component (input-component-name field.type)
       id=inputId
       value=value

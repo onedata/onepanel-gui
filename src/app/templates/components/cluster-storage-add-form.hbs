@@ -1,7 +1,7 @@
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#form.group}}
-    <label class={{concat "control-label " layout.formLabelColumns}}>Storage type</label>
-    <div class={{layout.formInputColumns}}>
+    <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type</label>
+    <div class={{layoutConfig.formInputColumns}}>
       {{#power-select
         options=storageTypes
         selected=selectedStorageType
@@ -23,7 +23,7 @@
     onFocusOut=(action "focusOut")
   }}
   <div class="row">
-    <div class={{concat "text-xs-center " layout.formSubmitColumns}}>
+    <div class={{layoutConfig.formSubmitColumns}}>
       {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
         Add
       {{/spin-button}}

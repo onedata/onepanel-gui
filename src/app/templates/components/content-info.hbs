@@ -17,7 +17,7 @@
     {{/if}}
     <div class="row text-center">
       <div class="col-xs-12">
-        {{#spin-button class="btn btn-primary" action=(action buttonAction)}}
+        {{#spin-button class=(concat "btn btn-primary " buttonClass) action=(action buttonAction)}}
           {{buttonLabel}}
         {{/spin-button}}
       </div>

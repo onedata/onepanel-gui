@@ -20,10 +20,10 @@ module.exports = function (environment) {
     onedataTabs: [
       'clusters'
     ],
-    layout: {
+    layoutConfig: {
       formLabelColumns: 'col-xs-12 col-sm-5',
       formInputColumns: 'col-xs-12 col-sm-7',
-      formSubmitColumns: 'col-xs-12 col-sm-7 col-sm-offset-5',
+      formSubmitColumns: 'col-xs-12 col-sm-7 col-sm-offset-5 text-xs-center',
       formToggleLabelColumns: 'col-xs-6 col-sm-5',
       formToggleInputColumns: 'col-xs-6 col-sm-7',
     },

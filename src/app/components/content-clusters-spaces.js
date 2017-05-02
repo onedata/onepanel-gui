@@ -40,10 +40,9 @@ export default Component.extend({
 
   _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened', function() {
     let {
-      content,
       _supportSpaceOpened
-    } = this.getProperties('spacesProxy.content', '_supportSpaceOpened');
-    return !content && !_supportSpaceOpened;
+    } = this.getProperties('_supportSpaceOpened');
+    return !_supportSpaceOpened && !this.get('spacesProxy.content');
   }),
 
   init() {

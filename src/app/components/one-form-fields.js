@@ -12,7 +12,7 @@ import { invokeAction } from 'ember-invoke-action';
 import config from 'ember-get-config';
 
 const { 
-  layout 
+  layoutConfig 
 } = config;
 
 /**
@@ -27,7 +27,7 @@ const {
 
 export default Ember.Component.extend({
   tagName: '',
-  layout: layout,
+  layoutConfig,
 
   /**
    * @type {ember-bootstrap.Components.FormGroup}

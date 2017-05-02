@@ -1,8 +1,8 @@
 <div class="row">
-  <label class={{concat "control-label " layout.formLabelColumns}}>
+  <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
     {{field.placeholder}}:
   </label>
-  <span class={{concat (concat (concat "form-control-static one-form-field-static " fieldNameClass) " ") layout.formInputColumns}}>
+  <span class={{concat (concat (concat "form-control-static one-form-field-static " fieldNameClass) " ") layoutConfig.formInputColumns}}>
     {{#if fakePassword}}
       {{fake-password}}
     {{else}}

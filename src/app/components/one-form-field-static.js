@@ -11,7 +11,7 @@ import Ember from 'ember';
 import config from 'ember-get-config';
 
 const { 
-  layout 
+  layoutConfig 
 } = config;
 
 const {
@@ -20,7 +20,7 @@ const {
 } = Ember;
 
 export default Component.extend({
-  layout: layout,
+  layoutConfig,
   tagName: '',
 
   fieldNameClass: computed('field.name', function () {

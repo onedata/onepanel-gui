@@ -32,11 +32,11 @@ const {
 } = Ember;
 
 const { 
-  layout 
+  layoutConfig 
 } = config;
 
 export default Ember.Component.extend({
-  layout: layout,
+  layoutConfig,
 
   /**
    * Message used as a warning message after unknown field change.

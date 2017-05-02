@@ -33,17 +33,32 @@ export default Ember.Component.extend({
    */
   imageTextClass: '',
 
+  _onResizeHandler: null,
+
+  init() {
+    this._super(...arguments);
+    this.set('_onResizeHandler', () => this._recalculateImageFontSize());
+  },
+
   didInsertElement() {
     this._super(...arguments);
-    $(window).resize(() => this._recalculateImageFontSize());
-    this.$('.image').on('load', () => this._recalculateImageFontSize());
+    $(window).resize(this.get('_onResizeHandler'));
+    this.$('.image').on('load', this.get('_onResizeHandler'));
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    $(window).off("resize", this.get('_onResizeHandler'));
   },
 
   _recalculateImageFontSize() {
     if (this.get('imageText')) {
       // 10% of image width
-      const fontSize = this.$(".image").width() * 0.10;
-      this.$().css('font-size', fontSize);
+      const image = this.$(".image");
+      if (image) {
+        const fontSize = image.width() * 0.10;
+        this.$().css('font-size', fontSize);
+      }
     }
   }
 });
