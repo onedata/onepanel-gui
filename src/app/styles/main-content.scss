@@ -42,6 +42,10 @@ $content-row-vertical-padding: $padding-base-vertical;
       margin-top: $content-row-vertical-padding;
       text-align: center;
     }
+    
+    .form-description {
+      text-align: center;
+    }
 
     form {
       margin-top: 2 * $content-row-vertical-padding;
