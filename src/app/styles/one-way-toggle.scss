@@ -4,6 +4,7 @@ $toggle-size-base: 1.4em;
   position: relative;
   display: inline-block;
   height: $toggle-size-base;
+  font-size: inherit;
 
   &.form-control {
     background-color: inherit;
@@ -33,8 +34,8 @@ $toggle-size-base: 1.4em;
     }
   }
 
-  div,
-  div:before {
+  .one-way-toggle-control,
+  .one-way-toggle-control:before {
     border: 1px solid $input-border;
     border-radius: $toggle-size-base / 2;
     box-sizing: border-box;
@@ -44,13 +45,14 @@ $toggle-size-base: 1.4em;
     @include box-shadow(none);
   }
 
-  div {
+  .one-way-toggle-control {
+    display: inline-block;
     background-color: $color-one-light-gray;
     transition: background-color 0.2s ease;
     width: $toggle-size-base * 2;
   }
 
-  div:before {
+  .one-way-toggle-control:before {
     display: block;
     background-color: $input-bg;
     position: relative;
@@ -60,11 +62,15 @@ $toggle-size-base: 1.4em;
     top: -1px;
   }
 
-  &.disabled div:before {
-    content: $oneicon-lock;
-    font-family: 'oneicons' !important;
-    color: $color-one-light-gray;
-    text-align: center;
+  &.disabled .one-way-toggle-control {
+    opacity: 0.6;
+  }
+
+  .one-way-toggle-readonly-icon {
+    display: inline-block;
+    font-size: 120%;
+    vertical-align: top;
+    color: $color-one-graphite;
   }
 
   div.clickable::before {

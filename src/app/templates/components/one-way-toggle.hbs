@@ -5,3 +5,13 @@
   focusOut=onFocusOut 
   disabled=isReadOnly}}
 <div class="one-way-toggle-control"></div>
+{{#if isReadOnly}}
+  <div class="one-way-toggle-readonly-icon">
+    {{one-icon icon="lock"}}
+    {{bs-tooltip
+      title="Read only"
+      placement="top"
+      triggerEvents="hover"
+    }}
+  </div>
+{{/if}}
