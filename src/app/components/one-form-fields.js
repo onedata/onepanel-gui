@@ -21,7 +21,9 @@ const {
  * @property {string} type
  * @property {boolean} [optional=undefined]
  * @property {*} [defaultValue=undefined]
+ * @property {string} [label=undefined]
  * @property {string} [placeholder=undefined]
+ * @property {string} [tip=undefined]
  * @property {number} [step=undefined] step in number inputs
  */
 

@@ -135,11 +135,11 @@ export default OneForm.extend(Validations, {
       Ember.Object.create(field)));
 
     this.prepareFields();
-    this._addFieldsPlaceholders();
+    this._addFieldsLabels();
   },
 
   // FIXME move to some helper or something  
-  _addFieldsPlaceholders() {
+  _addFieldsLabels() {
     let i18n = this.get('i18n');
     let {
       storageTypes,
@@ -147,17 +147,17 @@ export default OneForm.extend(Validations, {
     } = this.getProperties('storageTypes', 'genericFields');
     storageTypes.forEach(({ id: typeId, fields }) => {
       fields.forEach(field =>
-        this._addFieldPlaceholderTranslation(typeId, field, i18n)
+        this._addFieldLabelTranslation(typeId, field, i18n)
       );
     });
     genericFields.forEach(field =>
-      this._addFieldPlaceholderTranslation('generic', field, i18n)
+      this._addFieldLabelTranslation('generic', field, i18n)
     );
   },
 
-  _addFieldPlaceholderTranslation(typeId, field, i18n) {
-    if (!field.placeholder) {
-      field.set('placeholder', i18n.t(
+  _addFieldLabelTranslation(typeId, field, i18n) {
+    if (!field.label) {
+      field.set('label', i18n.t(
         `components.clusterStorageAddForm.${typeId}.${field.name}`
       ));
     }

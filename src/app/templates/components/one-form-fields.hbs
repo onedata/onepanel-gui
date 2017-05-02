@@ -5,8 +5,11 @@
     {{#if (eq field.type "checkbox")}}
       <div class="row toggle-form-row">
         <label for={{concat parentView.elementId (concat "-" field.name)}} class={{concat "control-label text-right " layoutConfig.formToggleLabelColumns}}>
-            {{field.placeholder}} {{if field.optional (concat " " (t "components.oneFormFields.optional"))}}
-          </label>
+          {{field.label}}{{if field.optional (concat " " (t "components.oneFormFields.optional"))}}:
+          {{#if field.tip}}
+            {{one-label-tip title=field.tip}}
+          {{/if}}
+        </label>
         <div class={{layoutConfig.formToggleInputColumns}}>
           {{one-way-toggle
             class=(concat "form-control toggle-field-" field.name)

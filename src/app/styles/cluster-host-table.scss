@@ -4,7 +4,10 @@
   &:not(.bt) {
     .toggle-column {
       width: 15%;
-      .one-way-toggle{
+      // toggles are a little bigger than a normal text 
+      // so padding must be smaller to preserve row height
+      padding: $table-cell-padding * 0.75 $table-cell-padding;
+      .one-way-toggle {
         font-size: 1.2em;
       }
     }

@@ -74,8 +74,8 @@ export default OneForm.extend({
     }
     let i18n = this.get('i18n');
     FORM_FIELDS.forEach(f => {
-      if (!f.placeholder) {
-        f.placeholder = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
+      if (!f.label) {
+        f.label = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
       }
     });
   },
