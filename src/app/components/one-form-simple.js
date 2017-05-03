@@ -100,6 +100,29 @@ export default OneForm.extend({
     return this._getValuesClone();
   }),
 
+  /**
+   * If true, the form does not have any real input. It's just a grid for data
+   * @type {computed.boolean}
+   */
+  _hasOnlyStatic: computed('currentFields.@each.type', function () {
+    let currentFields = this.get('currentFields');
+    return currentFields.filter(f => f.type === 'static').length === 
+      currentFields.length;
+  }),
+
+  /**
+   * CSS classes for the form element
+   * @type {computed.string}
+   */
+  _formClasses: computed('_hasOnlyStatic', function () {
+    let _hasOnlyStatic = this.get('_hasOnlyStatic'),
+      classes = 'col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal';
+    if (_hasOnlyStatic) {
+      classes += ' form-static';
+    }
+    return classes;
+  }),
+
   init() {
     this._super(...arguments);
     this._validateAttributes();
