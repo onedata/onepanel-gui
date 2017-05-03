@@ -1,10 +1,14 @@
 import Ember from 'ember';
 
+const {
+  run
+} = Ember;
+
 /**
  * Creates a table element which uses JQuery Basic Table to handle with small devices.
  *
  * @module components/basic-table.js
- * @author Michał Borzęcki
+ * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,6 +21,11 @@ export default Ember.Component.extend({
     this.$().basictable({
       breakpoint: 1200
     });
+    // prevent from collapse animation on first render
+    if (this.$().is('.dropdown-table-rows')) {
+      this.$('td:not(.row-header)').addClass('no-transition');
+      run.next(() => this.$('td:not(.row-header)').removeClass('no-transition'));
+    }
   },
 
   willDestroyElement() {
