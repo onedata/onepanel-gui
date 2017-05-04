@@ -21,5 +21,7 @@
   {{/if}}
 </div>
 <div class="row">
-  {{cluster-storage-table storages=storages}}  
+  {{#promise-proxy-container proxy=storagesProxy}}
+    {{cluster-storage-table storages=storagesProxy.content}}
+  {{/promise-proxy-container}}
 </div>

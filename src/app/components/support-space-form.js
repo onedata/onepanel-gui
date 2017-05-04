@@ -85,7 +85,7 @@ export default Component.extend({
       let storagesPromise = this.get('storageManager').getStorages()
         .get('promise');
       storagesPromise.then(storages => {
-        Promise.all(storages).then(resolve, reject);
+        Promise.all(storages.toArray()).then(resolve, reject);
       });
       storagesPromise.catch(reject);
     });

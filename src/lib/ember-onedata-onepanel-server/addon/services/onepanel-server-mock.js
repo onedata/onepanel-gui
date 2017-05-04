@@ -15,6 +15,8 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
+import _object from 'lodash/object';
+import _find from 'lodash/find';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -56,7 +58,7 @@ export default Ember.Service.extend({
 
   username: MOCK_USERNAME,
 
-  mockInitializedCluster: true,
+  mockInitializedCluster: false,
 
   /**
    * @type {computed<Boolean>}
@@ -264,7 +266,13 @@ export default Ember.Service.extend({
 
   _req_oneprovider_addStorage: computed(function () {
     return {
-      success: () => null,
+      success: (storages) => {
+        // the only storage is stored in the only key of storages
+        let storage = _object.values(storages)[0];
+        // generate some fake id
+        let id = `id-${storage.name}`;
+        this.get('__storages').push(_object.assign({ id }, storage));
+      },
     };
   }),
 
@@ -295,37 +303,20 @@ export default Ember.Service.extend({
       }
     }),
 
-  _req_oneprovider_getStorages: computed('mockInitializedCluster',
+  _req_oneprovider_getStorages: computed('__storages',
     function () {
-      if (this.get('mockInitializedCluster')) {
-        return {
-          success: () => ({
-            ids: ['storage1']
-          })
-        };
-      } else {
-        return {
-          statusCode: () => 404
-        };
-      }
+      return {
+        success: () => ({
+          ids: this.get('__storages').map(s => s.id)
+        })
+      };
     }),
 
-  _req_oneprovider_getStorageDetails: computed('mockInitializedCluster',
+  _req_oneprovider_getStorageDetails: computed('__storages',
     function () {
-      if (this.get('mockInitializedCluster')) {
-        return {
-          success: () => ({
-            id: 'storage1',
-            name: 'First storage',
-            type: 'posix',
-            mountPoint: '/mnt/one'
-          })
-        };
-      } else {
-        return {
-          statusCode: () => 404
-        };
-      }
+      return {
+        success: id => _find(this.get('__storages'), s => s.id === id)
+      };
     }),
 
   _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster', function () {
@@ -429,6 +420,8 @@ export default Ember.Service.extend({
       name: null,
     },
   }),
+
+  __storages: [],
 });
 
 const SPACES = {

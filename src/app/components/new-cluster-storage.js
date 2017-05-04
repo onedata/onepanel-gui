@@ -20,7 +20,6 @@ const {
   RSVP: {
     Promise
   },
-  A
 } = Ember;
 
 export default Ember.Component.extend({
@@ -29,15 +28,35 @@ export default Ember.Component.extend({
 
   noStorages: computed.equal('storages.length', 0),
 
-  storages: A(),
+  /**
+   * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
+   */
+  storagesProxy: null,
 
   addStorageOpened: computed.oneWay('noStorages'),
 
+  init() {
+    this._super(...arguments);
+    this._updateStoragesProxy();
+  },
+
+  /**
+   * Force update storages list - makes an API call
+   */
+  _updateStoragesProxy() {
+    let storageManager = this.get('storageManager');
+    this.set('storagesProxy', storageManager.getStorages(true));
+  },
+
+  /**
+   * Uses API to add new storage and updated storages list from remote if succeeds
+   * @param {object} storageFormData should have properties needed to construct
+   *  onepanel storage model
+   */
   _submitAddStorage(storageFormData) {
     let {
-      storages,
       storageManager,
-    } = this.getProperties('storages', 'storageManager');
+    } = this.getProperties('storageManager');
 
     let cs = createClusterStorageModel(storageFormData);
 
@@ -45,7 +64,7 @@ export default Ember.Component.extend({
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {
-        storages.pushObject(cs);
+        this._updateStoragesProxy();
         this.set('addStorageOpened', false);
         resolve();
       });
