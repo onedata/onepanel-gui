@@ -6,6 +6,7 @@ import Ember from 'ember';
  * ```
  * {{one-label-tip title="tooltip text"}}
  * ```
+ * 
  * @module components/one-label-tip
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH

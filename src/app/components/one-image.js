@@ -8,7 +8,9 @@ import Ember from 'ember';
  *   imagePath='some/image.png' 
  *   imageText='some text' 
  *   imageTextClass='classForTextElement'
- * }}```
+ * }}
+ * ```
+ * 
  * @module components/one-image
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
