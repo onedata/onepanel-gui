@@ -1,7 +1,7 @@
 /**
- * A storage management content for wizard of creating new cluster
+ * Storage management for cluster - can be used both in wizard and after cluster deployment
  *
- * @module components/new-cluster-storage.js
+ * @module components/manage-cluster-storages
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -20,24 +20,54 @@ const {
   RSVP: {
     Promise
   },
-  A
 } = Ember;
 
 export default Ember.Component.extend({
   storageManager: service(),
   globalNotify: service(),
 
-  noStorages: computed.equal('storages.length', 0),
+  noStorages: computed('storagesProxy.length', function () {
+    return !this.get('storagesProxy.length');
+  }),
 
-  storages: A(),
+  /**
+   * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
+   */
+  storagesProxy: null,
 
   addStorageOpened: computed.oneWay('noStorages'),
 
+  /**
+   * If true, render additional finish button that will invoke "nextStep" action
+   * Used in wizard
+   * @type {computed.boolean}
+   */
+  finishButton: computed('nextStep', function () {
+    return this.get('nextStep') != null;
+  }),
+
+  init() {
+    this._super(...arguments);
+    this._updateStoragesProxy();
+  },
+
+  /**
+   * Force update storages list - makes an API call
+   */
+  _updateStoragesProxy() {
+    let storageManager = this.get('storageManager');
+    this.set('storagesProxy', storageManager.getStorages(true));
+  },
+
+  /**
+   * Uses API to add new storage and updated storages list from remote if succeeds
+   * @param {object} storageFormData should have properties needed to construct
+   *  onepanel storage model
+   */
   _submitAddStorage(storageFormData) {
     let {
-      storages,
       storageManager,
-    } = this.getProperties('storages', 'storageManager');
+    } = this.getProperties('storageManager');
 
     let cs = createClusterStorageModel(storageFormData);
 
@@ -45,7 +75,7 @@ export default Ember.Component.extend({
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {
-        storages.pushObject(cs);
+        this._updateStoragesProxy();
         this.set('addStorageOpened', false);
         resolve();
       });
