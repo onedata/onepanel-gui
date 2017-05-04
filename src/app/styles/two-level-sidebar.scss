@@ -9,11 +9,12 @@
 
   .one-list-item {
     &.active {
-      background-color: $color-one-light-bluegray;
+      background-color: $color-sidebar-item-bg;
     }
     .item-header {
+      border-bottom: 1px solid $color-one-list-item-separator;
       &:hover {
-        background-color: darken($color-one-light-bluegray, 3%);
+        background-color: $color-sidebar-item-active-bg;
       }
       .one-icon {
         font-size: 2.5em;

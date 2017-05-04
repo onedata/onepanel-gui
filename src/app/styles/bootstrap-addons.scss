@@ -139,8 +139,14 @@ form {
   height: 1em;
   position: relative;
   padding: 0;
-  &:active {
-    @include box-shadow(none);
+  color: $btn-default-bg;
+  &:hover,
+  &:active,
+  &:hover:active,
+  &:focus {
+    color: $btn-default-bg;
+    background-color: transparent;
+    border: 0;
   }
   .one-icon {
     position: relative;
@@ -155,8 +161,6 @@ form {
     &:hover:active,
     &:focus {
       color: $btn-primary-bg;
-      background-color: transparent;
-      border: 0;
     }
   }
 }

@@ -1,5 +1,6 @@
 // TODO: all these colors are deprecated
 $color-one-white: #fff;
+$color-one-semiwhite: #EFEFEF;
 $color-one-gray-1: #b6b6b6;
 $color-one-dark-1: #3e3e3e;
 $color-one-steel: #555d72;
@@ -24,20 +25,20 @@ $color-one-23: #547bbc;
 $color-one-24: #e8e8e8;
 
 
-$color-one-red: #F25352;
-$color-one-azure: #2F99FC;
-$color-one-mint: #8BDCB1;
+$color-one-red: #ee3f3f;
+$color-one-azure: $color-one-red;
+$color-one-mint: #4bd187;
 $color-one-dark-gray: #6A6969;
 $color-one-graphite: #60687D;
 $color-one-light-gray: #BEBEBE;
-$color-one-light-bluegray: #ECEDF5;
+$color-one-light-bluegray: #e2e1e0;
 $color-one-white-blue: #E2EFFF;
 $color-one-white-gray: #F6F6F8;
 $color-one-white: #fff;
 
-$color-one-default: $color-one-azure;
+$color-one-default: #4a6089;
 $color-one-special: $color-one-mint;
-$color-one-info: $color-one-steel;
+$color-one-info: #4a6089;
 $color-one-success: $color-one-mint;
 // default bootstrap color
 $color-one-success-dark: #3c763d;

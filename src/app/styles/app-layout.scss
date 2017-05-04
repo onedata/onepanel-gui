@@ -53,7 +53,7 @@ $onedata-logo-width: 150px;
     height: $mobile-top-height;
     z-index: 1;
     // TODO: the same as col-main-menu?
-    background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
+    background-color: $color-main-menu-bg;
     color: $color-one-white;
     .side-menu-toggle {
       height: 100%;
@@ -92,7 +92,7 @@ $onedata-logo-width: 150px;
   .col-main-menu {
     z-index: 1;
     position: absolute;
-    background: linear-gradient( $color-main-menu-bg-top, $color-main-menu-bg-bottom);
+    background: $color-main-menu-bg;
     color: $color-main-menu-fg-default;
     width: $main-menu-width;
 
@@ -182,13 +182,21 @@ $onedata-logo-width: 150px;
 .col-main-menu .one-list-item.main-menu-item {
   >.item-header {
     color: $color-main-menu-fg-default;
+    border: 0;
   }
   &.enabled {
     &.active,
     &.selected {
       >.item-header {
         color: $color-main-menu-fg-active;
-        @include main-menu-item-gradient(0.2, 0);
+        background-color: $color-one-red;
+        @include box-shadow(inset 0px 0px 10px rgba(0, 0, 0, 0.5));
+      }
+      &:hover {
+        background-color: darken($color-one-red, 10);
+      }
+      &::before {
+        display: none;
       }
     }
     &:hover {
@@ -197,7 +205,7 @@ $onedata-logo-width: 150px;
       }
     }
   }
-  &.disabled {
+  &.disabled {  
     >.item-header {
       color: $color-main-menu-fg-disabled;
     }
