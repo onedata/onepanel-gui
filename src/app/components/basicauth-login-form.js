@@ -26,6 +26,7 @@ export default Ember.Component.extend({
   password: '',
 
   isDisabled: false,
+  areCredentialsInvalid: false,
 
   didInsertElement() {
     this._super(...arguments);
@@ -61,6 +62,7 @@ export default Ember.Component.extend({
       password
     });
     this.set('isDisabled', false);
+    this.set('areCredentialsInvalid', true);
   },
 
   onInitClientError(error) {
