@@ -10,8 +10,8 @@ import globalNotifyStub from '../../helpers/global-notify-stub';
 
 // NOTE: this test uses main real storage manager that uses onepanelServer mock
 
-describe('Integration | Component | new cluster storage', function () {
-  setupComponentTest('new-cluster-storage', {
+describe('Integration | Component | manage cluster storages', function () {
+  setupComponentTest('manage-cluster-storages', {
     integration: true
   });
 
@@ -35,7 +35,7 @@ describe('Integration | Component | new cluster storage', function () {
       mountPoint: '/mnt/s1',
     }]);
 
-    this.render(hbs `{{new-cluster-storage}}`);
+    this.render(hbs `{{manage-cluster-storages}}`);
 
     wait().then(() => {
       expect(this.$('.storage-item'), 'only one storage item')

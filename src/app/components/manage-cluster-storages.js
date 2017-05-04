@@ -1,7 +1,7 @@
 /**
- * A storage management content for wizard of creating new cluster
+ * Storage management for cluster - can be used both in wizard and after cluster deployment
  *
- * @module components/new-cluster-storage.js
+ * @module components/manage-cluster-storages
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -26,7 +26,9 @@ export default Ember.Component.extend({
   storageManager: service(),
   globalNotify: service(),
 
-  noStorages: computed.equal('storages.length', 0),
+  noStorages: computed('storagesProxy.length', function () {
+    return !this.get('storagesProxy.length');
+  }),
 
   /**
    * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
@@ -34,6 +36,15 @@ export default Ember.Component.extend({
   storagesProxy: null,
 
   addStorageOpened: computed.oneWay('noStorages'),
+
+  /**
+   * If true, render additional finish button that will invoke "nextStep" action
+   * Used in wizard
+   * @type {computed.boolean}
+   */
+  finishButton: computed('nextStep', function () {
+    return this.get('nextStep') != null;
+  }),
 
   init() {
     this._super(...arguments);

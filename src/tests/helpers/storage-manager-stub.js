@@ -12,7 +12,7 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 // TODO this service stub is probably faulty, because there were problems
-// using it in new-cluster-storage-test
+// using it in manage-cluster-storages-test
 
 export default Service.extend({
   /**

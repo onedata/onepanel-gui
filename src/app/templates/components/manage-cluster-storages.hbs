@@ -5,9 +5,11 @@
         {{#bs-button type="default" class="btn-sm" onClick=(action "toggleAddStorageForm")}}
           {{_addStorageButtonLabel}}
         {{/bs-button}}
-        {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
-          Finish
-        {{/bs-button}}
+        {{#if finishButton}}
+          {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
+            Finish
+          {{/bs-button}}
+        {{/if}}
       {{/unless}}
     </div>
   </h1>
