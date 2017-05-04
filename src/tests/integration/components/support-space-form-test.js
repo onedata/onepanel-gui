@@ -115,10 +115,10 @@ describe('Integration | Component | support space form', function () {
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
         _selectedStorage=_selectedStorage
-        formValues=formValues
+        values=formValues
       }}
     `);
-
+    
     this.$('button[type=submit]').click();
   });
 });

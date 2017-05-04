@@ -55,9 +55,14 @@
   .form-control {
     padding-left: $padding-large-horizontal;
   }
+  .radio-inline {
+  padding-top: 0;
+}
 }
 .has-success label.control-label, 
-.has-error label.control-label {
+.has-error label.control-label,
+.has-success label.radio-inline,
+.has-error label.radio-inline {
   color: inherit;
 }
 label {

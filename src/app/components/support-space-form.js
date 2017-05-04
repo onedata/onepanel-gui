@@ -4,14 +4,15 @@
  * Does not provide or invoke backend operations itself - invokes ``submit`` action.
  *
  * @module components/support-space-form
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-import OneForm from 'onepanel-gui/components/one-form';
+import OneFormSimple from 'onepanel-gui/components/one-form-simple';
+import { validator, buildValidations } from 'ember-cp-validations';
 
 const {
   inject: { service },
@@ -24,8 +25,13 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const FORM_FIELDS = [
-  { name: 'token', type: 'text' },
-  // the size field is inserted manually because of MB/GB/TB radio buttons
+  { name: 'token', type: 'text', tip: 'Globally unique identifier assigned by onezone', example: 'MDAxNWxvY...' },
+  { name: 'size', type: 'number', example: '100'},
+  { name: 'sizeUnit', type: 'radio-group', nolabel: true, options: [
+    { value: 'mb', label: 'MB' },
+    { value: 'gb', label: 'GB' },
+    { value: 'tb', label: 'TB' },
+  ]}
 ];
 
 const MEGA = Math.pow(10, 6);
@@ -38,14 +44,38 @@ const UNITS = {
   tb: TERA,
 };
 
-export default OneForm.extend({
+const Validations = buildValidations({
+  'allFieldsValues.main.token': [
+    validator('presence', {
+      presence: true
+    }),
+  ],
+  'allFieldsValues.main.size': [
+    validator('presence', {
+      presence: true
+    }),
+    validator('number', {
+      allowString: true,
+      allowBlank: false
+    }),
+  ],
+  'allFieldsValues.main.sizeUnit': [
+    validator('presence', {
+      presence: true
+    }),
+  ]
+});
+
+export default OneFormSimple.extend(Validations, {
   classNames: 'support-space-form',
 
   i18n: service(),
   storageManager: service(),
   globalNotify: service(),
 
-  formFields: computed(() => FORM_FIELDS).readOnly(),
+  fields: computed(() => FORM_FIELDS).readOnly(),
+
+  submitButton: false,
 
   /**
    * @type ObjectPromiseProxy.Array.StorageDetails
@@ -53,31 +83,33 @@ export default OneForm.extend({
   allStoragesProxy: null,
 
   _selectedStorage: null,
-  formValues: Ember.Object.create({
+  values: Ember.Object.create({
     token: '',
     size: '',
     sizeUnit: 'mb',
   }),
 
   // TODO change to ember-cp-validations  
-  canSubmit: computed('_selectedStorage', function () {
+  canSubmit: computed('_selectedStorage', 'isValid', function () {
     let {
-      _selectedStorage
-    } = this.getProperties('_selectedStorage');
-    return _selectedStorage != null;
+      _selectedStorage,
+      isValid
+    } = this.getProperties('_selectedStorage', 'isValid');
+    return _selectedStorage != null && isValid;
   }),
 
   init() {
-    this._super(...arguments);
-    if (this.get('allStoragesProxy') == null) {
-      this._initStoragesProxy();
-    }
+    // labels for fields must be declared before OneFormSimple initialization
     let i18n = this.get('i18n');
     FORM_FIELDS.forEach(f => {
       if (!f.label) {
         f.label = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
       }
     });
+    this._super(...arguments);
+    if (this.get('allStoragesProxy') == null) {
+      this._initStoragesProxy();
+    }
   },
 
   _initStoragesProxy() {
@@ -119,10 +151,6 @@ export default OneForm.extend({
       });
 
       return submitting;
-    },
-    // TODO input changed should be some generic mixin method
-    inputChanged(field, value) {
-      this.get('formValues').set(field, value);
     },
     storageChanged(storage) {
       this.set('_selectedStorage', storage);

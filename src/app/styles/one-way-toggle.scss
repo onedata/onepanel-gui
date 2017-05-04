@@ -63,7 +63,7 @@ $toggle-size-base: 1.4em;
   }
 
   &.disabled .one-way-toggle-control {
-    opacity: 0.6;
+    opacity: $disabled-opacity;
   }
 
   .one-way-toggle-readonly-icon {

@@ -1,6 +1,6 @@
 {{!-- TODO i18n --}}
 
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+{{#bs-form submitOnEnter=false class=_formClasses as |form|}}
   {{#form.group}}
     <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
       Storage:
@@ -23,51 +23,11 @@
 
   {{one-form-fields
     bsForm=form
-    fields=formFields
+    fields=currentFields
     formValues=formValues
     inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
   }}
-
-  {{#form.group}}
-    {{one-form-field
-      inputId=(concat elementId (concat "-size"))
-      field=(hash
-        name="size"
-        type="number"
-        label=(t "components.supportSpaceForm.fields.size")
-      )
-      value=(get formValues "size")
-      disabled=disabled
-      inputChanged=(action "inputChanged")
-    }}
-    {{!-- TODO component for inline radios --}}
-    <div class={{layoutConfig.formSubmitColumns}}>
-      <label class="radio-inline">
-        {{one-way-radio (get formValues "sizeUnit")
-          id=(concat elementId (concat "-sizeUnit-mb"))
-          class="field-sizeUnit-mb"
-          option="mb"
-          update=(action "inputChanged" "sizeUnit")
-        }} MB
-      </label>
-      <label class="radio-inline">
-        {{one-way-radio (get formValues "sizeUnit")
-          id=(concat elementId (concat "-sizeUnit-gb"))
-          class="field-sizeUnit-gb"
-          option="gb"
-          update=(action "inputChanged" "sizeUnit")
-        }} GB
-      </label>
-      <label class="radio-inline">
-        {{one-way-radio (get formValues "sizeUnit")
-          id=(concat elementId (concat "-sizeUnit-tb"))
-          class="field-sizeUnit-tb"
-          option="tb"
-          update=(action "inputChanged" "sizeUnit")
-        }} TB
-      </label>
-    </div>
-  {{/form.group}}
 
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>

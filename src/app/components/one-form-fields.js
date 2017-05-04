@@ -22,7 +22,9 @@ const {
  * @property {boolean} [optional=undefined]
  * @property {*} [defaultValue=undefined]
  * @property {string} [label=undefined]
+ * @property {boolean} [nolabel=undefined] disable label for input
  * @property {string} [placeholder=undefined]
+ * @property {string} [example=undefined]
  * @property {string} [tip=undefined]
  * @property {number} [step=undefined] step in number inputs
  */

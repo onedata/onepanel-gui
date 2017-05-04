@@ -56,6 +56,8 @@ $main-content-hover-background: $color-one-white-gray;
 
 $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
 
+$disabled-opacity: 0.6;
+
 @import 'common';
 
 @import 'spin-spinner-extensions';
@@ -79,6 +81,7 @@ $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s lin
 @import 'one-list-wrapper';
 @import 'two-level-sidebar';
 @import 'one-way-toggle';
+@import 'one-way-radio-group';
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
 @import 'ember-power-select-config';
