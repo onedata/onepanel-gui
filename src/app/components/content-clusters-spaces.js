@@ -14,6 +14,7 @@ const {
   inject: { service },
   get,
   computed,
+  isBlank,
 } = Ember;
 
 export default Component.extend({
@@ -42,7 +43,7 @@ export default Component.extend({
     let {
       _supportSpaceOpened
     } = this.getProperties('_supportSpaceOpened');
-    return !_supportSpaceOpened && !this.get('spacesProxy.content');
+    return !_supportSpaceOpened && isBlank(this.get('spacesProxy.content'));
   }),
 
   init() {

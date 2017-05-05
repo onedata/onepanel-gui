@@ -24,12 +24,12 @@ $radio-dot-size: $radio-size-base * 0.5;
     position: absolute;
     z-index: -1;
 
-    &:focus+div {
+    &:focus + .one-way-radio-control {
       @include box-shadow($control-box-shadow-focus);
       border: 1px solid $input-border-focus;
     }
 
-    &:checked+div:before {
+    &:checked + .one-way-radio-control:before {
       display: block;
     }
   }

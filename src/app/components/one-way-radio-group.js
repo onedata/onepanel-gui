@@ -6,7 +6,7 @@ const { Component } = Ember;
 /**
  * Creates radio inputs group based one the one-toggle-radio component.
  *
- * @module components/one-way-radio-group.js
+ * @module components/one-way-radio-group
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

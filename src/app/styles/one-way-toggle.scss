@@ -20,16 +20,16 @@ $toggle-size-base: 1.4em;
     position: absolute;
     z-index: -1;
 
-    &:focus+div::before {
+    &:focus + div::before {
       @include box-shadow($control-box-shadow-focus);
       border: 1px solid $input-border-focus;
     }
 
-    &:checked+div {
+    &:checked + div {
       background-color: $brand-success;
     }
 
-    &:checked+div:before {
+    &:checked + div:before {
       margin-left: $toggle-size-base;
     }
   }

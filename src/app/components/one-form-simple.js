@@ -105,9 +105,7 @@ export default OneForm.extend({
    * @type {computed.boolean}
    */
   _hasOnlyStatic: computed('currentFields.@each.type', function () {
-    let currentFields = this.get('currentFields');
-    return currentFields.filter(f => f.type === 'static').length === 
-      currentFields.length;
+    return this.get('currentFields').every(f => f.type === 'static');
   }),
 
   /**

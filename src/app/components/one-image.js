@@ -24,11 +24,13 @@ export default Ember.Component.extend({
    * @type {string}
    */
   imagePath: null,
+
   /**
    * Text, that will be placed with the image
    * @type {string}
    */
   imageText: '',
+  
   /**
    * CSS class for text element. It should handle with positioning if neccessary.
    * @type {string}

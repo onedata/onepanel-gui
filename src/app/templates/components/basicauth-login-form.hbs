@@ -25,10 +25,10 @@
       {{#form.group class=(if areCredentialsInvalid "has-error")}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
-            {{one-icon icon="lock login-lock"}}
+            {{one-icon icon="lock"}}
           </div>
           {{one-way-password password
-            class="form-control"
+            class="form-control login-lock"
             update=(action (mut password))
             placeholder="Password"
             disabled=isDisabled

@@ -44,7 +44,7 @@ export default Ember.Component.extend({
   text: '',
 
   /**
-   * Path to and image file (placed between the description and the primary button)
+   * Path to an image file (placed between the description and the primary button)
    * @type {string}
    */
   imagePath: null,

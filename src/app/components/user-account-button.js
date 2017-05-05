@@ -57,8 +57,6 @@ export default Component.extend(ClickOutside, {
 
   actions: {
     toggleMenu() {
-      // prevent click from being catched by global popover handlers
-      event.stopPropagation();
       this.toggleProperty('menuOpen');
     },
     // TODO handle error if manage account cannot be displayed
