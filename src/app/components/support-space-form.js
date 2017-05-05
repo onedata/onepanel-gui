@@ -12,7 +12,8 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 import OneFormSimple from 'onepanel-gui/components/one-form-simple';
-import { validator, buildValidations } from 'ember-cp-validations';
+import { buildValidations } from 'ember-cp-validations';
+import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 const {
   inject: { service },
@@ -26,7 +27,7 @@ const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const FORM_FIELDS = [
   { name: 'token', type: 'text', tip: 'Globally unique identifier assigned by onezone', example: 'MDAxNWxvY...' },
-  { name: 'size', type: 'number', example: '100'},
+  { name: 'size', type: 'number', gt: 0, example: '100'},
   { name: 'sizeUnit', type: 'radio-group', nolabel: true, options: [
     { value: 'mb', label: 'MB' },
     { value: 'gb', label: 'GB' },
@@ -44,27 +45,14 @@ const UNITS = {
   tb: TERA,
 };
 
-const Validations = buildValidations({
-  'allFieldsValues.main.token': [
-    validator('presence', {
-      presence: true
-    }),
-  ],
-  'allFieldsValues.main.size': [
-    validator('presence', {
-      presence: true
-    }),
-    validator('number', {
-      allowString: true,
-      allowBlank: false
-    }),
-  ],
-  'allFieldsValues.main.sizeUnit': [
-    validator('presence', {
-      presence: true
-    }),
-  ]
-});
+const VALIDATIONS_PROTO = {};
+
+FORM_FIELDS.forEach(field =>
+  VALIDATIONS_PROTO[`allFieldsValues.main.${field.name}`] =
+      createFieldValidator(field)
+);
+
+const Validations = buildValidations(VALIDATIONS_PROTO);
 
 export default OneFormSimple.extend(Validations, {
   classNames: 'support-space-form',
