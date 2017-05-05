@@ -2,28 +2,8 @@
 
 {{#one-collapsible-list as |list|}}
   {{#each storages as |storage|}}
-    {{#list.item class="storage-item" as |listItem|}}
-    
-      {{#listItem.header toolbarWhenOpened=true}}
-        <span class="one-label">{{storage.name}}</span>
-      {{/listItem.header}}
-
-      {{#listItem.content}}
-        <table class="item-table">
-          <tr>
-            <td class="item-table-img-cell"></td>
-            <td class="item-table-content-cell">
-              <div class="row content-row">
-                <strong>Type:</strong> <span class="one-label">{{storage.type}}</span>
-              </div>
-              <div class="row content-row">
-                <strong>Mount point:</strong> <span class="one-label">{{storage.mountPoint}}</span>
-              </div>
-            </td>
-          </tr>
-        </table>
-      {{/listItem.content}}
-
+    {{#list.item as |listItem|}}
+      {{storage-item listItem=listItem storage=storage.content}}
     {{/list.item}}
   {{/each}}
 {{/one-collapsible-list}}
