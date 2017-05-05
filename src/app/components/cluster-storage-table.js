@@ -9,5 +9,10 @@ import Ember from 'ember';
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default Ember.Component.extend({
-    classNames: ['cluster-storage-table']
+  classNames: ['cluster-storage-table'],
+
+  /**
+   * @type {Array.ObjectProxy.Onepanel.StorageDetails}
+   */
+  storages: null,
 });

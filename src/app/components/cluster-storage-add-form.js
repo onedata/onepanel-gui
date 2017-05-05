@@ -13,12 +13,8 @@ import { validator, buildValidations } from 'ember-cp-validations';
 
 import stripObject from 'onepanel-gui/utils/strip-object';
 import OneForm from 'onepanel-gui/components/one-form';
-
+import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
-import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
-import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
-import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
-import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 
 const {
   computed,
@@ -26,24 +22,6 @@ const {
     service
   }
 } = Ember;
-
-const storageTypes = [{
-  id: 'ceph',
-  name: 'Ceph',
-  fields: CEPH_FIELDS
-}, {
-  id: 'posix',
-  name: 'POSIX',
-  fields: POSIX_FIELDS
-}, {
-  id: 's3',
-  name: 'S3',
-  fields: S3_FIELDS
-}, {
-  id: 'swift',
-  name: 'Swift',
-  fields: SWIFT_FIELDS
-}];
 
 function createValidations(storageTypes, genericFields) {
   let validations = {};

@@ -153,6 +153,13 @@ export default Ember.Service.extend({
 
   init() {
     this._super(...arguments);
+    if (this.get('mockInitializedCluster')) {
+      this.get('__storages').push({
+        type: 'posix',
+        name: 'Some storage',
+        mountPoint: '/mnt/st1',
+      });
+    }
   },
 
   progressMock: computed('serviceType', function () {

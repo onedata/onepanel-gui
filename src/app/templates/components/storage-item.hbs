@@ -1,0 +1,23 @@
+{{#listItem.header toolbarWhenOpened=true}}
+  {{one-icon class="item-icon" icon="provider"}}
+  <span class="one-label">{{storage.name}}</span>
+{{/listItem.header}}
+
+{{#listItem.content}}
+  <table class="item-table">
+    <tr>
+      <td class="item-table-img-cell"></td>
+      <td class="item-table-content-cell">
+        <div class="row content-row">
+          <strong>Type:</strong> {{storageType}}
+        </div>
+        {{#each storageProperties as |storageProperty|}}
+          <div class="row content-row">
+            <strong>{{t (concat translationPrefix storageProperty)}}:</strong> 
+            {{get storage storageProperty}}
+          </div>
+        {{/each}}
+      </td>
+    </tr>
+  </table>
+{{/listItem.content}}
