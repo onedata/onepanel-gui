@@ -36,7 +36,8 @@ export default Component.extend(ClickOutside, {
 
   menuItemClasses: computed('isActive', function () {
     let isActive = this.get('isActive'),
-      classes = 'one-list-item enabled clickable main-menu-item user-account-button-main';
+      classes =
+      'one-list-item enabled clickable main-menu-item user-account-button-main';
     if (isActive) {
       classes += ' active';
     }
@@ -69,7 +70,7 @@ export default Component.extend(ClickOutside, {
       let loggingOut = onepanelServer.request('onepanel', 'removeSession');
       loggingOut.then(() => window.location.reload());
       loggingOut.catch(error => {
-        this.get('globalNotify').error(`We are sorry, but logout failed: ${error}`);
+        this.get('globalNotify').backendError('logging out', error);
       });
       loggingOut.finally(() => this.set('menuOpen', false));
       return loggingOut;

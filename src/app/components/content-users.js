@@ -80,11 +80,8 @@ export default Component.extend({
       );
 
       // TODO i18n
-      changingPassword.catch(({ message, response }) => {
-        let description = response && response.body && response.body.description;
-        this.get('globalNotify').error(
-          `Failed changing password: ${description || message}`
-        );
+      changingPassword.catch(error => {
+        this.get('globalNotify').backendError('password change', error);
       });
 
       changingPassword.then(() => {

@@ -25,14 +25,23 @@ const {
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
-const FORM_FIELDS = [
-  { name: 'token', type: 'text', tip: 'Globally unique identifier assigned by onezone', example: 'MDAxNWxvY...' },
-  { name: 'size', type: 'number', gt: 0, example: '100'},
-  { name: 'sizeUnit', type: 'radio-group', nolabel: true, options: [
-    { value: 'mb', label: 'MB' },
-    { value: 'gb', label: 'GB' },
-    { value: 'tb', label: 'TB' },
-  ]}
+const FORM_FIELDS = [{
+    name: 'token',
+    type: 'text',
+    tip: 'Globally unique identifier assigned by onezone',
+    example: 'MDAxNWxvY...'
+  },
+  { name: 'size', type: 'number', gt: 0, example: '100' },
+  {
+    name: 'sizeUnit',
+    type: 'radio-group',
+    nolabel: true,
+    options: [
+      { value: 'mb', label: 'MB' },
+      { value: 'gb', label: 'GB' },
+      { value: 'tb', label: 'TB' },
+    ]
+  }
 ];
 
 const MEGA = Math.pow(10, 6);
@@ -49,7 +58,7 @@ const VALIDATIONS_PROTO = {};
 
 FORM_FIELDS.forEach(field =>
   VALIDATIONS_PROTO[`allFieldsValues.main.${field.name}`] =
-      createFieldValidator(field)
+  createFieldValidator(field)
 );
 
 const Validations = buildValidations(VALIDATIONS_PROTO);
@@ -135,7 +144,7 @@ export default OneFormSimple.extend(Validations, {
       });
 
       submitting.catch(error => {
-        this.get('globalNotify').error(`Supporting space failed: ${error}`);
+        this.get('globalNotify').backendError('space supporting', error);
       });
 
       return submitting;

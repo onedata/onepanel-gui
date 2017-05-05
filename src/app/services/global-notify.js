@@ -3,7 +3,8 @@ import Ember from 'ember';
 const {
   inject: {
     service
-  }
+  },
+  String: { htmlSafe },
 } = Ember;
 
 function aliasToShow(type) {
@@ -33,6 +34,24 @@ export default Ember.Service.extend({
   success: aliasToShow('success'),
   warning: aliasToShow('warning'),
   error: aliasToShow('error'),
+
+  // TODO i18n  
+  backendError(message, error) {
+    let reason = error && error.response && error.response.body &&
+      (error.response.body.description || error.response.body.error) ||
+      error;
+
+    let finalMessage =
+      `<p><strong>We are sorry, but ${message} failed!</strong></p>`;
+
+    if (reason) {
+      finalMessage += `<p><strong>The reason of failure:</strong><br>${reason}</p>`;
+    } else {
+      finalMessage += `<p>Unfortunately, error details are unavailable</p>`;
+    }
+
+    this.error(htmlSafe(finalMessage));
+  },
 
   /**
    * Main method for reporting some information to user
