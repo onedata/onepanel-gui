@@ -58,14 +58,14 @@ form {
   .input-group {
     .form-control {
       background-color: $input-bg-light;
-      border-color: $color-one-24;
+      border-color: $main-border-color;
       @include box-shadow(none);
     }
     // TODO disabled?
     .input-group-addon {
       background-color: $input-bg-light;
       .one-icon {
-        color: $color-one-gray-1;
+        color: $main-border-color;
       } // should be same as input box-shadow!
       @include box-shadow(none);
     }

@@ -3,10 +3,10 @@ $content-row-vertical-padding: $padding-base-vertical;
 $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height - $content-col-padding;
 
 .main-content {
-  color: $color-one-steel;
+  color: $main-text-color;
 
   .content-row {
-    border-bottom: 1px solid $main-content-border-color;
+    border-bottom: 1px solid $main-border-color;
     padding: $content-row-vertical-padding 0;
     letter-spacing: $letter-spacing-base;
 

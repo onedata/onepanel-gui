@@ -22,11 +22,11 @@
   &.bt tbody tr {
     &.active td:after {
       @include left-line(
-        $one-list-item-active-left-border-width solid $color-one-azure
+        $one-list-item-active-left-border-width solid $color-one-main
       );
     }
     &.active td {
-      background-color: $color-one-light-bluegray;
+      background-color: $color-one-gray-sand;
     }
     td {
       text-align: right;

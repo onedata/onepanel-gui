@@ -189,11 +189,11 @@ $onedata-logo-width: 150px;
     &.selected {
       >.item-header {
         color: $color-main-menu-fg-active;
-        background-color: $color-one-red;
+        background-color: $color-one-main;
         @include box-shadow(inset 0px 0px 10px rgba(0, 0, 0, 0.5));
       }
       &:hover {
-        background-color: darken($color-one-red, 10);
+        background-color: darken($color-one-main, 10);
       }
       &::before {
         display: none;
@@ -213,11 +213,11 @@ $onedata-logo-width: 150px;
   // style overrides for list item
   &.one-list-item {
     &::after {
-      @include top-line(1px solid $color-main-menu-separator)
+      @include top-line(0)
     }
     &:last-of-type {
       &::after {
-        @include bottom-line(1px solid $color-main-menu-separator)
+        @include bottom-line(0)
       }
     }
   }
