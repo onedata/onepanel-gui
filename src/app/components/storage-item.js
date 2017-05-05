@@ -61,7 +61,7 @@ export default Component.extend({
    */
   storageType: computed('storage.type', function () {
     let st = this.get('storage.type');
-    return _find(STORAGE_TYPES, s => s.id === st).name;
+    return st && _find(STORAGE_TYPES, s => s.id === st).name;
   }),
 
   /**
