@@ -5,9 +5,15 @@ $root-url: rootUrl();
 @import 'fonts';
 
 $letter-spacing-base: 0.07em;
-$control-box-shadow: inset 1px 1px 2px #eee;
-$control-box-shadow-focus: inset 0 1px 1px #eee, 0 0 8px rgba(47, 153, 252, 0.2);
+$control-box-shadow: inset 1px 1px 2px $color-one-semiwhite;
+$control-box-shadow-focus: inset 0 1px 1px $color-one-semiwhite, 0 0 8px rgba($color-one-blue-gray, 0.2);
 $control-focus-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+
+$color-main-menu-bg: $color-one-semiblack;
+$color-sidebar-background: $color-one-semiwhite;
+$color-sidebar-item-bg: $color-one-gray-sand;
+$color-sidebar-item-active-bg: darken($color-sidebar-item-bg, 3%);
+$color-one-list-item-separator: $main-border-color;
 
 @import 'bootstrap-config';
 @import 'bootstrap-addons';
@@ -25,23 +31,13 @@ $main-menu-width: 200px;
 $sidebar-menu-width: 250px;
 $sidebar-menu-width-lg: 325px;
 
-$color-overlay: $content-backdrop-bg;
-
 $zindex-layer-1-2-overlay: $zindex-modal-background;
 $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
 $zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
 
-// TODO: color not defined!
-$color-sidebar-background: #F2F4FA;
-// TODO
-$color-one-list-item-separator: darken($color-sidebar-background, 5);
-$color-one-list-item-hover-bg: darken($color-sidebar-background, 2);
-$color-main-menu-separator: rgba($color-one-list-item-separator, 0.05);
+$one-list-item-line-height: 64px;
 $one-list-item-separator: 1px solid;
 $one-list-item-padding: $padding-large-horizontal;
-
-$color-main-menu-bg-top: #06235C;
-$color-main-menu-bg-bottom: #4686CF;
 
 $one-list-item-active-left-border-width: 8px;
 
@@ -50,10 +46,11 @@ $onedata-brand-info-height: 30px;
 $onedata-logo-margin-top: 30px;
 $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $one-list-item-padding * 2 - $onedata-brand-info-height;
 
-$main-content-hover-background: $color-one-white-gray;
-$main-content-border-color: darken($color-one-white-gray, 8);
+$main-content-hover-background: $color-one-semiwhite;
 
 $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
+
+$disabled-opacity: 0.6;
 
 @import 'common';
 
@@ -78,6 +75,7 @@ $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s lin
 @import 'one-list-wrapper';
 @import 'two-level-sidebar';
 @import 'one-way-toggle';
+@import 'one-way-radio-group';
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
 @import 'ember-power-select-config';
@@ -91,6 +89,8 @@ $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s lin
 @import 'user-account-button';
 @import 'one-webui-popover';
 @import 'resource-load-error';
+@import 'one-image';
+@import 'one-label-tip';
 
 // TODO a mess
 

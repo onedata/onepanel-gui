@@ -29,26 +29,43 @@ $input-bg-light: $color-one-white;
 }
 
 form {
-  .has-error label.control-label .form-message {
-    color: $state-danger-text;
+  .form-message {
+    padding-top: $padding-small-vertical;
+    text-align: right;
+    font-size: $font-size-small;
   }
-  .has-success label.control-label .form-message {
+  .has-error {
+    .form-message {
+      color: $state-danger-text;
+    }
+  }
+  @media (max-width: $screen-xs-max) {
+    .form-control-feedback {
+      // 5px from hard-coded value of bootstrap label bottom margin
+      margin-top: $line-height-computed + 5px;
+    }
+  }
+  .has-success .form-message {
     color: $state-success-text;
   }
+}
+
+.form-control-static {
+  min-height: 1em;
 }
 
 .form-group-light {
   .input-group {
     .form-control {
       background-color: $input-bg-light;
-      border-color: $color-one-24;
+      border-color: $main-border-color;
       @include box-shadow(none);
     }
     // TODO disabled?
     .input-group-addon {
       background-color: $input-bg-light;
       .one-icon {
-        color: $color-one-gray-1;
+        color: $main-border-color;
       } // should be same as input box-shadow!
       @include box-shadow(none);
     }
@@ -112,14 +129,24 @@ form {
   }
 }
 
+.form-static .form-group {
+  margin-bottom: 0;
+}
+
 .icon-btn {
   border: 0;
   background-color: transparent;
   height: 1em;
   position: relative;
   padding: 0;
-  &:active {
-    @include box-shadow(none);
+  color: $btn-default-bg;
+  &:hover,
+  &:active,
+  &:hover:active,
+  &:focus {
+    color: $btn-default-bg;
+    background-color: transparent;
+    border: 0;
   }
   .one-icon {
     position: relative;
@@ -134,21 +161,8 @@ form {
     &:hover:active,
     &:focus {
       color: $btn-primary-bg;
-      background-color: transparent;
-      border: 0;
     }
   }
-}
-
-.radio-group-inline {
-  padding-left: $form-group-margin-bottom;
-  padding-right: $form-group-margin-bottom;
-  padding-top: ($font-size-base * $line-height-base + $input-height-base) / 2;
-  text-align: center;
-  white-space: nowrap;
-  @media (max-width: $screen-xs-max) {
-    padding-top: $form-group-margin-bottom;
-  } 
 }
 
 // FIXME use bootstrap variables
@@ -163,5 +177,11 @@ form {
     &:last-of-type {
       padding-right: 0;
     }
+  }
+}
+
+.text-xs-center {
+  @media (max-width: $screen-xs-max) {
+    text-align: center;
   }
 }

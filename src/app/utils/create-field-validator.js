@@ -17,7 +17,11 @@ export default function createFieldValidator(field) {
   if (field.type === 'number') {
     validations.push(validator('number', {
       allowString: true,
-      allowBlank: field.optional
+      allowBlank: field.optional,
+      gte: field.gte,
+      lte: field.lte,
+      gt: field.gt,
+      lt: field.lt,
     }));
   }
   return validations;

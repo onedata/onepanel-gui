@@ -1,81 +1,7 @@
 // Override original Bootstrap mixins
 
+$btn-active-boxshadow-size: 0 0 8px;
 @mixin button-variant($color, $background, $border) {
-  color: $color;
-  background-color: $background;
-  border-color: $border;
-
-  &:focus,
-  &.focus {
-    color: $color;
-    background-color: lighten($border, 30%);
-        border-color: $border;
-  }
-  &:hover {
-    color: $color;
-    background-color: lighten($border, 33%);
-        border-color: $border;
-  }
-  &:active,
-  &.active,
-  .open > &.dropdown-toggle {
-    color: $color;
-    background-color: lighten($border, 33%);
-        border-color: $border;
-
-    &:hover,
-    &:focus,
-    &.focus {
-      color: $color;
-      background-color: lighten($border, 27%);
-          border-color: $border;
-    }
-  }
-  &:active,
-  &.active,
-  .open > &.dropdown-toggle {
-    background-image: none;
-  }
-  &.disabled,
-  &[disabled],
-  fieldset[disabled] & {
-               color: $text-color;
-    background-color: #b6b6b6 !important;
-        border-color: #b6b6b6 !important;
-  }
-
-  .badge {
-    color: $background;
-    background-color: $color;
-  }
-}
-
-@mixin button-variant-info($color, $background, $border) {
-  &:focus,
-  &.focus {
-    background-color: lighten($border, 45%);
-  }
-  &:hover {
-    color: $color;
-    background-color: lighten($border, 50%);
-        border-color: $border;
-  }
-  &:active,
-  &.active,
-  .open > &.dropdown-toggle {
-    background-color: lighten($border, 50%);
-
-    &:hover,
-    &:focus,
-    &.focus {
-      background-color: lighten($border, 45%);
-    }
-  }
-}
-
-
-$btn-filled-active-boxshadow-size: 0 0 8px;
-@mixin button-variant-filled($color, $background, $border) {
   color: $color;
   background-color: $background;
   border-color: $border;
@@ -85,7 +11,7 @@ $btn-filled-active-boxshadow-size: 0 0 8px;
     color: $color;
     background-color: darken($background, 7%);
         border-color: darken($border, 7%);
-    @include box-shadow($btn-filled-active-boxshadow-size darken($border, 40%));
+    @include box-shadow($btn-active-boxshadow-size $color-one-semiblack);
   }
   &:hover {
     color: $color;
@@ -98,7 +24,7 @@ $btn-filled-active-boxshadow-size: 0 0 8px;
     color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 10%);
-    @include box-shadow($btn-filled-active-boxshadow-size darken($border, 40%));
+    @include box-shadow($btn-active-boxshadow-size $color-one-semiblack);
 
     &:hover,
     &:focus,

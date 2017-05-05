@@ -47,8 +47,22 @@
 @import "bootstrap/tables";
 
 @import "bootstrap/forms";
+.form-horizontal {
+  .control-label {
+    padding-right: $padding-large-horizontal;
+    font-family: 'Open Sans Semibold';
+  }
+  .form-control {
+    padding-left: $padding-large-horizontal;
+  }
+  .radio-inline {
+  padding-top: 0;
+}
+}
 .has-success label.control-label, 
-.has-error label.control-label {
+.has-error label.control-label,
+.has-success label.radio-inline,
+.has-error label.radio-inline {
   color: inherit;
 }
 label {
@@ -78,13 +92,13 @@ label {
   }
   // special style for btn-primary, as it is "filled"
   &.btn-primary { 
-    @include button-variant-filled($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
+    @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border); 
   }
   &.btn-info {
-    @include button-variant-info($btn-info-color, $btn-info-bg, $btn-info-border); 
+    @include button-variant($btn-info-color, $btn-info-bg, $btn-info-border); 
   }
   &.btn-danger {
-    @include button-variant-filled($btn-danger-color, $btn-danger-bg, $btn-danger-border); 
+    @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border); 
   }
   .one-icon {
     font-size: 1.7em;
@@ -104,6 +118,22 @@ label {
 // Components
 @import "bootstrap/component-animations";
 @import "bootstrap/dropdowns";
+.dropdown-menu {
+  padding: 0;
+  margin: 0;
+  letter-spacing: $letter-spacing-base;
+  font-family: "Open Sans Semibold";
+  font-size: 90%;
+  li {
+    border-bottom: 1px solid $main-border-color;
+    &:last-child {
+      border-bottom: 0;
+    }
+    a {
+      padding: $padding-base-vertical * 0.8;
+    }
+  }
+}
 @import "bootstrap/button-groups";
 @import "bootstrap/input-groups";
 

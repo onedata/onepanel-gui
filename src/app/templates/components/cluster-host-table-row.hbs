@@ -1,6 +1,6 @@
 <td class="row-header" {{action "headerClick" on="click"}}>
   {{one-icon class="item-icon" icon="node"}}
-  {{host.hostname}}
+  <span class="one-label">{{host.hostname}}</span>
 </td>
 <td class="text-center toggle-column" data-option="database">
   {{one-way-toggle

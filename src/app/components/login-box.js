@@ -50,7 +50,6 @@ export default Ember.Component.extend({
     },
 
     authenticationFailure() {
-      this.get('globalNotify').warning('Authentication failed!');
       this.set('isBusy', false);
     }
   }

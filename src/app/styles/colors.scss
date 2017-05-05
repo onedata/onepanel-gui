@@ -1,44 +1,20 @@
-// TODO: all these colors are deprecated
 $color-one-white: #fff;
-$color-one-gray-1: #b6b6b6;
-$color-one-dark-1: #3e3e3e;
-$color-one-steel: #555d72;
-$color-one-5: #75d19e;
-$color-one-6: #ee3f3f;
-$color-one-7: #3ea5f9;
-$color-one-8: #dfdfdf;
-$color-one-9: #f5f6fa;
-$color-one-10: #a7a7a7;
-$color-one-11: #b7bac1;
-$color-one-12: #e9e9ef;
-$color-one-13: #272727;
-$color-one-14: #272c44;
-$color-one-16: #20314e;
-$color-one-17: #eeeeee;
-$color-one-18: #3ea5f9;
-$color-one-19: #d8d8d8;
-$color-one-20: #432667;
-$color-one-21: #075876;
-$color-one-22: #f4f4f4;
-$color-one-23: #547bbc;
-$color-one-24: #e8e8e8;
-
-
-$color-one-red: #F25352;
-$color-one-azure: #2F99FC;
-$color-one-mint: #8BDCB1;
-$color-one-dark-gray: #6A6969;
-$color-one-graphite: #60687D;
+$color-one-semiwhite: #EFEFEF;
+$color-one-semiblack: #363636;
+$color-one-dark-gray: #555555;
+$color-one-red: #EE3F3F;
+$color-one-mint: #4BD187;
 $color-one-light-gray: #BEBEBE;
-$color-one-light-bluegray: #ECEDF5;
-$color-one-white-blue: #E2EFFF;
-$color-one-white-gray: #F6F6F8;
-$color-one-white: #fff;
+$color-one-blue-gray: #4A6089;
+$color-one-gray-sand: #E2E1E0;
 
-$color-one-default: $color-one-azure;
-$color-one-special: $color-one-mint;
-$color-one-info: $color-one-steel;
+$color-one-main: $color-one-red;
+$color-one-default: $color-one-blue-gray;
+$color-one-info: $color-one-blue-gray;
 $color-one-success: $color-one-mint;
+$color-one-danger: $color-one-red;
 // default bootstrap color
 $color-one-success-dark: #3c763d;
-$color-one-danger: $color-one-red;
+
+$main-text-color: $color-one-dark-gray;
+$main-border-color: darken($color-one-semiwhite, 8%);

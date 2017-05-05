@@ -3,7 +3,7 @@
   opacity: 0;
   max-height: 0;
   transition: $collapse-transition;
-  border-bottom: 1px solid $main-content-border-color;
+  border-bottom: 1px solid $main-border-color;
   &.opened {
     max-height: 500px;
     opacity: 1;

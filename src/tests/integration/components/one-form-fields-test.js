@@ -11,7 +11,7 @@ describe('Integration | Component | one form fields', function () {
 
   it('puts an "optional" label in optional inputs', function () {
     let fields = [
-      { name: 'one', type: 'text', placeholder: 'One field', optional: true }
+      { name: 'one', type: 'text', label: 'One field', optional: true }
     ];
 
     this.set('fields', fields);
@@ -27,6 +27,26 @@ describe('Integration | Component | one form fields', function () {
     let inputId = formId + '-one';
 
     expect(this.$(`label[for='${inputId}']`).text()).to.match(/optional/);
+  });
+
+  it('renders label tip if field should have one', function () {
+    let fields = [
+      { name: 'one', type: 'text', label: 'One field', tip: 'Field tip' }
+    ];
+
+    this.set('fields', fields);
+    this.set('formValues', Ember.Object.create({}));
+
+    this.render(hbs `
+    {{#bs-form as |form|}}
+      {{one-form-fields bsForm=form fields=fields}}
+    {{/bs-form}}
+    `);
+
+    let formId = this.$('form').attr('id');
+    let inputId = formId + '-one';
+
+    expect(this.$(`label[for='${inputId}'] .one-icon`).length).to.eq(1);
   });
 
   it('can render a text type input with given value', function () {

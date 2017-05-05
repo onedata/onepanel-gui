@@ -5,8 +5,7 @@
     {{#list.item class="storage-item" as |listItem|}}
     
       {{#listItem.header toolbarWhenOpened=true}}
-        {{one-icon class="item-icon" icon="provider"}}
-        {{storage.name}}
+        <span class="one-label">{{storage.name}}</span>
       {{/listItem.header}}
 
       {{#listItem.content}}
@@ -15,10 +14,10 @@
             <td class="item-table-img-cell"></td>
             <td class="item-table-content-cell">
               <div class="row content-row">
-                <strong>Type:</strong> {{storage.type}}
+                <strong>Type:</strong> <span class="one-label">{{storage.type}}</span>
               </div>
               <div class="row content-row">
-                <strong>Mount point:</strong> {{storage.mountPoint}}
+                <strong>Mount point:</strong> <span class="one-label">{{storage.mountPoint}}</span>
               </div>
             </td>
           </tr>

@@ -9,6 +9,11 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import config from 'ember-get-config';
+
+const { 
+  layoutConfig 
+} = config;
 
 /**
  * @typedef {Object} FieldType
@@ -16,12 +21,17 @@ import { invokeAction } from 'ember-invoke-action';
  * @property {string} type
  * @property {boolean} [optional=undefined]
  * @property {*} [defaultValue=undefined]
+ * @property {string} [label=undefined]
+ * @property {boolean} [nolabel=undefined] disable label for input
  * @property {string} [placeholder=undefined]
+ * @property {string} [example=undefined]
+ * @property {string} [tip=undefined]
  * @property {number} [step=undefined] step in number inputs
  */
 
 export default Ember.Component.extend({
   tagName: '',
+  layoutConfig,
 
   /**
    * @type {ember-bootstrap.Components.FormGroup}

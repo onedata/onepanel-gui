@@ -65,3 +65,7 @@
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
 }
+
+@mixin clickable() {
+  cursor: pointer;
+}

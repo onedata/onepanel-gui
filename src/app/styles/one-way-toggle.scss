@@ -3,14 +3,16 @@ $toggle-size-base: 1.4em;
 .one-way-toggle {
   position: relative;
   display: inline-block;
-  height: 1em;
-  margin-top: -.1em;
+  height: $toggle-size-base;
+  font-size: inherit;
 
   &.form-control {
     background-color: inherit;
     border: 0;
     box-shadow: none;
-    padding-top: 0;
+    // padding and width properties to override bootstrap form-control styles
+    padding: 0;
+    width: auto;
   }
 
   input[type="checkbox"] {
@@ -18,22 +20,22 @@ $toggle-size-base: 1.4em;
     position: absolute;
     z-index: -1;
 
-    &:focus+div::before {
+    &:focus + div::before {
       @include box-shadow($control-box-shadow-focus);
       border: 1px solid $input-border-focus;
     }
 
-    &:checked+div {
+    &:checked + div {
       background-color: $brand-success;
     }
 
-    &:checked+div:before {
+    &:checked + div:before {
       margin-left: $toggle-size-base;
     }
   }
 
-  div,
-  div:before {
+  .one-way-toggle-control,
+  .one-way-toggle-control:before {
     border: 1px solid $input-border;
     border-radius: $toggle-size-base / 2;
     box-sizing: border-box;
@@ -43,13 +45,14 @@ $toggle-size-base: 1.4em;
     @include box-shadow(none);
   }
 
-  div {
+  .one-way-toggle-control {
+    display: inline-block;
     background-color: $color-one-light-gray;
     transition: background-color 0.2s ease;
     width: $toggle-size-base * 2;
   }
 
-  div:before {
+  .one-way-toggle-control:before {
     display: block;
     background-color: $input-bg;
     position: relative;
@@ -59,23 +62,38 @@ $toggle-size-base: 1.4em;
     top: -1px;
   }
 
+  &.disabled .one-way-toggle-control {
+    opacity: $disabled-opacity;
+  }
+
+  .one-way-toggle-readonly-icon {
+    display: inline-block;
+    font-size: 120%;
+    vertical-align: top;
+  }
+
   div.clickable::before {
     cursor: pointer;
   }
 }
 
-.toggle-centered-form-row {
+.toggle-form-row {
   .control-label {
-    text-align: right;
-    padding-right: $padding-base-vertical / 2;
     padding-top: 0;
   }
-  .one-way-toggle {
-    text-align: left;
-    padding-left: $padding-base-vertical / 2;
-  }
+  
   & + .form-control-feedback {
     height: $toggle-size-base;
     line-height: $toggle-size-base;
+    
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .form-control {
+      padding-left: $padding-large-horizontal;
+    }
+    & + .form-control-feedback {
+      margin-top: 0;
+    }
   }
 }

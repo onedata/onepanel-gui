@@ -8,14 +8,14 @@
 }
 
 .side-menu .one-list-item.main-menu-item {
-  color: $color-one-graphite;
+  color: $main-text-color;
 
   &.active {
-    background-color: $color-one-white-blue;
+    background-color: $color-sidebar-item-active-bg;
   }
 
   &.disabled {
-    color: rgba($color-one-graphite, 0.5);
+    color: rgba($main-text-color, 0.5);
   }
 
   &::after {

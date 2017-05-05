@@ -36,8 +36,7 @@ export default Component.extend(ClickOutside, {
 
   menuItemClasses: computed('isActive', function () {
     let isActive = this.get('isActive'),
-      classes =
-      'user-account-button-main one-list-item item-header clickable';
+      classes = 'one-list-item enabled clickable main-menu-item user-account-button-main';
     if (isActive) {
       classes += ' active';
     }

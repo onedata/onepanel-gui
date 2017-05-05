@@ -38,7 +38,7 @@ $inline-alert-left-border-width: 60px;
     max-height: 0;
     transition: $collapse-transition;
     opacity: 0;
-    color: $color-one-steel;
+    color: $main-text-color;
     &.active {
       opacity: 1; 
       // Different heights for animation purposes

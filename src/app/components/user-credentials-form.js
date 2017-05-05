@@ -27,29 +27,29 @@ const {
 
 const USERNAME_FIELD = {
   name: 'username',
-  placeholder: 'Username',
+  label: 'Username',
   type: 'static',
 };
 
 const SECRET_PASSWORD_FIELD = {
   name: 'secretPassword',
-  placeholder: 'Password',
+  label: 'Password',
   type: 'static',
 };
 
 const CHANGE_PASSWORD_FIELDS = [{
     name: 'currentPassword',
-    placeholder: 'Current password',
+    label: 'Current password',
     type: 'password',
   },
   {
     name: 'newPassword',
-    placeholder: 'New password',
+    label: 'New password',
     type: 'password',
   },
   {
     name: 'newPasswordRetype',
-    placeholder: 'Retype new password',
+    label: 'Retype new password',
     type: 'password',
   },
 ];

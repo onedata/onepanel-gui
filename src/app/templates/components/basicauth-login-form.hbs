@@ -9,33 +9,33 @@
       formLayout="horizontal"
       as |form|
     }}
-      
-      {{#form.group}}
+      {{#form.group class=(if areCredentialsInvalid "has-error")}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
             {{one-icon icon="user"}}
           </div>
           {{one-way-input username
-            class="form-control"
+            class="form-control login-username"
             update=(action (mut username))
             placeholder="Username"
             disabled=isDisabled
           }}
         </div>
       {{/form.group}}
-      {{#form.group}}
+      {{#form.group class=(if areCredentialsInvalid "has-error")}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
             {{one-icon icon="lock"}}
           </div>
           {{one-way-password password
-            class="form-control"
+            class="form-control login-lock"
             update=(action (mut password))
             placeholder="Password"
             disabled=isDisabled
           }}
         </div>
       {{/form.group}}
+      <div class="login-error-message{{if areCredentialsInvalid " active" ""}}">Invalid username and/or password.</div>
       <div class="row text-center">
         {{#spin-button class="btn btn-primary"
           buttonStyle="expand-left"

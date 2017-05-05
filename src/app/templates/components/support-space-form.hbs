@@ -1,81 +1,44 @@
 {{!-- TODO i18n --}}
 
-{{#bs-form submitOnEnter=false as |form|}}
+{{#bs-form submitOnEnter=false class=_formClasses as |form|}}
   {{#form.group}}
-    {{#power-select
-      loadingMessage="Loading..."
-      options=allStoragesProxy
-      selected=_selectedStorage
-      onchange=(action "storageChanged")
-      searchEnabled=false
-      renderInPlace=true
-      placeholder="Select a storage..."
-      as |storage|
-    }}
-      {{storage.name}}
-    {{/power-select}}
+    <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
+      Storage:
+    </label>
+    <div class={{layoutConfig.formInputColumns}}>
+      {{#power-select
+        loadingMessage="Loading..."
+        options=allStoragesProxy
+        selected=_selectedStorage
+        onchange=(action "storageChanged")
+        searchEnabled=false
+        renderInPlace=true
+        placeholder="Select a storage..."
+        as |storage|
+      }}
+        {{storage.name}}
+      {{/power-select}}
+    </div>
   {{/form.group}}
 
   {{one-form-fields
     bsForm=form
-    fields=formFields
+    fields=currentFields
     formValues=formValues
     inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
   }}
 
-  {{#form.group}}
-    <div class="row">
-      <div class="col-xs-12 col-sm-4 col-md-6">
-        {{one-form-field
-          inputId=(concat elementId (concat "-size"))
-          field=(hash
-            name="size"
-            type="number"
-            placeholder=(t "components.supportSpaceForm.fields.size")
-          )
-          value=(get formValues "size")
-          disabled=disabled
-          inputChanged=(action "inputChanged")
-        }}
-      </div>
-      <div class="col-xs-12 col-sm-8  col-md-6 radio-group radio-group-inline">
-        {{!-- TODO component for inline radios --}}
-        <label class="radio-inline">
-          {{one-way-radio (get formValues "sizeUnit")
-            id=(concat elementId (concat "-sizeUnit-mb"))
-            class="field-sizeUnit-mb"
-            option="mb"
-            update=(action "inputChanged" "sizeUnit")
-          }} MB
-        </label>
-        <label class="radio-inline">
-          {{one-way-radio (get formValues "sizeUnit")
-            id=(concat elementId (concat "-sizeUnit-gb"))
-            class="field-sizeUnit-gb"
-            option="gb"
-            update=(action "inputChanged" "sizeUnit")
-          }} GB
-        </label>
-        <label class="radio-inline">
-          {{one-way-radio (get formValues "sizeUnit")
-            id=(concat elementId (concat "-sizeUnit-tb"))
-            class="field-sizeUnit-tb"
-            option="tb"
-            update=(action "inputChanged" "sizeUnit")
-          }} TB
-        </label>
-      </div>
+  <div class="row">
+    <div class={{layoutConfig.formSubmitColumns}}>
+      {{#spin-button
+        type="submit"
+        class="btn btn-primary"
+        action=(action "submit")
+        disabled=(not canSubmit)
+      }}
+        Support space
+      {{/spin-button}}
     </div>
-  {{/form.group}}
-
-  <div class="row text-center">
-    {{#spin-button
-      type="submit"
-      class="btn btn-primary"
-      action=(action "submit")
-      disabled=(not canSubmit)
-    }}
-      Support space
-    {{/spin-button}}
   </div>
 {{/bs-form}}

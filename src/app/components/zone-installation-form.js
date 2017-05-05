@@ -16,7 +16,7 @@ import { invokeAction } from 'ember-invoke-action';
 const FORM_FIELDS = [{
   name: 'name',
   type: 'text',
-  placeholder: 'Zone name'
+  label: 'Zone name'
 }];
 
 const Validations = buildValidations({

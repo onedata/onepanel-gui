@@ -1,6 +1,6 @@
 .one-list-item {
   position: relative;
-  line-height: 64px;
+  line-height: $one-list-item-line-height;
 
   &::after {
     @include top-line(1px solid $color-one-list-item-separator)
@@ -15,11 +15,11 @@
   &.active {
     &::before {
       @include left-line(
-        $one-list-item-active-left-border-width solid $color-one-azure
+        $one-list-item-active-left-border-width solid $color-one-main
       );
     }
     > .item-header {
-      color: $color-one-azure;
+      color: $color-one-main;
     }
   }
 
@@ -37,5 +37,5 @@
 }
 
 .one-list-item.clickable .item-header:hover {
-  background: $color-one-white-blue;
+  background: $color-one-semiwhite;
 }

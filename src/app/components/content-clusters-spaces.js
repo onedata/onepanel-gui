@@ -14,6 +14,7 @@ const {
   inject: { service },
   get,
   computed,
+  isBlank,
 } = Ember;
 
 export default Component.extend({
@@ -36,6 +37,13 @@ export default Component.extend({
 
   _supportSpaceButtonType: computed('_supportSpaceOpened', function () {
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
+  }),
+
+  _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened', function() {
+    let {
+      _supportSpaceOpened
+    } = this.getProperties('_supportSpaceOpened');
+    return !_supportSpaceOpened && isBlank(this.get('spacesProxy.content'));
   }),
 
   init() {

@@ -8,6 +8,11 @@
  */
 
 import Ember from 'ember';
+import config from 'ember-get-config';
+
+const { 
+  layoutConfig 
+} = config;
 
 const {
   Component,
@@ -15,6 +20,7 @@ const {
 } = Ember;
 
 export default Component.extend({
+  layoutConfig,
   tagName: '',
 
   fieldNameClass: computed('field.name', function () {

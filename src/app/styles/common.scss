@@ -1,4 +1,4 @@
-$table-item-border: 1px solid $main-content-border-color;
+$table-item-border: 1px solid $main-border-color;
 
 .vertical-align-middle {
   @include vertical-align-middle();
@@ -21,9 +21,12 @@ $table-item-border: 1px solid $main-content-border-color;
   padding: 0 !important;
 }
 
+.no-transition {
+  transition: none !important;
+}
+
 .clickable {
-  cursor: hand;
-  cursor: pointer;
+  @include clickable();
 }
 
 .content-backdrop.sidenav-backdrop {
