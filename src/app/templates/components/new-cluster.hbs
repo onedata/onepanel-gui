@@ -16,7 +16,7 @@
         changeClusterName=(action "changeClusterName")
       }}
     {{else if (eq w.step.id "provider-storage")}}
-      {{new-cluster-storage nextStep=(action "next")}}
+      {{manage-cluster-storages nextStep=(action "next")}}
     {{else if (eq w.step.id "summary")}}
       {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}
     {{/if}}

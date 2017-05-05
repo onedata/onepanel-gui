@@ -18,14 +18,17 @@
 </div>
 {{!-- TODO i18n --}}
 {{#if (eq onepanelServiceType "zone")}}
-  <div class="row">
+  <div class="row content-row">
+    {{!-- TODO i18n --}}
+    <h1>Zone options</h1>
     {{zone-installation-form
       zoneFormChanged=(action "zoneFormChanged")
       allValidChanged=(action "zoneOptionsValidChanged")
     }}
   </div>
 {{/if}}
-<div class="row">
+<div class="row content-row">
+  <h1>Cluster hosts</h1>
   {{#promise-proxy-container proxy=hostsProxy}}
     {{cluster-host-table
       hosts=hosts

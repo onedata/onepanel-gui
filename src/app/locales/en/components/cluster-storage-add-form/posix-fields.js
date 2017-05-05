@@ -1,5 +1,5 @@
 export default {
   mountPoint: 'Mount point',
-  timeout: 'Timeout',
+  timeout: 'Timeout [ms]',
   readonly: 'Read only',
 };
