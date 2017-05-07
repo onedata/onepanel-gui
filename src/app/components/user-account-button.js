@@ -22,11 +22,14 @@ const {
 
 export default Component.extend(ClickOutside, {
   classNames: ['user-account-button'],
+  classNameBindings: ['mobileMode:user-account-button-mobile'],
 
   onepanelServer: service(),
   globalNotify: service(),
 
   menuOpen: false,
+
+  mobileMode: false,
 
   username: alias('onepanelServer.username'),
 
@@ -34,13 +37,13 @@ export default Component.extend(ClickOutside, {
     return `#${this.get('elementId')} .user-toggle-icon`;
   }),
 
-  menuItemClasses: computed('isActive', function () {
-    let isActive = this.get('isActive'),
-      classes = 'one-list-item enabled clickable main-menu-item user-account-button-main';
-    if (isActive) {
-      classes += ' active';
+  menuItemClasses: computed('mobileMode', function () {
+    if (this.get('mobileMode')) {
+      return 'one-list-item main-menu-item clickable';
     }
-    return classes;
+    else {
+      return 'one-list-item enabled clickable main-menu-item user-account-button-main';
+    }
   }),
 
   _attachClickOutsideHandler: on('didInsertElement', function () {

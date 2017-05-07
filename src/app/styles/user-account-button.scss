@@ -18,6 +18,18 @@
     font-size: 1em;
     margin: 0;
   }
+  &.user-account-button-mobile {
+    .one-collapsible-list {
+      margin: 0;
+      .one-collapsible-list-item-header.main-menu-item {
+        padding: 0 $one-list-item-padding;
+        text-transform: none;
+      }
+      .one-collapsible-list-item-content {
+        border-bottom: 0;
+      }
+    }
+  }
 }
 
 // TODO maybe it should be moved to main menu styles

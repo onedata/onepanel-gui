@@ -1,12 +1,18 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-const { computed } = Ember;
+const { 
+  computed,
+  inject: {
+    service,
+  },
+} = Ember;
 
 /**
  * Item class of the collapsible list. For example of use case see 
  * components/one-collapsible-list.js.
  * 
  * If isCollapsible == false then item cannot be toggled.
+ * Item closes its content if eventsBus triggers closeEventName event
  *
  * @module components/one-collapsible-list-item.js
  * @author Michał Borzęcki
@@ -17,9 +23,13 @@ export default Ember.Component.extend({
   tagName: 'li',
   classNames: ['one-collapsible-list-item'],
   classNameBindings: ['isActive:active'],
+
+  eventsBus: service(),
+
   isCollapsible: true,
   accordionMode: false,
   activeElementId: '',
+  closeEventName: null,
 
   isActive: computed('activeElementId', 'accordionMode', function () {
     let {
@@ -31,6 +41,17 @@ export default Ember.Component.extend({
       return activeElementId === elementId;
     }
   }),
+
+  init() {
+    this._super();
+    const { 
+      closeEventName, 
+      eventsBus
+    } = this.getProperties('closeEventName', 'eventsBus');
+    if (closeEventName) {
+      eventsBus.on(closeEventName, () => this.set('isActive', false));
+    }
+  },
 
   actions: {
     toggle() {
