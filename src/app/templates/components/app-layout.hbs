@@ -1,10 +1,17 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
 {{#side-menu width="85%" class="disable-user-select"}}
+  <div class="side-menu-background"></div>
+  <div class="side-menu-header">
+    <div class="row row-onedata-logo full-width">
+      <div class="onedata-logo"></div>
+      {{brand-info}}
+    </div>
+  </div>
   {{user-account-button 
-    isActive=(eq mainMenu.currentItemId "users") 
-    manageAccount=(action "manageAccount")
-    mobileMode=true}}
+      isActive=(eq mainMenu.currentItemId "users") 
+      manageAccount=(action "manageAccount")
+      mobileMode=true}}
   {{main-menu
     appModel=appModel
     currentItemId=currentTabId

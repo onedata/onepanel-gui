@@ -19,6 +19,17 @@
     margin: 0;
   }
   &.user-account-button-mobile {
+    .user-account-button {
+      // selector to the user-menu main item
+      & > .one-collapsible-list-item-header {
+        color: $color-sidebar-background;
+      }
+      &.active,
+      & > .one-collapsible-list-item-header:hover,
+      & > .one-collapsible-list-item-header.active  {
+        background-color: transparent;
+      }
+    }
     .one-collapsible-list {
       margin: 0;
       .one-collapsible-list-item-header.main-menu-item {
