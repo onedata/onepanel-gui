@@ -26,8 +26,15 @@ export default Ember.Component.extend({
   sidebar: service(),
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  eventsBus: service(),
 
   model: null,
+
+  /**
+   * Should sidebar:select event be triggered after primary item selection?
+   * @type {boolean}
+   */
+  triggerEventOnPrimaryItemSelection: false,
 
   /**
    * Name of oneicon that should be displayed for each first-level element
@@ -53,8 +60,13 @@ export default Ember.Component.extend({
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');
-
+      if (this.get('triggerEventOnPrimaryItemSelection')) {
+        this.get('eventsBus').trigger('sidebar:select');
+      }
       return invokeAction(this, 'changeResourceId', resourceType, itemId);
+    },
+    sidebarSecondaryItemSelected() {
+      this.get('eventsBus').trigger('sidebar:select');
     }
   },
 });
