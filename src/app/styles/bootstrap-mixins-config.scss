@@ -34,4 +34,19 @@ $btn-active-boxshadow-size: 0 0 8px;
           border-color: darken($border, 7%);
     }
   }
+
+  &[disabled] {
+    &,
+    &:focus,
+    &.focus,
+    &:hover,
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle {
+      background-color: $color-one-light-gray;
+      border-color: $color-one-light-gray;
+      color: $color-one-white;
+      @include box-shadow(none);
+    }
+  }
 }
