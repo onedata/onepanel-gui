@@ -217,16 +217,16 @@ $btn-border-radius-small:        $border-radius-small;
 
 //** `<input>` background color
 $input-bg:                       #fff !default;
-$input-bg:                       #f9f9f9;
+$input-bg:                       darken($color-one-white, 2%);
 //** `<input disabled>` background color
 $input-bg-disabled:              $gray-lighter !default;
-$input-bg-disabled:              darken($input-bg, 20%);
+$input-bg-disabled:              darken($color-one-white, 2%);
 
 //** Text color for `<input>`s
 $input-color:                    $gray !default;
 //** `<input>` border color
 $input-border:                   #ccc !default;
-$input-border:                   #bebebe;
+$input-border:                   $main-border-color;
 
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
