@@ -135,7 +135,7 @@ export default OneFormSimple.extend(Validations, {
 
       size = size * UNITS[sizeUnit];
 
-      let storageId = this.get('_selectedStorage.name');
+      let storageId = this.get('_selectedStorage.id');
 
       let submitting = invokeAction(this, 'submitSupportSpace', {
         token,
