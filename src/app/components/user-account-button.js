@@ -23,6 +23,7 @@ const {
 export default Component.extend(ClickOutside, {
   classNames: ['user-account-button'],
 
+  session: service(),
   onepanelServer: service(),
   globalNotify: service(),
 
@@ -66,8 +67,8 @@ export default Component.extend(ClickOutside, {
       this.set('menuOpen', false);
     },
     logout() {
-      let onepanelServer = this.get('onepanelServer');
-      let loggingOut = onepanelServer.request('onepanel', 'removeSession');
+      let session = this.get('session');
+      let loggingOut = session.invalidate();
       loggingOut.then(() => window.location.reload());
       loggingOut.catch(error => {
         this.get('globalNotify').backendError('logging out', error);

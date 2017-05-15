@@ -27,6 +27,11 @@ module.exports = function (environment) {
       formToggleLabelColumns: 'col-xs-6 col-sm-5',
       formToggleInputColumns: 'col-xs-6 col-sm-7',
     },
+    'ember-simple-auth': {
+      authenticationRoute: 'login',
+      routeAfterAuthentication: 'onedata',
+      routeIfAlreadyAuthenticated: 'onedata',
+    },
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created

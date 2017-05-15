@@ -199,12 +199,16 @@ export default Service.extend({
       gettingConfiguration.then(({ data }) => resolve(!!data));
 
       gettingConfiguration.catch(error => {
-        let statusCode = error.response.statusCode;
-        if (statusCode === 404) {
-          // no configuration found - user didn't started the deployment
-          resolve(false);
-        } else {
+        if (error == null || error.response == null) {
           reject(error);
+        } else {
+          let statusCode = error.response.statusCode;
+          if (statusCode === 404) {
+            // no configuration found - user didn't started the deployment
+            resolve(false);
+          } else {
+            reject(error);
+          }
         }
       });
     });
@@ -225,12 +229,16 @@ export default Service.extend({
         resolve(!!providerDetails);
       });
       gettingProvider.catch(error => {
-        let statusCode = error.response.statusCode;
-        if (statusCode === 404) {
-          // not registered yet, maybe not deployed yet
-          resolve(false);
-        } else {
+        if (error == null || error.response == null) {
           reject(error);
+        } else {
+          let statusCode = error.response.statusCode;
+          if (statusCode === 404) {
+            // not registered yet, maybe not deployed yet
+            resolve(false);
+          } else {
+            reject(error);
+          }
         }
       });
     });

@@ -13,9 +13,6 @@ const {
   inject: {
     service
   },
-  computed: {
-    readOnly
-  }
 } = Ember;
 
 // TODO: fake session, do it better with ember session
@@ -26,17 +23,7 @@ export default Ember.Component.extend({
   globalNotify: service(),
   onepanelServer: service(),
 
-  authLoadingPromise: readOnly('onepanelServer.sessionValidator.promise'),
-
-  isLoading: readOnly('authLoadingPromise.isPending'),
   isBusy: false,
-
-  init() {
-    this._super(...arguments);
-    let authLoading = this.get('authLoadingPromise');
-    authLoading.then(() => this.send('authenticationSuccess'));
-    authLoading.catch(() => this.send('authenticationFailure'));
-  },
 
   actions: {
     authenticationStarted() {
