@@ -44,7 +44,7 @@ export default Ember.Component.extend({
     },
 
     authenticationSuccess() {
-      this.get('globalNotify').success('Authentication succeeded!');
+      this.get('globalNotify').info('Authentication succeeded!');
       this.sendAction('authenticationSuccess');
       this.set('isBusy', false);
     },

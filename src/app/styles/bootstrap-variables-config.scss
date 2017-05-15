@@ -549,11 +549,16 @@ $jumbotron-heading-font-size:    ceil(($font-size-base * 4.5)) !default;
 $state-success-text:             #3c763d !default;
 $state-success-text:             $color-one-success;
 $state-success-bg:               #dff0d8 !default;
+$state-success-bg:               lighten($color-one-success, 40%);
 $state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-success-border:           darken($color-one-success, 10%);
 
 $state-info-text:                #31708f !default;
+$state-info-text:                $color-one-info;
 $state-info-bg:                  #d9edf7 !default;
+$state-info-bg:                  lighten($color-one-info, 50%);
 $state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
+$state-info-border:              lighten($color-one-info, 10%);
 
 $state-warning-text:             #8a6d3b !default;
 $state-warning-bg:               #fcf8e3 !default;
@@ -684,7 +689,7 @@ $alert-link-font-weight:      bold !default;
 
 $alert-success-bg:            $state-success-bg !default;
 $alert-success-text:          $state-success-text !default;
-$alert-success-text:          $color-one-success-dark;
+$alert-success-text:          darken($color-one-success, 15%);
 $alert-success-border:        $state-success-border !default;
 
 $alert-info-bg:               $state-info-bg !default;
