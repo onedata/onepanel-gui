@@ -18,7 +18,14 @@ module.exports = function (environment) {
       }
     },
     onedataTabs: [
-      'clusters'
+      { id: 'clusters', icon: 'menu-clusters' },
+      { id: 'providers', icon: 'provider' },
+      { id: 'data', icon: 'folder' },
+      { id: 'promises', icon: 'star' },
+      { id: 'spaces', icon: 'space' },
+      { id: 'groups', icon: 'groups' },
+      { id: 'shares', icon: 'share' },
+      { id: 'tokens', icon: 'tokens' },
     ],
     layoutConfig: {
       formLabelColumns: 'col-xs-12 col-sm-5',
