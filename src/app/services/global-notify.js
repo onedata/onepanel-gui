@@ -5,6 +5,7 @@ const {
     service
   },
   String: { htmlSafe },
+  Handlebars: { Utils: { escapeExpression } }
 } = Ember;
 
 function aliasToShow(type) {
@@ -40,6 +41,8 @@ export default Ember.Service.extend({
     let reason = error && error.response && error.response.body &&
       (error.response.body.description || error.response.body.error) ||
       error;
+
+    reason = escapeExpression(reason);
 
     let finalMessage =
       `<p><strong>We are sorry, but ${message} failed!</strong></p>`;
