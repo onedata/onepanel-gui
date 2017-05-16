@@ -15,6 +15,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
+import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import _object from 'lodash/object';
 import _find from 'lodash/find';
 
@@ -37,7 +38,7 @@ const MOCK_USERNAME = 'mock_admin';
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(RequestErrorHandler, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),
@@ -71,6 +72,12 @@ export default Ember.Service.extend({
       resolve();
     });
   },
+  
+    destroyClient() {
+    this.setProperties({
+      isInitialized: false,
+    });
+  },
 
   /// APIs provided by onepanel client library
 
@@ -88,7 +95,7 @@ export default Ember.Service.extend({
     let cookies = this.get('cookies');
 
     // TODO protect property read
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
       console.debug(
         `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
       );
@@ -137,6 +144,10 @@ export default Ember.Service.extend({
 
       resolve();
     });
+    
+    promise.catch(error => this.handleRequestError(error));
+    
+    return promise;
   },
 
   getServiceType() {

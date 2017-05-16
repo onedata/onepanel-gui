@@ -13,17 +13,23 @@ const {
   inject: {
     service
   },
+  computed: { alias },
 } = Ember;
-
-// TODO: fake session, do it better with ember session
 
 export default Ember.Component.extend({
   classNames: ['login-box'],
 
   globalNotify: service(),
   onepanelServer: service(),
+  session: service(),
 
   isBusy: false,
+
+
+  /**
+   * True, if previous session has expired
+   */
+  sessionHasExpired: alias('session.data.hasExpired'),
 
   actions: {
     authenticationStarted() {
@@ -32,7 +38,6 @@ export default Ember.Component.extend({
 
     authenticationSuccess() {
       this.get('globalNotify').success('Authentication succeeded!');
-      this.sendAction('authenticationSuccess');
       this.set('isBusy', false);
     },
 

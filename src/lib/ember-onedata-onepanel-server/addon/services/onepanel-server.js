@@ -2,6 +2,7 @@ import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -23,7 +24,7 @@ const {
  */
 const CUSTOM_REQUESTS = {};
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(RequestErrorHandler, {
   /**
    * An Onepanel API Client that is used for making requests.
    * 
@@ -75,7 +76,7 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
       let callback = (error, data, response) => {
         let taskId = getTaskId(response);
         let task;
@@ -99,6 +100,10 @@ export default Ember.Service.extend({
         this.get('_' + api + 'Api')[method](...params, callback);
       }
     });
+
+    promise.catch(error => this.handleRequestError(error));
+    
+    return promise;
   },
 
   /**
@@ -154,6 +159,13 @@ export default Ember.Service.extend({
         resolve({ serviceType });
       });
       gettingType.catch(reject);
+    });
+  },
+  
+  destroyClient() {
+    this.setProperties({
+      client: null,
+      serviceType: null,
     });
   },
 

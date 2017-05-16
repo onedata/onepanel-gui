@@ -31,7 +31,7 @@ function aliasToShow(type) {
 export default Ember.Service.extend({
   notify: service(),
   alert: service(),
-
+  
   info: aliasToShow('info'),
   success: aliasToShow('success'),
   warning: aliasToShow('warning'),

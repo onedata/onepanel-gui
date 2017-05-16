@@ -1,4 +1,4 @@
-.login-box {
+.login-box {  
   .col-user-profile-icon {
     height: 130px;
     margin-bottom: 10px;
@@ -20,4 +20,17 @@
   .additional-bottom-margin {
     margin-bottom: 25px;
   }
+
+  .login-box-error-message {
+    margin-top: 15px;
+    margin-bottom: -10px;
+    max-height: 0;
+    opacity: 0;
+    transition: $collapse-transition;
+    &.active {
+      max-height: 3em;
+      opacity: 1;
+    }
+  }
+
 }

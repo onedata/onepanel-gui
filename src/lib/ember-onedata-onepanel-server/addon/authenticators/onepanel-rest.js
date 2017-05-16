@@ -3,6 +3,7 @@ import Ember from 'ember';
 
 const {
   inject: { service },
+  RSVP: { Promise },
 } = Ember;
 
 export default BaseAuthenticator.extend({
@@ -17,6 +18,17 @@ export default BaseAuthenticator.extend({
   },
 
   invalidate() {
-    return this.get('onepanelServer').request('onepanel', 'removeSession');
+    return new Promise((resolve, reject) => {
+      let removingSession = this.get('onepanelServer').request('onepanel', 'removeSession');
+      removingSession.then(resolve);
+      removingSession.catch(error => {
+        if (error && error.response && error.response.statusCode === 401) {
+          resolve();
+        } else {
+          reject(error);
+        }
+      });
+    });
+    
   }
 });
