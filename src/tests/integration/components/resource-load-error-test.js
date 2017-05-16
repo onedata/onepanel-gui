@@ -24,4 +24,25 @@ describe('Integration | Component | resource load error', function () {
     this.render(hbs `{{resource-load-error message=message}}`);
     expect(this.$().text()).to.match(new RegExp(message));
   });
+
+  it('displays error string if an error is plain string', function () {
+    let reason = 'some reason';
+    this.set('reason', reason);
+    this.render(hbs `{{resource-load-error reason=reason}}`);
+    expect(this.$().text()).to.match(new RegExp(reason));
+  });
+
+  it('gets description of error when it\'s a response error type ', function () {
+    let description = 'some description';
+    let reason = {
+      response: {
+        body: {
+          description
+        }
+      }
+    };
+    this.set('reason', reason);
+    this.render(hbs `{{resource-load-error reason=reason}}`);
+    expect(this.$().text()).to.match(new RegExp(description));
+  });
 });

@@ -10,8 +10,11 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
+import getErrorDetails from 'ember-onedata-onepanel-server/utils/get-error-description';
+
 const {
   Component,
+  computed,
 } = Ember;
 
 export default Component.extend({
@@ -23,6 +26,14 @@ export default Component.extend({
    * @type {function|undefined}
    */
   onClose: undefined,
+
+  /**
+   * Displayed error details generated from reason error object
+   * @type {string}
+   */
+  _reasonDetails: computed('reason', function () {
+    return getErrorDetails(this.get('reason'));
+  }),
 
   init() {
     this._super(...arguments);

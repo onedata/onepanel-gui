@@ -85,11 +85,26 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
+    let cookies = this.get('cookies');
+
     // TODO protect property read
     return new Promise((resolve, reject) => {
       console.debug(
         `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
       );
+
+      if (!cookies.read('fakeLoginFlag')) {
+        reject({
+          response: {
+            statusCode: 401,
+            body: {
+              error: 'Unauthorized',
+              description: 'User not authorized',
+            }
+          }
+        });
+      }
+
       let handler = this.get(`_req_${api}_${method}`);
       if (handler) {
         if (handler.success) {

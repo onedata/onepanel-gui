@@ -1,11 +1,12 @@
 import Ember from 'ember';
 
+import getErrorDetails from 'ember-onedata-onepanel-server/utils/get-error-description';
+
 const {
   inject: {
     service
   },
   String: { htmlSafe },
-  Handlebars: { Utils: { escapeExpression } }
 } = Ember;
 
 function aliasToShow(type) {
@@ -38,11 +39,7 @@ export default Ember.Service.extend({
 
   // TODO i18n  
   backendError(message, error) {
-    let reason = error && error.response && error.response.body &&
-      (error.response.body.description || error.response.body.error) ||
-      error;
-
-    reason = escapeExpression(reason);
+    let reason = getErrorDetails(error);
 
     let finalMessage =
       `<p><strong>We are sorry, but ${message} failed!</strong></p>`;
