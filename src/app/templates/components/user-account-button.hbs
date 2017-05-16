@@ -29,15 +29,15 @@
 {{else}}
   <div class={{concat menuItemClasses (if isActive " active" "")}} {{action 'toggleMenu' bubbles=false}}>
     <div class="item-header">
-    {{one-icon
-      class="user-profile-icon item-icon"
-      icon="user-profile"
-    }}
-    <span class="one-label">{{username}}</span>
-    {{one-icon
-      class="user-toggle-icon"
-      icon=(if menuOpen "arrow-down" "arrow-up")
-    }}
+      {{one-icon
+        class="user-profile-icon item-icon"
+        icon="user-profile"
+      }}
+      <span class="one-label">{{username}}</span>
+      {{one-icon
+        class="user-toggle-icon"
+        icon=(if menuOpen "arrow-down" "arrow-up")
+      }}
     </div>
   </div>
 
