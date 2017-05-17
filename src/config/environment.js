@@ -19,6 +19,7 @@ module.exports = function (environment) {
     },
     onedataTabs: [
       { id: 'clusters', icon: 'menu-clusters' },
+      // features below are not available yet
       // { id: 'providers', icon: 'provider' },
       // { id: 'data', icon: 'folder' },
       // { id: 'promises', icon: 'star' },
