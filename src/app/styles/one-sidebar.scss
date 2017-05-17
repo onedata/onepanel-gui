@@ -6,6 +6,9 @@
       line-height: $onedata-logo-height;
       font-family: 'Open Sans Semibold';
     }
+    @media (max-width: $screen-xs-max) {
+      display: none;
+    }
   }
   .row-body {
     .search-bar-item {
