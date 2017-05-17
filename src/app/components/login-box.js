@@ -25,7 +25,6 @@ export default Ember.Component.extend({
 
   isBusy: false,
 
-
   /**
    * True, if previous session has expired
    */
@@ -37,7 +36,7 @@ export default Ember.Component.extend({
     },
 
     authenticationSuccess() {
-      this.get('globalNotify').success('Authentication succeeded!');
+      this.get('globalNotify').info('Authentication succeeded!');
       this.set('isBusy', false);
     },
 

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import { invokeAction, invoke } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -16,6 +16,11 @@ const {
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
+const MOBILE_APPLAYOUT_STATE = {
+  CONTENT: 1,
+  SIDEBAR: 2,
+};
+
 /**
  * Makes layout for whole application in authorized mode.
  *
@@ -27,7 +32,7 @@ const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
  * - changeTab(itemId: string) - when a content route should be changed
  *
  * @module components/app-layout
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -42,7 +47,8 @@ export default Ember.Component.extend({
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.oneWay('mainMenu.currentItemId'),
   sidenavTabId: null,
-  showMobileSidebar: false,
+  mobileAppLayoutState: MOBILE_APPLAYOUT_STATE.SIDEBAR,
+  showMobileSidebar: computed.equal('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.SIDEBAR),
 
   sidenavContentComponent: computed('sidenavTabId', function () {
     let sidenavTabId = this.get('sidenavTabId');
@@ -97,16 +103,20 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.get('eventsBus').on('one-sidenav:open', (selector) => {
+    const eventsBus = this.get('eventsBus');
+    eventsBus.on('one-sidenav:open', (selector) => {
       if (selector === '#sidenav-sidebar') {
         this.set('sidenavSidebarOpen', true);
       }
     });
-    this.get('eventsBus').on('one-sidenav:close', (selector) => {
+    eventsBus.on('one-sidenav:close', (selector) => {
       if (selector === '#sidenav-sidebar') {
         this.set('sidenavSidebarOpen', false);
         this.set('sidenavTabId', null);
       }
+    });
+    eventsBus.on('sidebar:select', () => {
+      this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.CONTENT);
     });
   },
 
@@ -144,12 +154,14 @@ export default Ember.Component.extend({
       let sideMenu = this.get('sideMenu');
       sideMenu.close();
       this.set('sidenavTabId', null);
+      this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.SIDEBAR);
       return invokeAction(this, 'changeTab', itemId);
     },
     showMobileSidebar() {
-      return this.set('showMobileSidebar', true);
+      return this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.SIDEBAR);
     },
     manageAccount() {
+      invoke(this, 'mobileMenuItemChanged', 'users');
       return invokeAction(this, 'manageAccount');
     },
     changeResourceId() {

@@ -1,6 +1,17 @@
 {{!-- Bootstrap layout for signed-in user --}}
 
 {{#side-menu width="85%" class="disable-user-select"}}
+  <div class="side-menu-background"></div>
+  <div class="side-menu-header">
+    <div class="row row-onedata-logo full-width">
+      <div class="onedata-logo"></div>
+      {{brand-info}}
+    </div>
+  </div>
+  {{user-account-button 
+    isActive=(eq mainMenu.currentItemId "users") 
+    manageAccount=(action "manageAccount")
+    mobileMode=true}}
   {{main-menu
     appModel=appModel
     currentItemId=currentTabId
@@ -39,12 +50,16 @@
   <div class="row row-mobile-menu visible-xs-block visible-sm-block disable-user-select">
     <div class="pull-left">
       {{#side-menu-toggle}}
-        <button type="button" class="navbar-toggle">
+        <button type="button" class="navbar-toggle{{unless showMobileSidebar " hidden-xs"}}">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
       {{/side-menu-toggle}}
+      <button {{action 'showMobileSidebar'}} type="button" 
+        class="navbar-toggle toggle-back hidden-sm{{if showMobileSidebar " hidden-xs"}}">
+        {{one-icon icon="arrow-right"}}
+      </button>
     </div>
     <div class="pull-left">
       <div class="tab-name" {{action "showMobileSidebar"}}>

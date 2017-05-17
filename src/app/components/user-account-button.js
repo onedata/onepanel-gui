@@ -22,6 +22,7 @@ const {
 
 export default Component.extend(ClickOutside, {
   classNames: ['user-account-button'],
+  classNameBindings: ['mobileMode:user-account-button-mobile'],
 
   session: service(),
   onepanelServer: service(),
@@ -29,20 +30,20 @@ export default Component.extend(ClickOutside, {
 
   menuOpen: false,
 
+  mobileMode: false,
+
   username: alias('onepanelServer.username'),
 
   menuTriggerSelector: computed(function () {
     return `#${this.get('elementId')} .user-toggle-icon`;
   }),
 
-  menuItemClasses: computed('isActive', function () {
-    let isActive = this.get('isActive'),
-      classes =
-      'one-list-item enabled clickable main-menu-item user-account-button-main';
-    if (isActive) {
-      classes += ' active';
+  menuItemClasses: computed('mobileMode', function () {
+    if (this.get('mobileMode')) {
+      return 'one-list-item main-menu-item clickable';
+    } else {
+      return 'one-list-item enabled clickable main-menu-item user-account-button-main';
     }
-    return classes;
   }),
 
   _attachClickOutsideHandler: on('didInsertElement', function () {

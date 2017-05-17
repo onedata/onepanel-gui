@@ -23,6 +23,18 @@ $onedata-logo-width: 150px;
   margin-right: auto;
 }
 
+.brand-info {
+  margin-left: auto;
+  margin-right: auto;
+  height: $onedata-brand-info-height;
+  width: $onedata-logo-width;
+  line-height: $onedata-brand-info-height;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-family: "Open Sans Semibold";
+  color: $color-main-menu-fg-default;
+}
+
 // needs: $mobile-top-height
 // needs: $main-menu-width
 .app-layout {
@@ -31,18 +43,11 @@ $onedata-logo-width: 150px;
   .app-grid {
     position: relative;
     padding-left: 0;
-  }
-  .app-grid {
     @media (min-width: $screen-md-min) {
       padding-left: $main-menu-width + $sidebar-menu-width;
     }
     @media (min-width: $screen-lg-min) {
       padding-left: $main-menu-width + $sidebar-menu-width-lg;
-    }
-  }
-  @media (max-width: $screen-sm-max) {
-    .app-grid {
-      padding-top: $mobile-top-height;
     }
   }
   .row-mobile-menu {
@@ -60,7 +65,17 @@ $onedata-logo-width: 150px;
       width: auto;
     }
     .navbar-toggle {
+      width: 40px;
       margin: 16px;
+      &.toggle-back {
+        transform: rotateY(180deg);
+        span {
+          position: relative;
+          top: -0.2em;
+          right: 0.2em;
+          font-size: 2.2em;
+        }
+      }
       .icon-bar {
         background-color: $color-one-white;
         border-radius: 0;
@@ -74,6 +89,56 @@ $onedata-logo-width: 150px;
       margin-right: 10px;
     }
   }
+  .side-menu {
+    background-color: $color-sidebar-background;
+
+    // override side-menu default style
+    ul > li {
+      line-height: 64px;
+    }
+
+    .side-menu-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: $sidemenu-header-height + $one-list-item-line-height;
+      z-index: -1;
+      background-image: url($root-url + 'assets/images/main-background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position-x: center;
+    }
+    .side-menu-header {
+      height: $sidemenu-header-height;
+      .row-onedata-logo {
+        .onedata-logo {
+          margin-left: $one-list-item-padding;
+          margin-top: $one-list-item-padding;
+        }
+        .brand-info {
+          margin-left: $one-list-item-padding;
+        }
+      }
+    }
+    .one-list-item.main-menu-item {
+      color: $main-text-color;
+      &.active {
+        background-color: $color-sidebar-item-active-bg;
+      }
+      &.disabled {
+        color: rgba($main-text-color, 0.5);
+      }
+      &::after {
+        @include top-line(none);
+      }
+      &:last-of-type {
+        &::after {
+          @include bottom-line(none);
+        }
+      }
+    }
+  }
   
   .row-account-button {
     position: absolute;
@@ -82,6 +147,9 @@ $onedata-logo-width: 150px;
   }
   
   .row-app {
+    @media (max-width: $screen-sm-max) {
+      padding-top: $mobile-top-height;
+    }
     @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
       padding-left: $sidebar-menu-width;
     }
@@ -106,18 +174,7 @@ $onedata-logo-width: 150px;
       margin-top: $onedata-logo-margin-top;
       margin-bottom: $onedata-logo-margin-bottom;
     }
-      
-    .row-onedata-logo .brand-info {
-      margin-left: auto;
-      margin-right: auto;
-      height: $onedata-brand-info-height;
-      width: $onedata-logo-width;
-      line-height: $onedata-brand-info-height;
-      vertical-align: middle;
-      text-transform: uppercase;
-      font-family: "Open Sans Semibold";
-      color: $color-main-menu-fg-default;
-    }
+    
     .item-icon {
       position: relative;
       margin-right: 0.6rem;
@@ -129,6 +186,12 @@ $onedata-logo-width: 150px;
     background: $color-sidebar-background;
     // TODO same as sidenav
     border-right: 1px solid $color-one-list-item-separator;
+    @media (max-width: $screen-xs-max) {
+      position: absolute;
+      top: 0;
+      padding-top: $mobile-top-height;
+      bottom: 0;
+    }
     @media (min-width: $screen-sm-min) {
       position: absolute;
       left: $main-menu-width;
@@ -234,4 +297,9 @@ $onedata-logo-width: 150px;
 // special for sidebar in sidenav TODO
 #sidenav-sidebar {
   background: $color-sidebar-background;
+}
+
+// fix for a bad placement of scrollbar
+.ps-scrollbar-y-rail {
+  position: absolute;
 }

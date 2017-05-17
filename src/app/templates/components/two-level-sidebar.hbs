@@ -21,7 +21,9 @@
         {{!-- TODO isActive secondary --}}
         <ul class="one-list one-list-level-2">
           {{#each secondLevelItems as |sli|}}
-            <li class={{concat "one-list-item clickable " (if (eq secondaryItemId sli.id) "active" "")}}>
+            <li 
+              class={{concat "one-list-item clickable " (if (eq secondaryItemId sli.id) "active" "")}}
+              {{action "sidebarSecondaryItemSelected"}}>
               {{!-- TODO only for clusters --}}
               {{#link-to
                 "onedata.sidebar.content.aspect"

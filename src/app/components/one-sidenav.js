@@ -63,6 +63,7 @@ export default Ember.Component.extend({
     let left = $coverElement.offset().left;
     let width = open ? $coverElement.width() : 0;
     this.set('style', htmlSafe(`left: ${left}px; width: ${width}px;`));
+    this.$('.sidenav-content-container').width(width);
 },
 
   changeSize: observer('isOpened', function() {

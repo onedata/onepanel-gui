@@ -87,6 +87,9 @@ input {
   width: 100%;
   .item-table-img-cell {
     width: 30%;
+    background-repeat: no-repeat;
+    background-size: 70% 70%;
+    background-position: center center;
     border-right: $table-item-border;
   }
   .item-table-content-cell {
@@ -100,7 +103,7 @@ input {
     }
   }
 }
-@media screen and (max-width: $screen-md) {
+@media screen and (max-width: $screen-sm-max) {
   .item-table {
     .item-table-img-cell {
       width: 0;

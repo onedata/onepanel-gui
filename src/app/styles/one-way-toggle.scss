@@ -5,6 +5,7 @@ $toggle-size-base: 1.4em;
   display: inline-block;
   height: $toggle-size-base;
   font-size: inherit;
+  vertical-align: middle;
 
   &.form-control {
     background-color: inherit;
@@ -41,7 +42,6 @@ $toggle-size-base: 1.4em;
     box-sizing: border-box;
     content: "";
     height: $toggle-size-base;
-    // cursor: pointer;
     @include box-shadow(none);
   }
 

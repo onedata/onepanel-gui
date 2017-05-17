@@ -26,6 +26,8 @@ export default TwoLevelSidebar.extend({
 
   firstLevelItemIcon: 'menu-clusters',
 
+  triggerEventOnPrimaryItemSelection: computed.not('cluster.isInitialized'),
+
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
       onepanelServiceType,

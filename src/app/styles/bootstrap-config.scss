@@ -56,8 +56,12 @@
     padding-left: $padding-large-horizontal;
   }
   .radio-inline {
-  padding-top: 0;
+    padding-top: 0;
+  }
 }
+.has-success input[disabled],
+.has-error input[disabled] {
+  border: 1px solid $main-border-color;
 }
 .has-success label.control-label, 
 .has-error label.control-label,
@@ -76,6 +80,7 @@ label {
   }
   &[disabled] {
     @include box-shadow(none);
+    opacity: 0.6;
   }
 }
 
@@ -160,7 +165,6 @@ label {
   position: relative;
   margin: $alert-padding 0;
   border-radius: 0;
-  letter-spacing: $letter-spacing-base;
 }
 @import "bootstrap/progress-bars";
 @import "bootstrap/media";

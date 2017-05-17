@@ -13,8 +13,15 @@
         </div>
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
-            <strong>{{t (concat translationPrefix storageProperty)}}:</strong> 
-            <span class="one-label">{{get storage storageProperty}}</span>
+            <strong>{{t (concat translationPrefix storageProperty)}}:</strong>
+            {{#if (eq (data-type (get storage storageProperty)) "boolean")}}
+              {{one-way-toggle
+                checked=(get storage storageProperty)
+                isReadOnly=true
+              }}
+            {{else}}
+              <span class="one-label">{{get storage storageProperty}}</span>
+            {{/if}}
           </div>
         {{/each}}
       </td>
