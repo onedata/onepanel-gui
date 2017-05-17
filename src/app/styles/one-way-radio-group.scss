@@ -4,19 +4,16 @@ $radio-dot-size: $radio-size-base * 0.5;
 .one-way-radio-group {
   position: relative;
   display: inline-block;
-  padding-right: 2em;
 
-  .radio-inline:first-child {
-    padding-left: 0;
+  @media (max-width: $screen-xs-max) {
+    padding-left: 2em;
   }
 
   .radio-inline {
     padding-left: 0;
-    padding-right: 20px;
+    padding-right: 2em;
     vertical-align: top;
-    & + .radio-inline {
-      margin-left: 0;
-    }
+    margin-left: 0;
   }
 
   input[type="radio"] {

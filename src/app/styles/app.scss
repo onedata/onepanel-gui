@@ -48,7 +48,7 @@ $onedata-brand-info-height: 30px;
 $onedata-logo-margin-top: 30px;
 $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $one-list-item-padding * 2 - $onedata-brand-info-height;
 
-$main-content-hover-background: $color-one-semiwhite;
+$main-content-hover-background: lighten($color-one-semiwhite, 3%);
 
 $collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
 

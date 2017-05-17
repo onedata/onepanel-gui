@@ -48,6 +48,13 @@ form {
   .has-success .form-message {
     color: $state-success-text;
   }
+  .has-error.disabled,
+  .has-success.disabled {
+    .form-message,
+    .form-control-feedback {
+      display: none;
+    }
+  }
 }
 
 .form-control-static {
