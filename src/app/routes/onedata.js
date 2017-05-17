@@ -41,9 +41,7 @@ export default Route.extend({
   },
 
   model() {
-    let mainMenuItems = A(onedataTabs).map(item => Object.assign({}, item));
-    // TODO change, when new app functions will be available
-    mainMenuItems.forEach(item => item.disabled = item.id !== 'clusters');
+    let mainMenuItems = A(onedataTabs).map(item => Object.assign({}, item, { disabled: false }));
 
     return new Promise((resolve) => {
       resolve(AppModel.create({ mainMenuItems }));
