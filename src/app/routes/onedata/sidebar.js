@@ -24,7 +24,7 @@ const {
 } = config;
 
 function isValidTab(tabName) {
-  return onedataTabs.indexOf(tabName) !== -1;
+  return onedataTabs.map(({ id }) => id).indexOf(tabName) !== -1;
 }
 
 export default Ember.Route.extend({

@@ -10,6 +10,7 @@
 import Ember from 'ember';
 import AppModel from 'onepanel-gui/utils/app-model';
 import config from 'ember-get-config';
+import _object from 'lodash/object';
 
 const {
   Route,
@@ -41,10 +42,7 @@ export default Route.extend({
   },
 
   model() {
-    let mainMenuItems = A(onedataTabs).map(id => ({
-      id,
-      disabled: false
-    }));
+    let mainMenuItems = A(onedataTabs).map(item => _object.assign({}, item, { disabled: false }));
 
     return new Promise((resolve) => {
       resolve(AppModel.create({ mainMenuItems }));

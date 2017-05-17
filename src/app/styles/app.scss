@@ -30,6 +30,7 @@ $mobile-top-height: 70px;
 $main-menu-width: 200px;
 $sidebar-menu-width: 250px;
 $sidebar-menu-width-lg: 325px;
+$menu-icon-font-size: 2.5em;
 
 $zindex-layer-1-2-overlay: $zindex-modal-background;
 $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
@@ -91,6 +92,9 @@ $disabled-opacity: 0.6;
 @import 'resource-load-error';
 @import 'one-image';
 @import 'one-label-tip';
+@import 'storage-item';
+@import 'cluster-spaces-table-item';
+@import 'ember-notify';
 
 // TODO a mess
 
