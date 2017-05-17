@@ -17,6 +17,7 @@
       @include left-line(
         $one-list-item-active-left-border-width solid $color-one-main
       );
+      display: block;
     }
     > .item-header {
       color: $color-one-main;

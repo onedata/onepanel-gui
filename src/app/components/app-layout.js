@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import { invokeAction, invoke } from 'ember-invoke-action';
 
 const {
   inject: {
@@ -161,6 +161,7 @@ export default Ember.Component.extend({
       return this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.SIDEBAR);
     },
     manageAccount() {
+      invoke(this, 'mobileMenuItemChanged', 'users');
       return invokeAction(this, 'manageAccount');
     },
     changeResourceId() {

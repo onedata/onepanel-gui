@@ -23,6 +23,18 @@ $onedata-logo-width: 150px;
   margin-right: auto;
 }
 
+.brand-info {
+  margin-left: auto;
+  margin-right: auto;
+  height: $onedata-brand-info-height;
+  width: $onedata-logo-width;
+  line-height: $onedata-brand-info-height;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-family: "Open Sans Semibold";
+  color: $color-main-menu-fg-default;
+}
+
 // needs: $mobile-top-height
 // needs: $main-menu-width
 .app-layout {
@@ -77,6 +89,56 @@ $onedata-logo-width: 150px;
       margin-right: 10px;
     }
   }
+  .side-menu {
+    background-color: $color-sidebar-background;
+
+    // override side-menu default style
+    ul > li {
+      line-height: 64px;
+    }
+
+    .side-menu-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: $sidemenu-header-height + $one-list-item-line-height;
+      z-index: -1;
+      background-image: url($root-url + 'assets/images/main-background.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position-x: center;
+    }
+    .side-menu-header {
+      height: $sidemenu-header-height;
+      .row-onedata-logo {
+        .onedata-logo {
+          margin-left: $one-list-item-padding;
+          margin-top: $one-list-item-padding;
+        }
+        .brand-info {
+          margin-left: $one-list-item-padding;
+        }
+      }
+    }
+    .one-list-item.main-menu-item {
+      color: $main-text-color;
+      &.active {
+        background-color: $color-sidebar-item-active-bg;
+      }
+      &.disabled {
+        color: rgba($main-text-color, 0.5);
+      }
+      &::after {
+        @include top-line(none);
+      }
+      &:last-of-type {
+        &::after {
+          @include bottom-line(none);
+        }
+      }
+    }
+  }
   
   .row-account-button {
     position: absolute;
@@ -112,18 +174,7 @@ $onedata-logo-width: 150px;
       margin-top: $onedata-logo-margin-top;
       margin-bottom: $onedata-logo-margin-bottom;
     }
-      
-    .row-onedata-logo .brand-info {
-      margin-left: auto;
-      margin-right: auto;
-      height: $onedata-brand-info-height;
-      width: $onedata-logo-width;
-      line-height: $onedata-brand-info-height;
-      vertical-align: middle;
-      text-transform: uppercase;
-      font-family: "Open Sans Semibold";
-      color: $color-main-menu-fg-default;
-    }
+    
     .item-icon {
       position: relative;
       margin-right: 0.6rem;
