@@ -14,7 +14,7 @@
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
             <strong>{{t (concat translationPrefix storageProperty)}}:</strong> 
-            {{get storage storageProperty}}
+            <span class="one-label">{{get storage storageProperty}}</span>
           </div>
         {{/each}}
       </td>
