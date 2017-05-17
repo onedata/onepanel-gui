@@ -44,7 +44,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super();
-    const { 
+    let { 
       closeEventName, 
       eventsBus
     } = this.getProperties('closeEventName', 'eventsBus');

@@ -13,7 +13,7 @@ export default EmberSideMenu.extend(PerfectScrollbarMixin, {
   eventsBus: service(),
 
   isClosedObserver: observer('progress', function() {
-    const {
+    let {
       progress,
       eventsBus,
     } = this.getProperties('progress', 'eventsBus');
