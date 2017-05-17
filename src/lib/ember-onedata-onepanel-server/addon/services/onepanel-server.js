@@ -1,3 +1,17 @@
+/**
+ * Ember-level interface for using onepanel API 
+ *
+ * It uses internally onepanel javascript client library.
+ * API methods should be invoked by using ``request`` method.
+ * The service wraps onepanel async requests into promises with additional
+ * fields (see ``request`` method).
+ * 
+ * @module services/onepanel-server
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -102,7 +116,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
     });
 
     promise.catch(error => this.handleRequestError(error));
-    
+
     return promise;
   },
 
@@ -161,7 +175,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
       gettingType.catch(reject);
     });
   },
-  
+
   destroyClient() {
     this.setProperties({
       client: null,

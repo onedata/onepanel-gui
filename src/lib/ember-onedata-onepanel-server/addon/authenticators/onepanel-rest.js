@@ -1,3 +1,13 @@
+/**
+ * An authenticator for ``ember-simple-auth`` that uses Onepanel REST API
+ * by using ``onepanel-server`` service
+ *
+ * @module authenticators/onepanel-rest
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 import Ember from 'ember';
 
@@ -19,7 +29,8 @@ export default BaseAuthenticator.extend({
 
   invalidate() {
     return new Promise((resolve, reject) => {
-      let removingSession = this.get('onepanelServer').request('onepanel', 'removeSession');
+      let removingSession = this.get('onepanelServer').request('onepanel',
+        'removeSession');
       removingSession.then(resolve);
       removingSession.catch(error => {
         if (error && error.response && error.response.statusCode === 401) {
@@ -29,6 +40,6 @@ export default BaseAuthenticator.extend({
         }
       });
     });
-    
+
   }
 });
