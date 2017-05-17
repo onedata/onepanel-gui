@@ -1,6 +1,6 @@
 .webui-popover {
   @include box-shadow(0 2px 3px rgba(128, 128, 128, 0.2));
-  max-width: 40em;
+  max-width: 28em;
   border-radius: 0;
   font-size: $font-size-base;
   letter-spacing: $letter-spacing-base;
@@ -15,7 +15,7 @@
     .btn-toolbar {
       margin-right: 0;
       float: none;
-      text-align: center;
+      text-align: right;
       .btn {
         float: none;
         margin-top: $padding-base-vertical;
