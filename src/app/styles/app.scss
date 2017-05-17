@@ -43,9 +43,11 @@ $one-list-item-padding: $padding-large-horizontal;
 $one-list-item-active-left-border-width: 8px;
 
 $sidemenu-header-height: 90px;
+$content-col-padding: 30px;
+$content-header-font-size: 1.25em;
 $onedata-logo-height: 35px;
 $onedata-brand-info-height: 30px;
-$onedata-logo-margin-top: 30px;
+$onedata-logo-margin-top: $content-col-padding;
 $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $one-list-item-padding * 2 - $onedata-brand-info-height;
 
 $main-content-hover-background: lighten($color-one-semiwhite, 3%);
