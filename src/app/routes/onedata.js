@@ -33,9 +33,4 @@ export default Route.extend(AuthenticatedRouteMixin, {
       resolve(AppModel.create({ mainMenuItems }));
     });
   },
-
-  afterModel(model) {
-    let firstItemId = model.get('mainMenuItems.firstObject').id;
-    this.controllerFor('onedata').send('mainMenuItemChanged', firstItemId);
-  },
 });
