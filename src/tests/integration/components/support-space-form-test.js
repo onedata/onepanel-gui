@@ -45,6 +45,19 @@ describe('Integration | Component | support space form', function () {
           sizeUnit: 'mb',
         }));
       };
+
+      this.expectException = function (expectedError) {
+        Ember.Test.adapter.exception = (error) => {
+          if (error !== expectedError) {
+            this.originalException(error);
+          }
+        };
+        Ember.Logger.error = (error) => {
+          if (error !== expectedError) {
+            this.originalLoggerError(error);
+          }
+        };
+      };
     },
   });
 
@@ -55,11 +68,9 @@ describe('Integration | Component | support space form', function () {
     this.register('service:global-notify', globalNotifyStub);
     this.inject.service('global-notify', { as: 'globaNotify' });
 
-    // TODO make some common helper for disabling global exception handling    
+    // TODO make some common helper for disabling global exception handling
     this.originalException = Ember.Test.adapter.exception;
     this.originalLoggerError = Ember.Logger.error;
-    Ember.Test.adapter.exception = function () {};
-    Ember.Logger.error = function () {};
   });
 
   afterEach(function () {
@@ -72,10 +83,12 @@ describe('Integration | Component | support space form', function () {
     let unit = 'tb';
     let sizeOutput = sizeToInput * UNITS[unit];
 
+    let submitInvoked = false;
     this.on('submitSupportSpace', function (supportSpaceData) {
       let { size } = supportSpaceData;
       expect(size).to.equal(sizeOutput);
-      done();
+      submitInvoked = true;
+      return new Promise(resolve => resolve());
     });
     this.set('_selectedStorage', {
       name: 'POSIX',
@@ -96,18 +109,25 @@ describe('Integration | Component | support space form', function () {
     helper.getInput('sizeUnit-' + unit).click();
     wait().then(() => {
       helper.submit();
+      wait().then(() => {
+        expect(submitInvoked).to.be.true;
+        done();
+      });
     });
   });
 
   it('shows a global error notify when submit fails', function (done) {
     let globalNotify = this.container.lookup('service:globalNotify');
-    globalNotify.set('error', function () {
-      done();
+    let errorInvoked = false;
+    globalNotify.set('backendError', function () {
+      errorInvoked = true;
     });
     this.prepareAllFields();
 
+    const EXPECTED_ERROR = 'some error';
+    this.expectException(EXPECTED_ERROR);
     this.on('submitSupportSpace', function () {
-      let promise = new Promise((_, reject) => reject('some error'));
+      let promise = new Promise((_, reject) => reject(EXPECTED_ERROR));
       return promise;
     });
 
@@ -118,7 +138,12 @@ describe('Integration | Component | support space form', function () {
         values=formValues
       }}
     `);
-    
+
     this.$('button[type=submit]').click();
+
+    wait().then(() => {
+      expect(errorInvoked).to.be.true;
+      done();
+    });
   });
 });

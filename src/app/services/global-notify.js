@@ -1,9 +1,12 @@
 import Ember from 'ember';
 
+import getErrorDetails from 'ember-onedata-onepanel-server/utils/get-error-description';
+
 const {
   inject: {
     service
-  }
+  },
+  String: { htmlSafe },
 } = Ember;
 
 function aliasToShow(type) {
@@ -28,11 +31,27 @@ function aliasToShow(type) {
 export default Ember.Service.extend({
   notify: service(),
   alert: service(),
-
+  
   info: aliasToShow('info'),
   success: aliasToShow('success'),
   warning: aliasToShow('warning'),
   error: aliasToShow('error'),
+
+  // TODO i18n  
+  backendError(message, error) {
+    let reason = getErrorDetails(error);
+
+    let finalMessage =
+      `<p><strong>We are sorry, but ${message} failed!</strong></p>`;
+
+    if (reason) {
+      finalMessage += `<p><strong>The reason of failure:</strong><br>${reason}</p>`;
+    } else {
+      finalMessage += `<p>Unfortunately, error details are unavailable</p>`;
+    }
+
+    this.error(htmlSafe(finalMessage));
+  },
 
   /**
    * Main method for reporting some information to user

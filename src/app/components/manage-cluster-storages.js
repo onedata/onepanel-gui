@@ -111,7 +111,7 @@ export default Ember.Component.extend({
       });
       submitting.catch(error => {
         // TODO i18n
-        this.get('globalNotify').error(`Failed to add storage "${name}": ${error}`);
+        this.get('globalNotify').backendError(`adding "${name}" storage`, error);
       });
       return submitting;
     }

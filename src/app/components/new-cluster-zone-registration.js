@@ -97,8 +97,9 @@ export default Component.extend({
         invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
-        this.get('globalNotify').error(
-          'Could not register the provider in zone: ' + error
+        this.get('globalNotify').backendError(
+          'provider registration',
+          error
         );
       });
       return submitting;

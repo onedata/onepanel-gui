@@ -19,7 +19,7 @@ const {
 export default Ember.Component.extend({
   classNames: ['basicauth-login-form'],
 
-  onepanelServer: service(),
+  session: service(),
   globalNotify: service(),
 
   username: '',
@@ -38,19 +38,14 @@ export default Ember.Component.extend({
   },
 
   onLoginSuccess(username, password) {
-    let onepanelServer = this.get('onepanelServer');
     console.debug(
       `component:basicauth-login-form: Credentials provided for ${username} are valid`
     );
-    let initializing = onepanelServer.initClient();
-    initializing.then(() => {
-      invokeAction(this, 'authenticationSuccess', {
-        username,
-        password
-      });
-      this.set('isDisabled', false);
+    invokeAction(this, 'authenticationSuccess', {
+      username,
+      password
     });
-    initializing.catch(this.onInitClientError.bind(this));
+    this.set('isDisabled', false);
   },
 
   onLoginFailure(username, password) {
@@ -73,26 +68,17 @@ export default Ember.Component.extend({
 
   actions: {
     submitLogin(username, password) {
-      let onepanelServer = this.get('onepanelServer');
+      let session = this.get('session');
       this.onLoginStarted();
       this.sendAction('authenticationStarted');
 
-      let loginCalling = onepanelServer.login(username, password);
+      let loginCalling = session.authenticate('authenticator:onepanel-rest',
+        username,
+        password
+      );
 
-      loginCalling.then(( /*data, textStatus, jqXHR*/ ) => {
-        let initializing = onepanelServer.initClient();
-        initializing.then(() => {
-          let authTestRequest =
-            onepanelServer.request('onepanel', 'getClusterCookie');
-          authTestRequest.then(() => this.onLoginSuccess(username, password));
-          authTestRequest.catch(() => this.onLoginFailure(username, password));
-        });
-        initializing.catch(this.onInitClientError.bind(this));
-      });
-
-      loginCalling.catch(( /*jqXHR, textStatus, errorThrown*/ ) => {
-        this.onLoginFailure();
-      });
+      loginCalling.then(() => this.onLoginSuccess(username, password));
+      loginCalling.catch(() => this.onLoginFailure(username, password));
 
       return loginCalling;
     }

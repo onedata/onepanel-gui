@@ -9,18 +9,18 @@
       <td class="item-table-img-cell"></td>
       <td class="item-table-content-cell">
         <div class="row content-row">
-          <strong>Type:</strong> {{storageType}}
+          <strong>Type:</strong> <span class="one-label">{{storageType}}</span>
         </div>
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
-            <strong>{{t (concat translationPrefix storageProperty)}}:</strong> 
+            <strong>{{t (concat translationPrefix storageProperty)}}:</strong>
             {{#if (eq (data-type (get storage storageProperty)) "boolean")}}
               {{one-way-toggle
                 checked=(get storage storageProperty)
                 isReadOnly=true
               }}
             {{else}}
-              {{get storage storageProperty}}
+              <span class="one-label">{{get storage storageProperty}}</span>
             {{/if}}
           </div>
         {{/each}}

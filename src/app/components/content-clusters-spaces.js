@@ -39,12 +39,13 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
-  _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened', function() {
-    let {
-      _supportSpaceOpened
-    } = this.getProperties('_supportSpaceOpened');
-    return !_supportSpaceOpened && isBlank(this.get('spacesProxy.content'));
-  }),
+  _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened',
+    function () {
+      let {
+        _supportSpaceOpened
+      } = this.getProperties('_supportSpaceOpened');
+      return !_supportSpaceOpened && isBlank(this.get('spacesProxy.content'));
+    }),
 
   init() {
     this._super(...arguments);
@@ -108,7 +109,7 @@ export default Component.extend({
         );
       });
       revoking.catch(error => {
-        globalNotify.error('Space revoking failed: ' + error);
+        globalNotify.backendError('space support revocation', error);
       });
       return revoking;
     },

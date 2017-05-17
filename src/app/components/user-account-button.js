@@ -24,6 +24,7 @@ export default Component.extend(ClickOutside, {
   classNames: ['user-account-button'],
   classNameBindings: ['mobileMode:user-account-button-mobile'],
 
+  session: service(),
   onepanelServer: service(),
   globalNotify: service(),
 
@@ -40,8 +41,7 @@ export default Component.extend(ClickOutside, {
   menuItemClasses: computed('mobileMode', function () {
     if (this.get('mobileMode')) {
       return 'one-list-item main-menu-item clickable';
-    }
-    else {
+    } else {
       return 'one-list-item enabled clickable main-menu-item user-account-button-main';
     }
   }),
@@ -68,11 +68,11 @@ export default Component.extend(ClickOutside, {
       this.set('menuOpen', false);
     },
     logout() {
-      let onepanelServer = this.get('onepanelServer');
-      let loggingOut = onepanelServer.request('onepanel', 'removeSession');
+      let session = this.get('session');
+      let loggingOut = session.invalidate();
       loggingOut.then(() => window.location.reload());
       loggingOut.catch(error => {
-        this.get('globalNotify').error(`We are sorry, but logout failed: ${error}`);
+        this.get('globalNotify').backendError('logging out', error);
       });
       loggingOut.finally(() => this.set('menuOpen', false));
       return loggingOut;

@@ -103,7 +103,7 @@ export default Component.extend({
       } = this.getProperties('globalNotify', 'providerManager');
       let deregistering = providerManager.deregisterProvider();
       deregistering.catch(error => {
-        globalNotify.error(`Deregistering provider failed: ${error}`);
+        globalNotify.backendError('provider deregistration', error);
       });
       deregistering.then(() => {
         globalNotify.info('Provider has been deregistered');
@@ -131,7 +131,7 @@ export default Component.extend({
       let modifying = providerManager.modifyProvider(modifyProviderData);
       modifying.catch(error => {
         // TODO i18n
-        globalNotify.error(`Modifying provider data failed: ${error}`);
+        globalNotify.backendError('provider data modification', error);
       });
       modifying.then(() => {
         // TODO i18n

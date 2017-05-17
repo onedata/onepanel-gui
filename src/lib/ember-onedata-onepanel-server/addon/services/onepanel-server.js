@@ -1,11 +1,22 @@
+/**
+ * Ember-level interface for using onepanel API 
+ *
+ * It uses internally onepanel javascript client library.
+ * API methods should be invoked by using ``request`` method.
+ * The service wraps onepanel async requests into promises with additional
+ * fields (see ``request`` method).
+ * 
+ * @module services/onepanel-server
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
-
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
-
-// TODO current req timeout: 1 minute, test and handle this or increase
+import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -16,9 +27,6 @@ const {
     Promise
   },
   computed,
-  computed: {
-    readOnly
-  },
 } = Ember;
 
 /**
@@ -30,20 +38,13 @@ const {
  */
 const CUSTOM_REQUESTS = {};
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(RequestErrorHandler, {
   /**
    * An Onepanel API Client that is used for making requests.
    * 
    * @type {Onepanel.ApiClient}
    */
   client: null,
-
-  /**
-   * Internal promise of this proxy resolves when the stored session is valid.
-   * 
-   * @type {ObjectPromiseProxy}
-   */
-  sessionValidator: null,
 
   serviceType: null,
 
@@ -52,8 +53,6 @@ export default Ember.Service.extend({
    * @type {string}
    */
   username: null,
-
-  isLoading: readOnly('sessionValidator.isPending'),
 
   /**
    * @type {computed<Boolean>}
@@ -78,17 +77,6 @@ export default Ember.Service.extend({
   }).readOnly(),
 
   /**
-   * Check is stored session is valid and initialize some properties.
-   */
-  init() {
-    this._super(...arguments);
-    let validatingSession = this.validateSession();
-    this.set('sessionValidator', ObjectPromiseProxy.create({
-      promise: validatingSession
-    }));
-  },
-
-  /**
    * Make an API call using onepanel library (onepanel-javascript-client).
    *
    * It's like creating API object of onepanel library and invoking its method
@@ -102,7 +90,7 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
       let callback = (error, data, response) => {
         let taskId = getTaskId(response);
         let task;
@@ -126,12 +114,16 @@ export default Ember.Service.extend({
         this.get('_' + api + 'Api')[method](...params, callback);
       }
     });
+
+    promise.catch(error => this.handleRequestError(error));
+
+    return promise;
   },
 
   /**
    * Checks if cookies-based session is valid by trying to get session.
    * 
-   * If the session is valid, it automatically initializes the main client.
+   * If the session is valid, it automatically (re)initializes the main client.
    * 
    * @returns {Promise} an ``initClient`` promise if ``getSession`` succeeds
    */
@@ -174,6 +166,7 @@ export default Ember.Service.extend({
     return new Promise((resolve, reject) => {
       let client = this.createClient(origin);
       this.set('client', client);
+      // client property is initialized, so it's safe to invoke getServiceType
       let gettingType = this.getServiceType();
       gettingType.then(serviceType => {
         this.set('serviceType', serviceType);
@@ -183,8 +176,18 @@ export default Ember.Service.extend({
     });
   },
 
+  destroyClient() {
+    this.setProperties({
+      client: null,
+      serviceType: null,
+    });
+  },
+
   /**
    * Make request that checks if the GUI is backed by provider or zone
+   *
+   * Note that ``client`` property should be already initialized!
+   *
    * @returns {Promise} resolves with 'provider' or 'zone'; rejects on error
    */
   getServiceType() {
@@ -258,12 +261,7 @@ export default Ember.Service.extend({
       api.createSession(callback);
     });
 
-    // TODO use a session Ember addon for storing this
-    loginCall.then(() => {
-      return this.validateSession();
-    });
-
-    return loginCall;
+    return loginCall.then(() => this.validateSession());
   }
 
 });

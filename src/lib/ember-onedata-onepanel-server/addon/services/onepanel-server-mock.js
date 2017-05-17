@@ -15,6 +15,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
+import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import _object from 'lodash/object';
 import _find from 'lodash/find';
 
@@ -37,28 +38,19 @@ const MOCK_USERNAME = 'mock_admin';
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default Ember.Service.extend({
+export default Ember.Service.extend(RequestErrorHandler, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),
 
   sessionValidator: computed(function () {
-    let cookies = this.get('cookies');
-    let fakeLoginFlag = cookies.read('fakeLoginFlag');
-    return ObjectPromiseProxy.create({
-      promise: new Promise((resolve, reject) => {
-        if (fakeLoginFlag) {
-          resolve();
-        } else {
-          reject();
-        }
-      })
-    });
+    let promise = this.validateSession();
+    return ObjectPromiseProxy.create({ promise });
   }).readOnly(),
 
   username: MOCK_USERNAME,
 
-  mockInitializedCluster: false,
+  mockInitializedCluster: true,
 
   /**
    * @type {computed<Boolean>}
@@ -80,6 +72,12 @@ export default Ember.Service.extend({
       resolve();
     });
   },
+  
+    destroyClient() {
+    this.setProperties({
+      isInitialized: false,
+    });
+  },
 
   /// APIs provided by onepanel client library
 
@@ -94,8 +92,26 @@ export default Ember.Service.extend({
    *                    reject(error: string)
    */
   request(api, method, ...params) {
+    let cookies = this.get('cookies');
+
     // TODO protect property read
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
+      console.debug(
+        `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
+      );
+
+      if (!cookies.read('fakeLoginFlag')) {
+        reject({
+          response: {
+            statusCode: 401,
+            body: {
+              error: 'Unauthorized',
+              description: 'User not authorized',
+            }
+          }
+        });
+      }
+
       let handler = this.get(`_req_${api}_${method}`);
       if (handler) {
         if (handler.success) {
@@ -128,6 +144,10 @@ export default Ember.Service.extend({
 
       resolve();
     });
+    
+    promise.catch(error => this.handleRequestError(error));
+    
+    return promise;
   },
 
   getServiceType() {
@@ -139,9 +159,24 @@ export default Ember.Service.extend({
     return watchTaskStatus(this, taskId);
   },
 
-  login(username, password) {
+  validateSession() {
+    console.debug('service:onepanel-server-mock: validateSession');
     let cookies = this.get('cookies');
-    return new Promise((resolve, reject) => {
+    let fakeLoginFlag = cookies.read('fakeLoginFlag');
+    let validating = new Promise((resolve, reject) => {
+      if (fakeLoginFlag) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+    return validating.then(() => this.initClient());
+  },
+
+  login(username, password) {
+    console.debug(`service:onepanel-server-mock: login ${username}`);
+    let cookies = this.get('cookies');
+    let loginCall = new Promise((resolve, reject) => {
       if (username === 'admin' && password === 'password') {
         cookies.write('fakeLoginFlag', true);
         resolve();
@@ -149,6 +184,7 @@ export default Ember.Service.extend({
         reject();
       }
     });
+    return loginCall.then(() => this.validateSession());
   },
 
   init() {

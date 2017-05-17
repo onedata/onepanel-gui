@@ -141,10 +141,7 @@ export default Ember.Component.extend({
   },
 
   configureFailed({ taskStatus }) {
-    this.get('globalNotify').error(
-      'Deployment cannot complete because of error: ' +
-      taskStatus.error
-    );
+    this.get('globalNotify').backendError('cluster deployment', taskStatus.error);
   },
 
   getNodes() {
@@ -326,11 +323,8 @@ export default Ember.Component.extend({
         this.showDeployProgress(task);
         this.watchDeployStatus(task);
       });
-      start.catch((error) => {
-        // TODO better error handling - get error type etc.
-        this.get('globalNotify').error(
-          'Deployment cannot start because of server error: ' + error
-        );
+      start.catch(error => {
+        this.get('globalNotify').backendError('deployment start', error);
       });
       return start;
     },

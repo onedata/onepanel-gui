@@ -13,30 +13,22 @@ const {
   inject: {
     service
   },
-  computed: {
-    readOnly
-  }
+  computed: { alias },
 } = Ember;
-
-// TODO: fake session, do it better with ember session
 
 export default Ember.Component.extend({
   classNames: ['login-box'],
 
   globalNotify: service(),
   onepanelServer: service(),
+  session: service(),
 
-  authLoadingPromise: readOnly('onepanelServer.sessionValidator.promise'),
-
-  isLoading: readOnly('authLoadingPromise.isPending'),
   isBusy: false,
 
-  init() {
-    this._super(...arguments);
-    let authLoading = this.get('authLoadingPromise');
-    authLoading.then(() => this.send('authenticationSuccess'));
-    authLoading.catch(() => this.send('authenticationFailure'));
-  },
+  /**
+   * True, if previous session has expired
+   */
+  sessionHasExpired: alias('session.data.hasExpired'),
 
   actions: {
     authenticationStarted() {
@@ -45,7 +37,6 @@ export default Ember.Component.extend({
 
     authenticationSuccess() {
       this.get('globalNotify').info('Authentication succeeded!');
-      this.sendAction('authenticationSuccess');
       this.set('isBusy', false);
     },
 

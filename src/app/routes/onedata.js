@@ -10,47 +10,25 @@
 import Ember from 'ember';
 import AppModel from 'onepanel-gui/utils/app-model';
 import config from 'ember-get-config';
+import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/authenticated-route-mixin';
 import _object from 'lodash/object';
 
 const {
   Route,
   A,
   RSVP: { Promise },
-  inject: { service },
-  computed: { readOnly },
 } = Ember;
 
 const {
   onedataTabs
 } = config;
 
-export default Route.extend({
-  onepanelServer: service(),
-
-  sessionValidation: readOnly('onepanelServer.sessionValidator.promise'),
-
-  beforeModel() {
-    let onepanelServer = this.get('onepanelServer');
-    let serverIsInitialized = onepanelServer.get('isInitialized');
-    if (!serverIsInitialized) {
-      let sessionValidation = this.get('sessionValidation');
-      sessionValidation.catch(() => this.transitionTo('login'));
-      return sessionValidation;
-    } else {
-      return undefined;
-    }
-  },
-
+export default Route.extend(AuthenticatedRouteMixin, {
   model() {
     let mainMenuItems = A(onedataTabs).map(item => _object.assign({}, item, { disabled: false }));
 
     return new Promise((resolve) => {
       resolve(AppModel.create({ mainMenuItems }));
     });
-  },
-
-  afterModel(model) {
-    let firstItemId = model.get('mainMenuItems.firstObject').id;
-    this.controllerFor('onedata').send('mainMenuItemChanged', firstItemId);
   },
 });
