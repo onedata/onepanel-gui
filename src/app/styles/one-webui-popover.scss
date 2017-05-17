@@ -3,7 +3,6 @@
   max-width: 28em;
   border-radius: 0;
   font-size: $font-size-base;
-  letter-spacing: $letter-spacing-base;
   .webui-popover-content {
     padding: $padding-base-vertical;
     overflow: initial;
@@ -11,6 +10,7 @@
       margin-top: 0;
       font-size: $font-size-base;
       font-weight: bold;
+      letter-spacing: $letter-spacing-base;
     }
     .btn-toolbar {
       margin-right: 0;

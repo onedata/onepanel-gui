@@ -126,7 +126,6 @@ label {
 .dropdown-menu {
   padding: 0;
   margin: 0;
-  letter-spacing: $letter-spacing-base;
   font-family: "Open Sans Semibold";
   font-size: 90%;
   li {
@@ -219,7 +218,7 @@ label {
         h1 {
             font-size: $font-size-base * 1.5;
             font-family: 'Open Sans Semibold';
-            letter-spacing: $letter-spacing-base;;
+            letter-spacing: $letter-spacing-base;
             margin-bottom: 1em;
             text-transform: uppercase;
             text-align: center;
