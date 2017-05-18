@@ -1,5 +1,3 @@
-$content-col-padding: $padding-large-horizontal * 1.5;
-
 $color-main-menu-fg-base: $color-one-white;
 $color-main-menu-fg-active: $color-main-menu-fg-base;
 $color-main-menu-fg-default: rgba($color-main-menu-fg-base, 0.9);
@@ -211,7 +209,7 @@ $onedata-logo-width: 150px;
     text-transform: uppercase;
     padding-left: 30px;
     padding-right: 30px;
-    font-size: 1.25em;
+    font-size: $content-header-font-size;
   }
   .col-content {
     // TODO similar 30px

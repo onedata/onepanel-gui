@@ -8,13 +8,21 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
   .content-row {
     border-bottom: 1px solid $main-border-color;
     padding: $content-row-vertical-padding 0;
-    letter-spacing: $letter-spacing-base;
 
     @media screen and (min-width: $screen-sm-min) {
       &.header-row {
         height: $content-header-row-height;
         padding-top: 0;
-        padding-bottom: $content-row-vertical-padding;
+        h1 {
+          font-size: $content-header-font-size;
+          font-family: 'Open Sans Semibold';
+          line-height: $onedata-logo-height;
+          .btn-toolbar button {
+            // resets font size to its default for normal content. 
+            // 85% is from font-size for .btn-sm (hard-coded in bootstrap config)
+            font-size: (1em / $content-header-font-size) * 85%;
+          }
+        }
       }
     }
 
@@ -28,6 +36,7 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
       font-weight: bold;
       text-transform: uppercase;
       line-height: 2.5;
+      letter-spacing: $letter-spacing-base;
       margin: 0;
 
       &+p {

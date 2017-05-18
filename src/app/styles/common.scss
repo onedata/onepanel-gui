@@ -86,11 +86,19 @@ input {
 .item-table {
   width: 100%;
   .item-table-img-cell {
+    position: relative;
     width: 30%;
-    background-repeat: no-repeat;
-    background-size: 70% 70%;
-    background-position: center center;
     border-right: $table-item-border;
+    .background-container {
+      position: absolute;
+      top: 20px;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background-repeat: no-repeat;
+      background-size: 100px;
+      background-position: center center;
+    }
   }
   .item-table-content-cell {
     .row {
