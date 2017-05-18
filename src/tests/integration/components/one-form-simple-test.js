@@ -5,6 +5,13 @@ import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
 
+const { 
+  RSVP: { 
+    Promise, 
+  }, 
+} = Ember;
+
+const ERROR_MSG = 'error!';
 
 describe('Integration | Component | one form simple', function () {
   setupComponentTest('one-form-simple', {
@@ -26,7 +33,7 @@ describe('Integration | Component | one form simple', function () {
       errors: [
         Ember.Object.create({
           attribute: 'allFieldsValues.main.first',
-          message: 'error!'
+          message: ERROR_MSG
         })
       ]
     });
@@ -58,11 +65,13 @@ describe('Integration | Component | one form simple', function () {
       `);
     
     let firstField = this.$('.field-first');
-    let firstFieldMsg = firstField.next();
-    expect(firstFieldMsg.text(),'field has no error before value change').to.be.empty;
+    let firstFieldMsg = firstField.next('.form-message');
+    expect(firstFieldMsg.text(),'field has no error before value change')
+      .to.be.empty;
     firstField.trigger('change');
     wait().then(() => {
-      expect(firstFieldMsg.text(), 'field has error after change').to.eq('error!');
+      expect(firstFieldMsg.text(), 'field has error after change')
+        .to.equal(ERROR_MSG);
       done();
     });
   });
@@ -77,11 +86,13 @@ describe('Integration | Component | one form simple', function () {
       `);
     
     let firstField = this.$('.field-first');
-    let firstFieldMsg = firstField.next();
-    expect(firstFieldMsg.text(),'field has no error before value change').to.be.empty;
+    let firstFieldMsg = firstField.next('.form-message');
+    expect(firstFieldMsg.text(),'field has no error before value change')
+      .to.be.empty;
     firstField.blur();
     wait().then(() => {
-      expect(firstFieldMsg.text(), 'field has error after change').to.eq('error!');
+      expect(firstFieldMsg.text(), 'field has error after change')
+        .to.equal(ERROR_MSG);
       done();
     });
   });
@@ -95,21 +106,23 @@ describe('Integration | Component | one form simple', function () {
     }}
       `);
     
+    const NEW_ERROR_MSG = 'error2!';
     let firstField = this.$('.field-first');
-    let firstFieldMsg = firstField.next();
+    let firstFieldMsg = firstField.next('.form-message');
     firstField.blur();
-    this.get('fakeValidations.errors')[0].set('message', 'error2!');
+    this.get('fakeValidations.errors')[0].set('message', NEW_ERROR_MSG);
     wait().then(() => {
-      expect(firstFieldMsg.text(), 'field has its another error').to.eq('error2!');
+      expect(firstFieldMsg.text(), 'field has its another error')
+        .to.equal(NEW_ERROR_MSG);
       done();
     });
   });
 
   it('changes submit button "disable" attribute', function (done) {
+    let submitOccurred = false;
     this.set('submitAction', () => {
-      expect(true, 'submitAction was invoked').to.eq(true);
-      done();
-      return new Ember.RSVP.Promise((resolve, reject) => reject());
+      submitOccurred = true;
+      return new Promise((resolve, reject) => reject());
     });
 
     this.render(hbs `
@@ -120,14 +133,24 @@ describe('Integration | Component | one form simple', function () {
     }}
       `);    
     
-    let submitBtn = this.$('.btn-primary');
-    expect(submitBtn.prop('disabled'), 'submit button is disabled if form is not valid').to.eq(true);
+    let submitBtn = this.$('button[type=submit]');
+    expect(
+      submitBtn.prop('disabled'), 
+      'submit button is disabled if form is not valid'
+    ).to.be.true;
 
     this.get('fakeValidations').set('errors', []);
     this.get('fakeValidations').set('isValid', true);
     wait().then(() => {
-      expect(submitBtn.prop('disabled'), 'submit button is enabled if form is valid').to.eq(false);
+      expect(
+        submitBtn.prop('disabled'), 
+        'submit button is enabled if form is valid'
+      ).to.equal(false);
       submitBtn.click();
+      wait().then(() => {
+        expect(submitOccurred, 'submitAction was invoked').to.be.true;
+        done();
+      });
     });
   });
 });
