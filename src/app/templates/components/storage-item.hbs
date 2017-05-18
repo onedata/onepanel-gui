@@ -1,5 +1,12 @@
 {{#listItem.header toolbarWhenOpened=true}}
-  {{one-icon class="item-icon" icon="provider"}}
+  <span class="item-icon-container">
+    {{one-icon class="item-icon" icon="provider"}}
+    {{bs-tooltip
+      title=storage.name
+      placement="right"
+      triggerEvents="hover"
+    }}
+  </span>
   <span class="one-label">{{storage.name}}</span>
 {{/listItem.header}}
 

@@ -1,5 +1,6 @@
 .cluster-host-table {
   position: relative;
+  table-layout: fixed;
 
   &:not(.bt) {
     .toggle-column {
@@ -43,10 +44,10 @@
 
       &:first-child {
         font-weight: bold;
+        padding-right: 70px;
         text-align: left;
-        .item-icon {
+        .item-icon-container {
           position: absolute;
-          top: 3rem;
           left: 2.5rem;
         }
       }

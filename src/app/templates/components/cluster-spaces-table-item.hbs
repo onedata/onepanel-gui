@@ -2,7 +2,14 @@
 {{!-- TODO i18n --}}
 
 {{#listItem.header}}
-  {{one-icon class="item-icon" icon="space"}}
+  <span class="item-icon-container">
+    {{one-icon class="item-icon" icon="space"}}
+    {{bs-tooltip
+      title=space.name
+      placement="right"
+      triggerEvents="hover"
+    }}
+  </span>
   <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
