@@ -67,7 +67,6 @@ export default Component.extend({
     this._super(...arguments);
     let open = this.get('open');
     if (open != null) {
-      // FIXME when using manual, clicking somewhere does not close popover
       this.set('popoverTrigger', 'manual');
       scheduleOnce('afterRender', () => this.triggerOpen());
     }

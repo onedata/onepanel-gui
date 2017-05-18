@@ -99,7 +99,6 @@ export default Component.extend({
     },
     // TODO currently space can be either object or ember object
     revokeSpace(space) {
-      // FIXME handle errors
       let globalNotify = this.get('globalNotify');
       let revoking = this._revokeSpace(get(space, 'id'));
       revoking.then(() => {
