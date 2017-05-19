@@ -50,7 +50,7 @@ export default Service.extend({
   },
 
   /**
-   * FIXME doc
+   * Fetch details of space support with given ID
    * 
    * @param {string} id
    * @return {ObjectPromiseProxy} resolves SpaceDetails object
@@ -66,7 +66,7 @@ export default Service.extend({
   },
 
   /**
-   * FIXME doc
+   * Support space in current provider using some storage
    * 
    * @param {Object} { size: Number, storageId: string, token: string, mountInRoot = false } 
    * @returns {Promise}

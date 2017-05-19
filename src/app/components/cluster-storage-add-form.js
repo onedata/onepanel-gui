@@ -116,7 +116,7 @@ export default OneForm.extend(Validations, {
     this._addFieldsLabels();
   },
 
-  // FIXME move to some helper or something  
+  // TODO move to some helper or something  
   _addFieldsLabels() {
     let i18n = this.get('i18n');
     let {

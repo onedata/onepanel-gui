@@ -1,4 +1,4 @@
-{{!-- TODO FIXME change to div class one list item  --}}
+{{!-- TODO change to div class one list item  --}}
 <ul class="one-list">
   <li class="one-list-item search-bar-item">
     <div class="item-header form-group form-group-sm form-group-light">
@@ -12,7 +12,6 @@
   </li>
   {{#each items as |item|}}
     {{#if (match-query item.name query)}}
-      {{!-- TODO try inject item format and make spaces-list generic searchable list --}}
       {{yield item}}
     {{/if}}
   {{/each}}

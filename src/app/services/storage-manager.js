@@ -1,5 +1,5 @@
 /**
- * FIXME jsdoc
+ * Provides backend model/operations for storages in onepanel
  *
  * @module services/storage-manager
  * @author Jakub Liput
@@ -21,7 +21,6 @@ const {
   RSVP: { Promise },
 } = Ember;
 
-// FIXME
 const {
   StorageCreateRequest,
 } = Onepanel;
@@ -72,8 +71,6 @@ export default Service.extend({
   },
 
   /**
-   * FIXME doc
-   * 
    * @param {string} id
    * @return {ObjectPromiseProxy} resolves ClusterStorage ObjectProxy
    */
@@ -98,8 +95,6 @@ export default Service.extend({
   },
 
   /**
-   * FIXME doc
-   * 
    * @param {ClusterStorage} clusterStorage
    * @returns {Promise}
    */
