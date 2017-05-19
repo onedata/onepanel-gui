@@ -16,11 +16,10 @@
 </div>
 <div class="row content-row row-small {{unless addStorageOpened "row-hidden"}}">
   <h1 class="form-title">Add a new storage</h1>
-  {{#if addStorageOpened}}
     {{cluster-storage-add-form 
       class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered" 
-      submit=(action "submitAddStorage")}}
-  {{/if}}
+      submit=(action "submitAddStorage")
+      isFormOpened=addStorageOpened}}
 </div>
 <div class="row">
   {{#promise-proxy-container proxy=storagesProxy}}

@@ -14,6 +14,9 @@ import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/creat
 
 const {
   computed,
+  computed: {
+    equal,
+  },
   inject: {
     service
   },
@@ -26,15 +29,21 @@ export default Ember.Component.extend({
   storageManager: service(),
   globalNotify: service(),
 
-  noStorages: computed('storagesProxy.length', function () {
-    return !this.get('storagesProxy.length');
-  }),
+  /**
+   * If true, there are no storages
+   * @type {computed.boolean}
+   */
+  noStorages: equal('storagesProxy.length', 0),
 
   /**
    * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
    */
   storagesProxy: null,
 
+  /**
+   * Form for adding new storage is opened or not?
+   * @type {computed.boolean}
+   */
   addStorageOpened: computed.oneWay('noStorages'),
 
   /**

@@ -18,6 +18,7 @@ import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 const {
   inject: { service },
   computed,
+  observer,
   ObjectProxy,
   PromiseProxyMixin,
   RSVP: { Promise },
@@ -75,6 +76,12 @@ export default OneFormSimple.extend(Validations, {
   submitButton: false,
 
   /**
+   * If true, form is visible to user
+   * @type {boolean}
+   */
+  isFormOpened: false,
+
+  /**
    * @type ObjectPromiseProxy.Array.StorageDetails
    */
   allStoragesProxy: null,
@@ -93,6 +100,15 @@ export default OneFormSimple.extend(Validations, {
       isValid
     } = this.getProperties('_selectedStorage', 'isValid');
     return _selectedStorage != null && isValid;
+  }),
+
+  /**
+   * Resets field if form visibility changes (clears validation errors)
+   */
+  isFormOpenedObserver: observer('isFormOpened', function () {
+    if (this.get('isFormOpened')) {
+      this.resetFormValues();
+    }
   }),
 
   init() {
