@@ -17,6 +17,7 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
           font-size: $content-header-font-size;
           font-family: 'Open Sans Semibold';
           line-height: $onedata-logo-height;
+          font-weight: normal;
           .btn-toolbar button {
             // resets font size to its default for normal content. 
             // 85% is from font-size for .btn-sm (hard-coded in bootstrap config)
