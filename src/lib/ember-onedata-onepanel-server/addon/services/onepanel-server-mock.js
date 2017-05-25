@@ -22,6 +22,7 @@ import _find from 'lodash/find';
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
 const {
+  A,
   RSVP: {
     Promise
   },
@@ -72,8 +73,8 @@ export default Ember.Service.extend(RequestErrorHandler, {
       resolve();
     });
   },
-  
-    destroyClient() {
+
+  destroyClient() {
     this.setProperties({
       isInitialized: false,
     });
@@ -144,9 +145,9 @@ export default Ember.Service.extend(RequestErrorHandler, {
 
       resolve();
     });
-    
+
     promise.catch(error => this.handleRequestError(error));
-    
+
     return promise;
   },
 
@@ -190,10 +191,40 @@ export default Ember.Service.extend(RequestErrorHandler, {
   init() {
     this._super(...arguments);
     if (this.get('mockInitializedCluster')) {
-      this.get('__storages').push({
+      let storage1 = {
+        id: 'storage1_verylongid',
         type: 'posix',
         name: 'Some storage',
         mountPoint: '/mnt/st1',
+      };
+      this.get('__storages').push(storage1);
+      let spaces = this.get('__spaces');
+      spaces.push({
+        id: 'space1_verylongid',
+        name: 'Space One',
+        storageId: storage1.id,
+        storageImport: {
+          strategy: 'no_import',
+        },
+        storageUpdate: {
+          strategy: 'no_update',
+        },
+      });
+      spaces.push({
+        id: 'space2__verylongid',
+        name: 'Space Two',
+        storageId: storage1.id,
+        storageImport: {
+          strategy: 'simple_scan',
+          maxDepth: 4,
+        },
+        storageUpdate: {
+          strategy: 'simple_scan',
+          maxDepth: 3,
+          scanInterval: 1000,
+          writeOnce: false,
+          deleteEnable: false,
+        },
       });
     }
   },
@@ -362,37 +393,39 @@ export default Ember.Service.extend(RequestErrorHandler, {
       };
     }),
 
-  _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster', function () {
-    if (this.get('mockInitializedCluster')) {
-      // TODO use Object.keys if available
-      let spaceIds = [];
-      for (let sid in SPACES) {
-        spaceIds.push(sid);
+  _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster', '__spaces.[]',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        // TODO use Object.keys if available
+        let spaces = this.get('__spaces');
+        let spaceIds = spaces.map(s => s.id);
+        return {
+          success: () => ({
+            ids: spaceIds,
+          })
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
       }
-      return {
-        success: () => ({
-          ids: spaceIds,
-        })
-      };
-    } else {
-      return {
-        statusCode: () => 404
-      };
-    }
-  }),
+    }),
 
-  _req_oneprovider_getSpaceDetails: computed('mockInitializedCluster', function () {
-    if (this.get('mockInitializedCluster')) {
-      return {
-        success: (id) => SPACES[id],
-        statusCode: (id) => SPACES[id] ? 200 : 404
-      };
-    } else {
-      return {
-        statusCode: () => 404
-      };
-    }
-  }),
+  _req_oneprovider_getSpaceDetails: computed('mockInitializedCluster', 'spaces',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        let spaces = this.get('__spaces');
+        let findSpace = (id) => _find(spaces, s => s.id === id);
+        return {
+          success: (id) => findSpace(id),
+          statusCode: (id) => findSpace(id) ? 200 : 404
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
 
   // TODO: after revoking space support, do not return the space in getSpaces  
   _req_oneprovider_revokeSpaceSupport: computed(function () {
@@ -404,7 +437,12 @@ export default Ember.Service.extend(RequestErrorHandler, {
 
   _req_oneprovider_supportSpace: computed(function () {
     return {
-      success: () => null,
+      success: (supportSpaceRequest) => {
+        supportSpaceRequest.id = 'id-' + Math.round(Math.random() * 100000, 0);
+        supportSpaceRequest.name = 'Space-' + Math.round(Math.random() * 100, 0);
+        delete supportSpaceRequest['token'];
+        this.get('__spaces').push(supportSpaceRequest);
+      },
       statusCode: () => 204,
     };
   }),
@@ -465,15 +503,6 @@ export default Ember.Service.extend(RequestErrorHandler, {
   }),
 
   __storages: [],
-});
 
-const SPACES = {
-  space1: {
-    id: 'space1',
-    name: 'Space One',
-  },
-  space2: {
-    id: 'space2',
-    name: 'Space Two',
-  }
-};
+  __spaces: A([]),
+});

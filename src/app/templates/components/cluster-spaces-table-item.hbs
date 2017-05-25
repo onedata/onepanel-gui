@@ -6,12 +6,20 @@
   <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
+    <button class="btn icon-btn">
+      {{one-icon icon="provider"}}
+      {{bs-tooltip
+        title="Import data from storage"
+        placement="bottom"
+        triggerEvents="hover"
+      }}
+    </button>
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
       {{bs-tooltip
         visible=revokeTooltipVisible
         title="Revoke space support from this provider"
-        placement="bottom"
+        placement="top"
         triggerEvents="hover"
       }}
     </button>
@@ -51,6 +59,21 @@
         <div class="row content-row">
           <strong>Id:</strong> <span class="one-label">{{space.id}}</span>
         </div>
+        {{#if space.importEnabled}}
+          <div class="row content-row">
+            <strong>Import enabled TODO FIXME, strategy: {{space.storageImport.strategy}},</strong>
+            <span>maxDepth: {{space.storageImport.maxDepth}}</span>
+          </div>
+        {{/if}}
+        {{#if space.updateEnabled}}
+          <div class="row content-row">
+            <strong>Update enabled TODO FIXME, strategy: {{space.storageUpdate.strategy}},</strong>
+            <span>maxDepth: {{space.storageUpdate.maxDepth}},</span>
+            <span>scanInterval: {{space.storageUpdate.scanInterval}},</span>
+            <span>writeOnce: {{space.storageUpdate.writeOnce}},</span>
+            <span>deleteEnable: {{space.storageUpdate.deleteEnable}},</span>
+          </div>
+        {{/if}}
       </td>
     </tr>
   </table>

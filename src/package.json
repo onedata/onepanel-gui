@@ -62,7 +62,7 @@
     "ember-spin-spinner": "0.3.1",
     "ember-truth-helpers": "1.3.0",
     "loader.js": "4.2.3",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#6eb8da9cf67341746aba5d6388fa0386ff3c9acf"
+    "onepanel": "git+ssh://git@git.plgrid.pl:7999/vfs/onepanel-javascript-client.git#c9c19fe6737"
   },
   "engines": {
     "node": ">= 0.12.0"

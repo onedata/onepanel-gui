@@ -18,6 +18,7 @@ import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 const {
   inject: { service },
   computed,
+  computed: { oneWay },
   ObjectProxy,
   PromiseProxyMixin,
   RSVP: { Promise },
@@ -41,7 +42,12 @@ const FORM_FIELDS = [{
       { value: 'gb', label: 'GB' },
       { value: 'tb', label: 'TB' },
     ]
-  }
+  },
+  {
+    name: '_importEnabled',
+    type: 'checkbox',
+    tip: 'Configure import files from storage',
+  },
 ];
 
 const MEGA = Math.pow(10, 6);
@@ -72,6 +78,8 @@ export default OneFormSimple.extend(Validations, {
 
   fields: computed(() => FORM_FIELDS).readOnly(),
 
+  _importEnabled: oneWay('formValues._importEnabled'),
+
   submitButton: false,
 
   /**
@@ -84,6 +92,7 @@ export default OneFormSimple.extend(Validations, {
     token: '',
     size: '',
     sizeUnit: 'mb',
+    _importEnabled: false,
   }),
 
   // TODO change to ember-cp-validations  
@@ -131,7 +140,16 @@ export default OneFormSimple.extend(Validations, {
         token,
         size,
         sizeUnit,
-      } = this.get('formValues').getProperties('name', 'token', 'size', 'sizeUnit');
+        storageImport,
+        storageUpdate,
+      } = this.get('formValues').getProperties(
+        'name',
+        'token',
+        'size',
+        'sizeUnit',
+        'storageImport',
+        'storageUpdate'
+      );
 
       size = size * UNITS[sizeUnit];
 
@@ -141,6 +159,8 @@ export default OneFormSimple.extend(Validations, {
         token,
         size,
         storageId,
+        storageImport,
+        storageUpdate,
       });
 
       submitting.catch(error => {
@@ -151,6 +171,12 @@ export default OneFormSimple.extend(Validations, {
     },
     storageChanged(storage) {
       this.set('_selectedStorage', storage);
+    },
+    importFormChanged(importFormValues) {
+      let formValues = this.get('formValues');
+      Object.keys(importFormValues).forEach(key => {
+        formValues.set(key, Ember.get(importFormValues, key));
+      });
     },
   },
 });
