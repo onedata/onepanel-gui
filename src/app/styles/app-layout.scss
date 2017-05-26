@@ -74,6 +74,17 @@ $onedata-logo-width: 150px;
           font-size: 2.2em;
         }
       }
+      &.collapsible-toolbar-toggle {
+        width: 30px;
+        padding: 8px;
+        .icon-bar {
+          border-radius: 100%;
+          width: 4px;
+          height: 4px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
       .icon-bar {
         background-color: $color-one-white;
         border-radius: 0;

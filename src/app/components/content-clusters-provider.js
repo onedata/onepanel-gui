@@ -43,6 +43,11 @@ export default Component.extend({
    */
   _editing: false,
 
+  /**
+   * @type {boolean}
+   */
+  _deregisterModalOpen: false,
+
   _editProviderButtonType: computed('_editing', function () {
     return this.get('_editing') ? 'default' : 'primary';
   }),
@@ -91,6 +96,16 @@ export default Component.extend({
 
         this.set('_editing', true);
       }
+    },
+
+    openDeregisterModal(fromFullToolbar) {
+      if (!fromFullToolbar) {
+        this.set('_deregisterModalOpen', true);
+      }
+    },
+
+    closeDeregisterModal() {
+      this.set('_deregisterModalOpen', false);
     },
 
     /**

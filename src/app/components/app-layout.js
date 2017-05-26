@@ -43,6 +43,7 @@ export default Ember.Component.extend({
   sidebarResources: service(),
   eventsBus: service(),
   sideMenu: service(),
+  globalCollapsibleToolbar: service(),
 
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.oneWay('mainMenu.currentItemId'),
@@ -166,6 +167,9 @@ export default Ember.Component.extend({
     },
     changeResourceId() {
       return invokeAction(this, 'changeResourceId', ...arguments);
+    },
+    globalCollapsibleToolbarToggle() {
+      this.toggleProperty('globalCollapsibleToolbar.isDropdownOpened');
     },
   }
 });

@@ -52,6 +52,12 @@ export default Component.extend({
   padding: true,
 
   /**
+   * Tells if multiple popovers are allowed.
+   * @type {boolean}
+   */
+  multi: false,
+
+  /**
    * One of: pop, fade
    * @type {string|null}
    */
@@ -93,6 +99,7 @@ export default Component.extend({
       popoverStyle,
       elementId,
       padding,
+      multi,
     } = this.getProperties(
       'triggerSelector',
       'animation',
@@ -101,7 +108,8 @@ export default Component.extend({
       'popoverStyle',
       'padding',
       'elementId',
-      'eventsBus'
+      'eventsBus',
+      'multi'
     );
 
     let $triggerElement = $(triggerSelector);
@@ -121,6 +129,7 @@ export default Component.extend({
       style: popoverStyle,
       padding,
       container: document.body,
+      multi,
       onShow: () => this.set('_isPopoverVisible', true),
       onHide: () => this.set('_isPopoverVisible', false),
     });
@@ -160,7 +169,9 @@ export default Component.extend({
   }),
 
   _debounceResizeRefresh() {
-    this._popover('show');
+    if (this.get('$triggerElement').is(':visible')) {
+      this._popover('show');
+    }
     this.set('_debounceTimerEnabled', false);
   },
 

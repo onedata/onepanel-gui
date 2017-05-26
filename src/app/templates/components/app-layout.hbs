@@ -66,6 +66,15 @@
         {{currentTabId}}
       </div>
     </div>
+    <div class="pull-right {{if globalCollapsibleToolbar.isToggleVisible "" " hidden"}}{{if showMobileSidebar " hidden-xs"}}">
+      <button type="button" 
+        class="navbar-toggle collapsible-toolbar-toggle collapsible-toolbar-global-toggle"
+        onclick={{disable-bubbling (action "globalCollapsibleToolbarToggle")}}>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
   </div>
   <div class="row row-app full-height">
     {{#one-sidenav open=sidenavSidebarOpen id="sidenav-sidebar"
