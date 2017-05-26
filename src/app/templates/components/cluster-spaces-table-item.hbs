@@ -6,20 +6,30 @@
   <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
-    <button class="btn icon-btn">
-      {{one-icon icon="provider"}}
+    {{!-- NOTE: currently edit is enabled only for import/update --}}
+    <button
+      class={{concat "btn icon-btn btn-import-storage-data " _importButtonClass}}
+      {{action _importButtonActionName}}>
+      
+      {{one-icon icon="space-import"}}
       {{bs-tooltip
-        title="Import data from storage"
+        title=_importButtonTip
         placement="bottom"
         triggerEvents="hover"
       }}
+      {{#if _importActive}}
+        {{one-icon
+          icon="checkbox-filled"
+          class="status-icon status-icon-success"
+        }}
+      {{/if}}
     </button>
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
       {{bs-tooltip
         visible=revokeTooltipVisible
         title="Revoke space support from this provider"
-        placement="top"
+        placement="bottom"
         triggerEvents="hover"
       }}
     </button>
@@ -50,6 +60,19 @@
 {{/listItem.header}}
 {{#listItem.content}}
   <table class="item-table">
+    {{!-- TODO FIXME maybe use animation not conditional rendering --}}
+    {{#if importConfigurationOpen}}
+      <tr>
+        <td colspan=99>
+          <div class="row content-row">
+            {{storage-import-update-form
+              submitButton=true
+              submit=(action "importUpdateConfigurationSubmit")
+            }}
+          </div>
+        </td>
+      </tr>
+    {{/if}}
     <tr>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
       <td class="item-table-content-cell">

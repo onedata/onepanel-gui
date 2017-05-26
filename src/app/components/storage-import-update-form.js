@@ -11,6 +11,11 @@ import Ember from 'ember';
 import { invokeAction, invoke } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
+  /**
+   * @type {boolean}
+   */
+  submitButton: false,
+
   formValues: {
     storageImport: {
       strategy: 'simple_scan',
@@ -32,7 +37,10 @@ export default Ember.Component.extend({
 
   actions: {
     valuesChanged() {
-      invokeAction(this, 'valuesChanged', this.get('formValues'));
+      invokeAction(this, 'valuesChanged');
+    },
+    submit() {
+      invokeAction(this, 'submit', this.get('formValues'));
     },
   },
 });

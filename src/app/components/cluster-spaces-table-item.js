@@ -12,6 +12,8 @@ import { invokeAction } from 'ember-invoke-action';
 
 const {
   Component,
+  computed,
+  computed: { alias },
 } = Ember;
 
 export default Component.extend({
@@ -27,9 +29,43 @@ export default Component.extend({
    */
   space: null,
 
+  _importActive: alias('space.importEnabled'),
+
+  _importButtonClass: computed('importConfigurationOpen', function () {
+    return this.get('importConfigurationOpen') ?
+      'active' :
+      '';
+  }),
+
+  _importButtonActionName: computed('importConfigurationOpen', function () {
+    return this.get('importConfigurationOpen') ?
+      'endImportConfiguration' :
+      'startImportConfiguration';
+  }),
+
+  // TODO i18n
+  _importButtonTip: computed('importConfigurationOpen', '_importActive', function () {
+    return this.get('importConfigurationOpen') ?
+      'Cancel data import configuration' : (
+        this.get('_importActive') ?
+        'Data import is enabled, click to configure' :
+        'Configure data import from storage'
+      );
+  }),
+
   actions: {
     revokeSpace() {
       return invokeAction(this, 'revokeSpace', this.get('space'));
+    },
+    startImportConfiguration() {
+      // FIXME uncollapse this item panel
+      this.set('importConfigurationOpen', true);
+    },
+    endImportConfiguration() {
+      this.set('importConfigurationOpen', false);
+    },
+    importUpdateConfigurationSubmit(configuration) {
+      invokeAction(this, 'submitModifySpace', configuration);
     },
   },
 });

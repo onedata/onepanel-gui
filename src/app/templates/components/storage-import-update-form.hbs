@@ -1,1 +1,9 @@
 FIXME storage-import-update-form
+{{#if submitButton}}
+  {{#spin-button
+    class="btn btn-primary"
+    action=(action "submit")
+  }}
+    Confirm import configuration
+  {{/spin-button}}
+{{/if}}

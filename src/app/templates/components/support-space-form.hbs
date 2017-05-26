@@ -31,7 +31,10 @@
   
   {{!-- FIXME check if valid if used --}}
   {{#if _importEnabled}}
-    {{storage-import-update-form valuesChanged=(action "importFormChanged")}}
+    {{storage-import-update-form
+      valuesChanged=(action "importFormChanged")
+      submitButton=true
+    }}
   {{/if}}
 
   <div class="row">

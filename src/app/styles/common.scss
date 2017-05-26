@@ -85,6 +85,9 @@ input {
 
 .item-table {
   width: 100%;
+  tr:not(:last-of-type) {
+    border-bottom: $table-item-border;
+  }
   .item-table-img-cell {
     position: relative;
     width: 30%;
@@ -134,4 +137,16 @@ input {
   margin-right: 0.6em;
   line-height: 0;
   font-size: 2em;
+}
+
+.status-icon {
+  position: absolute !important;
+  right: -10px;
+  bottom: 6px !important;
+  font-size: 22px !important;
+  top: initial !important;
+  
+  &.status-icon-success {
+    color: $color-one-mint;
+  }
 }
