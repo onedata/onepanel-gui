@@ -77,24 +77,33 @@
       <td class="item-table-img-cell"><div class="background-container"></div></td>
       <td class="item-table-content-cell">
         <div class="row content-row">
-          <strong>Name:</strong> <span class="one-label">{{space.name}}</span>
+          <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
+          <span class="one-label">{{space.name}}</span>
         </div>
         <div class="row content-row">
-          <strong>Id:</strong> <span class="one-label">{{space.id}}</span>
+          <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
+          <span class="one-label">{{space.id}}</span>
         </div>
         {{#if space.importEnabled}}
           <div class="row content-row">
-            <strong>Import enabled TODO FIXME, strategy: {{space.storageImport.strategy}},</strong>
-            <span>maxDepth: {{space.storageImport.maxDepth}}</span>
+            <strong>{{t 'components.clusterSpacesTableItem.importStrategy'}}:</strong>
+            <span class="one-label">{{importStrategyLabel}}</span>
+            {{#each importProperties as |property|}}
+              <div class="row content-row nested-row">
+                <strong>{{t (concat (concat importTranslationPrefix property))}}:</strong>
+                <span class="one-label">{{get space.storageImport property}}</span>
+              </div>
+            {{/each}}
           </div>
-        {{/if}}
-        {{#if space.updateEnabled}}
           <div class="row content-row">
-            <strong>Update enabled TODO FIXME, strategy: {{space.storageUpdate.strategy}},</strong>
-            <span>maxDepth: {{space.storageUpdate.maxDepth}},</span>
-            <span>scanInterval: {{space.storageUpdate.scanInterval}},</span>
-            <span>writeOnce: {{space.storageUpdate.writeOnce}},</span>
-            <span>deleteEnable: {{space.storageUpdate.deleteEnable}},</span>
+            <strong>{{t 'components.clusterSpacesTableItem.updateStrategy'}}:</strong>
+            <span class="one-label">{{updateStrategyLabel}}</span>
+            {{#each updateProperties as |property|}}
+              <div class="row content-row nested-row">
+                <strong>{{t (concat (concat updateTranslationPrefix property))}}:</strong>
+                <span class="one-label">{{get space.storageUpdate property}}</span>
+              </div>
+            {{/each}}
           </div>
         {{/if}}
       </td>

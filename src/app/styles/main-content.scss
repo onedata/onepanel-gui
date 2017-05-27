@@ -63,6 +63,13 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
     }
 
     @include btn-toolbar-float-right();
+
+    // TODO temporary style, to be designed better
+    &.nested-row {
+      padding: 0;
+      padding-top: $content-row-vertical-padding*0.75;
+      border-bottom: none;
+    }
   }
 
   .row {

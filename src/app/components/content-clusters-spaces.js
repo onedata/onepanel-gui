@@ -119,14 +119,18 @@ export default Component.extend({
     modifySpace(space, data) {
       let globalNotify = this.get('globalNotify');
       let modifying = this._modifySpace(get(space, 'id'), data);
+      let spaceName = get(space, 'name');
       modifying.then(() => {
         this._updateSpacesList();
         globalNotify.info(
-          `Space support configuration "${get(space, 'name')}" has been changed`
+          `Configuration of "${spaceName}" space support has been changed`
         );
       });
       modifying.catch(error => {
-        globalNotify.backendError('space support configuration', error);
+        globalNotify.backendError(
+          `configuration of "${spaceName}" space support`,
+          error
+        );
       });
       return modifying;
     },

@@ -34,7 +34,7 @@ export default Component.extend({
       this.set('anySpaceRejected', false);
     },
     submitModifySpace(space, data) {
-      invokeAction(this, 'modifySpace', space, data);
+      return invokeAction(this, 'modifySpace', space, data);
     },
   },
 });

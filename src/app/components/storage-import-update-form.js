@@ -37,10 +37,10 @@ export default Ember.Component.extend({
 
   actions: {
     valuesChanged() {
-      invokeAction(this, 'valuesChanged');
+      return invokeAction(this, 'valuesChanged');
     },
     submit() {
-      invokeAction(this, 'submit', this.get('formValues'));
+      return invokeAction(this, 'submit', this.get('formValues'));
     },
   },
 });

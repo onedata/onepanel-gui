@@ -9,12 +9,28 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import _includes from 'lodash/includes';
 
 const {
   Component,
   computed,
   computed: { alias },
+  get,
 } = Ember;
+
+/**
+ * Space's ``storageImport`` properties that shouldn't be listed as generic
+ * properties (can be handled separately)
+ * @type {Array.string}
+ */
+const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
+
+/**
+ * Space's ``storageUpdate`` properties that shouldn't be listed as generic
+ * properties (can be handled separately)
+ * @type {Array.string}
+ */
+const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 
 export default Component.extend({
   classNames: ['cluster-spaces-table-item'],
@@ -22,7 +38,7 @@ export default Component.extend({
   /**
    * @type {Component.OneCollapsibleListItem}
    */
-  oneListItem: null,
+  listItem: null,
 
   /**
    * @type {SpaceDetails}
@@ -53,6 +69,57 @@ export default Component.extend({
       );
   }),
 
+  importTranslationPrefix: 'components.clusterSpacesTableItem.storageImport.',
+  updateTranslationPrefix: 'components.clusterSpacesTableItem.storageUpdate.',
+
+  importStrategyLabel: computed('space.storageImport.strategy', function () {
+    let i18n = this.get('i18n');
+    let importTranslationPrefix = this.get('importTranslationPrefix');
+    let strategy = this.get('space.storageImport.strategy');
+    return i18n.t(`${importTranslationPrefix}strategies.${strategy}`);
+  }),
+
+  updateStrategyLabel: computed('space.storageUpdate.strategy', function () {
+    let i18n = this.get('i18n');
+    let updateTranslationPrefix = this.get('updateTranslationPrefix');
+    let strategy = this.get('space.storageUpdate.strategy');
+    return i18n.t(`${updateTranslationPrefix}strategies.${strategy}`);
+  }),
+
+  /**
+   * List of specific non-empty, type-specific storage import properties
+   * @type {Array}
+   */
+  importProperties: computed('space.storageImport', 'space.content', function () {
+    let space = this.get('space');
+    // support for ObjectProxy
+    if (space != null && space.content != null) {
+      space = space.get('content');
+    }
+    let storageImport = get(space, 'storageImport');
+    return storageImport != null ?
+      Object.keys(storageImport).filter(p =>
+        get(storageImport, p) != null && !_includes(SKIPPED_IMPORT_PROPERTIES, p)
+      ) : [];
+  }),
+
+  /**
+   * List of specific non-empty, type-specific storage update properties
+   * @type {Array}
+   */
+  updateProperties: computed('space.storageUpdate', 'space.content', function () {
+    let space = this.get('space');
+    // support for ObjectProxy
+    if (space != null && space.content != null) {
+      space = space.get('content');
+    }
+    let storageUpdate = get(space, 'storageUpdate');
+    return storageUpdate != null ?
+      Object.keys(storageUpdate).filter(p =>
+        get(storageUpdate, p) != null && !_includes(SKIPPED_UPDATE_PROPERTIES, p)
+      ) : [];
+  }),
+
   actions: {
     revokeSpace() {
       return invokeAction(this, 'revokeSpace', this.get('space'));
@@ -65,7 +132,7 @@ export default Component.extend({
       this.set('importConfigurationOpen', false);
     },
     importUpdateConfigurationSubmit(configuration) {
-      invokeAction(this, 'submitModifySpace', configuration);
+      return invokeAction(this, 'submitModifySpace', configuration);
     },
   },
 });

@@ -6,6 +6,7 @@ import supportSpaceForm from './components/support-space-form';
 import brandInfo from './components/brand-info';
 import oneFormFields from './components/one-form-fields';
 import storageItem from './components/storage-item';
+import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 
 const translations = {
   components: {
@@ -17,6 +18,7 @@ const translations = {
     brandInfo,
     oneFormFields,
     storageItem,
+    clusterSpacesTableItem,
   }
 };
 
