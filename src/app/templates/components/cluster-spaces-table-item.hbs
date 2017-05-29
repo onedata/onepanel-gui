@@ -84,6 +84,12 @@
           <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
           <span class="one-label">{{space.id}}</span>
         </div>
+        <div class="row content-row">
+          {{#promise-proxy-container proxy=_storage}}
+            <strong>{{t 'components.clusterSpacesTableItem.storage'}}:</strong>
+            <span class="one-label">{{_storage.name}}</span>
+          {{/promise-proxy-container}}
+        </div>
         {{#if space.importEnabled}}
           <div class="row content-row">
             <strong>{{t 'components.clusterSpacesTableItem.importStrategy'}}:</strong>

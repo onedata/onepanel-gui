@@ -16,6 +16,7 @@ const {
   computed,
   computed: { alias },
   get,
+  inject: { service },
 } = Ember;
 
 /**
@@ -35,6 +36,8 @@ const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 export default Component.extend({
   classNames: ['cluster-spaces-table-item'],
 
+  storageManager: service(),
+
   /**
    * @type {Component.OneCollapsibleListItem}
    */
@@ -44,6 +47,12 @@ export default Component.extend({
    * @type {SpaceDetails}
    */
   space: null,
+
+  /**
+   * Storage that supports space on this panel's provider
+   * @type {ObjectPromiseProxy}
+   */
+  _storage: null,
 
   _importActive: alias('space.importEnabled'),
 
@@ -119,6 +128,15 @@ export default Component.extend({
         get(storageUpdate, p) != null && !_includes(SKIPPED_UPDATE_PROPERTIES, p)
       ) : [];
   }),
+
+  init() {
+    this._super(...arguments);
+    let space = this.get('space');
+    if (space) {
+      let storageManager = this.get('storageManager');
+      this.set('_storage', storageManager.getStorageDetails(space.get('storageId')));
+    }
+  },
 
   actions: {
     revokeSpace() {
