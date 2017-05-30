@@ -43,7 +43,7 @@ describe('Integration | Component | support space form', function () {
           token: 'some_token',
           size: '100',
           sizeUnit: 'mb',
-          // _importEnabled: false
+          _importEnabled: false,
         }));
       };
 

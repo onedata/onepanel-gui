@@ -1,13 +1,20 @@
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
+import SpaceDetails from 'onepanel-gui/models/space-details';
+import storageManagerStub from '../../helpers/storage-manager-stub';
 
 import Ember from 'ember';
 
 describe('Integration | Component | cluster spaces table', function () {
   setupComponentTest('cluster-spaces-table', {
     integration: true
+  });
+
+  beforeEach(function () {
+    this.register('service:storage-manager', storageManagerStub);
+    this.inject.service('storage-manager', { as: 'storageManager' });
   });
 
   it('renders error message when at least one space details fetch was rejected',
@@ -17,10 +24,11 @@ describe('Integration | Component | cluster spaces table', function () {
           isSettled: true,
           isRejected: false,
           isFulfilled: true,
-          content: {
+          content: SpaceDetails.create({
             id: 'space-1',
             name: 'Space 1',
-          }
+            storageId: 'storage-one',
+          })
         }),
         Ember.Object.create({
           isSettled: true,
@@ -39,8 +47,7 @@ describe('Integration | Component | cluster spaces table', function () {
       this.set('spaces', spaces);
 
       this.render(hbs `{{cluster-spaces-table spaces=spaces}}`);
-      expect(this.$(
-        '.alert-some-spaces-rejected')).to.have.length(1);
+      expect(this.$('.alert-some-spaces-rejected')).to.exist;
     });
 
   it('does not render error message when at all spaces are fetched successfully',
@@ -50,25 +57,25 @@ describe('Integration | Component | cluster spaces table', function () {
           isSettled: true,
           isRejected: false,
           isFulfilled: true,
-          content: {
+          content: SpaceDetails.create({
             id: 'space-1',
             name: 'Space 1',
-          }
+          })
         }),
         Ember.Object.create({
           isSettled: true,
           isRejected: false,
           isFulfilled: true,
-          content: {
+          content: SpaceDetails.create({
             id: 'space-2',
             name: 'Space 2',
-          }
+          })
         }),
       ];
 
       this.set('spaces', spaces);
 
       this.render(hbs `{{cluster-spaces-table spaces=spaces}}`);
-      expect(this.$('.alert-some-spaces-rejected')).to.have.length(0);
+      expect(this.$('.alert-some-spaces-rejected')).to.not.exist;
     });
 });
