@@ -120,13 +120,22 @@ export default Component.extend({
       ) : [];
   }),
 
+  importFormDefaultValue: computed('space', function() {
+    let space = this.get('space');
+    // support for ObjectProxy
+    if (space != null && space.content != null) {
+      space = space.content;
+    }
+    return space;
+  }),
+
   actions: {
     revokeSpace() {
       return invokeAction(this, 'revokeSpace', this.get('space'));
     },
-    startImportConfiguration() {
-      // FIXME uncollapse this item panel
+    startImportConfiguration(toggleAction) {
       this.set('importConfigurationOpen', true);
+      toggleAction.call(null, true);
     },
     endImportConfiguration() {
       this.set('importConfigurationOpen', false);

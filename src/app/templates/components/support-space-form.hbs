@@ -29,13 +29,11 @@
     onFocusOut=(action "focusOut")
   }}
   
-  {{!-- FIXME check if valid if used --}}
-  {{#if _importEnabled}}
-    {{storage-import-update-form
-      valuesChanged=(action "importFormChanged")
-      submitButton=true
-    }}
-  {{/if}}
+  {{storage-import-update-form class=(concat "col-xs-12 collapse-animation collapse-small" (if _importEnabled "" " collapse-hidden"))
+    mode='new'
+    isFormOpened=_importEnabled
+    valuesChanged=(action "importFormChanged")
+  }}
 
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>

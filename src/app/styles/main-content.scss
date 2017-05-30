@@ -27,7 +27,7 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
     }
 
     &.no-border,
-    &:last-child {
+    &:last-child:not(.has-border) {
       border-bottom: 0;
     }
 
@@ -52,6 +52,16 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
       margin-top: $content-row-vertical-padding;
       text-align: center;
     }
+
+    .form-section-title {
+      margin-top: $content-row-vertical-padding;
+      margin-bottom: $content-row-vertical-padding * 2;
+      text-align: center;
+      font-size: $font-size-base;
+      font-family: 'Open Sans Semibold';
+      font-weight: normal;
+      text-transform: uppercase;
+    }
     
     .form-description {
       text-align: center;
@@ -60,6 +70,9 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
     form {
       margin-top: 2 * $content-row-vertical-padding;
       margin-bottom: 2 * $content-row-vertical-padding;
+      form {
+        margin: 0;
+      }
     }
 
     @include btn-toolbar-float-right();

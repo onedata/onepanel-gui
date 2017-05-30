@@ -57,13 +57,13 @@ const CHANGE_PASSWORD_FIELDS = [{
 function createValidations() {
   let validations = {};
   CHANGE_PASSWORD_FIELDS.forEach(field => {
-    let thisValidations = validations['allFieldsValues.main.' + field.name] =
+    let thisValidations = validations['allFieldsValues.change.' + field.name] =
       createFieldValidator(field);
     switch (field.name) {
     case 'newPasswordRetype':
       // TODO i18n    
       thisValidations.push(validator('confirmation', {
-        on: 'allFieldsValues.main.newPassword',
+        on: 'allFieldsValues.change.newPassword',
         message: 'Retyped password does not match'
       }));
       break;
@@ -83,7 +83,7 @@ export default OneForm.extend(Validations, {
   username: null,
 
   /**
-   * If true, show form fields and buttojn for chane current password
+   * If true, show form fields and button for chane current password
    * @type {boolean}
    */
   changingPassword: false,
@@ -91,31 +91,50 @@ export default OneForm.extend(Validations, {
   /**
    * @type {FieldType}
    */
-  usernameField: computed(() => Ember.Object.create(USERNAME_FIELD)).readOnly(),
+  usernameField: computed(() => {
+    let field = Ember.Object.create(USERNAME_FIELD);
+    field.set('name', 'generic.' + field.get('name'));
+    return field;
+  }).readOnly(),
 
   /**
    * @type {FieldType}
    */
-  secretPasswordField: computed(() => Ember.Object.create(SECRET_PASSWORD_FIELD)).readOnly(),
+  secretPasswordField: computed(() => {
+    let field = Ember.Object.create(SECRET_PASSWORD_FIELD);
+    field.set('name', 'static.' + field.get('name'));
+    return field;
+  }).readOnly(),
 
   /**
    * @type {Array.FieldType}
    */
-  changePasswordFields: computed(() => CHANGE_PASSWORD_FIELDS.map(f =>
-    Ember.Object.create(f)
-  )).readOnly(),
+  changePasswordFields: computed(() => CHANGE_PASSWORD_FIELDS.map(f => {
+    let field = Ember.Object.create(f);
+    field.set('name', 'change.' + field.get('name'));
+    return field;
+  })).readOnly(),
 
   allFieldsValues: Ember.Object.create({
-    main: Ember.Object.create({
+    generic: Ember.Object.create({
       username: null,
+    }),
+    static: Ember.Object.create({
       secretPassword: htmlSafe(PASSWORD_DOT.repeat(5)),
+    }),
+    change: Ember.Object.create({
       currentPassword: null,
       newPassword: null,
       newPasswordRetype: null,
     }),
   }),
 
-  currentFieldsPrefix: 'main',
+  currentFieldsPrefix: computed('changingPassword', function() {
+    if (this.get('changingPassword')) {
+      return ['generic', 'change'];
+    }
+    return ['generic', 'static'];
+  }),
 
   allFields: computed('usernameField', 'changePasswordFields', 'secretPasswordField',
     function () {
@@ -131,33 +150,11 @@ export default OneForm.extend(Validations, {
       return [usernameField, secretPasswordField, ...changePasswordFields];
     }),
 
-  currentFields: computed('usernameField', 'changePasswordFields',
-    'secretPasswordField', 'changingPassword',
-    function () {
-      let {
-        changingPassword,
-        usernameField,
-        changePasswordFields,
-        secretPasswordField,
-      } = this.getProperties(
-        'changingPassword',
-        'usernameField',
-        'changePasswordFields',
-        'secretPasswordField'
-      );
-
-      if (changingPassword) {
-        return [usernameField, ...changePasswordFields];
-      } else {
-        return [usernameField, secretPasswordField];
-      }
-    }),
-
   submitEnabled: readOnly('validations.isValid'),
 
   init() {
     this._super(...arguments);
-    this.set('formValues.username', this.get('username'));
+    this.set('formValues.generic.username', this.get('username'));
     this.prepareFields();
   },
 
@@ -165,8 +162,8 @@ export default OneForm.extend(Validations, {
     submit() {
       if (this.get('submitEnabled')) {
         return invokeAction(this, 'submit', {
-          currentPassword: this.get('formValues.currentPassword'),
-          newPassword: this.get('formValues.newPassword'),
+          currentPassword: this.get('formValues.change.currentPassword'),
+          newPassword: this.get('formValues.change.newPassword'),
         });
       }
     },

@@ -15,7 +15,7 @@
         <div class={{if field.nolabel layoutConfig.formSubmitColumns layoutConfig.formToggleInputColumns}}>
           {{#if (eq field.type "checkbox")}}
             {{one-way-toggle
-              class=(concat "form-control toggle-field-" field.name)
+              class=(concat "form-control toggle-field-" (dot-to-dash field.name))
               inputId=(concat parentView.elementId (concat "-" field.name))
               checked=(get formValues field.name)
               update=(action "inputChanged" field.name)
@@ -24,7 +24,7 @@
             }}
           {{else if (eq field.type "radio-group")}}
             {{one-way-radio-group
-              class=(concat "field-" field.name)
+              class=(concat "field-" (dot-to-dash field.name))
               inputId=(concat parentView.elementId (concat "-" field.name))
               value=(get formValues field.name)
               fieldName=field.name

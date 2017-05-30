@@ -8,6 +8,9 @@ import { invokeAction } from 'ember-invoke-action';
  * If toolbarWhenOpened == true then .btn-toolbar elements will be 
  * visible only if the list item is expanded.
  * isCollapsible == false hides the arrow icon on the right.
+ * 
+ * Yields:
+ * - toggle - action, that toggles list item visibility
  *
  * @module components/one-collapsible-list-item-header.js
  * @author Michał Borzęcki
@@ -30,4 +33,10 @@ export default Ember.Component.extend({
       invokeAction(this, 'toggle');
     }
   },
+
+  actions: {
+    toggle(opened) {
+      invokeAction(this, 'toggle', opened);
+    }
+  }
 });

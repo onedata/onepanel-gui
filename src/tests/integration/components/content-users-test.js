@@ -29,12 +29,12 @@ describe('Integration | Component | content users', function () {
 
     let form = new UserCredentialsFormHelper(this.$());
 
-    expect(form.getInput('username'), 'username field')
+    expect(form.getInput('generic-username'), 'username field')
       .to.exist;
-    expect(form.getInput('secretPassword'), 'secretPassword field')
+    expect(form.getInput('static-secretPassword'), 'secretPassword field')
       .to.exist;
 
-    expect(form.getInput('username')).to.contain(USERNAME);
+    expect(form.getInput('generic-username')).to.contain(USERNAME);
   });
 
   it(
@@ -53,15 +53,15 @@ describe('Integration | Component | content users', function () {
       let form = new UserCredentialsFormHelper(this.$());
 
       wait().then(() => {
-        expect(form.getInput('username'), 'field username')
+        expect(form.getInput('generic-username'), 'field username')
           .to.exist;
-        expect(form.getInput('secretPassword'), 'field secretPassword')
+        expect(form.getInput('static-secretPassword'), 'field secretPassword')
           .to.not.exist;
-        expect(form.getInput('currentPassword'), 'field currentPassword')
+        expect(form.getInput('change-currentPassword'), 'field currentPassword')
           .to.exist;
-        expect(form.getInput('newPassword'), 'field newPassword')
+        expect(form.getInput('change-newPassword'), 'field newPassword')
           .to.exist;
-        expect(form.getInput('newPasswordRetype'), 'field newPasswordRetype')
+        expect(form.getInput('change-newPasswordRetype'), 'field newPasswordRetype')
           .to.exist;
 
         done();

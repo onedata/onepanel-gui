@@ -1,9 +1,65 @@
-FIXME storage-import-update-form
-{{#if submitButton}}
-  {{#spin-button
-    class="btn btn-primary"
-    action=(action "submit")
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+  <h2 class="form-section-title">Import configuration</h2>
+  {{#form.group class="col-xs-12"}}
+    <div class="row">
+      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
+        {{t "components.clusterSpacesTableItem.importStrategy"}}:
+      </label>
+      <div class={{layoutConfig.formInputColumns}}>
+        {{#power-select
+          options=importStrategies
+          selected=selectedImportStrategy
+          onchange=(action "importStrategyChanged")
+          searchEnabled=false
+          renderInPlace=true
+          as |strategy|
+        }}
+          {{strategy.name}}
+        {{/power-select}}
+      </div>
+    </div>
+  {{/form.group}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentImportFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
   }}
-    Confirm import configuration
-  {{/spin-button}}
-{{/if}}
+  <h2 class="form-section-title">Update configuration</h2>
+  {{#form.group class="col-xs-12"}}
+    <div class="row">
+      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
+        {{t "components.clusterSpacesTableItem.updateStrategy"}}:
+      </label>
+      <div class={{layoutConfig.formInputColumns}}>
+        {{#power-select
+          options=updateStrategies
+          selected=selectedUpdateStrategy
+          onchange=(action "updateStrategyChanged")
+          searchEnabled=false
+          renderInPlace=true
+          as |strategy|
+        }}
+          {{strategy.name}}
+        {{/power-select}}
+      </div>
+    </div>
+  {{/form.group}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentUpdateFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+  }}
+  {{#if showSubmitButton}}
+    <div class="row">
+      <div class={{layoutConfig.formSubmitColumns}}>
+        {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+          Confirm import configuration
+        {{/spin-button}}
+      </div>
+    </div>
+  {{/if}}
+{{/bs-form}}

@@ -23,7 +23,7 @@ describe('Integration | Component | provider registration form', function () {
       this.render(hbs `{{provider-registration-form mode="new" submit=(action "submit")}}`);
 
       let helper = new ProviderRegistrationHelper(this.$());
-      ['name', 'onezoneDomainName', 'redirectionPoint', 'geoLatitude', 'geoLongitude']
+      ['main-name', 'main-onezoneDomainName', 'main-redirectionPoint', 'main-geoLatitude', 'main-geoLongitude']
       .forEach(fname => {
         expect(helper.getInput(fname), `${fname} field`).to.exist;
       });

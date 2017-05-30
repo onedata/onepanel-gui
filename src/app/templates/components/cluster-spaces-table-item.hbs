@@ -1,7 +1,7 @@
 {{!-- TODO change .storage-table class or make generic --}}
 {{!-- TODO i18n --}}
 
-{{#listItem.header}}
+{{#listItem.header as |itemHeader|}}
   {{one-icon class="item-icon" icon="space"}}
   <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
@@ -9,8 +9,7 @@
     {{!-- NOTE: currently edit is enabled only for import/update --}}
     <button
       class={{concat "btn icon-btn btn-import-storage-data " _importButtonClass}}
-      {{action _importButtonActionName}}>
-      
+      {{action _importButtonActionName itemHeader.toggleAction}}>
       {{one-icon icon="space-import"}}
       {{bs-tooltip
         title=_importButtonTip
@@ -60,19 +59,19 @@
 {{/listItem.header}}
 {{#listItem.content}}
   <table class="item-table">
-    {{!-- TODO FIXME maybe use animation not conditional rendering --}}
-    {{#if importConfigurationOpen}}
-      <tr>
-        <td colspan=99>
-          <div class="row content-row">
-            {{storage-import-update-form
-              submitButton=true
-              submit=(action "importUpdateConfigurationSubmit")
-            }}
-          </div>
-        </td>
-      </tr>
-    {{/if}}
+    <tr class="no-border">
+      <td colspan="99">
+        <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
+          <h1 class="form-title">Data import configuration</h1>
+          {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
+            defaultValues=importFormDefaultValue
+            mode='edit'
+            isFormOpened=importConfigurationOpen
+            submit=(action "importUpdateConfigurationSubmit")
+          }}
+        </div>
+      </td>
+    </tr>
     <tr>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
       <td class="item-table-content-cell">

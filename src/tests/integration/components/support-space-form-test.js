@@ -43,6 +43,7 @@ describe('Integration | Component | support space form', function () {
           token: 'some_token',
           size: '100',
           sizeUnit: 'mb',
+          // _importEnabled: false
         }));
       };
 
@@ -104,9 +105,9 @@ describe('Integration | Component | support space form', function () {
     let helper = new SupportSpaceFormHelper(this.$());
 
     // TODO ensure that a storage is selected
-    helper.getInput('token').val('some token').change();
-    helper.getInput('size').val(sizeToInput.toString()).change();
-    helper.getInput('sizeUnit-' + unit).click();
+    helper.getInput('main-token').val('some token').change();
+    helper.getInput('main-size').val(sizeToInput.toString()).change();
+    helper.getInput('main-sizeUnit-' + unit).click();
     wait().then(() => {
       helper.submit();
       wait().then(() => {
