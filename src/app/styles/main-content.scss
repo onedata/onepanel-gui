@@ -66,9 +66,19 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
 
     // TODO temporary style, to be designed better
     &.nested-row {
+      &:first-of-type {
+        margin-top: $content-row-vertical-padding*0.75;
+      }
+      
       padding: 0;
       padding-top: $content-row-vertical-padding*0.75;
+      padding-left: $content-row-vertical-padding;
       border-bottom: none;
+      
+      strong {
+        font-weight: normal;
+        font-family: 'Open Sans Semibold'
+      }
     }
   }
 
