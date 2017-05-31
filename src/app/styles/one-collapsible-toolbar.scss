@@ -1,0 +1,24 @@
+.one-collapsible-toolbar {
+  &.minimized {
+    .collapsible-toolbar-toggle {
+      transform: translateY(30%);
+      .icon-dot {
+        background-color: $main-text-color;
+        height: 0.4em;
+        width: 0.4em;
+        margin-bottom: 0.25em;
+        border-radius: 100%;
+      }
+    }
+  }
+  .collapsible-toolbar-buttons {
+    white-space: nowrap;
+  }
+}
+
+.one-collapsible-toolbar-popover {
+  width: $mobile-menu-popover-width;
+  .dropdown-menu {
+    font-size: $font-size-base;
+  }
+}

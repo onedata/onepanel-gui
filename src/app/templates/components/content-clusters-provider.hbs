@@ -1,53 +1,37 @@
 {{!-- TODO i18n --}}
   
 <div class="row content-row header-row">
-  <h1>Provider
-    <div class="btn-toolbar">
-      {{#bs-button
-        type="danger"
-        class="btn-sm btn-deregister-provider"
-      }}
+  <h1>
+    <span class="one-label">Provider</span>
+    {{#one-collapsible-toolbar isGlobal=true as |dropdown|}}
+      {{#dropdown.item buttonStyle="danger" triggerClasses="btn-deregister-provider" itemAction=(action "openDeregisterModal")}}
         Deregister provider
-      {{/bs-button}}
-      
-      {{#one-webui-popover
-        class="popover-deregister-provider"
-        placement="bottom-left"
-        triggerSelector=(concat "#" (concat elementId " .btn-deregister-provider"))
-        submit=(action "deregister")
-        as |popover|
-      }}
-        <h1>Deregister provider?</h1>
-        <p>
-          Deregistering provider from Zone will cause drop spaces support on 
-          this provider and lost of access to data kept only in this provider.
-        </p>
-        <p>
-          After leaving a Zone you can register again, but current support 
-          provided for spaces will be lost.
-        </p>
-        <div class="btn-toolbar">
-          {{#bs-button class="btn btn-sm" type="info" onClick=(action popover.hide)}}
-            No, keep it registered
-          {{/bs-button}}
-          {{#spin-button
-            class="btn btn-sm btn-danger"
-            action=(action popover.submit)
-          }}
-            {{one-icon icon="remove"}} <span>Yes, deregister</span>
-          {{/spin-button}}
-        </div>
-      {{/one-webui-popover}}
-      
-      {{#bs-button
-        onClick=(action "toggleModifyProvider")
-        type=_editProviderButtonType
-        class="btn-sm btn-modify-provider"
-      }}
+      {{/dropdown.item}}
+      {{#dropdown.item buttonStyle=_editProviderButtonType triggerClasses="btn-modify-provider" itemAction=(action "toggleModifyProvider")}}
         {{_editProviderButtonLabel}}
-      {{/bs-button}}
-    </div>
+      {{/dropdown.item}}
+    {{/one-collapsible-toolbar}}
   </h1>
+  {{!-- doubled confirmation message for both versions of toolbar - minimized and full --}}
+  {{!-- TODO move to generic component for switchable popovers/modals --}}
+  {{#one-webui-popover
+    class="popover-deregister-provider"
+    placement="bottom-left"
+    triggerSelector=".btn-deregister-provider.btn"
+    submit=submitAction
+    as |popover|
+  }}
+    {{deregister-provider-confirm submitAction=(action "deregister") closeAction=(action popover.hide)}}
+  {{/one-webui-popover}}
+  {{#bs-modal
+    open=_deregisterModalOpen
+    onHidden=(action "closeDeregisterModal")
+    as |modal|
+  }}
+    {{#modal.body}}
+      {{deregister-provider-confirm submitAction=(action "deregister") closeAction=(action "closeDeregisterModal")}}
+    {{/modal.body}}
+  {{/bs-modal}}
 </div>
 
 <div class="row">

@@ -28,6 +28,17 @@ $input-bg-light: $color-one-white;
   font-weight: bold;
 }
 
+.modal-content {
+  .btn-toolbar {
+    margin-top: $padding-large-horizontal;
+    text-align: center;
+    button {
+      margin-top: $padding-small-vertical;
+      float: none;
+    }
+  }
+}
+
 form {
   .form-message {
     padding-top: $padding-small-vertical;
