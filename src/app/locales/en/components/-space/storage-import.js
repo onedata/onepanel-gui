@@ -4,5 +4,8 @@ export default {
     no_update: 'Disabled',
     simple_scan: 'Simple scan',
   },
-  maxDepth: 'Max depth',
+  maxDepth: {
+    name: 'Max depth',
+    tip: 'Maximum depth of filesystem tree that will be traversed during storage synchronization.',
+  },
 };

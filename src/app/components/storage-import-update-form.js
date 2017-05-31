@@ -54,7 +54,9 @@ const IMPORT_GENERIC_FIELDS = [
   {
     name: 'maxDepth',
     type: 'number',
-    gte: 1
+    gte: 1,
+    optional: true,
+    example: '3',
   }
 ];
 
@@ -69,24 +71,26 @@ const UPDATE_GENERIC_FIELDS = [
   {
     name: 'maxDepth',
     type: 'number',
-    gte: 1
+    gte: 1,
+    optional: true,
+    example: '3',
   },
   {
     name: 'scanInterval',
     type: 'number',
-    gt: 0
+    gt: 0,
+    example: '1000',
+    optional: true,
   },
   {
     name: 'writeOnce',
     type: 'checkbox',
-    default: false,
-    optional: true
+    optional: true,
   },
   {
     name: 'deleteEnable',
     type: 'checkbox',
-    default: false,
-    optional: true
+    optional: true,
   }
 ];
 
@@ -295,7 +299,7 @@ export default OneForm.extend(Validations, {
       strategy.fields.forEach(field => field.set('name', 'update_' + strategy.id + '.' + field.get('name')));
     });
     this.prepareFields();
-    this._addFieldsLabels();
+    this._addFieldsTranslations();
     this._loadDefaultValues();
   },
 
@@ -304,7 +308,7 @@ export default OneForm.extend(Validations, {
     this._triggerValuesChanged();
   },
 
-  _addFieldsLabels() {
+  _addFieldsTranslations() {
     let i18n = this.get('i18n');
     let {
       importGenericFields,
@@ -315,29 +319,30 @@ export default OneForm.extend(Validations, {
       'updateGenericFields', 'importStrategies', 'updateStrategies');
       
     importGenericFields.forEach(field =>
-      this._addFieldLabelTranslation('storageImport', field, i18n)
+      this._addFieldTranslation('storageImport', field, i18n)
     );
     importStrategies.forEach(strategy => {
       strategy.fields.forEach(field =>
-        this._addFieldLabelTranslation('storageImport', field, i18n));
+        this._addFieldTranslation('storageImport', field, i18n));
       this._addStrategyNameTranslation('storageImport', strategy, i18n);
     });
     updateGenericFields.forEach(field =>
-      this._addFieldLabelTranslation('storageUpdate', field, i18n)
+      this._addFieldTranslation('storageUpdate', field, i18n)
     );
     updateStrategies.forEach(strategy => {
       strategy.fields.forEach(field =>
-        this._addFieldLabelTranslation('storageUpdate', field, i18n));
+        this._addFieldTranslation('storageUpdate', field, i18n));
       this._addStrategyNameTranslation('storageUpdate', strategy, i18n);
     });
   },
 
-  _addFieldLabelTranslation(path, field, i18n) {
+  _addFieldTranslation(path, field, i18n) {
+    let fieldTranslationPrefix = 
+      `components.storageImportUpdateForm.${path}.${this.cutOffPrefix(field.get('name'))}`;
     if (!field.get('label')) {
-      field.set('label', i18n.t(
-        `components.storageImportUpdateForm.${path}.${this.cutOffPrefix(field.get('name'))}`
-      ));
+      field.set('label', i18n.t(fieldTranslationPrefix + '.name'));
     }
+    field.set('tip', i18n.t(fieldTranslationPrefix + '.tip'));
   },
 
   _addStrategyNameTranslation(path, strategy, i18n) {

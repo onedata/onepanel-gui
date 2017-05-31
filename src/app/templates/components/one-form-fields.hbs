@@ -6,7 +6,7 @@
       <div class="row toggle-form-row">
         {{#if (not field.nolabel)}}
           <label for={{concat parentView.elementId (concat "-" field.name)}} class={{concat "control-label text-right " layoutConfig.formToggleLabelColumns}}>
-            {{field.label}}{{if field.optional (concat " " (t "components.oneFormFields.optional"))}}:
+            {{field.label}}:
             {{#if field.tip}}
               {{one-label-tip title=field.tip}}
             {{/if}}

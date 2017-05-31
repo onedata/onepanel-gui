@@ -95,7 +95,7 @@
             <span class="one-label">{{importStrategyLabel}}</span>
             {{#each importProperties as |property|}}
               <div class="row content-row nested-row">
-                <strong>{{t (concat (concat importTranslationPrefix property))}}:</strong>
+                <strong>{{t (concat (concat (concat importTranslationPrefix property)) ".name")}}:</strong>
                 <span class="one-label">{{get space.storageImport property}}</span>
               </div>
             {{/each}}
@@ -105,7 +105,7 @@
             <span class="one-label">{{updateStrategyLabel}}</span>
             {{#each updateProperties as |property|}}
               <div class="row content-row nested-row">
-                <strong>{{t (concat (concat updateTranslationPrefix property))}}:</strong>
+                <strong>{{t (concat (concat (concat updateTranslationPrefix property)) ".name")}}:</strong>
                 <span class="one-label">{{get space.storageUpdate property}}</span>
               </div>
             {{/each}}
