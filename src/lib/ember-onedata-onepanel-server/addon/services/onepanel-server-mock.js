@@ -465,7 +465,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
         supportSpaceRequest.id = 'id-' + Math.round(Math.random() * 100000, 0);
         supportSpaceRequest.name = 'Space-' + Math.round(Math.random() * 100, 0);
         delete supportSpaceRequest['token'];
-        this.get('__spaces').push(supportSpaceRequest);
+        this.get('__spaces').pushObject(supportSpaceRequest);
       },
       statusCode: () => 204,
     };

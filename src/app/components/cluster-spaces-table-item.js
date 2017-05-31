@@ -39,6 +39,8 @@ export default Component.extend({
   storageManager: service(),
 
   /**
+   * OneCollapsibleListItem that should be used to render this
+   * To inject.
    * @type {Component.OneCollapsibleListItem}
    */
   listItem: null,
