@@ -3,10 +3,12 @@
  * place for a given element. Overflow status is available via hasOverflow field. 
  * It works using algorithm (pseudo-code):
  * 
+ * ```
  * if (window.width < minimumFullWindowSize) hasOverflow = true
  * else hasOverflow = overflowParentElement.width < 
  *    overflowElement.width + overflowSiblingsElements.widthSum + additionalOverflowMargin
- *
+ * ```
+ * 
  * @module mixins/content-overflow-detector
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
@@ -21,21 +23,21 @@ const {
 
 export default Ember.Mixin.create({
   /**
-   * Element, which overflow is being checked
+   * Element, whose overflow is being checked
    * To inject.
    * @type {JQuery}
    */
   overflowElement: null,
 
   /**
-   * Container element, which width is taken as an available place for the 
+   * Container element, whose width is taken as an available place for the 
    * checked element. Default is overflowElement.parent()
    * @type {JQuery}
    */
   overflowParentElement: null,
 
   /**
-   * Elements that takes place (width) from container 
+   * Elements that takes space (width) in container 
    * (parent) and must be taken into account while 
    * calculating space for checked element.
    * Default is overflowElement.siblings()
@@ -58,7 +60,7 @@ export default Ember.Mixin.create({
   additionalOverflowMargin: 50,
 
   /**
-   * Detection debounce time
+   * Detection debounce time in ms
    * @type {number}
    */
   overflowDetectionDelay: 50,
@@ -124,11 +126,14 @@ export default Ember.Mixin.create({
     
     let elementWidth = overflowElement.outerWidth(true);
     if (overflowElement.is(':hidden')) {
-      let previousCss = overflowElement.attr("style");
+      let previousCss = overflowElement.attr('style');
       let newCss = previousCss + ';position: absolute !important; visibility: hidden !important; display: block !important;';
+      // shows element using standard display:block (but it is hidden from user)
+      // after that we can measure its width as if it was visible and
+      // then we fallback to previous styles
       overflowElement.attr('style', newCss);
       elementWidth = overflowElement.outerWidth(true);   
-      overflowElement.attr("style", previousCss ? previousCss : '');
+      overflowElement.attr('style', previousCss ? previousCss : '');
     }
     let parentWidth = overflowParentElement.width();
     let siblingsWidth = overflowSiblingsElements.get().map(sibling => $(sibling).outerWidth(true))

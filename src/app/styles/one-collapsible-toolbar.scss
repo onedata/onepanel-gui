@@ -17,17 +17,8 @@
 }
 
 .one-collapsible-toolbar-popover {
-  width: 200px;
+  width: $mobile-menu-popover-width;
   .dropdown-menu {
     font-size: $font-size-base;
-    li {
-      border-bottom: 1px solid $main-border-color;
-      &:last-child {
-        border-bottom: 0;
-      }
-      & > * {
-        padding: $padding-base-vertical * 0.8;
-      }
-    }
   }
 }
