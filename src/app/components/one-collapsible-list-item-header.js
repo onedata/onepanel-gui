@@ -10,7 +10,7 @@ import { invokeAction } from 'ember-invoke-action';
  * isCollapsible == false hides the arrow icon on the right.
  * 
  * Yields:
- * - toggle - action, that toggles list item visibility
+ * - toggleAction - action, that toggles list item visibility
  *
  * @module components/one-collapsible-list-item-header.js
  * @author Michał Borzęcki
@@ -35,6 +35,10 @@ export default Ember.Component.extend({
   },
 
   actions: {
+    /**
+     * Toggles collapse state of the collapsible item
+     * @param {boolean} opened should item be opened or collapsed?
+     */
     toggle(opened) {
       invokeAction(this, 'toggle', opened);
     }

@@ -1,4 +1,5 @@
 export default {
+  updateStrategy: 'Update strategy',
   strategies: {
     no_update: 'Disabled',
     simple_scan: 'Simple scan',

@@ -33,6 +33,7 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _object from 'lodash/object';
+import _find from 'lodash/find';
 
 import OneForm from 'onepanel-gui/components/one-form';
 import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
@@ -167,7 +168,7 @@ export default OneForm.extend(Validations, {
         'updateStrategies'
       );
     let prefixes = ['import_generic', 'import_' + selectedImportStrategy.id];
-    let noUpdateStrategy = updateStrategies.filter(strategy => strategy.id === 'no_update')[0];
+    let noUpdateStrategy = _find(updateStrategies, { id:  'no_update' });
     if (selectedUpdateStrategy !== noUpdateStrategy) {
       prefixes = prefixes.concat(['update_generic', 'update_' + selectedUpdateStrategy.id]);
     }
@@ -334,14 +335,14 @@ export default OneForm.extend(Validations, {
   _addFieldLabelTranslation(path, field, i18n) {
     if (!field.get('label')) {
       field.set('label', i18n.t(
-        `components.clusterSpacesTableItem.${path}.${this.cutOffPrefix(field.get('name'))}`
+        `components.storageImportUpdateForm.${path}.${this.cutOffPrefix(field.get('name'))}`
       ));
     }
   },
 
   _addStrategyNameTranslation(path, strategy, i18n) {
     strategy.name = i18n.t(
-      `components.clusterSpacesTableItem.${path}.strategies.${strategy.id}`
+      `components.storageImportUpdateForm.${path}.strategies.${strategy.id}`
     );
   },
 
@@ -359,12 +360,12 @@ export default OneForm.extend(Validations, {
 
     if (defaultValues) {
       defaultValues = Ember.Object.create(defaultValues);
-      let selectedImportStrategy = importStrategies.filter(strategy => 
-        strategy.id === defaultValues.get('storageImport.strategy'))[0] || 
+      let selectedImportStrategy = 
+        _find(importStrategies, { id:  defaultValues.get('storageImport.strategy') }) || 
         importStrategies[0];
-      let selectedUpdateStrategy = updateStrategies.filter(strategy => 
-        strategy.id === defaultValues.get('storageUpdate.strategy'))[0] ||
-        updateStrategies.filter(strategy => strategy.id === 'no_update')[0];
+      let selectedUpdateStrategy = 
+        _find(updateStrategies, { id:  defaultValues.get('storageUpdate.strategy') }) ||
+        _find(updateStrategies, { id:  'no_update' });
       this.set('selectedImportStrategy', selectedImportStrategy);
       this.set('selectedUpdateStrategy', selectedUpdateStrategy);
 
@@ -428,7 +429,7 @@ export default OneForm.extend(Validations, {
     this._super(...arguments);
     this.set('selectedImportStrategy', importStrategies[0]);
     this.set('selectedUpdateStrategy', 
-        updateStrategies.filter(strategy => strategy.id === 'no_update')[0]);
+      _find(updateStrategies, { id:  'no_update' }));
   },
 
   actions: {

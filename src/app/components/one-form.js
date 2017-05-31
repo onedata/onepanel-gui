@@ -49,6 +49,15 @@ export default Ember.Component.extend({
    * Array of all fields used in the form (both active and inactive)
    * @abstract
    * @type {Array.FieldType}
+   * 
+   * Field name should start with appropiate prefix. Example:
+   * ```
+   * [
+   *  {name: 'group1.name', type: 'text'},
+   *  {name: 'group1.surname', type: 'text', optional: true},
+   *  {name: 'group2.city', type: 'text'},
+   * ]
+   * ```
    */
   allFields: null,
 
@@ -59,21 +68,24 @@ export default Ember.Component.extend({
    * 
    * Uses prefixes to distinct different field groups. Almost one group 
    * (prefix) must be defined. Example with two prefixes - group1 and group2:
+   * 
    * ```
-   * {
-   *   'group1.name': null,
-   *   'group1.surname': null,
-   *   'group2.name': null,
-   *   'group2.city': null
-   * }
+   * Ember.Object.create({
+   *   group1: Ember.Object.create({
+   *     name: null,
+   *     surname: null,
+   *   }),
+   *   group2: Ember.Object.create({
+   *     city: null
+   *   })
+   * })
    * ```
    * If there is only one prefix, it is recommended to name it `main`.
    */
   allFieldsValues: null,
 
   /**
-   * Array of active (usually visible) form fields. All should
-   * be used within current prefixes.
+   * Array of active (visible) form fields (used within current prefixes).
    * @type {Array.Ember.Object}
    */
   currentFields: computed('currentFieldsPrefix.[]', 'allFields', function () {
@@ -95,14 +107,16 @@ export default Ember.Component.extend({
    * @abstract
    * @type {Array.string}
    * 
-   * While validation all values from these prefixes are being checked
-   * (even if corresponding fields are not in currentFields).
+   * While validation all values from these prefixes are being checked.
+   * Example: ``['group1', 'group2']``
    */
   currentFieldsPrefix: [],
 
   /**
    * Values of fields in current prefixes. Used in html form.
    * @type {Object}
+   * 
+   * Object has the same format as allFieldsValues.
    */
   formValues: computed('allFieldsValues', 'currentFieldsPrefix.[]', function () {
     let {
@@ -165,7 +179,7 @@ export default Ember.Component.extend({
 
   /**
    * Changes value of specified field
-   * @param {string} fieldName
+   * @param {string} fieldName field name (with prefix)
    * @param {any} value
    */
   changeFormValue(fieldName, value) {

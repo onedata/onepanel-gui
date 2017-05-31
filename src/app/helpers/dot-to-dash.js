@@ -9,8 +9,10 @@
 
 import Ember from 'ember';
 
+const replaceRegex = new RegExp('\\.', 'g');
+
 export function dotToDash([ name ]/*, hash*/) {
-  return name.split('.').join('-');
+  return name.replace(replaceRegex, '-');
 }
 
 export default Ember.Helper.helper(dotToDash);

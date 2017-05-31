@@ -3,7 +3,7 @@
   {{#form.group class="col-xs-12"}}
     <div class="row">
       <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-        {{t "components.clusterSpacesTableItem.importStrategy"}}:
+        {{t "components.storageImportUpdateForm.storageImport.importStrategy"}}:
       </label>
       <div class={{layoutConfig.formInputColumns}}>
         {{#power-select
@@ -30,7 +30,7 @@
   {{#form.group class="col-xs-12"}}
     <div class="row">
       <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-        {{t "components.clusterSpacesTableItem.updateStrategy"}}:
+        {{t "components.storageImportUpdateForm.storageUpdate.updateStrategy"}}:
       </label>
       <div class={{layoutConfig.formInputColumns}}>
         {{#power-select
@@ -57,7 +57,7 @@
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
         {{#spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-          Confirm import configuration
+          Save configuration
         {{/spin-button}}
       </div>
     </div>

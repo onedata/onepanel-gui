@@ -65,7 +65,7 @@
           <h1 class="form-title">Data import configuration</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
             defaultValues=importFormDefaultValue
-            mode='edit'
+            mode="edit"
             isFormOpened=importConfigurationOpen
             submit=(action "importUpdateConfigurationSubmit")
           }}
@@ -91,7 +91,7 @@
         </div>
         {{#if space.importEnabled}}
           <div class="row content-row">
-            <strong>{{t 'components.clusterSpacesTableItem.importStrategy'}}:</strong>
+            <strong>{{t 'components.clusterSpacesTableItem.storageImport.importStrategy'}}:</strong>
             <span class="one-label">{{importStrategyLabel}}</span>
             {{#each importProperties as |property|}}
               <div class="row content-row nested-row">
@@ -101,7 +101,7 @@
             {{/each}}
           </div>
           <div class="row content-row">
-            <strong>{{t 'components.clusterSpacesTableItem.updateStrategy'}}:</strong>
+            <strong>{{t 'components.clusterSpacesTableItem.storageUpdate.updateStrategy'}}:</strong>
             <span class="one-label">{{updateStrategyLabel}}</span>
             {{#each updateProperties as |property|}}
               <div class="row content-row nested-row">

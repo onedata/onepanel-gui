@@ -72,6 +72,7 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
       margin-bottom: 2 * $content-row-vertical-padding;
       form {
         margin: 0;
+        padding: 0;
       }
     }
 
@@ -102,6 +103,9 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
     transition: $collapse-transition;
     &.row-small {
       max-height: 70em;
+    }
+    &.row-medium {
+      max-height: 150em;
     }
     &.row-hidden {
       max-height: 0;

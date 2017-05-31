@@ -130,10 +130,8 @@ export default OneForm.extend(Validations, {
   }),
 
   currentFieldsPrefix: computed('changingPassword', function() {
-    if (this.get('changingPassword')) {
-      return ['generic', 'change'];
-    }
-    return ['generic', 'static'];
+    return this.get('changingPassword') ? 
+      ['generic', 'change'] : ['generic', 'static'];
   }),
 
   allFields: computed('usernameField', 'changePasswordFields', 'secretPasswordField',
