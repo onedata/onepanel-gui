@@ -55,8 +55,6 @@ export default Ember.Object.extend({
     return strategy != null && strategy !== 'no_import';
   }),
 
-  // FIXME problem with import and update consistency - update should only be
-  // enabled when import is also enabled
   updateEnabled: computed('storageUpdate.strategy', function () {
     let strategy = this.get('storageUpdate.strategy');
     return strategy != null && strategy !== 'no_update';
