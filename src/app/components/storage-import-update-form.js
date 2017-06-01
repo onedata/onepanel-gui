@@ -161,17 +161,19 @@ export default OneForm.extend(Validations, {
 
   unknownFieldErrorMsg: 'component:storage-import-update-form: attempt to change not known input type',
   currentFieldsPrefix: computed('selectedImportStrategy.id', 
-    'selectedUpdateStrategy.id', function () {
+    'selectedUpdateStrategy.id', 'mode', function () {
     let {
         selectedImportStrategy,
         selectedUpdateStrategy,
-        updateStrategies
+        updateStrategies,
+        mode,
       } = this.getProperties(
         'selectedImportStrategy',
         'selectedUpdateStrategy',
-        'updateStrategies'
+        'updateStrategies',
+        'mode'
       );
-    let prefixes = ['import_generic', 'import_' + selectedImportStrategy.id];
+    let prefixes = mode === 'new' ? ['import_generic', 'import_' + selectedImportStrategy.id] : [];
     let noUpdateStrategy = _find(updateStrategies, { id:  'no_update' });
     if (selectedUpdateStrategy !== noUpdateStrategy) {
       prefixes = prefixes.concat(['update_generic', 'update_' + selectedUpdateStrategy.id]);
@@ -264,7 +266,7 @@ export default OneForm.extend(Validations, {
    * Is submit button visible?
    * @type {computed.boolean}
    */
-  showSubmitButton: equal('mode', 'edit'),
+  showSubmitButton: true,
 
   /**
    * Loads new default values
@@ -393,26 +395,30 @@ export default OneForm.extend(Validations, {
       formValues,
       currentFields,
       selectedImportStrategy,
-      selectedUpdateStrategy
+      selectedUpdateStrategy,
+      mode
     } = this.getProperties(
       'formValues',
       'currentFields',
       'selectedImportStrategy',
-      'selectedUpdateStrategy'
+      'selectedUpdateStrategy',
+      'mode'
     );
 
     let formData = {
-      storageImport: {
-        strategy: selectedImportStrategy.id
-      },
       storageUpdate: {
         strategy: selectedUpdateStrategy.id
       },
     };
+    if (mode === 'new') {
+      formData.storageImport = {
+        strategy: selectedImportStrategy.id
+      };
+    }
 
     currentFields.forEach(({ name }) => {
       let nameWithoutPrefix = this.cutOffPrefix(name);
-      if (name.startsWith('import_')) {
+      if (mode === 'new' && name.startsWith('import_')) {
         formData.storageImport[nameWithoutPrefix] = formValues.get(name);
       }
       if (name.startsWith('update_')) {
