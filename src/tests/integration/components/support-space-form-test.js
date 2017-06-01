@@ -8,6 +8,7 @@ import Ember from 'ember';
 import storageManagerStub from '../../helpers/storage-manager-stub';
 import globalNotifyStub from '../../helpers/global-notify-stub';
 import FormHelper from '../../helpers/form';
+import EmberPowerSelectHelper from '../../helpers/ember-power-select';
 
 const {
   RSVP: { Promise },
@@ -26,6 +27,12 @@ const UNITS = {
 class SupportSpaceFormHelper extends FormHelper {
   constructor($template) {
     super($template, '.support-space-form');
+  }
+}
+
+class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
+  constructor() {
+    super('.update-configuration-section .ember-basic-dropdown');
   }
 }
 
@@ -91,10 +98,7 @@ describe('Integration | Component | support space form', function () {
       submitInvoked = true;
       return new Promise(resolve => resolve());
     });
-    this.set('_selectedStorage', {
-      name: 'POSIX',
-      id: 'posix',
-    });
+    this.prepareAllFields();
     this.render(hbs `
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
@@ -145,6 +149,87 @@ describe('Integration | Component | support space form', function () {
     wait().then(() => {
       expect(errorInvoked).to.be.true;
       done();
+    });
+  });
+
+  it('hides import form by default', function (done) {
+    this.render(hbs `
+      {{support-space-form}}
+    `);
+
+    wait().then(() => {
+      expect(this.$('.import-configuration-section .ember-basic-dropdown').length)
+        .to.be.gte(1);
+      done();
+    });
+  });
+
+  it('shows import form on import toggle change', function (done) {
+    this.render(hbs `
+      {{support-space-form}}
+    `);
+
+    let helper = new SupportSpaceFormHelper(this.$());
+    helper.getToggleInput('main-_importEnabled').click();
+
+    wait().then(() => {
+      expect(this.$('.import-configuration-section .ember-basic-dropdown').length)
+        .to.be.gte(1);
+      done();
+    });
+  });
+
+  it('reacts to invalid data in import form', function (done) {
+    this.prepareAllFields();
+    this.render(hbs `
+      {{support-space-form
+        _selectedStorage=_selectedStorage
+        values=formValues
+      }}
+    `);
+
+    let helper = new SupportSpaceFormHelper(this.$());
+
+    helper.getToggleInput('main-_importEnabled').click();
+    wait().then(() => {
+      helper.getInput('import_generic-maxDepth').val('incorrect').change();
+      wait().then(() => {
+        expect(this.$('button[type=submit]')).to.have.prop('disabled', true);
+        done();
+      });
+    });
+  });
+
+  it('submits data from import form', function (done) {
+    let submitInvoked = false;
+    let submitDataCorrect = false;
+
+    this.prepareAllFields();
+    this.on('submitSupportSpace', function (supportSpaceData) {
+      submitDataCorrect = supportSpaceData.storageUpdate.strategy !==
+        'no_update';
+      submitInvoked = true;
+      return new Promise(resolve => resolve());
+    });
+
+    this.render(hbs `
+      {{support-space-form
+        submitSupportSpace=(action "submitSupportSpace")
+        _selectedStorage=_selectedStorage
+        values=formValues
+      }}
+    `);
+
+    let helper = new SupportSpaceFormHelper(this.$());
+    let powerSelectHelper = new UpdateStrategySelectHelper();
+
+    helper.getToggleInput('main-_importEnabled').click();
+    powerSelectHelper.selectOption(2, () => {
+      helper.submit();
+      wait().then(() => {
+        expect(submitInvoked).to.be.true;
+        done();
+      });
     });
   });
 });

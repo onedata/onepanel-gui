@@ -47,25 +47,21 @@ const {
   },
 } = Ember;
 
-const IMPORT_GENERIC_FIELDS = [
-  {
-    name: 'maxDepth',
-    type: 'number',
-    gte: 1,
-    optional: true,
-    example: '3',
-  }
-];
+const IMPORT_GENERIC_FIELDS = [{
+  name: 'maxDepth',
+  type: 'number',
+  _nativeType: 'number',
+  gte: 1,
+  optional: true,
+  example: '3',
+}];
 
-const IMPORT_STRATEGIES = [
-  {
-    id: 'simple_scan',
-    fields: []
-  }
-];
+const IMPORT_STRATEGIES = [{
+  id: 'simple_scan',
+  fields: []
+}];
 
-const UPDATE_GENERIC_FIELDS = [
-  {
+const UPDATE_GENERIC_FIELDS = [{
     name: 'maxDepth',
     type: 'number',
     gte: 1,
@@ -77,7 +73,7 @@ const UPDATE_GENERIC_FIELDS = [
     type: 'number',
     gt: 0,
     example: '1000',
-    optional: true,
+    defaultValue: 10
   },
   {
     name: 'writeOnce',
@@ -91,8 +87,7 @@ const UPDATE_GENERIC_FIELDS = [
   }
 ];
 
-const UPDATE_STRATEGIES = [
-  {
+const UPDATE_STRATEGIES = [{
     id: 'no_update',
     fields: []
   },
@@ -102,7 +97,7 @@ const UPDATE_STRATEGIES = [
   }
 ];
 
-function createValidations(importGenericFields, importStrategies, 
+function createValidations(importGenericFields, importStrategies,
   updateGenericFields, updateStrategies) {
   let validations = {};
   importStrategies.forEach(strategy => {
@@ -128,7 +123,7 @@ function createValidations(importGenericFields, importStrategies,
   return validations;
 }
 
-const Validations = buildValidations(createValidations(IMPORT_GENERIC_FIELDS, 
+const Validations = buildValidations(createValidations(IMPORT_GENERIC_FIELDS,
   IMPORT_STRATEGIES, UPDATE_GENERIC_FIELDS, UPDATE_STRATEGIES));
 
 export default OneForm.extend(Validations, {
@@ -156,32 +151,11 @@ export default OneForm.extend(Validations, {
    */
   defaultValues: null,
 
-  unknownFieldErrorMsg: 'component:storage-import-update-form: attempt to change not known input type',
-  currentFieldsPrefix: computed('selectedImportStrategy.id', 
-    'selectedUpdateStrategy.id', 'mode', function () {
-    let {
-        selectedImportStrategy,
-        selectedUpdateStrategy,
-        updateStrategies,
-        mode,
-      } = this.getProperties(
-        'selectedImportStrategy',
-        'selectedUpdateStrategy',
-        'updateStrategies',
-        'mode'
-      );
-    let prefixes = mode === 'new' ? ['import_generic', 'import_' + selectedImportStrategy.id] : [];
-    let noUpdateStrategy = _find(updateStrategies, { id:  'no_update' });
-    if (selectedUpdateStrategy !== noUpdateStrategy) {
-      prefixes = prefixes.concat(['update_generic', 'update_' + selectedUpdateStrategy.id]);
-    }
-    return prefixes;
-  }),
-
-  importGenericFields: computed(() => IMPORT_GENERIC_FIELDS.map(field => Ember.Object.create(field))),
-  updateGenericFields: computed(() => UPDATE_GENERIC_FIELDS.map(field => Ember.Object.create(field))),
-  importStrategies: computed(() => IMPORT_STRATEGIES.map(strategy => _object.assign({}, strategy))),
-  updateStrategies: computed(() => UPDATE_STRATEGIES.map(strategy => _object.assign({}, strategy))),
+  /**
+   * Is submit button visible?
+   * @type {computed.boolean}
+   */
+  showSubmitButton: true,
 
   /**
    * Selected import strategy
@@ -195,60 +169,95 @@ export default OneForm.extend(Validations, {
    */
   selectedUpdateStrategy: null,
 
-  allFields: computed('importGenericFields', 'updateGenericFields', 
-  'importStrategies.@each.fields', 'updateStrategies.@each.fields', function () {
-    let {
-      importGenericFields,
-      updateGenericFields,
-      importStrategies,
-      updateStrategies,
-    } = this.getProperties('importGenericFields', 'updateGenericFields', 
-      'importStrategies', 'updateStrategies');
-    return importStrategies
-      .concat(updateStrategies)
-      .concat({ fields: importGenericFields })
-      .concat({ fields: updateGenericFields })
-      .map(type => type.fields)
-      .reduce((a, b) => a.concat(b));
-  }),
+  unknownFieldErrorMsg: 'component:storage-import-update-form: attempt to change not known input type',
+  currentFieldsPrefix: computed('selectedImportStrategy.id',
+    'selectedUpdateStrategy.id', 'mode',
+    function () {
+      let {
+        selectedImportStrategy,
+        selectedUpdateStrategy,
+        updateStrategies,
+      } = this.getProperties(
+        'selectedImportStrategy',
+        'selectedUpdateStrategy',
+        'updateStrategies'
+      );
+      let prefixes = ['import_generic', 'import_' + selectedImportStrategy.id];
+      let noUpdateStrategy = _find(updateStrategies, { id: 'no_update' });
+      if (selectedUpdateStrategy !== noUpdateStrategy) {
+        prefixes = prefixes.concat(['update_generic', 'update_' +
+          selectedUpdateStrategy.id
+        ]);
+      }
+      return prefixes;
+    }),
 
-  allFieldsValues: computed('importGenericFields', 'updateGenericFields', 
-    'importStrategies', 'updateStrategies', function () {
-    let {
-      importGenericFields,
-      updateGenericFields,
-      importStrategies,
-      updateStrategies,
-    } = this.getProperties('importGenericFields', 'updateGenericFields', 
-      'importStrategies', 'updateStrategies');
-    let fields = Ember.Object.create({
-      import_generic: Ember.Object.create({}),
-      update_generic: Ember.Object.create({})
-    });
-    importStrategies.forEach(type => {
-      fields.set('import_' + type.id, Ember.Object.create({}));
-      type.fields.forEach(field => {
+  importGenericFields: computed(() => IMPORT_GENERIC_FIELDS.map(field => Ember.Object.create(
+    field))),
+  updateGenericFields: computed(() => UPDATE_GENERIC_FIELDS.map(field => Ember.Object.create(
+    field))),
+  importStrategies: computed(() => IMPORT_STRATEGIES.map(strategy => _object.assign({},
+    strategy))),
+  updateStrategies: computed(() => UPDATE_STRATEGIES.map(strategy => _object.assign({},
+    strategy))),
+
+  allFields: computed('importGenericFields', 'updateGenericFields',
+    'importStrategies.@each.fields', 'updateStrategies.@each.fields',
+    function () {
+      let {
+        importGenericFields,
+        updateGenericFields,
+        importStrategies,
+        updateStrategies,
+      } = this.getProperties('importGenericFields', 'updateGenericFields',
+        'importStrategies', 'updateStrategies');
+      return importStrategies
+        .concat(updateStrategies)
+        .concat({ fields: importGenericFields })
+        .concat({ fields: updateGenericFields })
+        .map(type => type.fields)
+        .reduce((a, b) => a.concat(b));
+    }),
+
+  allFieldsValues: computed('importGenericFields', 'updateGenericFields',
+    'importStrategies', 'updateStrategies',
+    function () {
+      let {
+        importGenericFields,
+        updateGenericFields,
+        importStrategies,
+        updateStrategies,
+      } = this.getProperties('importGenericFields', 'updateGenericFields',
+        'importStrategies', 'updateStrategies');
+      let fields = Ember.Object.create({
+        import_generic: Ember.Object.create({}),
+        update_generic: Ember.Object.create({})
+      });
+      importStrategies.forEach(type => {
+        fields.set('import_' + type.id, Ember.Object.create({}));
+        type.fields.forEach(field => {
+          fields.set(field.get('name'), null);
+        });
+      });
+      updateStrategies.forEach(type => {
+        fields.set('update_' + type.id, Ember.Object.create({}));
+        type.fields.forEach(field => {
+          fields.set(field.get('name'), null);
+        });
+      });
+      importGenericFields.concat(updateGenericFields).forEach(field => {
         fields.set(field.get('name'), null);
       });
-    });
-    updateStrategies.forEach(type => {
-      fields.set('update_' + type.id, Ember.Object.create({}));
-      type.fields.forEach(field => {
-        fields.set(field.get('name'), null);
-      });
-    });
-    importGenericFields.concat(updateGenericFields).forEach(field => {
-      fields.set(field.get('name'), null);
-    });
-    return fields;
-  }),
+      return fields;
+    }),
 
   /**
    * Fields for "import" form part
    * @type {computed.Array.Ember.Object}
    */
   currentImportFields: computed('currentFields', function () {
-    return this.get('currentFields').filter(field => field.get('name').startsWith('import_'));
+    return this.get('currentFields').filter(field => field.get('name').startsWith(
+      'import_'));
   }),
 
   /**
@@ -256,14 +265,9 @@ export default OneForm.extend(Validations, {
    * @type {computed.Array.Ember.Object}
    */
   currentUpdateFields: computed('currentFields', function () {
-    return this.get('currentFields').filter(field => field.get('name').startsWith('update_'));
+    return this.get('currentFields').filter(field => field.get('name').startsWith(
+      'update_'));
   }),
-
-  /**
-   * Is submit button visible?
-   * @type {computed.boolean}
-   */
-  showSubmitButton: true,
 
   /**
    * Loads new default values
@@ -279,6 +283,13 @@ export default OneForm.extend(Validations, {
     this._loadDefaultValues();
   }),
 
+  /**
+   * When mode changes, change import fields type
+   */
+  modeObserver: observer('mode', function () {
+    this._toggleStaticImportFields();
+  }),
+
   init() {
     this._super(...arguments);
     if (this.get('selectedImportStrategy') === null) {
@@ -287,19 +298,24 @@ export default OneForm.extend(Validations, {
     if (this.get('selectedUpdateStrategy') === null) {
       this.set('selectedUpdateStrategy', this.get('updateStrategies.firstObject'));
     }
-    this.get('importGenericFields').forEach(field => field.set('name', 'import_generic.' + field.get('name')));
-    this.get('updateGenericFields').forEach(field => field.set('name', 'update_generic.' + field.get('name')));
+    this.get('importGenericFields').forEach(field => field.set('name',
+      'import_generic.' + field.get('name')));
+    this.get('updateGenericFields').forEach(field => field.set('name',
+      'update_generic.' + field.get('name')));
     this.get('importStrategies').forEach(strategy => {
       strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
-      strategy.fields.forEach(field => field.set('name', 'import_' + strategy.id + '.' + field.get('name')));
+      strategy.fields.forEach(field => field.set('name', 'import_' + strategy.id +
+        '.' + field.get('name')));
     });
     this.get('updateStrategies').forEach(strategy => {
       strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
-      strategy.fields.forEach(field => field.set('name', 'update_' + strategy.id + '.' + field.get('name')));
+      strategy.fields.forEach(field => field.set('name', 'update_' + strategy.id +
+        '.' + field.get('name')));
     });
     this.prepareFields();
     this._addFieldsTranslations();
     this._loadDefaultValues();
+    this._toggleStaticImportFields();
   },
 
   didInsertElement() {
@@ -312,11 +328,11 @@ export default OneForm.extend(Validations, {
     let {
       importGenericFields,
       updateGenericFields,
-      importStrategies, 
+      importStrategies,
       updateStrategies
-    } = this.getProperties('importGenericFields', 
+    } = this.getProperties('importGenericFields',
       'updateGenericFields', 'importStrategies', 'updateStrategies');
-      
+
     importGenericFields.forEach(field =>
       this._addFieldTranslation('storageImport', field, i18n)
     );
@@ -336,7 +352,7 @@ export default OneForm.extend(Validations, {
   },
 
   _addFieldTranslation(path, field, i18n) {
-    let fieldTranslationPrefix = 
+    let fieldTranslationPrefix =
       `components.storageImportUpdateForm.${path}.${this.cutOffPrefix(field.get('name'))}`;
     if (!field.get('label')) {
       field.set('label', i18n.t(fieldTranslationPrefix + '.name'));
@@ -350,39 +366,52 @@ export default OneForm.extend(Validations, {
     );
   },
 
+  _toggleStaticImportFields() {
+    let {
+      importGenericFields,
+      importStrategies,
+      mode,
+    } = this.getProperties('importGenericFields', 'importStrategies', 'mode');
+    let fields = [];
+    importStrategies.forEach(strategy => fields = fields.concat(strategy.fields));
+    fields = fields.concat(importGenericFields);
+    fields.forEach(field => field.set('type',
+      mode === 'new' ? field.get('_nativeType') : 'static'));
+  },
+
   _loadDefaultValues() {
     let {
       defaultValues,
       importGenericFields,
       updateGenericFields,
-      importStrategies, 
+      importStrategies,
       updateStrategies
-    } = this.getProperties('defaultValues', 'importGenericFields', 
+    } = this.getProperties('defaultValues', 'importGenericFields',
       'updateGenericFields', 'importStrategies', 'updateStrategies');
 
-    this.resetFormValues();
+    this.resetFormValues(true);
 
     if (defaultValues) {
       defaultValues = Ember.Object.create(defaultValues);
-      let selectedImportStrategy = 
-        _find(importStrategies, { id:  defaultValues.get('storageImport.strategy') }) || 
+      let selectedImportStrategy =
+        _find(importStrategies, { id: defaultValues.get('storageImport.strategy') }) ||
         importStrategies[0];
-      let selectedUpdateStrategy = 
-        _find(updateStrategies, { id:  defaultValues.get('storageUpdate.strategy') }) ||
-        _find(updateStrategies, { id:  'no_update' });
+      let selectedUpdateStrategy =
+        _find(updateStrategies, { id: defaultValues.get('storageUpdate.strategy') }) ||
+        _find(updateStrategies, { id: 'no_update' });
       this.set('selectedImportStrategy', selectedImportStrategy);
       this.set('selectedUpdateStrategy', selectedUpdateStrategy);
 
       importGenericFields.concat(selectedImportStrategy.fields)
-        .forEach(({name}) => 
-          this.set(`allFieldsValues.${name}`, 
+        .forEach(({ name }) =>
+          this.set(`allFieldsValues.${name}`,
             defaultValues.get(`storageImport.${this.cutOffPrefix(name)}`))
-      );
+        );
       updateGenericFields.concat(selectedUpdateStrategy.fields)
-        .forEach(({name}) => 
-          this.set(`allFieldsValues.${name}`, 
+        .forEach(({ name }) =>
+          this.set(`allFieldsValues.${name}`,
             defaultValues.get(`storageUpdate.${this.cutOffPrefix(name)}`))
-      );
+        );
     }
     this._triggerValuesChanged();
   },
@@ -429,27 +458,29 @@ export default OneForm.extend(Validations, {
     return invokeAction(this, 'valuesChanged', this._getValues(), this.get('isValid'));
   },
 
-  resetFormValues() {
+  resetFormValues(resetSelect, prefixes) {
     let {
-      importStrategies, 
+      importStrategies,
       updateStrategies
     } = this.getProperties('importStrategies', 'updateStrategies');
-    this._super(...arguments);
-    this.set('selectedImportStrategy', importStrategies[0]);
-    this.set('selectedUpdateStrategy', 
-      _find(updateStrategies, { id:  'no_update' }));
+    this._super(prefixes);
+    if (resetSelect) {
+      this.set('selectedImportStrategy', importStrategies[0]);
+      this.set('selectedUpdateStrategy',
+        _find(updateStrategies, { id: 'no_update' }));
+    }
   },
 
   actions: {
     importStrategyChanged(strategy) {
-      this.resetFormValues(['import_generic', 'import_' + strategy.id]);
       this.set('selectedImportStrategy', strategy);
+      this.resetFormValues(false, ['import_generic', 'import_' + strategy.id]);
       return this._triggerValuesChanged();
     },
 
     updateStrategyChanged(strategy) {
-      this.resetFormValues(['update_generic', 'update_' + strategy.id]);
       this.set('selectedUpdateStrategy', strategy);
+      this.resetFormValues(false, ['update_generic', 'update_' + strategy.id]);
       return this._triggerValuesChanged();
     },
 
@@ -464,7 +495,9 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      return invokeAction(this, 'submit', stripObject(this._getValues(), [undefined, null, '']));
+      return invokeAction(this, 'submit', stripObject(this._getValues(), [undefined,
+        null, ''
+      ]));
     },
   }
 });

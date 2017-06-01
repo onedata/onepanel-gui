@@ -1,13 +1,13 @@
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
-  {{#if (eq mode "new")}}
-    <div class="import-configuration-section">
-      <h2 class="form-section-title">Import configuration</h2>
-      {{#form.group class="col-xs-12"}}
-        <div class="row">
-          <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-            {{t "components.storageImportUpdateForm.storageImport.importStrategy"}}:
-          </label>
-          <div class={{layoutConfig.formInputColumns}}>
+  <div class="import-configuration-section">
+    <h2 class="form-section-title">Import configuration</h2>
+    {{#form.group class="col-xs-12"}}
+      <div class="row">
+        <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
+          {{t "components.storageImportUpdateForm.storageImport.importStrategy"}}:
+        </label>
+        <div class={{concat layoutConfig.formInputColumns (if (not (eq mode "new")) " form-control-static one-form-field-static" "")}}>
+          {{#if (eq mode "new")}}
             {{#power-select
               options=importStrategies
               selected=selectedImportStrategy
@@ -18,18 +18,20 @@
             }}
               {{strategy.name}}
             {{/power-select}}
-          </div>
+          {{else}}
+            <span class="field-import-strategy">{{selectedImportStrategy.name}}</span>
+          {{/if}}
         </div>
-      {{/form.group}}
-      {{one-form-fields
-        bsForm=form
-        fields=currentImportFields
-        formValues=formValues
-        inputChanged=(action "inputChanged")
-        onFocusOut=(action "focusOut")
-      }}
-    </div>
-  {{/if}}
+      </div>
+    {{/form.group}}
+    {{one-form-fields
+      bsForm=form
+      fields=currentImportFields
+      formValues=formValues
+      inputChanged=(action "inputChanged")
+      onFocusOut=(action "focusOut")
+    }}
+  </div>
   <div class="update-configuration-section">
     <h2 class="form-section-title">Update configuration</h2>
     {{#form.group class="col-xs-12"}}

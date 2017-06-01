@@ -130,6 +130,13 @@ export default OneFormSimple.extend(Validations, {
     if (this.get('allStoragesProxy') == null) {
       this._initStoragesProxy();
     }
+    // first storage is default selected storage
+    this.get('allStoragesProxy').then((storages) => {
+      if (storages.length > 0) {
+        this.set('_selectedStorage', storages[0]);
+      }
+      return storages;
+    });
   },
 
   _initStoragesProxy() {

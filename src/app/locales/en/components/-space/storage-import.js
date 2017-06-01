@@ -6,6 +6,6 @@ export default {
   },
   maxDepth: {
     name: 'Max depth',
-    tip: 'Maximum depth of filesystem tree that will be traversed during storage synchronization.',
+    tip: 'Maximum depth of filesystem tree that will be traversed during storage synchronization. By default it is unlimited.',
   },
 };
