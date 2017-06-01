@@ -41,9 +41,6 @@ import stripObject from 'onepanel-gui/utils/strip-object';
 
 const {
   computed,
-  computed: {
-    equal,
-  },
   observer,
   inject: {
     service,

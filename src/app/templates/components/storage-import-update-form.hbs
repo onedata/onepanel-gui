@@ -1,16 +1,47 @@
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   {{#if (eq mode "new")}}
-    <h2 class="form-section-title">Import configuration</h2>
+    <div class="import-configuration-section">
+      <h2 class="form-section-title">Import configuration</h2>
+      {{#form.group class="col-xs-12"}}
+        <div class="row">
+          <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
+            {{t "components.storageImportUpdateForm.storageImport.importStrategy"}}:
+          </label>
+          <div class={{layoutConfig.formInputColumns}}>
+            {{#power-select
+              options=importStrategies
+              selected=selectedImportStrategy
+              onchange=(action "importStrategyChanged")
+              searchEnabled=false
+              renderInPlace=true
+              as |strategy|
+            }}
+              {{strategy.name}}
+            {{/power-select}}
+          </div>
+        </div>
+      {{/form.group}}
+      {{one-form-fields
+        bsForm=form
+        fields=currentImportFields
+        formValues=formValues
+        inputChanged=(action "inputChanged")
+        onFocusOut=(action "focusOut")
+      }}
+    </div>
+  {{/if}}
+  <div class="update-configuration-section">
+    <h2 class="form-section-title">Update configuration</h2>
     {{#form.group class="col-xs-12"}}
       <div class="row">
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-          {{t "components.storageImportUpdateForm.storageImport.importStrategy"}}:
+          {{t "components.storageImportUpdateForm.storageUpdate.updateStrategy"}}:
         </label>
         <div class={{layoutConfig.formInputColumns}}>
           {{#power-select
-            options=importStrategies
-            selected=selectedImportStrategy
-            onchange=(action "importStrategyChanged")
+            options=updateStrategies
+            selected=selectedUpdateStrategy
+            onchange=(action "updateStrategyChanged")
             searchEnabled=false
             renderInPlace=true
             as |strategy|
@@ -22,39 +53,12 @@
     {{/form.group}}
     {{one-form-fields
       bsForm=form
-      fields=currentImportFields
+      fields=currentUpdateFields
       formValues=formValues
       inputChanged=(action "inputChanged")
       onFocusOut=(action "focusOut")
     }}
-  {{/if}}
-  <h2 class="form-section-title">Update configuration</h2>
-  {{#form.group class="col-xs-12"}}
-    <div class="row">
-      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-        {{t "components.storageImportUpdateForm.storageUpdate.updateStrategy"}}:
-      </label>
-      <div class={{layoutConfig.formInputColumns}}>
-        {{#power-select
-          options=updateStrategies
-          selected=selectedUpdateStrategy
-          onchange=(action "updateStrategyChanged")
-          searchEnabled=false
-          renderInPlace=true
-          as |strategy|
-        }}
-          {{strategy.name}}
-        {{/power-select}}
-      </div>
-    </div>
-  {{/form.group}}
-  {{one-form-fields
-    bsForm=form
-    fields=currentUpdateFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-  }}
+  </div>
   {{#if showSubmitButton}}
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
