@@ -269,7 +269,7 @@ export default Ember.Component.extend({
 
   actions: {
     zoneFormChanged(fieldName, value) {
-      if (fieldName === 'name') {
+      if (fieldName === 'main.name') {
         this.set('_zoneName', value);
       } else {
         throw 'Unexpected field changed in zone installation form: ' + fieldName;
