@@ -43,6 +43,7 @@ $radio-dot-size: $radio-size-base * 0.5;
     position: relative;
     display: inline-block;
     width: $radio-size-base;
+    margin-right: 0.4em;
     vertical-align: middle;
     border: 1px solid $input-border;
   }
