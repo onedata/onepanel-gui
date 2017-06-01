@@ -55,14 +55,19 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    toggle() {
+    toggle(opened) {
       if (!this.get('isCollapsible')) {
         return;
       }
       if (this.get('accordionMode')) {
-        invokeAction(this, 'toggle', this.get('elementId'));
+        invokeAction(this, 'toggle', this.get('elementId'), opened);
       } else {
-        this.toggleProperty('isActive');
+        if (opened !== undefined) {
+          this.set('isActive', !!opened);
+        }
+        else {
+          this.toggleProperty('isActive');
+        }
       }
     }
   }

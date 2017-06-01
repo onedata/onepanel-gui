@@ -51,8 +51,8 @@ describe('Integration | Component | one form simple', function () {
     }}
       `);
 
-    expect(this.$('.field-first'), 'field first').to.exist;
-    expect(this.$('.field-second'), 'field second').to.exist;
+    expect(this.$('.field-main-first'), 'field first').to.exist;
+    expect(this.$('.field-main-second'), 'field second').to.exist;
   });
 
   it('renders errors after field change', function (done) {
@@ -64,7 +64,7 @@ describe('Integration | Component | one form simple', function () {
     }}
       `);
     
-    let firstField = this.$('.field-first');
+    let firstField = this.$('.field-main-first');
     let firstFieldMsg = firstField.next('.form-message');
     expect(firstFieldMsg.text(),'field has no error before value change')
       .to.be.empty;
@@ -85,7 +85,7 @@ describe('Integration | Component | one form simple', function () {
     }}
       `);
     
-    let firstField = this.$('.field-first');
+    let firstField = this.$('.field-main-first');
     let firstFieldMsg = firstField.next('.form-message');
     expect(firstFieldMsg.text(),'field has no error before value change')
       .to.be.empty;
@@ -107,7 +107,7 @@ describe('Integration | Component | one form simple', function () {
       `);
     
     const NEW_ERROR_MSG = 'error2!';
-    let firstField = this.$('.field-first');
+    let firstField = this.$('.field-main-first');
     let firstFieldMsg = firstField.next('.form-message');
     firstField.blur();
     this.get('fakeValidations.errors')[0].set('message', NEW_ERROR_MSG);
