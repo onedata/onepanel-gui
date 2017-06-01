@@ -83,9 +83,7 @@ $toggle-size-base: 1.4em;
   }
   
   & + .form-control-feedback {
-    height: $toggle-size-base;
-    line-height: $toggle-size-base;
-    
+    display: none;
   }
 
   @media (max-width: $screen-xs-max) {
