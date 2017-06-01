@@ -9,12 +9,14 @@
 
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
-import { validator, buildValidations } from 'ember-cp-validations';
+import { buildValidations } from 'ember-cp-validations';
+import _object from 'lodash/object';
 
 import stripObject from 'onepanel-gui/utils/strip-object';
 import OneForm from 'onepanel-gui/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
+import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 const {
   computed,
@@ -26,19 +28,14 @@ const {
 function createValidations(storageTypes, genericFields) {
   let validations = {};
   storageTypes.forEach(type => {
-    type.fields.concat(genericFields).forEach(field => {
+    type.fields.forEach(field => {
       let fieldName = 'allFieldsValues.' + type.id + '.' + field.name;
-      validations[fieldName] = [];
-      if (!field.optional) {
-        validations[fieldName].push(validator('presence', true));
-      }
-      if (field.type === 'number') {
-        validations[fieldName].push(validator('number', Ember.Object.create({
-          allowString: true,
-          allowBlank: field.optional
-        })));
-      }
+      validations[fieldName] = createFieldValidator(field);
     });
+  });
+  genericFields.forEach(field => {
+    let fieldName = 'allFieldsValues.generic.' + field.name;
+    validations[fieldName] = createFieldValidator(field);
   });
   return validations;
 }
@@ -47,7 +44,9 @@ const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIE
 
 export default OneForm.extend(Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
-  currentFieldsPrefix: computed.alias('selectedStorageType.id'),
+  currentFieldsPrefix: computed('selectedStorageType.id', function () {
+    return ['generic', this.get('selectedStorageType.id')];
+  }),
   allFields: computed('storageTypes.@each.fields', 'genericFields', function () {
     let {
       storageTypes,
@@ -64,53 +63,49 @@ export default OneForm.extend(Validations, {
   i18n: service(),
 
   genericFields: null,
-  storageTypes: computed(() => storageTypes).readOnly(),
+  storageTypes: computed(() =>
+    storageTypes.map(type => _object.assign({}, type))).readOnly(),
 
   selectedStorageType: null,
 
-  specificFields: computed('selectedStorageType.id', 'storageTypes', function () {
-    return this.get('storageTypes')
-      .filter(type => type.id === this.get('selectedStorageType.id'))[0].fields;
-  }),
-
-  /**
-   * @type {computed.FieldType}
-   */
-  currentFields: computed('genericFields.[]', 'specificFields.[]', function () {
-    let {
-      genericFields,
-      specificFields,
-    } = this.getProperties(
-      'genericFields',
-      'specificFields'
-    );
-
-    return genericFields.concat(specificFields);
-  }),
-
   allFieldsValues: computed('genericFields', 'storageTypes', function () {
-    let fields = Ember.Object.create({});
+    let fields = Ember.Object.create({
+      generic: Ember.Object.create({})
+    });
     let {
       genericFields,
       storageTypes
     } = this.getProperties('genericFields', 'storageTypes');
     storageTypes.forEach(type => {
       fields.set(type.id, Ember.Object.create({}));
-      type.fields.concat(genericFields).forEach(field => {
-        fields.set(type.id + "." + field.get('name'), null);
-      });
+      type.fields.forEach(field => fields.set(field.get('name'), null));
     });
+    genericFields.forEach(field =>
+      fields.set(field.get('name'), null)
+    );
     return fields;
   }),
 
   init() {
     this._super(...arguments);
     if (this.get('selectedStorageType') == null) {
-      this.set('selectedStorageType', this.get('storageTypes.firstObject'));
+      this.set('selectedStorageType',
+        this.get('storageTypes.firstObject'));
     }
-    this.set('genericFields', GENERIC_FIELDS.map(fields => Ember.Object.create(fields)));
-    this.get('storageTypes').forEach(type => type.fields = type.fields.map(field =>
-      Ember.Object.create(field)));
+    this.set('genericFields', GENERIC_FIELDS.map(fields =>
+      Ember.Object.create(fields))
+    );
+    this.get('genericFields').forEach(field =>
+      field.set('name', 'generic.' + field.get('name'))
+    );
+    this.get('storageTypes').forEach(type =>
+      type.fields = type.fields.map(field =>
+        Ember.Object.create(field))
+    );
+    this.get('storageTypes').forEach(type =>
+      type.fields.forEach(field => 
+      field.set('name', type.id + '.' + field.get('name')))
+    );
 
     this.prepareFields();
     this._addFieldsLabels();
@@ -136,7 +131,7 @@ export default OneForm.extend(Validations, {
   _addFieldLabelTranslation(typeId, field, i18n) {
     if (!field.label) {
       field.set('label', i18n.t(
-        `components.clusterStorageAddForm.${typeId}.${field.name}`
+        `components.clusterStorageAddForm.${field.name}`
       ));
     }
   },
@@ -177,9 +172,10 @@ export default OneForm.extend(Validations, {
       };
 
       currentFields.forEach(({ name }) => {
-        formData[name] = formValues.get(name);
+        formData[this.cutOffPrefix(name)] = formValues.get(name);
       });
-      return invokeAction(this, 'submit', stripObject(formData, [undefined, null, '']));
+      return invokeAction(this, 'submit', 
+        stripObject(formData, [undefined, null, '']));
     },
   }
 });

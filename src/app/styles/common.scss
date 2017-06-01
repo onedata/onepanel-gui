@@ -87,6 +87,9 @@ input {
   width: 100%;
   tr:not(:last-of-type) {
     border-bottom: $table-item-border;
+    &.no-border {
+      border-bottom: 0;
+    }
   }
   .item-table-img-cell {
     position: relative;
@@ -148,5 +151,20 @@ input {
   
   &.status-icon-success {
     color: $color-one-mint;
+  }
+}
+
+.collapse-animation {
+  max-height: 99999em;
+  opacity: 1;
+  transition: $collapse-transition;
+  &.collapse-small {
+    max-height: 70em;
+  }
+  &.collapse-hidden {
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
   }
 }

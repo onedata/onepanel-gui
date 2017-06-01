@@ -12,6 +12,14 @@ export default class FormHelper {
     return this.$form.find('.field-' + fieldName);
   }
 
+  /**
+   * @param {string} fieldName
+   * @return {JQuery}
+   */
+  getToggleInput(fieldName) {
+    return this.$form.find('.toggle-field-' + fieldName);
+  }
+
   submit() {
     this.$form.find('button[type=submit]').click();
   }

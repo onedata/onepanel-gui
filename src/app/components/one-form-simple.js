@@ -49,14 +49,17 @@ export default OneForm.extend({
    */
   values: Ember.Object.create(),
 
-  currentFieldsPrefix: 'main',
+  currentFieldsPrefix: ['main'],
 
   /**
    * Will be initialized from injected ``fields``
    * @type {Array.EmberObject}
    */
   allFields: computed('fields', function () {
-    return this.get('fields').map(f => Ember.Object.create(f));
+    let fields = this.get('fields').map(f => Ember.Object.create(f));
+    fields.filter(field => !field.get('name').startsWith('main.'))
+      .forEach(field => field.set('name', 'main.' + field.get('name')));
+    return fields;
   }),
 
   currentFields: readOnly('allFields'),

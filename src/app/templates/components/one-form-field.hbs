@@ -9,7 +9,7 @@
     {{component (input-component-name field.type)
       id=inputId
       value=value
-      class=(concat "form-control one-form-field " inputClass)
+      class=(concat "form-control one-form-field field-" (dot-to-dash field.name))
       update=(action "inputChanged" field.name)
       step=field.step
       disabled=disabled
