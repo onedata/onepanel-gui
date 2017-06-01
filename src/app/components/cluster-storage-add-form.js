@@ -143,8 +143,8 @@ export default OneForm.extend(Validations, {
 
   actions: {
     storageTypeChanged(type) {
-      this.resetFormValues();
       this.set('selectedStorageType', type);
+      this.resetFormValues();
     },
 
     inputChanged(fieldName, value) {
