@@ -192,14 +192,18 @@ export default OneForm.extend(Validations, {
       return prefixes;
     }),
 
-  importGenericFields: computed(() => IMPORT_GENERIC_FIELDS.map(field => Ember.Object.create(
-    field))),
-  updateGenericFields: computed(() => UPDATE_GENERIC_FIELDS.map(field => Ember.Object.create(
-    field))),
-  importStrategies: computed(() => IMPORT_STRATEGIES.map(strategy => _object.assign({},
-    strategy))),
-  updateStrategies: computed(() => UPDATE_STRATEGIES.map(strategy => _object.assign({},
-    strategy))),
+  importGenericFields: computed(() => IMPORT_GENERIC_FIELDS.map(field => 
+    Ember.Object.create(field)
+  )),
+  updateGenericFields: computed(() => UPDATE_GENERIC_FIELDS.map(field => 
+    Ember.Object.create(field)
+  )),
+  importStrategies: computed(() => IMPORT_STRATEGIES.map(strategy =>
+    _object.assign({}, strategy)
+  )),
+  updateStrategies: computed(() => UPDATE_STRATEGIES.map(strategy => 
+    _object.assign({}, strategy)
+  )),
 
   allFields: computed('importGenericFields', 'updateGenericFields',
     'importStrategies.@each.fields', 'updateStrategies.@each.fields',
@@ -256,8 +260,9 @@ export default OneForm.extend(Validations, {
    * @type {computed.Array.Ember.Object}
    */
   currentImportFields: computed('currentFields', function () {
-    return this.get('currentFields').filter(field => field.get('name').startsWith(
-      'import_'));
+    return this.get('currentFields').filter(field => 
+      field.get('name').startsWith('import_')
+    );
   }),
 
   /**
@@ -265,8 +270,9 @@ export default OneForm.extend(Validations, {
    * @type {computed.Array.Ember.Object}
    */
   currentUpdateFields: computed('currentFields', function () {
-    return this.get('currentFields').filter(field => field.get('name').startsWith(
-      'update_'));
+    return this.get('currentFields').filter(field => 
+      field.get('name').startsWith('update_')
+    );
   }),
 
   /**
@@ -304,13 +310,15 @@ export default OneForm.extend(Validations, {
       'update_generic.' + field.get('name')));
     this.get('importStrategies').forEach(strategy => {
       strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
-      strategy.fields.forEach(field => field.set('name', 'import_' + strategy.id +
-        '.' + field.get('name')));
+      strategy.fields.forEach(field => 
+        field.set('name', 'import_' + strategy.id + '.' + field.get('name'))
+      );
     });
     this.get('updateStrategies').forEach(strategy => {
       strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
-      strategy.fields.forEach(field => field.set('name', 'update_' + strategy.id +
-        '.' + field.get('name')));
+      strategy.fields.forEach(field => 
+        field.set('name', 'update_' + strategy.id + '.' + field.get('name'))
+      );
     });
     this.prepareFields();
     this._addFieldsTranslations();
@@ -375,8 +383,9 @@ export default OneForm.extend(Validations, {
     let fields = [];
     importStrategies.forEach(strategy => fields = fields.concat(strategy.fields));
     fields = fields.concat(importGenericFields);
-    fields.forEach(field => field.set('type',
-      mode === 'new' ? field.get('_nativeType') : 'static'));
+    fields.forEach(field => 
+      field.set('type', mode === 'new' ? field.get('_nativeType') : 'static')
+    );
   },
 
   _loadDefaultValues() {
@@ -495,9 +504,8 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      return invokeAction(this, 'submit', stripObject(this._getValues(), [undefined,
-        null, ''
-      ]));
+      return invokeAction(this, 'submit', stripObject(this._getValues(), 
+        [undefined, null, '']));
     },
   }
 });
