@@ -44,6 +44,10 @@ const FORM_FIELDS = [{
     ]
   },
   {
+    name: 'mountInRoot',
+    type: 'checkbox',
+  },
+  {
     name: '_importEnabled',
     type: 'checkbox',
     tip: 'Configure import files from storage',
