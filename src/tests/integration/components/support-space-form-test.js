@@ -158,8 +158,8 @@ describe('Integration | Component | support space form', function () {
     `);
 
     wait().then(() => {
-      expect(this.$('.import-configuration-section .ember-basic-dropdown').length)
-        .to.be.gte(1);
+      expect(this.$('.import-configuration-section').parents('.collapse-hidden'))
+        .to.exist;
       done();
     });
   });
@@ -173,8 +173,8 @@ describe('Integration | Component | support space form', function () {
     helper.getToggleInput('main-_importEnabled').click();
 
     wait().then(() => {
-      expect(this.$('.import-configuration-section .ember-basic-dropdown').length)
-        .to.be.gte(1);
+      expect(this.$('.import-configuration-section').parents('.collapse-hidden'))
+        .to.not.exist;
       done();
     });
   });
@@ -194,7 +194,7 @@ describe('Integration | Component | support space form', function () {
     wait().then(() => {
       helper.getInput('import_generic-maxDepth').val('incorrect').change();
       wait().then(() => {
-        expect(this.$('button[type=submit]')).to.have.prop('disabled', true);
+        expect(this.$('button[type=submit]')).to.be.disabled;
         done();
       });
     });
@@ -206,8 +206,8 @@ describe('Integration | Component | support space form', function () {
 
     this.prepareAllFields();
     this.on('submitSupportSpace', function (supportSpaceData) {
-      submitDataCorrect = supportSpaceData.storageUpdate.strategy !==
-        'no_update';
+      submitDataCorrect = 
+        supportSpaceData.storageUpdate.strategy !== 'no_update';
       submitInvoked = true;
       return new Promise(resolve => resolve());
     });
@@ -228,6 +228,7 @@ describe('Integration | Component | support space form', function () {
       helper.submit();
       wait().then(() => {
         expect(submitInvoked).to.be.true;
+        expect(submitDataCorrect).to.be.true;
         done();
       });
     });
