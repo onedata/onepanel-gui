@@ -18,6 +18,7 @@ import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 
 const {
   computed,
+  observer,
   inject: {
     service
   }
@@ -63,6 +64,12 @@ export default OneForm.extend(Validations, {
 
   i18n: service(),
 
+  /**
+   * If true, form is visible to user
+   * @type {boolean}
+   */
+  isFormOpened: false,
+
   genericFields: null,
   storageTypes: computed(() => storageTypes).readOnly(),
 
@@ -101,6 +108,15 @@ export default OneForm.extend(Validations, {
       });
     });
     return fields;
+  }),
+
+  /**
+   * Resets field if form visibility changes (clears validation errors)
+   */
+  isFormOpenedObserver: observer('isFormOpened', function () {
+    if (this.get('isFormOpened')) {
+      this.resetFormValues();
+    }
   }),
 
   init() {
