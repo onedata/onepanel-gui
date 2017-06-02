@@ -29,6 +29,12 @@ $table-item-border: 1px solid $main-border-color;
   @include clickable();
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .content-backdrop.sidenav-backdrop {
   // TODO: animation
   position: absolute;
@@ -134,4 +140,12 @@ input {
   margin-right: 0.6em;
   line-height: 0;
   font-size: 2em;
+}
+
+.item-icon-container {
+  display: inline-block;
+  margin-right: 0.6em;
+  .item-icon {
+    margin-right: 0;
+  }
 }
