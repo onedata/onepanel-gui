@@ -22,5 +22,10 @@
   .alert-promise-error {
     margin-left: 10px;
     margin-right: 10px;
+    border-left-width: 1px;
+    background-color: $color-one-white;
+    &::before {
+      display: none;
+    }
   }
 }
