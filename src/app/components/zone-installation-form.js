@@ -9,24 +9,37 @@
 
 import OneFormSimple from 'onepanel-gui/components/one-form-simple';
 import layout from 'onepanel-gui/templates/components/one-form-simple';
-import { validator, buildValidations } from 'ember-cp-validations';
+import { buildValidations } from 'ember-cp-validations';
 import { invokeAction } from 'ember-invoke-action';
+import _array from 'lodash/array';
+import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 // TODO i18n
 const FORM_FIELDS = [{
-  name: 'name',
-  type: 'text',
-  label: 'Zone name'
-}];
+    name: 'name',
+    type: 'text',
+    label: 'Zone name',
+    example: 'My zone',
+    tip: 'The name for this zone, typically corresponding to ' +
+      'organizational unit where it operates.',
+  },
+  {
+    name: 'domainName',
+    type: 'text',
+    label: 'Zone domain name',
+    example: window.location.hostname,
+    tip: 'The domain of this zone as seen by the users, the same as ' +
+      'the domain name in your web server SSL certificates. ' +
+      'Required for proper functioning of Onezone server.',
+  }
+];
 
-const Validations = buildValidations({
-  'allFieldsValues.main.name': [
-    validator('presence', {
-      presence: true,
-      allowBlank: false,
-    }),
-  ]
-});
+const Validations = buildValidations(
+  _array.zipObject(
+    FORM_FIELDS.map(f => `allFieldsValues.main.${f.name}`),
+    FORM_FIELDS.map(field => createFieldValidator(field))
+  )
+);
 
 export default OneFormSimple.extend(Validations, {
   layout,
