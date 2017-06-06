@@ -19,6 +19,8 @@ const {
   inject: { service },
 } = Ember;
 
+const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+
 /**
  * Space's ``storageImport`` properties that shouldn't be listed as generic
  * properties (can be handled separately)
@@ -37,6 +39,7 @@ export default Component.extend({
   classNames: ['cluster-spaces-table-item'],
 
   storageManager: service(),
+  spaceManager: service(),
 
   /**
    * OneCollapsibleListItem that should be used to render this
@@ -79,6 +82,8 @@ export default Component.extend({
         'Configure data import from storage'
       );
   }),
+
+  _syncStats: computed(() => ObjectPromiseProxy.create({})).readOnly(),
 
   importTranslationPrefix: 'components.clusterSpacesTableItem.storageImport.',
   updateTranslationPrefix: 'components.clusterSpacesTableItem.storageUpdate.',
@@ -162,6 +167,11 @@ export default Component.extend({
     },
     importUpdateConfigurationSubmit(configuration) {
       return invokeAction(this, 'submitModifySpace', configuration);
+    },
+    updateSyncStats() {
+      let spaceManager = this.get('spaceManager');
+      let promise = spaceManager.getSyncStats();
+      this.set('_syncStats.promise', promise);
     },
   },
 });

@@ -100,4 +100,27 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer.request('oneprovider', 'revokeSpaceSupport', spaceId);
   },
+
+  /**
+   * @param {string} spaceId 
+   * @param {string} period one of: minute, hour, day
+   * @param {Array.string} metrics array with any of: queueLength, insertCount,
+   *  updateCount, deleteCount
+   */
+  getSyncStats(spaceId, period, metrics) {
+    return new Promise((resolve, reject) => {
+      let onepanelServer = this.get('onepanelServer');
+      let gettingSyncStats = onepanelServer.request(
+        'oneprovider',
+        'getProviderSpaceSyncStats',
+        spaceId, {
+          period,
+          metrics,
+        }
+      );
+
+      gettingSyncStats.then(({ data }) => resolve(data));
+      gettingSyncStats.catch(reject);
+    });
+  },
 });

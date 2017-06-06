@@ -117,6 +117,18 @@
               </div>
             {{/each}}
           </div>
+          
+          <button {{action "updateSyncStats"}}>
+            Update sync stats
+          </button>
+          
+          {{#if _syncStats.isSettled}}
+            {{_syncStats.reason}}
+            <div class="row content-row">
+              {{space-sync-stats syncStats=_syncStats.content}}
+            </div>
+          {{/if}}
+          
         {{/if}}
       </td>
     </tr>

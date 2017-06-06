@@ -427,6 +427,43 @@ export default Ember.Service.extend(RequestErrorHandler, {
       }
     }),
 
+  // FIXME better mock
+  _req_oneprovider_getProviderSpaceSyncStats: computed('mockInitializedCluster',
+    'spaces',
+    function () {
+      if (this.get('mockInitializedCluster')) {
+        return {
+          // FIXME mock should
+          success: ( /*spaceId, { period, metrics }*/ ) => ({
+            importStatus: 'done',
+            updateStatus: 'inProgress',
+            period: "hour",
+            stats: [{
+                "name": "queueLength",
+                "values": [4, 8, 12, 16, 20, 10, 0, 1, 2, 3]
+              },
+              {
+                "name": "insertCount",
+                "values": [8, 9, 2, 3, 0, 2, 1, 4, 5, 7]
+              },
+              {
+                "name": "updateCount",
+                "values": [0, 0, 0, 3, 0, 5, 1, 4, 5, 7]
+              },
+              {
+                "name": "deleteCount",
+                "values": [3, 4, 5, 6, 0, 2, 1, 4, 5, 7]
+              }
+            ],
+          })
+        };
+      } else {
+        return {
+          statusCode: () => 404
+        };
+      }
+    }),
+
   // TODO: after revoking space support, do not return the space in getSpaces  
   _req_oneprovider_revokeSpaceSupport: computed(function () {
     return {
