@@ -59,13 +59,13 @@ export default Component.extend({
    */
   _storage: null,
 
-  _importActive: alias('space.importEnabled'),
+  /**
+   * If true, space revoke modal is opened
+   * @type {boolean}
+   */
+  _openRevokeModal: false,
 
-  _importButtonClass: computed('importConfigurationOpen', function () {
-    return this.get('importConfigurationOpen') ?
-      'active' :
-      '';
-  }),
+  _importActive: alias('space.importEnabled'),
 
   _importButtonActionName: computed('importConfigurationOpen', function () {
     return this.get('importConfigurationOpen') ?
@@ -74,13 +74,9 @@ export default Component.extend({
   }),
 
   // TODO i18n
-  _importButtonTip: computed('importConfigurationOpen', '_importActive', function () {
+  _importButtonTip: computed('importConfigurationOpen', function () {
     return this.get('importConfigurationOpen') ?
-      'Cancel data import configuration' : (
-        this.get('_importActive') ?
-        'Data import is enabled, click to configure' :
-        'Configure data import from storage'
-      );
+      'Cancel sync. configuration' : 'Configure data synchronization';
   }),
 
   _syncStats: computed(() => ObjectPromiseProxy.create({})).readOnly(),
@@ -155,6 +151,12 @@ export default Component.extend({
   },
 
   actions: {
+    startRevoke() {
+      this.set('_openRevokeModal', true);
+    },
+    hideRevoke() {
+      this.set('_openRevokeModal', false);
+    },
     revokeSpace() {
       return invokeAction(this, 'revokeSpace', this.get('space'));
     },

@@ -1,7 +1,7 @@
 {{!-- TODO change .storage-table class or make generic --}}
 {{!-- TODO i18n --}}
 
-{{#listItem.header as |itemHeader|}}
+{{#listItem.header disableToggleIcon=true as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="space"}}
     {{bs-tooltip
@@ -11,65 +11,49 @@
     }}
   </span>
   <span class="one-label">{{space.name}}</span>
-  <div class="btn-toolbar">
-    {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
-    {{!-- NOTE: currently edit is enabled only for import/update --}}
-    <button
-      class={{concat "btn icon-btn btn-import-storage-data " _importButtonClass}}
-      {{action _importButtonActionName itemHeader.toggleAction}}>
-      {{one-icon icon="space-import"}}
-      {{bs-tooltip
-        title=_importButtonTip
-        placement="bottom"
-        triggerEvents="hover"
-      }}
-      {{#if _importActive}}
-        {{one-icon
-          icon="checkbox-filled"
-          class="status-icon status-icon-success"
-        }}
-      {{/if}}
-    </button>
-    <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
-      {{one-icon icon="remove"}}
-      {{bs-tooltip
-        visible=revokeTooltipVisible
-        title="Revoke space support from this provider"
-        placement="bottom"
-        triggerEvents="hover"
-      }}
-    </button>
-      {{!-- TODO make a generic component for confirmations --}}
-      {{#one-webui-popover
-        class="popover-revoke-space"
-        placement="bottom-left"
-        triggerSelector=(concat "#" (concat elementId "-btn-revoke-space"))
-        submit=(action "revokeSpace")
-        as |popover|
-      }}
-        <h1>Revoke space support?</h1>
-        <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
-        <div class="btn-toolbar">
-          {{#bs-button class="btn btn-sm" type="info" onClick=(action popover.hide)}}
-            No, keep the support
-          {{/bs-button}}
-          {{#spin-button
-            class="btn btn-sm btn-danger"
-            action=(action popover.submit)
-          }}
-            {{one-icon icon="remove"}} <span>Yes, revoke</span>
-          {{/spin-button}}
-        </div>
-      {{/one-webui-popover}}
+  <div class="one-collapsible-toolbar minimized pull-right">
+    <div class="collapsible-toolbar-toggle btn-menu-toggle">
+      <div class="icon-dot"></div>
+      <div class="icon-dot"></div>
+      <div class="icon-dot"></div>
+    </div>
   </div>
-  
+  {{#one-webui-popover
+    class=(concat "one-collapsible-toolbar-popover popover-" elementId)
+    placement="bottom-left"
+    padding=false
+    triggerSelector=(local-selector elementId ".collapsible-toolbar-toggle")
+    multi=false
+    as |popover|
+  }}
+    <ul class="dropdown-menu">
+      {{#one-collapsible-toolbar-item
+        tagName="li"
+        closeDropdown=popover.hide
+        isMinimized=true
+        itemAction=(action _importButtonActionName itemHeader.toggleAction)
+      }}
+        {{_importButtonTip}}
+      {{/one-collapsible-toolbar-item}}
+      
+      {{#one-collapsible-toolbar-item
+        tagName="li"
+        closeDropdown=popover.hide
+        isMinimized=true
+        itemAction=(action "startRevoke")
+      }}
+        Revoke space support
+      {{/one-collapsible-toolbar-item}}
+    </ul>
+  {{/one-webui-popover}}
 {{/listItem.header}}
+
 {{#listItem.content}}
   <table class="item-table">
     <tr class="no-border">
       <td colspan="99">
         <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
-          <h1 class="form-title">Data import configuration</h1>
+          <h1 class="form-title">Data synchronization configuration</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
             defaultValues=importFormDefaultValue
             mode=(if _importActive "edit" "new")
@@ -134,3 +118,22 @@
     </tr>
   </table>
 {{/listItem.content}}
+
+{{#bs-modal
+  open=_openRevokeModal
+  onHide=(action "hideRevoke")
+}}
+  <h1>Revoke space support?</h1>
+    <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
+    <div class="btn-toolbar">
+      {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
+        No, keep the support
+      {{/bs-button}}
+      {{#spin-button
+        class="btn btn-sm btn-danger"
+        action=(action "revokeSpace")
+      }}
+        {{one-icon icon="remove"}} <span>Yes, revoke</span>
+      {{/spin-button}}
+    </div>
+{{/bs-modal}}

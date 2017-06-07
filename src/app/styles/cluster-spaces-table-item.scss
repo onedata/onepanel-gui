@@ -3,6 +3,8 @@
     background-image: url($root-url + 'assets/images/space-item.svg');
   }
   .one-collapsible-list-item-header {
-    padding-right: 100px;
+    &:not(.disable-toggle-icon) {
+      padding-right: 100px;
+    }
   }
 }
