@@ -1,5 +1,12 @@
-<td class="row-header" {{action "headerClick" on="click"}}>
-  {{one-icon class="item-icon" icon="node"}}
+<td class="row-header truncate" {{action "headerClick" on="click"}}>
+  <span class="item-icon-container">
+    {{one-icon class="item-icon" icon="node"}}
+    {{bs-tooltip
+      title=host.hostname
+      placement="right"
+      triggerEvents="hover"
+    }}
+  </span>
   <span class="one-label">{{host.hostname}}</span>
 </td>
 <td class="text-center toggle-column" data-option="database">

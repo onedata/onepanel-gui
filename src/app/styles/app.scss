@@ -31,6 +31,7 @@ $main-menu-width: 200px;
 $sidebar-menu-width: 250px;
 $sidebar-menu-width-lg: 325px;
 $menu-icon-font-size: 2.5em;
+$mobile-menu-popover-width: 200px;
 
 $zindex-layer-1-2-overlay: $zindex-modal-background;
 $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
@@ -52,7 +53,7 @@ $onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $o
 
 $main-content-hover-background: lighten($color-one-semiwhite, 3%);
 
-$collapse-transition: max-height .2s linear, padding .2s linear, opacity .1s linear;
+$collapse-transition: max-height .2s linear, padding .2s linear, opacity .2s linear;
 
 $disabled-opacity: 0.6;
 
@@ -97,6 +98,8 @@ $disabled-opacity: 0.6;
 @import 'storage-item';
 @import 'cluster-spaces-table-item';
 @import 'ember-notify';
+@import 'one-collapsible-toolbar';
+@import 'one-collapsible-toolbar-item';
 
 // TODO a mess
 

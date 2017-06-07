@@ -20,6 +20,7 @@ import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 const {
   computed,
+  observer,
   inject: {
     service
   }
@@ -62,6 +63,12 @@ export default OneForm.extend(Validations, {
 
   i18n: service(),
 
+  /**
+   * If true, form is visible to user
+   * @type {boolean}
+   */
+  isFormOpened: false,
+
   genericFields: null,
   storageTypes: computed(() =>
     storageTypes.map(type => _object.assign({}, type))).readOnly(),
@@ -84,6 +91,15 @@ export default OneForm.extend(Validations, {
       fields.set(field.get('name'), null)
     );
     return fields;
+  }),
+
+  /**
+   * Resets field if form visibility changes (clears validation errors)
+   */
+  isFormOpenedObserver: observer('isFormOpened', function () {
+    if (this.get('isFormOpened')) {
+      this.resetFormValues();
+    }
   }),
 
   init() {
@@ -138,8 +154,8 @@ export default OneForm.extend(Validations, {
 
   actions: {
     storageTypeChanged(type) {
-      this.resetFormValues();
       this.set('selectedStorageType', type);
+      this.resetFormValues();
     },
 
     inputChanged(fieldName, value) {

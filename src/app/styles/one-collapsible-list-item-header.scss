@@ -34,7 +34,14 @@
       display: block;
     }
     .btn-toolbar {
-      margin-right: 4em;
+      margin-right: 5em;
     }
+  }
+
+  .btn-toolbar {
+    float: none;
+    position: absolute;
+    right: 0;
+    top: 1.5em;
   }
 }

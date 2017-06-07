@@ -4,6 +4,9 @@
     width: 100%;
     font-size: $font-size-small;
     text-transform: none;
+    .item-header {
+      padding-right: 35px;
+    }
   }
   .user-account-button-main {
     &::after {
@@ -19,25 +22,26 @@
     margin: 0;
   }
   &.user-account-button-mobile {
+    .one-collapsible-list {
+      margin: 0;
+      .one-collapsible-list-item-header {
+        padding: 0 $one-list-item-padding;
+        text-transform: none;
+      }
+      .one-collapsible-list-item-content {
+        border-bottom: 0;
+      }
+    }
     .user-account-button {
       // selector to the user-menu main item
       & > .one-collapsible-list-item-header {
+        padding-right: 50px;
         color: $color-sidebar-background;
       }
       &.active,
       & > .one-collapsible-list-item-header:hover,
       & > .one-collapsible-list-item-header.active  {
         background-color: transparent;
-      }
-    }
-    .one-collapsible-list {
-      margin: 0;
-      .one-collapsible-list-item-header.main-menu-item {
-        padding: 0 $one-list-item-padding;
-        text-transform: none;
-      }
-      .one-collapsible-list-item-content {
-        border-bottom: 0;
       }
     }
   }

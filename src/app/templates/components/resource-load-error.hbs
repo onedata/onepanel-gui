@@ -4,7 +4,7 @@
 {{/if}}
 <strong>{{message}}</strong>
 {{#if reason}}
-  <a href="javascript(0);" class="promise-error-show-details"{{action "toggleShowDetails"}}>{{if showDetails "Hide details" "Show details..."}}</a>
+  <a href="javascript(0);" class="promise-error-show-details"{{action "toggleShowDetails"}}>{{if showDetails "Hide" "Show"}}&nbsp;details...</a>
   <div class="error-details sm-row {{if showDetails "active"}}">
     {{_reasonDetails}}
   </div>

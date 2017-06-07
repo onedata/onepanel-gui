@@ -28,7 +28,7 @@
   {{/one-collapsible-list}}
 {{else}}
   <div class={{concat menuItemClasses (if isActive " active" "")}} {{action 'toggleMenu' bubbles=false}}>
-    <div class="item-header">
+    <div class="item-header truncate">
       {{one-icon
         class="user-profile-icon item-icon"
         icon="user-profile"

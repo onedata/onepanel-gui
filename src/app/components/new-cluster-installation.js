@@ -90,6 +90,7 @@ export default Ember.Component.extend({
   }).readOnly(),
 
   _zoneName: '',
+  _zoneDomainName: '',
 
   /**
    * @type {boolean}
@@ -166,10 +167,12 @@ export default Ember.Component.extend({
       hostsUsed,
       primaryClusterManager,
       _zoneName,
+      _zoneDomainName,
     } = this.getProperties(
       'hostsUsed',
       'primaryClusterManager',
-      '_zoneName'
+      '_zoneName',
+      '_zoneDomainName'
     );
 
     const ConfigurationClass = configurationClass(serviceType);
@@ -204,6 +207,7 @@ export default Ember.Component.extend({
     if (serviceType === 'zone') {
       configProto.onezone = {
         name: _zoneName,
+        domainName: _zoneDomainName,
       };
     }
 
@@ -269,9 +273,14 @@ export default Ember.Component.extend({
 
   actions: {
     zoneFormChanged(fieldName, value) {
-      if (fieldName === 'main.name') {
+      switch (fieldName) {
+      case 'main.name':
         this.set('_zoneName', value);
-      } else {
+        break;
+      case 'main.domainName':
+        this.set('_zoneDomainName', value);
+        break;
+      default:
         throw 'Unexpected field changed in zone installation form: ' + fieldName;
       }
     },

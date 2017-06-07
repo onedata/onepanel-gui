@@ -40,8 +40,9 @@ export default Component.extend(ClickOutside, {
 
   menuItemClasses: computed('mobileMode', function () {
     if (this.get('mobileMode')) {
-      return 'one-list-item main-menu-item clickable';
-    } else {
+      return 'one-list-item main-menu-item clickable truncate';
+    }
+    else {
       return 'one-list-item enabled clickable main-menu-item user-account-button-main';
     }
   }),
