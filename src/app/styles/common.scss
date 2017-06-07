@@ -182,3 +182,31 @@ input {
     margin-right: 0;
   }
 }
+
+// FIXME temporary style
+// FIXME move to separate file
+.space-status-icons {
+  // FIXME style is similiar to toggle
+  position: absolute;
+  right: 64px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+// FIXME move to separate files
+// FIXME temporary styles
+
+
+// FIXME the same as in one-collapsible-toolbar toggle hover
+.status-toolbar {
+  line-height: 20px;
+  font-size: 20px;
+  background-color: $color-one-white;
+  border: 1px solid $color-one-list-item-separator;
+  // rounded corners
+  border-radius: 999px;
+  padding: 2px 18px;
+  .one-icon + .one-icon:not(.hidden) {
+    margin-left: 8px;
+  }
+}
