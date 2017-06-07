@@ -1,5 +1,5 @@
 {{#unless isGlobal}}
-  <div class="collapsible-toolbar-toggle{{unless isMinimized " hidden"}}" {{action "toggleDropdown"}}>
+  <div class="collapsible-toolbar-toggle{{unless isMinimized " hidden"}}" onClick={{disable-bubbling (action "toggleDropdown")}}>
     <div class="icon-dot"></div>
     <div class="icon-dot"></div>
     <div class="icon-dot"></div>
