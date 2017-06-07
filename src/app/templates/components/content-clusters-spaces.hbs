@@ -43,6 +43,7 @@
           submitSupportSpace=(action "submitSupportSpace")
           isFormOpened=_supportSpaceOpened
         }}
+      {{/if}}
     </div>
     {{#promise-proxy-container proxy=spacesProxy}}
       {{cluster-spaces-table
