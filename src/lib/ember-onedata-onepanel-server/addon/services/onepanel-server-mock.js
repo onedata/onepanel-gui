@@ -16,6 +16,7 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
+import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import _object from 'lodash/object';
 import _find from 'lodash/find';
 
@@ -39,7 +40,7 @@ const MOCK_USERNAME = 'mock_admin';
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default Ember.Service.extend(RequestErrorHandler, {
+export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),
@@ -428,41 +429,15 @@ export default Ember.Service.extend(RequestErrorHandler, {
     }),
 
   // FIXME better mock
-  _req_oneprovider_getProviderSpaceSyncStats: computed('mockInitializedCluster',
-    'spaces',
-    function () {
-      if (this.get('mockInitializedCluster')) {
-        return {
-          // FIXME mock should
-          success: ( /*spaceId, { period, metrics }*/ ) => ({
-            importStatus: 'done',
-            updateStatus: 'inProgress',
-            period: "hour",
-            stats: [{
-                "name": "queueLength",
-                "values": [4, 8, 12, 16, 20, 10, 0, 1, 2, 3]
-              },
-              {
-                "name": "insertCount",
-                "values": [8, 9, 2, 3, 0, 2, 1, 4, 5, 7]
-              },
-              {
-                "name": "updateCount",
-                "values": [0, 0, 0, 3, 0, 5, 1, 4, 5, 7]
-              },
-              {
-                "name": "deleteCount",
-                "values": [3, 4, 5, 6, 0, 2, 1, 4, 5, 7]
-              }
-            ],
-          })
-        };
-      } else {
-        return {
-          statusCode: () => 404
-        };
+  _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
+    return {
+      // FIXME mock should
+      success: (spaceId, { period, metrics }) => {
+        let space = _find(this.get('__spaces', s => s.id === spaceId));
+        return this.generateSpaceSyncStats(space, period, metrics);
       }
-    }),
+    };
+  }),
 
   // TODO: after revoking space support, do not return the space in getSpaces  
   _req_oneprovider_revokeSpaceSupport: computed(function () {

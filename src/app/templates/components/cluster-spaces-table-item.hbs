@@ -11,7 +11,7 @@
     }}
   </span>
   <span class="one-label">{{space.name}}</span>
-  {{space-status-icons space=space syncStats=_syncStats.content}}
+  {{space-status-icons space=space syncStats=_syncStats}}
   <div class="one-collapsible-toolbar minimized pull-right">
     <div class="collapsible-toolbar-toggle btn-menu-toggle">
       <div class="icon-dot"></div>
@@ -102,15 +102,10 @@
               </div>
             {{/each}}
           </div>
-          
-          <button {{action "updateSyncStats"}}>
-            Update sync stats
-          </button>
-          
-          {{#if _syncStats.isSettled}}
-            {{_syncStats.reason}}
+                    
+          {{#if _syncStats}}
             <div class="row content-row">
-              {{space-sync-stats syncStats=_syncStats.content}}
+              {{space-sync-stats syncStats=(if _syncStats.stats _syncStats)}}
             </div>
           {{/if}}
           

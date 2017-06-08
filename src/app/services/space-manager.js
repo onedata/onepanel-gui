@@ -27,6 +27,9 @@ const {
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
+const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
+const DEFAULT_SYNC_STATS_PERIOD = 'minute';
+
 export default Service.extend({
   onepanelServer: service(),
 
@@ -102,6 +105,12 @@ export default Service.extend({
   },
 
   /**
+   * Fetch current sync (import/update) statistics with given configuration
+   *
+   * There are more high-level methods that should be considered to use:
+   * - getSyncStatusOnly
+   * - getSyncAllStats
+   *
    * @param {string} spaceId 
    * @param {string} period one of: minute, hour, day
    * @param {Array.string} metrics array with any of: queueLength, insertCount,
@@ -122,5 +131,24 @@ export default Service.extend({
       gettingSyncStats.then(({ data }) => resolve(data));
       gettingSyncStats.catch(reject);
     });
+  },
+
+  /**
+   * Helper method to get only status of sync without statistics for charts
+   * @param {string} spaceId
+   */
+  getSyncStatusOnly(spaceId) {
+    return this.getSyncStats(spaceId);
+  },
+
+  /**
+   * Get all known statistics for space synchronization needed to display
+   * all charts
+   *
+   * @param {*} spaceId 
+   * @param {string} period one of: minute, hour, day (like in Onepanel.SyncStats)
+   */
+  getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
+    return this.getSyncStats(spaceId, period, SYNC_METRICS);
   },
 });

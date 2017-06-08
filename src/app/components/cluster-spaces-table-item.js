@@ -1,3 +1,5 @@
+// FIXME this file is too big - use mixins
+
 /**
  * Details about support provided for space
  *
@@ -10,16 +12,18 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 import _includes from 'lodash/includes';
+import Looper from 'onepanel-gui/utils/looper';
 
 const {
   Component,
   computed,
-  computed: { alias },
+  computed: { readOnly },
   get,
+  set,
   inject: { service },
+  observer,
+  on,
 } = Ember;
-
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
 /**
  * Space's ``storageImport`` properties that shouldn't be listed as generic
@@ -34,6 +38,14 @@ const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
  * @type {Array.string}
  */
 const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
+
+const WATCHER_INTERVAL = {
+  minute: 5000 + 1,
+  hour: 60 * 60000 + 1,
+  day: 24 * 60000 + 1,
+};
+
+const SYNC_STATS_REFRESH_TIME = 10000;
 
 export default Component.extend({
   classNames: ['cluster-spaces-table-item'],
@@ -65,7 +77,44 @@ export default Component.extend({
    */
   _openRevokeModal: false,
 
-  _importActive: alias('space.importEnabled'),
+  // FIXME this should be computed from   
+  /**
+   * Maximal time [ms] after which ``_syncStatus`` should be updated (fetched)
+   * @type {number}
+   */
+  _syncStatusRefreshTime: SYNC_STATS_REFRESH_TIME,
+
+  /**
+   * @type {Date}
+   */
+  _lastSyncStatusRefresh: null,
+  /**
+   * Currently chosen sync interval (enum as in SpaceSyncStats)
+   * @type {string}
+   */
+  _syncInterval: 'minute',
+
+  /**
+   * Periodically fetched new sync statistics (for charts)
+   *
+   * It's interval is reconfigured in ``reconfigureWatcher`` observer
+   * by various changes
+   *
+   * @type {Looper}
+   */
+  _syncStatsWatcher: null,
+
+  /**
+   * Periodically checks if sync status if fresh and if not - fetch sync status
+   * (without statistics)
+   * 
+   * @type {Looper}
+   */
+  _syncStatusUpdater: null,
+
+  _importActive: readOnly('space.importEnabled'),
+
+  _isActive: readOnly('listItem.isActive'),
 
   _importButtonActionName: computed('importConfigurationOpen', function () {
     return this.get('importConfigurationOpen') ?
@@ -79,7 +128,10 @@ export default Component.extend({
       'Cancel sync. configuration' : 'Configure data synchronization';
   }),
 
-  _syncStats: computed(() => ObjectPromiseProxy.create({})).readOnly(),
+  /**
+   * @type {Onepanel.SpaceSyncStats}
+   */
+  _syncStats: null,
 
   importTranslationPrefix: 'components.clusterSpacesTableItem.storageImport.',
   updateTranslationPrefix: 'components.clusterSpacesTableItem.storageUpdate.',
@@ -148,7 +200,112 @@ export default Component.extend({
       let storageManager = this.get('storageManager');
       this.set('_storage', storageManager.getStorageDetails(space.get('storageId')));
     }
+
+    let _syncStatsWatcher = Looper.create({ immediate: true });
+    _syncStatsWatcher.on('tick', this._fetchAllSyncStats.bind(this));
+    _syncStatsWatcher.notify();
+
+    let _syncStatusUpdater = Looper.create({
+      immediate: true,
+      interval: SYNC_STATS_REFRESH_TIME,
+    });
+    _syncStatusUpdater.on('tick', this._checkSyncStatusUpdate.bind(this));
+    _syncStatusUpdater.notify();
+
+    this.setProperties({ _syncStatsWatcher, _syncStatusUpdater });
   },
+
+  willDestroyElement() {
+    this.get('_syncStatsWatcher').stop();
+    this.get('_syncStatusUpdater').stop();
+  },
+
+  /**
+   * @returns {boolean} true if sync status should be refreshed
+   */
+  _shouldRefreshSyncStatus() {
+    let {
+      _syncStatusRefreshTime,
+      _lastSyncStatusRefresh,
+    } = this.getProperties(
+      '_syncStatusRefreshTime',
+      '_lastSyncStatusRefresh'
+    );
+
+    return Date.now() - _lastSyncStatusRefresh > _syncStatusRefreshTime;
+  },
+
+  /**
+   * If sync status was now updated for some mininal time, fetch sync status
+   */
+  _checkSyncStatusUpdate() {
+    if (this._shouldRefreshSyncStatus()) {
+      let syncStatsPromise =
+        this.get('spaceManager').getSyncStatusOnly(this.get('space.id'));
+
+      syncStatsPromise.then(newSyncStats => {
+        this._updateSyncStatsWithStatusOnly(newSyncStats);
+      });
+
+      syncStatsPromise.finally(() => {
+        this.set('_lastSyncStatusRefresh', Date.now());
+      });
+
+      // TODO status fetch error handling
+    }
+  },
+
+  /**
+   * @param {Onepanel.SpaceSyncStats} newSyncStats syncStats without time stats
+   */
+  _updateSyncStatsWithStatusOnly(newSyncStats) {
+    let currentSyncStats = this.get('_syncStats');
+    if (currentSyncStats != null) {
+      // we already got some syncStats so update only statuses
+      set(currentSyncStats, 'importStatus', get(newSyncStats, 'importStatus'));
+      set(currentSyncStats, 'updateStatus', get(newSyncStats, 'updateStatus'));
+    } else {
+      // first syncStats update
+      this.set('_syncStats', newSyncStats);
+    }
+  },
+
+  _fetchAllSyncStats() {
+    let syncStatsPromise =
+      this.get('spaceManager').getSyncAllStats(this.get('space.id'));
+
+    syncStatsPromise.then(newSyncStats => {
+      this.set('_syncStats', newSyncStats);
+    });
+
+    syncStatsPromise.finally(() =>
+      this.set('_lastSyncStatusRefresh', Date.now())
+    );
+
+    // TODO handle error
+  },
+
+  reconfigureWatcher: on('init', observer('_isActive', '_importActive', '_syncInterval',
+    '_syncStatsWatcher',
+    function () {
+      let {
+        _isActive,
+        _importActive,
+        _syncInterval,
+        _syncStatsWatcher
+      } = this.getProperties(
+        '_isActive',
+        '_importActive',
+        '_syncInterval',
+        '_syncStatsWatcher'
+      );
+
+      if (_importActive && _isActive) {
+        _syncStatsWatcher.set('interval', WATCHER_INTERVAL[_syncInterval]);
+      } else {
+        _syncStatsWatcher.stop();
+      }
+    })),
 
   actions: {
     startRevoke() {
@@ -169,11 +326,6 @@ export default Component.extend({
     },
     importUpdateConfigurationSubmit(configuration) {
       return invokeAction(this, 'submitModifySpace', configuration);
-    },
-    updateSyncStats() {
-      let spaceManager = this.get('spaceManager');
-      let promise = spaceManager.getSyncStats();
-      this.set('_syncStats.promise', promise);
     },
   },
 });
