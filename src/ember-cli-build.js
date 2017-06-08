@@ -40,6 +40,9 @@ module.exports = function (defaults) {
       'importBootstrapTheme': false,
       'importBootstrapFont': true,
       'bootstrapVersion': 3
+    },
+    'ember-cli-chartist': {
+      'useCustomCSS': true
     }
   });
 
@@ -61,6 +64,7 @@ module.exports = function (defaults) {
     'basictable/basictable.css',
     'webui-popover/dist/jquery.webui-popover.css',
     'webui-popover/dist/jquery.webui-popover.js',
+    'chartist-plugin-legend/chartist-plugin-legend.js',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));

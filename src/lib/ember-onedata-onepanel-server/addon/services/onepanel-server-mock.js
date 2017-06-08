@@ -428,10 +428,8 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
       }
     }),
 
-  // FIXME better mock
   _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
     return {
-      // FIXME mock should
       success: (spaceId, { period, metrics }) => {
         let space = _find(this.get('__spaces', s => s.id === spaceId));
         return this.generateSpaceSyncStats(space, period, metrics);
