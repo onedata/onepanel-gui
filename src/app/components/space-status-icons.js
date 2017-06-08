@@ -15,8 +15,12 @@ export default Ember.Component.extend({
    */
   space: null,
 
-  // FIXME space._syncStats should not be marked private  
-  syncStats: alias('space._syncStats'),
+  /**
+   * To inject.
+   * @type {Onepanel.SpaceSyncStats}
+   */
+  syncStats: null,
+
   importEnabled: alias('space.importEnabled'),
   updateEnabled: alias('space.updateEnabled'),
 
@@ -24,11 +28,33 @@ export default Ember.Component.extend({
     return !this.get('importEnabled') && !this.get('updateEnabled');
   }),
 
-  _importIconClass: computed('importEnabled', function () {
-    return !this.get('importEnabled') ? 'hidden' : '';
+  _importHint: computed('importEnabled', 'syncStats.importStatus', function () {
+    if (this.get('importEnabled')) {
+      switch (this.get('syncStats.importStatus')) {
+      case 'inProgress':
+        return 'Data import: in progress...';
+      case 'done':
+        return 'Data import: done!';
+      default:
+        break;
+      }
+    } else {
+      return 'Import disabled';
+    }
   }),
 
-  _updateIconClass: computed('updateEnabled', function () {
-    return !this.get('updateEnabled') ? 'hidden' : '';
+  _updateHint: computed('updateEnabled', 'syncStats.updateStatus', function () {
+    if (this.get('updateEnabled')) {
+      switch (this.get('syncStats.updateStatus')) {
+      case 'inProgress':
+        return 'Data update: in progress...';
+      case 'waiting':
+        return 'Data update: idle';
+      default:
+        break;
+      }
+    } else {
+      return 'Update disabled';
+    }
   }),
 });

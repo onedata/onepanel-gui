@@ -1,2 +1,13 @@
-{{one-icon icon="space-import" class=_importIconClass}}
-{{one-icon icon="update" class=_updateIconClass}}
+{{status-icon
+  type="space-import"
+  status=syncStats.importStatus
+  hint=_importHint
+  enabled=importEnabled
+}}
+{{status-icon
+  type="update"
+  status=syncStats.updateStatus
+  hint=_updateHint
+  enabled=updateEnabled
+}}
+

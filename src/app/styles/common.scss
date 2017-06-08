@@ -148,17 +148,18 @@ input {
   font-size: 2em;
 }
 
-.status-icon {
-  position: absolute !important;
-  right: -10px;
-  bottom: 6px !important;
-  font-size: 22px !important;
-  top: initial !important;
+// FIXME to delete or to use
+// .sub-status-icon {
+//   position: absolute !important;
+//   right: -10px;
+//   bottom: 6px !important;
+//   font-size: 22px !important;
+//   top: initial !important;
   
-  &.status-icon-success {
-    color: $color-one-mint;
-  }
-}
+//   &.status-icon-success {
+//     color: $color-one-mint;
+//   }
+// }
 
 .collapse-animation {
   max-height: 99999em;
@@ -206,7 +207,32 @@ input {
   // rounded corners
   border-radius: 999px;
   padding: 2px 18px;
-  .one-icon + .one-icon:not(.hidden) {
+  .status-icon {
+    float: left;
+  }
+  .status-icon + .status-icon:not(.hidden) {
     margin-left: 8px;
   }
 }
+
+// FIXME move
+
+@include animation-fg-color-change(
+  pulse-mint,
+  inherit,
+  $color-one-mint
+);
+
+.status-icon {
+  // using camelCase because of status mapping from API
+  &.inProgress {
+    @extend .animated;
+    @extend .infinite;
+    @extend .semi-hinge;
+    @extend .pulse-mint;
+  }
+  &.done {
+    color: $color-one-mint;
+  }
+}
+

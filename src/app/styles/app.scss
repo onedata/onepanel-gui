@@ -57,6 +57,7 @@ $collapse-transition: max-height .2s linear, padding .2s linear, opacity .2s lin
 
 $disabled-opacity: 0.6;
 
+@import 'animate';
 @import 'common';
 
 @import 'spin-spinner-extensions';
