@@ -8,7 +8,7 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
   }
 
   .ct-bar-sum {
-    transform: translateY(-100%) translateY(-5px);
+    transform: translateY(-5px);
     font-size: 8pt;
     fill: $ct-text-color;
     text-anchor: middle;

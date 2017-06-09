@@ -69,6 +69,18 @@ export default Ember.Component.extend({
       };
     };
 
+    let refreshLegendFilter = () => {
+      let ignoreCounter = 0;
+      return (chart) => {
+        chart.on('data', () => {
+          let legendNodes = $(chart.container).find('.ct-legend li');
+          ignoreCounter = 10;
+          $(legendNodes[0]).click();
+          $(legendNodes[0]).click();
+        });
+      };
+    };
+
     let tooltip = (options) => {
       let tooltipHtml = `
         <div class="chart-tooltip">
@@ -104,6 +116,12 @@ export default Ember.Component.extend({
           if(data.type === 'bar' && options.chartType === 'bar') {
             let groupNode = $(data.group._node),
              barNode = $(data.element._node);
+            let tooltipData = chart.data.series.map(s => ({
+                className: s.className,
+                name: s.name,
+                value: s.data[data.index],
+              })
+            );
             barNode.mouseover(() => {
               let lastGroupNode = groupNode.parent().children().last();
               let lastGroupBar = $(lastGroupNode.children('line')[data.index]);
@@ -117,7 +135,8 @@ export default Ember.Component.extend({
                 tooltipNode.css('top', (lastGroupBar.offset().top - container.offset().top) + 'px');
               }
               // left position
-              tooltipNode.css('left', (lastGroupBar.offset().left - container.offset().left) + 'px');
+              let rect = lastGroupBar[0].getBoundingClientRect();
+              tooltipNode.css('left', (rect.left + rect.width / 2 - container.offset().left) + 'px');
 
               // title
               let title = tooltipNode.find('.chart-tooltip-title');
@@ -130,8 +149,8 @@ export default Ember.Component.extend({
               // data series and values
               let ul = tooltipNode.find('.ct-legend');
               ul.empty();
-              chart.data.series.forEach(s => {
-                tooltipNode.find('ul').append(`<li class="${s.className}">${s.name}: ${s.data[data.index]}</li>`);
+              tooltipData.forEach(d => {
+                ul.append(`<li class="${d.className}">${d.name}: ${d.value}</li>`);
               });
 
               tooltipNode.addClass('active');
@@ -181,7 +200,8 @@ export default Ember.Component.extend({
           xLabel: 'time',
           yLabel: 'operations/s',
         }),
-        Chartist.plugins.legend()
+        Chartist.plugins.legend(),
+        refreshLegendFilter()
       ]
     });
   },
