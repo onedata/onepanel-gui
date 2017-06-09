@@ -11,6 +11,7 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
     transform: translateY(-100%) translateY(-5px);
     font-size: 8pt;
     fill: $ct-text-color;
+    text-anchor: middle;
   }
 
   @for $i from 0 to length($chart-colors) {
@@ -38,6 +39,15 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
     font-size: 8pt;
     fill: $ct-text-color;
     text-transform: uppercase;
+
+    .ct-axis-y-label {
+      text-anchor: middle;
+      transform: rotate(-90deg);
+    }
+
+    .ct-axis-x-label {
+      text-anchor: middle;
+    }
   }
 }
 
@@ -94,6 +104,11 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
   font-size: 8pt;
   &.active {
     display: block;
+  }
+  .chart-tooltip-title {
+    text-align: center;
+    padding-top: 5px;
+    font-family: 'Open Sans Semibold';
   }
   .ct-legend {
     padding: 5px 7px;
