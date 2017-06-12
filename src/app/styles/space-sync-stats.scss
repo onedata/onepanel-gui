@@ -62,6 +62,8 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
         padding-left: 23px;
         margin-bottom: 3px;
         margin-right: 2em;
+        cursor: pointer;
+        user-select: none;
     }
 
     li:before {
