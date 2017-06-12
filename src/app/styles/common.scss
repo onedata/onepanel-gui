@@ -148,18 +148,18 @@ input {
   font-size: 2em;
 }
 
-// FIXME to delete or to use
-// .sub-status-icon {
-//   position: absolute !important;
-//   right: -10px;
-//   bottom: 6px !important;
-//   font-size: 22px !important;
-//   top: initial !important;
+// adds a small circle icon to status-icon
+.sub-status-icon {
+  position: absolute !important;
+  right: -10px;
+  bottom: 6px !important;
+  font-size: 22px !important;
+  top: initial !important;
   
-//   &.status-icon-success {
-//     color: $color-one-mint;
-//   }
-// }
+  &.status-icon-success {
+    color: $color-one-mint;
+  }
+}
 
 .collapse-animation {
   max-height: 99999em;
@@ -183,56 +183,3 @@ input {
     margin-right: 0;
   }
 }
-
-// FIXME temporary style
-// FIXME move to separate file
-.space-status-icons {
-  // FIXME style is similiar to toggle
-  position: absolute;
-  right: 64px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-// FIXME move to separate files
-// FIXME temporary styles
-
-
-// FIXME the same as in one-collapsible-toolbar toggle hover
-.status-toolbar {
-  line-height: 20px;
-  font-size: 20px;
-  background-color: $color-one-white;
-  border: 1px solid $color-one-list-item-separator;
-  // rounded corners
-  border-radius: 999px;
-  padding: 2px 18px;
-  .status-icon {
-    float: left;
-  }
-  .status-icon + .status-icon:not(.hidden) {
-    margin-left: 8px;
-  }
-}
-
-// FIXME move
-
-@include animation-fg-color-change(
-  pulse-mint,
-  inherit,
-  $color-one-mint
-);
-
-.status-icon {
-  // using camelCase because of status mapping from API
-  &.inProgress {
-    @extend .animated;
-    @extend .infinite;
-    @extend .semi-hinge;
-    @extend .pulse-mint;
-  }
-  &.done {
-    color: $color-one-mint;
-  }
-}
-

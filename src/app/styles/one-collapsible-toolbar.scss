@@ -1,8 +1,6 @@
 .one-collapsible-toolbar {
   &.minimized {
     .collapsible-toolbar-toggle {
-      // FIXME temporarily disabled - enable in global
-      // transform: translateY(30%);
       .icon-dot {
         background-color: $main-text-color;
         height: 0.4em;
@@ -17,14 +15,7 @@
   }
 }
 
-// FIXME should be moved from here, this is only a draft!
 .btn-menu-toggle {
-  padding: 8px 12px;
-  position: absolute;
-  // FIXME use padding of header
-  right: 1.5em;
-  top: 50%;
-  transform: translateY(-50%);
   border: 1px solid transparent;
   
   &:hover {

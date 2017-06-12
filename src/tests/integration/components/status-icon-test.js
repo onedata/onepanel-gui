@@ -8,18 +8,13 @@ describe('Integration | Component | status icon', function () {
     integration: true
   });
 
-  // FIXME test changing status - classes  
-  it('renders', function () {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.on('myAction', function(val) { ... });
-    // Template block usage:
-    // this.render(hbs`
-    //   {{#status-icon}}
-    //     template content
-    //   {{/status-icon}}
-    // `);
+  it('is hidden if enabled is set to false', function () {
+    this.render(hbs `{{status-icon type="space" enabled=false}}`);
+    expect(this.$('.status-icon')).to.be.hidden;
+  });
 
-    this.render(hbs `{{status-icon}}`);
-    expect(this.$()).to.have.length(1);
+  it('adds a class based on status property', function () {
+    this.render(hbs `{{status-icon icon="space" status="some"}}`);
+    expect(this.$('.status-icon')).to.have.class('some');
   });
 });

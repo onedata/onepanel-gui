@@ -1,5 +1,3 @@
-// FIXME this file is too big - use mixins
-
 /**
  * Details about support provided for space
  *

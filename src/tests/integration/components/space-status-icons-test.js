@@ -2,24 +2,57 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
 describe('Integration | Component | space status icons', function () {
   setupComponentTest('space-status-icons', {
     integration: true
   });
 
-  // FIXME test visibility of status icons  
-  it('renders', function () {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.on('myAction', function(val) { ... });
-    // Template block usage:
-    // this.render(hbs`
-    //   {{#space-status-icons}}
-    //     template content
-    //   {{/space-status-icons}}
-    // `);
+  it('shows only import icon when import is enabled and update is disabled', function () {
+    this.set('space', Ember.Object.create({
+      importEnabled: true,
+      updateEnabled: false,
+    }));
+    this.set('syncStats', {
+      importStatus: 'done',
+    });
 
-    this.render(hbs `{{space-status-icons}}`);
-    expect(this.$()).to.have.length(1);
+    this.render(hbs `
+    {{space-status-icons space=space syncStats=syncStats}}
+    `);
+
+    expect(this.$('.oneicon-space-import')).to.be.visible;
+    expect(this.$('.oneicon-update')).to.be.hidden;
+  });
+
+  it('shows import and update icons when enabled', function () {
+    this.set('space', Ember.Object.create({
+      importEnabled: true,
+      updateEnabled: true,
+    }));
+    this.set('syncStats', {
+      importStatus: 'done',
+      updateStatus: 'done',
+    });
+
+    this.render(hbs `
+    {{space-status-icons space=space syncStats=syncStats}}
+    `);
+
+    expect(this.$('.oneicon-space-import')).to.be.visible;
+    expect(this.$('.oneicon-update')).to.be.visible;
+  });
+
+  it('does not render status toolbar if import and update are disabled', function () {
+    this.set('space', Ember.Object.create({
+      importEnabled: false,
+      updateEnabled: false,
+    }));
+
+    this.render(hbs `
+    {{space-status-icons space=space syncStats=syncStats}}
+    `);
+    expect(this.$('.space-status-icons')).to.be.hidden;
   });
 });
