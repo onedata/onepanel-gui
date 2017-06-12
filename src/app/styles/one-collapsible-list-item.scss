@@ -1,5 +1,5 @@
-$collapsible-list-item-padding: 1.5em;
-$collapsible-list-item-btn-toggle-padding: 0.5em;
+$collapsible-list-item-padding: $padding-large-horizontal;
+$collapsible-list-item-btn-toggle-padding: 12px;
 
 .one-collapsible-list-item {
   background-color: inherit;
@@ -7,21 +7,8 @@ $collapsible-list-item-btn-toggle-padding: 0.5em;
   &.active {
     background-color: $main-content-hover-background;
   }
-  .row {
-    padding: $collapsible-list-item-padding;
-
-    .btn-menu-toggle {
-      @include vertical-align-middle();
-      right: $collapsible-list-item-padding;
-      padding: $collapsible-list-item-btn-toggle-padding*0.75 $collapsible-list-item-btn-toggle-padding;
-    }
-
-    .status-toolbar {
-      @include vertical-align-middle();
-      right:
-        2*$collapsible-list-item-btn-toggle-padding +
-          $collapsible-list-item-padding + 0.5em;
-    }
+  .list-header-row {
+    padding: $padding-large-horizontal $padding-large-vertical;
   }
   .form {
     .row {

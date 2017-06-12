@@ -50,9 +50,9 @@
 {{/listItem.header}}
 
 {{#listItem.content}}
-  <table class="item-table">
-    <tr class="no-border">
-      <td colspan="99">
+  <div class="row item-table">
+    <div class="row no-border">
+      <div class="col-xs-12">
         <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
           <h1 class="form-title">Data synchronization configuration</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
@@ -62,11 +62,10 @@
             submit=(action "importUpdateConfigurationSubmit")
           }}
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td class="item-table-img-cell"><div class="background-container"></div></td>
-      <td class="item-table-content-cell">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
         <div class="row content-row">
           <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
           <span class="one-label">{{space.name}}</span>
@@ -101,18 +100,17 @@
                 <span class="one-label">{{get space.storageUpdate property}}</span>
               </div>
             {{/each}}
-          </div>
-                    
-          {{#if _syncStats.stats}}
-            <div class="row content-row">
-              {{space-sync-chart-operations timeStats=_syncStats.stats}}
-            </div>
-          {{/if}}
-          
+          </div>          
         {{/if}}
-      </td>
-    </tr>
-  </table>
+      </div>
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-cell item-table-img-cell"><div class="background-container"></div></div>
+      {{#if _syncStats.stats}}
+        <div class="col-xs-12">
+          {{space-sync-chart-operations timeStats=_syncStats.stats}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
 {{/listItem.content}}
 
 {{#bs-modal

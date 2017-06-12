@@ -97,10 +97,12 @@ input {
       border-bottom: 0;
     }
   }
+  .item-table-cell {
+    padding-bottom: 2*$padding-large-vertical;
+  }
   .item-table-img-cell {
+    height: 400px;
     position: relative;
-    width: 30%;
-    border-right: $table-item-border;
     .background-container {
       position: absolute;
       top: 20px;
