@@ -59,14 +59,14 @@ export default Mixin.create({
   /**
    * Periodically fetched new sync statistics (for charts)
    *
-   * It's interval is reconfigured in ``reconfigureWatcher`` observer
+   * It's interval is reconfigured in ``reconfigureSyncWatchers`` observer
    * by various changes
    *
    * Initialized on init
    *
    * @type {Looper}
    */
-  _syncStatsWatcher: null,
+  _syncChartStatsWatcher: null,
 
   /**
    * Periodically checks if sync status if fresh and if not - fetch sync status
@@ -76,7 +76,7 @@ export default Mixin.create({
    * 
    * @type {Looper}
    */
-  _syncStatusUpdater: null,
+  _syncStatusWatcher: null,
 
   /**
    * Sync statistics object fetched from backend
@@ -89,24 +89,24 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    let _syncStatsWatcher = Looper.create({ immediate: true });
-    _syncStatsWatcher.on('tick', this.fetchAllSyncStats.bind(this));
-    _syncStatsWatcher.notify();
+    // interval of this Looper will be set in reconfigureSyncWatchers observer
+    let _syncChartStatsWatcher = Looper.create({ immediate: true });
+    _syncChartStatsWatcher.on('tick', this.fetchAllSyncStats.bind(this));
 
-    let _syncStatusUpdater = Looper.create({
+    let _syncStatusWatcher = Looper.create({
       immediate: true,
       interval: this.get('syncStatusRefreshTime'),
     });
-    _syncStatusUpdater.on('tick', this.checkSyncStatusUpdate.bind(this));
-    _syncStatusUpdater.notify();
+    _syncStatusWatcher.on('tick', this.checkSyncStatusUpdate.bind(this));
+    this.checkSyncStatusUpdate();
 
-    this.setProperties({ _syncStatsWatcher, _syncStatusUpdater });
+    this.setProperties({ _syncChartStatsWatcher, _syncStatusWatcher });
   },
 
   willDestroyElement() {
     try {
-      this.get('_syncStatsWatcher').stop();
-      this.get('_syncStatusUpdater').stop();
+      this.get('_syncChartStatsWatcher').stop();
+      this.get('_syncStatusWatcher').stop();
     } finally {
       this._super(...arguments);
     }
@@ -119,12 +119,15 @@ export default Mixin.create({
     let {
       syncStatusRefreshTime,
       _lastSyncStatusRefresh,
+      _importActive,
     } = this.getProperties(
       'syncStatusRefreshTime',
-      '_lastSyncStatusRefresh'
+      '_lastSyncStatusRefresh',
+      '_importActive'
     );
 
-    return Date.now() - _lastSyncStatusRefresh > syncStatusRefreshTime;
+    return _importActive &&
+      Date.now() - _lastSyncStatusRefresh > syncStatusRefreshTime;
   },
 
   /**
@@ -177,25 +180,33 @@ export default Mixin.create({
     // TODO handle error
   },
 
-  reconfigureWatcher: on('init', observer('_isActive', '_importActive', 'syncInterval',
-    '_syncStatsWatcher',
+  reconfigureSyncWatchers: on('init', observer('_isActive', '_importActive',
+    'syncInterval',
+    '_syncChartStatsWatcher',
     function () {
       let {
         _isActive,
         _importActive,
         syncInterval,
-        _syncStatsWatcher
+        _syncChartStatsWatcher,
+        _syncStatusWatcher,
       } = this.getProperties(
         '_isActive',
         '_importActive',
         'syncInterval',
-        '_syncStatsWatcher'
+        '_syncChartStatsWatcher',
+        '_syncStatusWatcher'
       );
 
-      if (_importActive && _isActive) {
-        _syncStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
+      if (_importActive) {
+        _syncStatusWatcher.set('interval', this.get('syncStatusRefreshTime'));
       } else {
-        _syncStatsWatcher.stop();
+        
+      }
+      if (_importActive && _isActive) {
+        _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
+      } else {
+        _syncChartStatsWatcher.stop();
       }
     })),
 });
