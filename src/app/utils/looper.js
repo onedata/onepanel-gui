@@ -47,9 +47,9 @@ export default Ember.Object.extend(Evented, {
         '_intervalId',
         setInterval(this.notify.bind(this), interval)
       );
-    }
-    if (immediate) {
-      this.notify();
+      if (immediate) {
+        this.notify();
+      }
     }
   })),
 
