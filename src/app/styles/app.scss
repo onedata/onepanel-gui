@@ -101,9 +101,10 @@ $disabled-opacity: 0.6;
 @import 'ember-notify';
 @import 'one-collapsible-toolbar';
 @import 'one-collapsible-toolbar-item';
-@import "chartist";
-@import "chartist-settings";
-@import 'space-sync-stats';
+@import 'chartist';
+@import 'chartist-settings';
+@import 'chartist-overrides';
+@import 'space-sync-chart-operations';
 
 
 // TODO a mess

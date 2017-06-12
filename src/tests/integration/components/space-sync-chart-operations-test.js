@@ -3,8 +3,8 @@ import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 
-describe('Integration | Component | space sync stats', function() {
-  setupComponentTest('space-sync-stats', {
+describe('Integration | Component | space sync chart operations', function() {
+  setupComponentTest('space-sync-chart-operations', {
     integration: true
   });
 
@@ -13,12 +13,12 @@ describe('Integration | Component | space sync stats', function() {
     // Handle any actions with this.on('myAction', function(val) { ... });
     // Template block usage:
     // this.render(hbs`
-    //   {{#space-sync-stats}}
+    //   {{#space-sync-chart-operations}}
     //     template content
-    //   {{/space-sync-stats}}
+    //   {{/space-sync-chart-operations}}
     // `);
 
-    this.render(hbs`{{space-sync-stats}}`);
+    this.render(hbs`{{space-sync-chart-operations}}`);
     expect(this.$()).to.have.length(1);
   });
 });
