@@ -7,6 +7,9 @@ $chart-tooltip-arrow-size: 20px;
 .ct-chart {
   height: 200px;
   margin-bottom: $chart-legend-height;
+  &::before {
+    display: none;
+  }  
   .ct-chart-bar {
     margin-top: $chart-legend-height;
   }

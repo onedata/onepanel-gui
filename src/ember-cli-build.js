@@ -43,6 +43,14 @@ module.exports = function (defaults) {
     },
     'ember-cli-chartist': {
       'useCustomCSS': true
+    },
+    nodeAssets: {
+      'chartist-plugin-legend': {
+        vendor: {
+          include: ['chartist-plugin-legend.js']
+        },
+        public: {}
+      }
     }
   });
 
@@ -64,10 +72,11 @@ module.exports = function (defaults) {
     'basictable/basictable.css',
     'webui-popover/dist/jquery.webui-popover.css',
     'webui-popover/dist/jquery.webui-popover.js',
-    'chartist-plugin-legend/chartist-plugin-legend.js',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
+  
+  app.import('vendor/chartist-plugin-legend/chartist-plugin-legend.js');
 
   return app.toTree();
 };
