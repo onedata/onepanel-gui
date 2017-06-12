@@ -7,32 +7,32 @@ const {
 export default Ember.Component.extend({
   /**
    * To inject.
-   * @type {ProviderSpaceSyncStats}
+   * @type {Array.Onepanel.TimeStats}
    */
-  syncStats: null,
+  timeStats: null,
 
   chartOptions: null,
 
-  chartLabels:  ['Insert', 'Update', 'Delete'],
+  chartLabels: ['Insert', 'Update', 'Delete'],
 
-  chartData: computed('syncStats.stats.@each.values.[]', 'chartLabels', function () {
+  chartData: computed('timeStats.@each.values.[]', 'chartLabels', function () {
     let {
-      syncStats,
+      timeStats,
       chartLabels,
-    } = this.getProperties('syncStats', 'chartLabels');
-    if (syncStats && syncStats.stats) {
+    } = this.getProperties('timeStats', 'chartLabels');
+    if (timeStats) {
       return {
-        labels: Array.apply(null, {length: syncStats.stats[1].values.length + 1}).map(Number.call, Number).map(n => `${n}:00`),
-        series: syncStats.stats.slice(1).map((stat, index) => {
-          return { 
+        labels: Array.apply(null, { length: timeStats[1].values.length + 1 })
+          .map(Number.call, Number).map(n => `${n}:00`),
+        series: timeStats.slice(1).map((stat, index) => {
+          return {
             name: chartLabels[index],
             data: stat.values,
             className: `ct-series-${index}`
           };
         })
       };
-    }
-    else {
+    } else {
       return [];
     }
   }),
@@ -43,7 +43,7 @@ export default Ember.Component.extend({
     let maximizeBarWidth = () => {
       return (chart) => {
         chart.on('draw', (data) => {
-          if(data.type === 'bar') {
+          if (data.type === 'bar') {
             data.element.attr({
               style: `stroke-width: ${100 / chart.data.series[0].data.length}%`,
             });
@@ -51,11 +51,11 @@ export default Ember.Component.extend({
         });
       };
     };
-    
+
     let barSumLabels = () => {
       return (chart) => {
         chart.on('draw', (data) => {
-          if(data.type === 'bar') {
+          if (data.type === 'bar') {
             if (data.seriesIndex === chart.data.series.length - 1) {
               let sum = chart.data.series.map(s => s.data[data.index])
                 .reduce((prev, next) => prev + next, 0);
@@ -82,7 +82,8 @@ export default Ember.Component.extend({
     };
 
     let tooltip = (options) => {
-      let tooltipHtml = `
+      let tooltipHtml =
+        `
         <div class="chart-tooltip">
           <div class="chart-tooltip-title"></div>
           <ul class="ct-legend">
@@ -106,22 +107,20 @@ export default Ember.Component.extend({
           if (tooltipNode.length === 0) {
             tooltipNode = $($.parseHTML(tooltipHtml));
             container.append(tooltipNode);
-          }
-          else {
+          } else {
             tooltipNode.removeClass('active');
           }
         });
 
-        chart.on('draw', function(data) {
-          if(data.type === 'bar' && options.chartType === 'bar') {
+        chart.on('draw', function (data) {
+          if (data.type === 'bar' && options.chartType === 'bar') {
             let groupNode = $(data.group._node),
-             barNode = $(data.element._node);
+              barNode = $(data.element._node);
             let tooltipData = chart.data.series.map(s => ({
-                className: s.className,
-                name: s.name,
-                value: s.data[data.index],
-              })
-            );
+              className: s.className,
+              name: s.name,
+              value: s.data[data.index],
+            }));
             barNode.mouseover(() => {
               let lastGroupNode = groupNode.parent().children().last();
               let lastGroupBar = $(lastGroupNode.children('line')[data.index]);
@@ -129,14 +128,16 @@ export default Ember.Component.extend({
               // top position
               if (options.aboveDescription) {
                 let sumLabel = $(lastGroupNode.children('text')[data.index]);
-                tooltipNode.css('top', (sumLabel.offset().top - container.offset().top) + 'px');
-              }
-              else {
-                tooltipNode.css('top', (lastGroupBar.offset().top - container.offset().top) + 'px');
+                tooltipNode.css('top', (sumLabel.offset().top - container.offset()
+                  .top) + 'px');
+              } else {
+                tooltipNode.css('top', (lastGroupBar.offset().top -
+                  container.offset().top) + 'px');
               }
               // left position
               let rect = lastGroupBar[0].getBoundingClientRect();
-              tooltipNode.css('left', (rect.left + rect.width / 2 - container.offset().left) + 'px');
+              tooltipNode.css('left', (rect.left + rect.width / 2 -
+                container.offset().left) + 'px');
 
               // title
               let title = tooltipNode.find('.chart-tooltip-title');
@@ -150,7 +151,9 @@ export default Ember.Component.extend({
               let ul = tooltipNode.find('.ct-legend');
               ul.empty();
               tooltipData.forEach(d => {
-                ul.append(`<li class="${d.className}">${d.name}: ${d.value}</li>`);
+                ul.append(
+                  `<li class="${d.className}">${d.name}: ${d.value}</li>`
+                );
               });
 
               tooltipNode.addClass('active');
@@ -170,18 +173,18 @@ export default Ember.Component.extend({
       options = Chartist.extend({}, defaultOptions, options);
 
       return (chart) => {
-          chart.on('created', function() {
-            let svgNode = $(chart.svg._node);
-            let axisLabelsGroup = chart.svg.elem('g', {}, 'ct-axis-labels');
-            axisLabelsGroup.elem('text', {
-              x: -svgNode.innerHeight() / 2 + 15,
-              y: 20,
-            }, 'ct-axis-y-label').text(options.yLabel);
-            axisLabelsGroup.elem('text', {
-              x: svgNode.innerWidth() / 2,
-              y: svgNode.innerHeight() - 5,
-            }, 'ct-axis-x-label').text(options.xLabel);
-          });
+        chart.on('created', function () {
+          let svgNode = $(chart.svg._node);
+          let axisLabelsGroup = chart.svg.elem('g', {}, 'ct-axis-labels');
+          axisLabelsGroup.elem('text', {
+            x: -svgNode.innerHeight() / 2 + 15,
+            y: 20,
+          }, 'ct-axis-y-label').text(options.yLabel);
+          axisLabelsGroup.elem('text', {
+            x: svgNode.innerWidth() / 2,
+            y: svgNode.innerHeight() - 5,
+          }, 'ct-axis-x-label').text(options.xLabel);
+        });
       };
     };
 
@@ -191,8 +194,8 @@ export default Ember.Component.extend({
       plugins: [
         maximizeBarWidth(),
         barSumLabels(),
-        tooltip({ 
-          chartType: 'bar', 
+        tooltip({
+          chartType: 'bar',
           rangeInTitle: true,
           aboveDescription: true,
         }),

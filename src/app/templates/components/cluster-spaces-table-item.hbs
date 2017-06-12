@@ -103,9 +103,9 @@
             {{/each}}
           </div>
                     
-          {{#if _syncStats}}
+          {{#if _syncStats.stats}}
             <div class="row content-row">
-              {{space-sync-stats syncStats=(if _syncStats.stats _syncStats)}}
+              {{space-sync-stats timeStats=_syncStats.stats}}
             </div>
           {{/if}}
           
