@@ -9,8 +9,8 @@ $chart-tooltip-arrow-size: 20px;
   margin-bottom: $chart-legend-height;
   &::before {
     display: none;
-  }  
-  .ct-chart-bar {
+  }
+  svg {
     margin-top: $chart-legend-height;
   }
   .ct-bar-sum {
@@ -25,6 +25,10 @@ $chart-tooltip-arrow-size: 20px;
   }
   .ct-label {
     font-size: $chart-labels-font-size;
+  }
+  .ct-label.ct-horizontal.ct-end {
+    transform: translateX(-50%) translateY(10px) rotate(-45deg);
+    justify-content: center;
   }
   .ct-axis-labels {
     font-size: $chart-font-size-base;
@@ -74,7 +78,6 @@ $chart-tooltip-arrow-size: 20px;
     border: 1px solid $main-border-color;
     border-radius: $border-radius-small;
     background-color: $color-one-white;
-    transform: translateY(-100%) translateY(-$padding-base-vertical) translateX(-50%);
     z-index: 1;
     font-size: $chart-font-size-base;
     &.active {
@@ -82,7 +85,7 @@ $chart-tooltip-arrow-size: 20px;
     }
     .chart-tooltip-title {
       text-align: center;
-      padding-top: $chart-tooltip-padding;
+      padding: $chart-tooltip-padding $chart-tooltip-padding 0 $chart-tooltip-padding;
       font-family: 'Open Sans Semibold';
     }
     .ct-legend {

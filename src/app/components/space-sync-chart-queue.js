@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import _util from 'lodash/util';
 
+import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import maximizeBarWidth from 'onepanel-gui/utils/chartist/maximize-bar-width';
 import barSumLabels from 'onepanel-gui/utils/chartist/bar-sum-labels';
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
@@ -11,21 +12,15 @@ const {
   computed,
 } = Ember;
 
-export default Ember.Component.extend({
+export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-queue'],
-
-  /**
-   * To inject.
-   * @type {Array.Onepanel.TimeStats}
-   */
-  timeStats: null,
 
   /**
    * Chartist settings
    * @type {Object}
    */
   chartOptions: {
-    chartPadding: 15,
+    chartPadding: 30,
     plugins: [
       maximizeBarWidth(),
       additionalXLabel(),
@@ -47,11 +42,13 @@ export default Ember.Component.extend({
    * Label for chart
    * @type {string}
    */
-  chartLabel: 'Queue length',
+  chartSeriesLabel: 'Queue length',
 
   _queueData: computed('timeStats.[]', function () {
     return this.get('timeStats')[0];
   }),
+
+  _chartValues: [],
 
   /**
    * Data for chartist
@@ -60,18 +57,23 @@ export default Ember.Component.extend({
   chartData: computed('_queueData.values.[]', 'chartLabel', function () {
     let {
       _queueData,
-      chartLabel,
-    } = this.getProperties('_queueData', 'chartLabel');
+      chartSeriesLabel,
+      _chartValues,
+    } = this.getProperties('_queueData', 'chartSeriesLabel', '_chartValues');
     if (_queueData && _queueData.values.length > 0) {
+      while (_chartValues.length) {
+        _chartValues.shift();
+      }
+      _queueData.values.forEach(value => _chartValues.push(value));
       return {
-        labels: _util.range(_queueData.values.length).map(n => `${n}:00`),
+        labels: _util.range(1, _chartValues.length + 1).reverse().
+          map(n => this.getChartLabel(n)),
         series: [{
-          name: chartLabel,
-          data: _queueData.values,
+          name: chartSeriesLabel,
+          data: _chartValues,
           className: `ct-series-0`
         }],
-        // TODO change to some dynamicaly generated value
-        lastLabel: '12:00'
+        lastLabel: this.getChartLabel(0)
       };
     } else {
       return {};

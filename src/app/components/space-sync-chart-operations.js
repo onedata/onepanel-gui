@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import _util from 'lodash/util';
 
+import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import maximizeBarWidth from 'onepanel-gui/utils/chartist/maximize-bar-width';
 import barSumLabels from 'onepanel-gui/utils/chartist/bar-sum-labels';
 import refreshLegendFilter from 'onepanel-gui/utils/chartist/refresh-legend-filter';
@@ -9,17 +10,11 @@ import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 
 const {
-  computed,
+  computed
 } = Ember;
 
-export default Ember.Component.extend({
+export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-operations'],
-
-  /**
-   * To inject.
-   * @type {Array.Onepanel.TimeStats}
-   */
-  timeStats: null,
 
   /**
    * Chartist settings
@@ -27,7 +22,7 @@ export default Ember.Component.extend({
    */
   chartOptions: {
     stackBars: true,
-    chartPadding: 15,
+    chartPadding: 30,
     plugins: [
       maximizeBarWidth(),
       additionalXLabel(),
@@ -39,7 +34,7 @@ export default Ember.Component.extend({
       }),
       axisLabels({
         xLabel: 'time',
-        yLabel: 'op./s',
+        yLabel: 'operations',
       }),
       Chartist.plugins.legend(),
       refreshLegendFilter()
@@ -50,7 +45,13 @@ export default Ember.Component.extend({
    * Series labels for chart
    * @type {Array.string}
    */
-  chartLabels: ['Insert', 'Update', 'Delete'],
+  chartSeriesLabels: ['Insert', 'Update', 'Delete'],
+
+  _chartValues: [
+    [],
+    [],
+    []
+  ],
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
     let {
@@ -66,20 +67,28 @@ export default Ember.Component.extend({
   chartData: computed('_timeStatsValues.[]', 'chartLabels', function () {
     let {
       _timeStatsValues,
-      chartLabels,
-    } = this.getProperties('_timeStatsValues', 'chartLabels');
+      chartSeriesLabels,
+      _chartValues,
+    } = this.getProperties('_timeStatsValues', 'chartSeriesLabels', '_chartValues');
     if (_timeStatsValues && _timeStatsValues.length > 0) {
+      let statsValues = _timeStatsValues.slice(1);
+      statsValues.forEach((values, index) => {
+        while (_chartValues[index].length) {
+          _chartValues[index].shift();
+        }
+        values.forEach(value => _chartValues[index].push(value));
+      });
       return {
-        labels: _util.range(_timeStatsValues[1].length).map(n => `${n}:00`),
-        series: _timeStatsValues.slice(1).map((values, index) => {
+        labels: _util.range(1, _chartValues[0].length + 1).reverse().map(n => this.getChartLabel(
+          n)),
+        series: _chartValues.map((values, index) => {
           return {
-            name: chartLabels[index],
-            data: values,
+            name: chartSeriesLabels[index],
+            data: _chartValues[index],
             className: `ct-series-${index}`
           };
         }),
-        // TODO change to some dynamicaly generated value
-        lastLabel: '12:00'
+        lastLabel: this.getChartLabel(0)
       };
     } else {
       return {};
