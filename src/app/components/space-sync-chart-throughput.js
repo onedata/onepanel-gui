@@ -57,8 +57,6 @@ export default SpaceSyncChartBase.extend({
       timePeriod
     } = this.getProperties('timeUnit', 'timePeriod');
     switch (timeUnit) {
-      case 'second':
-        return timePeriod;
       case 'minute':
         return 60 * timePeriod;
       case 'hour':

@@ -37,29 +37,15 @@ export default Ember.Component.extend({
     }
   }),
 
-  /**
-   * To inject.
-   * @type {number}
-   * @abstract
-   */
-  timePeriod: computed('timeStats', 'timeUnit', function () {
+  timePeriod: computed('timeStats', function () {
     let {
       timeStats,
-      timeUnit,
-    } = this.getProperties('timeStats', 'timeUnit');
+    } = this.getProperties('timeStats');
     let len = 0;
     if (timeStats || !timeStats[0].values.length) {
-      len = !timeStats[0].values.length;
+      len = timeStats[0].values.length;
     }
-    switch (timeUnit) {
-    case 'minute':
-    case 'hour':
-      return len ? 60 / len : 5;
-    case 'day':
-      return len ? 24 / len : 2;
-    default:
-      return 'H:mm:ss';
-    }
+    return len ? 1 / len : 1/12;
   }),
 
   timeFormat: computed('timeUnit', function () {
@@ -80,14 +66,14 @@ export default Ember.Component.extend({
       lastUpdateTime,
       timeFormat,
       timePeriod,
-      lowerTimeUnit
+      timeUnit
     } = this.getProperties(
       'lastUpdateTime',
       'timeFormat',
       'timePeriod',
-      'lowerTimeUnit');
+      'timeUnit');
     return moment(lastUpdateTime)
-      .subtract(offset * timePeriod, lowerTimeUnit + 's')
+      .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);
   }
 });
