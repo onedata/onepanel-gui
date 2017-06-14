@@ -3,7 +3,8 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import SpaceDetails from 'onepanel-gui/models/space-details';
-import storageManagerStub from '../../helpers/storage-manager-stub';
+import StorageManagerStub from '../../helpers/storage-manager-stub';
+import ProviderManagerStub from '../../helpers/provider-manager-stub';
 
 import Ember from 'ember';
 
@@ -13,8 +14,11 @@ describe('Integration | Component | cluster spaces table', function () {
   });
 
   beforeEach(function () {
-    this.register('service:storage-manager', storageManagerStub);
+    this.register('service:storage-manager', StorageManagerStub);
     this.inject.service('storage-manager', { as: 'storageManager' });
+
+    this.register('service:provider-manager', ProviderManagerStub);
+    this.inject.service('provider-manager', { as: 'providerManager' });
   });
 
   it('renders error message when at least one space details fetch was rejected',

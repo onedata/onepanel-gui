@@ -17,8 +17,7 @@ import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deploym
 import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
-import _object from 'lodash/object';
-import _find from 'lodash/find';
+import _ from 'lodash';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -37,6 +36,27 @@ const {
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
+const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
+const MOCKED_SUPPORT = {
+  'lofrewu83yr78fghae78ft64aqry4-14uy48979fmur': 100000000,
+  'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 314000000,
+  'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 214000000,
+};
+
+function _genSupportingProviders() {
+  let supportingProviders = {};
+  supportingProviders[PROVIDER_ID] = 700000000;
+  _.assign(supportingProviders, MOCKED_SUPPORT);
+  return supportingProviders;
+}
+
+/**
+ * A string serializer for generated mock responses
+ * @returns {string}
+ */
+function responseToString() {
+  return `Request ${this.__request_method} failed: ${JSON.stringify(this)}`;
+}
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
@@ -104,13 +124,15 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
 
       if (!cookies.read('fakeLoginFlag')) {
         reject({
+          __request_method: method,
           response: {
             statusCode: 401,
             body: {
               error: 'Unauthorized',
               description: 'User not authorized',
-            }
-          }
+            },
+          },
+          toString: responseToString,
         });
       }
 
@@ -123,19 +145,21 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
             headers: {
               location: handler.taskId ? ('https://something/tasks/' +
                 handler.taskId) : undefined
-            }
+            },
           };
           let taskId = getTaskId(response);
           resolve({
+            __request_method: method,
             data: handler.success(...params),
             response: response,
-            task: taskId && this.watchTaskStatus(taskId)
+            task: taskId && this.watchTaskStatus(taskId),
+            toString: responseToString,
           });
         } else {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
           };
-          reject({ response });
+          reject({ __request_method: method, response, toString: responseToString, });
         }
 
       } else {
@@ -210,6 +234,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         storageUpdate: {
           strategy: 'no_update',
         },
+        providersSupport: _genSupportingProviders(),
       });
       spaces.push({
         id: 'space2__verylongid',
@@ -226,6 +251,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
           writeOnce: false,
           deleteEnable: false,
         },
+        providersSupport: _genSupportingProviders(),
       });
     }
   },
@@ -343,10 +369,10 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
     return {
       success: (storages) => {
         // the only storage is stored in the only key of storages
-        let storage = _object.values(storages)[0];
+        let storage = _.values(storages)[0];
         // generate some fake id
         let id = `id-${storage.name}`;
-        this.get('__storages').push(_object.assign({ id }, storage));
+        this.get('__storages').push(_.assign({ id }, storage));
       },
     };
   }),
@@ -390,7 +416,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   _req_oneprovider_getStorageDetails: computed('__storages',
     function () {
       return {
-        success: id => _find(this.get('__storages'), s => s.id === id)
+        success: id => _.find(this.get('__storages'), s => s.id === id)
       };
     }),
 
@@ -416,7 +442,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
     function () {
       if (this.get('mockInitializedCluster')) {
         let spaces = this.get('__spaces');
-        let findSpace = (id) => _find(spaces, s => s.id === id);
+        let findSpace = (id) => _.find(spaces, s => s.id === id);
         return {
           success: (id) => findSpace(id),
           statusCode: (id) => findSpace(id) ? 200 : 404
@@ -431,7 +457,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
     return {
       success: (spaceId, { period, metrics }) => {
-        let space = _find(this.get('__spaces', s => s.id === spaceId));
+        let space = _.find(this.get('__spaces', s => s.id === spaceId));
         return this.generateSpaceSyncStats(space, period, metrics);
       }
     };
@@ -449,7 +475,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
     let spaces = this.get('__spaces');
     return {
       success: (id, { storageImport, storageUpdate }) => {
-        let space = _find(spaces, s => s.id === id);
+        let space = _.find(spaces, s => s.id === id);
         if (space) {
           if (storageImport) {
             space.storageImport = storageImport;
@@ -463,7 +489,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         }
       },
       statusCode: (id) => {
-        let space = _find(spaces, s => s.id === id);
+        let space = _.find(spaces, s => s.id === id);
         return space ? 204 : 404;
       },
     };
@@ -472,10 +498,12 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   _req_oneprovider_supportSpace: computed(function () {
     return {
       success: (supportSpaceRequest) => {
-        supportSpaceRequest.id = 'id-' + Math.round(Math.random() * 100000, 0);
-        supportSpaceRequest.name = 'Space-' + Math.round(Math.random() * 100, 0);
-        delete supportSpaceRequest['token'];
-        this.get('__spaces').pushObject(supportSpaceRequest);
+        let space = _.clone(supportSpaceRequest);
+        space.id = 'id-' + Math.round(Math.random() * 100000, 0);
+        space.name = 'Space-' + Math.round(Math.random() * 100, 0);
+        space.providersSupport = _genSupportingProviders();
+        delete space['token'];
+        this.get('__spaces').pushObject(space);
       },
       statusCode: () => 204,
     };
@@ -505,7 +533,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   // -- MOCKED RESOURCE STORE --
 
   __provider: PlainableObject.create({
-    id: 'dfhiufhqw783t462rniw39r-hq27d8gnf8',
+    id: PROVIDER_ID,
     name: 'Some provider 1',
     urls: ['172.17.0.4'],
     redirectionPoint: 'https://172.17.0.4',

@@ -103,9 +103,13 @@
           </div>          
         {{/if}}
       </div>
-      <div class="col-xs-12 col-md-6 item-table-cell item-table-cell item-table-img-cell"><div class="background-container"></div></div>
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
+        {{#promise-proxy-container proxy=spaceSupportersProxy}}
+          {{space-support-chart spaceSupporters=spaceSupportersProxy.content}}
+        {{/promise-proxy-container}}
+      </div>
       {{#if _syncStats.stats}}
-        <div class="col-xs-12">
+        <div class="col-xs-12 item-table-cell item-table-content-cell">
           {{space-sync-chart-operations timeStats=_syncStats.stats}}
         </div>
       {{/if}}

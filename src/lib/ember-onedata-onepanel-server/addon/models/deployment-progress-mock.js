@@ -45,7 +45,7 @@ export default Ember.Object.extend({
   /**
    * Mocks getTaskStatus for cluster configuration operation.
    *
-   * Every time it is invoked, it returns TaskStatus with more steps.
+getProvider   * Every time it is invoked, it returns TaskStatus with more steps.
    * 
    * @returns {Onepanel.TaskStatus}
    */

@@ -11,6 +11,7 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 import _includes from 'lodash/includes';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 
 const {
   Component,
@@ -34,7 +35,7 @@ const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
  */
 const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 
-export default Component.extend(SpaceItemSyncStats, {
+export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
   classNames: ['cluster-spaces-table-item'],
 
   storageManager: service(),
