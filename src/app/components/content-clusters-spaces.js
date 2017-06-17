@@ -14,6 +14,9 @@ const {
   inject: { service },
   get,
   computed,
+  computed: {
+    not,
+  },
   observer,
   isArray,
 } = Ember;
@@ -40,12 +43,15 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
-  _isToolbarVisible: computed('spacesProxy.content', function () {
-    return !this._hasNoSpaces();
+  _hasNoSpaces: computed('spacesProxy.content.[]', function () {
+    let content = this.get('spacesProxy.content');
+    return isArray(content) && content.length === 0;
   }),
 
-  spacesObserver: observer('spacesProxy.content', function () {
-    if (this._hasNoSpaces()) {
+  _isToolbarVisible: not('_hasNoSpaces'),
+
+  _hasNoSpacesObserver: observer('_hasNoSpaces', function () {
+    if (this.get('_hasNoSpaces')) {
       this.set('_supportSpaceOpened', true);
     }
   }),
@@ -53,11 +59,6 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     this._updateSpacesList();
-  },
-
-  _hasNoSpaces() {
-    let content = this.get('spacesProxy.content');
-    return isArray(content) && content.length === 0;
   },
 
   _updateSpacesList() {
