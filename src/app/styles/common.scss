@@ -29,6 +29,10 @@ $table-item-border: 1px solid $main-border-color;
   @include clickable();
 }
 
+.scrollable {
+  overflow: auto;
+}
+
 .truncate {
   white-space: nowrap;
   overflow: hidden;
@@ -98,7 +102,7 @@ input {
     }
   }
   .item-table-cell {
-    padding-bottom: 2*$padding-large-vertical;
+    padding-bottom: $padding-large-vertical;
   }
   .item-table-img-cell {
     height: 400px;

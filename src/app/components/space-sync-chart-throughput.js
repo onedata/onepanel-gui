@@ -32,7 +32,7 @@ export default SpaceSyncChartBase.extend({
       tooltip({
         chartType: 'line',
         rangeInTitle: true,
-        topOffset: -20,
+        topOffset: -17,
       }),
       axisLabels({
         xLabel: 'time',
@@ -69,9 +69,7 @@ export default SpaceSyncChartBase.extend({
   }),
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
-    let {
-      timeStats,
-    } = this.getProperties('timeStats');
+    let timeStats = this.get('timeStats');
     return timeStats ? timeStats.map(stat => stat.values) : [];
   }),
 

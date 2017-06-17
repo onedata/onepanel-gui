@@ -6,6 +6,8 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
+  classNames: ['space-sync-chart-base'],
+
   /**
    * To inject.
    * @type {Array.Onepanel.TimeStats}
@@ -24,25 +26,13 @@ export default Ember.Component.extend({
    */
   timeUnit: 'minute',
 
-  lowerTimeUnit: computed('timeUnit', function () {
-    switch (this.get('timeUnit')) {
-    case 'minute':
-      return 'second';
-    case 'hour':
-      return 'minute';
-    case 'day':
-      return 'hour';
-    default:
-      return 'second';
-    }
-  }),
 
   timePeriod: computed('timeStats', function () {
     let {
       timeStats,
     } = this.getProperties('timeStats');
     let len = 0;
-    if (timeStats || !timeStats[0].values.length) {
+    if (timeStats && timeStats[0].values.length) {
       len = timeStats[0].values.length;
     }
     return len ? 1 / len : 1/12;
@@ -50,8 +40,6 @@ export default Ember.Component.extend({
 
   timeFormat: computed('timeUnit', function () {
     switch (this.get('timeUnit')) {
-    case 'minute':
-      return 'H:mm:ss';
     case 'hour':
       return 'H:mm';
     case 'day':

@@ -106,7 +106,6 @@ export default function (options) {
               .top) + 'px');
           }
           // left position
-
           tooltipNode.css('left', (rect.left + rect.width / 2 - container.offset()
             .left) + 'px');
 
