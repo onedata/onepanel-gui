@@ -79,9 +79,10 @@ export default Mixin.create({
       let interval = sampling[period];
       setInterval(() => {
         _.keys(allStats[period]).forEach(metric => {
-          let values = allStats[period][metric];
+          let values = allStats[period][metric].slice(0);
           values.shift();
           values.push(randomValue());
+          allStats[period][metric] = values;
         });
       }, interval);
     });

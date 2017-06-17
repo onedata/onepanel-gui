@@ -100,19 +100,28 @@
                 <span class="one-label">{{get space.storageUpdate property}}</span>
               </div>
             {{/each}}
-          </div>          
+          </div>
         {{/if}}
       </div>
+
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
         {{#promise-proxy-container proxy=spaceSupportersProxy}}
           {{space-support-chart spaceSupporters=spaceSupportersProxy.content}}
         {{/promise-proxy-container}}
       </div>
+                    
       {{#if _syncStats.stats}}
         <div class="col-xs-12 item-table-cell item-table-content-cell">
           {{space-sync-chart-operations timeStats=_syncStats.stats}}
         </div>
+        <div class="col-xs-12 item-table-cell item-table-content-cell">
+          {{space-sync-chart-queue timeStats=_syncStats.stats}}
+        </div>
+        <div class="col-xs-12 item-table-cell item-table-content-cell">
+          {{space-sync-chart-throughput timeStats=_syncStats.stats}}
+        </div>
       {{/if}}
+          
     </div>
   </div>
 {{/listItem.content}}

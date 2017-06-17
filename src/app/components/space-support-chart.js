@@ -48,10 +48,10 @@ export default Ember.Component.extend({
         return Math.round(100 * dataSeries[index] / total) + '%';
       },
       plugins: [
-        tooltip({
-          chartType: 'pie',
-        }),
-        Chartist.plugins.legend(),
+        // tooltip({
+        //   chartType: 'pie',
+        // }),
+        // Chartist.plugins.legend(),
       ]
     };
   }),

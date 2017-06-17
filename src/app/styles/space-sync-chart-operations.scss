@@ -8,9 +8,6 @@ $chart-colors: $color-one-mint $color-one-azure $color-one-red;
       }
     }
   }
-  .ct-label.ct-horizontal.ct-end {
-    transform: translateX(-50%) translateY($padding-small-vertical) rotate(-45deg);
-  }
   .ct-legend {
     @for $i from 0 to length($chart-colors) {
       .ct-series-#{$i}:before {
