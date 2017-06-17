@@ -34,7 +34,7 @@ export default SpaceSyncChartBase.extend({
       }),
       axisLabels({
         xLabel: 'time',
-        yLabel: 'operations',
+        yLabel: 'files',
       }),
       Chartist.plugins.legend(),
       refreshLegendFilter()
