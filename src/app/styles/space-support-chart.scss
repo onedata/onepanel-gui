@@ -12,12 +12,25 @@
         }
       }
     }
+    @for $i from 0 to length($chart-colors) {
+      .ct-series-#{$i+length($chart-colors)} {
+        .ct-slice-pie {
+          fill: darken(nth($chart-colors, $i + 1), 20);
+        }
+      }
+    }
     .ct-legend.ct-legend-inside  {
       position: static;
       @for $i from 0 to length($chart-colors) {
         .ct-series-#{$i}:before {
           background-color: nth($chart-colors, $i + 1);
           border-color: nth($chart-colors, $i + 1);
+        }
+      }
+      @for $i from 0 to length($chart-colors) {
+        .ct-series-#{$i+length($chart-colors)}:before {
+          background-color: darken(nth($chart-colors, $i + 1), 20);
+          border-color: darken(nth($chart-colors, $i + 1), 20);
         }
       }
     }
