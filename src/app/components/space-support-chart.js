@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 // FIXME to use
 // import bytesToString from 'onepanel-gui/utils/bytes-to-string';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
+// import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 
 import _ from 'lodash';
 
@@ -51,7 +51,7 @@ export default Ember.Component.extend({
         // tooltip({
         //   chartType: 'pie',
         // }),
-        // Chartist.plugins.legend(),
+        Chartist.plugins.legend(),
       ]
     };
   }),
