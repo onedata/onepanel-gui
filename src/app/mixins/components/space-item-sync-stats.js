@@ -18,6 +18,7 @@ const {
   set,
   on,
   observer,
+  computed,
 } = Ember;
 
 /**
@@ -49,6 +50,9 @@ export default Mixin.create({
    * @type {string}
    */
   syncInterval: 'minute',
+
+  hideSyncStats: computed.equal('syncInterval', null),
+  showSyncStats: computed.not('hideSyncStats'),
 
   /**
    * When the sync status was updated last time?
@@ -170,7 +174,10 @@ export default Mixin.create({
       this.get('spaceManager').getSyncAllStats(this.get('space.id'));
 
     syncStatsPromise.then(newSyncStats => {
-      this.set('_syncStats', newSyncStats);
+      this.setProperties({
+        lastStatsUpdateTime: Date.now(),
+        _syncStats: newSyncStats,
+      });
     });
 
     syncStatsPromise.finally(() =>
@@ -180,33 +187,36 @@ export default Mixin.create({
     // TODO handle error
   },
 
-  reconfigureSyncWatchers: on('init', observer('_isActive', '_importActive',
-    'syncInterval',
-    '_syncChartStatsWatcher',
-    function () {
-      let {
-        _isActive,
-        _importActive,
-        syncInterval,
-        _syncChartStatsWatcher,
-        _syncStatusWatcher,
-      } = this.getProperties(
-        '_isActive',
-        '_importActive',
-        'syncInterval',
-        '_syncChartStatsWatcher',
-        '_syncStatusWatcher'
-      );
+  reconfigureSyncWatchers: on('init',
+    observer(
+      '_isActive',
+      '_importActive',
+      'syncInterval',
+      '_syncChartStatsWatcher',
+      function () {
+        let {
+          _isActive,
+          _importActive,
+          syncInterval,
+          _syncChartStatsWatcher,
+          _syncStatusWatcher,
+        } = this.getProperties(
+          '_isActive',
+          '_importActive',
+          'syncInterval',
+          '_syncChartStatsWatcher',
+          '_syncStatusWatcher'
+        );
 
-      if (_importActive) {
-        _syncStatusWatcher.set('interval', this.get('syncStatusRefreshTime'));
-      } else {
-        
-      }
-      if (_importActive && _isActive) {
-        _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
-      } else {
-        _syncChartStatsWatcher.stop();
-      }
-    })),
+        if (_importActive) {
+          _syncStatusWatcher.set('interval', this.get('syncStatusRefreshTime'));
+        } else {
+
+        }
+        if (_importActive && _isActive) {
+          _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
+        } else {
+          _syncChartStatsWatcher.stop();
+        }
+      })),
 });

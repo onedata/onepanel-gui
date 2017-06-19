@@ -109,16 +109,57 @@
           {{space-support-chart spaceSupporters=spaceSupportersProxy.content}}
         {{/promise-proxy-container}}
       </div>
-                    
+      
       {{#if _syncStats.stats}}
         <div class="col-xs-12 item-table-cell item-table-content-cell">
-          {{space-sync-chart-operations timeStats=_syncStats.stats}}
-        </div>
-        <div class="col-xs-12 item-table-cell item-table-content-cell">
-          {{space-sync-chart-queue timeStats=_syncStats.stats}}
-        </div>
-        <div class="col-xs-12 item-table-cell item-table-content-cell">
-          {{space-sync-chart-throughput timeStats=_syncStats.stats}}
+          <div class="row content-row">
+            <strong>Storage synchronization statistics</strong>
+          </div>
+          <div class="row content-row">
+            {{#bs-button-group
+              value=syncInterval
+              type="radio"
+              onChange=(action (mut syncInterval)) as |bg|
+            }}
+              {{#bg.button type="default" class="btn-sm" value=null}}
+                Hide
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="minute"}}
+                Minute
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="hour"}}
+                Hour
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="day"}}
+                Day
+              {{/bg.button}}
+            {{/bs-button-group}}
+          </div>
+          {{#if showSyncStats}}
+          <div class="row">
+            <div class="col-xs-12 item-table-cell item-table-content-cell">
+              {{space-sync-chart-operations
+                lastUpdateTime=lastStatsUpdateTime
+                timeStats=_syncStats.stats
+                timeUnit=syncInterval
+              }}
+            </div>
+            <div class="col-xs-12 item-table-cell item-table-content-cell">
+              {{space-sync-chart-queue
+                lastUpdateTime=lastStatsUpdateTime
+                timeStats=_syncStats.stats
+                timeUnit=syncInterval
+              }}
+            </div>
+            <div class="col-xs-12 item-table-cell item-table-content-cell">
+              {{space-sync-chart-throughput
+                lastUpdateTime=lastStatsUpdateTime
+                timeStats=_syncStats.stats
+                timeUnit=syncInterval
+              }}
+            </div>
+          </div>
+          {{/if}}
         </div>
       {{/if}}
           

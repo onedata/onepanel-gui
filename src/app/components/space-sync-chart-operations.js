@@ -45,7 +45,7 @@ export default SpaceSyncChartBase.extend({
    * Series labels for chart
    * @type {Array.string}
    */
-  chartSeriesLabels: ['Insert', 'Update', 'Delete'],
+  chartSeriesLabels: ['Inserted', 'Updated', 'Deleted'],
 
   _chartValues: [
     [],
