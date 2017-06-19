@@ -5,7 +5,7 @@
   transition: $collapse-transition;
   border-bottom: 1px solid $main-border-color;
   &.opened {
-    max-height: 2000px;
+    max-height: 2500px;
     opacity: 1;
   }
 }
