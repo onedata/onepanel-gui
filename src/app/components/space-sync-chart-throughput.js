@@ -6,6 +6,7 @@ import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
+import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
 
 const {
   computed,
@@ -29,6 +30,7 @@ export default SpaceSyncChartBase.extend({
       additionalXLabel({
         xOffsetMultiply: 0
       }),
+      rotateHorizontalLabels(),
       tooltip({
         chartType: 'line',
         rangeInTitle: true,
@@ -36,10 +38,13 @@ export default SpaceSyncChartBase.extend({
       }),
       axisLabels({
         xLabel: 'Time',
-        yLabel: 'Op./s',
+        yLabel: 'Op/s',
       }),
       centerLineChart(),
-      Chartist.plugins.legend()
+      Chartist.plugins.legend({
+        className: 'not-clickable',
+        clickable: false,
+      })
     ]
   },
 

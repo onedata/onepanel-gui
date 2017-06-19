@@ -8,6 +8,7 @@ import refreshLegendFilter from 'onepanel-gui/utils/chartist/refresh-legend-filt
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
+import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
 
 const {
   computed
@@ -26,6 +27,7 @@ export default SpaceSyncChartBase.extend({
     plugins: [
       maximizeBarWidth(),
       additionalXLabel(),
+      rotateHorizontalLabels(),
       barSumLabels(),
       tooltip({
         chartType: 'bar',

@@ -58,7 +58,10 @@ export default Ember.Component.extend({
         tooltip({
           chartType: 'pie',
         }),
-        Chartist.plugins.legend(),
+        Chartist.plugins.legend({
+          className: 'not-clickable',
+          clickable: false,
+        }),
       ]
     };
   }),
