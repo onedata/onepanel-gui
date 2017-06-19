@@ -1,25 +1,28 @@
 .space-support-chart {
   // FIXME: generate more colors automatically by darkening/lightening
-  $-chart-colors: $color-one-mint $color-one-azure $color-one-red;
+  $chart-colors: $color-one-mint $color-one-azure $color-one-red orange;
   
   .ct-chart {
+    height: initial;
+    margin-bottom: 0;
     @for $i from 0 to length($chart-colors) {
       .ct-series-#{$i} {
-        .ct-bar {
-          stroke: nth($chart-colors, $i + 1);
+        .ct-slice-pie {
+          fill: nth($chart-colors, $i + 1);
         }
       }
     }
-    .ct-label.ct-horizontal.ct-end {
-      transform: translateX(-50%) translateY($padding-small-vertical) rotate(-45deg);
-    }
-    .ct-legend {
+    .ct-legend.ct-legend-inside  {
+      position: static;
       @for $i from 0 to length($chart-colors) {
         .ct-series-#{$i}:before {
           background-color: nth($chart-colors, $i + 1);
           border-color: nth($chart-colors, $i + 1);
         }
       }
+    }
+    svg {
+      position: static;
     }
   }
 }

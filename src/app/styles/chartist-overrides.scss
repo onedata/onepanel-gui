@@ -33,7 +33,6 @@ $chart-tooltip-arrow-size: 20px;
   .ct-axis-labels {
     font-size: $chart-font-size-base;
     fill: $ct-text-color;
-    text-transform: uppercase;
     .ct-axis-y-label {
       text-anchor: middle;
       transform: rotate(-90deg);
@@ -44,6 +43,7 @@ $chart-tooltip-arrow-size: 20px;
   }
   .ct-legend {
     list-style-type: none;
+    padding-left: 0;
     li {
       position: relative;
       display: inline-block;
@@ -96,6 +96,9 @@ $chart-tooltip-arrow-size: 20px;
         white-space: nowrap;
         &:last-child {
           margin-bottom: 0;
+        }
+        &.no-padding {
+          padding-left: 0;
         }
       }
     }
