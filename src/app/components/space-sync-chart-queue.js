@@ -7,6 +7,7 @@ import barSumLabels from 'onepanel-gui/utils/chartist/bar-sum-labels';
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
+import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
 
 const {
   computed,
@@ -24,6 +25,7 @@ export default SpaceSyncChartBase.extend({
     plugins: [
       maximizeBarWidth(),
       additionalXLabel(),
+      rotateHorizontalLabels(),
       barSumLabels(),
       tooltip({
         chartType: 'bar',
@@ -34,7 +36,10 @@ export default SpaceSyncChartBase.extend({
         xLabel: 'Time',
         yLabel: 'Length',
       }),
-      Chartist.plugins.legend()
+      Chartist.plugins.legend({
+        className: 'not-clickable',
+        clickable: false,
+      })
     ]
   },
 

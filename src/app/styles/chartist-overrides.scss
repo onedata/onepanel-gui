@@ -27,8 +27,7 @@ $chart-tooltip-arrow-size: 20px;
     font-size: $chart-labels-font-size;
   }
   .ct-label.ct-horizontal.ct-end {
-    transform: translateX(-50%) translateY(10px) rotate(-45deg);
-    justify-content: center;
+    justify-content: flex-end;
   }
   .ct-axis-labels {
     font-size: $chart-font-size-base;
@@ -70,6 +69,11 @@ $chart-tooltip-arrow-size: 20px;
       position: absolute;
       top: 0;
       right: 0;
+    }
+    &.not-clickable {
+      li {
+        cursor: initial;
+      }
     }
   }
   .chart-tooltip {
