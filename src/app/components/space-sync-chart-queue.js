@@ -31,8 +31,8 @@ export default SpaceSyncChartBase.extend({
         renderAboveBarDescription: true,
       }),
       axisLabels({
-        xLabel: 'time',
-        yLabel: 'length',
+        xLabel: 'Time',
+        yLabel: 'Length',
       }),
       Chartist.plugins.legend()
     ]

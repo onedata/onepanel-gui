@@ -35,8 +35,8 @@ export default SpaceSyncChartBase.extend({
         topOffset: -17,
       }),
       axisLabels({
-        xLabel: 'time',
-        yLabel: 'op./s',
+        xLabel: 'Time',
+        yLabel: 'Op./s',
       }),
       centerLineChart(),
       Chartist.plugins.legend()
@@ -88,7 +88,6 @@ export default SpaceSyncChartBase.extend({
       while (_chartValues.length) {
         _chartValues.shift();
       }
-      console.log(throughputDivisor);
       _timeStatsValues[1].map((val, index) => 
         _chartValues.push((val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) / throughputDivisor)
       );

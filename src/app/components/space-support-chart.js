@@ -1,8 +1,7 @@
 import Ember from 'ember';
 
-// FIXME to use
-// import bytesToString from 'onepanel-gui/utils/bytes-to-string';
-// import tooltip from 'onepanel-gui/utils/chartist/tooltip';
+import bytesToString from 'onepanel-gui/utils/bytes-to-string';
+import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 
 import _ from 'lodash';
 
@@ -10,8 +9,7 @@ const {
   computed,
 } = Ember;
 
-// FIXME to use
-// const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
+const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
 
 export default Ember.Component.extend({
   classNames: ['chart-component', 'space-support-chart'],
@@ -30,7 +28,21 @@ export default Ember.Component.extend({
 
   dataSeries: computed('spaceSupporters', function () {
     let spaceSupporters = this.get('spaceSupporters');
-    return _.map(spaceSupporters, 'size');
+    let total = _.sum(_.map(spaceSupporters, 'size'));
+    return spaceSupporters.map((entry, index) => ({
+      data: entry.size,
+      className: `ct-series-${index}`,
+      tooltipElements: [
+        {
+          name: 'Support size',
+          value: b2s(entry.size)
+        },
+        {
+          name: 'Support share',
+          value: Math.round(100 * entry.size / total) + '%',
+        }
+      ]
+    }));
   }),
 
   // FIXME slice labels, slice legend, slice tooltips
@@ -40,17 +52,12 @@ export default Ember.Component.extend({
    * @type {Object}
    */
   chartOptions: computed('dataSeries', function () {
-    let dataSeries = this.get('dataSeries');
-    let total = _.sum(dataSeries);
     return {
       showLabel: false,
-      labelInterpolationFnc: (label, index) => {
-        return Math.round(100 * dataSeries[index] / total) + '%';
-      },
       plugins: [
-        // tooltip({
-        //   chartType: 'pie',
-        // }),
+        tooltip({
+          chartType: 'pie',
+        }),
         Chartist.plugins.legend(),
       ]
     };
@@ -61,7 +68,6 @@ export default Ember.Component.extend({
    * @type {computed.Object}
    */
   chartData: computed('dataLabels', 'dataSeries', function () {
-    // let supportingProviders = this.get('supportingProviders');
     let {
       dataLabels,
       dataSeries,
