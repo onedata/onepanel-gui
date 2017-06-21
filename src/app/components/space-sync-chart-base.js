@@ -26,7 +26,6 @@ export default Ember.Component.extend({
    */
   timeUnit: 'minute',
 
-
   timePeriod: computed('timeStats', function () {
     let {
       timeStats,
@@ -35,7 +34,7 @@ export default Ember.Component.extend({
     if (timeStats && timeStats[0].values.length) {
       len = timeStats[0].values.length;
     }
-    return len ? 1 / len : 1/12;
+    return len ? 1 / len : 1 / 12;
   }),
 
   timeFormat: computed('timeUnit', function () {
@@ -43,7 +42,7 @@ export default Ember.Component.extend({
     case 'hour':
       return 'H:mm';
     case 'day':
-      return 'DD/MM';
+      return 'DD/MM H:mm';
     default:
       return 'H:mm:ss';
     }
