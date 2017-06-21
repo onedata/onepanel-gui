@@ -19,6 +19,7 @@ const {
   on,
   observer,
   computed,
+  computed: { readOnly },
 } = Ember;
 
 /**
@@ -50,6 +51,11 @@ export default Mixin.create({
    * @type {string}
    */
   syncInterval: 'minute',
+
+  /**
+   * Previous value of syncInterval used to detect changes
+   */
+  _prevSyncInterval: null,
 
   hideSyncStats: computed.equal('syncInterval', null),
   showSyncStats: computed.not('hideSyncStats'),
@@ -89,6 +95,20 @@ export default Mixin.create({
    * @type {Onepanel.SpaceSyncStats}
    */
   _syncStats: null,
+
+  timeStats: readOnly('_syncStats.stats'),
+
+  /**
+   * @type {string}
+   */
+  timeStatsError: null,
+
+  /**
+   * True if time stats have been loaded after syncInterval change
+   * at least once.
+   * @type {boolean}
+   */
+  timeStatsLoading: true,
 
   init() {
     this._super(...arguments);
@@ -177,15 +197,35 @@ export default Mixin.create({
       this.setProperties({
         lastStatsUpdateTime: Date.now(),
         _syncStats: newSyncStats,
+        timeStatsError: null,
+      });
+    });
+
+    syncStatsPromise.catch(error => {
+      this.setProperties({
+        timeStatsError: error,
       });
     });
 
     syncStatsPromise.finally(() =>
-      this.set('_lastSyncStatusRefresh', Date.now())
+      this.setProperties({
+        timeStatsLoading: false,
+        _lastSyncStatusRefresh: Date.now(),
+      })
     );
-
-    // TODO handle error
   },
+
+  // watchSyncInterval: observer('syncInterval', '_prevSyncInterval', function () {
+  //   let {
+  //     syncInterval,
+  //     _prevSyncInterval,
+  //   } = this.getProperties('syncInterval', '_prevSyncInterval');
+
+  //   if (syncInterval !== _prevSyncInterval) {
+  //     this.onSyncIntervalChange();
+  //   }
+  //   this.set('_prevSyncInterval', syncInterval);
+  // }),
 
   reconfigureSyncWatchers: on('init',
     observer(
@@ -219,4 +259,14 @@ export default Mixin.create({
           _syncChartStatsWatcher.stop();
         }
       })),
+
+  actions: {
+    onSyncIntervalChange(syncInterval) {
+      this.setProperties({
+        syncInterval,
+        timeStatsLoading: true,
+        timeStatsError: null,
+      });
+    },
+  },
 });

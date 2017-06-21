@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 const {
   computed,
-  computed: { alias },
+  computed: { readOnly },
 } = Ember;
 
 export default Ember.Component.extend({
@@ -21,16 +21,19 @@ export default Ember.Component.extend({
    */
   syncStats: null,
 
-  importEnabled: alias('space.importEnabled'),
-  updateEnabled: alias('space.updateEnabled'),
+  importEnabled: readOnly('space.importEnabled'),
+  updateEnabled: readOnly('space.updateEnabled'),
+
+  importStatus: readOnly('syncStats.importStatus'),
+  updateStatus: readOnly('syncStats.updateStatus'),
 
   _noStatus: computed('importEnabled', 'updateEnabled', function () {
     return !this.get('importEnabled') && !this.get('updateEnabled');
   }),
 
-  _importHint: computed('importEnabled', 'syncStats.importStatus', function () {
+  _importHint: computed('importEnabled', 'importStatus', function () {
     if (this.get('importEnabled')) {
-      switch (this.get('syncStats.importStatus')) {
+      switch (this.get('importStatus')) {
       case 'inProgress':
         return 'Data import: in progress...';
       case 'done':
@@ -43,9 +46,9 @@ export default Ember.Component.extend({
     }
   }),
 
-  _updateHint: computed('updateEnabled', 'syncStats.updateStatus', function () {
+  _updateHint: computed('updateEnabled', 'updateStatus', function () {
     if (this.get('updateEnabled')) {
-      switch (this.get('syncStats.updateStatus')) {
+      switch (this.get('updateStatus')) {
       case 'inProgress':
         return 'Data update: in progress...';
       case 'waiting':
