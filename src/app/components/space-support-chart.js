@@ -32,8 +32,7 @@ export default Ember.Component.extend({
     return spaceSupporters.map((entry, index) => ({
       data: entry.size,
       className: `ct-series-${index}`,
-      tooltipElements: [
-        {
+      tooltipElements: [{
           name: 'Support size',
           value: b2s(entry.size)
         },
@@ -44,8 +43,6 @@ export default Ember.Component.extend({
       ]
     }));
   }),
-
-  // FIXME slice labels, slice legend, slice tooltips
 
   /**
    * Chartist settings
