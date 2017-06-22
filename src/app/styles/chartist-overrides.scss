@@ -10,8 +10,8 @@ $chart-tooltip-arrow-size: 20px;
   &::before {
     display: none;
   }
-  svg {
-    margin-top: $chart-legend-height;
+  & > svg {
+    position: static;
   }
   .ct-bar-sum {
     transform: translateY(-5px);

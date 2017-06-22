@@ -1,5 +1,10 @@
 .space-sync-chart-base {
-  svg {
-    min-width: 400px;
+  .ct-chart {
+    & > .ct-legend {
+      white-space: nowrap;
+    }
+    svg {
+      min-width: 400px;
+    }
   }
 }
