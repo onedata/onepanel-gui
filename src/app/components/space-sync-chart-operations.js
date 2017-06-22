@@ -9,6 +9,7 @@ import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
+import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
 
 const {
   computed
@@ -38,6 +39,7 @@ export default SpaceSyncChartBase.extend({
         xLabel: 'Time',
         yLabel: 'Files',
       }),
+      shortHorizontalGrid(),
       Chartist.plugins.legend(),
       refreshLegendFilter()
     ]

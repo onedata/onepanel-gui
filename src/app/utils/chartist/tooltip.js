@@ -14,6 +14,7 @@ export default function (options) {
     rangeInTitle: false,
     renderAboveBarDescription: false,
     topOffset: -10,
+    valueSuffix: ''
   };
   options = Chartist.extend({}, defaultOptions, options);
 
@@ -37,8 +38,9 @@ export default function (options) {
       // data series and values
       let ul = tooltipNode.find('.ct-legend');
       ul.empty();
+      let suffix = options.valueSuffix ? ' ' + options.valueSuffix : '';
       tooltipData.forEach(d => {
-        ul.append(`<li class="${d.className}">${d.name}: ${d.value}</li>`);
+        ul.append(`<li class="${d.className}">${d.name}: ${d.value + suffix}</li>`);
       });
     };
 
