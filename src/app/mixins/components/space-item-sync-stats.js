@@ -215,18 +215,6 @@ export default Mixin.create({
     );
   },
 
-  // watchSyncInterval: observer('syncInterval', '_prevSyncInterval', function () {
-  //   let {
-  //     syncInterval,
-  //     _prevSyncInterval,
-  //   } = this.getProperties('syncInterval', '_prevSyncInterval');
-
-  //   if (syncInterval !== _prevSyncInterval) {
-  //     this.onSyncIntervalChange();
-  //   }
-  //   this.set('_prevSyncInterval', syncInterval);
-  // }),
-
   reconfigureSyncWatchers: on('init',
     observer(
       '_isActive',
@@ -262,11 +250,15 @@ export default Mixin.create({
 
   actions: {
     onSyncIntervalChange(syncInterval) {
-      this.setProperties({
-        syncInterval,
-        timeStatsLoading: true,
-        timeStatsError: null,
-      });
+      let currentSyncInterval = this.get('syncInterval');
+      if (syncInterval !== currentSyncInterval) {
+        this.setProperties({
+          syncInterval,
+          _prevSyncInterval: currentSyncInterval,
+          timeStatsLoading: true,
+          timeStatsError: null,
+        });
+      }
     },
   },
 });
