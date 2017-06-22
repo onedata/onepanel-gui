@@ -88,7 +88,7 @@ label {
 .btn {
   border-width: 2px;
   position: relative;
-  padding: $padding-large-vertical $padding-large-horizontal * 2;
+  padding: $padding-base-vertical $padding-base-horizontal * 2;
   font-size: 105%;
   font-family: 'Open Sans Semibold';
   &.btn-sm {
