@@ -59,6 +59,10 @@ export default Ember.Component.extend({
       'timeFormat',
       'timePeriod',
       'timeUnit');
+    if (timeUnit === 'day') {
+      timeUnit = 'hour';
+      offset *= 24;
+    }
     return moment(lastUpdateTime)
       .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);
