@@ -133,8 +133,7 @@ input {
 @media screen and (max-width: $screen-sm-max) {
   .item-table {
     .item-table-img-cell {
-      width: 0;
-      border-right: 0;
+      display: none;
     }
   }
 }
