@@ -24,11 +24,11 @@ describe('Integration | Component | user credentials form', function () {
 
     let form = new UserCredentialsFormHelper(this.$());
 
-    expect(form.getInput('username'), 'username field exists ')
+    expect(form.getInput('generic-username'), 'username field exists ')
       .to.exist;
-    expect(form.getInput('secretPassword'), 'secret password field exists')
+    expect(form.getInput('static-secretPassword'), 'secret password field exists')
       .to.exist;
-    expect(form.getInput('username'), 'username field contains username')
+    expect(form.getInput('generic-username'), 'username field contains username')
       .to.contain(USERNAME);
   });
 
@@ -42,15 +42,15 @@ describe('Integration | Component | user credentials form', function () {
 
       let form = new UserCredentialsFormHelper(this.$());
 
-      expect(form.getInput('username'), 'username field')
+      expect(form.getInput('generic-username'), 'username field')
         .to.exist;
-      expect(form.getInput('secretPassword'), 'secret pass field')
+      expect(form.getInput('static-secretPassword'), 'secret pass field')
         .to.not.exist;
-      expect(form.getInput('currentPassword'), 'current password field')
+      expect(form.getInput('change-currentPassword'), 'current password field')
         .to.exist;
-      expect(form.getInput('newPassword'), 'new password field')
+      expect(form.getInput('change-newPassword'), 'new password field')
         .to.exist;
-      expect(form.getInput('newPasswordRetype'), 'new pass retype field')
+      expect(form.getInput('change-newPasswordRetype'), 'new pass retype field')
         .to.exist;
 
       done();
@@ -77,9 +77,9 @@ describe('Integration | Component | user credentials form', function () {
 
     let form = new UserCredentialsFormHelper(this.$());
 
-    form.getInput('currentPassword').val(OLD_PASSWORD).change();
-    form.getInput('newPassword').val(NEW_PASSWORD).change();
-    form.getInput('newPasswordRetype').val(NEW_PASSWORD).change();
+    form.getInput('change-currentPassword').val(OLD_PASSWORD).change();
+    form.getInput('change-newPassword').val(NEW_PASSWORD).change();
+    form.getInput('change-newPasswordRetype').val(NEW_PASSWORD).change();
 
     wait().then(() => {
       this.$('button[type=submit]').click();
@@ -103,9 +103,9 @@ describe('Integration | Component | user credentials form', function () {
 
     let form = new UserCredentialsFormHelper(this.$());
 
-    form.getInput('currentPassword').val(OLD_PASSWORD).change();
-    form.getInput('newPassword').val(NEW_PASSWORD).change();
-    form.getInput('newPasswordRetype').val(NEW_PASSWORD + 'x').change();
+    form.getInput('change-currentPassword').val(OLD_PASSWORD).change();
+    form.getInput('change-newPassword').val(NEW_PASSWORD).change();
+    form.getInput('change-newPasswordRetype').val(NEW_PASSWORD + 'x').change();
 
     wait().then(() => {
       expect(this.$('button[type=submit]')).to.have.attr('disabled');

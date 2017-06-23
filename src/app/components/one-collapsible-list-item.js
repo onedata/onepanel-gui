@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-const { 
+const {
   computed,
   inject: {
     service,
@@ -33,7 +33,8 @@ export default Ember.Component.extend({
 
   isActive: computed('activeElementId', 'accordionMode', function () {
     let {
-      activeElementId, elementId
+      activeElementId,
+      elementId
     } = this.getProperties([
       'activeElementId', 'elementId'
     ]);
@@ -44,8 +45,8 @@ export default Ember.Component.extend({
 
   init() {
     this._super();
-    let { 
-      closeEventName, 
+    let {
+      closeEventName,
       eventsBus
     } = this.getProperties('closeEventName', 'eventsBus');
     if (closeEventName) {
@@ -54,14 +55,19 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    toggle() {
+    toggle(opened) {
       if (!this.get('isCollapsible')) {
         return;
       }
       if (this.get('accordionMode')) {
-        invokeAction(this, 'toggle', this.get('elementId'));
+        invokeAction(this, 'toggle', this.get('elementId'), opened);
       } else {
-        this.toggleProperty('isActive');
+        if (opened !== undefined) {
+          this.set('isActive', !!opened);
+        }
+        else {
+          this.toggleProperty('isActive');
+        }
       }
     }
   }

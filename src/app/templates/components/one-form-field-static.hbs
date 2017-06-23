@@ -5,7 +5,7 @@
       {{one-label-tip title=field.tip}}
     {{/if}}
   </label>
-  <span class={{concat (concat (concat "form-control-static one-form-field-static " fieldNameClass) " ") layoutConfig.formInputColumns}}>
+  <span class={{concat (concat (concat "form-control-static one-form-field-static field-" (dot-to-dash field.name)) " ") layoutConfig.formInputColumns}}>
     {{#if fakePassword}}
       {{fake-password}}
     {{else}}

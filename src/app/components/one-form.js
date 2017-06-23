@@ -49,6 +49,15 @@ export default Ember.Component.extend({
    * Array of all fields used in the form (both active and inactive)
    * @abstract
    * @type {Array.FieldType}
+   * 
+   * Field name should start with appropiate prefix. Example:
+   * ```
+   * [
+   *  {name: 'group1.name', type: 'text'},
+   *  {name: 'group1.surname', type: 'text', optional: true},
+   *  {name: 'group2.city', type: 'text'},
+   * ]
+   * ```
    */
   allFields: null,
 
@@ -59,56 +68,83 @@ export default Ember.Component.extend({
    * 
    * Uses prefixes to distinct different field groups. Almost one group 
    * (prefix) must be defined. Example with two prefixes - group1 and group2:
+   * 
    * ```
-   * {
-   *   'group1.name': null,
-   *   'group1.surname': null,
-   *   'group2.name': null,
-   *   'group2.city': null
-   * }
+   * Ember.Object.create({
+   *   group1: Ember.Object.create({
+   *     name: null,
+   *     surname: null,
+   *   }),
+   *   group2: Ember.Object.create({
+   *     city: null
+   *   })
+   * })
    * ```
    * If there is only one prefix, it is recommended to name it `main`.
    */
   allFieldsValues: null,
 
   /**
-   * Array of active (usually visible) form fields. All should
-   * be used within the same prefix.
-   * @abstract
+   * Array of active (visible) form fields (used within current prefixes).
    * @type {Array.Ember.Object}
    */
-  currentFields: null,
+  currentFields: computed('currentFieldsPrefix.[]', 'allFields', function () {
+    let {
+      allFields,
+      currentFieldsPrefix
+    } = this.getProperties('allFields', 'currentFieldsPrefix');
+    let fields = [];
+    currentFieldsPrefix.forEach(prefix => {
+      let prefixFields = allFields.filter(field => 
+        field.get('name').startsWith(`${prefix}.`));
+      fields = fields.concat(prefixFields);
+    });
+    return fields;
+  }),
 
   /**
-   * Prefix for the active group of fields.
+   * Prefixes for the active groups of fields.
    * @abstract
-   * @type {string}
+   * @type {Array.string}
    * 
-   * While validation all values from that prefix are being checked
-   * (even if corresponding fields are not in currentFields).
+   * While validation all values from these prefixes are being checked.
+   * Example: ``['group1', 'group2']``
    */
-  currentFieldsPrefix: '',
+  currentFieldsPrefix: [],
 
   /**
-   * Values of fields in the current prefix. Used in html form.
+   * Values of fields in current prefixes. Used in html form.
    * @type {Object}
+   * 
+   * Object has the same format as allFieldsValues.
    */
-  formValues: computed('allFieldsValues', 'currentFieldsPrefix', function () {
-    return this.get('allFieldsValues.' + this.get('currentFieldsPrefix'));
+  formValues: computed('allFieldsValues', 'currentFieldsPrefix.[]', function () {
+    let {
+      allFieldsValues,
+      currentFieldsPrefix
+    } = this.getProperties('allFieldsValues', 'currentFieldsPrefix');
+    let values = Ember.Object.create({});
+    currentFieldsPrefix
+      .forEach(prefix => values.set(prefix, allFieldsValues.get(prefix)));
+    return values;
   }),
 
   /**
    * Array of error objects from ember-cp-validations.
-   * @type {Array[Object]}
+   * @type {Array.Object}
    */
   errors: computed('currentFieldsPrefix', 'validations.errors.[]', function () {
     let {
       currentFieldsPrefix,
       validations
     } = this.getProperties('currentFieldsPrefix', 'validations');
-    let attrPrefix = 'allFieldsValues.' + currentFieldsPrefix + '.';
-    return validations.get('errors')
-      .filter(error => error.get('attribute').startsWith(attrPrefix));
+    let errors = [];
+    currentFieldsPrefix.forEach(prefix => {
+      let attrPrefix = `allFieldsValues.${prefix}.`;
+      errors = errors.concat(validations.get('errors')
+        .filter(error => error.get('attribute').startsWith(attrPrefix)));
+    });
+    return errors;
   }),
 
   /**
@@ -143,7 +179,7 @@ export default Ember.Component.extend({
 
   /**
    * Changes value of specified field
-   * @param {string} fieldName
+   * @param {string} fieldName field name (with prefix)
    * @param {any} value
    */
   changeFormValue(fieldName, value) {
@@ -167,13 +203,24 @@ export default Ember.Component.extend({
 
   /**
    * Resets current fields to initial state
+   * @param {Array.string} prefixes array of current prefixes, whose values 
+   * should be cleared. If not provided, it means all current prefixes.
    */
-  resetFormValues() {
+  resetFormValues(prefixes) {
     let {
       currentFields,
       formValues
     } = this.getProperties('currentFields', 'formValues');
-    currentFields.forEach(field => {
+    let fields = currentFields;
+    if (prefixes) {
+      fields = [];
+      prefixes.forEach(prefix => {
+        fields = fields.concat(currentFields.filter(
+          field => field.get('name').startsWith(prefix)
+        ));
+      });
+    }
+    fields.forEach(field => {
       formValues.set(field.get('name'), field.get('defaultValue'));
       this._resetField(field);
     });
@@ -184,12 +231,11 @@ export default Ember.Component.extend({
    */
   recalculateErrors() {
     let {
-      currentFieldsPrefix,
       currentFields,
       errors
-    } = this.getProperties('currentFieldsPrefix', 'currentFields', 'errors');
+    } = this.getProperties('currentFields', 'errors');
 
-    let prefix = 'allFieldsValues.' + currentFieldsPrefix + '.';
+    let prefix = 'allFieldsValues.';
     currentFields.forEach(field => {
       let error = errors
         .filter(error => error.get('attribute') === prefix + field.get('name'));
@@ -222,4 +268,13 @@ export default Ember.Component.extend({
       message: '',
     });
   },
+
+  /**
+   * Cuts off field name prefix.
+   * @param {string} fieldName 
+   * @returns {string}
+   */
+  cutOffPrefix(fieldName) {
+    return fieldName.substring(fieldName.indexOf('.') + 1);
+  }
 });

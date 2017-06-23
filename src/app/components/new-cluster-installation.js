@@ -274,10 +274,10 @@ export default Ember.Component.extend({
   actions: {
     zoneFormChanged(fieldName, value) {
       switch (fieldName) {
-      case 'name':
+      case 'main.name':
         this.set('_zoneName', value);
         break;
-      case 'domainName':
+      case 'main.domainName':
         this.set('_zoneDomainName', value);
         break;
       default:
