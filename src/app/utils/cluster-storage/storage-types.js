@@ -13,6 +13,7 @@ import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
 import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
 import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
+import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-fields';
 
 export default [{
   id: 'ceph',
@@ -30,4 +31,9 @@ export default [{
   id: 'swift',
   name: 'Swift',
   fields: SWIFT_FIELDS
-}];
+}, {
+  id: 'glusterfs',
+  name: 'GlusterFS',
+  fields: GLUSTERFS_FIELDS
+}
+];
