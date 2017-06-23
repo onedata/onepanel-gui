@@ -91,6 +91,12 @@ input {
 
 .item-table {
   width: 100%;
+  tr:not(:last-of-type) {
+    border-bottom: $table-item-border;
+    &.no-border {
+      border-bottom: 0;
+    }
+  }
   .item-table-img-cell {
     position: relative;
     width: 30%;
@@ -140,6 +146,33 @@ input {
   margin-right: 0.6em;
   line-height: 0;
   font-size: 2em;
+}
+
+.status-icon {
+  position: absolute !important;
+  right: -10px;
+  bottom: 6px !important;
+  font-size: 22px !important;
+  top: initial !important;
+  
+  &.status-icon-success {
+    color: $color-one-mint;
+  }
+}
+
+.collapse-animation {
+  max-height: 99999em;
+  opacity: 1;
+  transition: $collapse-transition;
+  &.collapse-small {
+    max-height: 70em;
+  }
+  &.collapse-hidden {
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
 }
 
 .item-icon-container {

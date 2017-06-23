@@ -15,19 +15,11 @@ const {
   layoutConfig 
 } = config;
 
-const {
-  computed,
-  String: { htmlSafe },
-} = Ember;
-
 export default Ember.Component.extend({
   layoutConfig,
   tagName: '',
 
   field: null,
-  inputClass: computed('field.name', function () {
-    return htmlSafe(`field-${this.get('field.name')}`);
-  }),
 
   actions: {
     inputChanged() {

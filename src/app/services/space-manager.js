@@ -10,6 +10,8 @@
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 
+import SpaceDetails from 'onepanel-gui/models/space-details';
+
 const {
   A,
   Service,
@@ -59,6 +61,23 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
     let promise = new Promise((resolve, reject) => {
       let req = onepanelServer.request('oneprovider', 'getSpaceDetails', id);
+      req.then(({ data }) => resolve(SpaceDetails.create(data)));
+      req.catch(reject);
+    });
+    return ObjectPromiseProxy.create({ promise });
+  },
+
+  /**
+   * @param {string} id
+   * @param {SpaceModifyRequest} spaceData fields of space to be changed
+   * @param {StorageImportDetails} spaceData.storageImport
+   * @param {StorageUpdateDetails} spaceData.storageUpdate
+   */
+  modifySpaceDetails(id, spaceData) {
+    let onepanelServer = this.get('onepanelServer');
+    let promise = new Promise((resolve, reject) => {
+      let req =
+        onepanelServer.request('oneprovider', 'modifySpace', id, spaceData);
       req.then(({ data }) => resolve(data));
       req.catch(reject);
     });
@@ -71,14 +90,9 @@ export default Service.extend({
    * @param {Object} { size: Number, storageId: string, token: string, mountInRoot = false } 
    * @returns {Promise}
    */
-  supportSpace({ size, storageId, token, mountInRoot = false }) {
+  supportSpace(supportSpaceData) {
     let onepanelServer = this.get('onepanelServer');
-    let supportReq = SpaceSupportRequest.constructFromObject({
-      size,
-      storageId,
-      token,
-      mountInRoot,
-    });
+    let supportReq = SpaceSupportRequest.constructFromObject(supportSpaceData);
     return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
   },
 

@@ -56,7 +56,7 @@ export default Component.extend({
 
   /**
    * Readable name of storage typee
-   * Eg. Ceph, POSIX, S3, Swift
+   * Eg. Ceph, POSIX, S3, Swift, GlusterFS
    * @type {string}
    */
   storageType: computed('storage.type', function () {

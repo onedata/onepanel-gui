@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: 'oneicons';
-  src:  url('#{$icomoon-font-path}/oneicons.eot?ujvvve');
-  src:  url('#{$icomoon-font-path}/oneicons.eot?ujvvve#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/oneicons.ttf?ujvvve') format('truetype'),
-    url('#{$icomoon-font-path}/oneicons.woff?ujvvve') format('woff'),
-    url('#{$icomoon-font-path}/oneicons.svg?ujvvve#oneicons') format('svg');
+  src:  url('#{$icomoon-font-path}/oneicons.eot?3zwi22');
+  src:  url('#{$icomoon-font-path}/oneicons.eot?3zwi22#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/oneicons.ttf?3zwi22') format('truetype'),
+    url('#{$icomoon-font-path}/oneicons.woff?3zwi22') format('woff'),
+    url('#{$icomoon-font-path}/oneicons.svg?3zwi22#oneicons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -59,11 +59,6 @@
 .oneicon-ban-left {
   &:before {
     content: $oneicon-ban-left;
-  }
-}
-.oneicon-block2 {
-  &:before {
-    content: $oneicon-block2;
   }
 }
 .oneicon-checkbox-check {
@@ -391,6 +386,11 @@
     content: $oneicon-social-plgrid;
   }
 }
+.oneicon-social-rhea {
+  &:before {
+    content: $oneicon-social-rhea;
+  }
+}
 .oneicon-space-add {
   &:before {
     content: $oneicon-space-add;
@@ -414,6 +414,16 @@
 .oneicon-space-home {
   &:before {
     content: $oneicon-space-home;
+  }
+}
+.oneicon-space-import-provider {
+  &:before {
+    content: $oneicon-space-import-provider;
+  }
+}
+.oneicon-space-import {
+  &:before {
+    content: $oneicon-space-import;
   }
 }
 .oneicon-space-join {

@@ -16,16 +16,11 @@ const {
 
 const {
   Component,
-  computed,
 } = Ember;
 
 export default Component.extend({
   layoutConfig,
   tagName: '',
-
-  fieldNameClass: computed('field.name', function () {
-    return `field-${this.get('field.name')}`;
-  }),
 
   field: null,
 

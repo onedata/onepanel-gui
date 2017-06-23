@@ -28,6 +28,13 @@
     inputChanged=(action "inputChanged")
     onFocusOut=(action "focusOut")
   }}
+  
+  {{storage-import-update-form class=(concat "col-xs-12 collapse-animation collapse-small" (if _importEnabled "" " collapse-hidden"))
+    mode="new"
+    isFormOpened=_importEnabled
+    valuesChanged=(action "importFormChanged")
+    showSubmitButton=false
+  }}
 
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>

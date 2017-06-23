@@ -1,4 +1,6 @@
 {{#if isCollapsible}}
   {{one-icon class="toggle-icon" icon="arrow-down"}}
 {{/if}}
-{{yield}}
+{{yield (hash
+  toggleAction=(action "toggle")
+)}}

@@ -35,7 +35,7 @@ describe('Integration | Component | cluster storage add form', function () {
 
     // TODO use chai-jquery, chai-dom or something    
     expect(this.$('input')).to.have.length(totalFields);
-    ['name', 'mountPoint', 'timeout'].forEach(fieldName => {
+    ['generic-name', 'posix-mountPoint', 'posix-timeout'].forEach(fieldName => {
       expect(helper.getInput(fieldName)).to.have.length(1);
       expect(helper.getInput(fieldName)[0].tagName).to.be.equal('INPUT');
     });
@@ -72,8 +72,8 @@ describe('Integration | Component | cluster storage add form', function () {
 
     let helper = new ClusterStorageAddHelper(this.$());
 
-    helper.getInput('name').val('some name').change();
-    helper.getInput('mountPoint').val('/mnt/st1').change();
+    helper.getInput('generic-name').val('some name').change();
+    helper.getInput('posix-mountPoint').val('/mnt/st1').change();
     wait().then(() => helper.submit());
   });
 });

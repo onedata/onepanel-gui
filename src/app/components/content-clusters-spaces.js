@@ -74,6 +74,10 @@ export default Component.extend({
     return this.get('spaceManager').revokeSpaceSupport(spaceId);
   },
 
+  _modifySpace(id, data) {
+    return this.get('spaceManager').modifySpaceDetails(id, data);
+  },
+
   actions: {
     updateSpacesList() {
       return this._updateSpacesList();
@@ -111,6 +115,24 @@ export default Component.extend({
         globalNotify.backendError('space support revocation', error);
       });
       return revoking;
+    },
+    modifySpace(space, data) {
+      let globalNotify = this.get('globalNotify');
+      let modifying = this._modifySpace(get(space, 'id'), data);
+      let spaceName = get(space, 'name');
+      modifying.then(() => {
+        this._updateSpacesList();
+        globalNotify.info(
+          `Configuration of "${spaceName}" space support has been changed`
+        );
+      });
+      modifying.catch(error => {
+        globalNotify.backendError(
+          `configuration of "${spaceName}" space support`,
+          error
+        );
+      });
+      return modifying;
     },
   },
 });

@@ -1,7 +1,7 @@
 {{!-- TODO change .storage-table class or make generic --}}
 {{!-- TODO i18n --}}
 
-{{#listItem.header}}
+{{#listItem.header as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="space"}}
     {{bs-tooltip
@@ -13,6 +13,23 @@
   <span class="one-label">{{space.name}}</span>
   <div class="btn-toolbar">
     {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
+    {{!-- NOTE: currently edit is enabled only for import/update --}}
+    <button
+      class={{concat "btn icon-btn btn-import-storage-data " _importButtonClass}}
+      {{action _importButtonActionName itemHeader.toggleAction}}>
+      {{one-icon icon="space-import"}}
+      {{bs-tooltip
+        title=_importButtonTip
+        placement="bottom"
+        triggerEvents="hover"
+      }}
+      {{#if _importActive}}
+        {{one-icon
+          icon="checkbox-filled"
+          class="status-icon status-icon-success"
+        }}
+      {{/if}}
+    </button>
     <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
       {{one-icon icon="remove"}}
       {{bs-tooltip
@@ -49,15 +66,58 @@
 {{/listItem.header}}
 {{#listItem.content}}
   <table class="item-table">
+    <tr class="no-border">
+      <td colspan="99">
+        <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
+          <h1 class="form-title">Data import configuration</h1>
+          {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
+            defaultValues=importFormDefaultValue
+            mode=(if _importActive "edit" "new")
+            isFormOpened=importConfigurationOpen
+            submit=(action "importUpdateConfigurationSubmit")
+          }}
+        </div>
+      </td>
+    </tr>
     <tr>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
       <td class="item-table-content-cell">
         <div class="row content-row">
-          <strong>Name:</strong> <span class="one-label">{{space.name}}</span>
+          <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
+          <span class="one-label">{{space.name}}</span>
         </div>
         <div class="row content-row">
-          <strong>Id:</strong> <span class="one-label">{{space.id}}</span>
+          <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
+          <span class="one-label">{{space.id}}</span>
         </div>
+        <div class="row content-row">
+          {{#promise-proxy-container proxy=_storage}}
+            <strong>{{t 'components.clusterSpacesTableItem.storage'}}:</strong>
+            <span class="one-label">{{_storage.name}}</span>
+          {{/promise-proxy-container}}
+        </div>
+        {{#if space.importEnabled}}
+          <div class="row content-row">
+            <strong>{{t 'components.clusterSpacesTableItem.storageImport.importStrategy'}}:</strong>
+            <span class="one-label">{{importStrategyLabel}}</span>
+            {{#each importProperties as |property|}}
+              <div class="row content-row nested-row">
+                <strong>{{t (concat (concat (concat importTranslationPrefix property)) ".name")}}:</strong>
+                <span class="one-label">{{get space.storageImport property}}</span>
+              </div>
+            {{/each}}
+          </div>
+          <div class="row content-row">
+            <strong>{{t 'components.clusterSpacesTableItem.storageUpdate.updateStrategy'}}:</strong>
+            <span class="one-label">{{updateStrategyLabel}}</span>
+            {{#each updateProperties as |property|}}
+              <div class="row content-row nested-row">
+                <strong>{{t (concat (concat (concat updateTranslationPrefix property)) ".name")}}:</strong>
+                <span class="one-label">{{get space.storageUpdate property}}</span>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
       </td>
     </tr>
   </table>
