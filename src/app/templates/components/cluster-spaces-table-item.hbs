@@ -4,9 +4,10 @@
 {{#listItem.header as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="space"}}
-    {{bs-tooltip
+    {{one-tooltip
       title=space.name
-      placement="right"
+      placement="top"
+      arrowPlacement="left"
       triggerEvents="hover"
     }}
   </span>

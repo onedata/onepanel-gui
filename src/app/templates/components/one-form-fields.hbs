@@ -1,7 +1,9 @@
 {{!-- TODO make some helper for generating input ids --}}
 
 {{#each fields as |field|}}
-  {{#bsForm.group validation=(if field.isInvalid "error" (if field.isValid "success")) class=(concat (concat "col-xs-12" (if disabled " disabled" "")) (if field.tip " group-with-tip" ""))}}
+  {{#bsForm.group 
+    validation=(if field.isInvalid "error" (if field.isValid "success")) 
+    class=(concat (concat "col-xs-12" (if disabled " disabled" "")) (if field.tip " group-with-tip" ""))}}
     {{#if (or (eq field.type "checkbox") (eq field.type "radio-group"))}}
       <div class="row toggle-form-row">
         {{#if (not field.nolabel)}}

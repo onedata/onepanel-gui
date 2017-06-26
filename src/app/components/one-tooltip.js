@@ -31,6 +31,14 @@ export default BsTooltip.extend({
    */
   arrowOffset: 20,
 
+  /**
+   * Adds to bs-tooltip arrow implementation translateX/Y property to place it 
+   * again over the target after tooltip offset manipulation.
+   * 
+   * @param {number} delta 
+   * @param {string} dimension 
+   * @param {boolean} isVertical 
+   */
   replaceArrow(delta, dimension, isVertical) {
     let {
       overlayElement,
@@ -61,6 +69,13 @@ export default BsTooltip.extend({
     }
   },
 
+  /**
+   * Adds to bs-tooltip implementation a fake placement offset to change 
+   * tooltip position.
+   * 
+   * @param {Object} offset 
+   * @param {string} placement 
+   */
   applyPlacement(offset, placement) {
     let arrowPlacement = this.get('arrowPlacement');
     let arrowOffset = -this._getArrowRelativeOffset();
