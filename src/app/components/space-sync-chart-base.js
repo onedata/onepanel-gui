@@ -1,3 +1,13 @@
+/**
+ * A base component for all space import/update sync statistics charts.
+ * Needs timeStats (chart data), lastUpdateTime and timeUnit to be injected.
+ *
+ * @module components/space-sync-chart-base
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import moment from 'moment';
 

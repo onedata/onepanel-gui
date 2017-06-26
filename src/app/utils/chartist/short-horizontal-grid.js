@@ -1,3 +1,15 @@
+/**
+ * Plugin for Chartist which shorten horizontal grid to the specified height and place it in the middle of the x axis.
+ *
+ * Options:
+ * - height - height of the horizontal grid
+ * 
+ * @module utils/chartist/short-horizontal-grid
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 export default function (options) {
   return (chart) => {
     let defaultOptions = {

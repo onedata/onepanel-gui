@@ -1,3 +1,12 @@
+/**
+ * Plugin for Chartist which displays values sum above bars in bar charts.
+ *
+ * @module utils/chartist/bar-sum-labels
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 export default function () {
   return (chart) => {
     chart.on('draw', (data) => {

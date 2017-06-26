@@ -1,3 +1,12 @@
+/**
+ * A chart component for a space import/update operations statistics.
+ *
+ * @module components/space-sync-chart-operations
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import _util from 'lodash/util';
 
