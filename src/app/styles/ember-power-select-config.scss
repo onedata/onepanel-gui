@@ -59,6 +59,10 @@ $ember-power-select-selected-background: $ember-power-select-background-color;
 .ember-power-select-dropdown {
   box-shadow: 0 0 5px #ccc;
 
+  .ember-power-select-options[role="listbox"] {
+    max-height: 600px;
+  }
+
   .ember-power-select-option {
     border-bottom: 1px solid $input-border;
     padding: $padding-base-vertical;
