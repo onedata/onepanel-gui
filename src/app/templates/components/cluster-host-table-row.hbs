@@ -1,4 +1,4 @@
-<td class="row-header truncate" {{action "headerClick" on="click"}}>
+<td class="row-header truncate" {{action "headerClick" on="click"}} data-option="name">
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="node"}}
     {{bs-tooltip
@@ -19,7 +19,7 @@
     isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center toggle-column">
+<td class="text-center toggle-column" data-option="clusterWorker">
   {{one-way-toggle
     checked=host.clusterWorker
     update=(action "checkboxChanged")
