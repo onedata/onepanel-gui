@@ -4,9 +4,10 @@
 {{#listItem.header as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="space"}}
-    {{bs-tooltip
+    {{one-tooltip
       title=space.name
-      placement="right"
+      placement="top"
+      arrowPlacement="left"
       triggerEvents="hover"
     }}
   </span>
@@ -20,7 +21,7 @@
       {{one-icon icon="space-import"}}
       {{bs-tooltip
         title=_importButtonTip
-        placement="bottom"
+        placement="top"
         triggerEvents="hover"
       }}
       {{#if _importActive}}
@@ -35,7 +36,7 @@
       {{bs-tooltip
         visible=revokeTooltipVisible
         title="Revoke space support from this provider"
-        placement="bottom"
+        placement="top"
         triggerEvents="hover"
       }}
     </button>

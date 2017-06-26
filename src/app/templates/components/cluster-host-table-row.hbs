@@ -1,9 +1,10 @@
 <td class="row-header truncate" {{action "headerClick" on="click"}} data-option="name">
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="node"}}
-    {{bs-tooltip
+    {{one-tooltip
       title=host.hostname
-      placement="right"
+      placement="top"
+      arrowPlacement="left"
       triggerEvents="hover"
     }}
   </span>

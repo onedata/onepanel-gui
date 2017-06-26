@@ -32,7 +32,13 @@ export default Ember.Component.extend({
    * Placement of the tooltip 
    * @type {string}
    */
-  placement: 'bottom',
+  placement: 'top',
+
+  /**
+   * Placement of the tooltip arrow
+   * @type {string}
+   */
+  arrowPlacement: 'right',
 
   /**
    * The event(s) that should trigger the tooltip
