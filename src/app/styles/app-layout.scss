@@ -177,11 +177,41 @@ $onedata-logo-width: 150px;
       position: absolute;
       @include fill-container();
       bottom: $one-list-item-line-height;
+      background-color: inherit;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 280px;
+        left: -150px;
+        right: -230px;
+        transform: rotate(-90deg);
+        height: 90px;
+        opacity: .1;
+        background-image: url($root-url + 'assets/images/logo.svg');
+        background-position: bottom left;
+        background-repeat: no-repeat;
+        background-size: contain;
+        @media (max-height: 600px) {
+          display: none;
+        }
+        @media (max-height: 850px) {
+          bottom: 300px;
+          right: -260px;
+          height: 50px;
+        }
+      }
     }
     .row-onedata-logo {
       position: relative;
-      margin-top: $onedata-logo-margin-top;
-      margin-bottom: $onedata-logo-margin-bottom;
+      padding-top: $onedata-logo-margin-top;
+      padding-bottom: $onedata-logo-margin-bottom;
+      background-color: inherit;
+      z-index: 10;
+    }
+    .row-main-menu {
+      position: relative;
+      background-color: inherit;
+      z-index: 10;
     }
     
     .item-icon {
@@ -254,11 +284,11 @@ $onedata-logo-width: 150px;
 }
 .col-main-menu {
   &.sidenav-opened {
-      .one-list-item.main-menu-item.enabled {
-        &.active > .item-header {
-          background-color: #666161;
-        }
+    .one-list-item.main-menu-item.enabled {
+      &.active > .item-header {
+        background-color: #666161;
       }
+    }
   }
   .one-list-item.main-menu-item {
     >.item-header {
