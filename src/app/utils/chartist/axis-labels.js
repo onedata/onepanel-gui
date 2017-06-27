@@ -17,7 +17,7 @@ export default function (options) {
     xLabel: '',
     yLabel: '',
     xLabelXOffset: 15,
-    xLabelYOffset: 0,
+    xLabelYOffset: -20,
     yLabelXOffset: 20,
     yLabelYOffset: 20,
   };

@@ -31,7 +31,7 @@ export default function (options) {
           sourceLabelNode.attr('width'))
       );
       newLabelNode.find('span').text(chart.data.lastLabel);
-      labelsNode.append(newLabelNode);
+      newLabelNode.insertAfter(lastLabelNode);
     });
   };
 }

@@ -50,11 +50,11 @@ export default Ember.Component.extend({
   timeFormat: computed('timeUnit', function () {
     switch (this.get('timeUnit')) {
     case 'hour':
-      return 'H:mm';
+      return 'HH:mm';
     case 'day':
-      return 'DD/MM H:mm';
+      return 'DD/MM HH:mm';
     default:
-      return 'H:mm:ss';
+      return 'HH:mm:ss';
     }
   }),
 

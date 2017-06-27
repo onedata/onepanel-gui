@@ -13,9 +13,7 @@ import _util from 'lodash/util';
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
-import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
-import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
 import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
 
 const {
@@ -37,10 +35,6 @@ export default SpaceSyncChartBase.extend({
     }),
     fullWidth: true,
     plugins: [
-      additionalXLabel({
-        xOffsetMultiply: 0
-      }),
-      rotateHorizontalLabels(),
       tooltip({
         chartType: 'line',
         rangeInTitle: true,
@@ -110,7 +104,7 @@ export default SpaceSyncChartBase.extend({
       );
       _chartValues.push(null);
       return {
-        labels: _util.range(1, _chartValues.length).reverse().map(n => this.getChartLabel(n)),
+        labels: _util.range(0, _chartValues.length).reverse().map(n => this.getChartLabel(n)),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
