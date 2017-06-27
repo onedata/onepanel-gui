@@ -109,10 +109,10 @@ export default Mixin.create({
 
       let stats;
       if (period && metrics) {
-        stats = metrics.map(metric => ({
+        stats = _.zipObject(metrics, metrics.map(metric => ({
           name: metric,
           values: allStats[period][metric]
-        }));
+        })));
       }
 
       return {

@@ -148,21 +148,21 @@
             <div class="col-xs-12 item-table-cell item-table-content-cell">
               {{space-sync-chart-operations
                 lastUpdateTime=lastStatsUpdateTime
-                timeStats=_syncStats.stats
+                timeStats=timeStats
                 timeUnit=syncInterval
               }}
             </div>
             <div class="col-xs-12 item-table-cell item-table-content-cell">
               {{space-sync-chart-queue
                 lastUpdateTime=lastStatsUpdateTime
-                timeStats=_syncStats.stats
+                timeStats=timeStats
                 timeUnit=syncInterval
               }}
             </div>
             <div class="col-xs-12 item-table-cell item-table-content-cell">
               {{space-sync-chart-throughput
                 lastUpdateTime=lastStatsUpdateTime
-                timeStats=_syncStats.stats
+                timeStats=timeStats
                 timeUnit=syncInterval
               }}
             </div>

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Adds space sync statistics fetch capabilities to ``cluster-spaces-table-item``
  *
@@ -96,7 +98,14 @@ export default Mixin.create({
    */
   _syncStats: null,
 
-  timeStats: readOnly('_syncStats.stats'),
+  timeStatsCollection: readOnly('_syncStats.stats'),
+
+  /**
+   * TimeStatsCollection in form of Array
+   */
+  timeStats: computed('timeStatsCollection', function () {
+    return _.values(this.get('timeStatsCollection'));
+  }).readOnly(),
 
   /**
    * @type {string}
