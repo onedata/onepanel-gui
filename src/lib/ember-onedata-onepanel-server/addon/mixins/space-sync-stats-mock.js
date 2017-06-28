@@ -98,6 +98,9 @@ export default Mixin.create({
   },
 
   generateSpaceSyncStats(space, period, metrics) {
+    if (typeof metrics === 'string') {
+      metrics = metrics.split(',');
+    }
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
