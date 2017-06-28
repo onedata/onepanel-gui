@@ -1,3 +1,13 @@
+/**
+ * A base component for all space import/update sync statistics charts.
+ * Needs timeStats (chart data), lastUpdateTime and timeUnit to be injected.
+ *
+ * @module components/space-sync-chart-base
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import moment from 'moment';
 import _ from 'lodash';
@@ -53,11 +63,11 @@ export default Ember.Component.extend({
   timeFormat: computed('timeUnit', function () {
     switch (this.get('timeUnit')) {
     case 'hour':
-      return 'H:mm';
+      return 'HH:mm';
     case 'day':
-      return 'DD/MM H:mm';
+      return 'DD/MM HH:mm';
     default:
-      return 'H:mm:ss';
+      return 'HH:mm:ss';
     }
   }),
 
@@ -72,6 +82,10 @@ export default Ember.Component.extend({
       'timeFormat',
       'timePeriod',
       'timeUnit');
+    if (timeUnit === 'day') {
+      timeUnit = 'hour';
+      offset *= 24;
+    }
     return moment(lastUpdateTime)
       .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);

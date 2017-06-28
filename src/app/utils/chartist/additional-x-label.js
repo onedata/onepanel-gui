@@ -1,3 +1,15 @@
+/**
+ * Plugin for Chartist which adds additional label on the right side of the x-axis.
+ * 
+ * Options:
+ * - xOffsetMultiply - label will be moved right by xOffsetMultiply * (default width of a label)
+ *
+ * @module utils/chartist/additional-x-label
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 export default function (options) {
   let defaultOptions = {
     xOffsetMultiply: 1,
@@ -19,7 +31,7 @@ export default function (options) {
           sourceLabelNode.attr('width'))
       );
       newLabelNode.find('span').text(chart.data.lastLabel);
-      labelsNode.append(newLabelNode);
+      newLabelNode.insertAfter(lastLabelNode);
     });
   };
 }

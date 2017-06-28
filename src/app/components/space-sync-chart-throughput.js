@@ -1,12 +1,20 @@
+/**
+ * A chart component for a space import/update throughput statistics.
+ *
+ * @module components/space-sync-chart-throughput
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import _util from 'lodash/util';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
-import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
-import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
+import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
 
 const {
   computed,
@@ -27,19 +35,17 @@ export default SpaceSyncChartBase.extend({
     }),
     fullWidth: true,
     plugins: [
-      additionalXLabel({
-        xOffsetMultiply: 0
-      }),
-      rotateHorizontalLabels(),
       tooltip({
         chartType: 'line',
         rangeInTitle: true,
         topOffset: -17,
+        valueSuffix: 'op/s'
       }),
       axisLabels({
         xLabel: 'Time',
         yLabel: 'Op/s',
       }),
+      shortHorizontalGrid(),
       centerLineChart(),
       Chartist.plugins.legend({
         className: 'not-clickable',
@@ -102,8 +108,9 @@ export default SpaceSyncChartBase.extend({
       );
       _chartValues.push(null);
       return {
-        labels: _util.range(1, _chartValues.length).reverse().map(n => this.getChartLabel(
-          n)),
+        labels: _util.range(0, _chartValues.length).reverse().map(n =>
+          this.getChartLabel(n)
+        ),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,

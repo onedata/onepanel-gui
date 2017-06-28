@@ -1,9 +1,23 @@
+/**
+ * Plugin for Chartist which adds axis (x and y) labels.
+ * 
+ * Options:
+ * - xLabel, yLabel - labels
+ * - xLabelXOffset, xLabelYOffset, yLabelXOffset, yLabelYOffset - position 
+ * adjustments for x and y labels
+ *
+ * @module utils/chartist/axis-labels
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 export default function (options) {
   let defaultOptions = {
     xLabel: '',
     yLabel: '',
     xLabelXOffset: 15,
-    xLabelYOffset: 0,
+    xLabelYOffset: -20,
     yLabelXOffset: 20,
     yLabelYOffset: 20,
   };

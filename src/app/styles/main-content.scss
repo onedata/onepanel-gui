@@ -107,7 +107,7 @@ $content-header-row-height: $onedata-logo-margin-top * 2 + $onedata-logo-height 
     opacity: 1;
     transition: $collapse-transition;
     &.row-small {
-      max-height: 70em;
+      max-height: 100em;
     }
     &.row-medium {
       max-height: 150em;

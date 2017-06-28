@@ -10,8 +10,24 @@ $chart-tooltip-arrow-size: 20px;
   &::before {
     display: none;
   }
-  svg {
-    margin-top: $chart-legend-height;
+  & > svg {
+    position: static;
+  }
+  &.hide-middle-x-labels {
+    .ct-labels {
+      & > * {
+        &:nth-child(2n) {
+          span.ct-end {
+            display: none;
+          }
+        }
+        span.ct-end {
+          justify-content: center;
+          line-height: 1.5;
+          transform: translateX(-50%);
+        }
+      }
+    }
   }
   .ct-bar-sum {
     transform: translateY(-5px);
@@ -25,9 +41,6 @@ $chart-tooltip-arrow-size: 20px;
   }
   .ct-label {
     font-size: $chart-labels-font-size;
-  }
-  .ct-label.ct-horizontal.ct-end {
-    justify-content: flex-end;
   }
   .ct-axis-labels {
     font-size: $chart-font-size-base;

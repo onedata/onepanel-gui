@@ -1,3 +1,12 @@
+/**
+ * A chart component for a space import/update operations statistics.
+ *
+ * @module components/space-sync-chart-operations
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import _util from 'lodash/util';
 
@@ -8,7 +17,7 @@ import refreshLegendFilter from 'onepanel-gui/utils/chartist/refresh-legend-filt
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
-import rotateHorizontalLabels from 'onepanel-gui/utils/chartist/rotate-horizontal-labels';
+import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
 
 const {
   computed
@@ -27,7 +36,6 @@ export default SpaceSyncChartBase.extend({
     plugins: [
       maximizeBarWidth(),
       additionalXLabel(),
-      rotateHorizontalLabels(),
       barSumLabels(),
       tooltip({
         chartType: 'bar',
@@ -38,6 +46,7 @@ export default SpaceSyncChartBase.extend({
         xLabel: 'Time',
         yLabel: 'Files',
       }),
+      shortHorizontalGrid(),
       Chartist.plugins.legend(),
       refreshLegendFilter()
     ]

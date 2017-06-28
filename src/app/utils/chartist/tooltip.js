@@ -1,3 +1,32 @@
+/**
+ * Plugin for Chartist which adds tooltip. For bar and line charts tooltip 
+ * creates description based on chartist legend and values. For pie chart data for tooltip is 
+ * taken from data.series.tooltipElements. For example:
+ * ```
+ * tooltipElements: [{
+ *     name: 'prop1',
+ *     value: '100',
+ *   },
+ *   {
+ *     name: 'desc2',
+ *     value: '23%',
+ * }]
+ * ```
+ *
+ * Options:
+ * - chartType - type of the chart (bar, line, pie)
+ * - rangeInTitle - takes two x axis labels instead of one to tooltip title
+ * - renderAboveBarDescription - [bar chart only] if true, places tooltip 
+ * above a text instead of bar
+ * - topOffset - top offset of a tooltip
+ * - valueSuffix - [bar/line chart only] suffix for tooltip entries (e.g. for units)
+ * 
+ * @module utils/chartist/tooltip
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 const TOOLTIP_HTML =
   `
   <div class="chart-tooltip">
@@ -14,6 +43,7 @@ export default function (options) {
     rangeInTitle: false,
     renderAboveBarDescription: false,
     topOffset: -10,
+    valueSuffix: ''
   };
   options = Chartist.extend({}, defaultOptions, options);
 
@@ -37,8 +67,9 @@ export default function (options) {
       // data series and values
       let ul = tooltipNode.find('.ct-legend');
       ul.empty();
+      let suffix = options.valueSuffix ? ' ' + options.valueSuffix : '';
       tooltipData.forEach(d => {
-        ul.append(`<li class="${d.className}">${d.name}: ${d.value}</li>`);
+        ul.append(`<li class="${d.className}">${d.name}: ${d.value + suffix}</li>`);
       });
     };
 

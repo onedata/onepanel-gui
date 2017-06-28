@@ -105,8 +105,9 @@ input {
     padding-bottom: $padding-large-vertical;
   }
   .item-table-img-cell {
-    height: 400px;
+    height: 120px;
     position: relative;
+    width: 33%;
     .background-container {
       position: absolute;
       top: 20px;
@@ -132,8 +133,7 @@ input {
 @media screen and (max-width: $screen-sm-max) {
   .item-table {
     .item-table-img-cell {
-      width: 0;
-      border-right: 0;
+      display: none;
     }
   }
 }
