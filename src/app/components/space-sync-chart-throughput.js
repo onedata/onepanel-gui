@@ -23,7 +23,7 @@ export default SpaceSyncChartBase.extend({
     stackBars: true,
     chartPadding: 30,
     lineSmooth: Chartist.Interpolation.simple({
-    divisor: 2
+      divisor: 2
     }),
     fullWidth: true,
     plugins: [
@@ -62,20 +62,22 @@ export default SpaceSyncChartBase.extend({
       timePeriod
     } = this.getProperties('timeUnit', 'timePeriod');
     switch (timeUnit) {
-      case 'minute':
-        return 60 * timePeriod;
-      case 'hour':
-        return 3600 * timePeriod;
-      case 'day':
-        return 86400 * timePeriod;
-      default:
-        return timePeriod;
+    case 'minute':
+      return 60 * timePeriod;
+    case 'hour':
+      return 3600 * timePeriod;
+    case 'day':
+      return 86400 * timePeriod;
+    default:
+      return timePeriod;
     }
   }),
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
     let timeStats = this.get('timeStats');
-    return timeStats ? timeStats.map(stat => stat.values) : [];
+    // stat or stat.values can be null in case when there are no deletes or updates
+    return timeStats ? timeStats.map(stat => stat && stat.values ||
+      this.get('emptyTimePeriod')) : [];
   }),
 
   /**
@@ -88,17 +90,20 @@ export default SpaceSyncChartBase.extend({
       chartSeriesLabel,
       _chartValues,
       throughputDivisor,
-    } = this.getProperties('_timeStatsValues', 'chartSeriesLabel', '_chartValues', 'throughputDivisor');
+    } = this.getProperties('_timeStatsValues', 'chartSeriesLabel', '_chartValues',
+      'throughputDivisor');
     if (_timeStatsValues && _timeStatsValues.length > 0) {
       while (_chartValues.length) {
         _chartValues.shift();
       }
-      _timeStatsValues[1].map((val, index) => 
-        _chartValues.push((val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) / throughputDivisor)
+      _timeStatsValues[1].map((val, index) =>
+        _chartValues.push((val + _timeStatsValues[2][index] + _timeStatsValues[3]
+          [index]) / throughputDivisor)
       );
       _chartValues.push(null);
       return {
-        labels: _util.range(1, _chartValues.length).reverse().map(n => this.getChartLabel(n)),
+        labels: _util.range(1, _chartValues.length).reverse().map(n => this.getChartLabel(
+          n)),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,

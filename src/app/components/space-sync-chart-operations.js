@@ -59,7 +59,11 @@ export default SpaceSyncChartBase.extend({
     let {
       timeStats,
     } = this.getProperties('timeStats');
-    return timeStats ? timeStats.map(stat => stat.values) : [];
+    // if there are falsy TimeStats (e.g. null) we want to fill them with empty data
+    // below this.get are used here because we want to lazy-load this computed property
+    return timeStats ?
+      timeStats.map(stat => (stat && stat.values) || this.get('emptyTimePeriod')) :
+      this.get('emptyTimePeriod');
   }),
 
   /**
