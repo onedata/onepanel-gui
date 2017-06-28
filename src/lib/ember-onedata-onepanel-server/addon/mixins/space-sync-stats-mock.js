@@ -98,6 +98,9 @@ export default Mixin.create({
   },
 
   generateSpaceSyncStats(space, period, metrics) {
+    if (typeof metrics === 'string') {
+      metrics = metrics.split(',');
+    }
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
@@ -109,10 +112,10 @@ export default Mixin.create({
 
       let stats;
       if (period && metrics) {
-        stats = metrics.map(metric => ({
+        stats = _.zipObject(metrics, metrics.map(metric => ({
           name: metric,
           values: allStats[period][metric]
-        }));
+        })));
       }
 
       return {

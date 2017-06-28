@@ -117,6 +117,10 @@ export default Service.extend({
    *  updateCount, deleteCount
    */
   getSyncStats(spaceId, period, metrics) {
+    // convert metrics to special-format string that holds an array
+    if (Array.isArray(metrics)) {
+      metrics = metrics.join(',');
+    }
     return new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
       let gettingSyncStats = onepanelServer.request(

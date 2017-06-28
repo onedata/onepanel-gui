@@ -10,6 +10,7 @@
 
 import Ember from 'ember';
 import moment from 'moment';
+import _ from 'lodash';
 
 const {
   computed
@@ -36,15 +37,27 @@ export default Ember.Component.extend({
    */
   timeUnit: 'minute',
 
-  timePeriod: computed('timeStats', function () {
-    let {
-      timeStats,
-    } = this.getProperties('timeStats');
+  emptyTimePeriod: computed('timeParts', function () {
+    return _.times(this.get('timeParts'), () => 0);
+  }),
+
+  timeParts: computed('timeStats', function () {
+    let timeStats = this.get('timeStats');
     let len = 0;
-    if (timeStats && timeStats[0].values.length) {
-      len = timeStats[0].values.length;
+    if (timeStats) {
+      let nonEmptyTimeStats = _.find(timeStats, ts =>
+        ts && Array.isArray(ts.values) && ts.values.length > 0
+      );
+      if (nonEmptyTimeStats.values.length) {
+        len = nonEmptyTimeStats.values.length;
+      }
     }
-    return len ? 1 / len : 1 / 12;
+    return len;
+  }),
+
+  timePeriod: computed('timeParts', function () {
+    let timeParts = this.get('timeParts');
+    return timeParts ? 1 / timeParts : 1 / 12;
   }),
 
   timeFormat: computed('timeUnit', function () {

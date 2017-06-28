@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Adds space sync statistics fetch capabilities to ``cluster-spaces-table-item``
  *
@@ -96,7 +98,14 @@ export default Mixin.create({
    */
   _syncStats: null,
 
-  timeStats: readOnly('_syncStats.stats'),
+  timeStatsCollection: readOnly('_syncStats.stats'),
+
+  /**
+   * TimeStatsCollection in form of Array
+   */
+  timeStats: computed('timeStatsCollection', function () {
+    return _.values(this.get('timeStatsCollection'));
+  }).readOnly(),
 
   /**
    * @type {string}
@@ -215,18 +224,6 @@ export default Mixin.create({
     );
   },
 
-  // watchSyncInterval: observer('syncInterval', '_prevSyncInterval', function () {
-  //   let {
-  //     syncInterval,
-  //     _prevSyncInterval,
-  //   } = this.getProperties('syncInterval', '_prevSyncInterval');
-
-  //   if (syncInterval !== _prevSyncInterval) {
-  //     this.onSyncIntervalChange();
-  //   }
-  //   this.set('_prevSyncInterval', syncInterval);
-  // }),
-
   reconfigureSyncWatchers: on('init',
     observer(
       '_isActive',
@@ -262,11 +259,15 @@ export default Mixin.create({
 
   actions: {
     onSyncIntervalChange(syncInterval) {
-      this.setProperties({
-        syncInterval,
-        timeStatsLoading: true,
-        timeStatsError: null,
-      });
+      let currentSyncInterval = this.get('syncInterval');
+      if (syncInterval !== currentSyncInterval) {
+        this.setProperties({
+          syncInterval,
+          _prevSyncInterval: currentSyncInterval,
+          timeStatsLoading: true,
+          timeStatsError: null,
+        });
+      }
     },
   },
 });
