@@ -69,6 +69,35 @@ form {
   }
 }
 
+.form-group.group-with-tip {
+  @media (min-width: $screen-sm-min) {
+    .toggle-form-row {
+      .control-label .one-label-tip {
+        height: $line-height-computed;
+        line-height: $line-height-computed;
+      }
+    }
+    .control-label {
+      position: initial;
+      .one-label-tip {
+        position: absolute;
+        top: 0px;
+        height: $input-height-base;
+        line-height: $input-height-base;
+        right: -$padding-small-horizontal;
+        transform: translateX(100%);
+      }
+    }
+  }
+  @media (max-width: $screen-xs-max) {
+    .control-label {
+      .one-label-tip {
+        font-size: 90%;
+      }
+    }
+  }
+}
+
 .form-control-static {
   min-height: 1em;
 }

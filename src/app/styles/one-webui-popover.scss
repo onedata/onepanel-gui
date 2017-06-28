@@ -1,7 +1,9 @@
+$webui-popover-offset: 4px;
+
 .webui-popover {
   @include box-shadow(0 2px 3px rgba(128, 128, 128, 0.2));
   max-width: 28em;
-  border-radius: 0;
+  border-radius: $border-radius-small;
   font-size: $font-size-base;
   .webui-popover-content {
     padding: $padding-base-vertical;
@@ -24,6 +26,35 @@
         }
       }
     }
+  }
+
+  // bootstrap xs size range is to large for width in percent unit
+  @media (max-width: 400px) {
+    max-width: 80%;
+  }
+
+  &.bottom,
+  &.bottom-right, 
+  &.bottom-left {
+    transform: translateY($webui-popover-offset);
+  }
+
+  &.top,
+  &.top-right, 
+  &.top-left {
+    transform: translateY(-$webui-popover-offset);
+  }
+
+  &.left,
+  &.left-top, 
+  &.left-bottom {
+    transform: translateX(-$webui-popover-offset);
+  }
+
+  &.right,
+  &.right-top, 
+  &.right-bottom {
+    transform: translateX($webui-popover-offset);
   }
 }
 

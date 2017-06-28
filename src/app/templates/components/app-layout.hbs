@@ -21,7 +21,7 @@
 {{content-backdrop}}
 
 <div id="main-menu-container" 
-  class="col-in-app-layout col-main-menu hidden-xs hidden-sm full-height disable-user-select" 
+  class="col-in-app-layout col-main-menu hidden-xs hidden-sm full-height disable-user-select {{if sidenavTabId "sidenav-opened"}}" 
   {{action "closeSidenav" bubbles=true}}>
 {{#perfect-scrollbar-element tagName="div" class="main-menu-content"}}
   <div class="row row-onedata-logo full-width">
