@@ -199,8 +199,13 @@ export default Mixin.create({
   },
 
   fetchAllSyncStats() {
+    let syncInterval = this.get('syncInterval');
+
     let syncStatsPromise =
-      this.get('spaceManager').getSyncAllStats(this.get('space.id'));
+      this.get('spaceManager').getSyncAllStats(
+        this.get('space.id'),
+        syncInterval
+      );
 
     syncStatsPromise.then(newSyncStats => {
       this.setProperties({
