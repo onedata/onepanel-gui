@@ -39,7 +39,7 @@ export default Mixin.create({
    * Maps: space Id: string -> supported space [b]: number
    * @type {object}
    */
-  providersSupport: readOnly('space.providersSupport'),
+  supportingProviders: readOnly('space.supportingProviders'),
 
   /**
    * Each object of array has information about provider space support
@@ -52,18 +52,20 @@ export default Mixin.create({
    * ```
    * @type {PromiseProxy.Array}
    */
-  spaceSupportersProxy: computed('providersSupport', '_providerDetailsProxy', function () {
-    let _providerDetailsProxy = this.get('_providerDetailsProxy');
-    let providersSupport = this.get('providersSupport');
-    return ObjectPromiseProxy.create({
-      promise: new Promise((resolve, reject) => {
-        _providerDetailsProxy.get('promise').then(({ id, name }) => {
-          resolve(this.createSupportersArray(providersSupport, id, name));
-        });
-        _providerDetailsProxy.catch(reject);
-      })
-    });
-  }),
+  spaceSupportersProxy: computed('supportingProviders', '_providerDetailsProxy',
+    function () {
+      let _providerDetailsProxy = this.get('_providerDetailsProxy');
+      let supportingProviders = this.get('supportingProviders');
+      return ObjectPromiseProxy.create({
+        promise: new Promise((resolve, reject) => {
+          _providerDetailsProxy.get('promise').then(({ id, name }) => {
+            resolve(this.createSupportersArray(supportingProviders, id,
+              name));
+          });
+          _providerDetailsProxy.catch(reject);
+        })
+      });
+    }),
 
   _providerDetailsProxy: null,
 
@@ -73,8 +75,8 @@ export default Mixin.create({
     this.set('_providerDetailsProxy', providerManager.getProviderDetails());
   },
 
-  createSupportersArray(providersSupport, currentProviderId, currentProviderName) {
-    return _.map(providersSupport, (size, pid) => ({
+  createSupportersArray(supportingProviders, currentProviderId, currentProviderName) {
+    return _.map(supportingProviders, (size, pid) => ({
       name: pid === currentProviderId ?
         currentProviderName : providerIdToName(pid),
       size

@@ -26,7 +26,7 @@ describe('Integration | Mixin | components/space item supports', function () {
     this.inject.service('provider-manager', { as: 'providerManager' });
   });
 
-  it('converts providersSupport object to spaceSupporters format', function (done) {
+  it('converts supportingProviders object to spaceSupporters format', function (done) {
     let providerManager = getOwner(this).lookup('service:provider-manager');
     providerManager.set('__providerDetails.id', 'id1');
     providerManager.set('__providerDetails.name', 'My provider');
@@ -34,7 +34,7 @@ describe('Integration | Mixin | components/space item supports', function () {
     let subject = this.subject();
 
     subject.set('space', {
-      providersSupport: {
+      supportingProviders: {
         id1: 100,
         id2: 200,
         id3: 300,

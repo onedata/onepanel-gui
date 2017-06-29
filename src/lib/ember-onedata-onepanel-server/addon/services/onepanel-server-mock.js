@@ -234,7 +234,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         storageUpdate: {
           strategy: 'no_update',
         },
-        providersSupport: _genSupportingProviders(),
+        supportingProviders: _genSupportingProviders(),
       });
       spaces.push({
         id: 'space2__verylongid',
@@ -251,7 +251,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
           writeOnce: false,
           deleteEnable: false,
         },
-        providersSupport: _genSupportingProviders(),
+        supportingProviders: _genSupportingProviders(),
       });
     }
   },
@@ -501,7 +501,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         let space = _.clone(supportSpaceRequest);
         space.id = 'id-' + Math.round(Math.random() * 100000, 0);
         space.name = 'Space-' + Math.round(Math.random() * 100, 0);
-        space.providersSupport = _genSupportingProviders();
+        space.supportingProviders = _genSupportingProviders();
         delete space['token'];
         this.get('__spaces').pushObject(space);
       },
