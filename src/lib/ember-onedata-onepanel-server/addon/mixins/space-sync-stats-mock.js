@@ -37,6 +37,8 @@ function randomValue() {
 export default Mixin.create({
   allStats: null,
 
+  _statusTimerId: null,
+
   globalImportStatus: 'inProgress',
   globalUpdateStatus: 'waiting',
 
@@ -46,6 +48,11 @@ export default Mixin.create({
     this.initAllStats();
     this.initAutoStatsPush();
     this.initDelayedStatusChange();
+  },
+
+  willDestroy() {
+    clearTimeout(this.get('_statusTimerId'));
+    this._super(...arguments);
   },
 
   /**
@@ -89,12 +96,13 @@ export default Mixin.create({
   },
 
   initDelayedStatusChange(delay = 10000) {
-    setTimeout(() => {
+    let _statusTimerId = setTimeout(() => {
       this.setProperties({
         globalImportStatus: 'done',
         globalUpdateStatus: 'inProgress',
       });
     }, delay);
+    this.set('_statusTimerId', _statusTimerId);
   },
 
   generateSpaceSyncStats(space, period, metrics) {
