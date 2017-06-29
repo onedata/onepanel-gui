@@ -52,12 +52,12 @@ describe('Integration | Mixin | components/space item supports', function () {
       expect(result[0].size).to.equal(100);
 
       expect(result[1]).to.have.property('name');
-      expect(result[1].name).to.equal('ID-id2');
+      expect(result[1].name).to.equal('Provider#id2');
       expect(result[1]).to.have.property('size');
       expect(result[1].size).to.equal(200);
 
       expect(result[2]).to.have.property('name');
-      expect(result[2].name).to.equal('ID-id3');
+      expect(result[2].name).to.equal('Provider#id3');
       expect(result[2]).to.have.property('size');
       expect(result[2].size).to.equal(300);
 

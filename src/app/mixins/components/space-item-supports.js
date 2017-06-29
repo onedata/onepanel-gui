@@ -16,6 +16,7 @@ const {
   computed: { readOnly },
   inject: { service },
   RSVP: { Promise },
+  get,
 } = Ember;
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
@@ -26,7 +27,7 @@ const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
  * @return {string} name to display
  */
 function providerIdToName(providerId) {
-  return providerId && `ID-${providerId.slice(0, 6)}`;
+  return providerId && `Provider#${providerId.slice(0, 6)}`;
 }
 
 export default Mixin.create({
@@ -58,9 +59,14 @@ export default Mixin.create({
       let supportingProviders = this.get('supportingProviders');
       return ObjectPromiseProxy.create({
         promise: new Promise((resolve, reject) => {
-          _providerDetailsProxy.get('promise').then(({ id, name }) => {
-            resolve(this.createSupportersArray(supportingProviders, id,
-              name));
+          _providerDetailsProxy.get('promise').then(provider => {
+            let id = get(provider, 'id');
+            let name = get(provider, 'name');
+            resolve(this.createSupportersArray(
+              supportingProviders,
+              id,
+              name
+            ));
           });
           _providerDetailsProxy.catch(reject);
         })
