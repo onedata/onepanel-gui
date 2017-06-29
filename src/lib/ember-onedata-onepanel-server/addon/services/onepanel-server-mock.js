@@ -16,8 +16,7 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
-import _object from 'lodash/object';
-import _find from 'lodash/find';
+import _ from 'lodash';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -32,7 +31,8 @@ const {
   },
   inject: {
     service
-  }
+  },
+  get,
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
@@ -342,10 +342,10 @@ export default Ember.Service.extend(RequestErrorHandler, {
     return {
       success: (storages) => {
         // the only storage is stored in the only key of storages
-        let storage = _object.values(storages)[0];
+        let storage = _.values(storages)[0];
         // generate some fake id
         let id = `id-${storage.name}`;
-        this.get('__storages').push(_object.assign({ id }, storage));
+        this.get('__storages').push(_.assign({ id }, storage));
       },
     };
   }),
@@ -389,7 +389,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
   _req_oneprovider_getStorageDetails: computed('__storages',
     function () {
       return {
-        success: id => _find(this.get('__storages'), s => s.id === id)
+        success: id => _.find(this.get('__storages'), s => s.id === id)
       };
     }),
 
@@ -415,7 +415,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
     function () {
       if (this.get('mockInitializedCluster')) {
         let spaces = this.get('__spaces');
-        let findSpace = (id) => _find(spaces, s => s.id === id);
+        let findSpace = (id) => _.find(spaces, s => s.id === id);
         return {
           success: (id) => findSpace(id),
           statusCode: (id) => findSpace(id) ? 200 : 404
@@ -430,16 +430,19 @@ export default Ember.Service.extend(RequestErrorHandler, {
   // TODO: after revoking space support, do not return the space in getSpaces  
   _req_oneprovider_revokeSpaceSupport: computed(function () {
     return {
-      success: () => null,
-      statusCode: () => 204,
+      success: (spaceId) => {
+        let __spaces = this.get('__spaces');
+        this.set('__spaces', _.reject(__spaces, s => get(s, 'id') === spaceId));
+      },
+      statusCode: () => 200,
     };
   }),
 
   _req_oneprovider_modifySpace: computed(function () {
-    let spaces = this.get('__spaces');
     return {
       success: (id, { storageImport, storageUpdate }) => {
-        let space = _find(spaces, s => s.id === id);
+        let spaces = this.get('__spaces');
+        let space = _.find(spaces, s => s.id === id);
         if (space) {
           if (storageImport) {
             space.storageImport = storageImport;
@@ -453,7 +456,8 @@ export default Ember.Service.extend(RequestErrorHandler, {
         }
       },
       statusCode: (id) => {
-        let space = _find(spaces, s => s.id === id);
+        let spaces = this.get('__spaces');
+        let space = _.find(spaces, s => s.id === id);
         return space ? 204 : 404;
       },
     };
