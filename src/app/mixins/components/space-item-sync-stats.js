@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 /**
  * Adds space sync statistics fetch capabilities to ``cluster-spaces-table-item``
@@ -22,6 +23,7 @@ const {
   observer,
   computed,
   computed: { readOnly },
+  isEmpty,
 } = Ember;
 
 /**
@@ -108,6 +110,21 @@ export default Mixin.create({
   }).readOnly(),
 
   /**
+   * Latest ``lastValueDate`` from all sync stats.
+   * @type {Date}
+   */
+  lastValueDate: computed('timeStats.@each.lastValueDate', function () {
+    let timeStats = this.get('timeStats');
+    if (timeStats) {
+      return _.max(timeStats.mapBy('lastValueDate'));
+    }
+  }).readOnly(),
+
+  lastValueDateText: computed('lastValueDate', function () {
+    return moment(this.get('lastValueDate')).format('YYYY-MM-DD, HH:mm:ss');
+  }),
+
+  /**
    * @type {string}
    */
   timeStatsError: null,
@@ -118,6 +135,33 @@ export default Mixin.create({
    * @type {boolean}
    */
   timeStatsLoading: true,
+
+  /**
+   * If true, statistics are not updated live, but only archival ones are
+   * presented. There should be also clear information about that.
+   * @type {boolean}
+   */
+  statsFrozen: computed(
+    'space.{importEnabled,updateEnabled}',
+    'timeStats',
+    '_syncStats.importStatus',
+    function () {
+      let {
+        space,
+        _syncStats,
+        timeStats,
+      } = this.getProperties(
+        'space',
+        '_syncStats',
+        'timeStats'
+      );
+
+      return space && _syncStats &&
+        get(space, 'updateEnabled') === false &&
+        !isEmpty(timeStats) &&
+        get(space, 'importEnabled') &&
+        get(_syncStats, 'importStatus') === 'done';
+    }),
 
   init() {
     this._super(...arguments);
@@ -235,6 +279,7 @@ export default Mixin.create({
       '_importActive',
       'syncInterval',
       '_syncChartStatsWatcher',
+      'statsFrozen',
       function () {
         let {
           _isActive,
@@ -242,20 +287,21 @@ export default Mixin.create({
           syncInterval,
           _syncChartStatsWatcher,
           _syncStatusWatcher,
+          statsFrozen,
         } = this.getProperties(
           '_isActive',
           '_importActive',
           'syncInterval',
           '_syncChartStatsWatcher',
-          '_syncStatusWatcher'
+          '_syncStatusWatcher',
+          'statsFrozen'
         );
 
         if (_importActive) {
           _syncStatusWatcher.set('interval', this.get('syncStatusRefreshTime'));
-        } else {
-
         }
-        if (_importActive && _isActive) {
+
+        if (_importActive && _isActive && !statsFrozen) {
           _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
         } else {
           _syncChartStatsWatcher.stop();
@@ -266,6 +312,7 @@ export default Mixin.create({
     onSyncIntervalChange(syncInterval) {
       let currentSyncInterval = this.get('syncInterval');
       if (syncInterval !== currentSyncInterval) {
+        this.set('_syncStats.stats', undefined);
         this.setProperties({
           syncInterval,
           _prevSyncInterval: currentSyncInterval,

@@ -42,9 +42,12 @@ export default Mixin.create({
   globalImportStatus: 'inProgress',
   globalUpdateStatus: 'waiting',
 
+  lastValueDate: null,
+
   init() {
     this._super(...arguments);
 
+    this.set('lastValueDate', new Date());
     this.initAllStats();
     this.initAutoStatsPush();
     this.initDelayedStatusChange();
@@ -91,6 +94,7 @@ export default Mixin.create({
           values.push(randomValue());
           allStats[period][metric] = values;
         });
+        this.set('lastValueDate', new Date());
       }, interval);
     });
   },
@@ -116,13 +120,19 @@ export default Mixin.create({
         allStats,
         globalImportStatus,
         globalUpdateStatus,
-      } = this.getProperties('allStats', 'globalImportStatus', 'globalUpdateStatus');
+        lastValueDate,
+      } = this.getProperties('allStats',
+        'globalImportStatus',
+        'globalUpdateStatus',
+        'lastValueDate'
+      );
 
       let stats;
       if (period && metrics) {
         stats = _.zipObject(metrics, metrics.map(metric => ({
           name: metric,
-          values: allStats[period][metric]
+          values: allStats[period][metric],
+          lastValueDate: lastValueDate.toJSON(),
         })));
       }
 

@@ -189,3 +189,19 @@ input {
     margin-right: 0;
   }
 }
+
+/// A class to display short information text with icon
+.one-info-label {
+  .one-icon {
+    vertical-align: middle;
+    font-size: 22px;
+    padding-right: 8px;
+    &.oneicon-sign-info {
+      color: $color-one-azure;
+    }    
+  }
+  label {
+    display: inline;
+    vertical-align: middle;
+  }
+}

@@ -111,65 +111,75 @@
         {{/promise-proxy-container}}
       </div>
       
-      <div class="col-xs-12 item-table-cell item-table-content-cell">
-        <div class="row content-row">
-          <strong>Storage synchronization statistics</strong>
-        </div>
-        <div class="row content-row">
-          <label class="btn-group-addon btn-group-addon-sm pull-left">Time span:</label>
-          {{#bs-button-group
-            class="pull-left"
-            value=syncInterval
-            type="radio"
-            onChange=(action "onSyncIntervalChange") as |bg|
-          }}
-            {{#bg.button type="default" class="btn-sm" value="minute"}}
-              Minute
-            {{/bg.button}}
-            {{#bg.button type="default" class="btn-sm" value="hour"}}
-              Hour
-            {{/bg.button}}
-            {{#bg.button type="default" class="btn-sm" value="day"}}
-              Day
-            {{/bg.button}}
-          {{/bs-button-group}}
-          {{#if timeStatsLoading}}
-            {{spin-spinner-block
-              sizeClass="xs"
-              class="btn-group-addon btn-group-addon-sm pull-left"
+      {{#if space.importEnabled}}
+        <div class="col-xs-12 item-table-cell item-table-content-cell">
+          <div class="row content-row">
+            <strong>Storage synchronization statistics</strong>
+          </div>
+          <div class="row content-row">
+            <label class="btn-group-addon btn-group-addon-sm pull-left">Time span:</label>
+            {{#bs-button-group
+              class="pull-left"
+              value=syncInterval
+              type="radio"
+              onChange=(action "onSyncIntervalChange") as |bg|
             }}
+              {{#bg.button type="default" class="btn-sm" value="minute"}}
+                {{t "components.clusterSpacesTableItem.minute"}}
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="hour"}}
+                {{t "components.clusterSpacesTableItem.hour"}}
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="day"}}
+                {{t "components.clusterSpacesTableItem.day"}}
+              {{/bg.button}}
+            {{/bs-button-group}}
+            {{#if timeStatsLoading}}
+              {{spin-spinner-block
+                sizeClass="xs"
+                class="btn-group-addon btn-group-addon-sm pull-left"
+              }}
+            {{/if}}
+            {{#if statsFrozen}}
+              <div class="btn-group-addon btn-group-addon-sm one-info-label">
+                {{one-icon icon="sign-info"}}
+                <label>
+                  {{t "components.clusterSpacesTableItem.syncDone"}} {{lastValueDateText}}
+                </label>
+              </div>
+            {{/if}}
+          </div>
+          {{#if timeStatsError}}
+            <div class="row">
+              {{resource-load-error reason=timeStatsError}}
+            </div>
+          {{else if (not timeStatsLoading)}}
+            <div class="row">
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-operations
+                  lastUpdateTime=lastStatsUpdateTime
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-queue
+                  lastUpdateTime=lastStatsUpdateTime
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-throughput
+                  lastUpdateTime=lastStatsUpdateTime
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+            </div>
           {{/if}}
         </div>
-        {{#if timeStatsError}}
-          <div class="row">
-            {{resource-load-error reason=timeStatsError}}
-          </div>
-        {{else if (not timeStatsLoading)}}
-          <div class="row">
-            <div class="col-xs-12 item-table-cell item-table-content-cell">
-              {{space-sync-chart-operations
-                lastUpdateTime=lastStatsUpdateTime
-                timeStats=timeStats
-                timeUnit=syncInterval
-              }}
-            </div>
-            <div class="col-xs-12 item-table-cell item-table-content-cell">
-              {{space-sync-chart-queue
-                lastUpdateTime=lastStatsUpdateTime
-                timeStats=timeStats
-                timeUnit=syncInterval
-              }}
-            </div>
-            <div class="col-xs-12 item-table-cell item-table-content-cell">
-              {{space-sync-chart-throughput
-                lastUpdateTime=lastStatsUpdateTime
-                timeStats=timeStats
-                timeUnit=syncInterval
-              }}
-            </div>
-          </div>
-        {{/if}}
-      </div>
+      {{/if}}
     </div>
   </div>
 {{/listItem.content}}
