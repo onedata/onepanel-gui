@@ -44,6 +44,18 @@ export default Mixin.create({
 
   lastValueDate: null,
 
+  /**
+   * Id of setTimeout for delayed status change
+   * @type {Number}
+   */
+  statusChangeTimerId: null,
+
+  /**
+   * Ids of setInterval for auto stats push workers
+   * @type {Array.number}
+   */
+  statsPushIntervalIds: null,
+
   init() {
     this._super(...arguments);
 
@@ -54,7 +66,15 @@ export default Mixin.create({
   },
 
   willDestroy() {
-    clearTimeout(this.get('_statusTimerId'));
+    let {
+      statusChangeTimerId,
+      statsPushIntervalIds
+    } = this.getProperties(
+      'statusChangeTimerId',
+      'statsPushIntervalIds'
+    );
+    clearTimeout(statusChangeTimerId);
+    statsPushIntervalIds.forEach(id => clearInterval(id));
     this._super(...arguments);
   },
 
@@ -85,9 +105,10 @@ export default Mixin.create({
       hour: (60 * 60000) / SAMPLES_COUNT,
       day: (24 * 60 * 60000) / SAMPLES_COUNT
     };
+    let statsPushIntervalIds = [];
     _.keys(sampling).forEach(period => {
       let interval = sampling[period];
-      setInterval(() => {
+      statsPushIntervalIds.push(setInterval(() => {
         _.keys(allStats[period]).forEach(metric => {
           let values = allStats[period][metric].slice(0);
           values.shift();
@@ -95,18 +116,19 @@ export default Mixin.create({
           allStats[period][metric] = values;
         });
         this.set('lastValueDate', new Date());
-      }, interval);
+      }, interval));
     });
+    this.set('statsPushIntervalIds', statsPushIntervalIds);
   },
 
   initDelayedStatusChange(delay = 10000) {
-    let _statusTimerId = setTimeout(() => {
+    let statusChangeTimerId = setTimeout(() => {
       this.setProperties({
         globalImportStatus: 'done',
         globalUpdateStatus: 'inProgress',
       });
     }, delay);
-    this.set('_statusTimerId', _statusTimerId);
+    this.set('statusChangeTimerId', statusChangeTimerId);
   },
 
   generateSpaceSyncStats(space, period, metrics) {
