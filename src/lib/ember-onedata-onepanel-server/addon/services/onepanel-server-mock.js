@@ -32,7 +32,8 @@ const {
   },
   inject: {
     service
-  }
+  },
+  get,
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
@@ -466,8 +467,36 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   // TODO: after revoking space support, do not return the space in getSpaces  
   _req_oneprovider_revokeSpaceSupport: computed(function () {
     return {
-      success: () => null,
-      statusCode: () => 204,
+      success: (spaceId) => {
+        let __spaces = this.get('__spaces');
+        this.set('__spaces', _.reject(__spaces, s => get(s, 'id') === spaceId));
+      },
+      statusCode: () => 200,
+    };
+  }),
+
+  _req_oneprovider_modifySpace: computed(function () {
+    return {
+      success: (id, { storageImport, storageUpdate }) => {
+        let spaces = this.get('__spaces');
+        let space = _.find(spaces, s => s.id === id);
+        if (space) {
+          if (storageImport) {
+            space.storageImport = storageImport;
+          }
+          if (storageUpdate) {
+            space.storageUpdate = storageUpdate;
+          }
+          return null;
+        } else {
+          return null;
+        }
+      },
+      statusCode: (id) => {
+        let spaces = this.get('__spaces');
+        let space = _.find(spaces, s => s.id === id);
+        return space ? 204 : 404;
+      },
     };
   }),
 

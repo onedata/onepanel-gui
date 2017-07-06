@@ -2,7 +2,7 @@
   
 <div class="row content-row header-row">
   <h1>Spaces
-    {{#unless _isEmptySpacesInfoVisible}}
+    {{#if _isToolbarVisible}}
       <div class="btn-toolbar">
         {{!-- Only for development --}}
         {{!--{{#spin-button
@@ -19,7 +19,7 @@
           {{_supportSpaceButtonLabel}}
         {{/bs-button}}
       </div>
-    {{/unless}}
+    {{/if}}
   </h1>
 </div>
 
@@ -53,4 +53,11 @@
       }}
     {{/promise-proxy-container}}
   </div>
-{{/if}}
+  {{#promise-proxy-container proxy=spacesProxy}}
+    {{cluster-spaces-table
+      spaces=spacesProxy.content
+      revokeSpace=(action "revokeSpace")
+      modifySpace=(action "modifySpace")
+    }}
+  {{/promise-proxy-container}}
+</div>

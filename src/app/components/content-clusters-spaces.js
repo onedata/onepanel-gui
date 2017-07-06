@@ -14,7 +14,11 @@ const {
   inject: { service },
   get,
   computed,
-  isBlank,
+  computed: {
+    not,
+  },
+  observer,
+  isArray,
 } = Ember;
 
 export default Component.extend({
@@ -39,13 +43,18 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
-  _isEmptySpacesInfoVisible: computed('spacesProxy.content', '_supportSpaceOpened',
-    function () {
-      let {
-        _supportSpaceOpened
-      } = this.getProperties('_supportSpaceOpened');
-      return !_supportSpaceOpened && isBlank(this.get('spacesProxy.content'));
-    }),
+  _hasNoSpaces: computed('spacesProxy.content.[]', function () {
+    let content = this.get('spacesProxy.content');
+    return isArray(content) && content.length === 0;
+  }),
+
+  _isToolbarVisible: not('_hasNoSpaces'),
+
+  _hasNoSpacesObserver: observer('_hasNoSpaces', function () {
+    if (this.get('_hasNoSpaces')) {
+      this.set('_supportSpaceOpened', true);
+    }
+  }),
 
   init() {
     this._super(...arguments);
