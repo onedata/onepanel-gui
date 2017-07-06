@@ -44,7 +44,7 @@ export default Ember.Mixin.create({
   validateAnyMetric(metrics) {
     let timeStats = this.get('timeStats');
     let anyMetric = metrics.some(metric =>
-      _.find(timeStats, ts => ts.name === metric) != null
+      _.find(timeStats, ts => ts && ts.name === metric) != null
     );
     return anyMetric ? [] : [
       'none of following metrics are available: ' +
@@ -60,7 +60,7 @@ export default Ember.Mixin.create({
     let timeStats = this.get('timeStats');
     let errors = [];
     metrics.forEach(metric => {
-      let stat = _.find(timeStats, ts => ts.name === metric);
+      let stat = _.find(timeStats, ts => ts && ts.name === metric);
       if (stat) {
         if (!validateTimeStats(stat)) {
           errors.push(`time stats record for "${metric}" is not valid`);

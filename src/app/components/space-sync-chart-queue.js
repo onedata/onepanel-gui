@@ -60,7 +60,7 @@ export default SpaceSyncChartBase.extend({
   chartSeriesLabel: 'Queue length',
 
   _queueData: computed('timeStats.[]', function () {
-    return _.find(this.get('timeStats'), ts => ts.name === 'queueLength');
+    return _.find(this.get('timeStats'), ts => ts && ts.name === 'queueLength');
   }),
 
   _chartValues: [],

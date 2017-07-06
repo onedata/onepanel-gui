@@ -116,12 +116,20 @@ export default Mixin.create({
   lastValueDate: computed('timeStats.@each.lastValueDate', function () {
     let timeStats = this.get('timeStats');
     if (timeStats) {
-      return _.max(timeStats.mapBy('lastValueDate'));
+      return _.max(
+        _.map(
+          timeStats,
+          ts => ts ? get(ts, 'lastValueDate') : undefined
+        )
+      );
     }
   }).readOnly(),
 
   lastValueDateText: computed('lastValueDate', function () {
-    return moment(this.get('lastValueDate')).format('YYYY-MM-DD, HH:mm:ss');
+    let lastValueDate = this.get('lastValueDate');
+    return lastValueDate ?
+      moment(lastValueDate).format('YYYY-MM-DD, HH:mm:ss') :
+      undefined;
   }),
 
   /**
