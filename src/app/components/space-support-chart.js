@@ -1,7 +1,20 @@
+/**
+ * Component for displaying a chart that shows distribution of providers support
+ * for some space
+ *
+ * Uses ``spaceSupporters`` property of onepanel.SpaceDetails
+ *
+ * @module components/space-support-chart
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 import bytesToString from 'onepanel-gui/utils/bytes-to-string';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
+import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 
 import _ from 'lodash';
 
@@ -81,7 +94,16 @@ export default Ember.Component.extend({
     };
   }),
 
+  dataValidationError: computed('spaceSupporters', function () {
+    return this.validateChartData(this.get('spaceSupporters'));
+  }),
+
   init() {
     this._super(...arguments);
+  },
+
+  validateChartData(spaceSupporters) {
+    return validateSupportingProviders(spaceSupporters) ? undefined :
+      `supportingProviders data is invalid`;
   },
 });

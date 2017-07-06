@@ -6,5 +6,9 @@
   }}
 </div>
 <div class="row content-row chart-row">
-  {{chartist-chart data=chartData options=chartOptions type="pie"}}
+  {{#if dataValidationError}}
+    {{resource-load-error reason=dataValidationError}}
+  {{else}}
+    {{chartist-chart data=chartData options=chartOptions type="pie"}}
+  {{/if}}
 </div>

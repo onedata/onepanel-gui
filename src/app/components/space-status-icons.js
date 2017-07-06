@@ -39,7 +39,7 @@ export default Ember.Component.extend({
       case 'done':
         return 'Data import: done!';
       default:
-        break;
+        return 'Data import: enabled';
       }
     } else {
       return 'Import disabled';
@@ -54,7 +54,7 @@ export default Ember.Component.extend({
       case 'waiting':
         return 'Data update: idle';
       default:
-        break;
+        return 'Data update: enabled';
       }
     } else {
       return 'Update disabled';

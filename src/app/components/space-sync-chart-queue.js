@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import _util from 'lodash/util';
+import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import maximizeBarWidth from 'onepanel-gui/utils/chartist/maximize-bar-width';
@@ -20,6 +20,7 @@ import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-gr
 
 const {
   computed,
+  isEmpty,
 } = Ember;
 
 export default SpaceSyncChartBase.extend({
@@ -59,7 +60,7 @@ export default SpaceSyncChartBase.extend({
   chartSeriesLabel: 'Queue length',
 
   _queueData: computed('timeStats.[]', function () {
-    return this.get('timeStats')[0];
+    return _.find(this.get('timeStats'), ts => ts.name === 'queueLength');
   }),
 
   _chartValues: [],
@@ -80,8 +81,8 @@ export default SpaceSyncChartBase.extend({
       }
       _queueData.values.forEach(value => _chartValues.push(value));
       return {
-        labels: _util.range(1, _chartValues.length + 1).reverse().
-          map(n => this.getChartLabel(n)),
+        labels: _.range(1, _chartValues.length + 1).reverse().
+        map(n => this.getChartLabel(n)),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
@@ -93,4 +94,16 @@ export default SpaceSyncChartBase.extend({
       return {};
     }
   }),
+
+  /**
+   * @implements SpaceSyncChartDataValidator
+   */
+  validateSyncChartData() {
+    let requiredMetrics = ['insertCount', 'updateCount', 'deleteCount'];
+    let errors = _.concat(
+      this.validateAnyMetric(requiredMetrics),
+      this.validateAllMetricsValidOrNull(requiredMetrics)
+    );
+    return isEmpty(errors) ? undefined : errors.join('; ');
+  },
 });

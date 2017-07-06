@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import _util from 'lodash/util';
+import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
@@ -18,6 +18,7 @@ import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-gr
 
 const {
   computed,
+  isEmpty,
 } = Ember;
 
 export default SpaceSyncChartBase.extend({
@@ -108,7 +109,7 @@ export default SpaceSyncChartBase.extend({
       );
       _chartValues.push(null);
       return {
-        labels: _util.range(0, _chartValues.length).reverse().map(n =>
+        labels: _.range(0, _chartValues.length).reverse().map(n =>
           this.getChartLabel(n)
         ),
         series: [{
@@ -122,4 +123,16 @@ export default SpaceSyncChartBase.extend({
       return {};
     }
   }),
+
+  /**
+   * @implements SpaceSyncChartDataValidator
+   */
+  validateSyncChartData() {
+    let requiredMetrics = ['queueLength'];
+    let errors = _.concat(
+      this.validateAnyMetric(requiredMetrics),
+      this.validateAllMetricsValidOrNull(requiredMetrics)
+    );
+    return isEmpty(errors) ? undefined : errors.join('; ');
+  },
 });

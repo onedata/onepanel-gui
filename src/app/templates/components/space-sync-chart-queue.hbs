@@ -6,5 +6,9 @@
   }}
 </div>
 <div class="row content-row chart-row scrollable">
-  {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
+  {{#if syncChartDataError}}
+    {{resource-load-error reason=syncChartDataError}}
+  {{else}}
+    {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
+  {{/if}}
 </div>
