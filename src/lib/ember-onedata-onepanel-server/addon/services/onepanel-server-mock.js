@@ -500,30 +500,6 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
     };
   }),
 
-  _req_oneprovider_modifySpace: computed(function () {
-    let spaces = this.get('__spaces');
-    return {
-      success: (id, { storageImport, storageUpdate }) => {
-        let space = _.find(spaces, s => s.id === id);
-        if (space) {
-          if (storageImport) {
-            space.storageImport = storageImport;
-          }
-          if (storageUpdate) {
-            space.storageUpdate = storageUpdate;
-          }
-          return null;
-        } else {
-          return null;
-        }
-      },
-      statusCode: (id) => {
-        let space = _.find(spaces, s => s.id === id);
-        return space ? 204 : 404;
-      },
-    };
-  }),
-
   _req_oneprovider_supportSpace: computed(function () {
     return {
       success: (supportSpaceRequest) => {

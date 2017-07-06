@@ -23,35 +23,15 @@
   </h1>
 </div>
 
-{{#if _isEmptySpacesInfoVisible}}
-  {{content-info
-    class="preserve-header scroll-breakpoint-700"
-    header="Nothing here yet"
-    imagePath="assets/images/empty-spaces.svg"
-    imageText="Empty spaces"
-    text="Currently this provider does not support any space"
-    buttonLabel="Support space"
-    buttonClass="btn-support-space"
-    buttonAction=(action "toggleSupportSpaceForm")
-  }}
-{{else}}
-  <div class="row">
-    <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
-      {{#if _supportSpaceOpened}}
-        <h1 class="form-title">Add support for a space</h1>
-        {{support-space-form
-          submitSupportSpace=(action "submitSupportSpace")
-          isFormOpened=_supportSpaceOpened
-        }}
-      {{/if}}
-    </div>
-    {{#promise-proxy-container proxy=spacesProxy}}
-      {{cluster-spaces-table
-        spaces=spacesProxy.content
-        revokeSpace=(action "revokeSpace")
-        modifySpace=(action "modifySpace")
+<div class="row">
+  <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
+    {{#if _supportSpaceOpened}}
+      <h1 class="form-title">Add support for a space</h1>
+      {{support-space-form
+        submitSupportSpace=(action "submitSupportSpace")
+        isFormOpened=_supportSpaceOpened
       }}
-    {{/promise-proxy-container}}
+    {{/if}}
   </div>
   {{#promise-proxy-container proxy=spacesProxy}}
     {{cluster-spaces-table
