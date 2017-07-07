@@ -21,11 +21,15 @@ import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-gr
 
 const {
   computed,
-  isEmpty,
 } = Ember;
 
 export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-operations'],
+
+  /**
+   * @implements SpaceSyncChartDataValidator
+   */
+  usedMetrics: ['insertCount', 'updateCount', 'deleteCount'],
 
   /**
    * Chartist settings
@@ -111,15 +115,4 @@ export default SpaceSyncChartBase.extend({
     }
   }),
 
-  /**
-   * @implements SpaceSyncChartDataValidator
-   */
-  validateSyncChartData() {
-    let requiredMetrics = ['insertCount', 'updateCount', 'deleteCount'];
-    let errors = _.concat(
-      this.validateAnyMetric(requiredMetrics),
-      this.validateAllMetricsValidOrNull(requiredMetrics)
-    );
-    return isEmpty(errors) ? undefined : errors.join('; ');
-  },
 });

@@ -1,12 +1,18 @@
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
+import i18n from 'ember-i18n/services/i18n';
 
 describe('Integration | Component | space status icons', function () {
   setupComponentTest('space-status-icons', {
     integration: true
+  });
+
+  beforeEach(function () {
+    this.register('service:i18n', i18n);
+    this.inject.service('i18n', { as: 'i18n' });
   });
 
   it('shows only import icon when import is enabled and update is disabled', function () {

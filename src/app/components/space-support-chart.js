@@ -98,10 +98,6 @@ export default Ember.Component.extend({
     return this.validateChartData(this.get('spaceSupporters'));
   }),
 
-  init() {
-    this._super(...arguments);
-  },
-
   validateChartData(spaceSupporters) {
     return validateSupportingProviders(spaceSupporters) ? undefined :
       `supportingProviders data is invalid`;

@@ -18,12 +18,17 @@ import validateTimeStats from 'onepanel-gui/utils/model-validators/validate-time
 
 const {
   computed,
+  isEmpty,
 } = Ember;
 
 export default Ember.Mixin.create({
-  init() {
-    this._super(...arguments);
-  },
+  /**
+   * To implement in subclasses.
+   * Should contain metric names that are used by chart.
+   * At least one metric from this collection is required for chart to render.
+   * @type {string[]}
+   */
+  usedMetrics: [],
 
   syncChartDataError: computed('timeStats', function () {
     return this.get('timeStats') ?
@@ -32,10 +37,21 @@ export default Ember.Mixin.create({
   }),
 
   /**
-   * To implement in subclasses.
+   * Default implementation of validation
+   *
+   * Checking if there are enough metric objects to populate a chart and if
+   * they are valid.
+   *
    * @returns {string|undefined} description of error if validation failed or nothing
    */
-  validateSyncChartData() {},
+  validateSyncChartData() {
+    let usedMetrics = this.get('usedMetrics');
+    let errors = _.concat(
+      this.validateAnyMetric(usedMetrics),
+      this.validateAllMetricsValidOrNull(usedMetrics)
+    );
+    return isEmpty(errors) ? undefined : errors.join('; ');
+  },
 
   /**
    * @param {string[]} metrics
@@ -47,7 +63,7 @@ export default Ember.Mixin.create({
       _.find(timeStats, ts => ts && ts.name === metric) != null
     );
     return anyMetric ? [] : [
-      'none of following metrics are available: ' +
+      'none of following metrics is available: ' +
       metrics.join(', ')
     ];
   },

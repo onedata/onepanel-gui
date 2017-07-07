@@ -5,7 +5,7 @@ import validateTimeStats from 'onepanel-gui/utils/model-validators/validate-time
 describe('Unit | Utility | model validators/validate time stats', function () {
   it('returns false if some required field of timeStats is missing', function () {
     let result = validateTimeStats({
-      name: 'jeden',
+      name: 'one',
       lastValueDate: undefined,
       values: undefined,
     });
@@ -14,7 +14,7 @@ describe('Unit | Utility | model validators/validate time stats', function () {
 
   it('returns true if all required fields of timeStats are present', function () {
     let result = validateTimeStats({
-      name: 'jeden',
+      name: 'one',
       lastValueDate: new Date().toJSON(),
       values: [1, 2, 3],
     });
