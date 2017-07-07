@@ -13,7 +13,11 @@ const {
   inject: {
     service
   },
-  computed: { alias },
+  computed,
+  computed: { 
+    alias,
+    readOnly,
+  },
 } = Ember;
 
 export default Ember.Component.extend({
@@ -29,6 +33,17 @@ export default Ember.Component.extend({
    * True, if previous session has expired
    */
   sessionHasExpired: alias('session.data.hasExpired'),
+
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
+  brandSubtitle: computed('onepanelServiceType', function () {
+    let {
+      i18n,
+      onepanelServiceType
+    } = this.getProperties('i18n', 'onepanelServiceType');
+    return onepanelServiceType ?
+      'One' + i18n.t(`components.brandInfo.serviceType.${onepanelServiceType}`) : null;
+  }),
 
   actions: {
     authenticationStarted() {

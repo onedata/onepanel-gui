@@ -9,13 +9,19 @@
   background-size: cover;
   background-position-x: center;
   color: $color-one-white;
+  overflow: auto;
   
   .onedata-logo-container {
     position: absolute;
     margin: 30px;
   }
   .login-box-container {
-    @include absolute-align-middle-center();
+    margin-top: 100px;
     width: 100%;
+    @media (min-height: 750px) {
+      @include absolute-align-middle-center();
+      transform: translateX(-50%) translateY(-50%) translateY(-50px);
+      margin-top: 0;
+    }
   }
 }
