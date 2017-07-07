@@ -8,6 +8,7 @@ import oneFormFields from './components/one-form-fields';
 import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import storageImportUpdateForm from './components/storage-import-update-form';
+import spaceStatusIcons from './components/space-status-icons';
 
 const translations = {
   components: {
@@ -21,6 +22,7 @@ const translations = {
     storageItem,
     clusterSpacesTableItem,
     storageImportUpdateForm,
+    spaceStatusIcons,
   }
 };
 

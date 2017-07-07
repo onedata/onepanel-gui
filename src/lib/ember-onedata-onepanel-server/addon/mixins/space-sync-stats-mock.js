@@ -161,7 +161,6 @@ export default Mixin.create({
       return {
         importStatus: globalImportStatus,
         updateStatus: globalUpdateStatus,
-        period,
         stats,
       };
     }

@@ -12,11 +12,14 @@ import Ember from 'ember';
 import moment from 'moment';
 import _ from 'lodash';
 
+import SpaceSyncChartDataValidator from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';
+
 const {
-  computed
+  computed,
+  computed: { readOnly },
 } = Ember;
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(SpaceSyncChartDataValidator, {
   classNames: ['space-sync-chart-base'],
 
   /**
@@ -27,15 +30,15 @@ export default Ember.Component.extend({
 
   /**
    * To inject.
-   * @type {Date}
-   */
-  lastUpdateTime: new Date(),
-
-  /**
-   * To inject.
    * @type {string}
    */
   timeUnit: 'minute',
+
+  /**
+   * A date on right side of the chart
+   * @type {Date}
+   */
+  lastUpdateTime: readOnly('timeStats.lastValueDate'),
 
   emptyTimePeriod: computed('timeParts', function () {
     return _.times(this.get('timeParts'), () => 0);

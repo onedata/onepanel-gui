@@ -129,7 +129,7 @@
               <div class="btn-group-addon btn-group-addon-sm one-info-label">
                 {{one-icon icon="sign-info"}}
                 <label>
-                  {{t "components.clusterSpacesTableItem.syncDone"}} {{lastValueDateText}}
+                  {{t "components.clusterSpacesTableItem.syncDone"}}
                 </label>
               </div>
             {{/if}}
@@ -142,21 +142,18 @@
             <div class="row">
               <div class="col-xs-12 item-table-cell item-table-content-cell">
                 {{space-sync-chart-operations
-                  lastUpdateTime=lastStatsUpdateTime
                   timeStats=timeStats
                   timeUnit=syncInterval
                 }}
               </div>
               <div class="col-xs-12 item-table-cell item-table-content-cell">
                 {{space-sync-chart-queue
-                  lastUpdateTime=lastStatsUpdateTime
                   timeStats=timeStats
                   timeUnit=syncInterval
                 }}
               </div>
               <div class="col-xs-12 item-table-cell item-table-content-cell">
                 {{space-sync-chart-throughput
-                  lastUpdateTime=lastStatsUpdateTime
                   timeStats=timeStats
                   timeUnit=syncInterval
                 }}

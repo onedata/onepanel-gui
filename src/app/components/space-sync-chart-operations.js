@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import _util from 'lodash/util';
+import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
 import maximizeBarWidth from 'onepanel-gui/utils/chartist/maximize-bar-width';
@@ -20,11 +20,16 @@ import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
 
 const {
-  computed
+  computed,
 } = Ember;
 
 export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-operations'],
+
+  /**
+   * @implements SpaceSyncChartDataValidator
+   */
+  usedMetrics: ['insertCount', 'updateCount', 'deleteCount'],
 
   /**
    * Chartist settings
@@ -94,7 +99,7 @@ export default SpaceSyncChartBase.extend({
         values.forEach(value => _chartValues[index].push(value));
       });
       return {
-        labels: _util.range(1, _chartValues[0].length + 1).reverse().map(n => this.getChartLabel(
+        labels: _.range(1, _chartValues[0].length + 1).reverse().map(n => this.getChartLabel(
           n)),
         series: _chartValues.map((values, index) => {
           return {
@@ -109,4 +114,5 @@ export default SpaceSyncChartBase.extend({
       return {};
     }
   }),
+
 });

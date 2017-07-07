@@ -10,7 +10,7 @@ export default {
   minute: 'Minute',
   hour: 'Hour',
   day: 'Day',
-  syncDone: 'Showing archival statistics, synchronization done at:',
+  syncDone: 'Synchronization done, live statistics disabled',
   cancelSyncConfig: 'Cancel sync. configuration',
   syncConfig: 'Configure data synchronization',
   revokeSpaceSupport: 'Revoke space support',

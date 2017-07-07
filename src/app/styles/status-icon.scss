@@ -6,7 +6,7 @@
     @extend .semi-hinge;
     @extend .pulse-mint;
   }
-  &.done {
+  &.done, &.waiting {
     color: $color-one-mint;
   }
 }
