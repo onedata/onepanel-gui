@@ -11,4 +11,7 @@ export default {
   hour: 'Hour',
   day: 'Day',
   syncDone: 'Showing archival statistics, synchronization done at:',
+  cancelSyncConfig: 'Cancel sync. configuration',
+  syncConfig: 'Configure data synchronization',
+  revokeSpaceSupport: 'Revoke space support',
 };

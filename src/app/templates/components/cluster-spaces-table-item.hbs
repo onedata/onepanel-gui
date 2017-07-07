@@ -13,41 +13,26 @@
   </span>
   <span class="one-label">{{space.name}}</span>
   {{space-status-icons space=space syncStats=_syncStats}}
-  <div class="one-collapsible-toolbar minimized pull-right">
-    <div class="collapsible-toolbar-toggle btn-menu-toggle">
-      <div class="icon-dot"></div>
-      <div class="icon-dot"></div>
-      <div class="icon-dot"></div>
-    </div>
-  </div>
-  {{#one-webui-popover
-    class=(concat "one-collapsible-toolbar-popover popover-" elementId)
-    placement="bottom-left"
-    padding=false
-    triggerSelector=(local-selector elementId ".collapsible-toolbar-toggle")
-    multi=false
-    as |popover|
+
+  {{#one-collapsible-toolbar
+    isMinimized=true
+    toggleBtnClass="btn-menu-toggle"
+    as |dropdown|
   }}
-    <ul class="dropdown-menu">
-      {{#one-collapsible-toolbar-item
-        tagName="li"
-        closeDropdown=popover.hide
-        isMinimized=true
-        itemAction=(action _importButtonActionName itemHeader.toggleAction)
-      }}
-        {{_importButtonTip}}
-      {{/one-collapsible-toolbar-item}}
-      
-      {{#one-collapsible-toolbar-item
-        tagName="li"
-        closeDropdown=popover.hide
-        isMinimized=true
-        itemAction=(action "startRevoke")
-      }}
-        Revoke space support
-      {{/one-collapsible-toolbar-item}}
-    </ul>
-  {{/one-webui-popover}}
+    
+    {{#dropdown.item
+      itemAction=(action _importButtonActionName itemHeader.toggleAction)
+      triggerClasses="btn-toggle-sync-config"
+    }}
+      {{_importButtonTip}}
+    {{/dropdown.item}}
+    {{#dropdown.item
+      itemAction=(action "startRevoke")
+      triggerClasses="btn-revoke-space-support"
+    }}
+       {{t "components.clusterSpacesTableItem.revokeSpaceSupport"}}
+    {{/dropdown.item}}
+  {{/one-collapsible-toolbar}}
 {{/listItem.header}}
 
 {{#listItem.content}}

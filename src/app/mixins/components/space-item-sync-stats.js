@@ -288,17 +288,19 @@ export default Mixin.create({
           _syncChartStatsWatcher,
           _syncStatusWatcher,
           statsFrozen,
+          syncStatusRefreshTime,
         } = this.getProperties(
           '_isActive',
           '_importActive',
           'syncInterval',
           '_syncChartStatsWatcher',
           '_syncStatusWatcher',
-          'statsFrozen'
+          'statsFrozen',
+          'syncStatusRefreshTime'
         );
 
         if (_importActive) {
-          _syncStatusWatcher.set('interval', this.get('syncStatusRefreshTime'));
+          _syncStatusWatcher.set('interval', syncStatusRefreshTime);
         }
 
         if (_importActive && _isActive && !statsFrozen) {
