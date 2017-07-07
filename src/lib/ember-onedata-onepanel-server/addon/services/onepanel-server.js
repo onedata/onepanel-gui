@@ -76,6 +76,12 @@ export default Ember.Service.extend(RequestErrorHandler, {
     return client ? new Onepanel.OneproviderApi(client) : null;
   }).readOnly(),
 
+  init() {
+    this._super(...arguments);
+    this.getServiceType()
+      .then(serviceType => this.set('serviceType', serviceType));
+  },
+
   /**
    * Make an API call using onepanel library (onepanel-javascript-client).
    *
@@ -163,48 +169,42 @@ export default Ember.Service.extend(RequestErrorHandler, {
    * @returns {Promise} resolves with { serviceType: string }
    */
   initClient(origin = null) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let client = this.createClient(origin);
       this.set('client', client);
-      // client property is initialized, so it's safe to invoke getServiceType
-      let gettingType = this.getServiceType();
-      gettingType.then(serviceType => {
-        this.set('serviceType', serviceType);
-        resolve({ serviceType });
-      });
-      gettingType.catch(reject);
+      resolve();
     });
   },
 
   destroyClient() {
     this.setProperties({
       client: null,
-      serviceType: null,
     });
   },
 
   /**
    * Make request that checks if the GUI is backed by provider or zone
    *
-   * Note that ``client`` property should be already initialized!
-   *
    * @returns {Promise} resolves with 'provider' or 'zone'; rejects on error
    */
   getServiceType() {
-    return new Promise((resolve, reject) => {
-      let gettingProvider = this.request('oneprovider', 'getProvider');
-      gettingProvider.then(() => resolve('provider'));
-      gettingProvider.catch(error => {
-        let statusCode = error.response.statusCode;
-        if (statusCode === 404) {
-          resolve('provider');
-        } else if (statusCode === 406) {
-          // TODO maybe try to make request to Zone to be sure...
-          resolve('zone');
+    return new Promise((resolve) => {
+      let client = this.createClient();
+      let api = new Onepanel.OneproviderApi(client);
+
+      let callback = function (error) {
+        if (error) {
+          let statusCode = error.response.statusCode;
+          if (statusCode === 406) {
+            resolve('zone');
+          } else {
+            resolve('provider');
+          }
         } else {
-          reject(error);
+          resolve('provider');
         }
-      });
+      };
+      api.getProvider(callback);
     });
   },
 
