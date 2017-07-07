@@ -23,7 +23,6 @@ const {
   observer,
   computed,
   computed: { readOnly },
-  isEmpty,
 } = Ember;
 
 /**
@@ -144,32 +143,34 @@ export default Mixin.create({
    */
   timeStatsLoading: true,
 
-  /**
-   * If true, statistics are not updated live, but only archival ones are
-   * presented. There should be also clear information about that.
-   * @type {boolean}
-   */
-  statsFrozen: computed(
-    'space.{importEnabled,updateEnabled}',
-    'timeStats',
-    '_syncStats.importStatus',
-    function () {
-      let {
-        space,
-        _syncStats,
-        timeStats,
-      } = this.getProperties(
-        'space',
-        '_syncStats',
-        'timeStats'
-      );
+  // TODO sync stats freezing disabled due to bugs
+  statsFrozen: false,
+  // /**
+  //  * If true, statistics are not updated live, but only archival ones are
+  //  * presented. There should be also clear information about that.
+  //  * @type {boolean}
+  //  */
+  // statsFrozen: computed(
+  //   'space.{importEnabled,updateEnabled}',
+  //   'timeStats',
+  //   '_syncStats.importStatus',
+  //   function () {
+  //     let {
+  //       space,
+  //       _syncStats,
+  //       timeStats,
+  //     } = this.getProperties(
+  //       'space',
+  //       '_syncStats',
+  //       'timeStats'
+  //     );
 
-      return space && _syncStats &&
-        get(space, 'updateEnabled') === false &&
-        !isEmpty(timeStats) &&
-        get(space, 'importEnabled') &&
-        get(_syncStats, 'importStatus') === 'done';
-    }),
+  //     return space && _syncStats &&
+  //       get(space, 'updateEnabled') === false &&
+  //       !isEmpty(timeStats) &&
+  //       get(space, 'importEnabled') &&
+  //       get(_syncStats, 'importStatus') === 'done';
+  //   }),
 
   init() {
     this._super(...arguments);
