@@ -322,6 +322,7 @@ export default Mixin.create({
           _prevSyncInterval: currentSyncInterval,
           timeStatsLoading: true,
           timeStatsError: null,
+          statsFrozen: false,
         });
       }
     },
