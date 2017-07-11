@@ -29,6 +29,10 @@ $table-item-border: 1px solid $main-border-color;
   @include clickable();
 }
 
+.scrollable {
+  overflow: auto;
+}
+
 .truncate {
   white-space: nowrap;
   overflow: hidden;
@@ -97,10 +101,13 @@ input {
       border-bottom: 0;
     }
   }
+  .item-table-cell {
+    padding-bottom: $padding-large-vertical;
+  }
   .item-table-img-cell {
+    height: 120px;
     position: relative;
-    width: 30%;
-    border-right: $table-item-border;
+    width: 33%;
     .background-container {
       position: absolute;
       top: 20px;
@@ -126,8 +133,7 @@ input {
 @media screen and (max-width: $screen-sm-max) {
   .item-table {
     .item-table-img-cell {
-      width: 0;
-      border-right: 0;
+      display: none;
     }
   }
 }
@@ -148,7 +154,8 @@ input {
   font-size: 2em;
 }
 
-.status-icon {
+// adds a small circle icon to status-icon
+.sub-status-icon {
   position: absolute !important;
   right: -10px;
   bottom: 6px !important;
@@ -180,5 +187,21 @@ input {
   margin-right: 0.6em;
   .item-icon {
     margin-right: 0;
+  }
+}
+
+/// A class to display short information text with icon
+.one-info-label {
+  .one-icon {
+    vertical-align: middle;
+    font-size: 22px;
+    padding-right: 8px;
+    &.oneicon-sign-info {
+      color: $color-one-azure;
+    }    
+  }
+  label {
+    display: inline;
+    vertical-align: middle;
   }
 }

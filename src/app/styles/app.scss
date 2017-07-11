@@ -31,7 +31,7 @@ $main-menu-width: 200px;
 $sidebar-menu-width: 250px;
 $sidebar-menu-width-lg: 325px;
 $menu-icon-font-size: 2.5em;
-$mobile-menu-popover-width: 200px;
+$mobile-menu-popover-width: 240px;
 
 $zindex-layer-1-2-overlay: $zindex-modal-background;
 $zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
@@ -57,6 +57,8 @@ $collapse-transition: max-height .2s linear, padding .2s linear, opacity .2s lin
 
 $disabled-opacity: 0.6;
 
+@import 'animate';
+@import 'custom-animations';
 @import 'common';
 
 @import 'spin-spinner-extensions';
@@ -100,6 +102,17 @@ $disabled-opacity: 0.6;
 @import 'ember-notify';
 @import 'one-collapsible-toolbar';
 @import 'one-collapsible-toolbar-item';
+@import 'chartist';
+@import 'chartist-settings';
+@import 'chartist-overrides';
+@import 'space-sync-chart-base';
+@import 'space-sync-chart-operations';
+@import 'status-toolbar';
+@import 'status-icon';
+@import 'space-sync-chart-queue';
+@import 'space-sync-chart-throughput';
+@import 'space-support-chart';
+
 
 // TODO a mess
 

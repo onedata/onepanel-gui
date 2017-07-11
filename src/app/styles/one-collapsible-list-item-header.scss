@@ -44,4 +44,17 @@
     right: 0;
     top: 1.5em;
   }
+  
+  .btn-menu-toggle {
+    @include vertical-align-middle();
+    right: $collapsible-list-item-padding;
+    padding: $collapsible-list-item-btn-toggle-padding*0.75 $collapsible-list-item-btn-toggle-padding;
+  }
+
+  .status-toolbar {
+    @include vertical-align-middle();
+    right:
+      2*$collapsible-list-item-btn-toggle-padding +
+        $collapsible-list-item-padding + 12px;
+  }
 }

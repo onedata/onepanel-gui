@@ -54,7 +54,7 @@ $onedata-logo-width: 150px;
     right: 0;
     top: 0;
     height: $mobile-top-height;
-    z-index: 1;
+    z-index: $zindex-navbar;
     // TODO: the same as col-main-menu?
     background-color: $color-main-menu-bg;
     color: $color-one-white;
@@ -221,7 +221,7 @@ $onedata-logo-width: 150px;
     }
   }
   .col-sidebar {
-    z-index: 1;
+    z-index: $zindex-navbar;
     background: $color-sidebar-background;
     // TODO same as sidenav
     border-right: 1px solid $color-one-list-item-separator;

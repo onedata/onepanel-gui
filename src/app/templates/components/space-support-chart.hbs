@@ -1,0 +1,14 @@
+<div class="row content-row">
+  <strong>Providers support</strong>
+  {{one-label-tip
+    title="The chart shows how many space particular providers provide for this space"
+    placement="top"
+  }}
+</div>
+<div class="row content-row chart-row">
+  {{#if dataValidationError}}
+    {{resource-load-error reason=dataValidationError}}
+  {{else}}
+    {{chartist-chart data=chartData options=chartOptions type="pie"}}
+  {{/if}}
+</div>

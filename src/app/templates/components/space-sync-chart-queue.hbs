@@ -1,0 +1,14 @@
+<div class="row content-row">
+  <strong>File operations queue statistics</strong>
+  {{one-label-tip
+    title="The chart shows how many operations was queued in given time period"
+    placement="top"
+  }}
+</div>
+<div class="row content-row chart-row scrollable">
+  {{#if syncChartDataError}}
+    {{resource-load-error reason=syncChartDataError}}
+  {{else}}
+    {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
+  {{/if}}
+</div>

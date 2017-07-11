@@ -1,7 +1,7 @@
 {{!-- TODO change .storage-table class or make generic --}}
 {{!-- TODO i18n --}}
 
-{{#listItem.header as |itemHeader|}}
+{{#listItem.header disableToggleIcon=true as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="space"}}
     {{one-tooltip
@@ -12,65 +12,35 @@
     }}
   </span>
   <span class="one-label">{{space.name}}</span>
-  <div class="btn-toolbar">
-    {{!-- TODO replace icon-btn with btn-icon-only to allow usage of bs-button or allow colors... --}}
-    {{!-- NOTE: currently edit is enabled only for import/update --}}
-    <button
-      class={{concat "btn icon-btn btn-import-storage-data " _importButtonClass}}
-      {{action _importButtonActionName itemHeader.toggleAction}}>
-      {{one-icon icon="space-import"}}
-      {{bs-tooltip
-        title=_importButtonTip
-        placement="top"
-        triggerEvents="hover"
-      }}
-      {{#if _importActive}}
-        {{one-icon
-          icon="checkbox-filled"
-          class="status-icon status-icon-success"
-        }}
-      {{/if}}
-    </button>
-    <button class="btn icon-btn btn-revoke-space" id={{concat elementId "-btn-revoke-space"}}>
-      {{one-icon icon="remove"}}
-      {{bs-tooltip
-        visible=revokeTooltipVisible
-        title="Revoke space support from this provider"
-        placement="top"
-        triggerEvents="hover"
-      }}
-    </button>
-      {{!-- TODO make a generic component for confirmations --}}
-      {{#one-webui-popover
-        class="popover-revoke-space"
-        placement="bottom-left"
-        triggerSelector=(concat "#" (concat elementId "-btn-revoke-space"))
-        submit=(action "revokeSpace")
-        as |popover|
-      }}
-        <h1>Revoke space support?</h1>
-        <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
-        <div class="btn-toolbar">
-          {{#bs-button class="btn btn-sm" type="info" onClick=(action popover.hide)}}
-            No, keep the support
-          {{/bs-button}}
-          {{#spin-button
-            class="btn btn-sm btn-danger"
-            action=(action popover.submit)
-          }}
-            {{one-icon icon="remove"}} <span>Yes, revoke</span>
-          {{/spin-button}}
-        </div>
-      {{/one-webui-popover}}
-  </div>
-  
+  {{space-status-icons space=space syncStats=_syncStats}}
+
+  {{#one-collapsible-toolbar
+    isMinimized=true
+    toggleBtnClass="btn-menu-toggle"
+    as |dropdown|
+  }}
+    
+    {{#dropdown.item
+      itemAction=(action _importButtonActionName itemHeader.toggleAction)
+      triggerClasses="btn-toggle-sync-config"
+    }}
+      {{_importButtonTip}}
+    {{/dropdown.item}}
+    {{#dropdown.item
+      itemAction=(action "startRevoke")
+      triggerClasses="btn-revoke-space-support"
+    }}
+       {{t "components.clusterSpacesTableItem.revokeSpaceSupport"}}
+    {{/dropdown.item}}
+  {{/one-collapsible-toolbar}}
 {{/listItem.header}}
+
 {{#listItem.content}}
-  <table class="item-table">
-    <tr class="no-border">
-      <td colspan="99">
+  <div class="row item-table">
+    <div class="row no-border">
+      <div class="col-xs-12">
         <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
-          <h1 class="form-title">Data import configuration</h1>
+          <h1 class="form-title">Data synchronization configuration</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
             defaultValues=importFormDefaultValue
             mode=(if _importActive "edit" "new")
@@ -78,48 +48,139 @@
             submit=(action "importUpdateConfigurationSubmit")
           }}
         </div>
-      </td>
-    </tr>
-    <tr>
-      <td class="item-table-img-cell"><div class="background-container"></div></td>
-      <td class="item-table-content-cell">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
         <div class="row content-row">
           <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
-          <span class="one-label">{{space.name}}</span>
+          <span class="one-label space-name">{{space.name}}</span>
         </div>
         <div class="row content-row">
           <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
-          <span class="one-label">{{space.id}}</span>
+          <span class="one-label space-id">{{space.id}}</span>
         </div>
         <div class="row content-row">
           {{#promise-proxy-container proxy=_storage}}
             <strong>{{t 'components.clusterSpacesTableItem.storage'}}:</strong>
-            <span class="one-label">{{_storage.name}}</span>
+            <span class="one-label space-provider-storage">{{_storage.name}}</span>
           {{/promise-proxy-container}}
         </div>
         {{#if space.importEnabled}}
-          <div class="row content-row">
+          <div class="row content-row space-import">
             <strong>{{t 'components.clusterSpacesTableItem.storageImport.importStrategy'}}:</strong>
-            <span class="one-label">{{importStrategyLabel}}</span>
+            <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
             {{#each importProperties as |property|}}
               <div class="row content-row nested-row">
                 <strong>{{t (concat (concat (concat importTranslationPrefix property)) ".name")}}:</strong>
-                <span class="one-label">{{get space.storageImport property}}</span>
+                <span class="one-label space-import-{{property}}">{{get space.storageImport property}}</span>
               </div>
             {{/each}}
           </div>
-          <div class="row content-row">
+          <div class="row content-row space-update">
             <strong>{{t 'components.clusterSpacesTableItem.storageUpdate.updateStrategy'}}:</strong>
-            <span class="one-label">{{updateStrategyLabel}}</span>
+            <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
             {{#each updateProperties as |property|}}
               <div class="row content-row nested-row">
                 <strong>{{t (concat (concat (concat updateTranslationPrefix property)) ".name")}}:</strong>
-                <span class="one-label">{{get space.storageUpdate property}}</span>
+                <span class="one-label space-update-{{property}}">{{get space.storageUpdate property}}</span>
               </div>
             {{/each}}
           </div>
         {{/if}}
-      </td>
-    </tr>
-  </table>
+      </div>
+
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
+        {{#promise-proxy-container proxy=spaceSupportersProxy}}
+          {{space-support-chart spaceSupporters=spaceSupportersProxy.content}}
+        {{/promise-proxy-container}}
+      </div>
+      
+      {{#if space.importEnabled}}
+        <div class="col-xs-12 item-table-cell item-table-content-cell">
+          <div class="row content-row">
+            <strong>Storage synchronization statistics</strong>
+          </div>
+          <div class="row content-row">
+            <label class="btn-group-addon btn-group-addon-sm pull-left">Time span:</label>
+            {{#bs-button-group
+              class="pull-left"
+              value=syncInterval
+              type="radio"
+              onChange=(action "onSyncIntervalChange") as |bg|
+            }}
+              {{#bg.button type="default" class="btn-sm" value="minute"}}
+                {{t "components.clusterSpacesTableItem.minute"}}
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="hour"}}
+                {{t "components.clusterSpacesTableItem.hour"}}
+              {{/bg.button}}
+              {{#bg.button type="default" class="btn-sm" value="day"}}
+                {{t "components.clusterSpacesTableItem.day"}}
+              {{/bg.button}}
+            {{/bs-button-group}}
+            {{#if timeStatsLoading}}
+              {{spin-spinner-block
+                sizeClass="xs"
+                class="btn-group-addon btn-group-addon-sm pull-left"
+              }}
+            {{/if}}
+            {{#if statsFrozen}}
+              <div class="btn-group-addon btn-group-addon-sm one-info-label">
+                {{one-icon icon="sign-info"}}
+                <label>
+                  {{t "components.clusterSpacesTableItem.syncDone"}}
+                </label>
+              </div>
+            {{/if}}
+          </div>
+          {{#if timeStatsError}}
+            <div class="row">
+              {{resource-load-error reason=timeStatsError}}
+            </div>
+          {{else if (not timeStatsLoading)}}
+            <div class="row">
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-operations
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-queue
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+              <div class="col-xs-12 item-table-cell item-table-content-cell">
+                {{space-sync-chart-throughput
+                  timeStats=timeStats
+                  timeUnit=syncInterval
+                }}
+              </div>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
 {{/listItem.content}}
+
+{{#bs-modal
+  open=_openRevokeModal
+  onHide=(action "hideRevoke")
+}}
+  <h1>Revoke space support?</h1>
+    <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
+    <div class="btn-toolbar">
+      {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
+        No, keep the support
+      {{/bs-button}}
+      {{#spin-button
+        class="btn btn-sm btn-danger"
+        action=(action "revokeSpace")
+      }}
+        {{one-icon icon="remove"}} <span>Yes, revoke</span>
+      {{/spin-button}}
+    </div>
+{{/bs-modal}}

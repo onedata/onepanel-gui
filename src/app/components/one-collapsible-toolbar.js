@@ -36,7 +36,7 @@ import ContentOverflowDetector from 'onepanel-gui/mixins/content-overflow-detect
 const {
   computed,
   computed: {
-    alias,
+    oneWay,
   },
   inject: {
     service
@@ -51,6 +51,13 @@ export default Ember.Component.extend(ClickOutside, ContentOverflowDetector, {
   classNameBindings: ['stateClasses', 'isMinimized:minimized'],
 
   globalCollapsibleToolbar: service(),
+
+  /**
+   * Optional to inject.
+   * Additional class for toggle.
+   * @type {string}
+   */
+  toggleBtnClass: '',
 
   /**
    * Is that collapsible-toolbar a global toolbar?
@@ -73,7 +80,7 @@ export default Ember.Component.extend(ClickOutside, ContentOverflowDetector, {
 
   minimumFullWindowSize: 768,
 
-  isMinimized: alias('hasOverflow'),
+  isMinimized: oneWay('hasOverflow'),
 
   _internalDropdownOpened: false,
   dropdownOpened: computed('isGlobal', 'globalCollapsibleToolbar.isDropdownOpened', {

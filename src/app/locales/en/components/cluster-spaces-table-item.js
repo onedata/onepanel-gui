@@ -7,4 +7,11 @@ export default {
   storage: 'This provider storage',
   storageImport,
   storageUpdate,
+  minute: 'Minute',
+  hour: 'Hour',
+  day: 'Day',
+  syncDone: 'Synchronization done, live statistics disabled',
+  cancelSyncConfig: 'Cancel sync. configuration',
+  syncConfig: 'Configure data synchronization',
+  revokeSpaceSupport: 'Revoke space support',
 };

@@ -1,0 +1,14 @@
+<div class="row content-row">
+  <strong>Synchronization files processing</strong>
+  {{one-label-tip
+    title="The chart shows how many files was processed with operations of given type in specific time periods"
+    placement="top"
+  }}
+</div>
+<div class="row content-row chart-row scrollable">
+  {{#if syncChartDataError}}
+    {{resource-load-error reason=syncChartDataError}}
+  {{else}}
+    {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
+  {{/if}}
+</div>

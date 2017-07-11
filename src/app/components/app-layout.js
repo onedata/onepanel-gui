@@ -94,13 +94,7 @@ export default Ember.Component.extend({
     return htmlSafe(`${base} ${xsClass}`);
   }),
 
-  colContentClass: computed('showMobileSidebar', function () {
-    let showMobileSidebar = this.get('showMobileSidebar');
-    let base =
-      'col-in-app-layout col-content col-xs-12 full-height';
-    let xsClass = (showMobileSidebar ? 'hidden-xs' : 'col-xs-12');
-    return htmlSafe(`${base} ${xsClass}`);
-  }),
+  colContentClass: 'col-in-app-layout col-content col-xs-12 full-height',
 
   init() {
     this._super(...arguments);
@@ -118,6 +112,7 @@ export default Ember.Component.extend({
     });
     eventsBus.on('sidebar:select', () => {
       this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.CONTENT);
+      this.$('.col-content').scrollTop(0);
     });
   },
 

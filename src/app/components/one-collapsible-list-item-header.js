@@ -19,10 +19,16 @@ import { invokeAction } from 'ember-invoke-action';
  */
 export default Ember.Component.extend({
   tagName: 'div',
-  classNames: ['one-collapsible-list-item-header', 'row', 'truncate'],
+  classNames: ['one-collapsible-list-item-header', 'row', 'list-header-row', 'truncate'],
   classNameBindings: ['isOpened:opened', 'isCollapsible:collapsible',
-    'toolbarWhenOpened:toolbar-when-opened'
+    'toolbarWhenOpened:toolbar-when-opened', 'disableToggleIcon:disable-toggle-icon',
   ],
+
+  /**
+   * If true, do not render toggle icon even if header if isCollapsible
+   * @type {boolean}
+   */
+  disableToggleIcon: false,
 
   click(event) {
     const selector = '.btn-toolbar *, .webui-popover *';

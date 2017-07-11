@@ -237,3 +237,11 @@ form {
     text-align: center;
   }
 }
+
+.btn-group-addon {
+  display: inline-block;
+  margin: $padding-base-vertical $padding-base-horizontal;
+  &.btn-group-addon-sm {
+    margin: $padding-small-vertical $padding-small-horizontal;
+  }
+}
