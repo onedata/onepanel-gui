@@ -23,6 +23,7 @@ const {
   observer,
   computed,
   computed: { readOnly },
+  isEmpty,
 } = Ember;
 
 /**
@@ -143,34 +144,13 @@ export default Mixin.create({
    */
   timeStatsLoading: true,
 
-  // TODO sync stats freezing disabled due to bugs
+  /**
+   * If true, statistics are not updated live, but only archival ones are
+   * presented. There should be also clear information about that.
+   * It is set to true on full stats update when import is done (without update).
+   * @type {boolean}
+   */
   statsFrozen: false,
-  // /**
-  //  * If true, statistics are not updated live, but only archival ones are
-  //  * presented. There should be also clear information about that.
-  //  * @type {boolean}
-  //  */
-  // statsFrozen: computed(
-  //   'space.{importEnabled,updateEnabled}',
-  //   'timeStats',
-  //   '_syncStats.importStatus',
-  //   function () {
-  //     let {
-  //       space,
-  //       _syncStats,
-  //       timeStats,
-  //     } = this.getProperties(
-  //       'space',
-  //       '_syncStats',
-  //       'timeStats'
-  //     );
-
-  //     return space && _syncStats &&
-  //       get(space, 'updateEnabled') === false &&
-  //       !isEmpty(timeStats) &&
-  //       get(space, 'importEnabled') &&
-  //       get(_syncStats, 'importStatus') === 'done';
-  //   }),
 
   init() {
     this._super(...arguments);
@@ -221,18 +201,7 @@ export default Mixin.create({
    */
   checkSyncStatusUpdate() {
     if (this.shouldRefreshSyncStatus()) {
-      let syncStatsPromise =
-        this.get('spaceManager').getSyncStatusOnly(this.get('space.id'));
-
-      syncStatsPromise.then(newSyncStats => {
-        this.updateSyncStatsWithStatusOnly(newSyncStats);
-      });
-
-      syncStatsPromise.finally(() => {
-        this.set('_lastSyncStatusRefresh', Date.now());
-      });
-
-      // TODO status fetch error handling
+      this.fetchStatusSyncStats();
     }
   },
 
@@ -251,6 +220,21 @@ export default Mixin.create({
     }
   },
 
+  fetchStatusSyncStats() {
+    let syncStatsPromise =
+      this.get('spaceManager').getSyncStatusOnly(this.get('space.id'));
+
+    syncStatsPromise.then(newSyncStats => {
+      this.updateSyncStatsWithStatusOnly(newSyncStats);
+    });
+
+    syncStatsPromise.finally(() => {
+      this.set('_lastSyncStatusRefresh', Date.now());
+    });
+
+    // TODO status fetch error handling
+  },
+
   fetchAllSyncStats() {
     let syncInterval = this.get('syncInterval');
 
@@ -261,6 +245,15 @@ export default Mixin.create({
       );
 
     syncStatsPromise.then(newSyncStats => {
+      if (newSyncStats &&
+        this.get('space.updateEnabled') === false &&
+        !isEmpty(get(newSyncStats, 'stats')) &&
+        this.get('space.importEnabled') &&
+        get(newSyncStats, 'importStatus') === 'done') {
+
+        this.set('statsFrozen', true);
+      }
+
       this.setProperties({
         lastStatsUpdateTime: Date.now(),
         _syncStats: newSyncStats,
@@ -274,12 +267,12 @@ export default Mixin.create({
       });
     });
 
-    syncStatsPromise.finally(() =>
+    syncStatsPromise.finally(() => {
       this.setProperties({
         timeStatsLoading: false,
         _lastSyncStatusRefresh: Date.now(),
-      })
-    );
+      });
+    });
   },
 
   reconfigureSyncWatchers: on('init',
