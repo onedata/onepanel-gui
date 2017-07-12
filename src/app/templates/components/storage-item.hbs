@@ -31,6 +31,14 @@
             {{/if}}
           </div>
         {{/each}}
+        {{#if supportedSpaces}}
+          <div class="row content-row">
+            <strong>{{t 'components.storageItem.generic.supportedSpaces'}}:</strong>
+            {{#each supportedSpaces as |space|}}
+              <div class="row content-row nested-row">{{space.name}}</div>
+            {{/each}}
+          </div>
+        {{/if}}
       </td>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
     </tr>

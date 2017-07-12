@@ -27,6 +27,7 @@ const {
 
 export default Ember.Component.extend({
   storageManager: service(),
+  spaceManager: service(),
   globalNotify: service(),
 
   /**
@@ -39,6 +40,11 @@ export default Ember.Component.extend({
    * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
    */
   storagesProxy: null,
+
+  /**
+   * @type {ObjectPromiseProxy} spacesProxy resolves with spaces list ArrayProxy
+   */
+  spacesProxy: null,
 
   /**
    * Form for adding new storage is opened or not?
@@ -58,6 +64,7 @@ export default Ember.Component.extend({
   init() {
     this._super(...arguments);
     this._updateStoragesProxy();
+    this._updateSpacesProxy();
   },
 
   /**
@@ -66,6 +73,14 @@ export default Ember.Component.extend({
   _updateStoragesProxy() {
     let storageManager = this.get('storageManager');
     this.set('storagesProxy', storageManager.getStorages(true));
+  },
+
+  /**
+   * Force update spaces list - makes an API call
+   */
+  _updateSpacesProxy() {
+    let spaceManager = this.get('spaceManager');
+    this.set('spacesProxy', spaceManager.getSpaces());
   },
 
   /**
