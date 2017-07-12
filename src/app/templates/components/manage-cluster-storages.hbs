@@ -23,6 +23,10 @@
 </div>
 <div class="row">
   {{#promise-proxy-container proxy=storagesProxy}}
-    {{cluster-storage-table storages=storagesProxy.content}}
+    {{#promise-proxy-container proxy=spacesProxy}}
+      {{cluster-storage-table 
+        storages=storagesProxy.content 
+        spaces=spacesProxy.content}}
+    {{/promise-proxy-container}}
   {{/promise-proxy-container}}
 </div>

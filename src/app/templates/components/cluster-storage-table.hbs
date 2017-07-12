@@ -3,7 +3,7 @@
 {{#one-collapsible-list as |list|}}
   {{#each storages as |storage|}}
     {{#list.item as |listItem|}}
-      {{storage-item listItem=listItem storage=storage.content}}
+      {{storage-item listItem=listItem storage=storage.content spaces=spaces}}
     {{/list.item}}
   {{/each}}
 {{/one-collapsible-list}}
