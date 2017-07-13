@@ -1,7 +1,7 @@
 {
   "name": "onepanel-gui",
-  "version": "0.0.1",
-  "description": "Small description for onepanel-gui goes here",
+  "version": "17.06.0-beta6",
+  "description": "A web frontend for Onepanel - control panel for Onedata",
   "license": "MIT",
   "author": "",
   "directories": {
