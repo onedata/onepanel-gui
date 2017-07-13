@@ -33,6 +33,10 @@ $table-item-border: 1px solid $main-border-color;
   overflow: auto;
 }
 
+.transparent {
+  opacity: 0;
+}
+
 .truncate {
   white-space: nowrap;
   overflow: hidden;

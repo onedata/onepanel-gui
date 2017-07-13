@@ -18,6 +18,19 @@
         <div class="row content-row">
           <strong>Type:</strong> <span class="one-label">{{storageType}}</span>
         </div>
+        <div class="row content-row">
+          <strong>{{t (concat "components.clusterStorageAddForm.generic.lumaEnabled")}}:</strong> 
+          {{one-way-toggle
+            checked=(get storage "lumaEnabled")
+            isReadOnly=true
+          }}
+        </div>
+        {{#if (get storage "lumaEnabled")}}
+          <div class="row content-row">
+            <strong>{{t (concat "components.clusterStorageAddForm.generic.lumaUrl")}}:</strong> 
+            <span class="one-label">{{get storage "lumaUrl"}}</span>
+          </div>
+        {{/if}}
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
             <strong>{{t (concat translationPrefix storageProperty)}}:</strong>
