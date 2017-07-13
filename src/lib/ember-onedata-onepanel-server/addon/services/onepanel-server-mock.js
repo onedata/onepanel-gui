@@ -18,6 +18,7 @@ import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import _ from 'lodash';
+import Onepanel from 'npm:onepanel';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -36,6 +37,10 @@ const {
   get,
 } = Ember;
 
+const {
+  StorageDetails
+} = Onepanel;
+
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 const MOCKED_SUPPORT = {
@@ -44,7 +49,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 214000000,
 };
 
-const MOCK_SERVICE_TYPE = 'zone';
+const MOCK_SERVICE_TYPE = 'provider';
 
 function _genSupportingProviders() {
   let supportingProviders = {};
@@ -234,7 +239,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         lumaEnabled: true,
         lumaUrl: 'http://localhost:9090'
       };
-      this.get('__storages').push(storage1);
+      this.get('__storages').push(StorageDetails.constructFromObject(storage1));
       let spaces = this.get('__spaces');
       spaces.push({
         id: 'space1_verylongid',
@@ -385,7 +390,11 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         let storage = _.values(storages)[0];
         // generate some fake id
         let id = `id-${storage.name}`;
-        this.get('__storages').push(_.assign({ id }, storage));
+        this.get('__storages').push(
+          StorageDetails.constructFromObject(
+            _.assign({ id }, storage)
+          )
+        );
       },
     };
   }),
