@@ -229,6 +229,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         id: 'space1_verylongid',
         name: 'Space One',
         storageId: storage1.id,
+        mountInRoot: true,
         storageImport: {
           strategy: 'no_import',
         },

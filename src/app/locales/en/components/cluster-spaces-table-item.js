@@ -4,6 +4,7 @@ import storageUpdate from './-space/storage-update';
 export default {
   id: 'Id',
   name: 'Name',
+  mountInRoot: 'Mount in root',
   storage: 'This provider storage',
   storageImport,
   storageUpdate,
