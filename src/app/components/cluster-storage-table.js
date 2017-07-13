@@ -15,4 +15,9 @@ export default Ember.Component.extend({
    * @type {Array.ObjectProxy.Onepanel.StorageDetails}
    */
   storages: null,
+
+  /**
+   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   */
+  spaces: null,
 });
