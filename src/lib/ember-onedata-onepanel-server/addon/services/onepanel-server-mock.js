@@ -44,6 +44,8 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 214000000,
 };
 
+const MOCK_SERVICE_TYPE = 'zone';
+
 function _genSupportingProviders() {
   let supportingProviders = {};
   supportingProviders[PROVIDER_ID] = 700000000;
@@ -84,7 +86,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
    * A onepanel typ: "provider" or "zone"
    * @type {computed.string}
    */
-  serviceType: 'provider',
+  serviceType: null,
 
   /**
    * @returns {Promise}
@@ -99,6 +101,13 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
   destroyClient() {
     this.setProperties({
       isInitialized: false,
+    });
+  },
+
+  fetchAndSetServiceType() {
+    return new Promise(resolve => {
+      this.set('serviceType', MOCK_SERVICE_TYPE);
+      resolve(MOCK_SERVICE_TYPE);
     });
   },
 
