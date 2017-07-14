@@ -10,7 +10,7 @@
 import Ember from 'ember';
 import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
-import _object from 'lodash/object';
+import _ from 'lodash';
 
 import stripObject from 'onepanel-gui/utils/strip-object';
 import OneForm from 'onepanel-gui/components/one-form';
@@ -35,9 +35,11 @@ function createValidations(storageTypes, genericFields) {
     });
   });
   genericFields.forEach(field => {
-    let fieldName = 'allFieldsValues.generic.' + field.name;
+    let fieldName;
     if (field.name === 'lumaUrl') {
       fieldName = 'allFieldsValues.generic_luma.' + field.name;
+    } else {
+      fieldName = 'allFieldsValues.generic.' + field.name;
     }
     validations[fieldName] = createFieldValidator(field);
   });
@@ -87,7 +89,7 @@ export default OneForm.extend(Validations, {
 
   genericFields: null,
   storageTypes: computed(() =>
-    storageTypes.map(type => _object.assign({}, type))).readOnly(),
+    storageTypes.map(type => _.assign({}, type))).readOnly(),
 
   selectedStorageType: null,
 
@@ -122,8 +124,7 @@ export default OneForm.extend(Validations, {
 
   showLumaPrefixObserver: observer('showLumaPrefix', function () {
     // make luma fields transparent (for animation purposes)
-    this.get('allFields')
-      .filter(f => f.get('name') === 'generic_luma.lumaUrl')[0]
+    _.find(this.get('allFields'), (f) => f.get('name') === 'generic_luma.lumaUrl')
       .set('cssClass', 'transparent');
     this.resetFormValues(['generic_luma']);
   }),
@@ -137,11 +138,10 @@ export default OneForm.extend(Validations, {
     this.set('genericFields', GENERIC_FIELDS.map(fields =>
       Ember.Object.create(fields)));
     this.get('genericFields').forEach(field => {
-      if (field.get('name') === 'lumaUrl') {
-        field.set('name', 'generic_luma.' + field.get('name'));
-      } else {
-        field.set('name', 'generic.' + field.get('name'));
-      }
+      let fieldName = field.get('name');
+      field.set('name',
+        `generic${fieldName === 'lumaUrl' ? '_luma' : ''}.${fieldName}`
+      );
     });
     this.get('storageTypes').forEach(type =>
       type.fields = type.fields.map(field =>
