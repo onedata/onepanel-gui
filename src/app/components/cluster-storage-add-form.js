@@ -16,6 +16,7 @@ import stripObject from 'onepanel-gui/utils/strip-object';
 import OneForm from 'onepanel-gui/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
+import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
 
 const {
@@ -26,7 +27,7 @@ const {
   }
 } = Ember;
 
-function createValidations(storageTypes, genericFields) {
+function createValidations(storageTypes, genericFields, lumaFields) {
   let validations = {};
   storageTypes.forEach(type => {
     type.fields.forEach(field => {
@@ -35,18 +36,19 @@ function createValidations(storageTypes, genericFields) {
     });
   });
   genericFields.forEach(field => {
-    let fieldName;
-    if (field.name === 'lumaUrl') {
-      fieldName = 'allFieldsValues.generic_luma.' + field.name;
-    } else {
-      fieldName = 'allFieldsValues.generic.' + field.name;
-    }
-    validations[fieldName] = createFieldValidator(field);
+    validations['allFieldsValues.generic.' + field.name] =
+      createFieldValidator(field);
+  });
+
+  lumaFields.forEach(field => {
+    validations['allFieldsValues.luma.' + field.name] =
+      createFieldValidator(field);
   });
   return validations;
 }
 
-const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS));
+const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS,
+  LUMA_FIELDS));
 
 const VISIBILITY_ANIMATION_TIME = 333;
 
@@ -58,21 +60,24 @@ export default OneForm.extend(Validations, {
       showLumaPrefix
     } = this.getProperties('selectedStorageType', 'showLumaPrefix');
     if (showLumaPrefix) {
-      return ['generic', 'generic_luma', selectedStorageType.id];
+      return ['generic', 'luma', selectedStorageType.id];
     } else {
       return ['generic', selectedStorageType.id];
     }
   }),
-  allFields: computed('storageTypes.@each.fields', 'genericFields', function () {
-    let {
-      storageTypes,
-      genericFields
-    } = this.getProperties('storageTypes', 'genericFields');
-    return storageTypes
-      .concat({ fields: genericFields })
-      .map(type => type.fields)
-      .reduce((a, b) => a.concat(b));
-  }),
+  allFields: computed('storageTypes.@each.fields', 'genericFields',
+    'lumaFields',
+    function () {
+      let {
+        storageTypes,
+        genericFields,
+        lumaFields
+      } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
+      return storageTypes
+        .concat([{ fields: genericFields }, { fields: lumaFields }])
+        .map(type => type.fields)
+        .reduce((a, b) => a.concat(b));
+    }),
 
   classNames: ['cluster-storage-add-form'],
 
@@ -88,25 +93,27 @@ export default OneForm.extend(Validations, {
   showLumaPrefixTimeoutId: -1,
 
   genericFields: null,
+  lumaFields: null,
   storageTypes: computed(() =>
     storageTypes.map(type => _.assign({}, type))).readOnly(),
 
   selectedStorageType: null,
 
-  allFieldsValues: computed('genericFields', 'storageTypes', function () {
+  allFieldsValues: computed('genericFields', 'lumaFields', 'storageTypes', function () {
     let fields = Ember.Object.create({
       generic: Ember.Object.create({}),
-      generic_luma: Ember.Object.create({})
+      luma: Ember.Object.create({})
     });
     let {
       genericFields,
+      lumaFields,
       storageTypes
-    } = this.getProperties('genericFields', 'storageTypes');
+    } = this.getProperties('genericFields', 'lumaFields', 'storageTypes');
     storageTypes.forEach(type => {
       fields.set(type.id, Ember.Object.create({}));
       type.fields.forEach(field => fields.set(field.get('name'), null));
     });
-    genericFields.forEach(field =>
+    genericFields.concat(lumaFields).forEach(field =>
       fields.set(field.get('name'), null)
     );
     return fields;
@@ -124,9 +131,9 @@ export default OneForm.extend(Validations, {
 
   showLumaPrefixObserver: observer('showLumaPrefix', function () {
     // make luma fields transparent (for animation purposes)
-    _.find(this.get('allFields'), (f) => f.get('name') === 'generic_luma.lumaUrl')
-      .set('cssClass', 'transparent');
-    this.resetFormValues(['generic_luma']);
+    this.get('allFields').filter(f => f.get('name').startsWith('luma.'))
+      .forEach(f => f.set('cssClass', 'transparent'));
+    this.resetFormValues(['luma']);
   }),
 
   init() {
@@ -139,9 +146,13 @@ export default OneForm.extend(Validations, {
       Ember.Object.create(fields)));
     this.get('genericFields').forEach(field => {
       let fieldName = field.get('name');
-      field.set('name',
-        `generic${fieldName === 'lumaUrl' ? '_luma' : ''}.${fieldName}`
-      );
+      field.set('name', `generic.${fieldName}`);
+    });
+    this.set('lumaFields', LUMA_FIELDS.map(fields =>
+      Ember.Object.create(fields)));
+    this.get('lumaFields').forEach(field => {
+      let fieldName = field.get('name');
+      field.set('name', `luma.${fieldName}`);
     });
     this.get('storageTypes').forEach(type =>
       type.fields = type.fields.map(field =>
@@ -163,7 +174,8 @@ export default OneForm.extend(Validations, {
     let {
       storageTypes,
       genericFields,
-    } = this.getProperties('storageTypes', 'genericFields');
+      lumaFields
+    } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
     storageTypes.forEach(({ id: typeId, fields }) => {
       fields.forEach(field =>
         this._addFieldLabelTranslation(typeId, field, i18n)
@@ -171,6 +183,9 @@ export default OneForm.extend(Validations, {
     });
     genericFields.forEach(field =>
       this._addFieldLabelTranslation('generic', field, i18n)
+    );
+    lumaFields.forEach(field =>
+      this._addFieldLabelTranslation('luma', field, i18n)
     );
   },
 
@@ -183,7 +198,7 @@ export default OneForm.extend(Validations, {
   },
 
   _toggleLumaPrefixAnimation(show) {
-    let formGroup = this.$('.field-generic_luma-lumaUrl').parents('.form-group');
+    let formGroup = this.$('[class*="field-luma-"]').parents('.form-group');
     formGroup
       .addClass('animated fast ' + (show ? 'fadeIn' : 'fadeOut'))
       .removeClass(show ? 'fadeOut' : 'fadeIn');
@@ -204,8 +219,8 @@ export default OneForm.extend(Validations, {
           this.set('showLumaPrefix', value);
           // remove transparent class to avoid visibility issues after rerender
           setTimeout(() => this.get('allFields')
-            .filter(f => f.get('name') === 'generic_luma.lumaUrl')[0]
-            .set('cssClass', ''), VISIBILITY_ANIMATION_TIME);
+            .filter(f => f.get('name').startsWith('luma.'))
+            .forEach(f => f.set('cssClass', '')), VISIBILITY_ANIMATION_TIME);
         } else {
           this.set('showLumaPrefixTimeoutId', setTimeout(
             () => this.set('showLumaPrefix', value),
@@ -244,6 +259,7 @@ export default OneForm.extend(Validations, {
       currentFields.forEach(({ name }) => {
         formData[this.cutOffPrefix(name)] = formValues.get(name);
       });
+
       return invokeAction(this, 'submit',
         stripObject(formData, [undefined, null, '']));
     },

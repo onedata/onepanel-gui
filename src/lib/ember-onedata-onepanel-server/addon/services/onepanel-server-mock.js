@@ -237,7 +237,8 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         name: 'Some storage',
         mountPoint: '/mnt/st1',
         lumaEnabled: true,
-        lumaUrl: 'http://localhost:9090'
+        lumaUrl: 'http://localhost:9090',
+        lumaCacheTimeout: 10
       };
       this.get('__storages').push(StorageDetails.constructFromObject(storage1));
       let spaces = this.get('__spaces');

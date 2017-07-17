@@ -22,6 +22,7 @@ export default function createFieldValidator(field) {
       lte: field.lte,
       gt: field.gt,
       lt: field.lt,
+      integer: field.integer
     }));
   }
   return validations;

@@ -6,11 +6,5 @@ export default [
       ' the mappings during operations on storage. If disabled, some random' + 
       ' credentials (e.g. uid and gid on POSIX storage) will be generated for' + 
       ' every user.'
-  },
-  { 
-    name: 'lumaUrl', 
-    type: 'text', 
-    example: 'http://localhost:9090', 
-    tip: 'The URL of your LUMA instance, must be reachable from all Oneprovider nodes.'
   }
 ];

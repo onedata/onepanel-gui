@@ -16,6 +16,7 @@ import _flatten from 'lodash/flatten';
 
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
+import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 
 const {
   Component,
@@ -28,6 +29,11 @@ const {
 const GENERIC_STORAGE_PROPERTIES = ['id', 'type', ...GENERIC_FIELDS.map(f => f.name)];
 
 /**
+ * Properties of Onepanel.StorageDetails that describe LUMA configuration
+ */
+const LUMA_PROPERTIES = LUMA_FIELDS.map(f => f.name);
+
+/**
  * All fields of "password" type are not shown on storage details
  */
 const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
@@ -36,6 +42,7 @@ const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
 
 const REJECTED_STORAGE_PROPERTIES = [
   ...GENERIC_STORAGE_PROPERTIES,
+  ...LUMA_PROPERTIES,
   ...HIDDEN_STORAGE_PROPERTIES
 ];
 
