@@ -21,9 +21,8 @@ describe('Integration | Component | cluster storage add form', function () {
   });
 
   it('renders fields for POSIX storage type if "posix" is injected', function () {
-    // -1 because of hidden Luma URL field
     let totalFields = Object.keys(GenericFields).length + Object.keys(PosixFields)
-      .length - 1;
+      .length;
 
     this.set('selectedStorageType', {
       id: 'posix',
