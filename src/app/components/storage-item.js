@@ -92,6 +92,12 @@ export default Component.extend({
   }),
 
   /**
+   * List of LUMA-related storage properties
+   * @type {Array.string}
+   */
+  lumaProperties: LUMA_PROPERTIES,
+
+  /**
    * List of spaces supported by this storage
    * @type {Array.Onepanel.SpaceDetails}
    */

@@ -99,6 +99,7 @@ input {
 
 .item-table {
   width: 100%;
+  table-layout: fixed;
   tr:not(:last-of-type) {
     border-bottom: $table-item-border;
     &.no-border {
@@ -128,6 +129,7 @@ input {
       margin: 0 2em;
       padding-left: 0;
       padding-right: 0;
+      word-wrap: break-word;
       @media screen and (max-width: $screen-md) {
         border-bottom: $table-item-border;
       }

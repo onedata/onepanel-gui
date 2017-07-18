@@ -1,4 +1,5 @@
 export default {
   lumaUrl: 'LUMA URL',
-  lumaCacheTimeout: 'LUMA cache timeout [min]'
+  lumaCacheTimeout: 'LUMA cache timeout [min]',
+  lumaApiKey: 'LUMA API key'
 };

@@ -25,5 +25,11 @@ export default function createFieldValidator(field) {
       integer: field.integer
     }));
   }
+  if (field.regex) {
+    validations.push(validator('format', {
+      regex: field.regex,
+      message: field.regexMessage
+    }));
+  }
   return validations;
 }

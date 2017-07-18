@@ -26,14 +26,12 @@
           }}
         </div>
         {{#if (get storage "lumaEnabled")}}
-          <div class="row content-row">
-            <strong>{{t (concat "components.clusterStorageAddForm.luma.lumaUrl")}}:</strong> 
-            <span class="one-label">{{get storage "lumaUrl"}}</span>
-          </div>
-          <div class="row content-row">
-            <strong>{{t (concat "components.clusterStorageAddForm.luma.lumaCacheTimeout")}}:</strong> 
-            <span class="one-label">{{get storage "lumaCacheTimeout"}}</span>
-          </div>
+          {{#each lumaProperties as |lumaProperty|}}
+            <div class="row content-row">
+              <strong>{{t (concat "components.clusterStorageAddForm.luma." lumaProperty)}}:</strong> 
+              <span class="one-label">{{get storage lumaProperty}}</span>
+            </div>
+          {{/each}}
         {{/if}}
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">

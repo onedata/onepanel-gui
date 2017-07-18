@@ -1,5 +1,5 @@
 export default [
-  { 
+  {
     name: 'lumaUrl', 
     type: 'text', 
     example: 'http://localhost:9090', 
@@ -17,5 +17,13 @@ export default [
       'synchronization delay when mapping changes. "0" is no cache - this ' +
       'may cause a serious degradation of file-ops performance, but mapping ' +
       'changes in LUMA will have an instantaneous effect.'
-  }
+  },
+  {
+    name: 'lumaApiKey',
+    type: 'text',
+    regex: /^[a-z0-9_]+$/,
+    regexMessage: 'This field can contain only lowercase alphanumeric characters and _',
+    tip: 'Arbitrary alphanumeric string that identifies this storage, will be ' +
+      'sent in requests to LUMA.'
+  },
 ];
