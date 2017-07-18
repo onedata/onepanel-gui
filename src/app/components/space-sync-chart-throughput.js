@@ -33,7 +33,10 @@ export default SpaceSyncChartBase.extend({
    * @type {Object}
    */
   chartOptions: {
-    stackBars: true,
+    axisY: {
+      onlyInteger: true,
+    },
+    low: 0,
     chartPadding: 30,
     lineSmooth: Chartist.Interpolation.simple({
       divisor: 2
