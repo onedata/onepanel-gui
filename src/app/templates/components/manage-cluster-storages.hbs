@@ -1,15 +1,17 @@
-<div class="row content-row header-row">
+<div class="row content-row header-row {{unless nextStep "hidden-xs"}}">
   <h1>Storages
     <div class="btn-toolbar">
       {{#unless noStorages}}
-        {{#bs-button type="default" class="btn-sm" onClick=(action "toggleAddStorageForm")}}
-          {{_addStorageButtonLabel}}
-        {{/bs-button}}
-        {{#if finishButton}}
-          {{#bs-button type="primary" class="btn-sm" onClick=(action "next")}}
-            Finish
-          {{/bs-button}}
-        {{/if}}
+        {{#one-collapsible-toolbar isGlobal=true isMinimized=false as |dropdown|}}
+          {{#dropdown.item buttonStyle="default" triggerClasses="btn-add-storage" itemAction=(action "toggleAddStorageForm")}}
+            {{_addStorageButtonLabel}}
+          {{/dropdown.item}}
+          {{#if finishButton}}
+            {{#dropdown.item buttonStyle="primary" triggerClasses="btn-add-storage" itemAction=(action "next")}}
+              Finish
+            {{/dropdown.item}}
+          {{/if}}
+        {{/one-collapsible-toolbar}}
       {{/unless}}
     </div>
   </h1>

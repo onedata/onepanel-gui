@@ -48,6 +48,26 @@ export default Ember.Component.extend({
   // TODO: too much relations: we got mainMenuItemChanged event
   currentTabId: computed.oneWay('mainMenu.currentItemId'),
   sidenavTabId: null,
+  sidebarSecondaryItem: null,
+  mobileAppLayoutHeader: computed('mobileAppLayoutState', 'currentTabId', 
+    'sidebarSecondaryItem', function () {
+    let {
+      mobileAppLayoutState,
+      currentTabId,
+      sidebarSecondaryItem
+    } = this.getProperties(
+      'mobileAppLayoutState', 
+      'currentTabId', 
+      'sidebarSecondaryItem'
+    );
+    if (mobileAppLayoutState === MOBILE_APPLAYOUT_STATE.SIDEBAR ||
+      !sidebarSecondaryItem) {
+      return currentTabId;
+    }
+    else {
+      return sidebarSecondaryItem.label;
+    }
+  }),
   mobileAppLayoutState: MOBILE_APPLAYOUT_STATE.SIDEBAR,
   showMobileSidebar: computed.equal('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.SIDEBAR),
 
@@ -110,9 +130,10 @@ export default Ember.Component.extend({
         this.set('sidenavTabId', null);
       }
     });
-    eventsBus.on('sidebar:select', () => {
+    eventsBus.on('sidebar:select', (sidebarSecondaryItem) => {
       this.set('mobileAppLayoutState', MOBILE_APPLAYOUT_STATE.CONTENT);
       this.$('.col-content').scrollTop(0);
+      this.set('sidebarSecondaryItem', sidebarSecondaryItem);
     });
   },
 

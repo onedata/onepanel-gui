@@ -1,24 +1,20 @@
   {{!-- TODO i18n --}}
   
-<div class="row content-row header-row">
+<div class="row content-row header-row hidden-xs">
   <h1>Spaces
+    {{!-- Only for development --}}
+    {{!--{{#spin-button
+      action=(action "updateSpacesList")
+      class="btn btn-sm btn-default btn-update-spaces-list"
+    }}
+      Refresh list
+    {{/spin-button}}--}}
     {{#if _isToolbarVisible}}
-      <div class="btn-toolbar">
-        {{!-- Only for development --}}
-        {{!--{{#spin-button
-          action=(action "updateSpacesList")
-          class="btn btn-sm btn-default btn-update-spaces-list"
-        }}
-          Refresh list
-        {{/spin-button}}--}}
-        {{#bs-button
-          onClick=(action "toggleSupportSpaceForm")
-          type=_supportSpaceButtonType
-          class="btn-sm btn-support-space"
-        }}
+      {{#one-collapsible-toolbar isGlobal=true isMinimized=false as |dropdown|}}
+        {{#dropdown.item buttonStyle=_supportSpaceButtonType triggerClasses="btn-support-space" itemAction=(action "toggleSupportSpaceForm")}}
           {{_supportSpaceButtonLabel}}
-        {{/bs-button}}
-      </div>
+        {{/dropdown.item}}
+      {{/one-collapsible-toolbar}}
     {{/if}}
   </h1>
 </div>

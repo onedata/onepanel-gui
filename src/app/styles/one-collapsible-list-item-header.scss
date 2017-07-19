@@ -47,7 +47,7 @@
   
   .btn-menu-toggle {
     @include vertical-align-middle();
-    right: $collapsible-list-item-padding;
+    right: $padding-small-horizontal + 1px;
     padding: $collapsible-list-item-btn-toggle-padding*0.75 $collapsible-list-item-btn-toggle-padding;
   }
 

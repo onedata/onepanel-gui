@@ -56,13 +56,16 @@ describe('Integration | Component | content clusters spaces', function () {
   });
 
   it('shows support space form when clicking on support space button', function (done) {
-    this.render(hbs `{{content-clusters-spaces}}`);
-    this.$('.btn-support-space').click();
+    this.render(hbs `
+      <button class="collapsible-toolbar-global-toggle"></button>
+      {{content-clusters-spaces}}
+    `);
+    this.$('button.btn-support-space').click();
 
     let supportFormAppeared = () => {
       return this.$('.support-space-form').length === 1;
     };
-
+    
     waitFor(supportFormAppeared, {
       resolve: done,
       reject: () => expect(false, 'support form to appear').to.be.ok

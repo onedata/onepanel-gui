@@ -152,7 +152,12 @@ export default Ember.Component.extend(ClickOutside, ContentOverflowDetector, {
     if (isGlobal) {
       globalCollapsibleToolbar.set('isToggleVisible', true);
     }
-    next(this, this.addClickOutsideListener);
+    next(this,() => {
+      if (this.isDestroyed || this.isDestroying) {
+        return;
+      }
+      this.addClickOutsideListener();
+    });
     this.setProperties({
       overflowElement: this.$('.collapsible-toolbar-buttons'),
       overflowParentElement: this.$().parent(),
