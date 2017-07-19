@@ -22,8 +22,10 @@ export default [
     name: 'lumaApiKey',
     type: 'text',
     regex: /^[a-z0-9_]+$/,
+    regexAllowBlank: true,
+    optional: true,
     regexMessage: 'This field can contain only lowercase alphanumeric characters and _',
-    tip: 'Arbitrary alphanumeric string that identifies this storage, will be ' +
-      'sent in requests to LUMA.'
+    tip: 'Optional, arbitrary alphanumeric string that serves as authorization ' +
+      'in requests to LUMA. If not specified, no authorization headers will be sent.'
   },
 ];

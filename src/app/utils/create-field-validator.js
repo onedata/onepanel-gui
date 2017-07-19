@@ -28,7 +28,8 @@ export default function createFieldValidator(field) {
   if (field.regex) {
     validations.push(validator('format', {
       regex: field.regex,
-      message: field.regexMessage
+      message: field.regexMessage,
+      allowBlank: field.regexAllowBlank
     }));
   }
   return validations;

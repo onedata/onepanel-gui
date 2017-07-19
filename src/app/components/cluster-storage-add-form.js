@@ -204,18 +204,6 @@ export default OneForm.extend(Validations, {
       .removeClass(show ? 'fadeOut' : 'fadeIn');
   },
 
-  _generateLumaApiKey() {
-    let storageName = this.get('allFieldsValues.generic.name');
-    let key = '';
-    if (storageName) {
-      key = storageName
-        .replace(new RegExp(' ', 'g'), '_')
-        .replace(/\W/g, '')
-        .toLowerCase();
-    }
-    this.set('allFieldsValues.luma.lumaApiKey', key);
-  },
-
   actions: {
     storageTypeChanged(type) {
       this.set('selectedStorageType', type);
@@ -229,7 +217,6 @@ export default OneForm.extend(Validations, {
         clearTimeout(this.get('showLumaPrefixTimeoutId'));
         if (value) {
           this.set('showLumaPrefix', value);
-          this._generateLumaApiKey();
           // remove transparent class to avoid visibility issues after rerender
           setTimeout(() => this.get('allFields')
             .filter(f => f.get('name').startsWith('luma.'))
@@ -241,13 +228,6 @@ export default OneForm.extend(Validations, {
           ));
         }
         Ember.run.next(() => this._toggleLumaPrefixAnimation(value));
-      }
-      if (fieldName === 'generic.name') {
-        let lumaApiKeyField = this.get('allFields')
-          .filter(f => f.get('name') === 'luma.lumaApiKey')[0];
-        if (!lumaApiKeyField.get('changed')) {
-          this._generateLumaApiKey();
-        }
       }
     },
 
