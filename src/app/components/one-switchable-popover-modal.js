@@ -13,6 +13,17 @@
  * onHide and onShow are triggered when component would hide/show as 
  * if ``open`` was undefined, but then these events do not launch any internal actions -
  * it can be used to handle interaction with user from outside of the component.
+ * 
+ * Example:
+ * ```
+ *  <button class="trigger">Show popover/modal</button>
+ *  {{#one-switchable-popover-modal
+ *    triggersConfiguration=".trigger"
+ *    as |ospm|}}
+ *    Some content
+ *    <button {{action ospm.close}}>Close me</button>
+ *  {{/one-switchable-popover-modal}}
+ * ```
  *
  * @module components/one-switchable-popover-modal
  * @author Michal Borzecki
@@ -129,8 +140,11 @@ export default Ember.Component.extend(ClickOutside, {
   onHidden: null,
 
   /**
-   * Callback called when popover/modal is going to show. If open property 
-   * is not set and function returns false, show action is stopped
+   * Callback called when popover/modal is going to show. Trigger selector is 
+   * passed as a first argument.
+   * 
+   * If open property is not set and function returns false, show 
+   * action is stopped.
    * @type {Function}
    */
   onShow: null,
@@ -166,6 +180,12 @@ export default Ember.Component.extend(ClickOutside, {
    * @type {Array.Object}
    */
   _triggersConfigurationOld: [],
+
+  /**
+   * Property for testing purposes
+   * @type {Window}
+   */
+  _window: window,
 
   /**
    * If true, component will handle open/close actions on its own.
@@ -205,7 +225,7 @@ export default Ember.Component.extend(ClickOutside, {
    * Unique class for popover component
    * @type {computed.string}
    */
-  _popoverIdClass: computed('elementId', function() {
+  _popoverIdClass: computed('elementId', function () {
     return 'popover-' + this.get('elementId');
   }),
 
@@ -233,7 +253,7 @@ export default Ember.Component.extend(ClickOutside, {
    * Unique class for modal component
    * @type {computed.string}
    */
-  _modalIdClass: computed('elementId', function() {
+  _modalIdClass: computed('elementId', function () {
     return 'modal-' + this.get('elementId');
   }),
 
@@ -242,7 +262,7 @@ export default Ember.Component.extend(ClickOutside, {
    * and _modalIdClass
    * @type {computed.string}
    */
-  _modalClass: computed('componentClass', 'modalClass', '_modalIdClass', 
+  _modalClass: computed('componentClass', 'modalClass', '_modalIdClass',
     function () {
       let {
         componentClass,
@@ -272,7 +292,7 @@ export default Ember.Component.extend(ClickOutside, {
   /**
    * Handles changes of component visibility properties
    */
-  _openAndActiveTriggerSelectorObserver: observer('open', 'activeTriggerSelector', 
+  _openAndActiveTriggerSelectorObserver: observer('open', 'activeTriggerSelector',
     '_triggersConfiguration', function () {
       this.handleManualTriggering();
     }
@@ -288,7 +308,8 @@ export default Ember.Component.extend(ClickOutside, {
     });
   }),
 
-  _activeTriggerConfigurationObserver: observer('_activeTriggerConfiguration',
+  _activeTriggerAndBreakpointObserver: observer(
+    '_activeTriggerConfiguration', 'switchBreakpoint',
     function () {
       this.recomputeRenderMode();
     }
@@ -296,7 +317,7 @@ export default Ember.Component.extend(ClickOutside, {
 
   _contentVisibleObserver: observer('_contentVisible', function () {
     invokeAction(this, this.get('_contentVisible') ? 'onShown' : 'onHidden');
-  }),  
+  }),
 
   didInsertElement() {
     this._super(...arguments);
@@ -306,7 +327,7 @@ export default Ember.Component.extend(ClickOutside, {
     // bind neccessary event listeners
     this.bindTriggerListeners();
     next(this, this.addClickOutsideListener);
-    window.addEventListener('resize', _windowResizeHandler);
+    this.get('_window').addEventListener('resize', _windowResizeHandler);
 
     this.handleManualTriggering();
   },
@@ -319,7 +340,7 @@ export default Ember.Component.extend(ClickOutside, {
     // unbind event listeners
     this.unbindTriggerListeners();
     this.removeClickOutsideListener();
-    window.removeEventListener('resize', _windowResizeHandler);
+    this.get('_window').removeEventListener('resize', _windowResizeHandler);
   },
 
   clickOutside(event) {
@@ -336,7 +357,8 @@ export default Ember.Component.extend(ClickOutside, {
     if (_activeTriggerConfiguration) {
       let clickTarget = $(event.target);
       let triggerSelector = _activeTriggerConfiguration.selector;
-      let excludeSelector = `${triggerSelector}, .${_popoverIdClass}, .${_modalIdClass}`;
+      let excludeSelector =
+        `${triggerSelector}, .${_popoverIdClass}, .${_modalIdClass}`;
       // close only if click is outside the trigger element and the popover
       if (!clickTarget.is(excludeSelector) &&
         clickTarget.parents(excludeSelector).length === 0) {
@@ -388,12 +410,12 @@ export default Ember.Component.extend(ClickOutside, {
     event.stopPropagation();
 
     let targetTrigger = $(event.currentTarget);
-    if (_activeTriggerConfiguration && 
+    if (_activeTriggerConfiguration &&
       _activeTriggerConfiguration.element.is(targetTrigger)) {
       // this trigger is the same as the last used one so only toggle 
       // content visibility
-      if (invokeAction(this, 
-          _contentVisible ? 'onHide' : 'onShow', 
+      if (invokeAction(this,
+          _contentVisible ? 'onHide' : 'onShow',
           _activeTriggerConfiguration.selector) !== false &&
         _handleOpenClose) {
         this.toggleProperty('_contentVisible');
@@ -406,7 +428,8 @@ export default Ember.Component.extend(ClickOutside, {
         if (conf.element.is($(event.currentTarget))) {
           if (_handleOpenClose) {
             this.set('_activeTriggerConfiguration', conf);
-            if (!_contentVisible && invokeAction(this, 'onShow', conf.selector) !== false) {
+            if (!_contentVisible && 
+              invokeAction(this, 'onShow', conf.selector) !== false) {
               this.set('_contentVisible', true);
             }
           } else {
@@ -424,15 +447,20 @@ export default Ember.Component.extend(ClickOutside, {
   recomputeRenderMode() {
     let {
       switchBreakpoint,
-      _activeTriggerConfiguration
-    } = this.getProperties('switchBreakpoint', '_activeTriggerConfiguration');
+      _activeTriggerConfiguration,
+      _window
+    } = this.getProperties(
+      'switchBreakpoint',
+      '_activeTriggerConfiguration',
+      '_window'
+    );
 
     if (!_activeTriggerConfiguration) {
       this.set('_renderMode', 'none');
       return;
     }
 
-    let inModalSize = window.innerWidth < switchBreakpoint;
+    let inModalSize = _window.innerWidth < switchBreakpoint;
     let confMode = _activeTriggerConfiguration.mode;
     if (confMode === 'modal' || (confMode === 'dynamic' && inModalSize)) {
       this.set('_renderMode', 'modal');
@@ -451,8 +479,8 @@ export default Ember.Component.extend(ClickOutside, {
       activeTriggerSelector,
       _triggersConfiguration
     } = this.getProperties(
-      'open', 
-      'activeTriggerSelector', 
+      'open',
+      'activeTriggerSelector',
       '_triggersConfiguration'
     );
 
@@ -468,7 +496,7 @@ export default Ember.Component.extend(ClickOutside, {
 
   actions: {
     close() {
-      if (invokeAction(this, "onHide") !== false && this.get('_handleOpenClose')) {
+      if (invokeAction(this, 'onHide') !== false && this.get('_handleOpenClose')) {
         this.set('_contentVisible', false);
       }
     },
