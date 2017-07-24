@@ -138,7 +138,7 @@ describe('Integration | Component | one switchable popover modal', function () {
       <button class="trigger">Trigger</button>
       {{#one-switchable-popover-modal
         popoverClass="popover-element"
-        triggersConfiguration=".trigger"}}
+        triggersConfiguration=".trigger:popover"}}
         {{contentText}}
       {{/one-switchable-popover-modal}}
     `);
@@ -160,7 +160,7 @@ describe('Integration | Component | one switchable popover modal', function () {
         <button class="trigger">Trigger</button>
         {{#one-switchable-popover-modal
           popoverClass="popover-element"
-          triggersConfiguration=".trigger"}}
+          triggersConfiguration=".trigger:popover"}}
           {{contentText}}
         {{/one-switchable-popover-modal}}
       </div>
