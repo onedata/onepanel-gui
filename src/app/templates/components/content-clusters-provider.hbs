@@ -12,26 +12,13 @@
       {{/dropdown.item}}
     {{/one-collapsible-toolbar}}
   </h1>
-  {{!-- doubled confirmation message for both versions of toolbar - minimized and full --}}
-  {{!-- TODO move to generic component for switchable popovers/modals --}}
-  {{#one-webui-popover
-    class="popover-deregister-provider"
-    placement="bottom-left"
-    triggerSelector=".btn-deregister-provider.btn"
-    submit=submitAction
-    as |popover|
-  }}
-    {{deregister-provider-confirm submitAction=(action "deregister") closeAction=(action popover.hide)}}
-  {{/one-webui-popover}}
-  {{#bs-modal
-    open=_deregisterModalOpen
-    onHidden=(action "closeDeregisterModal")
-    as |modal|
-  }}
-    {{#modal.body}}
-      {{deregister-provider-confirm submitAction=(action "deregister") closeAction=(action "closeDeregisterModal")}}
-    {{/modal.body}}
-  {{/bs-modal}}
+  {{#one-switchable-popover-modal
+    triggersConfiguration=".btn-deregister-provider.btn;a.btn-deregister-provider:modal"
+    popoverClass="popover-deregister-provider"
+    submit=(action "deregister")
+    as |ospm|}}
+    {{deregister-provider-confirm submitAction=ospm.submit closeAction=ospm.close}}
+  {{/one-switchable-popover-modal}}
 </div>
 
 <div class="row">

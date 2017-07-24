@@ -69,6 +69,10 @@ export default Component.extend({
    */
   popoverTrigger: 'click',
 
+  _resizeHandler: computed(function() {
+    return () => this.send('refresh');
+  }),
+
   init() {
     this._super(...arguments);
     let open = this.get('open');
@@ -100,6 +104,7 @@ export default Component.extend({
       elementId,
       padding,
       multi,
+      _resizeHandler
     } = this.getProperties(
       'triggerSelector',
       'animation',
@@ -109,9 +114,9 @@ export default Component.extend({
       'padding',
       'elementId',
       'eventsBus',
-      'multi'
+      'multi',
+      '_resizeHandler'
     );
-
     let $triggerElement = $(triggerSelector);
 
     assert(
@@ -134,8 +139,17 @@ export default Component.extend({
       onHide: () => this.set('_isPopoverVisible', false),
     });
 
-    window.addEventListener('resize', () => this.send('refresh'));
+    window.addEventListener('resize', _resizeHandler);
     this._registerEventsBus();
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+
+    let _resizeHandler = this.get('_resizeHandler');
+
+    this._deregisterEventsBus();
+    window.removeEventListener('resize', _resizeHandler);
   },
 
   _onUpdateEvent: computed(function () {
@@ -169,7 +183,14 @@ export default Component.extend({
   }),
 
   _debounceResizeRefresh() {
-    if (this.get('$triggerElement').is(':visible')) {
+    let {
+      $triggerElement,
+      open
+    } = this.getProperties('$triggerElement', 'open');
+    if (this.isDestroyed || this.isDestroying) {
+      return;
+    }
+    if ($triggerElement.is(':visible') && open !== false) {
       this._popover('show');
     }
     this.set('_debounceTimerEnabled', false);
