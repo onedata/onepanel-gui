@@ -22,6 +22,14 @@ export default function createFieldValidator(field) {
       lte: field.lte,
       gt: field.gt,
       lt: field.lt,
+      integer: field.integer
+    }));
+  }
+  if (field.regex) {
+    validations.push(validator('format', {
+      regex: field.regex,
+      message: field.regexMessage,
+      allowBlank: field.regexAllowBlank
     }));
   }
   return validations;
