@@ -47,8 +47,8 @@ function createValidations(storageTypes, genericFields, lumaFields) {
   return validations;
 }
 
-const Validations = buildValidations(createValidations(storageTypes, GENERIC_FIELDS,
-  LUMA_FIELDS));
+const Validations = buildValidations(createValidations(
+  storageTypes, GENERIC_FIELDS, LUMA_FIELDS));
 
 const VISIBILITY_ANIMATION_TIME = 333;
 
@@ -65,8 +65,7 @@ export default OneForm.extend(Validations, {
       return ['generic', selectedStorageType.id];
     }
   }),
-  allFields: computed('storageTypes.@each.fields', 'genericFields',
-    'lumaFields',
+  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields', 
     function () {
       let {
         storageTypes,
@@ -77,7 +76,8 @@ export default OneForm.extend(Validations, {
         .concat([{ fields: genericFields }, { fields: lumaFields }])
         .map(type => type.fields)
         .reduce((a, b) => a.concat(b));
-    }),
+    }
+  ),
 
   classNames: ['cluster-storage-add-form'],
 

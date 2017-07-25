@@ -17,8 +17,8 @@ import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deploym
 import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
+import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import _ from 'lodash';
-import Onepanel from 'npm:onepanel';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 
@@ -37,9 +37,6 @@ const {
   get,
 } = Ember;
 
-const {
-  StorageDetails
-} = Onepanel;
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -241,7 +238,9 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         lumaCacheTimeout: 10,
         lumaApiKey: 'some_storage'
       };
-      this.get('__storages').push(StorageDetails.constructFromObject(storage1));
+      this.get('__storages').push(
+        clusterStorageClass(storage1.type).constructFromObject(storage1)
+      );
       let spaces = this.get('__spaces');
       spaces.push({
         id: 'space1_verylongid',
@@ -393,7 +392,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         // generate some fake id
         let id = `id-${storage.name}`;
         this.get('__storages').push(
-          StorageDetails.constructFromObject(
+          clusterStorageClass(storage.type).constructFromObject(
             _.assign({ id }, storage)
           )
         );
