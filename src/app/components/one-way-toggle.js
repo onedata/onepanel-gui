@@ -1,7 +1,13 @@
 import Ember from 'ember';
+import RecognizerMixin from 'ember-gestures/mixins/recognizers';
 import { invokeAction, invoke } from 'ember-invoke-action';
 
-const { Component } = Ember;
+const { 
+  Component,
+  run: {
+    next,
+  },
+} = Ember;
 
 /**
  * Creates toggle-like checkbox based one the one-toggle-checkbox component.
@@ -11,10 +17,12 @@ const { Component } = Ember;
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-export default Component.extend({
+export default Component.extend(RecognizerMixin, {
   classNames: ['one-way-toggle'],
   classNameBindings: ['isReadOnly:disabled', 'isReadOnly::clickable'],
   attributeBindings: ['dataOption:data-option'],
+
+  recognizers: 'pan',
 
   /**
    * Element ID for rendered invisible input element
@@ -40,6 +48,13 @@ export default Component.extend({
    */
   dataOption: null,
 
+  /**
+   * If true, click action handler will be disabled
+   * (used by pan event handlers)
+   * @type {boolean}
+   */
+  _disableClick: false,
+
   didInsertElement() {
     this._super(...arguments);
 
@@ -56,7 +71,28 @@ export default Component.extend({
   },
 
   click() {
-    invoke(this, 'toggle');
+    if (!this.get('_disableClick')) {
+      invoke(this, 'toggle');
+    }
+  },
+
+  panStart() {
+    this.set('_disableClick', true);
+  },
+
+  panMove(event) {
+    let toggleElement = this.$('.one-way-toggle-control');
+    let mouseX = event.originalEvent.gesture.center.x;
+    let moveRatio = (mouseX - toggleElement.offset().left) /
+      toggleElement.outerWidth();
+
+    if (this.get('checked') !== moveRatio > 0.5) {
+      invoke(this, 'toggle');
+    }
+  },
+
+  panEnd() {
+    next(() =>this.set('_disableClick', false));
   },
 
   actions: {
