@@ -2,7 +2,9 @@
  * Plugin for Chartist which adds additional label on the right side of the x-axis.
  * 
  * Options:
- * - xOffsetMultiply - label will be moved right by xOffsetMultiply * (default width of a label)
+ * - xOffsetMultiply - label will be moved right by xOffsetMultiply 
+ * (default width of a label)
+ * - insertBefore - label will be inserted before last label node
  *
  * @module utils/chartist/additional-x-label
  * @author Michal Borzecki
@@ -13,6 +15,7 @@
 export default function (options) {
   let defaultOptions = {
     xOffsetMultiply: 1,
+    insertBefore: false,
   };
   options = Chartist.extend({}, defaultOptions, options);
   return (chart) => {
@@ -31,7 +34,11 @@ export default function (options) {
           sourceLabelNode.attr('width'))
       );
       newLabelNode.find('span').text(chart.data.lastLabel);
-      newLabelNode.insertAfter(lastLabelNode);
+      if (!options.insertBefore) {
+        newLabelNode.insertAfter(lastLabelNode);
+      } else {
+        newLabelNode.insertBefore(lastLabelNode);
+      }
     });
   };
 }
