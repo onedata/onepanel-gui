@@ -69,6 +69,11 @@ export default Component.extend(RecognizerMixin, {
       }
     });
   },
+  
+  mouseDown() {
+    // prevent from selected text drag-n-drop while panMove
+    document.getSelection().removeAllRanges();
+  },
 
   click() {
     if (!this.get('_disableClick')) {
@@ -81,6 +86,8 @@ export default Component.extend(RecognizerMixin, {
   },
 
   panMove(event) {
+    document.getSelection().removeAllRanges();
+
     let toggleElement = this.$('.one-way-toggle-control');
     let mouseX = event.originalEvent.gesture.center.x;
     let moveRatio = (mouseX - toggleElement.offset().left) /
