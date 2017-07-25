@@ -15,6 +15,7 @@ import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
 import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
+import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 
 const {
   computed,
@@ -52,6 +53,10 @@ export default SpaceSyncChartBase.extend({
       axisLabels({
         xLabel: 'Time',
         yLabel: 'Op/s',
+      }),
+      additionalXLabel({
+        xOffsetMultiply: 0,
+        insertBefore: true,
       }),
       shortHorizontalGrid(),
       centerLineChart(),
@@ -116,7 +121,7 @@ export default SpaceSyncChartBase.extend({
       );
       _chartValues.push(null);
       return {
-        labels: _.range(0, _chartValues.length).reverse().map(n =>
+        labels: _.range(1, _chartValues.length).reverse().map(n =>
           this.getChartLabel(n)
         ),
         series: [{

@@ -24,7 +24,7 @@ $chart-tooltip-arrow-size: 20px;
         span.ct-end {
           justify-content: center;
           line-height: 1.5;
-          transform: translateX(-50%);
+          margin-left: -50%;
         }
       }
     }
