@@ -1,0 +1,50 @@
+.one-tree {
+  position: relative;
+  margin-left: 1.5em;
+  padding: 1em 0 0 0;
+  list-style-type: none;
+
+  li {
+    position: relative;
+    padding-left: 3em;
+    border-left: 1px solid #cdcdcd;
+
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -1px;
+      width: 2em;
+      height: 0.5em * $line-height-base;
+      border-bottom: 1px solid #cdcdcd;
+      border-left: 1px solid #cdcdcd;
+    }
+
+    &:first-of-type::before {
+      height: 1em * $line-height-base;
+      margin-top: -0.5em * $line-height-base;
+    }
+
+    &:last-of-type {
+      border-left: 1px solid transparent;
+      &::before {
+        bottom: initial;
+      }
+    }
+
+    .tree-circle {
+      position: absolute;
+      left: 2em;
+      width: 8px;
+      height: 8px;
+      top: 0.5em * $line-height-base;
+      margin-left: -1px;
+      transform: translateY(-50%);
+      border: 1px solid #cdcdcd;
+      border-radius: 100%;
+      text-align: center;
+      background-color: white;
+    }
+  }
+}
