@@ -14,6 +14,8 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
+  classNames: ['one-tree-item-content'],
+  
   click() {
     invokeAction(this, '_showAction');
   }

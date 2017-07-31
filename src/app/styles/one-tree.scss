@@ -1,50 +1,81 @@
+$one-tree-indent: 45px;
+$one-tree-bullet-top: 13px;
+$one-tree-bullet-size: 17px;
+// all possible border-style values
+$one-tree-border-styles: none hidden dotted dashed solid double groove ridge inset outset;
+
 .one-tree {
-  position: relative;
-  margin-left: 1.5em;
-  padding: 1em 0 0 0;
-  list-style-type: none;
+  background-color: $color-one-white;
 
-  li {
-    position: relative;
-    padding-left: 3em;
-    border-left: 1px solid #cdcdcd;
-
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: -1px;
-      width: 2em;
-      height: 0.5em * $line-height-base;
-      border-bottom: 1px solid #cdcdcd;
-      border-left: 1px solid #cdcdcd;
-    }
-
-    &:first-of-type::before {
-      height: 1em * $line-height-base;
-      margin-top: -0.5em * $line-height-base;
-    }
-
-    &:last-of-type {
-      border-left: 1px solid transparent;
-      &::before {
-        bottom: initial;
+  @each $border-style in $one-tree-border-styles {
+    &.border-#{$border-style},
+    &.border-#{$border-style} .one-tree,
+    & .one-tree-list > li .one-tree.border-#{$border-style} {
+      > .one-tree-list {
+        border-left-style: $border-style;
+        > li:before {
+          border-top-style: $border-style;
+        }
       }
     }
+  }
+  .one-tree-list {
+    position: relative;
+    margin-left: $padding-base-horizontal;
+    padding: $padding-base-vertical 0 0 0;
+    border-left: 1px solid $main-border-color;
+    list-style-type: none;
+    background-color: inherit;
 
-    .tree-circle {
-      position: absolute;
-      left: 2em;
-      width: 8px;
-      height: 8px;
-      top: 0.5em * $line-height-base;
-      margin-left: -1px;
-      transform: translateY(-50%);
-      border: 1px solid #cdcdcd;
-      border-radius: 100%;
-      text-align: center;
-      background-color: white;
+    > li {
+      position: relative;
+      padding-left: $one-tree-indent;
+      background-color: inherit;
+
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: $one-tree-bullet-top;
+        left: 0;
+        width: $one-tree-indent - $one-tree-bullet-size - 3px;
+        z-index: 1;
+        border-top: 1px solid $main-border-color;
+      }
+
+      &:last-child::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: $one-tree-bullet-top + 1px;
+        bottom: 0;
+        left: -2px;
+        width: 5px;
+        background-color: inherit;
+      }
+
+      &.has-subtree {
+        > .one-tree-item-content,
+        > .tree-circle {
+          @extend .clickable
+        }
+      }
+
+      > .tree-circle {
+        position: absolute;
+        left: $one-tree-indent - $one-tree-bullet-size - $padding-xs-horizontal;
+        top: $one-tree-bullet-top + 2px;
+        transform: translateY(-50%);
+        background-color: inherit;
+        color: darken($main-border-color, 30%);
+        .one-icon {
+          font-size: $one-tree-bullet-size;
+        }
+      }
+
+      > .one-tree-item-content {
+        padding: $padding-small-vertical 0;
+      }
     }
   }
 }

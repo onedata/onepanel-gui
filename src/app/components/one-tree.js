@@ -58,9 +58,8 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
-  tagName: 'ul',
   classNames: ['one-tree', 'collapse-animation', 'collapse-small'],
-  classNameBindings: ['_isExpanded::collapse-hidden'],
+  classNameBindings: ['_isRoot:one-tree-root', '_isExpanded::collapse-hidden'],
 
   /**
    * Key for this tree, used to determine at the root level if it 
@@ -117,6 +116,19 @@ export default Ember.Component.extend({
    * @type {boolean}
    */
   _isRoot: empty('_rootKey'),
+
+  didInsertElement() {
+    this._super(...arguments);
+
+    invokeAction(this, '_hasTreeNotify', true);
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+
+    invokeAction(this, '_hasTreeNotify', false);
+  },
+
 
   actions: {
     /**

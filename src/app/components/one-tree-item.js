@@ -31,6 +31,9 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
+  classNames: ['one-tree-item'],
+  classNameBindings: ['_hasSubtree:has-subtree'],
+
   tagName: 'li',
 
   eventsBus: service(),
@@ -42,6 +45,12 @@ export default Ember.Component.extend({
    * @type {*}
    */
   _parentKey: null,
+
+  /**
+   * If true, item has a subtree
+   * @type {boolean}
+   */
+  _hasSubtree: false,
 
   /**
    * Property used in _activeSubtreeKeys observer to compare with new 
@@ -56,6 +65,23 @@ export default Ember.Component.extend({
       key,
     } = this.getProperties('_activeSubtreeKeys', 'key');
     return _activeSubtreeKeys.indexOf(key) > -1;
+  }),
+
+  _bulletIcon: computed('_isSubtreeExpanded', '_hasSubtree', function() {
+    let {
+      _isSubtreeExpanded,
+      _hasSubtree
+    } = this.getProperties('_isSubtreeExpanded', '_hasSubtree');
+
+    if (_hasSubtree) {
+      if (_isSubtreeExpanded) {
+        return 'checkbox-minus';
+      } else {
+        return 'add';
+      }
+    } else {
+      return 'checkbox-empty';
+    }
   }),
 
   _eventsBusShowHandler: computed(function () {
@@ -128,9 +154,14 @@ export default Ember.Component.extend({
     show(subtreeKeys, subtreeIsExpanded) {
       let {
         _isSubtreeExpanded,
-        key
-      } = this.getProperties('_isSubtreeExpanded', 'key');
+        key,
+        _hasSubtree
+      } = this.getProperties('_isSubtreeExpanded', 'key', '_hasSubtree');
       
+      if (!_hasSubtree) {
+        return;
+      }
+
       if (!isArray(subtreeKeys) || typeof subtreeKeys === 'string') {
         subtreeKeys = [subtreeKeys];
       }
@@ -141,6 +172,9 @@ export default Ember.Component.extend({
         }
       }
       invokeAction(this, '_showAction', subtreeKeys, subtreeIsExpanded);
+    },
+    hasTreeNotify(hasSubtree) {
+      this.set('_hasSubtree', hasSubtree);
     }
   }
 });
