@@ -41,7 +41,7 @@ export default Ember.Component.extend({
   key: oneWay('elementId'),
 
   /**
-   * Parent subtree key (will be null for root, and root direct subtrees)
+   * Parent subtree key (will be null for root)
    * @type {*}
    */
   _parentKey: null,

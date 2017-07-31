@@ -15,6 +15,12 @@ import { invokeAction } from 'ember-invoke-action';
 
 export default Ember.Component.extend({
   classNames: ['one-tree-item-content'],
+
+  /**
+   * Action callback that shows item subtree
+   * @type {Function}
+   */
+  _showAction: null,
   
   click() {
     invokeAction(this, '_showAction');
