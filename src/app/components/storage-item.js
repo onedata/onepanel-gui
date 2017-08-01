@@ -16,6 +16,7 @@ import _flatten from 'lodash/flatten';
 
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
+import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 
 const {
   Component,
@@ -28,6 +29,11 @@ const {
 const GENERIC_STORAGE_PROPERTIES = ['id', 'type', ...GENERIC_FIELDS.map(f => f.name)];
 
 /**
+ * Properties of Onepanel.StorageDetails that describe LUMA configuration
+ */
+const LUMA_PROPERTIES = LUMA_FIELDS.map(f => f.name);
+
+/**
  * All fields of "password" type are not shown on storage details
  */
 const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
@@ -36,6 +42,7 @@ const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
 
 const REJECTED_STORAGE_PROPERTIES = [
   ...GENERIC_STORAGE_PROPERTIES,
+  ...LUMA_PROPERTIES,
   ...HIDDEN_STORAGE_PROPERTIES
 ];
 
@@ -53,6 +60,11 @@ export default Component.extend({
    * @type {Ember.Object|ObjectProxy}
    */
   storage: null,
+
+  /**
+   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   */
+  spaces: [],
 
   /**
    * Readable name of storage typee
@@ -77,6 +89,40 @@ export default Component.extend({
     return storage != null ? Object.keys(storage).filter(
       p => storage[p] != null && !_includes(REJECTED_STORAGE_PROPERTIES, p)
     ) : [];
+  }),
+
+  /**
+   * List of LUMA-related storage properties
+   * @type {Array.string}
+   */
+  lumaProperties: LUMA_PROPERTIES,
+
+  /**
+   * List of spaces supported by this storage
+   * @type {Array.Onepanel.SpaceDetails}
+   */
+  supportedSpaces: computed('spaces.@each.isFulfilled', function () {
+    let {
+      spaces,
+      storage
+    } = this.getProperties('spaces', 'storage');
+
+    // support for ObjectProxy
+    if (storage != null && storage.content != null) {
+      storage = storage.get('content');
+    }
+
+    return spaces.filter(spaceProxy => {
+      if (spaceProxy.get('isFulfilled')) {
+        // if there will be more than one local storage per space, 
+        // localStorages array can be used instead of storageId
+        let localStorage = spaceProxy.get('content.storageId');
+        return localStorage && localStorage === storage.id;
+      }
+      else {
+        return false;
+      }
+    });
   }),
 
   translationPrefix: computed('storage.type', function () {

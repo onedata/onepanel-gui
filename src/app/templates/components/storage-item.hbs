@@ -18,6 +18,23 @@
         <div class="row content-row">
           <strong>Type:</strong> <span class="one-label">{{storageType}}</span>
         </div>
+        <div class="row content-row">
+          <strong>{{t (concat "components.clusterStorageAddForm.generic.lumaEnabled")}}:</strong> 
+          {{one-way-toggle
+            checked=(get storage "lumaEnabled")
+            isReadOnly=true
+          }}
+        </div>
+        {{#if (get storage "lumaEnabled")}}
+          {{#each lumaProperties as |lumaProperty|}}
+            {{#unless (eq (get storage lumaProperty) undefined)}}
+              <div class="row content-row">
+                <strong>{{t (concat "components.clusterStorageAddForm.luma." lumaProperty)}}:</strong> 
+                <span class="one-label">{{get storage lumaProperty}}</span>
+              </div>
+            {{/unless}}
+          {{/each}}
+        {{/if}}
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
             <strong>{{t (concat translationPrefix storageProperty)}}:</strong>
@@ -31,6 +48,14 @@
             {{/if}}
           </div>
         {{/each}}
+        {{#if supportedSpaces}}
+          <div class="row content-row">
+            <strong>{{t 'components.storageItem.generic.supportedSpaces'}}:</strong>
+            {{#each supportedSpaces as |space|}}
+              <div class="row content-row nested-row">{{space.name}}</div>
+            {{/each}}
+          </div>
+        {{/if}}
       </td>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
     </tr>

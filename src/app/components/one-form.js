@@ -232,15 +232,19 @@ export default Ember.Component.extend({
   recalculateErrors() {
     let {
       currentFields,
+      allFieldsValues,
       errors
-    } = this.getProperties('currentFields', 'errors');
+    } = this.getProperties('currentFields', 'allFieldsValues', 'errors');
 
     let prefix = 'allFieldsValues.';
     currentFields.forEach(field => {
       let error = errors
         .filter(error => error.get('attribute') === prefix + field.get('name'));
       error = error.length > 0 ? error[0] : null;
-      if (field.get('changed')) {
+      // show if is not optional or is optional, but not empty
+      let showValidation = field.get('optional') !== true || 
+        [undefined, null, ''].indexOf(allFieldsValues.get(field.get('name'))) === -1;
+      if (field.get('changed') && showValidation) {
         field.setProperties({
           isValid: !error,
           isInvalid: !!error,

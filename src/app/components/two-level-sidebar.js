@@ -9,6 +9,7 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import _ from 'lodash';
 
 const {
   inject: {
@@ -57,6 +58,14 @@ export default Ember.Component.extend({
     return this.get('sidebar.itemPath').objectAt(1);
   }),
 
+  secondaryItem: computed('secondLevelItems', 'secondaryItemId', function () {
+    let {
+      secondLevelItems,
+      secondaryItemId
+    } = this.getProperties('secondLevelItems', 'secondaryItemId');
+    return _.find(secondLevelItems, { id: secondaryItemId });
+  }),
+
   actions: {
     changePrimaryItemId(itemId) {
       let resourceType = this.get('resourceType');
@@ -66,7 +75,7 @@ export default Ember.Component.extend({
       return invokeAction(this, 'changeResourceId', resourceType, itemId);
     },
     sidebarSecondaryItemSelected() {
-      this.get('eventsBus').trigger('sidebar:select');
+      this.get('eventsBus').trigger('sidebar:select', this.get('secondaryItem'));
     }
   },
 });

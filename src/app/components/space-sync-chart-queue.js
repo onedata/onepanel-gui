@@ -35,6 +35,10 @@ export default SpaceSyncChartBase.extend({
    * @type {Object}
    */
   chartOptions: {
+    axisY: {
+      onlyInteger: true,
+    },
+    low: 0,
     chartPadding: 30,
     plugins: [
       maximizeBarWidth(),

@@ -1,7 +1,7 @@
 import Onepanel from 'npm:onepanel';
 
 const {
-  POSIX,
+  Posix,
   S3,
   Ceph,
   Swift,
@@ -15,7 +15,7 @@ function clusterStorageClass(storageType) {
   case 'ceph':
     return Ceph;
   case 'posix':
-    return POSIX;
+    return Posix;
   case 'swift':
     return Swift;
   case 'glusterfs':

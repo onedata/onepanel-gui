@@ -9,6 +9,7 @@ export default {
     type: 'Type',
     timeout: 'Timeout',
     readonly: 'Is readonly',
+    supportedSpaces: 'Supported spaces'
   },
   posix,
   ceph,

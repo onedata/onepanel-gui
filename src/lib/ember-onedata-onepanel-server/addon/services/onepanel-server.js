@@ -78,8 +78,7 @@ export default Ember.Service.extend(RequestErrorHandler, {
 
   init() {
     this._super(...arguments);
-    this.getServiceType()
-      .then(serviceType => this.set('serviceType', serviceType));
+    this.fetchAndSetServiceType();
   },
 
   /**
@@ -179,6 +178,22 @@ export default Ember.Service.extend(RequestErrorHandler, {
   destroyClient() {
     this.setProperties({
       client: null,
+    });
+  },
+
+  fetchAndSetServiceType() {
+    return new Promise((resolve, reject) => {
+      let currentServiceType = this.get('serviceType');
+      if (currentServiceType) {
+        resolve(currentServiceType);
+      } else {
+        let promise = this.getServiceType();
+        promise.then(serviceType => {
+          this.set('serviceType', serviceType);
+          resolve(serviceType);
+        });
+        promise.catch(reject);
+      }
     });
   },
 

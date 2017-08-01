@@ -21,7 +21,7 @@ $icon-btn-active-color: $color-one-red;
 
 @mixin icon-toggle-float-right() {
   position: absolute;
-  right: 1.5em;
+  right: $padding-base-horizontal;
   top: 50%;
   transform: translateY(-50%);
   font-family: 'oneicons' !important;

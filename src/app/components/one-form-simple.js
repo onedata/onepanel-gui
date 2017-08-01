@@ -171,7 +171,6 @@ export default OneForm.extend({
       this.set('_disabled', true);
       submitting.finally(() => {
         this.set('_disabled', false);
-        this.updateValues();
       });
       return submitting;
     },
