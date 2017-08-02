@@ -7,12 +7,12 @@
  * component and an item, which subtree we want to expand/collapse.
  * 
  * eventsBus.trigger needs arguments:
- * 'oneTreeShow' - event name,
- * oneTreeKey - key of the one-tree component
- * itemKey - key of the item to expand/collapse
- * subtreeVisibility - status of expand/collapse. May be true, false or
- *   undefined. The last one means that each event trigger will toggle
- *   item subtree visibility
+ * 'one-tree:show' - event name,
+ *   * oneTreeKey - key of the one-tree component
+ *   * itemKey - key of the item to expand/collapse
+ *   * subtreeVisibility - status of expand/collapse. May be true, false or
+ *     undefined. The last one means that each event trigger will toggle
+ *     item subtree visibility
  * 
  * Example: If one-tree has key property set to "rootTree", and one 
  * of the items has key "treeItem4", then treeItem4 can be expanded by:
@@ -30,7 +30,7 @@
  * 
  * ...
  * 
- * eventsBus.trigger('oneTreeShow', 'rootTree', 'treeItem4', true);
+ * eventsBus.trigger('one-tree:show', 'rootTree', 'treeItem4', true);
  * ```
  * 
  * By default collapse of the parent subtree will automatically collapse
@@ -74,7 +74,7 @@ export default Ember.Component.extend({
    * If true, then if parent tree collapse, this tree will collapse.
    * @type {boolean}
    */
-  collapseRecursively: true,
+  collapseRecursively: false,
 
   /**
    * Key for root tree. When tree is a root tree, then _rootKey = null.

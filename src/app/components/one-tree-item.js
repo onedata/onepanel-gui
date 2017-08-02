@@ -92,7 +92,8 @@ export default Ember.Component.extend({
         _areParentsExpanded
       } = this.getProperties('key', '_rootKey', '_areParentsExpanded');
 
-      assert('Root tree key must be provided.', selectedRootKey !== undefined);
+      assert('one-tree-item: Root tree key must be provided.', 
+        selectedRootKey !== undefined);
 
       if (!_areParentsExpanded && subtreeIsExpanded !== false) {
         subtreeIsExpanded = true;
@@ -136,18 +137,20 @@ export default Ember.Component.extend({
       _eventsBusShowHandler
     } = this.getProperties('eventsBus', '_eventsBusShowHandler');
 
-    eventsBus.on('oneTreeShow', _eventsBusShowHandler);
+    eventsBus.on('one-tree:show', _eventsBusShowHandler);
   },
 
   willDestroyElement() {
-    this._super(...arguments);
+    try {
+      let {
+        eventsBus,
+        _eventsBusShowHandler
+      } = this.getProperties('eventsBus', '_eventsBusShowHandler');
 
-    let {
-      eventsBus,
-      _eventsBusShowHandler
-    } = this.getProperties('eventsBus', '_eventsBusShowHandler');
-
-    eventsBus.off('oneTreeShow', _eventsBusShowHandler);
+      eventsBus.off('one-tree:show', _eventsBusShowHandler);
+    } finally {
+      this._super(...arguments);
+    }
   },
 
   actions: {

@@ -3,27 +3,8 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-import Ember from 'ember';
 
-const {
-  Service
-} = Ember;
-
-let EVENTS_BUS_MOCK = Service.extend({
-  callbacks: [],
-
-  on(eventName, callback) {
-    this.get('callbacks').push(callback);
-  },
-
-  off() {},
-
-  trigger() {
-    let args = [].slice.call(arguments, 1);
-    this.get('callbacks')
-      .forEach(callback => callback.call(null, ...args));
-  }
-});
+import EventsBusStub from '../../helpers/events-bus-stub';
 
 describe('Integration | Component | one tree', function() {
   setupComponentTest('one-tree', {
@@ -31,7 +12,7 @@ describe('Integration | Component | one tree', function() {
   });
 
   beforeEach(function () {
-    this.register('service:events-bus', EVENTS_BUS_MOCK);
+    this.register('service:events-bus', EventsBusStub);
     this.inject.service('events-bus', { as: 'eventsBus' });
     let eventsBus = this.container.lookup('service:events-bus');
     eventsBus.set('callbacks', []);
@@ -87,9 +68,9 @@ describe('Integration | Component | one tree', function() {
     });
   });
 
-  it('collapses children recursively', function(done) {
+  it('collapses children recursively when collapseRecursively==true', function(done) {
     this.render(hbs`
-      {{#one-tree as |tree|}}
+      {{#one-tree collapseRecursively=true as |tree|}}
         {{#tree.item as |item|}}
           {{#item.content}}item1{{/item.content}}
           {{#item.subtree as |subtree|}}
@@ -126,9 +107,9 @@ describe('Integration | Component | one tree', function() {
     });
   });
 
-  it('does not collapse children recursively when collapseRecursively==false', function(done) {
+  it('does not collapse children recursively', function(done) {
     this.render(hbs`
-      {{#one-tree collapseRecursively=false as |tree|}}
+      {{#one-tree as |tree|}}
         {{#tree.item as |item|}}
           {{#item.content}}item1{{/item.content}}
           {{#item.subtree as |subtree|}}
@@ -183,7 +164,7 @@ describe('Integration | Component | one tree', function() {
 
     let item = this.$('.item1');
     expect(item.find('> .one-tree')).to.have.class('collapse-hidden');
-    eventsBus.trigger('oneTreeShow', 'root', 'item1', true);
+    eventsBus.trigger('one-tree:show', 'root', 'item1', true);
     wait().then(() => {
       expect(item.find('> .one-tree')).to.not.have.class('collapse-hidden');
       done();
@@ -208,10 +189,10 @@ describe('Integration | Component | one tree', function() {
 
     let item = this.$('.item1');
     expect(item.find('> .one-tree')).to.have.class('collapse-hidden');
-    eventsBus.trigger('oneTreeShow', 'root', 'item1');
+    eventsBus.trigger('one-tree:show', 'root', 'item1');
     wait().then(() => {
       expect(item.find('> .one-tree')).to.not.have.class('collapse-hidden');
-      eventsBus.trigger('oneTreeShow', 'root', 'item1');
+      eventsBus.trigger('one-tree:show', 'root', 'item1');
       wait().then(() => {
         expect(item.find('> .one-tree')).to.have.class('collapse-hidden');
         done();
@@ -244,7 +225,7 @@ describe('Integration | Component | one tree', function() {
     let childItem = this.$('.item11');
     expect(parentItem.find('> .one-tree')).to.have.class('collapse-hidden');
     expect(childItem.find('> .one-tree')).to.have.class('collapse-hidden');
-    eventsBus.trigger('oneTreeShow', 'root', 'item11', true);
+    eventsBus.trigger('one-tree:show', 'root', 'item11', true);
     wait().then(() => {
       expect(parentItem.find('> .one-tree')).to.not.have.class('collapse-hidden');
       expect(childItem.find('> .one-tree')).to.not.have.class('collapse-hidden');
