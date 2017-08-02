@@ -15,7 +15,7 @@ const {
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default Component.extend({
-  classNameBindings: ['isReadOnly:disabled', 'isReadOnly::clickable', 'checked'],
+  classNameBindings: ['isReadOnly:disabled:clickable', 'checked'],
   attributeBindings: ['dataOption:data-option'],
 
   /**
