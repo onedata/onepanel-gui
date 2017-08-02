@@ -17,6 +17,7 @@ import Onepanel from 'npm:onepanel';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
+import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -38,7 +39,7 @@ const {
  */
 const CUSTOM_REQUESTS = {};
 
-export default Ember.Service.extend(RequestErrorHandler, {
+export default Ember.Service.extend(RequestErrorHandler, ResponseValidator, {
   /**
    * An Onepanel API Client that is used for making requests.
    * 
@@ -105,11 +106,17 @@ export default Ember.Service.extend(RequestErrorHandler, {
         if (error) {
           reject(error);
         } else {
-          resolve({
-            data,
-            response,
-            task
-          });
+          if (this.validateResponseData(api, method, data)) {
+            resolve({
+              data,
+              response,
+              task
+            });
+          } else {
+            reject({
+              message: `Data returned from ${api}/${method} backend method seems to be invalid`
+            });
+          }
         }
       };
       let customHandler = CUSTOM_REQUESTS[`${api}_${method}`];

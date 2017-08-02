@@ -77,10 +77,10 @@ export default Service.extend({
       defaultCache,
       _defaultCache,
     } = this.getProperties(
-      'onepanelServiceType',
-      'defaultCache',
-      '_defaultCache'
-    );
+        'onepanelServiceType',
+        'defaultCache',
+        '_defaultCache'
+      );
 
     let promise = new Promise((resolve, reject) => {
       if (_defaultCache && !reload) {
@@ -121,6 +121,8 @@ export default Service.extend({
           this.set('_defaultCache', clusterDetails);
           resolve(defaultCache);
         }).catch(reject);
+
+        gettingStep.catch(reject);
       }
     });
     return ObjectPromiseProxy.create({ promise });
@@ -195,6 +197,7 @@ export default Service.extend({
    */
   _checkIsConfigurationDone() {
     return new Promise((resolve, reject) => {
+      // FIXME VFS-3398
       let gettingConfiguration = this._getConfiguration();
       gettingConfiguration.then(({ data }) => resolve(!!data));
 
@@ -224,6 +227,7 @@ export default Service.extend({
       let gettingProvider = onepanelServer.request('oneprovider',
         'getProvider');
 
+      // FIXME VFS-3398
       gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
         resolve(!!providerDetails);
@@ -253,6 +257,7 @@ export default Service.extend({
     return new Promise((resolve, reject) => {
       let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
 
+      // FIXME VFS-3398
       gettingStorages.then(({ data: { ids } }) => {
         resolve(ids != null && ids.length > 0);
       });
@@ -343,6 +348,7 @@ export default Service.extend({
         'onepanel',
         'getClusterHosts', { discovered }
       );
+      // FIXME VFS-3398
       gettingClusterHosts.then(resolve, reject);
     });
   }

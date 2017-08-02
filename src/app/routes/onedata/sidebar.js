@@ -46,7 +46,8 @@ export default Ember.Route.extend({
               resourceType: type,
               collection
             });
-          });
+          })
+          .catch(reject);
         gettingCollection.catch(reject);
       } else {
         reject({ error: 'invalid onedata tab name' });

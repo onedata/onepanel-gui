@@ -18,6 +18,7 @@ import Plainable from 'ember-plainable/mixins/plainable';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
+import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 import _ from 'lodash';
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
@@ -65,7 +66,7 @@ function responseToString() {
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
+export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, ResponseValidator, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),
@@ -153,20 +154,27 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
         if (handler.success) {
           let response = {
             statusCode: handler.statusCode &&
-              handler.statusCode(...params) || 200,
+            handler.statusCode(...params) || 200,
             headers: {
               location: handler.taskId ? ('https://something/tasks/' +
                 handler.taskId) : undefined
             },
           };
           let taskId = getTaskId(response);
-          resolve({
-            __request_method: method,
-            data: handler.success(...params),
-            response: response,
-            task: taskId && this.watchTaskStatus(taskId),
-            toString: responseToString,
-          });
+          let data = handler.success(...params);
+          if (this.validateResponseData(api, method, data)) {
+            resolve({
+              __request_method: method,
+              data,
+              response: response,
+              task: taskId && this.watchTaskStatus(taskId),
+              toString: responseToString,
+            });
+          } else {
+            reject({
+              message: `Data returned from ${api}/${method} backend method seems to be invalid`
+            });
+          }
         } else {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
@@ -337,7 +345,7 @@ export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
 
   _req_onepanel_modifyUser: computed(function () {
     return {
-      success( /* ignore password */ ) {
+      success( /* ignore password */) {
         return null;
       }
     };

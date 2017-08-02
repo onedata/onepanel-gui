@@ -16,7 +16,9 @@ const {
 
 /**
  * Gets error details from error object that is returned on onepanel backend reject
- * 
+ *
+ * Additionally, it supports a plain object with ``message`` property
+ *
  * @export
  * @param {object|string} error
  * @return {Ember.String.htmlSafe}
@@ -24,6 +26,7 @@ const {
 export default function getErrorDescription(error) {
   let details = error && error.response && error.response.body &&
     (error.response.body.description || error.response.body.error) ||
+    error.message ||
     error;
 
   return htmlSafe(escapeExpression(details));
