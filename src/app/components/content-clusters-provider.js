@@ -68,13 +68,21 @@ export default Component.extend({
   }),
 
   // TODO i18n  
-  _formTitle: computed('_providerFormMode', function () {
-    return FORM_TITLES[this.get('_providerFormMode')];
+  _formTitle: computed('_providerFormMode', 'providerProxy.isFulfilled', function () {
+    if (!this.get('providerProxy.isFulfilled')) {
+      return '';
+    } else {
+      return FORM_TITLES[this.get('_providerFormMode')];
+    }
   }),
 
   // TODO i18n  
-  _formDescription: computed('_providerFormMode', function () {
-    return FORM_DESCRIPTIONS[this.get('_providerFormMode')];
+  _formDescription: computed('_providerFormMode', 'providerProxy.isFulfilled', function () {
+    if (!this.get('providerProxy.isFulfilled')) {
+      return '';
+    } else {
+      return FORM_DESCRIPTIONS[this.get('_providerFormMode')];
+    }
   }),
 
   init() {

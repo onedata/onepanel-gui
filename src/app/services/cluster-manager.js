@@ -77,10 +77,10 @@ export default Service.extend({
       defaultCache,
       _defaultCache,
     } = this.getProperties(
-        'onepanelServiceType',
-        'defaultCache',
-        '_defaultCache'
-      );
+      'onepanelServiceType',
+      'defaultCache',
+      '_defaultCache'
+    );
 
     let promise = new Promise((resolve, reject) => {
       if (_defaultCache && !reload) {
@@ -135,7 +135,7 @@ export default Service.extend({
    */
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this._getConfiguration();
+      let gettingConfiguration = this._getConfiguration(true);
       gettingConfiguration.then(({ data: { cluster } }) => {
         resolve(this._clusterConfigurationToHostsInfo(cluster));
       });
@@ -179,14 +179,18 @@ export default Service.extend({
 
   /**
    * Get a cluster configuration for current service type
+   * @param {boolean} [validateData] if true, make validation of cluster configuration
    * @returns {Promise} result of GET configuration request
    */
-  _getConfiguration() {
+  _getConfiguration(validateData) {
     let {
       onepanelServer,
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
-    return onepanelServer.request(
+    let requestFun =
+      (validateData ? onepanelServer.requestValidData : onepanelServer.request)
+      .bind(onepanelServer);
+    return requestFun(
       'one' + onepanelServiceType,
       camelize(`get-${onepanelServiceType}-configuration`)
     );
@@ -197,7 +201,6 @@ export default Service.extend({
    */
   _checkIsConfigurationDone() {
     return new Promise((resolve, reject) => {
-      // FIXME VFS-3398
       let gettingConfiguration = this._getConfiguration();
       gettingConfiguration.then(({ data }) => resolve(!!data));
 
@@ -227,7 +230,6 @@ export default Service.extend({
       let gettingProvider = onepanelServer.request('oneprovider',
         'getProvider');
 
-      // FIXME VFS-3398
       gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
         resolve(!!providerDetails);
@@ -257,7 +259,6 @@ export default Service.extend({
     return new Promise((resolve, reject) => {
       let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
 
-      // FIXME VFS-3398
       gettingStorages.then(({ data: { ids } }) => {
         resolve(ids != null && ids.length > 0);
       });
@@ -344,11 +345,10 @@ export default Service.extend({
   getHostNames(discovered = false) {
     let onepanelServer = this.get('onepanelServer');
     return new Promise((resolve, reject) => {
-      let gettingClusterHosts = onepanelServer.request(
+      let gettingClusterHosts = onepanelServer.requestValidData(
         'onepanel',
         'getClusterHosts', { discovered }
       );
-      // FIXME VFS-3398
       gettingClusterHosts.then(resolve, reject);
     });
   }

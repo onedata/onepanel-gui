@@ -14,9 +14,17 @@ import Ember from 'ember';
 
 import getZoneConfiguration from 'ember-onedata-onepanel-server/utils/response-validators/onezone/get-zone-configuration';
 import getProviderConfiguration from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-configuration';
+import getProvider from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider';
+import getClusterHosts from 'ember-onedata-onepanel-server/utils/response-validators/onepanel/get-cluster-hosts';
+import getProviderSpaces from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-spaces';
+import getSpaceDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-space-details';
+import getStorages from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storages';
+import getStorageDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storage-details';
 
 const {
   Mixin,
+  RSVP: { Promise },
+  String: { htmlSafe },
 } = Ember;
 
 /**
@@ -24,17 +32,33 @@ const {
  * @type {object}
  */
 const VALIDATORS = {
+  onepanel: {
+    getClusterHosts
+  },
   onezone: {
     getZoneConfiguration,
   },
   oneprovider: {
     getProviderConfiguration,
+    getProvider,
+    getProviderSpaces,
+    getSpaceDetails,
+    getStorages,
+    getStorageDetails,
   }
 };
 
 export default Mixin.create({
   init() {
     this._super(...arguments);
+  },
+
+  /**
+   * See eg. onepanel-server for implementation
+   * @abstract
+   */
+  request() {
+    throw new Error('not implemented');
   },
 
   /**
@@ -46,7 +70,44 @@ export default Mixin.create({
     if (VALIDATORS.hasOwnProperty(api) && VALIDATORS[api].hasOwnProperty(method)) {
       return VALIDATORS[api][method](data);
     } else {
+      console.warn(
+        `responseValidator: validator function not found for: ${api}/${method}`
+      );
       return true;
     }
+  },
+
+  /**
+   * Makes a request that requires valid data to be fetched
+   *
+   * This is version of a request that rejects on invalid data returned
+   * 
+   * @param {string} api 
+   * @param {string} method 
+   * @param {any} params 
+   */
+  requestValidData(api, method, ...params) {
+    return this.request(api, method, ...params).then(
+      (responseInfo) => {
+        return new Promise((resolve, reject) => {
+          if (this.validateResponseData(api, method, responseInfo.data)) {
+            resolve(responseInfo);
+          } else {
+            let responseData;
+            try {
+              responseData = JSON.stringify(responseInfo.data);
+            } catch (error) {
+              console.warn(
+                `Cannot parse invalid response data from ${api}/${method}`);
+            }
+
+            reject({
+              message: htmlSafe(
+                `<p>Server method <code>${api}/${method}</code> provided incomplete or invalid data</p> <code>${responseData}</code>`
+              )
+            });
+          }
+        });
+      });
   },
 });

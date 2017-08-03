@@ -1,11 +1,16 @@
 /**
- * Validate ZoneConfiguration 
+ * Validate cluster hosts list 
  *
- * @module utils/response-validators/oneprovider/get-zone-configuration
+ * @module utils/response-validators/onepanel/get-cluster-hosts
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
+
 export default function (data) {
-  return !!(typeof data.cluster === 'object' && data.onezone);
+  try {
+    return Array.isArray(data);
+  } catch (error) {
+    return false;
+  }
 }
