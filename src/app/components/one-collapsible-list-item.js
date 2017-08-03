@@ -2,6 +2,9 @@ import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
 const {
   computed,
+  computed: {
+    notEmpty
+  },
   inject: {
     service,
   },
@@ -31,6 +34,29 @@ export default Ember.Component.extend({
   activeElementId: '',
   closeEventName: null,
 
+  /**
+   * Value, that will be returned by one-collapsible-list on this item select
+   * @type {*}
+   */
+  selectionValue: null,
+
+  /**
+   * Item selection change handler. Injected by one-collapsible-list.
+   * @type {Function}
+   */
+  toggleItemSelection: null,
+
+  /**
+   * List of selected list items
+   * @type {Array.*}
+   */
+  _selectedItemValues: [],
+
+  /**
+   * If true, item has a checkbox
+   */
+  _hasCheckbox: false,
+
   isActive: computed('activeElementId', 'accordionMode', function () {
     let {
       activeElementId,
@@ -42,6 +68,16 @@ export default Ember.Component.extend({
       return activeElementId === elementId;
     }
   }),
+
+  _isSelected: computed('_selectedItemValues.[]', 'selectionValue', function () {
+    let {
+      _selectedItemValues,
+      selectionValue
+    } = this.getProperties('_selectedItemValues', 'selectionValue');
+    return _selectedItemValues.indexOf(selectionValue) > -1;
+  }),
+
+  _isCheckboxActive: notEmpty('selectionValue'),
 
   init() {
     this._super();
@@ -64,11 +100,13 @@ export default Ember.Component.extend({
       } else {
         if (opened !== undefined) {
           this.set('isActive', !!opened);
-        }
-        else {
+        } else {
           this.toggleProperty('isActive');
         }
       }
+    },
+    toggleSelection() {
+      invokeAction(this, 'toggleItemSelection', this.get('selectionValue'));
     }
   }
 });

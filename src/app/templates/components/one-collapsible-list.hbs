@@ -1,7 +1,10 @@
 {{yield (hash 
-  item=(component 'one-collapsible-list-item' 
+  item=(component "one-collapsible-list-item" 
     accordionMode=accordionMode
     activeElementId=activeElementId
-    toggle=(action 'toggle')
+    toggle=(action "toggle")
+    toggleItemSelection=(action "toggleItemSelection")
+    _selectedItemValues=_selectedItemValues
+    _hasCheckbox=hasCheckboxes
   )
 )}}

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { invokeAction } from 'ember-invoke-action';
 
 /**
  * Creates accordion-like list of elements. By default items can be expanded separately. 
@@ -32,6 +33,24 @@ export default Ember.Component.extend({
   accordionMode: false,
   activeElementId: '',
 
+  /**
+   * If true, each item can be selected through checkbox
+   * @type {boolean}
+   */
+  hasCheckboxes: false,
+
+  /**
+   * Selected items change handler
+   * @type {Function}
+   */
+  selectionChanged: null,
+
+  /**
+   * List of selected item values
+   * @type {Array.*}
+   */
+  _selectedItemValues: [],
+
   actions: {
     toggle(elementId) {
       if (this.get('accordionMode')) {
@@ -41,6 +60,25 @@ export default Ember.Component.extend({
           this.set('activeElementId', elementId);
         }
       }
+    },
+    toggleItemSelection(itemValue, selectionState) {
+      let _selectedItemValues = this.get('_selectedItemValues');
+      if (selectionState === undefined) {
+        if (_selectedItemValues.indexOf(itemValue) > -1) {
+          _selectedItemValues = _selectedItemValues
+            .filter(value => value !== itemValue);
+        } else {
+          _selectedItemValues = _selectedItemValues.concat([itemValue]);
+        }
+      }
+      else {
+        _selectedItemValues = _selectedItemValues
+          .filter(value => value !== itemValue)
+          .concat(selectionState ? [itemValue] : []);
+      }
+
+      this.set('_selectedItemValues', _selectedItemValues);
+      invokeAction(this, 'selectionChanged', _selectedItemValues.slice(0));
     }
   }
 });
