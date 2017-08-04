@@ -2,10 +2,11 @@
 
 @font-face {
   font-family: 'oneicons';
-  src:
-    url('#{$icomoon-font-path}/oneicons.ttf?3v14gh') format('truetype'),
-    url('#{$icomoon-font-path}/oneicons.woff?3v14gh') format('woff'),
-    url('#{$icomoon-font-path}/oneicons.svg?3v14gh#oneicons') format('svg');
+  src:  url('#{$icomoon-font-path}/oneicons.eot?83je97');
+  src:  url('#{$icomoon-font-path}/oneicons.eot?83je97#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/oneicons.ttf?83je97') format('truetype'),
+    url('#{$icomoon-font-path}/oneicons.woff?83je97') format('woff'),
+    url('#{$icomoon-font-path}/oneicons.svg?83je97#oneicons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -75,6 +76,11 @@
     content: $oneicon-checkbox-filled;
   }
 }
+.oneicon-checkbox-minus {
+  &:before {
+    content: $oneicon-checkbox-minus;
+  }
+}
 .oneicon-checkbox-option {
   &:before {
     content: $oneicon-checkbox-option;
@@ -88,6 +94,11 @@
 .oneicon-checkbox {
   &:before {
     content: $oneicon-checkbox;
+  }
+}
+.oneicon-checked {
+  &:before {
+    content: $oneicon-checked;
   }
 }
 .oneicon-clipboard-copy {
