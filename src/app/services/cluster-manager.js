@@ -121,6 +121,8 @@ export default Service.extend({
           this.set('_defaultCache', clusterDetails);
           resolve(defaultCache);
         }).catch(reject);
+
+        gettingStep.catch(reject);
       }
     });
     return ObjectPromiseProxy.create({ promise });
@@ -133,7 +135,7 @@ export default Service.extend({
    */
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this._getConfiguration();
+      let gettingConfiguration = this._getConfiguration(true);
       gettingConfiguration.then(({ data: { cluster } }) => {
         resolve(this._clusterConfigurationToHostsInfo(cluster));
       });
@@ -177,14 +179,18 @@ export default Service.extend({
 
   /**
    * Get a cluster configuration for current service type
+   * @param {boolean} [validateData] if true, make validation of cluster configuration
    * @returns {Promise} result of GET configuration request
    */
-  _getConfiguration() {
+  _getConfiguration(validateData) {
     let {
       onepanelServer,
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
-    return onepanelServer.request(
+    let requestFun =
+      (validateData ? onepanelServer.requestValidData : onepanelServer.request)
+      .bind(onepanelServer);
+    return requestFun(
       'one' + onepanelServiceType,
       camelize(`get-${onepanelServiceType}-configuration`)
     );
@@ -339,7 +345,7 @@ export default Service.extend({
   getHostNames(discovered = false) {
     let onepanelServer = this.get('onepanelServer');
     return new Promise((resolve, reject) => {
-      let gettingClusterHosts = onepanelServer.request(
+      let gettingClusterHosts = onepanelServer.requestValidData(
         'onepanel',
         'getClusterHosts', { discovered }
       );

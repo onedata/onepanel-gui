@@ -43,7 +43,10 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
 
     let promise = new Promise((resolve, reject) => {
-      let getSpaces = onepanelServer.request('oneprovider', 'getProviderSpaces');
+      let getSpaces = onepanelServer.requestValidData(
+        'oneprovider',
+        'getProviderSpaces'
+      );
 
       getSpaces.then(({ data: { ids } }) => {
         resolve(A(ids.map(id => this.getSpaceDetails(id))));
@@ -63,7 +66,11 @@ export default Service.extend({
   getSpaceDetails(id) {
     let onepanelServer = this.get('onepanelServer');
     let promise = new Promise((resolve, reject) => {
-      let req = onepanelServer.request('oneprovider', 'getSpaceDetails', id);
+      let req = onepanelServer.requestValidData(
+        'oneprovider',
+        'getSpaceDetails',
+        id
+      );
       req.then(({ data }) => resolve(SpaceDetails.create(data)));
       req.catch(reject);
     });

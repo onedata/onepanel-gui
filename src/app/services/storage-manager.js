@@ -49,7 +49,10 @@ export default Service.extend({
       if (!reload && collectionCache.get('content') != null) {
         resolve(collectionCache);
       } else {
-        let getStorages = onepanelServer.request('oneprovider', 'getStorages');
+        let getStorages = onepanelServer.requestValidData(
+          'oneprovider',
+          'getStorages'
+        );
 
         getStorages.then(({ data: { ids } }) => {
           this.set('collectionCache.content', A(ids.map(id =>
@@ -82,7 +85,11 @@ export default Service.extend({
       if (!reload && record != null && record.get('content') != null) {
         resolve(record);
       } else {
-        let req = onepanelServer.request('oneprovider', 'getStorageDetails', id);
+        let req = onepanelServer.requestValidData(
+          'oneprovider',
+          'getStorageDetails',
+          id
+        );
         req.then(({ data }) => {
           record = _collectionMap[id] = (_collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);

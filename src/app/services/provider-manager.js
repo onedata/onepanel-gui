@@ -40,7 +40,7 @@ export default Service.extend({
   getProviderDetails(reload) {
     let onepanelServer = this.get('onepanelServer');
     let providerCache = this.get('providerCache');
-    let gettingProvider = onepanelServer.request('oneprovider', 'getProvider');
+    let gettingProvider = onepanelServer.requestValidData('oneprovider', 'getProvider');
     let promise = new Promise((resolve, reject) => {
       if (!reload && this.get('_providerCache')) {
         resolve(providerCache);

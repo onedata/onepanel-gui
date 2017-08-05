@@ -4,6 +4,11 @@ $spinner-container-base-size: 120px;
   &.#{$name} {
     width: $size*$spinner-container-base-size;
     height: $size*$spinner-container-base-size;
+
+    .spinner-logo {
+      width: $size*$spinner-container-base-size;
+      height: $size*$spinner-container-base-size;
+    }
   }
 }
 
@@ -22,5 +27,9 @@ $spinner-container-base-size: 120px;
 
   &.middle-centered {
     @include absolute-align-middle-center();
+  }
+
+  .spinner-logo {
+    background-size: 30%;
   }
 }

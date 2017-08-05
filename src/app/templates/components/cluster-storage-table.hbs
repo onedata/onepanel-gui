@@ -1,9 +1,27 @@
 {{!-- TODO i18n --}}
 
+{{#if spacesLoadError}}
+  {{resource-load-error
+    class="alert-some-storages-rejected"
+    message="Support information may be incomplete due to spaces data load error"
+    onClose=(action (mut spacesLoadError false))
+  }}
+{{/if}}
+
+{{#if anyStorageRejected}}
+  {{resource-load-error
+    class="alert-some-storages-rejected"
+    message="Some of storage details cannot be loaded properly."
+    onClose=(action (mut anyStorageRejected false))
+  }}
+{{/if}}
+
 {{#one-collapsible-list as |list|}}
-  {{#each storages as |storage|}}
-    {{#list.item as |listItem|}}
-      {{storage-item listItem=listItem storage=storage.content spaces=spaces}}
-    {{/list.item}}
+  {{#each storages as |storageProxy|}}
+    {{#if storageProxy.isFulfilled}}
+      {{#list.item as |listItem|}}
+        {{storage-item listItem=listItem storage=storageProxy.content spaces=spaces}}
+      {{/list.item}}
+    {{/if}}
   {{/each}}
 {{/one-collapsible-list}}

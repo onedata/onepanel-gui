@@ -211,3 +211,17 @@ input {
     vertical-align: middle;
   }
 }
+
+.od-logo-short-dark {
+  background-image: url(/assets/images/logo-short-dark.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+}
+
+.fixed-center {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}

@@ -11,11 +11,11 @@
 
 import Ember from 'ember';
 
+import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'ember-plainable/mixins/plainable';
-import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import _ from 'lodash';
@@ -36,7 +36,6 @@ const {
   },
   get,
 } = Ember;
-
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -65,7 +64,7 @@ function responseToString() {
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default Ember.Service.extend(RequestErrorHandler, SpaceSyncStatsMock, {
+export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),

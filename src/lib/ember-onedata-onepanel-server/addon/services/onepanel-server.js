@@ -14,9 +14,9 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
+import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
-import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -38,7 +38,7 @@ const {
  */
 const CUSTOM_REQUESTS = {};
 
-export default Ember.Service.extend(RequestErrorHandler, {
+export default OnepanelServerBase.extend({
   /**
    * An Onepanel API Client that is used for making requests.
    * 
