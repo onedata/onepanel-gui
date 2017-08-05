@@ -1,7 +1,7 @@
 /**
  * A base class for both real onepanel-server and mocked one (to avoid code redundancy)
  *
- * It shoul not be used as a standalone service! (thus it's name is "private")
+ * It should not be used as a standalone service! (thus it's name is "private")
  *
  * @module services/-onepanel-server-base
  * @author Jakub Liput

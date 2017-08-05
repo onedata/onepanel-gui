@@ -7,5 +7,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default function (data) {
-  return !!(typeof data.cluster === 'object' && data.onezone);
+  try {
+    return !!(typeof data.cluster === 'object' && data.onezone);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      return false;
+    } else {
+      throw error;
+    }
+  }
 }

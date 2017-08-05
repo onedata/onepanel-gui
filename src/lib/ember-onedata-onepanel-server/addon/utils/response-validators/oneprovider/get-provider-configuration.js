@@ -6,7 +6,6 @@
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-
 export default function (data) {
   let { cluster, oneprovider } = data;
   try {
@@ -19,6 +18,10 @@ export default function (data) {
       'name' in oneprovider
     );
   } catch (error) {
-    return false;
+    if (error instanceof TypeError) {
+      return false;
+    } else {
+      throw error;
+    }
   }
 }

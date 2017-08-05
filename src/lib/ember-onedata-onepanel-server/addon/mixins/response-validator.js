@@ -1,7 +1,7 @@
 /**
  * Adds a validation of backend response data
  *
- * See VALIDATORS const to add a validator for specific api method reponse
+ * See VALIDATORS const to add a validator for specific api method response
  * Validator functions are stored in ``utils/response-validators/``
  *
  * @module mixins/response-validator

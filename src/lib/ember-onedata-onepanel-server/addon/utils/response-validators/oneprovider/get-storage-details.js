@@ -6,7 +6,6 @@
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-
 export default function (data) {
   try {
     return !!(
@@ -14,8 +13,11 @@ export default function (data) {
       data.name &&
       data.type
     );
-
   } catch (error) {
-    return false;
+    if (error instanceof TypeError) {
+      return false;
+    } else {
+      throw error;
+    }
   }
 }

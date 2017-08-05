@@ -14,6 +14,10 @@ export default function (data) {
       typeof data.supportingProviders === 'object'
     );
   } catch (error) {
-    return false;
+    if (error instanceof TypeError) {
+      return false;
+    } else {
+      throw error;
+    }
   }
 }
