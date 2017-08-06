@@ -51,7 +51,7 @@
     "ember-get-config": "0.2.1",
     "ember-hammertime": "1.2.3",
     "ember-i18n": "5.0.0",
-    "ember-invoke-action": "1.4.0",
+    "ember-invoke-action": "git+https://github.com/kliput/ember-invoke-action.git#ec5bf575516ef52a2084c33c1719ff25ebf9fc5f",
     "ember-load-initializers": "0.6.3",
     "ember-lodash": "4.17.2",
     "ember-moment": "^7.3.1",
