@@ -1,6 +1,6 @@
 /**
- * A world map component, on which other components can be placed accroding 
- * to speficied latitude and longitude. Yields hash with "point" component.
+ * A world map component, on which other components can be placed according 
+ * to spcified latitude and longitude. Yields hash with "point" component.
  * Example:
  * ```
  * {{#one-atlas as |atlas|}}
@@ -47,17 +47,17 @@ export default Ember.Component.extend({
   _height: 0,
 
   /**
+   * Window property for testing purposes
+   * @type {Window}
+   */
+  _window: window,
+  
+  /**
    * Window resize event handler
    */
   _resizeEventHandler: computed(function () {
     return () => this.resizeToFit();
   }),
-
-  /**
-   * Window property for testing purposes
-   * @type {Window}
-   */
-  _window: window,
 
   didInsertElement() {
     this._super(...arguments);
