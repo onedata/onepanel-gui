@@ -1,137 +1,13 @@
-$root-url: rootUrl();
-
-@import 'colors';
-@import 'utils';
-@import 'fonts';
-
-$letter-spacing-base: 0.07em;
-$control-box-shadow: inset 1px 1px 2px $color-one-semiwhite;
-$control-box-shadow-focus: inset 0 1px 1px $color-one-semiwhite, 0 0 8px rgba($color-one-blue-gray, 0.2);
-$control-focus-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-
-$color-main-menu-bg: $color-one-semiblack;
-$color-sidebar-background: $color-one-semiwhite;
-$color-sidebar-item-bg: $color-one-gray-sand;
-$color-sidebar-item-active-bg: darken($color-sidebar-item-bg, 3%);
-$color-one-list-item-separator: $main-border-color;
-
-@import 'bootstrap-config';
-@import 'bootstrap-addons';
-@import 'ember-power-select-config';
-@import 'side-menu';
-@import '_spin-button-base';
-@import 'spin-button-overrides';
-
-
-// should be same as rootURL in environment.js
-// TODO maybe use https://github.com/davidpett/ember-cli-sass-variables
-
-$mobile-top-height: 70px;
-$main-menu-width: 200px;
-$sidebar-menu-width: 250px;
-$sidebar-menu-width-lg: 325px;
-$menu-icon-font-size: 2.5em;
-$mobile-menu-popover-width: 240px;
-
-$zindex-layer-1-2-overlay: $zindex-modal-background;
-$zindex-layer-1-max: $zindex-layer-1-2-overlay - 1;
-$zindex-layer-2-min: $zindex-layer-1-2-overlay + 1;
-
-$one-list-item-line-height: 64px;
-$one-list-item-separator: 1px solid;
-$one-list-item-padding: $padding-large-horizontal;
-
-$one-list-item-active-left-border-width: 8px;
-
-$sidemenu-header-height: 90px;
-$content-col-padding: 30px;
-$content-header-font-size: 1.25em;
-$onedata-logo-height: 35px;
-$onedata-brand-info-height: 30px;
-$onedata-logo-margin-top: $content-col-padding;
-$onedata-logo-margin-bottom: $onedata-logo-margin-top + $input-height-small + $one-list-item-padding * 2 - $onedata-brand-info-height;
-
-$main-content-hover-background: lighten($color-one-semiwhite, 3%);
-
-$collapse-transition: max-height .2s linear, padding .2s linear, opacity .2s linear;
-
-$disabled-opacity: 0.6;
-
-@import 'animate';
-@import 'custom-animations';
-@import 'common';
-
 @import 'onedata-gui-common';
 
-@import 'spin-spinner-extensions';
-@import 'app-layout';
-@import 'alert-global';
-@import 'main-content';
-@import 'one-list';
-@import 'one-list-item';
-@import 'main-menu';
-@import 'main-menu-item';
-@import 'one-sidebar';
-@import 'one-sidenav';
-@import 'one-wizard';
-@import 'one-steps';
-@import 'one-step';
-@import 'basic-table';
-@import 'basicauth-login-form';
-@import 'login-box';
-@import 'one-list-wrapper';
-@import 'two-level-sidebar';
-@import 'one-way-toggle';
-@import 'one-way-radio-group';
-@import 'one-checkbox';
+// Onepanel specific styles
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
-@import 'ember-power-select-config';
-@import 'content-info';
-@import 'one-collapsible-list';
-@import 'one-collapsible-list-item';
-@import 'one-collapsible-list-item-header';
-@import 'one-collapsible-list-item-content';
-@import 'cluster-storage-table';
-@import 'brand-info';
-@import 'user-account-button';
-@import 'one-webui-popover';
-@import 'resource-load-error';
-@import 'one-image';
-@import 'one-label-tip';
 @import 'storage-item';
-@import 'cluster-spaces-table-item';
-@import 'ember-notify';
-@import 'one-collapsible-toolbar';
-@import 'one-collapsible-toolbar-item';
 @import 'chartist';
 @import 'chartist-overrides';
 @import 'space-sync-chart-base';
 @import 'space-sync-chart-operations';
-@import 'status-toolbar';
-@import 'status-icon';
 @import 'space-sync-chart-queue';
 @import 'space-sync-chart-throughput';
 @import 'space-support-chart';
-@import 'application-error';
-@import 'one-tree';
-
-// TODO a mess
-
-html,
-body {
-  position: relative;
-  height: 100%;
-}
-
-// component TODO
-.one-sidebar-toolbar-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  line-height: 32px;
-  text-align: center;
-  font-size: 26px;
-  color: $color-one-white;
-  background-color: blue;
-}

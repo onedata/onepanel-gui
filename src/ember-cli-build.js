@@ -1,8 +1,6 @@
 /*jshint node:true*/
 /* global require, module */
 
-var sass = require('node-sass');
-
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
@@ -15,12 +13,6 @@ module.exports = function (defaults) {
         'app/styles',
         'app/styles/oneicons'
       ],
-      functions: {
-        rootUrl: function () {
-          // NOTE: remember to change this when changing in environment!
-          return new sass.types.String('/');
-        }
-      }
     },
     // a "bootstrap" should be imported into app.scss
     'ember-cli-bootstrap-sassy': {
@@ -75,7 +67,7 @@ module.exports = function (defaults) {
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
-  
+
   app.import('vendor/chartist-plugin-legend/chartist-plugin-legend.js');
 
   return app.toTree();
