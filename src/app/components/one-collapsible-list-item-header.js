@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import { invoke, invokeAction } from 'ember-invoke-action';
 
 /**
  * Item header class of the collapsible list. For example of use case see 
@@ -20,8 +20,12 @@ import { invokeAction } from 'ember-invoke-action';
 export default Ember.Component.extend({
   tagName: 'div',
   classNames: ['one-collapsible-list-item-header', 'row', 'list-header-row', 'truncate'],
-  classNameBindings: ['isOpened:opened', 'isCollapsible:collapsible',
-    'toolbarWhenOpened:toolbar-when-opened', 'disableToggleIcon:disable-toggle-icon',
+  classNameBindings: [
+    'isOpened:opened',
+    'isCollapsible:collapsible',
+    'toolbarWhenOpened:toolbar-when-opened',
+    'disableToggleIcon:disable-toggle-icon',
+    '_isItemFixed:header-fixed'
   ],
 
   /**
@@ -30,13 +34,16 @@ export default Ember.Component.extend({
    */
   disableToggleIcon: false,
 
+  _clickDisabledElementsSelector: 
+    '.btn-toolbar *, .webui-popover *, .item-checkbox, .item-checkbox *',
+
   click(event) {
-    const selector = '.btn-toolbar *, .webui-popover *';
+    const selector = this.get('_clickDisabledElementsSelector');
     if ((event.target.matches && event.target.matches(selector)) ||
       (event.target.msMatchesSelector && event.target.msMatchesSelector(selector))) {
       event.stopPropagation();
     } else {
-      invokeAction(this, 'toggle');
+      invoke(this, 'toggle');
     }
   },
 
@@ -46,7 +53,9 @@ export default Ember.Component.extend({
      * @param {boolean} opened should item be opened or collapsed?
      */
     toggle(opened) {
-      invokeAction(this, 'toggle', opened);
+      if (!this.get('_isItemFixed')) {
+        invokeAction(this, 'toggle', opened);
+      }
     }
   }
 });

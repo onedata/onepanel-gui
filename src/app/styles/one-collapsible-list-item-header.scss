@@ -38,9 +38,17 @@
     }
   }
 
+  &.header-fixed {
+    // override inline styles
+    cursor: not-allowed !important;
+    .item-checkbox ~ * {
+      opacity: 0.4;
+    }
+  }
+
   .item-checkbox {
     margin-bottom: -3px;
-    margin-right: 0.6em;
+    margin-right: 1.2em;
   }
 
   .btn-toolbar {

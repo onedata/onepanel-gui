@@ -178,7 +178,10 @@ input {
   opacity: 1;
   transition: $collapse-transition;
   &.collapse-small {
-    max-height: 70em;
+    max-height: 1000px;
+  }
+  &.collapse-medium {
+    max-height: 2500px;
   }
   &.collapse-hidden {
     max-height: 0;

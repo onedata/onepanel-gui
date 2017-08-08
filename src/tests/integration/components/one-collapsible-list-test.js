@@ -112,4 +112,102 @@ describe('Integration | Component | one collapsible list', function () {
       done();
     });
   });
+
+  it('can select all items', function (done) {
+    let selectionChanged = false;
+    this.set('selectionChangedHandler', function (valuesSelected) {
+      expect(valuesSelected.length).to.be.equal(2);
+      expect(valuesSelected.indexOf(1)).to.be.gt(-1);
+      expect(valuesSelected.indexOf(2)).to.be.gt(-1);
+      selectionChanged = true;
+    });
+
+    this.render(hbs `
+    {{#one-collapsible-list
+      hasCheckboxes=true
+      selectionChanged=(action selectionChangedHandler)
+      as |list|}}
+      {{list.header}}
+      {{#list.item selectionValue=1 as |listItem|}}
+        {{#listItem.header}}
+          <h1>Some header</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+      {{#list.item selectionValue=2 as |listItem|}}
+        {{#listItem.header}}
+          <h1>Some header</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+    {{/one-collapsible-list}}
+    `);
+    
+    wait().then(() => {
+      this.$('.one-collapsible-list-header .one-checkbox').click();
+      wait().then(() => {
+        expect(selectionChanged).to.be.true;
+        done();
+      });
+    });
+  });
+
+  it('can filter items', function (done) {
+     this.render(hbs `
+     {{#one-collapsible-list as |list|}}
+      {{list.header}}
+      {{#list.item as |listItem|}}
+        {{#listItem.header}}
+          <h1>item1</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+      {{#list.item as |listItem|}}
+        {{#listItem.header}}
+          <h1>item2</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+    {{/one-collapsible-list}}
+    `);
+
+    this.$('.one-collapsible-list-header .search-bar')
+      .val('item1').trigger('input');
+    wait().then(() => {
+      expect(this.$('.one-collapsible-list-item.collapse-hidden'))
+        .to.have.length(1);
+      done();
+    });
+  });
+
+  it('shows filtered out and checked items', function (done) {
+    this.render(hbs `
+    {{#one-collapsible-list
+      hasCheckboxes=true
+      as |list|}}
+      {{list.header}}
+      {{#list.item class="item1" selectionValue=1 as |listItem|}}
+        {{#listItem.header}}
+          <h1>item1</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+      {{#list.item selectionValue=2 as |listItem|}}
+        {{#listItem.header}}
+          <h1>item2</h1>
+        {{/listItem.header}}
+      {{/list.item}}
+    {{/one-collapsible-list}}
+    `);
+    
+    wait().then(() => {
+      this.$('.item1 .one-checkbox').click();
+      wait().then(() => {
+        this.$('.one-collapsible-list-header .search-bar')
+          .val('item2').trigger('input');
+        wait().then(() => {
+          let item1 = this.$('.item1');
+          expect(item1).to.have.class('selected');
+          expect(item1).not.to.have.class('collapse-hidden');
+          expect(item1.find('.header-fixed')).to.have.length(1);
+          done();
+        });
+      });
+    });
+  });
 });

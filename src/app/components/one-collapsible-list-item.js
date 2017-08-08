@@ -1,10 +1,11 @@
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import { invoke, invokeAction } from 'ember-invoke-action';
 const {
   computed,
   computed: {
     notEmpty
   },
+  observer,
   inject: {
     service,
   },
@@ -24,8 +25,12 @@ const {
  */
 export default Ember.Component.extend({
   tagName: 'li',
-  classNames: ['one-collapsible-list-item'],
-  classNameBindings: ['isActive:active'],
+  classNames: ['one-collapsible-list-item', 'collapse-animation', 'collapse-medium'],
+  classNameBindings: [
+    'isActive:active',
+    '_isItemCollapsed:collapse-hidden',
+    '_isSelected:selected'
+  ],
 
   eventsBus: service(),
 
@@ -54,8 +59,56 @@ export default Ember.Component.extend({
 
   /**
    * If true, item has a checkbox
+   * @type {boolean}
    */
   _hasCheckbox: false,
+
+  /**
+   * Item value notification handler. Sends to parent value of this item.
+   * @type {Function}
+   */
+  _notifyValue: null,
+
+  /**
+   * If true, list is collapsed
+   * @type {boolean}
+   */
+  _isListCollapsed: false,
+
+  /**
+   * Search query
+   * @type {string}
+   */
+  _searchQuery: '',
+
+  /**
+   * If true, list item matches searched text
+   * @type {boolean}
+   */
+  _matchesSearchQuery: true,
+
+  _isItemCollapsed: computed('_isListCollapsed', '_matchesSearchQuery', 
+    '_isSelected', function() {
+      let {
+        _isListCollapsed,
+        _matchesSearchQuery,
+        _isSelected
+      } = this.getProperties(
+        '_isListCollapsed', 
+        '_matchesSearchQuery', 
+        '_isSelected'
+      );
+      return _isListCollapsed || (!_matchesSearchQuery && !_isSelected);
+    }
+  ),
+
+  _isItemFixed: computed('_matchesSearchQuery', '_isSelected', function() {
+    let {
+      _matchesSearchQuery,
+      _isSelected
+    } = this.getProperties('_matchesSearchQuery', '_isSelected');
+    return !_matchesSearchQuery && _isSelected;
+  }),
 
   isActive: computed('activeElementId', 'accordionMode', function () {
     let {
@@ -72,22 +125,75 @@ export default Ember.Component.extend({
   _isSelected: computed('_selectedItemValues.[]', 'selectionValue', function () {
     let {
       _selectedItemValues,
-      selectionValue
+      selectionValue,
     } = this.getProperties('_selectedItemValues', 'selectionValue');
     return _selectedItemValues.indexOf(selectionValue) > -1;
   }),
 
   _isCheckboxActive: notEmpty('selectionValue'),
 
+  _searchQueryObserver: observer('_searchQuery', function () {
+    this._checkSearchQuery();
+  }),
+
+  _matchesSearchQueryAndIsSelectedObserver: observer('_matchesSearchQuery', 
+    '_isSelected', function() {
+      let {
+        _matchesSearchQuery,
+        _isSelected,
+        selectionValue
+      } = this.getProperties(
+        '_matchesSearchQuery',
+        '_isSelected',
+        'selectionValue'
+      );
+      // Add/remove item value from list after filter
+      if (!_matchesSearchQuery && !_isSelected) {
+        invokeAction(this, '_notifyValue', selectionValue, false);
+      } else if (_matchesSearchQuery) {
+        invokeAction(this, '_notifyValue', selectionValue, true);
+      }
+    }
+  ),
+
   init() {
-    this._super();
+    this._super(...arguments);
     let {
       closeEventName,
-      eventsBus
-    } = this.getProperties('closeEventName', 'eventsBus');
+      eventsBus,
+      selectionValue
+    } = this.getProperties('closeEventName', 'eventsBus', 'selectionValue');
     if (closeEventName) {
       eventsBus.on(closeEventName, () => this.set('isActive', false));
     }
+    if (selectionValue !== null) {
+      invokeAction(this, '_notifyValue', selectionValue, true);
+    }
+  },
+
+  willDestroyElement() {
+    try {
+      let selectionValue = this.get('selectionValue');
+      if (selectionValue !== null) {
+        invokeAction(this, '_notifyValue', selectionValue, false);
+      }
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
+  _checkSearchQuery() {
+    let {
+      _searchQuery,
+      _matchesSearchQuery,
+    } = this.getProperties('_searchQuery', '_matchesSearchQuery');
+    let headerTextElement = this.$('.one-collapsible-list-item-header');
+    let matches = 
+      headerTextElement.text().toLowerCase().search(_searchQuery.trim()) > -1;
+    if (matches !== _matchesSearchQuery && !matches) {
+      invoke(this, 'toggle', false);
+    }
+    this.set('_matchesSearchQuery', matches);
   },
 
   actions: {
