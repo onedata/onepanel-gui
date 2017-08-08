@@ -61,11 +61,12 @@ $disabled-opacity: 0.6;
 @import 'custom-animations';
 @import 'common';
 
+@import 'onedata-gui-common';
+
 @import 'spin-spinner-extensions';
 @import 'app-layout';
 @import 'alert-global';
 @import 'main-content';
-@import 'login-layout';
 @import 'one-list';
 @import 'one-list-item';
 @import 'main-menu';
@@ -114,7 +115,6 @@ $disabled-opacity: 0.6;
 @import 'space-support-chart';
 @import 'application-error';
 @import 'one-tree';
-
 
 // TODO a mess
 
