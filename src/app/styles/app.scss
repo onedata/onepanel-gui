@@ -1,6 +1,8 @@
 @import 'onedata-gui-common';
 
 // Onepanel specific styles
+@import 'cluster-storage-table';
+@import 'cluster-spaces-table-item';
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
 @import 'storage-item';

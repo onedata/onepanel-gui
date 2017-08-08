@@ -11,7 +11,11 @@ module.exports = function (defaults) {
     sassOptions: {
       includePaths: [
         'app/styles',
-        'app/styles/oneicons'
+        'app/styles/oneicons',
+        // onedata-gui-common addon
+        'lib/onedata-gui-common/app/styles',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common/components',
       ],
     },
     // a "bootstrap" should be imported into app.scss

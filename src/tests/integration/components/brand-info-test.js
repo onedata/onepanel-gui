@@ -25,7 +25,7 @@ describe('Integration | Component | brand info', function () {
     let onepanelServer = this.container.lookup('service:onepanelServer');
     onepanelServer.set('serviceType', 'zone');
 
-    this.render(hbs `{{brand-info}}`);
+    this.render(hbs`{{brand-info}}`);
 
     wait().then(() => {
       expect(this.$().text()).to.match(

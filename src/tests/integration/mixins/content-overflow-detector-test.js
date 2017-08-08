@@ -4,7 +4,7 @@ import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import Ember from 'ember';
-import ContentOverflowDetectorMixin from 'onepanel-gui/mixins/content-overflow-detector';
+import ContentOverflowDetectorMixin from 'onedata-gui-common/mixins/content-overflow-detector';
 
 const {
   String: {
@@ -44,7 +44,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs `
+    this.render(hbs`
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -71,7 +71,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs `
+    this.render(hbs`
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -93,7 +93,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs `
+    this.render(hbs`
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -125,7 +125,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs `
+    this.render(hbs`
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
