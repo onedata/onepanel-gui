@@ -78,7 +78,8 @@
   "ember-addon": {
     "paths": [
       "lib/ember-onedata-onepanel-server",
-      "lib/ember-plainable"
+      "lib/ember-plainable",
+      "lib/onedata-gui-common"
     ]
   }
 }
