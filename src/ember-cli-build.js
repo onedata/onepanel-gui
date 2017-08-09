@@ -13,8 +13,8 @@ module.exports = function (defaults) {
         'app/styles',
         // onedata-gui-common addon
         'lib/onedata-gui-common/app/styles',
-        'lib/onedata-gui-common/app/styles/oneicons',
         'lib/onedata-gui-common/app/styles/onedata-gui-common',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common/oneicons',
         'lib/onedata-gui-common/app/styles/onedata-gui-common/components',
       ],
       onlyIncluded: false,
