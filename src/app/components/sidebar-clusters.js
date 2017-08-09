@@ -8,8 +8,8 @@
  */
 
 import Ember from 'ember';
-import TwoLevelSidebar from 'onepanel-gui/components/two-level-sidebar';
-import layout from 'onepanel-gui/templates/components/two-level-sidebar';
+import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
+import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
 
 const {
   computed: { readOnly },
@@ -26,14 +26,14 @@ export default TwoLevelSidebar.extend({
 
   firstLevelItemIcon: 'menu-clusters',
 
-  triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized', 
+  triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized',
     'onepanelServiceType', function () {
-    let {
+      let {
       cluster,
-      onepanelServiceType
+        onepanelServiceType
     } = this.getProperties('cluster', 'onepanelServiceType');
-    return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
-  }),
+      return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
+    }),
 
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
@@ -43,25 +43,25 @@ export default TwoLevelSidebar.extend({
     if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
       // TODO i18n
       return [{
-          id: 'nodes',
-          label: 'Nodes',
-          icon: 'node',
-        },
-        {
-          id: 'provider',
-          label: 'Provider',
-          icon: 'provider'
-        },
-        {
-          id: 'storages',
-          label: 'Storages',
-          icon: 'support',
-        },
-        {
-          id: 'spaces',
-          label: 'Spaces',
-          icon: 'space'
-        },
+        id: 'nodes',
+        label: 'Nodes',
+        icon: 'node',
+      },
+      {
+        id: 'provider',
+        label: 'Provider',
+        icon: 'provider'
+      },
+      {
+        id: 'storages',
+        label: 'Storages',
+        icon: 'support',
+      },
+      {
+        id: 'spaces',
+        label: 'Spaces',
+        icon: 'space'
+      },
       ];
     } else {
       return [];

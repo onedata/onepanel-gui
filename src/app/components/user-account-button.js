@@ -4,7 +4,7 @@ import UserAccountButton from 'onedata-gui-common/components/user-account-button
 
 const {
   inject: { service },
-  alias,
+  computed: { alias },
 } = Ember;
 
 export default UserAccountButton.extend({

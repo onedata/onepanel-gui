@@ -9,6 +9,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 export default function (options) {
   let defaultOptions = {
     ignoreZero: true,

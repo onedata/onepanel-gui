@@ -27,6 +27,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 const TOOLTIP_HTML =
   `
   <div class="chart-tooltip">

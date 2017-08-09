@@ -7,7 +7,7 @@ import spaceStatusIcons from './components/space-status-icons';
 import brandInfo from './components/brand-info';
 
 import _ from 'lodash';
-import onedataCommonTranslations from 'onepanel-gui/locales/onedata-gui-common/locales/en/translations';
+import onedataCommonTranslations from './onedata-gui-common';
 
 let translations = {
   components: {
@@ -21,4 +21,4 @@ let translations = {
   },
 };
 
-export default _.assign(translations, onedataCommonTranslations);
+export default _.merge(translations, onedataCommonTranslations);

@@ -8,8 +8,8 @@
  */
 
 import _object from 'lodash/object';
-import OneFormSimple from 'onepanel-gui/components/one-form-simple';
-import layout from 'onepanel-gui/templates/components/one-form-simple';
+import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
+import layout from 'onedata-gui-common/templates/components/one-form-simple';
 import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import Ember from 'ember';
@@ -158,19 +158,19 @@ export default OneFormSimple.extend(Validations, {
 
   fields: computed('mode', function () {
     switch (this.get('mode')) {
-    case 'new':
-      return _object.values(FIELDS).filter(f => f._modeNew)
-        .map(f => Ember.Object.create(f));
-    case 'show':
-      // in show mode, convert each field to static type    
-      // TODO there are only text fields, so convert to static works  
-      return _object.values(FIELDS_STATIC).map(f => Ember.Object.create(f));
-    case 'edit':
-      return _object.values(FIELDS).filter(f => f._modeEdit)
-        .map(f => Ember.Object.create(f));
+      case 'new':
+        return _object.values(FIELDS).filter(f => f._modeNew)
+          .map(f => Ember.Object.create(f));
+      case 'show':
+        // in show mode, convert each field to static type    
+        // TODO there are only text fields, so convert to static works  
+        return _object.values(FIELDS_STATIC).map(f => Ember.Object.create(f));
+      case 'edit':
+        return _object.values(FIELDS).filter(f => f._modeEdit)
+          .map(f => Ember.Object.create(f));
 
-    default:
-      break;
+      default:
+        break;
     }
   }),
 
@@ -185,12 +185,12 @@ export default OneFormSimple.extend(Validations, {
   submitText: computed('mode', function () {
     let mode = this.get('mode');
     switch (mode) {
-    case 'new':
-      return 'Register';
-    case 'edit':
-      return 'Modify provider details';
-    default:
-      break;
+      case 'new':
+        return 'Register';
+      case 'edit':
+        return 'Modify provider details';
+      default:
+        break;
     }
   }),
 

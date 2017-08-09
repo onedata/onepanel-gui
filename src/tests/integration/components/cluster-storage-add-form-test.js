@@ -29,7 +29,7 @@ describe('Integration | Component | cluster storage add form', function () {
       name: 'POSIX'
     });
 
-    this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+    this.render(hbs`{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
 
     let helper = new ClusterStorageAddHelper(this.$());
 
@@ -47,7 +47,7 @@ describe('Integration | Component | cluster storage add form', function () {
       name: 'POSIX'
     });
 
-    this.render(hbs `
+    this.render(hbs`
       {{cluster-storage-add-form
         selectedStorageType=selectedStorageType
         submit=submit

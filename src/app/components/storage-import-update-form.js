@@ -35,7 +35,7 @@ import { buildValidations } from 'ember-cp-validations';
 import _object from 'lodash/object';
 import _find from 'lodash/find';
 
-import OneForm from 'onepanel-gui/components/one-form';
+import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 

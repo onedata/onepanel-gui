@@ -129,10 +129,10 @@ export default Ember.Component.extend({
       onepanelServiceType,
       _zoneName,
     } = this.getProperties(
-      'globalNotify',
-      'onepanelServiceType',
-      '_zoneName'
-    );
+        'globalNotify',
+        'onepanelServiceType',
+        '_zoneName'
+      );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
     if (onepanelServiceType === 'zone') {
@@ -169,11 +169,11 @@ export default Ember.Component.extend({
       _zoneName,
       _zoneDomainName,
     } = this.getProperties(
-      'hostsUsed',
-      'primaryClusterManager',
-      '_zoneName',
-      '_zoneDomainName'
-    );
+        'hostsUsed',
+        'primaryClusterManager',
+        '_zoneName',
+        '_zoneDomainName'
+      );
 
     const ConfigurationClass = configurationClass(serviceType);
 
@@ -274,14 +274,14 @@ export default Ember.Component.extend({
   actions: {
     zoneFormChanged(fieldName, value) {
       switch (fieldName) {
-      case 'main.name':
-        this.set('_zoneName', value);
-        break;
-      case 'main.domainName':
-        this.set('_zoneDomainName', value);
-        break;
-      default:
-        throw 'Unexpected field changed in zone installation form: ' + fieldName;
+        case 'main.name':
+          this.set('_zoneName', value);
+          break;
+        case 'main.domainName':
+          this.set('_zoneDomainName', value);
+          break;
+        default:
+          throw 'Unexpected field changed in zone installation form: ' + fieldName;
       }
     },
 
@@ -328,7 +328,7 @@ export default Ember.Component.extend({
       }
 
       let start = this._startDeploy();
-      start.then(({ data, task }) => {
+      start.then(({ task }) => {
         this.showDeployProgress(task);
         this.watchDeployStatus(task);
       });

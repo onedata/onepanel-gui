@@ -10,6 +10,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 export default function (options) {
   return (chart) => {
     let defaultOptions = {

@@ -7,6 +7,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 import Ember from 'ember';
 import _ from 'lodash';
 
@@ -76,14 +78,14 @@ export default SpaceSyncChartBase.extend({
       timePeriod
     } = this.getProperties('timeUnit', 'timePeriod');
     switch (timeUnit) {
-    case 'minute':
-      return 60 * timePeriod;
-    case 'hour':
-      return 3600 * timePeriod;
-    case 'day':
-      return 86400 * timePeriod;
-    default:
-      return timePeriod;
+      case 'minute':
+        return 60 * timePeriod;
+      case 'hour':
+        return 3600 * timePeriod;
+      case 'day':
+        return 86400 * timePeriod;
+      default:
+        return timePeriod;
     }
   }),
 
@@ -105,14 +107,15 @@ export default SpaceSyncChartBase.extend({
       _chartValues,
       throughputDivisor,
     } = this.getProperties('_timeStatsValues', 'chartSeriesLabel', '_chartValues',
-      'throughputDivisor');
+        'throughputDivisor');
     if (_timeStatsValues && _timeStatsValues.length > 0) {
       while (_chartValues.length) {
         _chartValues.shift();
       }
       _timeStatsValues[1].map((val, index) =>
-        _chartValues.push((val + _timeStatsValues[2][index] + _timeStatsValues[3]
-          [index]) / throughputDivisor)
+        _chartValues.push(
+          (val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) / throughputDivisor
+        )
       );
       _chartValues.push(null);
       return {
