@@ -11,12 +11,13 @@ module.exports = function (defaults) {
     sassOptions: {
       includePaths: [
         'app/styles',
-        'app/styles/oneicons',
         // onedata-gui-common addon
         'lib/onedata-gui-common/app/styles',
+        'lib/onedata-gui-common/app/styles/oneicons',
         'lib/onedata-gui-common/app/styles/onedata-gui-common',
         'lib/onedata-gui-common/app/styles/onedata-gui-common/components',
       ],
+      onlyIncluded: false,
     },
     // a "bootstrap" should be imported into app.scss
     'ember-cli-bootstrap-sassy': {
