@@ -3,6 +3,7 @@ import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
+import { click, fillIn } from 'ember-native-dom-helpers';
 
 describe('Integration | Component | one collapsible list', function () {
   setupComponentTest('one-collapsible-list', {
@@ -37,8 +38,7 @@ describe('Integration | Component | one collapsible list', function () {
     {{/one-collapsible-list}}
     `);
 
-    this.$('.first-item-header input').click();
-    wait().then(() => {
+    click('.first-item-header .one-checkbox').then(() => {
       expect(selectionChanged).to.be.true;
       done();
     });
@@ -73,10 +73,8 @@ describe('Integration | Component | one collapsible list', function () {
     {{/one-collapsible-list}}
     `);
 
-    this.$('.first-item-header input').click();
-    wait().then(() => {
-      this.$('.first-item-header input').click();
-      wait().then(() => {
+    click('.first-item-header .one-checkbox').then(() => {
+      click('.first-item-header .one-checkbox').then(() => {
         expect(changeCounter).to.be.equal(2);
         done();
       });
@@ -105,8 +103,7 @@ describe('Integration | Component | one collapsible list', function () {
     {{/one-collapsible-list}}
     `);
 
-    this.$('.first-item-header input').click();
-    wait().then(() => {
+    click('.first-item-header input').then(() => {
       expect(this.$('.first-item-header input')).to.be.disabled;
       expect(selectionChanged).to.be.false;
       done();
@@ -140,10 +137,9 @@ describe('Integration | Component | one collapsible list', function () {
       {{/list.item}}
     {{/one-collapsible-list}}
     `);
-    
+
     wait().then(() => {
-      this.$('.one-collapsible-list-header .one-checkbox').click();
-      wait().then(() => {
+      click('.one-collapsible-list-header .one-checkbox').then(() => {
         expect(selectionChanged).to.be.true;
         done();
       });
@@ -151,7 +147,7 @@ describe('Integration | Component | one collapsible list', function () {
   });
 
   it('can filter items', function (done) {
-     this.render(hbs `
+    this.render(hbs `
      {{#one-collapsible-list as |list|}}
       {{list.header}}
       {{#list.item as |listItem|}}
@@ -167,9 +163,7 @@ describe('Integration | Component | one collapsible list', function () {
     {{/one-collapsible-list}}
     `);
 
-    this.$('.one-collapsible-list-header .search-bar')
-      .val('item1').trigger('input');
-    wait().then(() => {
+    fillIn('.one-collapsible-list-header .search-bar', 'item1').then(() => {
       expect(this.$('.one-collapsible-list-item.collapse-hidden'))
         .to.have.length(1);
       done();
@@ -194,19 +188,14 @@ describe('Integration | Component | one collapsible list', function () {
       {{/list.item}}
     {{/one-collapsible-list}}
     `);
-    
-    wait().then(() => {
-      this.$('.item1 .one-checkbox').click();
-      wait().then(() => {
-        this.$('.one-collapsible-list-header .search-bar')
-          .val('item2').trigger('input');
-        wait().then(() => {
-          let item1 = this.$('.item1');
-          expect(item1).to.have.class('selected');
-          expect(item1).not.to.have.class('collapse-hidden');
-          expect(item1.find('.header-fixed')).to.have.length(1);
-          done();
-        });
+
+    click('.item1 .one-checkbox').then(() => {
+      fillIn('.one-collapsible-list-header .search-bar', 'item2').then(() => {
+        let item1 = this.$('.item1');
+        expect(item1).to.have.class('selected');
+        expect(item1).not.to.have.class('collapse-hidden');
+        expect(item1.find('.header-fixed')).to.have.length(1);
+        done();
       });
     });
   });
