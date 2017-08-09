@@ -12,12 +12,12 @@ import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
 
-import stripObject from 'onepanel-gui/utils/strip-object';
-import OneForm from 'onepanel-gui/components/one-form';
+import stripObject from 'onedata-gui-common/utils/strip-object';
+import OneForm from 'onedata-gui-common/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
-import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
+import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
 const {
   computed,
@@ -65,7 +65,7 @@ export default OneForm.extend(Validations, {
       return ['generic', selectedStorageType.id];
     }
   }),
-  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields', 
+  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
     function () {
       let {
         storageTypes,
@@ -247,10 +247,10 @@ export default OneForm.extend(Validations, {
         currentFields,
         selectedStorageType
       } = this.getProperties(
-        'formValues',
-        'currentFields',
-        'selectedStorageType'
-      );
+          'formValues',
+          'currentFields',
+          'selectedStorageType'
+        );
 
       let formData = {
         type: selectedStorageType.id

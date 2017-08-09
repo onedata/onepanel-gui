@@ -11,7 +11,7 @@ import _object from 'lodash/object';
 import OneFormSimple from 'onepanel-gui/components/one-form-simple';
 import layout from 'onepanel-gui/templates/components/one-form-simple';
 import { validator, buildValidations } from 'ember-cp-validations';
-import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
+import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import Ember from 'ember';
 
 const {

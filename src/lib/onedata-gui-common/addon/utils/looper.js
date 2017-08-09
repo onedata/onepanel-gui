@@ -56,9 +56,10 @@ export default Ember.Object.extend(Evented, {
   destroy() {
     try {
       this.stop();
-    } finally {
-      return this._super(...arguments);
+    } catch (error) {
+      console.warn('util:looper: stopping on destroy failed');
     }
+    return this._super(...arguments);
   },
 
   stop() {

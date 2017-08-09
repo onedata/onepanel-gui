@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import waitFor from 'onepanel-gui/utils/wait-for';
+import waitFor from 'onedata-gui-common/utils/wait-for';
 
 describe('Unit | Utility | wait for', function (done) {
   // Replace this with your real tests.

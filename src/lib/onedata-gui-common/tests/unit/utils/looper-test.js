@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import Ember from 'ember';
-import Looper from 'onepanel-gui/utils/looper';
+import Looper from 'onedata-gui-common/utils/looper';
 
 const {
   run

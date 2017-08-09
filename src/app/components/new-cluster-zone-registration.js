@@ -9,7 +9,7 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import stripObject from 'onepanel-gui/utils/strip-object';
+import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 
 const {

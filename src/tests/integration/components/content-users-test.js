@@ -25,7 +25,7 @@ describe('Integration | Component | content users', function () {
     });
     this.set('user', user);
 
-    this.render(hbs `{{content-users user=user}}`);
+    this.render(hbs`{{content-users user=user}}`);
 
     let form = new UserCredentialsFormHelper(this.$());
 
@@ -46,13 +46,13 @@ describe('Integration | Component | content users', function () {
       });
       this.set('user', user);
 
-      this.render(hbs `{{content-users user=user}}`);
+      this.render(hbs`{{content-users user=user}}`);
 
       this.$('.btn-change-password').click();
 
       let form = new UserCredentialsFormHelper(this.$());
 
-      wait().then(() => {
+      wait({ waitForTimers: false }).then(() => {
         expect(form.getInput('generic-username'), 'field username')
           .to.exist;
         expect(form.getInput('static-secretPassword'), 'field secretPassword')

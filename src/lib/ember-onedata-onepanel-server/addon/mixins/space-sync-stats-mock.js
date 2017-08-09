@@ -70,9 +70,9 @@ export default Mixin.create({
       statusChangeTimerId,
       statsPushIntervalIds
     } = this.getProperties(
-      'statusChangeTimerId',
-      'statsPushIntervalIds'
-    );
+        'statusChangeTimerId',
+        'statsPushIntervalIds'
+      );
     clearTimeout(statusChangeTimerId);
     statsPushIntervalIds.forEach(id => clearInterval(id));
     this._super(...arguments);
@@ -144,10 +144,10 @@ export default Mixin.create({
         globalUpdateStatus,
         lastValueDate,
       } = this.getProperties('allStats',
-        'globalImportStatus',
-        'globalUpdateStatus',
-        'lastValueDate'
-      );
+          'globalImportStatus',
+          'globalUpdateStatus',
+          'lastValueDate'
+        );
 
       let stats;
       if (period && metrics) {

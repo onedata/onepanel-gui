@@ -12,7 +12,7 @@
 
 import Ember from 'ember';
 
-import bytesToString from 'onepanel-gui/utils/bytes-to-string';
+import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 

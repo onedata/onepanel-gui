@@ -6,13 +6,13 @@
   <h1>Cluster deployment
     <div class="btn-toolbar">
       {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
-      {{#spin-button
+      {{#one-spin-button
         class=(concat "btn btn-sm btn-primary btn-deploy-cluster " (unless canDeploy "disabled"))
         action=(action "startDeploy")
       }}
         <span>Deploy</span>{{one-icon icon="arrow-right"}}
         {{bs-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
-      {{/spin-button}}
+      {{/one-spin-button}}
     </div>
   </h1>
 </div>

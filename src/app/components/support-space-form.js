@@ -11,9 +11,9 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-import OneFormSimple from 'onepanel-gui/components/one-form-simple';
+import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
-import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
+import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
 const {
   isEmpty,
@@ -29,33 +29,33 @@ const {
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 const FORM_FIELDS = [{
-    name: 'token',
-    type: 'text',
-    tip: 'Globally unique identifier assigned by onezone',
-    example: 'MDAxNWxvY...'
-  },
-  { name: 'size', type: 'number', gt: 0, example: '100' },
-  {
-    name: 'sizeUnit',
-    type: 'radio-group',
-    nolabel: true,
-    options: [
-      { value: 'mb', label: 'MB' },
-      { value: 'gb', label: 'GB' },
-      { value: 'tb', label: 'TB' },
-    ]
-  },
-  {
-    name: 'mountInRoot',
-    type: 'checkbox',
-    optional: true,
-  },
-  {
-    name: '_importEnabled',
-    type: 'checkbox',
-    tip: 'Configure import files from storage',
-    optional: true,
-  },
+  name: 'token',
+  type: 'text',
+  tip: 'Globally unique identifier assigned by onezone',
+  example: 'MDAxNWxvY...'
+},
+{ name: 'size', type: 'number', gt: 0, example: '100' },
+{
+  name: 'sizeUnit',
+  type: 'radio-group',
+  nolabel: true,
+  options: [
+    { value: 'mb', label: 'MB' },
+    { value: 'gb', label: 'GB' },
+    { value: 'tb', label: 'TB' },
+  ]
+},
+{
+  name: 'mountInRoot',
+  type: 'checkbox',
+  optional: true,
+},
+{
+  name: '_importEnabled',
+  type: 'checkbox',
+  tip: 'Configure import files from storage',
+  optional: true,
+},
 ];
 
 const MEGA = Math.pow(10, 6);
@@ -117,7 +117,7 @@ export default OneFormSimple.extend(Validations, {
       _importEnabled,
       _isImportUpdateFormValid,
     } = this.getProperties('errors', '_importEnabled',
-      '_isImportUpdateFormValid');
+        '_isImportUpdateFormValid');
     return isEmpty(errors) &&
       (_importEnabled ? _isImportUpdateFormValid : true);
   }),
@@ -188,15 +188,15 @@ export default OneFormSimple.extend(Validations, {
         mountInRoot,
         _importEnabled,
       } = this.get('formValues.main').getProperties(
-        'name',
-        'token',
-        'size',
-        'sizeUnit',
-        'storageImport',
-        'storageUpdate',
-        'mountInRoot',
-        '_importEnabled'
-      );
+          'name',
+          'token',
+          'size',
+          'sizeUnit',
+          'storageImport',
+          'storageUpdate',
+          'mountInRoot',
+          '_importEnabled'
+        );
 
       size = size * UNITS[sizeUnit];
 
