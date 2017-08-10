@@ -95,6 +95,18 @@ export default Ember.Component.extend(ClickOutside, {
   popoverPlacement: 'auto',
 
   /**
+   * If true, popover has padding
+   * @type {boolean}
+   */
+  popoverPadding: true,
+
+  /**
+   * Popover style. It will add webui-popover-{popoverStyle} 
+   * class to popover element
+   */
+  popoverStyle: null,
+
+  /**
    * Popover class
    * @type {string}
    */

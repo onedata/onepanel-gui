@@ -80,5 +80,8 @@
       "lib/ember-onedata-onepanel-server",
       "lib/ember-plainable"
     ]
+  },
+  "dependencies": {
+    "ember-cli-clipboard": "0.8.0"
   }
 }

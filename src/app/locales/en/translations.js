@@ -10,6 +10,7 @@ import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import storageImportUpdateForm from './components/storage-import-update-form';
 import spaceStatusIcons from './components/space-status-icons';
 import applicationError from './components/application-error';
+import providerPlace from './components/provider-place';
 
 const translations = {
   components: {
@@ -24,7 +25,8 @@ const translations = {
     clusterSpacesTableItem,
     storageImportUpdateForm,
     spaceStatusIcons,
-    applicationError
+    applicationError,
+    providerPlace
   },
 };
 

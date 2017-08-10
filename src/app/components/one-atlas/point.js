@@ -57,6 +57,9 @@ export default Ember.Component.extend({
       longitude,
     } = this.getProperties('atlasWidth', 'longitude');
 
+    if (longitude < -180 || longitude > 180) {
+      longitude = 0;
+    }
     return ((longitude + 180) / 360) * atlasWidth;
   }),
 
@@ -70,6 +73,9 @@ export default Ember.Component.extend({
       latitude,
     } = this.getProperties('atlasHeight', 'latitude');
 
+    if (latitude < -90 || latitude > 90) {
+      latitude = 0;
+    }
     // Calculations based on https://en.wikipedia.org/wiki/Mercator_projection
     // article
     let ltr = latitude * (Math.PI / 180);

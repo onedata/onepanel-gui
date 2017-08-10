@@ -1,0 +1,8 @@
+{{#unless widthBased}}
+  {{yield}}
+{{else}}
+  <div class="truncate truncated-string-content">
+    {{yield}}
+  </div>
+{{/unless}}
+{{bs-tooltip autoPlacement=true placement="top" title=tooltipText triggerEvents="" visible=(and tooltipEnabled showTooltip)}}
