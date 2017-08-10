@@ -1,22 +1,14 @@
 import Ember from 'ember';
 
-import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import OnedataApplicationRoute from 'onedata-gui-common/routes/application';
 
 const {
   inject: { service },
 } = Ember;
 
-export default Ember.Route.extend(ApplicationRouteMixin, {
+export default OnedataApplicationRoute.extend({
   onepanelServer: service(),
-
   beforeModel() {
     return this.get('onepanelServer').fetchAndSetServiceType();
-  },
-
-  actions: {
-    transitionTo() {
-      let transition = this.transitionTo(...arguments);
-      return transition.promise;
-    }
   },
 });
