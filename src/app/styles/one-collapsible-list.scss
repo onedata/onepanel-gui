@@ -15,9 +15,11 @@
     $mobile-view-breakpoint: $screen-sm-min + 100px;
 
     .list-title {
-      margin-left: 6px;
       font-weight: bold;
       text-transform: uppercase;
+      &.align-to-icon {
+        margin-left: 6px;
+      }
     }
 
     &.collapsible {

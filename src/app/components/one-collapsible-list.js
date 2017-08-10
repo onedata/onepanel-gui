@@ -21,7 +21,7 @@
  *     {{#listItem.content}}
  *       Hiddent content.
  *     {{/listItem.content}}
- *   {{/listItem}}
+ *   {{/list.item}}
  *   {{!-- other items... --}}
  * {{/one-collapsible-list}}
  * ```
@@ -40,6 +40,7 @@ const {
   run: {
     next,
   },
+  A,
 } = Ember;
 
 export default Ember.Component.extend({
@@ -63,15 +64,15 @@ export default Ember.Component.extend({
 
   /**
    * List of selected item values
-   * @type {Array.*}
+   * @type {Ember.Array.*}
    */
-  _selectedItemValues: [],
+  _selectedItemValues: null,
 
   /**
    * Selection values for all list items (used to "select all" action)
-   * @type {Array.*}
+   * @type {Ember.Array.*}
    */
-  _availableItemValues: [],
+  _availableItemValues: null,
 
   /**
    * If true, list is collapsed
@@ -89,8 +90,8 @@ export default Ember.Component.extend({
    * If true, all items are selected
    * @type {computed.boolean}
    */
-  _areAllItemsSelected: computed('_selectedItemValues.[]', 
-    '_availableItemValues.[]', function () {
+  _areAllItemsSelected: computed('_selectedItemValues.length', 
+    '_availableItemValues.length', function () {
       let {
         _selectedItemValues,
         _availableItemValues,
@@ -99,6 +100,15 @@ export default Ember.Component.extend({
         _availableItemValues.length !== 0;
     }
   ),
+
+  init() {
+    this._super(...arguments);
+
+    this.setProperties({
+      _selectedItemValues: A(),
+      _availableItemValues: A(),
+    });
+  },
 
   actions: {
     toggle(elementId) {
@@ -111,20 +121,21 @@ export default Ember.Component.extend({
       }
     },
     toggleItemSelection(itemValue, selectionState) {
-      let _selectedItemValues = this.get('_selectedItemValues');
-      let isOnList = _selectedItemValues.indexOf(itemValue) > -1;
+      let {
+        _selectedItemValues,
+        _availableItemValues,
+       } = this.getProperties('_selectedItemValues', '_availableItemValues');
+      let isOnList = _selectedItemValues.includes(itemValue);
       if (selectionState === undefined) {
         if ((selectionState === undefined || selectionState === false) && 
           isOnList) {
-          _selectedItemValues = _selectedItemValues
-            .filter(value => value !== itemValue);
+          _selectedItemValues.removeObject(itemValue);
         } else if ((selectionState === undefined || selectionState === true) && 
-          !isOnList) {
-          _selectedItemValues = _selectedItemValues.concat([itemValue]);
+          !isOnList && _availableItemValues.includes(itemValue)) {
+          _selectedItemValues.pushObject(itemValue);
         }
       }
-      this.set('_selectedItemValues', _selectedItemValues);
-      invokeAction(this, 'selectionChanged', _selectedItemValues.slice(0));
+      invokeAction(this, 'selectionChanged', _selectedItemValues.toArray());
     },
     notifyValue(itemValue, exists) {
       // next() to avoid multiple modification in a single render,
@@ -134,11 +145,9 @@ export default Ember.Component.extend({
           let _availableItemValues = this.get('_availableItemValues');
           let isOnList = _availableItemValues.indexOf(itemValue) > -1;
           if (exists && !isOnList) {
-            this.set('_availableItemValues', 
-              _availableItemValues.concat([itemValue]));
+            _availableItemValues.pushObject(itemValue);
           } else if (!exists && isOnList) {
-            this.set('_availableItemValues', 
-              _availableItemValues.filter(v => v !== itemValue));
+            _availableItemValues.removeObject(itemValue);
             invoke(this, 'toggleItemSelection', itemValue, false);
           }
         } 
@@ -148,10 +157,18 @@ export default Ember.Component.extend({
       let {
         _areAllItemsSelected,
         _availableItemValues,
-      } = this.getProperties('_areAllItemsSelected', '_availableItemValues');
-      this.set('_selectedItemValues', 
-        _areAllItemsSelected ? [] : _availableItemValues.slice(0));
-      invokeAction(this, 'selectionChanged', this.get('_selectedItemValues').slice(0));
+        _selectedItemValues
+      } = this.getProperties(
+        '_areAllItemsSelected',
+        '_availableItemValues',
+        '_selectedItemValues'
+      );
+      if (_areAllItemsSelected) {
+        _selectedItemValues.clear();
+      } else {
+        _selectedItemValues.addObjects(_availableItemValues);
+      }
+      invokeAction(this, 'selectionChanged', _selectedItemValues.toArray());
     },
     collapseList(visibility) {
       if (visibility === undefined) {

@@ -34,6 +34,17 @@ export default Ember.Component.extend({
    */
   disableToggleIcon: false,
 
+  /**
+   * If true, arrow icon will be visible
+   * @type {boolean}
+   */
+  isCollapsible: true,
+
+  /**
+   * A selector for elements, which click actions should be ignored by item 
+   * toggle event handler
+   * @type {string}
+   */
   _clickDisabledElementsSelector: 
     '.btn-toolbar *, .webui-popover *, .item-checkbox, .item-checkbox *',
 

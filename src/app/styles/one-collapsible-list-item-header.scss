@@ -41,7 +41,7 @@
   &.header-fixed {
     // override inline styles
     cursor: not-allowed !important;
-    .item-checkbox ~ * {
+    > *:not(.item-checkbox) {
       opacity: 0.4;
     }
   }
