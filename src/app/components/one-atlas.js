@@ -66,7 +66,7 @@ export default Ember.Component.extend({
       _resizeEventHandler,
       _window
     } = this.getProperties('_resizeEventHandler', '_window');
-    // this.$().parents().css('height', '100%');
+    
     this.resizeToFit();
     _window.addEventListener('resize', _resizeEventHandler);
   },
