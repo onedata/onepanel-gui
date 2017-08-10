@@ -103,6 +103,7 @@ export default Ember.Component.extend(ClickOutside, {
   /**
    * Popover style. It will add webui-popover-{popoverStyle} 
    * class to popover element
+   * @type {string}
    */
   popoverStyle: null,
 

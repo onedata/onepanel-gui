@@ -90,6 +90,11 @@ $color-provider-offline: $color-one-red;
       background-color: $color-provider-offline;
     }
   }
+  &.offline {
+    .drop-body ul {
+      margin-bottom: 0;
+    }
+  }
   .drop-title-bar {
     height: 28px;
     line-height: 28px;
@@ -111,8 +116,8 @@ $color-provider-offline: $color-one-red;
   .drop-provider-host-container {
     display: table;
     width: 100%;
-    padding-left: $drop-padding;
     height: 28px;
+    padding-left: $drop-padding;
     line-height: 28px;
     background-color: $color-one-semiwhite;
 
@@ -136,7 +141,7 @@ $color-provider-offline: $color-one-red;
       color: inherit;
 
       &:hover {
-        background-color: darken($color-one-semiwhite, 20);
+        background-color: darken($color-one-semiwhite, 20%);
       }
       .oneicon {
         position: absolute;

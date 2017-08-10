@@ -1,5 +1,6 @@
 /**
  * A base to build a component that shows info about space in context of particular provider.
+ * 
  * @module mixins/components/providers-space
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH

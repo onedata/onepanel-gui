@@ -28,6 +28,7 @@
     "ember-cli-bootstrap-sassy": "0.5.6",
     "ember-cli-chai": "^0.3.2",
     "ember-cli-chartist": "1.2.0",
+    "ember-cli-clipboard": "0.8.0",
     "ember-cli-dependency-checker": "^1.3.0",
     "ember-cli-events-bus": "git+https://github.com/blia/ember-cli-events-bus.git#f0c80d024690338358afb1abd949b8a34e8f0169",
     "ember-cli-htmlbars": "1.2.0",
@@ -80,8 +81,5 @@
       "lib/ember-onedata-onepanel-server",
       "lib/ember-plainable"
     ]
-  },
-  "dependencies": {
-    "ember-cli-clipboard": "0.8.0"
   }
 }

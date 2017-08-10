@@ -1,5 +1,6 @@
 /**
  * A circle representing a provider on world map.
+ * 
  * @module components/provider-place
  * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
@@ -7,7 +8,6 @@
  */
 
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
 
 const {
   computed,
@@ -25,12 +25,6 @@ export default Ember.Component.extend({
    * @type {Onezone.ProviderDetails}
    */
   provider: null,
-
-  /**
-   * If true, provider information popup is visible
-   * @type {boolean}
-   */
-  isActive: true,
 
   /**
    * Parent atlas component width
@@ -78,10 +72,4 @@ export default Ember.Component.extend({
       height: width + 'px',
     });
   },
-
-  actions: {
-    toggleActive() {
-      invokeAction(this, 'selectProvider', this.get('provider'));
-    }
-  }
 });

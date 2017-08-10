@@ -11,18 +11,15 @@
 import Ember from 'ember';
 
 const {
-  inject: {
-    service,
+  run: {
+    scheduleOnce,
   },
-  run,
 } = Ember;
 
 export default Ember.Component.extend({
   tagName: 'div',
   classNames: ['truncated-string'],
   classNameBindings: ['widthBased::truncate'],
-
-  eventsBus: service(),
 
   /**
    * Should tooltip be enabled? (set by overflow detection algorithm)
@@ -60,7 +57,7 @@ export default Ember.Component.extend({
    * Function for updating max width
    * @private
    */
-  __changeMaxWidthFun: null,
+  _changeMaxWidthFun: null,
 
   didInsertElement() {
     this._super(...arguments);
@@ -72,8 +69,7 @@ export default Ember.Component.extend({
 
     if (widthBased) {
       shrinkBy = shrinkBy || 0;
-
-      run.scheduleOnce('afterRender', this, function () {
+      scheduleOnce('afterRender', this, function () {
         let parent = parentSelector ?
           this.$().closest(parentSelector) : this.$().parent();
         let $element = this.$();
@@ -84,15 +80,9 @@ export default Ember.Component.extend({
           });
         };
 
-        this.set('__changeMaxWidthFun', changeMaxWidth);
-
+        this.set('_changeMaxWidthFun', changeMaxWidth);
         $(window).resize(changeMaxWidth);
-        if (this.get('eventsBus')) {
-          this.get('eventsBus').on('secondarySidebar:resized', changeMaxWidth);
-        }
-
         changeMaxWidth();
-
         this.updateTooltipText();
       });
     }
@@ -100,15 +90,11 @@ export default Ember.Component.extend({
 
   willDestroyElement() {
     let {
-      __changeMaxWidthFun,
+      _changeMaxWidthFun,
       widthBased
-    } = this.getProperties('__changeMaxWidthFun', 'widthBased');
+    } = this.getProperties('_changeMaxWidthFun', 'widthBased');
     if (widthBased) {
-      $(window).off('resize', __changeMaxWidthFun);
-      if (this.get('eventsBus')) {
-        this.get('eventsBus')
-          .off('secondarySidebar:resized', __changeMaxWidthFun);
-      }
+      $(window).off('resize', _changeMaxWidthFun);
     }
   },
 

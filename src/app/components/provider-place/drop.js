@@ -1,3 +1,13 @@
+/**
+ * A popover placed near to the provider-place circle element,
+ * visible when clicked. Contains information about provider and its spaces.
+ * 
+ * @module components/provider-place-drop
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {

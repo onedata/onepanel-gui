@@ -4,7 +4,7 @@
   popoverPadding=false
   popoverStyle="provider-place"
   popoverClass="popover-provider-place"
-  componentClass=(concat-classes "provider-place-drop" "online")
+  componentClass=(concat-classes "provider-place-drop" provider.status)
   as |ospm|}}
   <div class="drop-title-bar">
     {{#truncated-string class="provider-label"}}
@@ -38,20 +38,22 @@
         {{provider-place/drop-space space=space providerId=provider.id}}
       {{/each}} 
     </ul>
-    <hr>
-     {{#if (eq provider.status "online")}}
-      {{!-- TODO button below is only a placeholder. Link-to needs to be fixed --}}
-      {{!-- {{#link-to "onezone.provider-redirect" provider.id
-        class="btn btn-sm btn-go-to-files btn-primary"}}
-        {{t "components.providerPlace.drop.goToFiles"}}
-      {{/link-to}} --}}
-      <button class="btn btn-sm btn-go-to-files btn-primary">
-        {{t "components.providerPlace.drop.goToFiles"}}
-      </button>
-    {{else if (eq provider.status "pending")}}
-      {{#bs-button type="primary" disabled=true size="sm" class="btn-go-to-files"}}
-        {{t "components.providerPlace.drop.pending"}}
-      {{/bs-button}}
-    {{/if}} 
+    {{#unless (eq provider.status "offline")}}
+      <hr>
+      {{#if (eq provider.status "online")}}
+        {{!-- TODO button below is only a placeholder. Link-to needs to be fixed --}}
+        {{!-- {{#link-to "onezone.provider-redirect" provider.id
+          class="btn btn-sm btn-go-to-files btn-primary"}}
+          {{t "components.providerPlace.drop.goToFiles"}}
+        {{/link-to}} --}}
+        <button class="btn btn-sm btn-go-to-files btn-primary">
+          {{t "components.providerPlace.drop.goToFiles"}}
+        </button>
+      {{else if (eq provider.status "pending")}}
+        {{#bs-button type="primary" disabled=true size="sm" class="btn-go-to-files"}}
+          {{t "components.providerPlace.drop.pending"}}
+        {{/bs-button}}
+      {{/if}} 
+    {{/unless}}
   </div>
 {{/one-switchable-popover-modal}}
