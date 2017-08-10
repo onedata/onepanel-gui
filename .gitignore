@@ -67,6 +67,3 @@ src/tests/test-results.xml
 .vscode/
 jsconfig.json
 typings/
-
-# ES Lint (currently we force developers to use only JSHint)
-.eslintrc.js
