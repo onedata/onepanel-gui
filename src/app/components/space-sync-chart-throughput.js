@@ -41,7 +41,7 @@ export default SpaceSyncChartBase.extend({
     low: 0,
     chartPadding: 30,
     lineSmooth: Chartist.Interpolation.simple({
-      divisor: 2
+      divisor: 2,
     }),
     fullWidth: true,
     plugins: [
@@ -49,7 +49,7 @@ export default SpaceSyncChartBase.extend({
         chartType: 'line',
         rangeInTitle: true,
         topOffset: -17,
-        valueSuffix: 'op/s'
+        valueSuffix: 'op/s',
       }),
       axisLabels({
         xLabel: 'Time',
@@ -60,8 +60,8 @@ export default SpaceSyncChartBase.extend({
       Chartist.plugins.legend({
         className: 'not-clickable',
         clickable: false,
-      })
-    ]
+      }),
+    ],
   },
 
   /**
@@ -75,7 +75,7 @@ export default SpaceSyncChartBase.extend({
   throughputDivisor: computed('timeUnit', 'timePeriod', function () {
     let {
       timeUnit,
-      timePeriod
+      timePeriod,
     } = this.getProperties('timeUnit', 'timePeriod');
     switch (timeUnit) {
       case 'minute':
@@ -126,9 +126,9 @@ export default SpaceSyncChartBase.extend({
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
-          className: 'ct-series-0'
+          className: 'ct-series-0',
         }],
-        lastLabel: this.getChartLabel(0)
+        lastLabel: this.getChartLabel(0),
       };
     } else {
       return {};

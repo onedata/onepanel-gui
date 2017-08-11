@@ -6,7 +6,7 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function (defaults) {
   var app = new EmberApp(defaults, {
     'ember-cli-babel': {
-      includePolyfill: true
+      includePolyfill: true,
     },
     sassOptions: {
       includePaths: [
@@ -29,26 +29,26 @@ module.exports = function (defaults) {
         'collapse',
         'popover',
       ],
-      'glyphicons': false
+      'glyphicons': false,
     },
     // import only JS
     'ember-bootstrap': {
       'importBootstrapCSS': false,
       'importBootstrapTheme': false,
       'importBootstrapFont': true,
-      'bootstrapVersion': 3
+      'bootstrapVersion': 3,
     },
     'ember-cli-chartist': {
-      'useCustomCSS': true
+      'useCustomCSS': true,
     },
     nodeAssets: {
       'chartist-plugin-legend': {
         vendor: {
-          include: ['chartist-plugin-legend.js']
+          include: ['chartist-plugin-legend.js'],
         },
-        public: {}
-      }
-    }
+        public: {},
+      },
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated

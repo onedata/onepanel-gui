@@ -28,7 +28,7 @@ describe('Unit | Service | cluster manager', function () {
       },
       workers: {
         hosts: ['node2.example.com'],
-      }
+      },
     };
 
     let {

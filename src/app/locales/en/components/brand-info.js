@@ -3,5 +3,5 @@ export default {
   serviceType: {
     provider: 'provider',
     zone: 'zone',
-  }
+  },
 };

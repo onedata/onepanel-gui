@@ -64,7 +64,7 @@ export default Ember.Mixin.create({
     );
     return anyMetric ? [] : [
       'none of following metrics is available: ' +
-      metrics.join(', ')
+      metrics.join(', '),
     ];
   },
 

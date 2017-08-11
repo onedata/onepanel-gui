@@ -18,7 +18,7 @@ const SIBLING_WIDTH = 300;
 
 describe('Integration | Mixin | content overflow detector', function () {
   setupComponentTest('content-overflow-detector', {
-    integration: true
+    integration: true,
   });
 
   beforeEach(function () {
@@ -35,7 +35,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       },
       removeEventListener() {
         this.resizeListener = null;
-      }
+      },
     });
   });
 

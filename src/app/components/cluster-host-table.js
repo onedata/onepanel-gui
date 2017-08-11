@@ -1,5 +1,5 @@
 import {
-  InvokeActionMixin
+  InvokeActionMixin,
 } from 'ember-invoke-action';
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import Ember from 'ember';
@@ -99,6 +99,6 @@ export default BasicTable.extend(
       primaryClusterManagerChanged(hostname, isSet) {
         this.invokeAction('primaryClusterManagerChanged', isSet ? hostname : null);
       },
-    }
+    },
   }
 );

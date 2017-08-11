@@ -13,5 +13,5 @@ export default {
   posix,
   s3,
   swift,
-  glusterfs
+  glusterfs,
 };

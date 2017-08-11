@@ -10,10 +10,10 @@ export default [
     options: [
       { value: 4, label: '4' },
       { value: 2, label: '2' },
-    ]
+    ],
   },
   { name: 'blockSize', type: 'number', optional: true },
   { name: 'timeout', type: 'number', optional: true },
   { name: 'readonly', type: 'checkbox', optional: true },
-  { name: 'insecure', type: 'checkbox', optional: true }
+  { name: 'insecure', type: 'checkbox', optional: true },
 ];

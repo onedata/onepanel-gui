@@ -31,7 +31,7 @@ export default TwoLevelSidebar.extend({
     function () {
       let {
         cluster,
-        onepanelServiceType
+        onepanelServiceType,
       } = this.getProperties('cluster', 'onepanelServiceType');
       return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
     }),
@@ -51,7 +51,7 @@ export default TwoLevelSidebar.extend({
         {
           id: 'provider',
           label: 'Provider',
-          icon: 'provider'
+          icon: 'provider',
         },
         {
           id: 'storages',
@@ -61,7 +61,7 @@ export default TwoLevelSidebar.extend({
         {
           id: 'spaces',
           label: 'Spaces',
-          icon: 'space'
+          icon: 'space',
         },
       ];
     } else {

@@ -27,13 +27,13 @@ const SPACES = {
     id: 'c3',
     name: 'Space C3',
     supportingProviders: [],
-  }
+  },
 };
 
 const i18nStub = Service.extend({
   t() {
     return 'translation-mock';
-  }
+  },
 });
 
 describe('Integration | Component | content clusters spaces', function () {
@@ -68,7 +68,7 @@ describe('Integration | Component | content clusters spaces', function () {
 
     waitFor(supportFormAppeared, {
       resolve: done,
-      reject: () => expect(false, 'support form to appear').to.be.ok
+      reject: () => expect(false, 'support form to appear').to.be.ok,
     });
   });
 });

@@ -8,6 +8,6 @@ export default [
       ' and vice versa. If enabled, provided LUMA service will be used to resolve' +
       ' the mappings during operations on storage. If disabled, some random' +
       ' credentials (e.g. uid and gid on POSIX storage) will be generated for' +
-      ' every user.'
-  }
+      ' every user.',
+  },
 ];

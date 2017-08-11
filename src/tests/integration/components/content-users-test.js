@@ -15,7 +15,7 @@ class UserCredentialsFormHelper extends FormHelper {
 
 describe('Integration | Component | content users', function () {
   setupComponentTest('content-users', {
-    integration: true
+    integration: true,
   });
 
   it('shows username and secret password field by default', function () {

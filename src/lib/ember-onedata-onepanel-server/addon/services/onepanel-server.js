@@ -24,7 +24,7 @@ function replaceUrlOrigin(url, newOrigin) {
 
 const {
   RSVP: {
-    Promise
+    Promise,
   },
   computed,
 } = Ember;
@@ -108,7 +108,7 @@ export default OnepanelServerBase.extend({
           resolve({
             data,
             response,
-            task
+            task,
           });
         }
       };
@@ -269,7 +269,7 @@ export default OnepanelServerBase.extend({
           reject(error);
         } else {
           resolve({
-            response
+            response,
           });
         }
       };
@@ -277,6 +277,6 @@ export default OnepanelServerBase.extend({
     });
 
     return loginCall.then(() => this.validateSession());
-  }
+  },
 
 });

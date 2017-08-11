@@ -11,10 +11,10 @@ import Ember from 'ember';
 
 const {
   RSVP: {
-    Promise
+    Promise,
   },
   inject: {
-    service
+    service,
   },
 } = Ember;
 
@@ -35,5 +35,5 @@ export default Ember.Service.extend({
       default:
         return new Promise((resolve, reject) => reject('No such collection: ' + type));
     }
-  }
+  },
 });

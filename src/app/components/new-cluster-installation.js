@@ -33,8 +33,8 @@ const {
   ProviderConfiguration,
   ZoneConfiguration,
   TaskStatus: {
-    StatusEnum
-  }
+    StatusEnum,
+  },
 } = Onepanel;
 
 const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
@@ -114,7 +114,7 @@ export default Ember.Component.extend({
             resolve(hosts);
           });
           gettingHosts.catch(reject);
-        })
+        }),
       })
     );
 
@@ -151,7 +151,7 @@ export default Ember.Component.extend({
     let nodes = {};
     hostnames.forEach(hn => {
       nodes[hn] = {
-        hostname: getHostname(hn)
+        hostname: getHostname(hn),
       };
     });
     return nodes;
@@ -198,9 +198,9 @@ export default Ember.Component.extend({
           nodes: getHostnamesOfType(hostsUsed, 'clusterWorker'),
         },
         databases: {
-          nodes: getHostnamesOfType(hostsUsed, 'database')
-        }
-      }
+          nodes: getHostnamesOfType(hostsUsed, 'database'),
+        },
+      },
     };
 
     // in zone mode, add zone name    
@@ -337,5 +337,5 @@ export default Ember.Component.extend({
       });
       return start;
     },
-  }
+  },
 });

@@ -32,7 +32,7 @@ const FORM_FIELDS = [{
     name: 'token',
     type: 'text',
     tip: 'Globally unique identifier assigned by onezone',
-    example: 'MDAxNWxvY...'
+    example: 'MDAxNWxvY...',
   },
   { name: 'size', type: 'number', gt: 0, example: '100' },
   {
@@ -43,7 +43,7 @@ const FORM_FIELDS = [{
       { value: 'mb', label: 'MB' },
       { value: 'gb', label: 'GB' },
       { value: 'tb', label: 'TB' },
-    ]
+    ],
   },
   {
     name: 'mountInRoot',
@@ -126,7 +126,7 @@ export default OneFormSimple.extend(Validations, {
   canSubmit: computed('_selectedStorage', 'isValid', function () {
     let {
       _selectedStorage,
-      isValid
+      isValid,
     } = this.getProperties('_selectedStorage', 'isValid');
     return _selectedStorage != null && isValid;
   }),
@@ -202,10 +202,10 @@ export default OneFormSimple.extend(Validations, {
 
       if (!_importEnabled) {
         storageImport = {
-          strategy: 'no_import'
+          strategy: 'no_import',
         };
         storageUpdate = {
-          strategy: 'no_update'
+          strategy: 'no_update',
         };
       }
 

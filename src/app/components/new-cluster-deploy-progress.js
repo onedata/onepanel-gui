@@ -15,7 +15,7 @@ const {
   computed,
   computed: { readOnly },
   observer,
-  inject: { service }
+  inject: { service },
 } = Ember;
 
 // TODO this can be made a generic taskStatus progress component

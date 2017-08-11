@@ -79,7 +79,7 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
       lastUpdateTime,
       timeFormat,
       timePeriod,
-      timeUnit
+      timeUnit,
     } = this.getProperties(
       'lastUpdateTime',
       'timeFormat',
@@ -92,5 +92,5 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
     return moment(lastUpdateTime)
       .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);
-  }
+  },
 });

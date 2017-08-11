@@ -36,5 +36,5 @@ export default ContentInfo.extend({
 
   buttonAction() {
     invokeAction(this, 'start', true);
-  }
+  },
 });

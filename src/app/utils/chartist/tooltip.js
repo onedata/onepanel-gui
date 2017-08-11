@@ -45,7 +45,7 @@ export default function (options) {
     rangeInTitle: false,
     renderAboveBarDescription: false,
     topOffset: -10,
-    valueSuffix: ''
+    valueSuffix: '',
   };
   options = Chartist.extend({}, defaultOptions, options);
 

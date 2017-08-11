@@ -7,7 +7,7 @@ import onepanelServerStub from '../../helpers/onepanel-server-stub';
 
 describe('Integration | Component | user account button', function () {
   setupComponentTest('user-account-button', {
-    integration: true
+    integration: true,
   });
 
   beforeEach(function () {

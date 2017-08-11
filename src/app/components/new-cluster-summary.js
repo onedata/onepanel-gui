@@ -7,6 +7,6 @@ export default Ember.Component.extend({
   actions: {
     manageNewCluster() {
       return invokeAction(this, 'finish');
-    }
-  }
+    },
+  },
 });

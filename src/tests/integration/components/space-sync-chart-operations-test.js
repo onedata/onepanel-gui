@@ -5,7 +5,7 @@ import hbs from 'htmlbars-inline-precompile';
 
 describe('Integration | Component | space sync chart operations', function () {
   setupComponentTest('space-sync-chart-operations', {
-    integration: true
+    integration: true,
   });
 
   it('renders', function () {

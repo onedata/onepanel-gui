@@ -9,11 +9,11 @@ export default {
     type: 'Type',
     timeout: 'Timeout',
     readonly: 'Is readonly',
-    supportedSpaces: 'Supported spaces'
+    supportedSpaces: 'Supported spaces',
   },
   posix,
   ceph,
   s3,
   swift,
-  glusterfs
+  glusterfs,
 };

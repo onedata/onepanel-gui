@@ -18,7 +18,7 @@ describe('Integration | Mixin | components/space item supports', function () {
       );
       this.register('test-container:space-support-object', SpaceSupportsObject);
       return getOwner(this).lookup('test-container:space-support-object');
-    }
+    },
   });
 
   beforeEach(function () {
@@ -38,7 +38,7 @@ describe('Integration | Mixin | components/space item supports', function () {
         id1: 100,
         id2: 200,
         id3: 300,
-      }
+      },
     });
 
     subject.get('spaceSupportersProxy.promise').then((result) => {

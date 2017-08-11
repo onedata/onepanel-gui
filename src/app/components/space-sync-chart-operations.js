@@ -59,8 +59,8 @@ export default SpaceSyncChartBase.extend({
       }),
       shortHorizontalGrid(),
       Chartist.plugins.legend(),
-      refreshLegendFilter()
-    ]
+      refreshLegendFilter(),
+    ],
   },
 
   /**
@@ -72,7 +72,7 @@ export default SpaceSyncChartBase.extend({
   _chartValues: [
     [],
     [],
-    []
+    [],
   ],
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
@@ -111,10 +111,10 @@ export default SpaceSyncChartBase.extend({
           return {
             name: chartSeriesLabels[index],
             data: _chartValues[index],
-            className: `ct-series-${index}`
+            className: `ct-series-${index}`,
           };
         }),
-        lastLabel: this.getChartLabel(0)
+        lastLabel: this.getChartLabel(0),
       };
     } else {
       return {};

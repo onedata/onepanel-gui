@@ -30,7 +30,7 @@ export default BrandInfo.extend({
   brandSubtitle: computed('onepanelServiceType', function () {
     let {
       i18n,
-      onepanelServiceType
+      onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
       i18n.t(`components.brandInfo.serviceType.${onepanelServiceType}`) : null;

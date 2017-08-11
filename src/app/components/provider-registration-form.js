@@ -131,7 +131,7 @@ VALIDATIONS_PROTO['allFieldsValues.main.onezoneDomainName'] = [
     disabled: computed('model.mode', function () {
       return this.get('model.mode') !== 'new';
     }),
-  })
+  }),
 ];
 
 const Validations = buildValidations(VALIDATIONS_PROTO);

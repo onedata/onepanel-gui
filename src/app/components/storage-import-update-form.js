@@ -58,7 +58,7 @@ const IMPORT_GENERIC_FIELDS = [{
 
 const IMPORT_STRATEGIES = [{
   id: 'simple_scan',
-  fields: []
+  fields: [],
 }];
 
 const UPDATE_GENERIC_FIELDS = [{
@@ -73,7 +73,7 @@ const UPDATE_GENERIC_FIELDS = [{
     type: 'number',
     gt: 0,
     example: '1000',
-    defaultValue: 10
+    defaultValue: 10,
   },
   {
     name: 'writeOnce',
@@ -84,17 +84,17 @@ const UPDATE_GENERIC_FIELDS = [{
     name: 'deleteEnable',
     type: 'checkbox',
     optional: true,
-  }
+  },
 ];
 
 const UPDATE_STRATEGIES = [{
     id: 'no_update',
-    fields: []
+    fields: [],
   },
   {
     id: 'simple_scan',
-    fields: []
-  }
+    fields: [],
+  },
 ];
 
 function createValidations(importGenericFields, importStrategies,
@@ -186,7 +186,7 @@ export default OneForm.extend(Validations, {
       let noUpdateStrategy = _find(updateStrategies, { id: 'no_update' });
       if (selectedUpdateStrategy !== noUpdateStrategy) {
         prefixes = prefixes.concat(['update_generic', 'update_' +
-          selectedUpdateStrategy.id
+          selectedUpdateStrategy.id,
         ]);
       }
       return prefixes;
@@ -235,7 +235,7 @@ export default OneForm.extend(Validations, {
         'importStrategies', 'updateStrategies');
       let fields = Ember.Object.create({
         import_generic: Ember.Object.create({}),
-        update_generic: Ember.Object.create({})
+        update_generic: Ember.Object.create({}),
       });
       importStrategies.forEach(type => {
         fields.set('import_' + type.id, Ember.Object.create({}));
@@ -337,7 +337,7 @@ export default OneForm.extend(Validations, {
       importGenericFields,
       updateGenericFields,
       importStrategies,
-      updateStrategies
+      updateStrategies,
     } = this.getProperties('importGenericFields',
       'updateGenericFields', 'importStrategies', 'updateStrategies');
 
@@ -394,7 +394,7 @@ export default OneForm.extend(Validations, {
       importGenericFields,
       updateGenericFields,
       importStrategies,
-      updateStrategies
+      updateStrategies,
     } = this.getProperties('defaultValues', 'importGenericFields',
       'updateGenericFields', 'importStrategies', 'updateStrategies');
 
@@ -431,7 +431,7 @@ export default OneForm.extend(Validations, {
       currentFields,
       selectedImportStrategy,
       selectedUpdateStrategy,
-      mode
+      mode,
     } = this.getProperties(
       'formValues',
       'currentFields',
@@ -442,12 +442,12 @@ export default OneForm.extend(Validations, {
 
     let formData = {
       storageUpdate: {
-        strategy: selectedUpdateStrategy.id
+        strategy: selectedUpdateStrategy.id,
       },
     };
     if (mode === 'new') {
       formData.storageImport = {
-        strategy: selectedImportStrategy.id
+        strategy: selectedImportStrategy.id,
       };
     }
 
@@ -470,7 +470,7 @@ export default OneForm.extend(Validations, {
   resetFormValues(resetSelect, prefixes) {
     let {
       importStrategies,
-      updateStrategies
+      updateStrategies,
     } = this.getProperties('importStrategies', 'updateStrategies');
     this._super(prefixes);
     if (resetSelect) {
@@ -505,8 +505,8 @@ export default OneForm.extend(Validations, {
 
     submit() {
       return invokeAction(this, 'submit', stripObject(this._getValues(), [undefined,
-        null, ''
+        null, '',
       ]));
     },
-  }
+  },
 });

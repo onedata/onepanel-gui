@@ -59,8 +59,8 @@ export default SpaceSyncChartBase.extend({
       Chartist.plugins.legend({
         className: 'not-clickable',
         clickable: false,
-      })
-    ]
+      }),
+    ],
   },
 
   /**
@@ -91,14 +91,14 @@ export default SpaceSyncChartBase.extend({
       }
       _queueData.values.forEach(value => _chartValues.push(value));
       return {
-        labels: _.range(1, _chartValues.length + 1).reverse().
-        map(n => this.getChartLabel(n)),
+        labels: _.range(1, _chartValues.length + 1).reverse()
+        .map(n => this.getChartLabel(n)),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
-          className: `ct-series-0`
+          className: `ct-series-0`,
         }],
-        lastLabel: this.getChartLabel(0)
+        lastLabel: this.getChartLabel(0),
       };
     } else {
       return {};

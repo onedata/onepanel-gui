@@ -5,7 +5,7 @@ const {
   S3,
   Ceph,
   Swift,
-  Glusterfs
+  Glusterfs,
 } = Onepanel;
 
 function clusterStorageClass(storageType) {

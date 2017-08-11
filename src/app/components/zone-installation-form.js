@@ -31,7 +31,7 @@ const FORM_FIELDS = [{
     tip: 'The domain of this zone as seen by the users, the same as ' +
       'the domain name in your web server SSL certificates. ' +
       'Required for proper functioning of Onezone server.',
-  }
+  },
 ];
 
 const Validations = buildValidations(
@@ -52,5 +52,5 @@ export default OneFormSimple.extend(Validations, {
       this._super(...arguments);
       invokeAction(this, 'zoneFormChanged', fieldName, value);
     },
-  }
+  },
 });

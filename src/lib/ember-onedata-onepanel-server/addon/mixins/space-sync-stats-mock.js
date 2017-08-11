@@ -68,7 +68,7 @@ export default Mixin.create({
   willDestroy() {
     let {
       statusChangeTimerId,
-      statsPushIntervalIds
+      statsPushIntervalIds,
     } = this.getProperties(
       'statusChangeTimerId',
       'statsPushIntervalIds'
@@ -103,7 +103,7 @@ export default Mixin.create({
     let sampling = {
       minute: 60000 / SAMPLES_COUNT,
       hour: (60 * 60000) / SAMPLES_COUNT,
-      day: (24 * 60 * 60000) / SAMPLES_COUNT
+      day: (24 * 60 * 60000) / SAMPLES_COUNT,
     };
     let statsPushIntervalIds = [];
     _.keys(sampling).forEach(period => {
@@ -164,5 +164,5 @@ export default Mixin.create({
         stats,
       };
     }
-  }
+  },
 });

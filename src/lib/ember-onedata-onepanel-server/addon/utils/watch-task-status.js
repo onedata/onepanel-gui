@@ -2,19 +2,19 @@ import Onepanel from 'npm:onepanel';
 
 const {
   TaskStatus: {
-    StatusEnum
-  }
+    StatusEnum,
+  },
 } = Onepanel;
 
 const {
-  Deferred
+  Deferred,
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
   let gettingTaskStatus = onepanelServer.request('onepanel', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({
-    data: taskStatus
+    data: taskStatus,
   }) => {
     switch (taskStatus.status) {
       case StatusEnum.ok:

@@ -28,7 +28,7 @@ export default Service.extend({
     return ObjectPromiseProxy.create({
       promise: new Promise(resolve => {
         resolve(this.get('__providerDetails'));
-      })
+      }),
     });
   },
 });
