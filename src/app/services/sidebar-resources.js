@@ -28,12 +28,12 @@ export default Ember.Service.extend({
    */
   getCollectionFor(type) {
     switch (type) {
-    case 'clusters':
-      return this.get('clusterManager').getClusters().get('promise');
-    case 'users':
-      return this.get('userManager').getUsers().get('promise');
-    default:
-      return new Promise((resolve, reject) => reject('No such collection: ' + type));
+      case 'clusters':
+        return this.get('clusterManager').getClusters().get('promise');
+      case 'users':
+        return this.get('userManager').getUsers().get('promise');
+      default:
+        return new Promise((resolve, reject) => reject('No such collection: ' + type));
     }
   }
 });

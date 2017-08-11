@@ -247,10 +247,10 @@ export default OneForm.extend(Validations, {
         currentFields,
         selectedStorageType
       } = this.getProperties(
-          'formValues',
-          'currentFields',
-          'selectedStorageType'
-        );
+        'formValues',
+        'currentFields',
+        'selectedStorageType'
+      );
 
       let formData = {
         type: selectedStorageType.id

@@ -25,7 +25,7 @@ describe('Integration | Component | content users', function () {
     });
     this.set('user', user);
 
-    this.render(hbs`{{content-users user=user}}`);
+    this.render(hbs `{{content-users user=user}}`);
 
     let form = new UserCredentialsFormHelper(this.$());
 
@@ -46,7 +46,7 @@ describe('Integration | Component | content users', function () {
       });
       this.set('user', user);
 
-      this.render(hbs`{{content-users user=user}}`);
+      this.render(hbs `{{content-users user=user}}`);
 
       this.$('.btn-change-password').click();
 
@@ -61,7 +61,8 @@ describe('Integration | Component | content users', function () {
           .to.exist;
         expect(form.getInput('change-newPassword'), 'field newPassword')
           .to.exist;
-        expect(form.getInput('change-newPasswordRetype'), 'field newPasswordRetype')
+        expect(form.getInput('change-newPasswordRetype'),
+            'field newPasswordRetype')
           .to.exist;
 
         done();

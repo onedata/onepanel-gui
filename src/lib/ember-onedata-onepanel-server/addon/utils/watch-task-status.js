@@ -17,19 +17,19 @@ function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) 
     data: taskStatus
   }) => {
     switch (taskStatus.status) {
-    case StatusEnum.ok:
-    case StatusEnum.error:
-      deferred.resolve(taskStatus);
-      break;
-    case StatusEnum.running:
-      deferred.notify(taskStatus);
-      scheduleSelf();
-      break;
-    default:
-      console.warn('watchTaskStatus: invalid taskStatus: ' + JSON.serialize(
-        'taskStatus'));
-      scheduleSelf();
-      break;
+      case StatusEnum.ok:
+      case StatusEnum.error:
+        deferred.resolve(taskStatus);
+        break;
+      case StatusEnum.running:
+        deferred.notify(taskStatus);
+        scheduleSelf();
+        break;
+      default:
+        console.warn('watchTaskStatus: invalid taskStatus: ' + JSON.serialize(
+          'taskStatus'));
+        scheduleSelf();
+        break;
     }
   });
 

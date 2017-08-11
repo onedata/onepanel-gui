@@ -118,8 +118,7 @@ export default Component.extend({
         // localStorages array can be used instead of storageId
         let localStorage = spaceProxy.get('content.storageId');
         return localStorage && localStorage === storage.id;
-      }
-      else {
+      } else {
         return false;
       }
     });

@@ -56,7 +56,7 @@ describe('Integration | Component | content clusters spaces', function () {
   });
 
   it('shows support space form when clicking on support space button', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       <button class="collapsible-toolbar-global-toggle"></button>
       {{content-clusters-spaces}}
     `);

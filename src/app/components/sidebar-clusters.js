@@ -27,11 +27,12 @@ export default TwoLevelSidebar.extend({
   firstLevelItemIcon: 'menu-clusters',
 
   triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized',
-    'onepanelServiceType', function () {
+    'onepanelServiceType',
+    function () {
       let {
-      cluster,
+        cluster,
         onepanelServiceType
-    } = this.getProperties('cluster', 'onepanelServiceType');
+      } = this.getProperties('cluster', 'onepanelServiceType');
       return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
     }),
 
@@ -43,25 +44,25 @@ export default TwoLevelSidebar.extend({
     if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
       // TODO i18n
       return [{
-        id: 'nodes',
-        label: 'Nodes',
-        icon: 'node',
-      },
-      {
-        id: 'provider',
-        label: 'Provider',
-        icon: 'provider'
-      },
-      {
-        id: 'storages',
-        label: 'Storages',
-        icon: 'support',
-      },
-      {
-        id: 'spaces',
-        label: 'Spaces',
-        icon: 'space'
-      },
+          id: 'nodes',
+          label: 'Nodes',
+          icon: 'node',
+        },
+        {
+          id: 'provider',
+          label: 'Provider',
+          icon: 'provider'
+        },
+        {
+          id: 'storages',
+          label: 'Storages',
+          icon: 'support',
+        },
+        {
+          id: 'spaces',
+          label: 'Spaces',
+          icon: 'space'
+        },
       ];
     } else {
       return [];

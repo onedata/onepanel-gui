@@ -107,14 +107,15 @@ export default SpaceSyncChartBase.extend({
       _chartValues,
       throughputDivisor,
     } = this.getProperties('_timeStatsValues', 'chartSeriesLabel', '_chartValues',
-        'throughputDivisor');
+      'throughputDivisor');
     if (_timeStatsValues && _timeStatsValues.length > 0) {
       while (_chartValues.length) {
         _chartValues.shift();
       }
       _timeStatsValues[1].map((val, index) =>
         _chartValues.push(
-          (val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) / throughputDivisor
+          (val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) /
+          throughputDivisor
         )
       );
       _chartValues.push(null);

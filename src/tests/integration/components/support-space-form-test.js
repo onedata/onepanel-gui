@@ -100,7 +100,7 @@ describe('Integration | Component | support space form', function () {
       return new Promise(resolve => resolve());
     });
     this.prepareAllFields();
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
         _selectedStorage=_selectedStorage
@@ -138,7 +138,7 @@ describe('Integration | Component | support space form', function () {
       return promise;
     });
 
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
         _selectedStorage=_selectedStorage
@@ -155,7 +155,7 @@ describe('Integration | Component | support space form', function () {
   });
 
   it('hides import form by default', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form}}
     `);
 
@@ -167,7 +167,7 @@ describe('Integration | Component | support space form', function () {
   });
 
   it('shows import form on import toggle change', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form}}
     `);
 
@@ -183,7 +183,7 @@ describe('Integration | Component | support space form', function () {
 
   it('reacts to invalid data in import form', function (done) {
     this.prepareAllFields();
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form
         _selectedStorage=_selectedStorage
         values=formValues
@@ -214,7 +214,7 @@ describe('Integration | Component | support space form', function () {
       return new Promise(resolve => resolve());
     });
 
-    this.render(hbs`
+    this.render(hbs `
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
         _selectedStorage=_selectedStorage

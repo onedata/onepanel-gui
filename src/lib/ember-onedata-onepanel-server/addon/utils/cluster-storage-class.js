@@ -10,18 +10,18 @@ const {
 
 function clusterStorageClass(storageType) {
   switch (storageType) {
-  case 's3':
-    return S3;
-  case 'ceph':
-    return Ceph;
-  case 'posix':
-    return Posix;
-  case 'swift':
-    return Swift;
-  case 'glusterfs':
-    return Glusterfs;
-  default:
-    return undefined;
+    case 's3':
+      return S3;
+    case 'ceph':
+      return Ceph;
+    case 'posix':
+      return Posix;
+    case 'swift':
+      return Swift;
+    case 'glusterfs':
+      return Glusterfs;
+    default:
+      return undefined;
   }
 }
 

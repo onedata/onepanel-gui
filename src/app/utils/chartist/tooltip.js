@@ -150,11 +150,13 @@ export default function (options) {
         });
       }
       if (data.type === 'slice' && options.chartType === 'pie') {
-        data.series.tooltipElements.forEach(element => element.className = 'no-padding');
+        data.series.tooltipElements.forEach(element => element.className =
+          'no-padding');
         let tooltipData = data.series.tooltipElements;
         let sliceNode = $(data.element._node);
         sliceNode.mousemove((event) => {
-          tooltipNode.css('top', (event.pageY - container.offset().top - 10) + 'px');
+          tooltipNode.css('top', (event.pageY - container.offset().top - 10) +
+            'px');
           tooltipNode.css('left', (event.pageX - container.offset()
             .left) + 'px');
 

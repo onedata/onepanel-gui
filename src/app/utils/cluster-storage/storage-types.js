@@ -35,5 +35,4 @@ export default [{
   id: 'glusterfs',
   name: 'GlusterFS',
   fields: GLUSTERFS_FIELDS
-}
-];
+}];

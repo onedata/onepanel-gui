@@ -16,22 +16,22 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 
 // TODO i18n
 const FORM_FIELDS = [{
-  name: 'name',
-  type: 'text',
-  label: 'Zone name',
-  example: 'My zone',
-  tip: 'The name for this zone, typically corresponding to ' +
-  'organizational unit where it operates.',
-},
-{
-  name: 'domainName',
-  type: 'text',
-  label: 'Zone domain name',
-  example: window.location.hostname,
-  tip: 'The domain of this zone as seen by the users, the same as ' +
-  'the domain name in your web server SSL certificates. ' +
-  'Required for proper functioning of Onezone server.',
-}
+    name: 'name',
+    type: 'text',
+    label: 'Zone name',
+    example: 'My zone',
+    tip: 'The name for this zone, typically corresponding to ' +
+      'organizational unit where it operates.',
+  },
+  {
+    name: 'domainName',
+    type: 'text',
+    label: 'Zone domain name',
+    example: window.location.hostname,
+    tip: 'The domain of this zone as seen by the users, the same as ' +
+      'the domain name in your web server SSL certificates. ' +
+      'Required for proper functioning of Onezone server.',
+  }
 ];
 
 const Validations = buildValidations(

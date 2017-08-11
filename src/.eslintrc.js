@@ -12,5 +12,14 @@ module.exports = {
   },
   rules: {
     'no-console': 0,
+    'dot-location': [
+      1,
+      'property',
+    ],
+    'eol-last': 1,
+    'comma-dangle': [
+      1,
+      "always-multiline",
+    ]
   }
 };

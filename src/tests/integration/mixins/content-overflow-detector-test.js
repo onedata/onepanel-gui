@@ -44,7 +44,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs`
+    this.render(hbs `
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -71,7 +71,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs`
+    this.render(hbs `
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -93,7 +93,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs`
+    this.render(hbs `
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>
@@ -125,7 +125,7 @@ describe('Integration | Mixin | content overflow detector', function () {
       Ember.Object.extend(ContentOverflowDetectorMixin);
     let subject = ContentOverflowDetectorObject.create();
 
-    this.render(hbs`
+    this.render(hbs `
       <div class="parent" style={{parentStyle}}>
         <div class="sibling" style={{siblingStyle}}></div>
         <div class="testElement" style={{elementStyle}}></div>

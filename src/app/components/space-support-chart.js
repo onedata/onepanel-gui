@@ -48,13 +48,13 @@ export default Ember.Component.extend({
       data: entry.size,
       className: `ct-series-${index}`,
       tooltipElements: [{
-        name: 'Support size',
-        value: b2s(entry.size)
-      },
-      {
-        name: 'Support share',
-        value: Math.round(100 * entry.size / total) + '%',
-      }
+          name: 'Support size',
+          value: b2s(entry.size)
+        },
+        {
+          name: 'Support share',
+          value: Math.round(100 * entry.size / total) + '%',
+        }
       ]
     }));
   }),
@@ -87,9 +87,9 @@ export default Ember.Component.extend({
       dataLabels,
       dataSeries,
     } = this.getProperties(
-        'dataLabels',
-        'dataSeries'
-      );
+      'dataLabels',
+      'dataSeries'
+    );
     return {
       labels: dataLabels,
       series: dataSeries,

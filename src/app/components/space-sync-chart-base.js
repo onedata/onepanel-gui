@@ -65,12 +65,12 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
 
   timeFormat: computed('timeUnit', function () {
     switch (this.get('timeUnit')) {
-    case 'hour':
-      return 'HH:mm';
-    case 'day':
-      return 'DD/MM HH:mm';
-    default:
-      return 'HH:mm:ss';
+      case 'hour':
+        return 'HH:mm';
+      case 'day':
+        return 'DD/MM HH:mm';
+      default:
+        return 'HH:mm:ss';
     }
   }),
 

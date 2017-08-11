@@ -129,10 +129,10 @@ export default Ember.Component.extend({
       onepanelServiceType,
       _zoneName,
     } = this.getProperties(
-        'globalNotify',
-        'onepanelServiceType',
-        '_zoneName'
-      );
+      'globalNotify',
+      'onepanelServiceType',
+      '_zoneName'
+    );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
     if (onepanelServiceType === 'zone') {
@@ -169,11 +169,11 @@ export default Ember.Component.extend({
       _zoneName,
       _zoneDomainName,
     } = this.getProperties(
-        'hostsUsed',
-        'primaryClusterManager',
-        '_zoneName',
-        '_zoneDomainName'
-      );
+      'hostsUsed',
+      'primaryClusterManager',
+      '_zoneName',
+      '_zoneDomainName'
+    );
 
     const ConfigurationClass = configurationClass(serviceType);
 

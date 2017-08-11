@@ -40,7 +40,7 @@ describe('Integration | Component | storage import update form', function () {
   });
 
   it('hides submit button if neccessary', function () {
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form
         showSubmitButton=false
       }}
@@ -52,7 +52,7 @@ describe('Integration | Component | storage import update form', function () {
   it('makes import fields static for \'edit\' mode', function () {
     this.prepareAllFields();
 
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form
         defaultValues=defaultValues
         mode="edit"
@@ -66,7 +66,7 @@ describe('Integration | Component | storage import update form', function () {
   });
 
   it('does not show any update fields if update strategy is not selected', function () {
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form}}
     `);
 
@@ -74,7 +74,7 @@ describe('Integration | Component | storage import update form', function () {
   });
 
   it('shows fields on update strategy change', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form}}
     `);
 
@@ -90,7 +90,7 @@ describe('Integration | Component | storage import update form', function () {
   });
 
   it('clears inputs on update strategy change', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form}}
     `);
 
@@ -109,7 +109,7 @@ describe('Integration | Component | storage import update form', function () {
   });
 
   it('disables submit button when data is incorrect', function (done) {
-    this.render(hbs`
+    this.render(hbs `
       {{storage-import-update-form mode="new"}}
     `);
 

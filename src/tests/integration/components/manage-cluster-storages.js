@@ -35,7 +35,7 @@ describe('Integration | Component | manage cluster storages', function () {
       mountPoint: '/mnt/s1',
     }]);
 
-    this.render(hbs`{{manage-cluster-storages}}`);
+    this.render(hbs `{{manage-cluster-storages}}`);
 
     wait().then(() => {
       expect(this.$('.storage-item'), 'only one storage item')

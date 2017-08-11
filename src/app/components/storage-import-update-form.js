@@ -62,39 +62,39 @@ const IMPORT_STRATEGIES = [{
 }];
 
 const UPDATE_GENERIC_FIELDS = [{
-  name: 'maxDepth',
-  type: 'number',
-  gte: 1,
-  optional: true,
-  example: '3',
-},
-{
-  name: 'scanInterval',
-  type: 'number',
-  gt: 0,
-  example: '1000',
-  defaultValue: 10
-},
-{
-  name: 'writeOnce',
-  type: 'checkbox',
-  optional: true,
-},
-{
-  name: 'deleteEnable',
-  type: 'checkbox',
-  optional: true,
-}
+    name: 'maxDepth',
+    type: 'number',
+    gte: 1,
+    optional: true,
+    example: '3',
+  },
+  {
+    name: 'scanInterval',
+    type: 'number',
+    gt: 0,
+    example: '1000',
+    defaultValue: 10
+  },
+  {
+    name: 'writeOnce',
+    type: 'checkbox',
+    optional: true,
+  },
+  {
+    name: 'deleteEnable',
+    type: 'checkbox',
+    optional: true,
+  }
 ];
 
 const UPDATE_STRATEGIES = [{
-  id: 'no_update',
-  fields: []
-},
-{
-  id: 'simple_scan',
-  fields: []
-}
+    id: 'no_update',
+    fields: []
+  },
+  {
+    id: 'simple_scan',
+    fields: []
+  }
 ];
 
 function createValidations(importGenericFields, importStrategies,
@@ -178,10 +178,10 @@ export default OneForm.extend(Validations, {
         selectedUpdateStrategy,
         updateStrategies,
       } = this.getProperties(
-          'selectedImportStrategy',
-          'selectedUpdateStrategy',
-          'updateStrategies'
-        );
+        'selectedImportStrategy',
+        'selectedUpdateStrategy',
+        'updateStrategies'
+      );
       let prefixes = ['import_generic', 'import_' + selectedImportStrategy.id];
       let noUpdateStrategy = _find(updateStrategies, { id: 'no_update' });
       if (selectedUpdateStrategy !== noUpdateStrategy) {
@@ -214,7 +214,7 @@ export default OneForm.extend(Validations, {
         importStrategies,
         updateStrategies,
       } = this.getProperties('importGenericFields', 'updateGenericFields',
-          'importStrategies', 'updateStrategies');
+        'importStrategies', 'updateStrategies');
       return importStrategies
         .concat(updateStrategies)
         .concat({ fields: importGenericFields })
@@ -232,7 +232,7 @@ export default OneForm.extend(Validations, {
         importStrategies,
         updateStrategies,
       } = this.getProperties('importGenericFields', 'updateGenericFields',
-          'importStrategies', 'updateStrategies');
+        'importStrategies', 'updateStrategies');
       let fields = Ember.Object.create({
         import_generic: Ember.Object.create({}),
         update_generic: Ember.Object.create({})
@@ -339,7 +339,7 @@ export default OneForm.extend(Validations, {
       importStrategies,
       updateStrategies
     } = this.getProperties('importGenericFields',
-        'updateGenericFields', 'importStrategies', 'updateStrategies');
+      'updateGenericFields', 'importStrategies', 'updateStrategies');
 
     importGenericFields.forEach(field =>
       this._addFieldTranslation('storageImport', field, i18n)
@@ -396,7 +396,7 @@ export default OneForm.extend(Validations, {
       importStrategies,
       updateStrategies
     } = this.getProperties('defaultValues', 'importGenericFields',
-        'updateGenericFields', 'importStrategies', 'updateStrategies');
+      'updateGenericFields', 'importStrategies', 'updateStrategies');
 
     this.resetFormValues(true);
 
@@ -433,12 +433,12 @@ export default OneForm.extend(Validations, {
       selectedUpdateStrategy,
       mode
     } = this.getProperties(
-        'formValues',
-        'currentFields',
-        'selectedImportStrategy',
-        'selectedUpdateStrategy',
-        'mode'
-      );
+      'formValues',
+      'currentFields',
+      'selectedImportStrategy',
+      'selectedUpdateStrategy',
+      'mode'
+    );
 
     let formData = {
       storageUpdate: {
@@ -504,8 +504,9 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      return invokeAction(this, 'submit', stripObject(this._getValues(),
-        [undefined, null, '']));
+      return invokeAction(this, 'submit', stripObject(this._getValues(), [undefined,
+        null, ''
+      ]));
     },
   }
 });

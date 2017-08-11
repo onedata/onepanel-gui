@@ -36,7 +36,7 @@ describe('Integration | Component | cluster host table', function () {
     ];
     this.set('hosts', hosts);
 
-    this.render(hbs`{{cluster-host-table hosts=hosts}}`);
+    this.render(hbs `{{cluster-host-table hosts=hosts}}`);
 
     let $hostTable = $('.cluster-host-table');
     let helper = new HostTableHelper($hostTable);
@@ -55,7 +55,7 @@ describe('Integration | Component | cluster host table', function () {
     ];
     this.set('hosts', hosts);
 
-    this.render(hbs`{{cluster-host-table hosts=hosts}}`);
+    this.render(hbs `{{cluster-host-table hosts=hosts}}`);
 
     let $hostTable = $('.cluster-host-table');
     let helper = new HostTableHelper($hostTable);

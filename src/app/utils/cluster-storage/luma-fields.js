@@ -1,8 +1,7 @@
-export default [
-  {
-    name: 'lumaUrl', 
-    type: 'text', 
-    example: 'http://localhost:9090', 
+export default [{
+    name: 'lumaUrl',
+    type: 'text',
+    example: 'http://localhost:9090',
     tip: 'The URL of your LUMA instance, must be reachable from all Oneprovider nodes.'
   },
   {
