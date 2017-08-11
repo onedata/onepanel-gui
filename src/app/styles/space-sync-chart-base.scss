@@ -1,10 +1,14 @@
 .space-sync-chart-base {
-  .ct-chart {
-    & > .ct-legend {
+  .chart-row {
+    .ct-chart .ct-legend {
       white-space: nowrap;
     }
-    svg {
-      min-width: 400px;
+    @media (max-width: 500px) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      svg {
+        min-width: 400px;
+      }
     }
   }
 }
