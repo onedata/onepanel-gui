@@ -15,7 +15,7 @@
 import Ember from 'ember';
 
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
+import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 
 import _ from 'lodash';

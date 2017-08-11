@@ -13,10 +13,10 @@ import Ember from 'ember';
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
-import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
-import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
-import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
+import axisLabels from 'onedata-gui-common/utils/chartist/axis-labels';
+import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
+import centerLineChart from 'onedata-gui-common/utils/chartist/center-line-chart';
+import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
 const {
   computed,
