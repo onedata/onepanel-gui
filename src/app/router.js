@@ -9,9 +9,12 @@
 import Ember from 'ember';
 import onedataRouterSetup from 'onedata-gui-common/utils/onedata-router-setup';
 
-const {
-  Router,
-} = Ember;
+import config from './config/environment';
+
+const Router = Ember.Router.extend({
+  location: config.locationType,
+  rootURL: config.rootURL,
+});
 
 Router.map(function () {
   onedataRouterSetup(Router, this);
