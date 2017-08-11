@@ -4,6 +4,7 @@ import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import { click, fillIn } from 'ember-native-dom-helpers';
+import sinon from 'sinon';
 
 describe('Integration | Component | one collapsible list', function () {
   setupComponentTest('one-collapsible-list', {
@@ -11,14 +12,11 @@ describe('Integration | Component | one collapsible list', function () {
   });
 
   it('handles item select', function (done) {
-    let selectionChanged = false;
     let itemValue = 1;
     this.set('itemValue', itemValue);
-    this.on('selectionChanged', function (values) {
-      selectionChanged = true;
-      expect(values).to.have.length(1);
-      expect(values[0]).to.be.equal(itemValue);
-    });
+
+    let selectionChangedSpy = sinon.spy();
+    this.on('selectionChanged', selectionChangedSpy);
 
     this.render(hbs `
     {{#one-collapsible-list
@@ -37,7 +35,8 @@ describe('Integration | Component | one collapsible list', function () {
     `);
     wait().then(() => {
       click('.first-item-header .one-checkbox').then(() => {
-        expect(selectionChanged).to.be.true;
+        expect(selectionChangedSpy).to.be.calledOnce;
+        expect(selectionChangedSpy).to.be.calledWith([itemValue]);
         done();
       });
     });
@@ -45,14 +44,10 @@ describe('Integration | Component | one collapsible list', function () {
 
   it('handles item deselect', function (done) {
     let itemValue = 1;
-    let changeCounter = 0;
     this.set('itemValue', itemValue);
-    this.on('selectionChanged', function (values) {
-      if (changeCounter === 1) {
-          expect(values).to.have.length(0);
-        }
-        changeCounter++;
-    });
+
+    let selectionChangedSpy = sinon.spy();
+    this.on('selectionChanged', selectionChangedSpy);
 
     this.render(hbs `
     {{#one-collapsible-list
@@ -73,7 +68,9 @@ describe('Integration | Component | one collapsible list', function () {
     wait().then(() => {
       click('.first-item-header .one-checkbox').then(() => {
         click('.first-item-header .one-checkbox').then(() => {
-          expect(changeCounter).to.be.equal(2);
+          expect(selectionChangedSpy).to.be.calledTwice;
+          let selection = selectionChangedSpy.args[1][0];
+          expect(selection).to.be.an('array').that.is.empty;
           done();
         });
       });
@@ -81,10 +78,8 @@ describe('Integration | Component | one collapsible list', function () {
   });
 
   it('ignores item selection if selectionValue is not set', function (done) {
-    let selectionChanged = false;
-    this.on('selectionChanged', function () {
-      selectionChanged = true;
-    });
+    let selectionChangedSpy = sinon.spy();
+    this.on('selectionChanged', selectionChangedSpy);
 
     this.render(hbs `
     {{#one-collapsible-list
@@ -105,20 +100,15 @@ describe('Integration | Component | one collapsible list', function () {
     wait().then(() => {
       click('.first-item-header input').then(() => {
         expect(this.$('.first-item-header input')).to.be.disabled;
-        expect(selectionChanged).to.be.false;
+        expect(selectionChangedSpy).to.be.notCalled;
         done();
       });
     });
   });
 
   it('can select all items', function (done) {
-    let selectionChanged = false;
-    this.on('selectionChanged', function (valuesSelected) {
-      expect(valuesSelected.length).to.be.equal(2);
-      expect(valuesSelected.indexOf(1)).to.be.gt(-1);
-      expect(valuesSelected.indexOf(2)).to.be.gt(-1);
-      selectionChanged = true;
-    });
+    let selectionChangedSpy = sinon.spy();
+    this.on('selectionChanged', selectionChangedSpy);
 
     this.render(hbs `
     {{#one-collapsible-list
@@ -141,7 +131,10 @@ describe('Integration | Component | one collapsible list', function () {
     
     wait().then(() => {
       click('.one-collapsible-list-header .one-checkbox').then(() => {
-        expect(selectionChanged).to.be.true;
+        expect(selectionChangedSpy).to.be.calledOnce;
+        let selection = selectionChangedSpy.args[0][0];
+        expect(selection).to.be.an('array').with.length(2);
+        expect(selection).to.include.members([1, 2]);
         done();
       });
     });
