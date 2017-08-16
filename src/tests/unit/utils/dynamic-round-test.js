@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import dynamicRound from 'onepanel-gui/utils/dynamic-round';
+import dynamicRound from 'onedata-gui-common/utils/dynamic-round';
 
 describe('Unit | Utility | dynamic round', function () {
   it('rounds numbers after point', function () {
