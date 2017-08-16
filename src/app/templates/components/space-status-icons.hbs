@@ -1,13 +1,14 @@
-{{status-icon
-  type="space-import"
-  status=syncStats.importStatus
-  hint=_importHint
-  enabled=importEnabled
-}}
-{{status-icon
-  type="update"
-  status=syncStats.updateStatus
-  hint=_updateHint
-  enabled=updateEnabled
-}}
-
+{{#status-toolbar as |toolbar|}}
+  {{toolbar.icon
+    icon="space-import"
+    status=syncStats.importStatus
+    hint=_importHint
+    enabled=importEnabled
+  }}
+  {{toolbar.icon
+    icon="update"
+    status=syncStats.updateStatus
+    hint=_updateHint
+    enabled=updateEnabled
+  }}
+{{/status-toolbar}}

@@ -1,3 +1,12 @@
+/**
+ * A component that displays a space import/update status as icons.
+ *
+ * @module components/space-status-icons
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
@@ -11,7 +20,7 @@ function t(i18n, key) {
 }
 
 export default Ember.Component.extend({
-  classNames: ['space-status-icons', 'status-toolbar'],
+  classNames: ['space-status-icons'],
   classNameBindings: ['_noStatus:hidden'],
 
   i18n: service(),
