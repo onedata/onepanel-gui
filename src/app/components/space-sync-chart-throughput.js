@@ -15,6 +15,7 @@ import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
 import tooltip from 'onepanel-gui/utils/chartist/tooltip';
 import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
 import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
+import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
 
 const {
   computed,
@@ -32,35 +33,46 @@ export default SpaceSyncChartBase.extend({
    * Chartist settings
    * @type {Object}
    */
-  chartOptions: {
-    axisY: {
-      onlyInteger: true,
-    },
-    low: 0,
-    chartPadding: 30,
-    lineSmooth: Chartist.Interpolation.simple({
-      divisor: 2
-    }),
-    fullWidth: true,
-    plugins: [
-      tooltip({
-        chartType: 'line',
-        rangeInTitle: true,
-        topOffset: -17,
-        valueSuffix: 'op/s'
+  chartOptions: computed('chartData', function() {
+    let chartData = this.get('chartData');
+    let data = chartData.series ? 
+      chartData.series[0].data.filter(d => d !== null) : [];
+    let maxValue = data.length > 0 ? Math.max.apply(Math, data) : 0;
+    return {
+      axisY: {
+        onlyInteger: true,
+        low: 0,
+        referenceValue: maxValue >= 1 ? 1 : maxValue * 3
+      },
+      chartPadding: 30,
+      lineSmooth: Chartist.Interpolation.simple({
+        divisor: 2
       }),
-      axisLabels({
-        xLabel: 'Time',
-        yLabel: 'Op/s',
-      }),
-      shortHorizontalGrid(),
-      centerLineChart(),
-      Chartist.plugins.legend({
-        className: 'not-clickable',
-        clickable: false,
-      })
-    ]
-  },
+      fullWidth: true,
+      plugins: [
+        tooltip({
+          chartType: 'line',
+          rangeInTitle: true,
+          topOffset: -17,
+          valueSuffix: 'op/s'
+        }),
+        axisLabels({
+          xLabel: 'Time',
+          yLabel: 'Op/s',
+        }),
+        additionalXLabel({
+          xOffsetMultiply: 0,
+          insertBefore: true,
+        }),
+        shortHorizontalGrid(),
+        centerLineChart(),
+        Chartist.plugins.legend({
+          className: 'not-clickable',
+          clickable: false,
+        })
+      ]
+    };
+  }),
 
   /**
    * Series labels for chart
@@ -116,7 +128,7 @@ export default SpaceSyncChartBase.extend({
       );
       _chartValues.push(null);
       return {
-        labels: _.range(0, _chartValues.length).reverse().map(n =>
+        labels: _.range(1, _chartValues.length).reverse().map(n =>
           this.getChartLabel(n)
         ),
         series: [{

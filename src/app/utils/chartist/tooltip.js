@@ -20,12 +20,15 @@
  * above a text instead of bar
  * - topOffset - top offset of a tooltip
  * - valueSuffix - [bar/line chart only] suffix for tooltip entries (e.g. for units)
+ * - roundValues - if true, values in tooltip will be rounded
  * 
  * @module utils/chartist/tooltip
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
+
+import dynamicRound from 'onepanel-gui/utils/dynamic-round';
 
 const TOOLTIP_HTML =
   `
@@ -43,7 +46,8 @@ export default function (options) {
     rangeInTitle: false,
     renderAboveBarDescription: false,
     topOffset: -10,
-    valueSuffix: ''
+    valueSuffix: '',
+    roundValues: true,
   };
   options = Chartist.extend({}, defaultOptions, options);
 
@@ -69,7 +73,11 @@ export default function (options) {
       ul.empty();
       let suffix = options.valueSuffix ? ' ' + options.valueSuffix : '';
       tooltipData.forEach(d => {
-        ul.append(`<li class="${d.className}">${d.name}: ${d.value + suffix}</li>`);
+        let value = d.value;
+        if (options.roundValues && typeof value === 'number') {
+          value = dynamicRound(value);
+        }
+        ul.append(`<li class="${d.className}">${d.name}: ${value + suffix}</li>`);
       });
     };
 
