@@ -56,7 +56,7 @@ docker-build-report.txt
 rel
 
 # test results
-src/tests/test-results.xml
+**/test-results.xml
 
 # OSX
 .DS_Store
