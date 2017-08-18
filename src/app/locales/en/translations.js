@@ -5,6 +5,7 @@ import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import storageImportUpdateForm from './components/storage-import-update-form';
 import spaceStatusIcons from './components/space-status-icons';
 import brandInfo from './components/brand-info';
+import loginBox from './components/login-box';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -18,7 +19,8 @@ let translations = {
     storageImportUpdateForm,
     spaceStatusIcons,
     brandInfo,
+    loginBox,
   },
 };
 
-export default _.merge(translations, onedataCommonTranslations);
+export default _.merge({}, onedataCommonTranslations, translations);
