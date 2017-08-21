@@ -22,7 +22,7 @@ const {
 } = Ember;
 
 const {
-  SpaceSupportRequest
+  SpaceSupportRequest,
 } = Onepanel;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);

@@ -163,6 +163,6 @@ export default Component.extend({
         this.set('_editing', false);
       });
       return modifying;
-    }
-  }
+    },
+  },
 });

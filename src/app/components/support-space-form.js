@@ -11,9 +11,9 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
-import OneFormSimple from 'onepanel-gui/components/one-form-simple';
+import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
-import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
+import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
 const {
   isEmpty,
@@ -32,7 +32,7 @@ const FORM_FIELDS = [{
     name: 'token',
     type: 'text',
     tip: 'Globally unique identifier assigned by onezone',
-    example: 'MDAxNWxvY...'
+    example: 'MDAxNWxvY...',
   },
   { name: 'size', type: 'number', gt: 0, example: '100' },
   {
@@ -43,7 +43,7 @@ const FORM_FIELDS = [{
       { value: 'mb', label: 'MB' },
       { value: 'gb', label: 'GB' },
       { value: 'tb', label: 'TB' },
-    ]
+    ],
   },
   {
     name: 'mountInRoot',
@@ -126,7 +126,7 @@ export default OneFormSimple.extend(Validations, {
   canSubmit: computed('_selectedStorage', 'isValid', function () {
     let {
       _selectedStorage,
-      isValid
+      isValid,
     } = this.getProperties('_selectedStorage', 'isValid');
     return _selectedStorage != null && isValid;
   }),
@@ -202,10 +202,10 @@ export default OneFormSimple.extend(Validations, {
 
       if (!_importEnabled) {
         storageImport = {
-          strategy: 'no_import'
+          strategy: 'no_import',
         };
         storageUpdate = {
-          strategy: 'no_update'
+          strategy: 'no_update',
         };
       }
 

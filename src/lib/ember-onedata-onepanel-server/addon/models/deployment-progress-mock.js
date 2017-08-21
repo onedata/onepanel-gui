@@ -14,8 +14,8 @@ import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/clus
 const {
   TaskStatus,
   TaskStatus: {
-    StatusEnum
-  }
+    StatusEnum,
+  },
 } = Onepanel;
 
 const {
@@ -56,7 +56,7 @@ export default Ember.Object.extend({
     return TaskStatus.constructFromObject({
       status: (fakeProgress >= clusterDeploySteps.length) ?
         StatusEnum.ok : StatusEnum.running,
-      steps: clusterDeploySteps.slice(0, fakeProgress)
+      steps: clusterDeploySteps.slice(0, fakeProgress),
     });
-  }
+  },
 });

@@ -2,34 +2,34 @@ import Onepanel from 'npm:onepanel';
 
 const {
   TaskStatus: {
-    StatusEnum
-  }
+    StatusEnum,
+  },
 } = Onepanel;
 
 const {
-  Deferred
+  Deferred,
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
   let gettingTaskStatus = onepanelServer.request('onepanel', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({
-    data: taskStatus
+    data: taskStatus,
   }) => {
     switch (taskStatus.status) {
-    case StatusEnum.ok:
-    case StatusEnum.error:
-      deferred.resolve(taskStatus);
-      break;
-    case StatusEnum.running:
-      deferred.notify(taskStatus);
-      scheduleSelf();
-      break;
-    default:
-      console.warn('watchTaskStatus: invalid taskStatus: ' + JSON.serialize(
-        'taskStatus'));
-      scheduleSelf();
-      break;
+      case StatusEnum.ok:
+      case StatusEnum.error:
+        deferred.resolve(taskStatus);
+        break;
+      case StatusEnum.running:
+        deferred.notify(taskStatus);
+        scheduleSelf();
+        break;
+      default:
+        console.warn('watchTaskStatus: invalid taskStatus: ' + JSON.serialize(
+          'taskStatus'));
+        scheduleSelf();
+        break;
     }
   });
 

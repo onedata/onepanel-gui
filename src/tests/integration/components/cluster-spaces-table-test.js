@@ -10,7 +10,7 @@ import Ember from 'ember';
 
 describe('Integration | Component | cluster spaces table', function () {
   setupComponentTest('cluster-spaces-table', {
-    integration: true
+    integration: true,
   });
 
   beforeEach(function () {
@@ -32,7 +32,7 @@ describe('Integration | Component | cluster spaces table', function () {
             id: 'space-1',
             name: 'Space 1',
             storageId: 'storage-one',
-          })
+          }),
         }),
         Ember.Object.create({
           isSettled: true,
@@ -64,7 +64,7 @@ describe('Integration | Component | cluster spaces table', function () {
           content: SpaceDetails.create({
             id: 'space-1',
             name: 'Space 1',
-          })
+          }),
         }),
         Ember.Object.create({
           isSettled: true,
@@ -73,7 +73,7 @@ describe('Integration | Component | cluster spaces table', function () {
           content: SpaceDetails.create({
             id: 'space-2',
             name: 'Space 2',
-          })
+          }),
         }),
       ];
 

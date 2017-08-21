@@ -33,8 +33,8 @@ describe('Unit | Service | storage manager', function () {
               data: {
                 name: 'FirstStorage',
                 type: 'POSIX',
-                mountPoint: '/mnt/st1'
-              }
+                mountPoint: '/mnt/st1',
+              },
             }));
           }
         }
@@ -67,8 +67,8 @@ describe('Unit | Service | storage manager', function () {
               data: {
                 name: 'FirstStorage',
                 type: 'POSIX',
-                mountPoint: '/mnt/st1'
-              }
+                mountPoint: '/mnt/st1',
+              },
             }));
           }
         }

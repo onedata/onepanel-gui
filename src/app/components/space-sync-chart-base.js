@@ -65,12 +65,12 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
 
   timeFormat: computed('timeUnit', function () {
     switch (this.get('timeUnit')) {
-    case 'hour':
-      return 'HH:mm';
-    case 'day':
-      return 'DD/MM HH:mm';
-    default:
-      return 'HH:mm:ss';
+      case 'hour':
+        return 'HH:mm';
+      case 'day':
+        return 'DD/MM HH:mm';
+      default:
+        return 'HH:mm:ss';
     }
   }),
 
@@ -79,7 +79,7 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
       lastUpdateTime,
       timeFormat,
       timePeriod,
-      timeUnit
+      timeUnit,
     } = this.getProperties(
       'lastUpdateTime',
       'timeFormat',
@@ -92,5 +92,5 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
     return moment(lastUpdateTime)
       .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);
-  }
+  },
 });

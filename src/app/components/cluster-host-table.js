@@ -1,7 +1,7 @@
 import {
-  InvokeActionMixin
+  InvokeActionMixin,
 } from 'ember-invoke-action';
-import BasicTable from 'onepanel-gui/components/basic-table';
+import BasicTable from 'onedata-gui-common/components/basic-table';
 import Ember from 'ember';
 
 import { validator, buildValidations } from 'ember-cp-validations';
@@ -99,6 +99,6 @@ export default BasicTable.extend(
       primaryClusterManagerChanged(hostname, isSet) {
         this.invokeAction('primaryClusterManagerChanged', isSet ? hostname : null);
       },
-    }
+    },
   }
 );

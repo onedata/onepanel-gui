@@ -10,10 +10,12 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 import Ember from 'ember';
 
-import bytesToString from 'onepanel-gui/utils/bytes-to-string';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
+import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 
 import _ from 'lodash';
@@ -47,13 +49,13 @@ export default Ember.Component.extend({
       className: `ct-series-${index}`,
       tooltipElements: [{
           name: 'Support size',
-          value: b2s(entry.size)
+          value: b2s(entry.size),
         },
         {
           name: 'Support share',
           value: Math.round(100 * entry.size / total) + '%',
-        }
-      ]
+        },
+      ],
     }));
   }),
 
@@ -72,7 +74,7 @@ export default Ember.Component.extend({
           className: 'not-clickable',
           clickable: false,
         }),
-      ]
+      ],
     };
   }),
 

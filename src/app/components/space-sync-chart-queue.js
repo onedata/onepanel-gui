@@ -7,16 +7,18 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 import Ember from 'ember';
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
-import maximizeBarWidth from 'onepanel-gui/utils/chartist/maximize-bar-width';
-import barSumLabels from 'onepanel-gui/utils/chartist/bar-sum-labels';
-import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
-import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
-import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
+import maximizeBarWidth from 'onedata-gui-common/utils/chartist/maximize-bar-width';
+import barSumLabels from 'onedata-gui-common/utils/chartist/bar-sum-labels';
+import axisLabels from 'onedata-gui-common/utils/chartist/axis-labels';
+import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
+import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
+import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
 const {
   computed,
@@ -57,8 +59,8 @@ export default SpaceSyncChartBase.extend({
       Chartist.plugins.legend({
         className: 'not-clickable',
         clickable: false,
-      })
-    ]
+      }),
+    ],
   },
 
   /**
@@ -89,14 +91,14 @@ export default SpaceSyncChartBase.extend({
       }
       _queueData.values.forEach(value => _chartValues.push(value));
       return {
-        labels: _.range(1, _chartValues.length + 1).reverse().
-        map(n => this.getChartLabel(n)),
+        labels: _.range(1, _chartValues.length + 1).reverse()
+          .map(n => this.getChartLabel(n)),
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
-          className: `ct-series-0`
+          className: `ct-series-0`,
         }],
-        lastLabel: this.getChartLabel(0)
+        lastLabel: this.getChartLabel(0),
       };
     } else {
       return {};

@@ -51,12 +51,12 @@ export default Ember.Component.extend({
     let i18n = this.get('i18n');
     if (this.get('importEnabled')) {
       switch (this.get('importStatus')) {
-      case 'inProgress':
-        return `${t(i18n, 'dataImport')}: ${t(i18n, 'inProgress')}`;
-      case 'done':
-        return `${t(i18n, 'dataImport')}: ${t(i18n, 'done')}`;
-      default:
-        return `${t(i18n, 'dataImport') }: ${t(i18n, 'enabled')}`;
+        case 'inProgress':
+          return `${t(i18n, 'dataImport')}: ${t(i18n, 'inProgress')}`;
+        case 'done':
+          return `${t(i18n, 'dataImport')}: ${t(i18n, 'done')}`;
+        default:
+          return `${t(i18n, 'dataImport') }: ${t(i18n, 'enabled')}`;
       }
     }
   }),
@@ -65,11 +65,11 @@ export default Ember.Component.extend({
     let i18n = this.get('i18n');
     if (this.get('updateEnabled')) {
       switch (this.get('updateStatus')) {
-      case 'inProgress':
-        return `${t(i18n, 'dataUpdate')}: ${t(i18n, 'working')}`;
-      case 'waiting':
-        // showing "enabled" hint also for waiting to not confuse user
-        return `${t(i18n, 'dataUpdate') }: ${t(i18n, 'enabled')}`;
+        case 'inProgress':
+          return `${t(i18n, 'dataUpdate')}: ${t(i18n, 'working')}`;
+        case 'waiting':
+          // showing "enabled" hint also for waiting to not confuse user
+          return `${t(i18n, 'dataUpdate') }: ${t(i18n, 'enabled')}`;
       }
     }
   }),

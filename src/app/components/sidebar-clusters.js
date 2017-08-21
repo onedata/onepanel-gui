@@ -8,12 +8,13 @@
  */
 
 import Ember from 'ember';
-import TwoLevelSidebar from 'onepanel-gui/components/two-level-sidebar';
-import layout from 'onepanel-gui/templates/components/two-level-sidebar';
+import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
+import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
 
 const {
   computed: { readOnly },
   computed,
+  inject: { service },
 } = Ember;
 
 export default TwoLevelSidebar.extend({
@@ -21,19 +22,28 @@ export default TwoLevelSidebar.extend({
 
   classNames: ['sidebar-clusters'],
 
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
   // TODO this will not work in generic multi-clusters menu  
   cluster: readOnly('model.collection.firstObject'),
 
   firstLevelItemIcon: 'menu-clusters',
 
-  triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized', 
-    'onepanelServiceType', function () {
-    let {
-      cluster,
-      onepanelServiceType
-    } = this.getProperties('cluster', 'onepanelServiceType');
-    return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
-  }),
+  triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized',
+    'onepanelServiceType',
+    function () {
+      let {
+        cluster,
+        onepanelServiceType,
+      } = this.getProperties('cluster', 'onepanelServiceType');
+      return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
+    }),
+
+  /**
+   * @implements TwoLevelSidebar
+   */
+  sidebarType: 'clusters',
 
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
@@ -50,7 +60,7 @@ export default TwoLevelSidebar.extend({
         {
           id: 'provider',
           label: 'Provider',
-          icon: 'provider'
+          icon: 'provider',
         },
         {
           id: 'storages',
@@ -60,7 +70,7 @@ export default TwoLevelSidebar.extend({
         {
           id: 'spaces',
           label: 'Spaces',
-          icon: 'space'
+          icon: 'space',
         },
       ];
     } else {

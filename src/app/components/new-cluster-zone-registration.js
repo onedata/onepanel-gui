@@ -9,21 +9,21 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import stripObject from 'onepanel-gui/utils/strip-object';
+import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: {
-    service
+    service,
   },
   RSVP: {
-    Promise
+    Promise,
   },
   Component,
 } = Ember;
 
 const {
-  ProviderRegisterRequest
+  ProviderRegisterRequest,
 } = Onepanel;
 
 export default Component.extend({
@@ -54,7 +54,7 @@ export default Component.extend({
       onezoneDomainName,
       redirectionPoint,
       geoLongitude: Number.parseFloat(geoLongitude),
-      geoLatitude: Number.parseFloat(geoLatitude)
+      geoLatitude: Number.parseFloat(geoLatitude),
     }, [undefined, null, NaN, '']);
 
     let req = ProviderRegisterRequest.constructFromObject(reqProto);
@@ -103,6 +103,6 @@ export default Component.extend({
         );
       });
       return submitting;
-    }
-  }
+    },
+  },
 });

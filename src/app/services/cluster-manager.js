@@ -15,14 +15,14 @@ import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 const {
   Service,
   inject: {
-    service
+    service,
   },
   RSVP: { Promise },
   A,
   computed: { alias, readOnly },
   ObjectProxy,
   PromiseProxyMixin,
-  String: { camelize }
+  String: { camelize },
 } = Ember;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
@@ -157,7 +157,7 @@ export default Service.extend({
       cluster[type].hosts.forEach(host => {
         if (clusterHostsInfo[host] == null) {
           clusterHostsInfo[host] = ClusterHostInfo.create({
-            hostname: host
+            hostname: host,
           });
         }
         clusterHostsInfo[host].set(_ROLE_COLLECTIONS[type], true);
@@ -329,7 +329,7 @@ export default Service.extend({
       gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
         resolve(hostnames.map(hostname => ({
-          hostname
+          hostname,
         })));
       });
 
@@ -351,5 +351,5 @@ export default Service.extend({
       );
       gettingClusterHosts.then(resolve, reject);
     });
-  }
+  },
 });

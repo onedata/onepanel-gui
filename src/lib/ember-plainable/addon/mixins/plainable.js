@@ -17,5 +17,5 @@ export default Ember.Mixin.create({
       copy[p] = plainCopy(this.get(p));
     }, this);
     return copy;
-  }
+  },
 });

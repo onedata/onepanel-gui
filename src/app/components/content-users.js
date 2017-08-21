@@ -91,5 +91,5 @@ export default Component.extend({
 
       return changingPassword;
     },
-  }
+  },
 });

@@ -1,26 +1,23 @@
-/*jshint node:true*/
-/* global require, module */
-
-var sass = require('node-sass');
+/* eslint-env node */
+'use strict';
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
   var app = new EmberApp(defaults, {
     'ember-cli-babel': {
-      includePolyfill: true
+      includePolyfill: true,
     },
     sassOptions: {
       includePaths: [
         'app/styles',
-        'app/styles/oneicons'
+        // onedata-gui-common addon
+        'lib/onedata-gui-common/app/styles',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common/oneicons',
+        'lib/onedata-gui-common/app/styles/onedata-gui-common/components',
       ],
-      functions: {
-        rootUrl: function () {
-          // NOTE: remember to change this when changing in environment!
-          return new sass.types.String('/');
-        }
-      }
+      onlyIncluded: false,
     },
     // a "bootstrap" should be imported into app.scss
     'ember-cli-bootstrap-sassy': {
@@ -32,26 +29,26 @@ module.exports = function (defaults) {
         'collapse',
         'popover',
       ],
-      'glyphicons': false
+      'glyphicons': false,
     },
     // import only JS
     'ember-bootstrap': {
       'importBootstrapCSS': false,
       'importBootstrapTheme': false,
       'importBootstrapFont': true,
-      'bootstrapVersion': 3
+      'bootstrapVersion': 3,
     },
     'ember-cli-chartist': {
-      'useCustomCSS': true
+      'useCustomCSS': true,
     },
     nodeAssets: {
       'chartist-plugin-legend': {
         vendor: {
-          include: ['chartist-plugin-legend.js']
+          include: ['chartist-plugin-legend.js'],
         },
-        public: {}
-      }
-    }
+        public: {},
+      },
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -75,7 +72,7 @@ module.exports = function (defaults) {
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
-  
+
   app.import('vendor/chartist-plugin-legend/chartist-plugin-legend.js');
 
   return app.toTree();

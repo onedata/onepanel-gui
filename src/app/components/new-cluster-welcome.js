@@ -8,8 +8,8 @@
  */
 
 import Ember from 'ember';
-import ContentInfo from 'onepanel-gui/components/content-info';
-import layout from 'onepanel-gui/templates/components/content-info';
+import ContentInfo from 'onedata-gui-common/components/content-info';
+import layout from 'onedata-gui-common/templates/components/content-info';
 import { invokeAction } from 'ember-invoke-action';
 
 const {
@@ -21,7 +21,7 @@ const {
 // TODO: i18n
 export default ContentInfo.extend({
   classNames: ['scroll-breakpoint-300'],
-  
+
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
@@ -36,5 +36,5 @@ export default ContentInfo.extend({
 
   buttonAction() {
     invokeAction(this, 'start', true);
-  }
+  },
 });

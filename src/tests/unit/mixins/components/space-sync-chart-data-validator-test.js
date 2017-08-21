@@ -1,9 +1,9 @@
 import {
-  expect
+  expect,
 } from 'chai';
 import {
   describe,
-  it
+  it,
 } from 'mocha';
 import Ember from 'ember';
 import ComponentsSpaceSyncChartDataValidatorMixin from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';

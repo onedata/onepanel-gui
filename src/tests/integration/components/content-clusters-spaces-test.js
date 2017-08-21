@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import waitFor from 'onepanel-gui/utils/wait-for';
+import waitFor from 'onedata-gui-common/utils/wait-for';
 
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
@@ -27,13 +27,13 @@ const SPACES = {
     id: 'c3',
     name: 'Space C3',
     supportingProviders: [],
-  }
+  },
 };
 
 const i18nStub = Service.extend({
   t() {
     return 'translation-mock';
-  }
+  },
 });
 
 describe('Integration | Component | content clusters spaces', function () {
@@ -65,10 +65,10 @@ describe('Integration | Component | content clusters spaces', function () {
     let supportFormAppeared = () => {
       return this.$('.support-space-form').length === 1;
     };
-    
+
     waitFor(supportFormAppeared, {
       resolve: done,
-      reject: () => expect(false, 'support form to appear').to.be.ok
+      reject: () => expect(false, 'support form to appear').to.be.ok,
     });
   });
 });

@@ -18,22 +18,21 @@ import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-field
 export default [{
   id: 'ceph',
   name: 'Ceph',
-  fields: CEPH_FIELDS
+  fields: CEPH_FIELDS,
 }, {
   id: 'posix',
   name: 'POSIX',
-  fields: POSIX_FIELDS
+  fields: POSIX_FIELDS,
 }, {
   id: 's3',
   name: 'S3',
-  fields: S3_FIELDS
+  fields: S3_FIELDS,
 }, {
   id: 'swift',
   name: 'Swift',
-  fields: SWIFT_FIELDS
+  fields: SWIFT_FIELDS,
 }, {
   id: 'glusterfs',
   name: 'GlusterFS',
-  fields: GLUSTERFS_FIELDS
-}
-];
+  fields: GLUSTERFS_FIELDS,
+}];

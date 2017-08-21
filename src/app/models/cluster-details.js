@@ -51,7 +51,7 @@ export default Ember.ObjectProxy.extend({
   isInitialized: computed('initStep', 'onepanelServiceType', function () {
     let {
       initStep,
-      onepanelServiceType
+      onepanelServiceType,
     } = this.getProperties('initStep', 'onepanelServiceType');
     return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
   }),
