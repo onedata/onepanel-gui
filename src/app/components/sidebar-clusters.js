@@ -14,12 +14,16 @@ import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
 const {
   computed: { readOnly },
   computed,
+  inject: { service },
 } = Ember;
 
 export default TwoLevelSidebar.extend({
   layout,
 
   classNames: ['sidebar-clusters'],
+
+  onepanelServer: service(),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   // TODO this will not work in generic multi-clusters menu  
   cluster: readOnly('model.collection.firstObject'),
@@ -35,6 +39,11 @@ export default TwoLevelSidebar.extend({
       } = this.getProperties('cluster', 'onepanelServiceType');
       return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
     }),
+
+  /**
+   * @implements TwoLevelSidebar
+   */
+  sidebarType: 'clusters',
 
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
