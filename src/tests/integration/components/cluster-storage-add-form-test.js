@@ -17,7 +17,7 @@ class ClusterStorageAddHelper extends FormHelper {
 
 describe('Integration | Component | cluster storage add form', function () {
   setupComponentTest('cluster-storage-add-form', {
-    integration: true
+    integration: true,
   });
 
   it('renders fields for POSIX storage type if "posix" is injected', function () {
@@ -26,7 +26,7 @@ describe('Integration | Component | cluster storage add form', function () {
 
     this.set('selectedStorageType', {
       id: 'posix',
-      name: 'POSIX'
+      name: 'POSIX',
     });
 
     this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
@@ -44,7 +44,7 @@ describe('Integration | Component | cluster storage add form', function () {
   it('does not submit empty values for posix', function (done) {
     this.set('selectedStorageType', {
       id: 'posix',
-      name: 'POSIX'
+      name: 'POSIX',
     });
 
     this.render(hbs `
@@ -66,7 +66,7 @@ describe('Integration | Component | cluster storage add form', function () {
 
     this.set('selectedStorageType', {
       id: 'posix',
-      name: 'POSIX'
+      name: 'POSIX',
     });
     this.set('submit', handleSubmit);
 

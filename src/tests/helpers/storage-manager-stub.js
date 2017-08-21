@@ -28,13 +28,13 @@ export default Service.extend({
           storageDetailsList.push(this.getStorageDetails(storage.id));
         }
         resolve(ArrayProxy.create({ content: storageDetailsList }));
-      })
+      }),
     });
   },
 
   getStorageDetails(id) {
     return ObjectPromiseProxy.create({
-      promise: new Promise((resolve) => resolve(this.get('__storages')[id]))
+      promise: new Promise((resolve) => resolve(this.get('__storages')[id])),
     });
   },
 });

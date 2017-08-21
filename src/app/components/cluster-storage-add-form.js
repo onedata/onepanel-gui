@@ -12,19 +12,19 @@ import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
 
-import stripObject from 'onepanel-gui/utils/strip-object';
-import OneForm from 'onepanel-gui/components/one-form';
+import stripObject from 'onedata-gui-common/utils/strip-object';
+import OneForm from 'onedata-gui-common/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
-import createFieldValidator from 'onepanel-gui/utils/create-field-validator';
+import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
 const {
   computed,
   observer,
   inject: {
-    service
-  }
+    service,
+  },
 } = Ember;
 
 function createValidations(storageTypes, genericFields, lumaFields) {
@@ -57,7 +57,7 @@ export default OneForm.extend(Validations, {
   currentFieldsPrefix: computed('selectedStorageType.id', 'showLumaPrefix', function () {
     let {
       selectedStorageType,
-      showLumaPrefix
+      showLumaPrefix,
     } = this.getProperties('selectedStorageType', 'showLumaPrefix');
     if (showLumaPrefix) {
       return ['generic', 'luma', selectedStorageType.id];
@@ -65,12 +65,12 @@ export default OneForm.extend(Validations, {
       return ['generic', selectedStorageType.id];
     }
   }),
-  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields', 
+  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
     function () {
       let {
         storageTypes,
         genericFields,
-        lumaFields
+        lumaFields,
       } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
       return storageTypes
         .concat([{ fields: genericFields }, { fields: lumaFields }])
@@ -102,12 +102,12 @@ export default OneForm.extend(Validations, {
   allFieldsValues: computed('genericFields', 'lumaFields', 'storageTypes', function () {
     let fields = Ember.Object.create({
       generic: Ember.Object.create({}),
-      luma: Ember.Object.create({})
+      luma: Ember.Object.create({}),
     });
     let {
       genericFields,
       lumaFields,
-      storageTypes
+      storageTypes,
     } = this.getProperties('genericFields', 'lumaFields', 'storageTypes');
     storageTypes.forEach(type => {
       fields.set(type.id, Ember.Object.create({}));
@@ -174,7 +174,7 @@ export default OneForm.extend(Validations, {
     let {
       storageTypes,
       genericFields,
-      lumaFields
+      lumaFields,
     } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
     storageTypes.forEach(({ id: typeId, fields }) => {
       fields.forEach(field =>
@@ -245,7 +245,7 @@ export default OneForm.extend(Validations, {
       let {
         formValues,
         currentFields,
-        selectedStorageType
+        selectedStorageType,
       } = this.getProperties(
         'formValues',
         'currentFields',
@@ -253,7 +253,7 @@ export default OneForm.extend(Validations, {
       );
 
       let formData = {
-        type: selectedStorageType.id
+        type: selectedStorageType.id,
       };
 
       currentFields.forEach(({ name }) => {
@@ -263,5 +263,5 @@ export default OneForm.extend(Validations, {
       return invokeAction(this, 'submit',
         stripObject(formData, [undefined, null, '']));
     },
-  }
+  },
 });

@@ -59,7 +59,7 @@ export default Component.extend({
     this.set(
       'hostsProxy',
       ObjectPromiseProxy.create({
-        promise: clusterHostsPromise
+        promise: clusterHostsPromise,
       })
     );
   },

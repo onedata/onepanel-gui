@@ -4,5 +4,5 @@ export default {
     size: 'Size',
     mountInRoot: 'Mount in root',
     _importEnabled: 'Import storage data',
-  }
+  },
 };

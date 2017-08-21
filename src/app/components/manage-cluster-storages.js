@@ -18,10 +18,10 @@ const {
     equal,
   },
   inject: {
-    service
+    service,
   },
   RSVP: {
-    Promise
+    Promise,
   },
 } = Ember;
 
@@ -138,6 +138,6 @@ export default Ember.Component.extend({
         this.get('globalNotify').backendError(`adding "${name}" storage`, error);
       });
       return submitting;
-    }
-  }
+    },
+  },
 });

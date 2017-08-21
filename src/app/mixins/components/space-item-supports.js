@@ -69,7 +69,7 @@ export default Mixin.create({
             ));
           });
           _providerDetailsProxy.catch(reject);
-        })
+        }),
       });
     }),
 
@@ -85,7 +85,7 @@ export default Mixin.create({
     return _.map(supportingProviders, (size, pid) => ({
       name: pid === currentProviderId ?
         currentProviderName : providerIdToName(pid),
-      size
+      size,
     }));
   },
 });

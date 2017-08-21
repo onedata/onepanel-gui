@@ -9,7 +9,7 @@ import wait from 'ember-test-helpers/wait';
 const {
   getOwner,
   RSVP: {
-    Promise
+    Promise,
   },
 } = Ember;
 
@@ -38,7 +38,7 @@ describe('Integration | Mixin | components/space item sync stats', function () {
         SpaceItemSyncStats
       );
       return getOwner(this).lookup('test-container:space-item-sync-stats-object');
-    }
+    },
   });
 
   beforeEach(function () {
@@ -50,7 +50,7 @@ describe('Integration | Mixin | components/space item sync stats', function () {
 
     this.register('service:space-manager', SpaceManagerStub);
     this.inject.service('space-manager', {
-      as: 'spaceManager'
+      as: 'spaceManager',
     });
   });
 

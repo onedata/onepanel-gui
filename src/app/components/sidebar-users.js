@@ -10,8 +10,8 @@
 // TODO i18n
 
 import Ember from 'ember';
-import TwoLevelSidebar from 'onepanel-gui/components/two-level-sidebar';
-import layout from 'onepanel-gui/templates/components/two-level-sidebar';
+import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
+import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
 
 const {
   computed,

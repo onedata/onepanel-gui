@@ -1,5 +1,5 @@
 /**
- * Render additional information about app below onedata brand (logo)
+ * Implements brand info for Onepanel GUIs
  *
  * @module components/brand-info.js
  * @author Jakub Liput
@@ -10,16 +10,17 @@
 // TODO i18n
 
 import Ember from 'ember';
+import BrandInfo from 'onedata-gui-common/components/brand-info';
+import layout from 'onedata-gui-common/templates/components/brand-info';
 
 const {
-  Component,
   inject: { service },
   computed: { readOnly },
   computed,
 } = Ember;
 
-export default Component.extend({
-  classNames: ['brand-info'],
+export default BrandInfo.extend({
+  layout,
 
   i18n: service(),
   onepanelServer: service(),
@@ -29,7 +30,7 @@ export default Component.extend({
   brandSubtitle: computed('onepanelServiceType', function () {
     let {
       i18n,
-      onepanelServiceType
+      onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
       i18n.t(`components.brandInfo.serviceType.${onepanelServiceType}`) : null;

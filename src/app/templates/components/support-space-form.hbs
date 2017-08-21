@@ -38,14 +38,14 @@
 
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>
-      {{#spin-button
+      {{#one-spin-button
         type="submit"
         class="btn btn-primary"
         action=(action "submit")
         disabled=(not canSubmit)
       }}
         Support space
-      {{/spin-button}}
+      {{/one-spin-button}}
     </div>
   </div>
 {{/bs-form}}

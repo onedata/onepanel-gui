@@ -20,24 +20,24 @@ const {
 
 const STEPS_PROVIDER = [{
   id: 'installation',
-  title: 'cluster installation'
+  title: 'cluster installation',
 }, {
   id: 'provider-registration',
-  title: 'zone registration'
+  title: 'zone registration',
 }, {
   id: 'provider-storage',
-  title: 'storage configuration'
+  title: 'storage configuration',
 }, {
   id: 'summary',
-  title: 'summary'
+  title: 'summary',
 }];
 
 const STEPS_ZONE = [{
   id: 'installation',
-  title: 'cluster installation'
+  title: 'cluster installation',
 }, {
   id: 'summary',
-  title: 'summary'
+  title: 'summary',
 }];
 
 export default Ember.Component.extend({
@@ -70,6 +70,6 @@ export default Ember.Component.extend({
     },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');
-    }
-  }
+    },
+  },
 });

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import {
-  InvokeActionMixin
+  InvokeActionMixin,
 } from 'ember-invoke-action';
 
 const {
@@ -38,6 +38,6 @@ export default Ember.Component.extend(InvokeActionMixin, {
     },
     primaryClusterManagerChanged() {
       this.invokeAction('primaryClusterManagerChanged', ...arguments);
-    }
-  }
+    },
+  },
 });

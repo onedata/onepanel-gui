@@ -19,5 +19,5 @@ export default {
   deleteEnable: {
     name: 'Delete enabled',
     tip: 'Flag determining that deletions of files will be detected.',
-  }
+  },
 };

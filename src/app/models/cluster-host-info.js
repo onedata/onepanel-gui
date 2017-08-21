@@ -12,7 +12,7 @@
 import Ember from 'ember';
 
 const {
-  computed
+  computed,
 } = Ember;
 
 /**
@@ -37,5 +37,5 @@ export default Ember.Object.extend({
       clusterManager,
     } = this.getProperties('database', 'clusterWorker', 'clusterManager');
     return database || clusterWorker || clusterManager;
-  })
+  }),
 });

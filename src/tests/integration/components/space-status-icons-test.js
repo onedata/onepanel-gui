@@ -7,7 +7,7 @@ import i18n from 'ember-i18n/services/i18n';
 
 describe('Integration | Component | space status icons', function () {
   setupComponentTest('space-status-icons', {
-    integration: true
+    integration: true,
   });
 
   beforeEach(function () {

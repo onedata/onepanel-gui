@@ -3,12 +3,12 @@
 <div class="row content-row header-row hidden-xs">
   <h1>Spaces
     {{!-- Only for development --}}
-    {{!--{{#spin-button
+    {{!--{{#one-spin-button
       action=(action "updateSpacesList")
       class="btn btn-sm btn-default btn-update-spaces-list"
     }}
       Refresh list
-    {{/spin-button}}--}}
+    {{/one-spin-button}}--}}
     {{#if _isToolbarVisible}}
       {{#one-collapsible-toolbar isGlobal=true isMinimized=false as |dropdown|}}
         {{#dropdown.item buttonStyle=_supportSpaceButtonType triggerClasses="btn-support-space" itemAction=(action "toggleSupportSpaceForm")}}

@@ -20,7 +20,7 @@ class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
   }
 }
 
-const SIMPLE_SCAN_NAME = 
+const SIMPLE_SCAN_NAME =
   StorageImportFormLocales.storageImport.strategies.simple_scan;
 
 describe('Integration | Component | storage import update form', function () {

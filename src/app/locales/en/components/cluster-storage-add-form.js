@@ -6,7 +6,6 @@ import s3 from './cluster-storage-add-form/s3';
 import swift from './cluster-storage-add-form/swift';
 import glusterfs from './cluster-storage-add-form/glusterfs';
 
-
 export default {
   generic,
   luma,
@@ -14,5 +13,5 @@ export default {
   posix,
   s3,
   swift,
-  glusterfs
+  glusterfs,
 };

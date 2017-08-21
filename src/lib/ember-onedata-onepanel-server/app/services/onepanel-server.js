@@ -13,8 +13,8 @@ import config from 'ember-get-config';
 
 const {
   APP: {
-    MOCK_BACKEND
-  }
+    MOCK_BACKEND,
+  },
 } = config;
 
 let ExportServer;

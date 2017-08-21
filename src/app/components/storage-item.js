@@ -43,7 +43,7 @@ const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
 const REJECTED_STORAGE_PROPERTIES = [
   ...GENERIC_STORAGE_PROPERTIES,
   ...LUMA_PROPERTIES,
-  ...HIDDEN_STORAGE_PROPERTIES
+  ...HIDDEN_STORAGE_PROPERTIES,
 ];
 
 export default Component.extend({
@@ -104,7 +104,7 @@ export default Component.extend({
   supportedSpaces: computed('spaces.@each.isFulfilled', function () {
     let {
       spaces,
-      storage
+      storage,
     } = this.getProperties('spaces', 'storage');
 
     // support for ObjectProxy
@@ -118,8 +118,7 @@ export default Component.extend({
         // localStorages array can be used instead of storageId
         let localStorage = spaceProxy.get('content.storageId');
         return localStorage && localStorage === storage.id;
-      }
-      else {
+      } else {
         return false;
       }
     });

@@ -12,7 +12,7 @@ import globalNotifyStub from '../../helpers/global-notify-stub';
 
 describe('Integration | Component | manage cluster storages', function () {
   setupComponentTest('manage-cluster-storages', {
-    integration: true
+    integration: true,
   });
 
   beforeEach(function () {

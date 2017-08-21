@@ -1,9 +1,8 @@
-export default [
-  {
-    name: 'lumaUrl', 
-    type: 'text', 
-    example: 'http://localhost:9090', 
-    tip: 'The URL of your LUMA instance, must be reachable from all Oneprovider nodes.'
+export default [{
+    name: 'lumaUrl',
+    type: 'text',
+    example: 'http://localhost:9090',
+    tip: 'The URL of your LUMA instance, must be reachable from all Oneprovider nodes.',
   },
   {
     name: 'lumaCacheTimeout',
@@ -16,7 +15,7 @@ export default [
       'cached by Oneprovider for better performance, but this causes a ' +
       'synchronization delay when mapping changes. "0" is no cache - this ' +
       'may cause a serious degradation of file-ops performance, but mapping ' +
-      'changes in LUMA will have an instantaneous effect.'
+      'changes in LUMA will have an instantaneous effect.',
   },
   {
     name: 'lumaApiKey',
@@ -26,6 +25,6 @@ export default [
     optional: true,
     regexMessage: 'This field can contain only lowercase alphanumeric characters and _',
     tip: 'Optional, arbitrary alphanumeric string that serves as authorization ' +
-      'in requests to LUMA. If not specified, no authorization headers will be sent.'
+      'in requests to LUMA. If not specified, no authorization headers will be sent.',
   },
 ];

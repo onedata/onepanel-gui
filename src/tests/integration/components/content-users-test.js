@@ -15,7 +15,7 @@ class UserCredentialsFormHelper extends FormHelper {
 
 describe('Integration | Component | content users', function () {
   setupComponentTest('content-users', {
-    integration: true
+    integration: true,
   });
 
   it('shows username and secret password field by default', function () {
@@ -52,7 +52,7 @@ describe('Integration | Component | content users', function () {
 
       let form = new UserCredentialsFormHelper(this.$());
 
-      wait().then(() => {
+      wait({ waitForTimers: false }).then(() => {
         expect(form.getInput('generic-username'), 'field username')
           .to.exist;
         expect(form.getInput('static-secretPassword'), 'field secretPassword')
@@ -61,7 +61,8 @@ describe('Integration | Component | content users', function () {
           .to.exist;
         expect(form.getInput('change-newPassword'), 'field newPassword')
           .to.exist;
-        expect(form.getInput('change-newPasswordRetype'), 'field newPasswordRetype')
+        expect(form.getInput('change-newPasswordRetype'),
+            'field newPasswordRetype')
           .to.exist;
 
         done();

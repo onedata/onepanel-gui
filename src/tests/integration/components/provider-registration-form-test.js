@@ -12,7 +12,7 @@ class ProviderRegistrationHelper extends FormHelper {
 
 describe('Integration | Component | provider registration form', function () {
   setupComponentTest('provider-registration-form', {
-    integration: true
+    integration: true,
   });
 
   it(
@@ -23,7 +23,9 @@ describe('Integration | Component | provider registration form', function () {
       this.render(hbs `{{provider-registration-form mode="new" submit=(action "submit")}}`);
 
       let helper = new ProviderRegistrationHelper(this.$());
-      ['main-name', 'main-onezoneDomainName', 'main-redirectionPoint', 'main-geoLatitude', 'main-geoLongitude']
+      ['main-name', 'main-onezoneDomainName', 'main-redirectionPoint',
+        'main-geoLatitude', 'main-geoLongitude',
+      ]
       .forEach(fname => {
         expect(helper.getInput(fname), `${fname} field`).to.exist;
       });

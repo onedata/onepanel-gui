@@ -22,7 +22,7 @@ class HostTableHelper {
 
 describe('Integration | Component | cluster host table', function () {
   setupComponentTest('cluster-host-table', {
-    integration: true
+    integration: true,
   });
 
   it('renders table with host rows', function () {
@@ -32,7 +32,7 @@ describe('Integration | Component | cluster host table', function () {
       }),
       ClusterHostInfo.create({
         hostname: 'host.second.com',
-      })
+      }),
     ];
     this.set('hosts', hosts);
 
@@ -51,7 +51,7 @@ describe('Integration | Component | cluster host table', function () {
         hostname: 'host.one.com',
         database: true,
         clusterManager: false,
-      })
+      }),
     ];
     this.set('hosts', hosts);
 

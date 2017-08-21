@@ -21,12 +21,12 @@ export default Service.extend({
           spaceDetailsList.push(this.getSpaceDetails(space.id));
         }
         resolve(spaceDetailsList);
-      })
+      }),
     });
   },
   getSpaceDetails(id) {
     return ObjectPromiseProxy.create({
-      promise: new Promise((resolve) => resolve(this.get('__spaces')[id]))
+      promise: new Promise((resolve) => resolve(this.get('__spaces')[id])),
     });
   },
 });

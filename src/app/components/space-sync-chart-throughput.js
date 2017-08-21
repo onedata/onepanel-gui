@@ -7,15 +7,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+/* global Chartist */
+
 import Ember from 'ember';
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
-import axisLabels from 'onepanel-gui/utils/chartist/axis-labels';
-import tooltip from 'onepanel-gui/utils/chartist/tooltip';
-import centerLineChart from 'onepanel-gui/utils/chartist/center-line-chart';
-import shortHorizontalGrid from 'onepanel-gui/utils/chartist/short-horizontal-grid';
-import additionalXLabel from 'onepanel-gui/utils/chartist/additional-x-label';
+import axisLabels from 'onedata-gui-common/utils/chartist/axis-labels';
+import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
+import centerLineChart from 'onedata-gui-common/utils/chartist/center-line-chart';
+import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
+import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 
 const {
   computed,
@@ -33,20 +35,20 @@ export default SpaceSyncChartBase.extend({
    * Chartist settings
    * @type {Object}
    */
-  chartOptions: computed('chartData', function() {
+  chartOptions: computed('chartData', function () {
     let chartData = this.get('chartData');
-    let data = chartData.series ? 
+    let data = chartData.series ?
       chartData.series[0].data.filter(d => d !== null) : [];
     let maxValue = data.length > 0 ? Math.max.apply(Math, data) : 0;
     return {
       axisY: {
         onlyInteger: true,
         low: 0,
-        referenceValue: maxValue >= 1 ? 1 : maxValue * 3
+        referenceValue: maxValue >= 1 ? 1 : maxValue * 3,
       },
       chartPadding: 30,
       lineSmooth: Chartist.Interpolation.simple({
-        divisor: 2
+        divisor: 2,
       }),
       fullWidth: true,
       plugins: [
@@ -54,7 +56,7 @@ export default SpaceSyncChartBase.extend({
           chartType: 'line',
           rangeInTitle: true,
           topOffset: -17,
-          valueSuffix: 'op/s'
+          valueSuffix: 'op/s',
         }),
         axisLabels({
           xLabel: 'Time',
@@ -69,8 +71,8 @@ export default SpaceSyncChartBase.extend({
         Chartist.plugins.legend({
           className: 'not-clickable',
           clickable: false,
-        })
-      ]
+        }),
+      ],
     };
   }),
 
@@ -85,17 +87,17 @@ export default SpaceSyncChartBase.extend({
   throughputDivisor: computed('timeUnit', 'timePeriod', function () {
     let {
       timeUnit,
-      timePeriod
+      timePeriod,
     } = this.getProperties('timeUnit', 'timePeriod');
     switch (timeUnit) {
-    case 'minute':
-      return 60 * timePeriod;
-    case 'hour':
-      return 3600 * timePeriod;
-    case 'day':
-      return 86400 * timePeriod;
-    default:
-      return timePeriod;
+      case 'minute':
+        return 60 * timePeriod;
+      case 'hour':
+        return 3600 * timePeriod;
+      case 'day':
+        return 86400 * timePeriod;
+      default:
+        return timePeriod;
     }
   }),
 
@@ -123,8 +125,10 @@ export default SpaceSyncChartBase.extend({
         _chartValues.shift();
       }
       _timeStatsValues[1].map((val, index) =>
-        _chartValues.push((val + _timeStatsValues[2][index] + _timeStatsValues[3]
-          [index]) / throughputDivisor)
+        _chartValues.push(
+          (val + _timeStatsValues[2][index] + _timeStatsValues[3][index]) /
+          throughputDivisor
+        )
       );
       _chartValues.push(null);
       return {
@@ -134,9 +138,9 @@ export default SpaceSyncChartBase.extend({
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
-          className: 'ct-series-0'
+          className: 'ct-series-0',
         }],
-        lastLabel: this.getChartLabel(0)
+        lastLabel: this.getChartLabel(0),
       };
     } else {
       return {};

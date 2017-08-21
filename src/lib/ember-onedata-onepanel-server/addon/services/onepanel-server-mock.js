@@ -25,14 +25,14 @@ const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
 const {
   A,
   RSVP: {
-    Promise
+    Promise,
   },
   computed,
   computed: {
     readOnly,
   },
   inject: {
-    service
+    service,
   },
   get,
 } = Ember;
@@ -155,7 +155,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
               handler.statusCode(...params) || 200,
             headers: {
               location: handler.taskId ? ('https://something/tasks/' +
-                handler.taskId) : undefined
+                handler.taskId) : undefined,
             },
           };
           let taskId = getTaskId(response);
@@ -170,7 +170,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
           };
-          reject({ __request_method: method, response, toString: responseToString, });
+          reject({ __request_method: method, response, toString: responseToString });
         }
 
       } else {
@@ -235,7 +235,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         lumaEnabled: true,
         lumaUrl: 'http://localhost:9090',
         lumaCacheTimeout: 10,
-        lumaApiKey: 'some_storage'
+        lumaApiKey: 'some_storage',
       };
       this.get('__storages').push(
         clusterStorageClass(storage1.type).constructFromObject(storage1)
@@ -310,7 +310,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         } else {
           return null;
         }
-      }
+      },
     };
   }),
 
@@ -320,7 +320,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       success() {
         document.cookie = 'fakeLoginFlag=false; Max-Age=0';
         return null;
-      }
+      },
     };
   }),
 
@@ -330,7 +330,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         return {
           username: MOCK_USERNAME,
         };
-      }
+      },
     };
   }),
 
@@ -338,7 +338,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     return {
       success( /* ignore password */ ) {
         return null;
-      }
+      },
     };
   }),
 
@@ -350,7 +350,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           __provider.set(prop, data[prop]);
         }
       },
-      taskId: 'configure'
+      taskId: 'configure',
     };
   }),
 
@@ -404,11 +404,11 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => this.get('__configuration').plainCopy()
+          success: () => this.get('__configuration').plainCopy(),
         };
       } else {
         return {
-          statusCode: () => 404
+          statusCode: () => 404,
         };
       }
     }),
@@ -421,7 +421,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         };
       } else {
         return {
-          statusCode: () => 404
+          statusCode: () => 404,
         };
       }
     }),
@@ -430,15 +430,15 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     function () {
       return {
         success: () => ({
-          ids: this.get('__storages').map(s => s.id)
-        })
+          ids: this.get('__storages').map(s => s.id),
+        }),
       };
     }),
 
   _req_oneprovider_getStorageDetails: computed('__storages',
     function () {
       return {
-        success: id => _.find(this.get('__storages'), s => s.id === id)
+        success: id => _.find(this.get('__storages'), s => s.id === id),
       };
     }),
 
@@ -451,11 +451,11 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         return {
           success: () => ({
             ids: spaceIds,
-          })
+          }),
         };
       } else {
         return {
-          statusCode: () => 404
+          statusCode: () => 404,
         };
       }
     }),
@@ -467,11 +467,11 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         let findSpace = (id) => _.find(spaces, s => s.id === id);
         return {
           success: (id) => findSpace(id),
-          statusCode: (id) => findSpace(id) ? 200 : 404
+          statusCode: (id) => findSpace(id) ? 200 : 404,
         };
       } else {
         return {
-          statusCode: () => 404
+          statusCode: () => 404,
         };
       }
     }),
@@ -481,7 +481,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       success: (spaceId, { period, metrics }) => {
         let space = _.find(this.get('__spaces', s => s.id === spaceId));
         return this.generateSpaceSyncStats(space, period, metrics);
-      }
+      },
     };
   }),
 
@@ -538,7 +538,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
   _req_onezone_configureZone: computed(function () {
     return {
       success: () => null,
-      taskId: 'configure'
+      taskId: 'configure',
     };
   }),
 
@@ -547,11 +547,11 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     function () {
       if (this.get('mockInitializedCluster')) {
         return {
-          success: () => this.get('__configuration').plainCopy()
+          success: () => this.get('__configuration').plainCopy(),
         };
       } else {
         return {
-          statusCode: () => 404
+          statusCode: () => 404,
         };
       }
     }),
@@ -578,7 +578,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       },
       workers: {
         hosts: ['node2.example.com'],
-      }
+      },
     },
     // TODO add this only in zone mode
     onezone: {

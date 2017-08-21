@@ -33,7 +33,7 @@ const {
  */
 const VALIDATORS = {
   onepanel: {
-    getClusterHosts
+    getClusterHosts,
   },
   onezone: {
     getZoneConfiguration,
@@ -45,7 +45,7 @@ const VALIDATORS = {
     getSpaceDetails,
     getStorages,
     getStorageDetails,
-  }
+  },
 };
 
 export default Mixin.create({
@@ -104,7 +104,7 @@ export default Mixin.create({
             reject({
               message: htmlSafe(
                 `<p>Server method <code>${api}/${method}</code> provided incomplete or invalid data</p> <code>${responseData}</code>`
-              )
+              ),
             });
           }
         });

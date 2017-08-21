@@ -6,5 +6,5 @@ export default {
   poolName: 'Pool name',
   timeout: 'Timeout [ms]',
   insecure: 'Insecure',
-  readonly: 'Read only'
+  readonly: 'Read only',
 };

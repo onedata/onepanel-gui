@@ -56,7 +56,7 @@ docker-build-report.txt
 rel
 
 # test results
-src/tests/test-results.xml
+**/test-results.xml
 
 # OSX
 .DS_Store
@@ -67,6 +67,3 @@ src/tests/test-results.xml
 .vscode/
 jsconfig.json
 typings/
-
-# ES Lint (currently we force developers to use only JSHint)
-.eslintrc.js
