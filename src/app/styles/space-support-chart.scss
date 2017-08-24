@@ -39,4 +39,14 @@
       margin-top: $padding-base-vertical;
     }
   }
+  
+  .total-size-row {
+    // pull up, because we got some space before chart
+    margin-top: -30px;
+    padding-bottom: 30px;
+    
+    .one-label {
+      font-weight: bold;
+    }
+  }
 }

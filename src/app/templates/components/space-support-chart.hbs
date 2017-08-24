@@ -6,6 +6,10 @@
   }}
 </div>
 <div class="row content-row chart-row">
+  <div class="total-size-row">
+    <span class="one-label">{{t "components.spaceSupportChart.totalSizeLabel"}}:</span>
+    <span class="total-size">{{totalSizeHuman}}</span>
+  </div>
   {{#if dataValidationError}}
     {{resource-load-error reason=dataValidationError}}
   {{else}}

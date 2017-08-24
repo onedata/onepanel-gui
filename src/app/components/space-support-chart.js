@@ -36,6 +36,22 @@ export default Ember.Component.extend({
    */
   spaceSupporters: null,
 
+  /**
+   * Sum of support size in bytes
+   * @type {Number}
+   */
+  totalSize: computed('spaceSupporters', function () {
+    return _.sum(_.map(this.get('spaceSupporters'), 'size'))
+  }),
+
+  /**
+   * Human-readable support size
+   * @type {String}
+   */
+  totalSizeHuman: computed('totalSize', function () {
+    return b2s(this.get('totalSize'));
+  }),
+
   dataLabels: computed('spaceSupporters', function () {
     let spaceSupporters = this.get('spaceSupporters');
     return _.map(spaceSupporters, 'name');
