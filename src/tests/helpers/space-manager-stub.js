@@ -3,18 +3,16 @@ import Ember from 'ember';
 const {
   A,
   Service,
-  ObjectProxy,
-  PromiseProxyMixin,
   RSVP: { Promise },
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
   __spaces: [],
 
   getSpaces() {
-    return ObjectPromiseProxy.create({
+    return PromiseObject.create({
       promise: new Promise(resolve => {
         let spaceDetailsList = A();
         for (let space in this.get('__spaces')) {
@@ -25,7 +23,7 @@ export default Service.extend({
     });
   },
   getSpaceDetails(id) {
-    return ObjectPromiseProxy.create({
+    return PromiseObject.create({
       promise: new Promise((resolve) => resolve(this.get('__spaces')[id])),
     });
   },

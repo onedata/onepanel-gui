@@ -15,7 +15,6 @@ const {
   Service,
   ObjectProxy,
   ArrayProxy,
-  PromiseProxyMixin,
   computed: { alias },
   inject: { service },
   RSVP: { Promise },
@@ -25,7 +24,7 @@ const {
   StorageCreateRequest,
 } = Onepanel;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -39,7 +38,7 @@ export default Service.extend({
    * Fetch collection of onepanel ClusterStorage
    * 
    * @param {string} id
-   * @return {ObjectPromiseProxy} resolves ArrayProxy of SpaceDetails promise proxies
+   * @return {PromiseObject} resolves ArrayProxy of SpaceDetails promise proxies
    */
   getStorages(reload = false) {
     let onepanelServer = this.get('onepanelServer');
@@ -70,12 +69,12 @@ export default Service.extend({
       }
     });
 
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**
    * @param {string} id
-   * @return {ObjectPromiseProxy} resolves ClusterStorage ObjectProxy
+   * @return {PromiseObject} resolves ClusterStorage ObjectProxy
    */
   getStorageDetails(id, reload = false) {
     let onepanelServer = this.get('onepanelServer');
@@ -98,7 +97,7 @@ export default Service.extend({
         req.catch(reject);
       }
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**

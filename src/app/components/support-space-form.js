@@ -21,12 +21,10 @@ const {
   computed,
   computed: { oneWay },
   observer,
-  ObjectProxy,
-  PromiseProxyMixin,
   RSVP: { Promise },
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const FORM_FIELDS = [{
     name: 'token',
@@ -97,7 +95,7 @@ export default OneFormSimple.extend(Validations, {
   isFormOpened: false,
 
   /**
-   * @type ObjectPromiseProxy.Array.StorageDetails
+   * @type PromiseObject.Array.StorageDetails
    */
   allStoragesProxy: null,
 
@@ -173,7 +171,7 @@ export default OneFormSimple.extend(Validations, {
 
     this.set(
       'allStoragesProxy',
-      ObjectPromiseProxy.create({ promise: allStoragesPromise })
+      PromiseObject.create({ promise: allStoragesPromise })
     );
   },
 

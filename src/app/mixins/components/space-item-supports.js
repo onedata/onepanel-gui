@@ -19,7 +19,7 @@ const {
   get,
 } = Ember;
 
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 /**
  * Generates name to display of provider based on its Id
@@ -57,7 +57,7 @@ export default Mixin.create({
     function () {
       let _providerDetailsProxy = this.get('_providerDetailsProxy');
       let supportingProviders = this.get('supportingProviders');
-      return ObjectPromiseProxy.create({
+      return PromiseObject.create({
         promise: new Promise((resolve, reject) => {
           _providerDetailsProxy.get('promise').then(provider => {
             let id = get(provider, 'id');

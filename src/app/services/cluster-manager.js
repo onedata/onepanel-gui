@@ -21,11 +21,10 @@ const {
   A,
   computed: { alias, readOnly },
   ObjectProxy,
-  PromiseProxyMixin,
   String: { camelize },
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const THIS_CLUSTER_ID = 'the-cluster';
 
@@ -53,13 +52,13 @@ export default Service.extend({
 
   /**
    * Promise proxy resolves with array of promise proxies for ClusterDetails
-   * @returns {ObjectPromiseProxy}
+   * @returns {PromiseObject}
    */
   getClusters() {
     let promise = new Promise((resolve) => {
       resolve(A([this.getDefaultRecord()]));
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   getDefaultRecord(reload = false) {
@@ -69,7 +68,7 @@ export default Service.extend({
   // TODO: in future this should be able to get details of any cluster 
   // in system 
   /**
-   * @returns {ObjectPromiseProxy}
+   * @returns {PromiseObject}
    */
   getClusterDetails(clusterId, reload = false) {
     let {
@@ -125,7 +124,7 @@ export default Service.extend({
         gettingStep.catch(reject);
       }
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**

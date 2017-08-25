@@ -14,7 +14,6 @@ const {
   Service,
   inject: { service },
   ObjectProxy,
-  PromiseProxyMixin,
   RSVP: { Promise },
   computed: { alias },
 } = Ember;
@@ -23,7 +22,7 @@ const {
   ProviderModifyRequest,
 } = Onepanel;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -59,7 +58,7 @@ export default Service.extend({
         });
       }
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**

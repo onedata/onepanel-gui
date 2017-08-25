@@ -12,12 +12,10 @@ import Ember from 'ember';
 const {
   Component,
   inject: { service },
-  ObjectProxy,
-  PromiseProxyMixin,
   RSVP: { Promise },
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend({
   onepanelServer: service(),
@@ -26,7 +24,7 @@ export default Component.extend({
 
   /**
    * Resolves with EmberArray of ClusterHostInfo.
-   * @type {ObjectPromiseProxy.Array.ClusterHostInfo} hostsProxy
+   * @type {PromiseObject.Array.ClusterHostInfo} hostsProxy
    */
   hostsProxy: null,
 
@@ -58,7 +56,7 @@ export default Component.extend({
 
     this.set(
       'hostsProxy',
-      ObjectPromiseProxy.create({
+      PromiseObject.create({
         promise: clusterHostsPromise,
       })
     );
