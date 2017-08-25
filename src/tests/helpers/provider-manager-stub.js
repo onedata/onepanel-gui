@@ -26,7 +26,7 @@ export default Service.extend({
   },
 
   providerCache: computed(function () {
-    return ObjectProxy.create({ content: this.get('__providerDetails') })
+    return ObjectProxy.create({ content: this.get('__providerDetails') });
   }),
 
   getProviderDetails() {

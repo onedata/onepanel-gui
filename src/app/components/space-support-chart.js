@@ -41,7 +41,7 @@ export default Ember.Component.extend({
    * @type {Number}
    */
   totalSize: computed('spaceSupporters', function () {
-    return _.sum(_.map(this.get('spaceSupporters'), 'size'))
+    return _.sum(_.map(this.get('spaceSupporters'), 'size'));
   }),
 
   /**

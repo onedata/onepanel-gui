@@ -40,10 +40,15 @@ export default Ember.Component.extend({
    */
   spaces: null,
 
+  /**
+   * Id of provider for this onepanel
+   * Used for checking what support is local
+   * @type {String}
+   */
   providerId: oneWay('providerManager.providerCache.id'),
 
   /**
-   * List of spaces supposrted by this storage (filtered list of spaces)
+   * List of spaces supported by this storage (filtered list of spaces)
    * @type {Array.Onepanel.SpaceDetails}
    */
   supportedSpaces: computed('spaces.@each.isFulfilled', function () {
@@ -66,7 +71,7 @@ export default Ember.Component.extend({
 
   /**
    * Total size of support provided to spaces in supportedSpaces list in bytes
-   * @type {Computed.Number}
+   * @type {computed.Number}
    */
   supportTotalSize: computed('supportedSpaces.@each.supportingProviders', 'providerId',
     function () {
@@ -78,14 +83,14 @@ export default Ember.Component.extend({
       if (providerId != null) {
         return _.sum(_.map(supportedSpaces, s =>
           // space size of support in this provider
-          get(get(s, 'supportingProviders'), providerId)
+          get(s, `supportingProviders.${providerId}`)
         ));
       }
     }),
 
   /**
    * Humand-readable total size of support
-   * @type {Computed.String}
+   * @type {computed.String}
    */
   supportTotalSizeHuman: computed('supportTotalSize', function () {
     return b2s(this.get('supportTotalSize'));
@@ -93,7 +98,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-
+    
     if (this.get('providerId') == null) {
       // force getProviderDetails to be invoked
       this.get('providerManager').getProviderDetails();
