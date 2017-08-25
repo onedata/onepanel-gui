@@ -11,6 +11,11 @@ module.exports = {
     jquery: true,
   },
   rules: {
+    'eqeqeq': [
+      2,
+      'smart',
+    ],
+    'semi': 2,
     'no-console': 0,
     'dot-location': [
       1,

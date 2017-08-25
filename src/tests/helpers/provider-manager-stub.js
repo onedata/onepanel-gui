@@ -5,6 +5,7 @@ const {
   ObjectProxy,
   PromiseProxyMixin,
   RSVP: { Promise },
+  computed,
 } = Ember;
 
 const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
@@ -23,6 +24,10 @@ export default Service.extend({
     geoLatitude: 49.698284,
     geoLongitude: 21.898093,
   },
+
+  providerCache: computed(function () {
+    return ObjectProxy.create({ content: this.get('__providerDetails') });
+  }),
 
   getProviderDetails() {
     return ObjectPromiseProxy.create({

@@ -41,15 +41,18 @@ const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 const MOCKED_SUPPORT = {
   'lofrewu83yr78fghae78ft64aqry4-14uy48979fmur': 100000000,
-  'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 314000000,
-  'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 214000000,
+  'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 315000000,
+  'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
 const MOCK_SERVICE_TYPE = 'provider';
 
+let providerSupportCounter = 1;
+
 function _genSupportingProviders() {
   let supportingProviders = {};
-  supportingProviders[PROVIDER_ID] = 700000000;
+  supportingProviders[PROVIDER_ID] = 700000000 * providerSupportCounter;
+  providerSupportCounter += 1;
   _.assign(supportingProviders, MOCKED_SUPPORT);
   return supportingProviders;
 }
