@@ -20,7 +20,9 @@
   {{#each storages as |storageProxy|}}
     {{#if storageProxy.isFulfilled}}
       {{#list.item as |listItem|}}
-        {{storage-item listItem=listItem storage=storageProxy.content spaces=spaces}}
+        {{#storage-item listItem=listItem storage=storageProxy.content as |storageItem|}}
+          {{storageItem.supportedSpaces spaces=spaces}}
+        {{/storage-item}}
       {{/list.item}}
     {{/if}}
   {{/each}}

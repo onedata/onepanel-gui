@@ -8,7 +8,9 @@
       triggerEvents="hover"
     }}
   </span>
-  <span class="one-label">{{storage.name}}</span>
+  <span class="one-label storage-name">
+    {{storage.name}}
+  </span>
 {{/listItem.header}}
 
 {{#listItem.content}}
@@ -48,14 +50,11 @@
             {{/if}}
           </div>
         {{/each}}
-        {{#if supportedSpaces}}
-          <div class="row content-row">
-            <strong>{{t 'components.storageItem.generic.supportedSpaces'}}:</strong>
-            {{#each supportedSpaces as |space|}}
-              <div class="row content-row nested-row">{{space.name}}</div>
-            {{/each}}
-          </div>
-        {{/if}}
+        {{yield (hash
+          supportedSpaces=(
+            component "storage-item/supported-spaces" storageId=storage.id
+          )
+        )}}
       </td>
       <td class="item-table-img-cell"><div class="background-container"></div></td>
     </tr>

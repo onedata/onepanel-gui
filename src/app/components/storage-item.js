@@ -97,33 +97,6 @@ export default Component.extend({
    */
   lumaProperties: LUMA_PROPERTIES,
 
-  /**
-   * List of spaces supported by this storage
-   * @type {Array.Onepanel.SpaceDetails}
-   */
-  supportedSpaces: computed('spaces.@each.isFulfilled', function () {
-    let {
-      spaces,
-      storage,
-    } = this.getProperties('spaces', 'storage');
-
-    // support for ObjectProxy
-    if (storage != null && storage.content != null) {
-      storage = storage.get('content');
-    }
-
-    return spaces.filter(spaceProxy => {
-      if (spaceProxy.get('isFulfilled')) {
-        // if there will be more than one local storage per space, 
-        // localStorages array can be used instead of storageId
-        let localStorage = spaceProxy.get('content.storageId');
-        return localStorage && localStorage === storage.id;
-      } else {
-        return false;
-      }
-    });
-  }),
-
   translationPrefix: computed('storage.type', function () {
     return `components.storageItem.${this.get('storage.type')}.`;
   }),

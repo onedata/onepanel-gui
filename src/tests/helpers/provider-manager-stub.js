@@ -3,6 +3,7 @@ import Ember from 'ember';
 const {
   Service,
   RSVP: { Promise },
+  computed,
 } = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -21,6 +22,10 @@ export default Service.extend({
     geoLatitude: 49.698284,
     geoLongitude: 21.898093,
   },
+
+  providerCache: computed(function () {
+    return ObjectProxy.create({ content: this.get('__providerDetails') });
+  }),
 
   getProviderDetails() {
     return PromiseObject.create({
