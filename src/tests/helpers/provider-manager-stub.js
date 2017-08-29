@@ -4,6 +4,7 @@ const {
   Service,
   RSVP: { Promise },
   computed,
+  ObjectProxy,
 } = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
