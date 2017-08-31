@@ -58,7 +58,7 @@ export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
 
   /**
    * Storage that supports space on this panel's provider
-   * @type {ObjectPromiseProxy}
+   * @type {PromiseObject}
    */
   _storage: null,
 

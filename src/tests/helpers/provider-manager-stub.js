@@ -2,13 +2,12 @@ import Ember from 'ember';
 
 const {
   Service,
-  ObjectProxy,
-  PromiseProxyMixin,
   RSVP: { Promise },
   computed,
+  ObjectProxy,
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 // TODO this service stub is probably faulty, because there were problems
 // using it in manage-cluster-storages-test
@@ -30,7 +29,7 @@ export default Service.extend({
   }),
 
   getProviderDetails() {
-    return ObjectPromiseProxy.create({
+    return PromiseObject.create({
       promise: new Promise(resolve => {
         resolve(this.get('__providerDetails'));
       }),

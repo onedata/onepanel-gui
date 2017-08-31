@@ -37,7 +37,7 @@ const {
   },
 } = Onepanel;
 
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 function getClusterHostname(hostnames) {
   return hostnames.objectAt(0);
@@ -72,7 +72,7 @@ export default Ember.Component.extend({
 
   /**
    * Resolves with EmberArray of HostInfo.
-   * @type {ObjectPromiseProxy.EmberArray.HostInfo}
+   * @type {PromiseObject.EmberArray.HostInfo}
    */
   hostsProxy: null,
 
@@ -106,7 +106,7 @@ export default Ember.Component.extend({
 
     this.set(
       'hostsProxy',
-      ObjectPromiseProxy.create({
+      PromiseObject.create({
         promise: new Promise((resolve, reject) => {
           let gettingHosts = this.get('clusterManager').getHosts(true);
           gettingHosts.then(hosts => {

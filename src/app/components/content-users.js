@@ -1,5 +1,6 @@
 /**
- * Main view for single user account
+ * Implements operations on user for onepanel
+ * Extends `onedata-gui-common/components/content-users`
  *
  * @module components/content-users
  * @author Jakub Liput
@@ -8,21 +9,22 @@
  */
 
 import Ember from 'ember';
+
 import Onepanel from 'npm:onepanel';
 
-const {
-  Component,
-  inject: { service },
-  computed,
-} = Ember;
+import ContentUsers from 'onedata-gui-common/components/content-users';
+import layout from 'onedata-gui-common/templates/components/content-users';
 
 const {
   UserModifyRequest,
 } = Onepanel;
 
-export default Component.extend({
-  onepanelServer: service(),
-  globalNotify: service(),
+const {
+  get,
+} = Ember;
+
+export default ContentUsers.extend({
+  layout,
 
   /**
    * To inject.
@@ -31,65 +33,30 @@ export default Component.extend({
   user: null,
 
   /**
-   * If true, set credentials form to changingPassword mode
-   * @type {boolean}
+   * Make an API call to change password of current user
+   * @implements
+   * @override
+   * @param {object} { oldPassword: string, newPassword: string }
+   * @returns {Promise} resolves on change password success
    */
-  _changingPassword: false,
+  _changePassword({ currentPassword, newPassword }) {
+    let {
+      user,
+      onepanelServer,
+    } = this.getProperties(
+      'user',
+      'onepanelServer',
+    );
 
-  // TODO i18n  
-  _changePasswordButtonLabel: computed('_changingPassword', function () {
-    return this.get('_changingPassword') ?
-      'Cancel password change' :
-      'Change password';
-  }),
-
-  _changePasswordButtonType: computed('_changingPassword', function () {
-    return this.get('_changingPassword') ? 'default' : 'primary';
-  }),
-
-  _changePasswordButtonClass: computed('_changingPassword', function () {
-    return this.get('_changingPassword') ?
-      'btn-change-password-cancel' : 'btn-change-password-start';
-  }),
-
-  actions: {
-    toggleChangePassword() {
-      this.toggleProperty('_changingPassword');
-    },
-
-    /**
-     * Make an API call to change password of current user
-     * 
-     * @param {object} { oldPassword: string, newPassword: string }
-     * @returns {Promise} an API call promise
-     */
-    submitChangePassword({ currentPassword, newPassword }) {
-      let {
-        user,
-      } = this.getProperties(
-        'user'
-      );
-      let changingPassword = this.get('onepanelServer').request(
-        'onepanel',
-        'modifyUser',
-        user.get('id'),
-        UserModifyRequest.constructFromObject({
-          currentPassword,
-          newPassword,
-        })
-      );
-
-      // TODO i18n
-      changingPassword.catch(error => {
-        this.get('globalNotify').backendError('password change', error);
-      });
-
-      changingPassword.then(() => {
-        this.get('globalNotify').info(`Password changed sucessfully`);
-        this.set('_changingPassword', false);
-      });
-
-      return changingPassword;
-    },
+    return onepanelServer.request(
+      'onepanel',
+      'modifyUser',
+      get(user, 'id'),
+      UserModifyRequest.constructFromObject({
+        currentPassword,
+        newPassword,
+      })
+    );
   },
+
 });

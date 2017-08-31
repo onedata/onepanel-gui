@@ -20,7 +20,7 @@ import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import _ from 'lodash';
 
-const ObjectPromiseProxy = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const {
   A,
@@ -74,7 +74,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   sessionValidator: computed(function () {
     let promise = this.validateSession();
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   }).readOnly(),
 
   username: MOCK_USERNAME,

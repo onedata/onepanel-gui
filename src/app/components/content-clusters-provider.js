@@ -34,7 +34,7 @@ export default Component.extend({
 
   /**
    * Initialized in ``_initProviderProxy``
-   * @type {ObjectPromiseProxy}
+   * @type {PromiseObject}
    */
   providerProxy: null,
 

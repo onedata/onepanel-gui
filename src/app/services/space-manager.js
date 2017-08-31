@@ -15,8 +15,6 @@ import SpaceDetails from 'onepanel-gui/models/space-details';
 const {
   A,
   Service,
-  ObjectProxy,
-  PromiseProxyMixin,
   inject: { service },
   RSVP: { Promise },
 } = Ember;
@@ -25,7 +23,7 @@ const {
   SpaceSupportRequest,
 } = Onepanel;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
 const DEFAULT_SYNC_STATS_PERIOD = 'minute';
@@ -37,7 +35,7 @@ export default Service.extend({
    * Fetch collection of onepanel SpaceDetails
    * 
    * @param {string} id
-   * @return {ObjectPromiseProxy} resolves Ember.Array of SpaceDetails promise proxies
+   * @return {PromiseObject} resolves Ember.Array of SpaceDetails promise proxies
    */
   getSpaces() {
     let onepanelServer = this.get('onepanelServer');
@@ -54,14 +52,14 @@ export default Service.extend({
       getSpaces.catch(reject);
     });
 
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**
    * Fetch details of space support with given ID
    * 
    * @param {string} id
-   * @return {ObjectPromiseProxy} resolves SpaceDetails object
+   * @return {PromiseObject} resolves SpaceDetails object
    */
   getSpaceDetails(id) {
     let onepanelServer = this.get('onepanelServer');
@@ -74,7 +72,7 @@ export default Service.extend({
       req.then(({ data }) => resolve(SpaceDetails.create(data)));
       req.catch(reject);
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**
@@ -91,7 +89,7 @@ export default Service.extend({
       req.then(({ data }) => resolve(data));
       req.catch(reject);
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 
   /**

@@ -14,13 +14,11 @@ const {
   Service,
   inject: { service },
   RSVP: { Promise },
-  ObjectProxy,
-  PromiseProxyMixin,
   A,
   computed: { oneWay },
 } = Ember;
 
-const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -38,13 +36,13 @@ export default Service.extend({
         userId: data.userId,
         userRole: data.userRole,
       }));
-    return ObjectPromiseProxy.create({ promise: user });
+    return PromiseObject.create({ promise: user });
   },
 
   getUsers() {
     let promise = new Promise(resolve => {
       resolve(A([this.getCurrentUser()]));
     });
-    return ObjectPromiseProxy.create({ promise });
+    return PromiseObject.create({ promise });
   },
 });

@@ -37,12 +37,12 @@ export default Ember.Component.extend({
   noStorages: equal('storagesProxy.length', 0),
 
   /**
-   * @type {ObjectPromiseProxy} storagesProxy resolves with storages list ArrayProxy
+   * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
    */
   storagesProxy: null,
 
   /**
-   * @type {ObjectPromiseProxy} spacesProxy resolves with spaces list ArrayProxy
+   * @type {PromiseObject} spacesProxy resolves with spaces list ArrayProxy
    */
   spacesProxy: null,
 
