@@ -5,26 +5,19 @@
  * Uses ``spaceSupporters`` property of onepanel.SpaceDetails
  *
  * @module components/space-support-chart
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-/* global Chartist */
-
 import Ember from 'ember';
-
-import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
-import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
+import generateColors from 'onedata-gui-common/utils/generate-colors';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
-
-import _ from 'lodash';
 
 const {
   computed,
+  A,
 } = Ember;
-
-const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
 
 export default Ember.Component.extend({
   classNames: ['chart-component', 'space-support-chart'],
@@ -37,85 +30,32 @@ export default Ember.Component.extend({
   spaceSupporters: null,
 
   /**
-   * Sum of support size in bytes
-   * @type {Number}
+   * Data for a chart
+   * @type computed.Ember.Array.PieChartSeries
    */
-  totalSize: computed('spaceSupporters', function () {
-    return _.sum(_.map(this.get('spaceSupporters'), 'size'));
-  }),
-
-  /**
-   * Human-readable support size
-   * @type {String}
-   */
-  totalSizeHuman: computed('totalSize', function () {
-    return b2s(this.get('totalSize'));
-  }),
-
-  dataLabels: computed('spaceSupporters', function () {
+  chartData: computed('spaceSupporters', function () {
     let spaceSupporters = this.get('spaceSupporters');
-    return _.map(spaceSupporters, 'name');
-  }),
-
-  dataSeries: computed('spaceSupporters', function () {
-    let spaceSupporters = this.get('spaceSupporters');
-    let total = _.sum(_.map(spaceSupporters, 'size'));
-    return spaceSupporters.map((entry, index) => ({
-      data: entry.size,
-      className: `ct-series-${index}`,
-      tooltipElements: [{
-          name: 'Support size',
-          value: b2s(entry.size),
-        },
-        {
-          name: 'Support share',
-          value: Math.round(100 * entry.size / total) + '%',
-        },
-      ],
-    }));
+    let colors = generateColors(spaceSupporters.length);
+    return A(spaceSupporters.map((supporter, index) => Ember.Object.create({
+      id: String(index),
+      label: supporter.name,
+      value: supporter.size,
+      color: colors[index],
+    })));
   }),
 
   /**
-   * Chartist settings
-   * @type {Object}
+   * Data validation error
+   * @type {computed.string}
    */
-  chartOptions: computed('dataSeries', function () {
-    return {
-      showLabel: false,
-      plugins: [
-        tooltip({
-          chartType: 'pie',
-        }),
-        Chartist.plugins.legend({
-          className: 'not-clickable',
-          clickable: false,
-        }),
-      ],
-    };
-  }),
-
-  /**
-   * Data for chartist
-   * @type {computed.Object}
-   */
-  chartData: computed('dataLabels', 'dataSeries', function () {
-    let {
-      dataLabels,
-      dataSeries,
-    } = this.getProperties(
-      'dataLabels',
-      'dataSeries'
-    );
-    return {
-      labels: dataLabels,
-      series: dataSeries,
-    };
-  }),
-
   dataValidationError: computed('spaceSupporters', function () {
     return this.validateChartData(this.get('spaceSupporters'));
   }),
 
+  /**
+   * Validates chart data
+   * @param {Array.object} spaceSupporters space supporters
+   */
   validateChartData(spaceSupporters) {
     return validateSupportingProviders(spaceSupporters) ? undefined :
       `supportingProviders data is invalid`;

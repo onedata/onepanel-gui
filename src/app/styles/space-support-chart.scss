@@ -1,52 +1,8 @@
 .space-support-chart {
-  // TODO: generate more colors automatically by darkening/lightening
-  $chart-colors: $color-one-mint $color-one-azure $color-one-red orange;
-  
-  .ct-chart {
-    height: initial;
-    margin-bottom: 0;
-    @for $i from 0 to length($chart-colors) {
-      .ct-series-#{$i} {
-        .ct-slice-pie {
-          fill: nth($chart-colors, $i + 1);
-        }
-      }
-    }
-    @for $i from 0 to length($chart-colors) {
-      .ct-series-#{$i+length($chart-colors)} {
-        .ct-slice-pie {
-          fill: darken(nth($chart-colors, $i + 1), 20);
-        }
-      }
-    }
-    .ct-legend.ct-legend-inside  {
-      position: static;
-      @for $i from 0 to length($chart-colors) {
-        .ct-series-#{$i}:before {
-          background-color: nth($chart-colors, $i + 1);
-          border-color: nth($chart-colors, $i + 1);
-        }
-      }
-      @for $i from 0 to length($chart-colors) {
-        .ct-series-#{$i+length($chart-colors)}:before {
-          background-color: darken(nth($chart-colors, $i + 1), 20);
-          border-color: darken(nth($chart-colors, $i + 1), 20);
-        }
-      }
-    }
-    svg {
-      position: static;
-      margin-top: $padding-base-vertical;
-    }
-  }
-  
-  .total-size-row {
-    // pull up, because we got some space before chart
-    margin-top: -30px;
-    padding-bottom: 30px;
-    
-    .one-label {
-      font-weight: bold;
-    }
+  .row.chart-row {
+    max-width: 500px;
+    padding-top: 0;
+    padding: 0 2em;
+    margin: 30px auto;
   }
 }
