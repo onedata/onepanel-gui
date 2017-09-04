@@ -4,12 +4,12 @@ import { bytesToString } from 'onepanel-gui/helpers/bytes-to-string';
 
 describe('Unit | Helper | bytes to string', function () {
   it('generates valid KB string as in bytes-to-string util', function () {
-    let result = bytesToString([1500]);
+    let result = bytesToString([1500], { iecFormat: false });
     expect(result).to.be.equal('1.5 KB');
   });
 
   it('supports iecFormat option of bytes-to-string util', function () {
-    let result = bytesToString([1024], { iecFormat: true });
+    let result = bytesToString([1024]);
     expect(result).to.be.equal('1 KiB');
   });
 });
