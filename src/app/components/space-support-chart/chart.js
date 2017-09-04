@@ -31,7 +31,9 @@ export default OnePieChart.extend({
         value: this.formatValue(_sortedData[index].value),
       }, {
         name: 'Support share',
-        value: Math.round(this.getSeriesPercentSize(_sortedData[index]) * 100) + '%',
+        value: Math.round(
+          this.getSeriesPercentSize(_sortedData[index]) * 100
+        ) + '%',
       }];
     });
     return chartDataSeries;
