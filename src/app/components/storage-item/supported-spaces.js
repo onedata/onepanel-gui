@@ -98,7 +98,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    
+
     if (this.get('providerId') == null) {
       // force getProviderDetails to be invoked
       this.get('providerManager').getProviderDetails();
