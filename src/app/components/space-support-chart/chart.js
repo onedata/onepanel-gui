@@ -8,10 +8,19 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import Ember from 'ember';
 import OnePieChart from 'onedata-gui-common/components/one-pie-chart';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
+const {
+  inject: {
+    service,
+  },
+} = Ember;
+
 export default OnePieChart.extend({
+  i18n: service(),
+
   /**
    * @implements
    */
@@ -23,14 +32,17 @@ export default OnePieChart.extend({
    * @implements
    */
   generateChartDataSeries() {
-    let _sortedData = this.get('_sortedData');
+    let {
+      _sortedData,
+      i18n,
+    } = this.getProperties('_sortedData', 'i18n');
     let chartDataSeries = this._super(...arguments);
     chartDataSeries.forEach((series, index) => {
       series.tooltipElements = [{
-        name: 'Support size',
+        name: i18n.t('components.spaceSupportChart.supportSize'),
         value: this.formatValue(_sortedData[index].value),
       }, {
-        name: 'Support share',
+        name: i18n.t('components.spaceSupportChart.supportShare'),
         value: Math.round(
           this.getSeriesPercentSize(_sortedData[index]) * 100
         ) + '%',
