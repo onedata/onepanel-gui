@@ -264,6 +264,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         storageImport: {
           strategy: 'simple_scan',
           maxDepth: 4,
+          syncAcl: true,
         },
         storageUpdate: {
           strategy: 'simple_scan',
@@ -271,6 +272,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           scanInterval: 1000,
           writeOnce: false,
           deleteEnable: false,
+          syncAcl: true,
         },
         supportingProviders: _genSupportingProviders(),
       });
