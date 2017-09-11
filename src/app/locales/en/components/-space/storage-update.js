@@ -20,4 +20,8 @@ export default {
     name: 'Delete enabled',
     tip: 'Flag determining that deletions of files will be detected.',
   },
+  syncAcl: {
+    name: 'Synchronize ACL',
+    tip: 'Enables synchronization of NFSv4 ACLs.',
+  },
 };

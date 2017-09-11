@@ -48,13 +48,20 @@ const {
 } = Ember;
 
 const IMPORT_GENERIC_FIELDS = [{
-  name: 'maxDepth',
-  type: 'number',
-  _nativeType: 'number',
-  gte: 1,
-  optional: true,
-  example: '3',
-}];
+    name: 'maxDepth',
+    type: 'number',
+    _nativeType: 'number',
+    gte: 1,
+    optional: true,
+    example: '3',
+  },
+  {
+    name: 'syncAcl',
+    type: 'checkbox',
+    _nativeType: 'checkbox',
+    optional: true,
+  },
+];
 
 const IMPORT_STRATEGIES = [{
   id: 'simple_scan',
@@ -82,6 +89,11 @@ const UPDATE_GENERIC_FIELDS = [{
   },
   {
     name: 'deleteEnable',
+    type: 'checkbox',
+    optional: true,
+  },
+  {
+    name: 'syncAcl',
     type: 'checkbox',
     optional: true,
   },
