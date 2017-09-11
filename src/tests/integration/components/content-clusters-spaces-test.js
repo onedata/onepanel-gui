@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import waitFor from 'onedata-gui-common/utils/wait-for';
+import wait from 'ember-test-helpers/wait';
 
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
@@ -60,15 +60,12 @@ describe('Integration | Component | content clusters spaces', function () {
       <button class="collapsible-toolbar-global-toggle"></button>
       {{content-clusters-spaces}}
     `);
+    
     this.$('button.btn-support-space').click();
 
-    let supportFormAppeared = () => {
-      return this.$('.support-space-form').length === 1;
-    };
-
-    waitFor(supportFormAppeared, {
-      resolve: done,
-      reject: () => expect(false, 'support form to appear').to.be.ok,
+    wait().then(() => {
+      expect(this.$('.support-space-form')).to.exist;
+      done();
     });
   });
 });
