@@ -12,23 +12,22 @@ const {
   Service,
 } = Ember;
 
-const SPACES = {
-  a1: {
+const SPACES = [{
     id: 'a1',
     name: 'Space A1',
     supportingProviders: [],
   },
-  b2: {
+  {
     id: 'b2',
-    name: 'Space B2',
+    name: 'Space Conflicting',
     supportingProviders: [],
   },
-  c3: {
+  {
     id: 'c3',
-    name: 'Space C3',
+    name: 'Space Conflicting',
     supportingProviders: [],
   },
-};
+];
 
 const i18nStub = Service.extend({
   t() {
@@ -60,7 +59,7 @@ describe('Integration | Component | content clusters spaces', function () {
       <button class="collapsible-toolbar-global-toggle"></button>
       {{content-clusters-spaces}}
     `);
-    
+
     this.$('button.btn-support-space').click();
 
     wait().then(() => {

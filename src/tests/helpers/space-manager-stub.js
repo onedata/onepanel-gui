@@ -1,9 +1,12 @@
 import Ember from 'ember';
 
+import _ from 'lodash';
+
 const {
   A,
   Service,
   RSVP: { Promise },
+  get,
 } = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -15,16 +18,18 @@ export default Service.extend({
     return PromiseObject.create({
       promise: new Promise(resolve => {
         let spaceDetailsList = A();
-        for (let space in this.get('__spaces')) {
+        this.get('__spaces').forEach(space => {
           spaceDetailsList.push(this.getSpaceDetails(space.id));
-        }
+        });
         resolve(spaceDetailsList);
       }),
     });
   },
   getSpaceDetails(id) {
     return PromiseObject.create({
-      promise: new Promise((resolve) => resolve(this.get('__spaces')[id])),
+      promise: new Promise((resolve) =>
+        resolve(_.find(this.get('__spaces'), s => get(s, 'id') === id))
+      ),
     });
   },
 });

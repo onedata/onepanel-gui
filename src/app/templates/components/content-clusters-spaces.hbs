@@ -31,7 +31,7 @@
   </div>
   {{#promise-proxy-container proxy=spacesProxy}}
     {{cluster-spaces-table
-      spaces=spacesProxy.content
+      spaces=spaces
       revokeSpace=(action "revokeSpace")
       modifySpace=(action "modifySpace")
     }}
