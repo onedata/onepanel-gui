@@ -161,7 +161,10 @@ export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
     let space = this.get('space');
     if (space) {
       let storageManager = this.get('storageManager');
-      this.set('_storage', storageManager.getStorageDetails(space.get('storageId')));
+      this.set(
+        '_storage',
+        storageManager.getStorageDetails(get(space, 'storageId'))
+      );
     }
   },
 

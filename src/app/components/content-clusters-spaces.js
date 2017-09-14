@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import ConflictIdsArray from 'onedata-gui-common/utils/conflict-ids-array';
 
 const {
   Component,
@@ -29,6 +30,13 @@ export default Component.extend({
 
   spacesProxy: null,
 
+  spaces: computed('spacesProxy.content.@each.isSettled', function () {
+    let content = this.get('spacesProxy.content');
+    if (isArray(content) && content.every(space => get(space, 'isSettled'))) {
+      return ConflictIdsArray.create({ content });
+    }
+  }),
+
   _supportSpaceOpened: false,
   _currentToken: '',
 
@@ -43,8 +51,8 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
-  _hasNoSpaces: computed('spacesProxy.content.[]', function () {
-    let content = this.get('spacesProxy.content');
+  _hasNoSpaces: computed('spaces.[]', function () {
+    let content = this.get('spaces');
     return isArray(content) && content.length === 0;
   }),
 

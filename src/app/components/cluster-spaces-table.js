@@ -13,17 +13,18 @@ import { invokeAction } from 'ember-invoke-action';
 const {
   Component,
   computed,
+  get,
 } = Ember;
 
 export default Component.extend({
   /**
-   * @type {Array.SpaceDetails}
+   * @type {SpaceDetails[]|Ember.ArrayProxy.SpaceDetails}
    */
   spaces: null,
 
-  anySpaceRejected: computed('spaces', function () {
+  anySpaceRejected: computed('spaces.content', function () {
     let spaces = this.get('spaces');
-    return spaces.some(s => s.get('isRejected'));
+    return (get(spaces, 'content') || spaces).some(s => get(s, 'isRejected'));
   }),
 
   actions: {
