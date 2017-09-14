@@ -21,10 +21,13 @@ const {
 
 const {
   get,
+  inject: { service },
 } = Ember;
 
 export default ContentUsers.extend({
   layout,
+
+  onepanelServer: service(),
 
   /**
    * To inject.
