@@ -52,8 +52,8 @@ export default Component.extend({
   }),
 
   _hasNoSpaces: computed('spaces.[]', function () {
-    let content = this.get('spaces');
-    return isArray(content) && content.length === 0;
+    let spaces = this.get('spaces');
+    return isArray(spaces) && get(spaces, 'length') === 0;
   }),
 
   _isToolbarVisible: not('_hasNoSpaces'),
