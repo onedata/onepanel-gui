@@ -24,7 +24,9 @@ export default Component.extend({
 
   anySpaceRejected: computed('spaces.content', function () {
     let spaces = this.get('spaces');
-    return (get(spaces, 'content') || spaces).some(s => get(s, 'isRejected'));
+    if (spaces) {
+      return (get(spaces, 'content') || spaces).some(s => get(s, 'isRejected'));
+    }
   }),
 
   actions: {
