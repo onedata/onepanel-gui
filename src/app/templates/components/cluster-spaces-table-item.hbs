@@ -100,7 +100,7 @@
 
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
         {{#promise-proxy-container proxy=spaceSupportersProxy}}
-          {{space-support-chart spaceSupporters=spaceSupportersProxy.content}}
+          {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
         {{/promise-proxy-container}}
       </div>
       

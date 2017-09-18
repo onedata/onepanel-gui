@@ -8,21 +8,18 @@
  */
 
 import Ember from 'ember';
-
-import _ from 'lodash';
-
-import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
-const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
+import generateColors from 'onedata-gui-common/utils/generate-colors';
 
 const {
   computed,
   computed: { oneWay },
   inject: { service },
   get,
+  A,
 } = Ember;
 
 export default Ember.Component.extend({
-  classNames: ['row', 'content-row', 'storage-item-supported-spaces'],
+  classNames: ['storage-item-supported-spaces'],
 
   providerManager: service(),
 
@@ -70,30 +67,25 @@ export default Ember.Component.extend({
   }),
 
   /**
-   * Total size of support provided to spaces in supportedSpaces list in bytes
-   * @type {computed.Number}
+   * Data for support-size-info component
+   * @type computed.Ember.Array.PieChartSeries
    */
-  supportTotalSize: computed('supportedSpaces.@each.supportingProviders', 'providerId',
-    function () {
-      let {
-        providerId,
-        supportedSpaces,
-      } = this.getProperties('providerId', 'supportedSpaces');
-
-      if (providerId != null) {
-        return _.sum(_.map(supportedSpaces, s =>
-          // space size of support in this provider
-          get(s, `supportingProviders.${providerId}`)
-        ));
-      }
-    }),
-
-  /**
-   * Humand-readable total size of support
-   * @type {computed.String}
-   */
-  supportTotalSizeHuman: computed('supportTotalSize', function () {
-    return b2s(this.get('supportTotalSize'));
+  chartData: computed('supportedSpaces', 'providerId', function () {
+    let {
+      supportedSpaces,
+      providerId,
+    } = this.getProperties('supportedSpaces', 'providerId');
+    let colors = generateColors(supportedSpaces.length);
+    if (providerId && supportedSpaces.length) {
+      return A(supportedSpaces.map((space, index) => Ember.Object.create({
+        id: String(index),
+        label: get(space, 'name'),
+        value: get(space, `supportingProviders.${providerId}`),
+        color: colors[index],
+      })));
+    } else {
+      return A();
+    }
   }),
 
   init() {

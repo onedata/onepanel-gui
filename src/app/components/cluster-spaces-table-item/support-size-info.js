@@ -1,10 +1,7 @@
 /**
- * Component for displaying a chart that shows distribution of providers support
- * for some space
+ * A component, that shows information about providers support size per space.
  *
- * Uses ``spaceSupporters`` property of onepanel.SpaceDetails
- *
- * @module components/space-support-chart
+ * @module components/cluster-spaces-table-item/supporte-size-info
  * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -17,10 +14,15 @@ import validateSupportingProviders from 'onepanel-gui/utils/model-validators/val
 const {
   computed,
   A,
+  inject: {
+    service,
+  },
 } = Ember;
 
 export default Ember.Component.extend({
   classNames: ['chart-component', 'space-support-chart'],
+
+  i18n: service(),
 
   /**
    * To inject.
@@ -30,10 +32,10 @@ export default Ember.Component.extend({
   spaceSupporters: null,
 
   /**
-   * Data for a chart
+   * Data for the support-size-info component
    * @type computed.Ember.Array.PieChartSeries
    */
-  chartData: computed('spaceSupporters', function () {
+  _data: computed('spaceSupporters', function () {
     let spaceSupporters = this.get('spaceSupporters');
     let colors = generateColors(spaceSupporters.length);
     return A(spaceSupporters.map((supporter, index) => Ember.Object.create({
@@ -48,16 +50,14 @@ export default Ember.Component.extend({
    * Data validation error
    * @type {computed.string}
    */
-  dataValidationError: computed('spaceSupporters', function () {
-    return this.validateChartData(this.get('spaceSupporters'));
-  }),
-
-  /**
-   * Validates chart data
-   * @param {Array.object} spaceSupporters space supporters
-   */
-  validateChartData(spaceSupporters) {
+  _dataError: computed('spaceSupporters', function () {
+    let {
+      spaceSupporters,
+      i18n,
+    } = this.getProperties('spaceSupporters', 'i18n');
     return validateSupportingProviders(spaceSupporters) ? undefined :
-      `supportingProviders data is invalid`;
-  },
+      i18n.t(
+        'components.clusterSpacesTableItem.supportInfo.supportingProvidersDataError'
+      );
+  }),
 });

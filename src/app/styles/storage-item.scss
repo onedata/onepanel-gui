@@ -1,17 +1,5 @@
-.storage-item {
-  $-storage-item-size-color: $color-one-blue-gray;
-  
-  .item-table-img-cell .background-container {
-    background-image: url($root-url + 'assets/images/storage-item.svg');
-  }
+.storage-item {  
   .one-collapsible-list-item-header {
     padding-right: 60px;
-  }
-  
-  .storage-item-supported-spaces,
-  .storage-item-supported-space-item {
-    .support-size {
-      color: $-storage-item-size-color;
-    }
   }
 }
