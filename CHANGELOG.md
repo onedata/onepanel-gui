@@ -4,6 +4,34 @@
 CHANGELOG
 ---------
 
+### 17.06.1
+
+* VFS-3621 Fixing design of show error component
+* VFS-3620 Showing conflits in names of spaces
+* VFS-3449 Added sync ACL option to import/update settings
+* VFS-3478, VFS-3554 List of providers per space with support size
+* VFS-3524, VFS-3569 Chart component for space support size per provider
+* VFS-3450 Update to EmberJS 2.14.1; Major code refactor: using onedata-gui-common in-repo addon
+* VFS-3298 Fixed EmberJS deprecations, tidied usage of addons
+* VFS-3341 Toggles can now be activated with swipe
+* VFS-3374 Improvements in form fields validation
+* VFS-3398 Added application loader spinner and error messages
+
+
+### 17.06.0-rc2
+
+* No changes in GUI since 17.06.0-rc1
+
+
+### 17.06.0-rc1
+
+* VFS-3521 Libraries update: ember-bootstrap, ember-power-select
+* VFS-3274 Dynamic transformation of popover into modal in mobile view
+* VFS-3367 Support for reverse LUMA
+* VFS-3375 Styles improvements in mobile mode
+* VFS-3440 Fixed issues with bar and axis label display in import statistics charts
+
+
 ### 17.06.0-beta1 - 17.06.0-beta6
 
 * VFS-3411 Showing space mount in root setting for space
