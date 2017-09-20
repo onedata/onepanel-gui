@@ -180,12 +180,11 @@ export default OneForm.extend(Validations, {
       hostnameField: prepareField(HOSTNAME_FIELD),
       subdomainField: prepareField(SUBDOMAIN_FIELD),
     });
-    fields.set('subdomainField.rightText', '.onedata.org');
     return fields;
   }),
 
   /**
-   * Edition fields from the top part of the form
+   * Fields for edition from the top part of the form
    * @type {computed.Array.Ember.Object}
    */
   _editTopFields: computed('_fieldsSource.topFields', 'provider', 'mode',
@@ -204,7 +203,7 @@ export default OneForm.extend(Validations, {
   ),
 
   /**
-   * Editoin fields from the bototm part of the form
+   * Fields for edition from the bototm part of the form
    * @type {computed.Array.Ember.Object}
    */
   _editBottomFields: computed('_fieldsSource.bottomFields', 'provider',
@@ -290,7 +289,7 @@ export default OneForm.extend(Validations, {
       );
     }
   ),
-
+  
   allFields: computed(
     '_editTopFields',
     '_editBottomFields',
@@ -410,6 +409,10 @@ export default OneForm.extend(Validations, {
         }
       } else {
         field.set('defaultValue', value);
+      }
+      if (field.get('name') === 'subdomain') {
+        // TODO load from provider object
+        field.set('rightText', '.onedata.org');
       }
     }
     field.set('name', `${prefix}.${field.get('name')}`);
