@@ -13,6 +13,7 @@ import moment from 'moment';
 import Ember from 'ember';
 
 import Looper from 'onedata-gui-common/utils/looper';
+import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   Mixin,
@@ -157,13 +158,15 @@ export default Mixin.create({
 
     // interval of this Looper will be set in reconfigureSyncWatchers observer
     let _syncChartStatsWatcher = Looper.create({ immediate: true });
-    _syncChartStatsWatcher.on('tick', this.fetchAllSyncStats.bind(this));
+    _syncChartStatsWatcher.on('tick', () => safeMethodExecution(this,
+      'fetchAllSyncStats'));
 
     let _syncStatusWatcher = Looper.create({
       immediate: true,
       interval: this.get('syncStatusRefreshTime'),
     });
-    _syncStatusWatcher.on('tick', this.checkSyncStatusUpdate.bind(this));
+    _syncStatusWatcher.on('tick', () => safeMethodExecution(this,
+      'checkSyncStatusUpdate'));
     this.checkSyncStatusUpdate();
 
     this.setProperties({ _syncChartStatsWatcher, _syncStatusWatcher });

@@ -276,6 +276,15 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         },
         supportingProviders: _genSupportingProviders(),
       });
+      // additional spaces to test issue VFS-3673
+      _.times(8, i => {
+        spaces.push({
+          id: i + '-space',
+          name: 'Test Space ' + i,
+          storageId: storage1.id,
+          supportingProviders: _genSupportingProviders(),
+        });
+      });
     }
   },
 
