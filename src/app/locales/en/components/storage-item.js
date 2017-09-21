@@ -11,7 +11,8 @@ export default {
     readonly: 'Is readonly',
     supportedSpaces: {
       title: 'Supported spaces',
-      total: 'total',
+      space: 'Space',
+      noSpacesSupported: 'No spaces supported',
     },
   },
   posix,

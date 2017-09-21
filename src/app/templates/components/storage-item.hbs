@@ -14,9 +14,9 @@
 {{/listItem.header}}
 
 {{#listItem.content}}
-  <table class="item-table">
-    <tr>
-      <td class="item-table-content-cell">
+  <div class="item-table row">
+    <div class="row">
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
         <div class="row content-row">
           <strong>Type:</strong> <span class="one-label">{{storageType}}</span>
         </div>
@@ -50,13 +50,10 @@
             {{/if}}
           </div>
         {{/each}}
-        {{yield (hash
-          supportedSpaces=(
-            component "storage-item/supported-spaces" storageId=storage.id
-          )
-        )}}
-      </td>
-      <td class="item-table-img-cell"><div class="background-container"></div></td>
-    </tr>
-  </table>
+      </div>
+      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
+        {{storage-item/supported-spaces spaces=spaces storageId=storage.id}}
+      </div>
+    </div>
+  </div>
 {{/listItem.content}}

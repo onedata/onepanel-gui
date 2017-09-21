@@ -1,11 +1,5 @@
-<span class="supported-spaces-header">
-  <strong>{{t "components.storageItem.generic.supportedSpaces.title"}}</strong>
-  {{#if supportTotalSizeHuman}}
-    <span class="support-size">
-      ({{t "components.storageItem.generic.supportedSpaces.total"}} {{supportTotalSizeHuman}})
-    </span>
-  {{/if}}
-</span>
-{{#each supportedSpaces as |space|}}
-  {{storage-item/supported-spaces/item space=space providerId=providerId}}
-{{/each}}
+{{support-size-info
+  data=chartData
+  header=(t "components.storageItem.generic.supportedSpaces.title")
+  supporterNameHeader=(t 'components.storageItem.generic.supportedSpaces.space')
+  noDataToShowMessage=(t 'components.storageItem.generic.supportedSpaces.noSpacesSupported')}}
