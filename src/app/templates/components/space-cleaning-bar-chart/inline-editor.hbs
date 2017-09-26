@@ -1,0 +1,21 @@
+{{#if _inEditionMode}}
+  {{one-way-input _editorValue
+    class="form-control input-sm"
+    update=(action (mut _editorValue))
+    onenter=(action "saveEdition")
+    onescape=(action "cancelEdition")}}
+  <span class="one-label">{{_readableValue.unit}}</span>
+  <span class="action-icons">
+    {{one-icon icon="checked" click=(action "saveEdition")}}
+    {{one-icon icon="ban-left" click=(action "cancelEdition")}}
+  </span>
+{{else}}
+  <span class="one-label" {{action "startEdition" on="doubleClick"}}>
+    {{_readableValue.number}} {{_readableValue.unit}}
+  </span>
+  {{#if allowEdition}}
+    <span class="action-icons">
+      {{one-icon icon="rename" click=(action "startEdition")}}
+    </span>
+  {{/if}}
+{{/if}}

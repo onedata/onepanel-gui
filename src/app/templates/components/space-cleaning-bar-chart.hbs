@@ -1,0 +1,40 @@
+{{space-cleaning-bar-chart/inline-editor
+  class="target-editor"
+  position=cleanTargetPercent
+  value=cleanTarget 
+  allowEdition=(and _allowLabelsEdition (not _disabled))
+  onSave=(action "valueChanged" "cleanTarget")}}
+{{space-cleaning-bar-chart/inline-editor
+  class="threshold-editor"
+  position=cleanThresholdPercent
+  value=cleanThreshold
+  allowEdition=_allowLabelsEdition
+  onSave=(action "valueChanged" "cleanThreshold")}}
+<div class="bar">
+  <div class="chart-bar used-below-target"></div>
+  <div class="chart-bar not-used-below-target not-used"></div>
+  <div class="chart-bar used-below-threshold"></div>
+  <div class="chart-bar not-used-below-threshold not-used"></div>
+  <div class="chart-bar used-over-threshold"></div>
+  <div class="chart-bar not-used-over-threshold not-used"></div>
+  <div class="chart-bar used"></div>
+  <div class="pacman-row">
+    <div class="used-space"></div>
+    <div class="pacman-cell">
+      <div class="pacman">
+        <div class="pacman-shape">
+          <div class="pacman-top"></div>
+          <div class="pacman-bottom"></div>
+        </div>
+        <div class="feed"></div>
+      </div>
+    </div>
+  </div>
+  {{range-slider
+    range=sliderRange
+    start=sliderStartValues
+    disabled=_disabled
+    on-slide=(action "slide")
+    on-change=(action "sliderChanged")}}
+</div>
+
