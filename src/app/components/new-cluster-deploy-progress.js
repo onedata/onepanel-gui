@@ -79,8 +79,9 @@ export default Ember.Component.extend({
   }),
 
   /**
-   * Use ``TaskStatus`` from deployment promise progress callback. 
-   * @param {Onepanel.TaskStatus} taskStatus 
+   * Use `TaskStatus` from deployment promise progress callback. 
+   * @param {Onepanel.TaskStatus} taskStatus
+   * @returns {undefined}
    */
   handleProgress(taskStatus) {
     let doneSteps = taskStatus.steps;
@@ -90,6 +91,7 @@ export default Ember.Component.extend({
 
   /**
    * Handle done event of deployment promise.
+   * @returns {undefined}
    */
   handleDone() {
     this.set('isDone', true);

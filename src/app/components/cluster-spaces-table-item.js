@@ -12,6 +12,7 @@ import { invokeAction } from 'ember-invoke-action';
 import _includes from 'lodash/includes';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
+import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 
 const {
   Component,
@@ -37,7 +38,7 @@ const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 
 const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 
-export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
+export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, SpaceTabs, {
   classNames: ['cluster-spaces-table-item'],
 
   i18n: service(),
@@ -95,6 +96,12 @@ export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
       i18n.t(I18N_PREFIX + 'cancelSyncConfig') :
       i18n.t(I18N_PREFIX + 'syncConfig');
   }),
+
+  /**
+   * Which tab should be shown for space details
+   * @type {Ember.ComputedProperty<string>}
+   */
+  _detailsToShow: '',
 
   importTranslationPrefix: I18N_PREFIX + 'storageImport.',
   updateTranslationPrefix: I18N_PREFIX + 'storageUpdate.',

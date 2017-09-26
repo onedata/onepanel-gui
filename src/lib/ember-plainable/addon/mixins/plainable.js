@@ -8,7 +8,7 @@ export default Ember.Mixin.create({
     var props = Object.keys(this);
     var proto = this.constructor.prototype;
     for (let p in proto) {
-      if (proto.hasOwnProperty(p) && typeof (this[p]) !== "function") {
+      if (proto.hasOwnProperty(p) && typeof (this[p]) !== 'function') {
         props.push(p);
       }
     }

@@ -82,6 +82,7 @@ export default Component.extend({
    * @param {string} supportSpaceData.token
    * @param {number} supportSpaceData.size
    * @param {boolean} supportSpaceData.mountInRoot
+   * @returns {Promise.<any>} SpaceManager.supportSpace promise
    */
   _supportSpace(supportSpaceData) {
     return this.get('spaceManager').supportSpace(supportSpaceData);
@@ -113,7 +114,7 @@ export default Component.extend({
         this._updateSpacesList();
         this.set('_supportSpaceOpened', false);
         globalNotify.info(
-          `Added a new support for space`
+          'Added a new support for space'
         );
       });
       return supportingSpace;

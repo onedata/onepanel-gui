@@ -104,72 +104,40 @@
         {{/promise-proxy-container}}
       </div>
       
-      {{#if space.importEnabled}}
-        <div class="col-xs-12 item-table-cell item-table-content-cell">
-          <div class="row content-row">
-            <strong>Storage synchronization statistics</strong>
-          </div>
-          <div class="row content-row">
-            <label class="btn-group-addon btn-group-addon-sm pull-left">Time span:</label>
-            {{#bs-button-group
-              class="pull-left"
-              value=syncInterval
-              type="radio"
-              onChange=(action "onSyncIntervalChange") as |bg|
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        <div class="row content-row">
+          {{!-- FIXME: use space.importEnabled to check which tab should be selectable etc. --}}
+          {{!-- FIXME: i18n --}}
+          {{#bs-tab as |tab|}}
+            {{#tab.pane
+              title="Storage synchronization"
+              class=(unless tabStorageSynchronization "disabled")
             }}
-              {{#bg.button type="default" class="btn-sm" value="minute"}}
-                {{t "components.clusterSpacesTableItem.minute"}}
-              {{/bg.button}}
-              {{#bg.button type="default" class="btn-sm" value="hour"}}
-                {{t "components.clusterSpacesTableItem.hour"}}
-              {{/bg.button}}
-              {{#bg.button type="default" class="btn-sm" value="day"}}
-                {{t "components.clusterSpacesTableItem.day"}}
-              {{/bg.button}}
-            {{/bs-button-group}}
-            {{#if timeStatsLoading}}
-              {{spin-spinner-block
-                sizeClass="xs"
-                class="btn-group-addon btn-group-addon-sm pull-left"
+              {{space-storage-synchronization
+                syncInterval=syncInterval
+                statsFrozen=statsFrozen
+                timeStats=timeStats
+                timeStatsError=timeStatsError
+                timeStatsLoading=timeStatsLoading
+                syncIntervalChanged=(action "onSyncIntervalChange")
               }}
-            {{/if}}
-            {{#if statsFrozen}}
-              <div class="btn-group-addon btn-group-addon-sm one-info-label">
-                {{one-icon icon="sign-info"}}
-                <label>
-                  {{t "components.clusterSpacesTableItem.syncDone"}}
-                </label>
-              </div>
-            {{/if}}
-          </div>
-          {{#if timeStatsError}}
-            <div class="row">
-              {{resource-load-error reason=timeStatsError}}
-            </div>
-          {{else if (not timeStatsLoading)}}
-            <div class="row">
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-operations
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-queue
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-throughput
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-            </div>
-          {{/if}}
+            {{/tab.pane}}
+            {{#tab.pane
+              title="Files popularity"
+              class=(unless tabFilesPopularity "disabled")
+            }}
+              {{space-files-popularity}}
+            {{/tab.pane}}
+            {{#tab.pane
+              title="Auto cleaning"
+              class=(unless tabAutoCleaning "disabled")
+            }}
+              {{space-auto-cleaning}}
+            {{/tab.pane}}
+          {{/bs-tab}}
         </div>
-      {{/if}}
+      </div>
+      
     </div>
   </div>
 {{/listItem.content}}

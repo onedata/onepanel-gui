@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 /**
- * Adds space sync statistics fetch capabilities to ``cluster-spaces-table-item``
+ * Adds space sync statistics fetch capabilities to `cluster-spaces-table-item`
  *
  * @module mixins/space-item-sync-stats
  * @author Jakub Liput
@@ -43,6 +43,16 @@ const SYNC_STATUS_REFRESH_TIME = 15000;
 
 export default Mixin.create({
   spaceManager: service(),
+
+  /**
+   * Sync statistics object fetched from backend
+   *
+   * This property is updated automatically by some interval watchers
+   *
+   * @virtual
+   * @type {Onepanel.SpaceSyncStats}
+   */
+  _syncStats: null,
 
   // TODO maybe this could be computed from import/update algorightm's loop period
   /**
@@ -92,14 +102,6 @@ export default Mixin.create({
    * @type {Looper}
    */
   _syncStatusWatcher: null,
-
-  /**
-   * Sync statistics object fetched from backend
-   *
-   * This property is updated automatically by some interval watchers
-   * @type {Onepanel.SpaceSyncStats}
-   */
-  _syncStats: null,
 
   timeStatsCollection: readOnly('_syncStats.stats'),
 
@@ -201,6 +203,7 @@ export default Mixin.create({
 
   /**
    * If sync status was not updated for some mininal time, fetch sync status
+   * @returns {undefined}
    */
   checkSyncStatusUpdate() {
     if (this.shouldRefreshSyncStatus()) {
@@ -210,6 +213,7 @@ export default Mixin.create({
 
   /**
    * @param {Onepanel.SpaceSyncStats} newSyncStats syncStats without time stats
+   * @returns {undefined}
    */
   updateSyncStatsWithStatusOnly(newSyncStats) {
     let currentSyncStats = this.get('_syncStats');
@@ -316,6 +320,10 @@ export default Mixin.create({
       })),
 
   actions: {
+    /**
+     * @param {string} syncInterval one of: minute, hour, day
+     * @returns {undefined}
+     */
     onSyncIntervalChange(syncInterval) {
       let currentSyncInterval = this.get('syncInterval');
       if (syncInterval !== currentSyncInterval) {

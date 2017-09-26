@@ -33,6 +33,7 @@ const WORKER_STEPS = [
 /**
  * Generate list of specific deployment steps for specific worker service
  * @param {string} type one of: "zone", "provider"
+ * @returns {Array<string>} full worker step names
  */
 function workerSteps(type) {
   // currently - just first letter
@@ -43,6 +44,7 @@ function workerSteps(type) {
 /**
  * Generate list of all deployment steps for specific worker service
  * @param {string} type one of: "zone", "provider"
+ * @returns {Array<string>}
  */
 function clusterDeploySteps(type) {
   return COMMON_DEPLOY_STEPS.concat(workerSteps(type));

@@ -80,6 +80,7 @@ export default Service.extend({
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
    * @param {StorageImportDetails} spaceData.storageImport
    * @param {StorageUpdateDetails} spaceData.storageUpdate
+   * @returns {PromiseObject<undefined|object>}
    */
   modifySpaceDetails(id, spaceData) {
     let onepanelServer = this.get('onepanelServer');
@@ -95,7 +96,11 @@ export default Service.extend({
   /**
    * Support space in current provider using some storage
    * 
-   * @param {Object} { size: Number, storageId: string, token: string, mountInRoot = false } 
+   * @param {Object} supportSpaceData
+   * @param {number} supportSpaceData.size
+   * @param {string} supportSpaceData.storageId
+   * @param {string} supportSpaceData.token
+   * @param {boolean} [supportSpaceData.mountInRoot=undefined]
    * @returns {Promise}
    */
   supportSpace(supportSpaceData) {
@@ -120,6 +125,7 @@ export default Service.extend({
    * @param {string} period one of: minute, hour, day
    * @param {Array.string} metrics array with any of: queueLength, insertCount,
    *  updateCount, deleteCount
+   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderSpaceSyncStats results
    */
   getSyncStats(spaceId, period, metrics) {
     // convert metrics to special-format string that holds an array
@@ -145,6 +151,7 @@ export default Service.extend({
   /**
    * Helper method to get only status of sync without statistics for charts
    * @param {string} spaceId
+   * @returns {Promise<object>}
    */
   getSyncStatusOnly(spaceId) {
     return this.getSyncStats(spaceId);
@@ -155,9 +162,59 @@ export default Service.extend({
    * all charts
    *
    * @param {*} spaceId 
-   * @param {string} period one of: minute, hour, day (like in Onepanel.SyncStats)
+   * @param {string} [period] one of: minute, hour, day (like in Onepanel.SyncStats)
+   * @returns {Promise<object>}
    */
   getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
     return this.getSyncStats(spaceId, period, SYNC_METRICS);
   },
+
+  /**
+   * @param {string} spaceId 
+   * @returns {Promise<Onepanel.SpaceFilesPopularity>}
+   */
+  getFilesPopularity(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceFilesPopularity',
+      spaceId
+    );
+  },
+
+  /**
+   * @param {string} spaceId
+   * @returns {Promise<Onepanel.SpaceAutoCleaning>}
+   */
+  getAutoCleaning(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceAutoCleaning',
+      spaceId
+    );
+  },
+
+  /**
+   * @param {string} spaceId
+   * @returns {Promise<Onepanel.SpaceAutoCleaningStatus>}
+   */
+  getAutoCleaningStatus(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceAutoCleaningStatus',
+      spaceId
+    );
+  },
+
+  /**
+   * @param {string} spaceId
+   * @returns {Promise<Onepanel.SpaceAutoCleaningReports>}
+   */
+  getAutoCleaningReports(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceAutoCleaningReports',
+      spaceId
+    );
+  },
+
 });
