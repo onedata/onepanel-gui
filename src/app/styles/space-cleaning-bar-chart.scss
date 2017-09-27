@@ -1,306 +1,345 @@
 .space-cleaning-bar-chart {
   $bar-height: 50px;
-  $slider-width: 10px;
+  $slider-width: 14px;
   $slider-gradient-width: 2px;
   $slider-gradient-amount: 10;
-  $pacman-size: $bar-height * 0.7;
+  $pacman-size: $bar-height * 0.6;
   $pacman-color: $color-one-yellow;
   $pacman-food-color: black;
   $pacman-border: 1px solid black;
-  position: relative;
-  .noUi-handle {
-    cursor: pointer;
-  }
-  [disabled] {
-    &.noUi-target {
-      cursor: initial;
+  .indicators {
+    text-align: right;
+    .indicator {
+      display: inline-block;
+      & ~ .indicator {
+        margin-left: 1em;
+      }
+      .value {
+        font-weight: bold;
+      }
+      &.total-space .value {
+        color: $color-one-blue-gray;
+      }
+      &.free-space .value {
+        color: $color-one-mint;
+      }
+      &.used-space .value {
+        color: $color-one-red;
+      }
+      &.to-release .value {
+        color: $color-one-yellow;
+      }
     }
-    .noUi-handle {
-      cursor: progress;
-    }
   }
-  .bar {
+  
+  .bar-container {
     position: relative;
-    height: $bar-height;
-    .chart-bar {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      box-sizing: border-box;
-      float: left;
-      border-style: solid;
-      border-width: 2px;
-      &.used-below-target {
-        border-color: $color-one-mint;
-        border-right-width: 0;
-        background-color: lighten($color-one-mint, 5%);
+    margin: 1em 0 3em 0;
+    .noUi-handle {
+      cursor: pointer;
+    }
+    [disabled] {
+      &.noUi-target {
+        cursor: initial;
       }
-      &.not-used-below-target {
-        border-color: $color-one-mint;
-        background-color: lighten($color-one-mint, 20%);
-      }
-      &.used-below-threshold {
-        border-color: $color-one-yellow;
-        border-right-width: 0;
-        background-color: lighten($color-one-yellow, 10%);
-      }
-      &.not-used-below-threshold {
-        border-color: $color-one-yellow;
-        background-color: lighten($color-one-yellow, 25%);
-      }
-      &.used-over-threshold {
-        border-color: $color-one-red;
-        border-right-width: 0;
-        background-color: lighten($color-one-red, 7%);
-      }
-      &.not-used-over-threshold {
-        border-color: $color-one-red;
-        background-color: lighten($color-one-red, 20%);
-      }
-      &.used {
-        border-color: transparent;
-        &::before {
-          $gradient-size: 8px;
-          content: '';
-          position: absolute;
-          display: block;
-          @include fill-container();
-          background-image: repeating-linear-gradient(
-            45deg,
-            rgba(255, 255, 255, 0.1),
-            rgba(255, 255, 255, 0.1) $gradient-size,
-            transparent $gradient-size,
-            transparent $gradient-size * 2
-          );
-        }
+      .noUi-handle {
+        cursor: progress;
       }
     }
-    .noUi-target {
-      background: none;
-      border: 0;
-      box-shadow: none;
-      .noUi-handle {
-        height: $bar-height + 12px;
-        width: $slider-width;
-        border: 2px solid $main-border-color;
-        background-color: $main-content-light-background;
-        &::before {
-          background-color: initial;
-          top: 50%;
-          left: 50%;
-          height: ($slider-gradient-amount - 0.5) * $slider-gradient-width * 2;
-          width: 4px;
-          transform: translateX(-50%) translateY(-50%);
+    .bar {
+      position: relative;
+      height: $bar-height;
+      .chart-bar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        box-sizing: border-box;
+        float: left;
+        border-style: solid;
+        border-width: 2px;
+        &.used-below-target {
+          border-color: $color-one-mint;
+          border-right-width: 0;
+          background-color: lighten($color-one-mint, 5%);
         }
-        &::after {
-          display: none;
+        &.not-used-below-target {
+          border-color: $color-one-mint;
+          background-color: lighten($color-one-mint, 20%);
         }
-        &.noUi-handle-lower {
-          left: -$slider-width;
+        &.used-below-threshold {
+          border-color: $color-one-yellow;
+          border-right-width: 0;
+          background-color: lighten($color-one-yellow, 10%);
+        }
+        &.not-used-below-threshold {
+          border-color: $color-one-yellow;
+          background-color: lighten($color-one-yellow, 25%);
+        }
+        &.used-over-threshold {
+          border-color: $color-one-red;
+          border-right-width: 0;
+          background-color: lighten($color-one-red, 7%);
+        }
+        &.not-used-over-threshold {
+          border-color: $color-one-red;
+          background-color: lighten($color-one-red, 20%);
+        }
+        &.used {
+          border-color: transparent;
           &::before {
+            $gradient-size: 8px;
+            content: '';
+            position: absolute;
+            display: block;
+            @include fill-container();
             background-image: repeating-linear-gradient(
-              to bottom,
-              $color-one-mint,
-              $color-one-mint $slider-gradient-width,
-              transparent $slider-gradient-width,
-              transparent $slider-gradient-width * 2
-              );
-          }
-        }
-        &.noUi-handle-upper {
-          left: 0px;
-          &::before {
-            background-image: repeating-linear-gradient(
-              to bottom,
-              $color-one-yellow,
-              $color-one-yellow $slider-gradient-width,
-              transparent $slider-gradient-width,
-              transparent $slider-gradient-width * 2
+              45deg,
+              rgba(255, 255, 255, 0.1),
+              rgba(255, 255, 255, 0.1) $gradient-size,
+              transparent $gradient-size,
+              transparent $gradient-size * 2
             );
           }
         }
       }
-    }
-  }
-  .inline-editor {
-    position: absolute;
-    white-space: nowrap;
-    font-size: 80%;
-    font-weight: bold;
-    &.target-editor {
-      top: 120%;
-      bottom: initial;
-      transform: translateX(-$slider-width * 0.5) translateX(-50%);
-      .one-label {
-        color: $color-one-mint;
-      }
-    }
-    &.threshold-editor {
-      bottom: 120%;
-      transform: translateX($slider-width * 0.5) translateX(-50%);
-      .one-label {
-        color: $color-one-yellow;
-      }
-    }
-    &.static {
-      .one-icon {
-        color: transparent;
-      }
-    }
-    &.editor {
-      .one-icon {
-        margin-top: 0.1em;
-      }
-    }
-    &:hover {
-      .one-icon {
-        color: $main-text-color;
-      }
-    }
-    .action-icons {
-      position: absolute;
-      top: 50%;
-      left: 100%;
-      transform: translateY(-50%);
-      letter-spacing: -3px;
-    }
-    .one-icon {
-      display: inline-block;
-      font-size: 170%;
-      &:hover {
-        color: lighten($main-text-color, 20%);
-      }
-    }
-    .form-control {
-      display: inline-block;
-      width: 4em;
-      height: initial;
-      padding: $padding-xs-vertical $padding-xs-horizontal;
-      text-align: center;
-      font-size: 90%;
-    }
-  }
-  .pacman-row {
-    position: absolute;
-    display: table;
-    width: 100%;
-    .used-space {
-      display: table-cell;
-    }
-    .pacman-cell {
-      display: table-cell;
-      position: relative;
-      height: $bar-height;
-      min-width: $pacman-size * 2 + $padding-xs-horizontal;
-      min-width: $pacman-size * 2 + $padding-xs-horizontal;
-      padding-right: $padding-xs-horizontal;
-      .pacman {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: $pacman-size * 2;
-        height: $pacman-size;
-        overflow: hidden;
-        .pacman-shape {
-          position: absolute;
-          right: 0;
-          .pacman-top {
-            position: relative;
-            width: $pacman-size;
-            height: $pacman-size;
-            animation: pacman-spin1 0.5s infinite linear;
+      .noUi-target {
+        background: none;
+        border: 0;
+        box-shadow: none;
+        .noUi-handle {
+          height: $bar-height + 12px;
+          width: $slider-width;
+          border: 2px solid $main-border-color;
+          background-color: $main-content-light-background;
+          &::before {
+            background-color: initial;
+            top: 50%;
+            left: 50%;
+            height: ($slider-gradient-amount - 0.5) * $slider-gradient-width * 2;
+            width: 6px;
+            transform: translateX(-50%) translateY(-50%);
+          }
+          &::after {
+            display: none;
+          }
+          &.noUi-handle-lower {
+            left: -$slider-width;
             &::before {
-              content: '';
-              display: block;
-              background-color: $color-one-yellow;
-              height: $pacman-size / 2;
-              width: $pacman-size;
-              border: $pacman-border;
-              border-radius: ($pacman-size / 2) ($pacman-size / 2) 0 0;
+              background-image: repeating-linear-gradient(
+                to bottom,
+                $color-one-mint,
+                $color-one-mint $slider-gradient-width,
+                transparent $slider-gradient-width,
+                transparent $slider-gradient-width * 2
+                );
             }
-            &::after {
-              content: '';
-              position: absolute;
-              display: block;
-              top: 25%;
-              left: 25%;
-              width: $pacman-size / 10;
-              height: $pacman-size / 10;
-              border-radius: 100%;
-              background-color: black;
+          }
+          &.noUi-handle-upper {
+            left: 0px;
+            &::before {
+              background-image: repeating-linear-gradient(
+                to bottom,
+                $color-one-yellow,
+                $color-one-yellow $slider-gradient-width,
+                transparent $slider-gradient-width,
+                transparent $slider-gradient-width * 2
+              );
+            }
+          }
+        }
+      }
+    }
+    .inline-editor {
+      position: absolute;
+      white-space: nowrap;
+      font-size: 80%;
+      font-weight: bold;
+      &.target-editor {
+        top: 120%;
+        bottom: initial;
+        transform: translateX(-$slider-width * 0.5) translateX(-50%);
+        .one-label {
+          color: $color-one-mint;
+        }
+      }
+      &.threshold-editor {
+        bottom: 120%;
+        transform: translateX($slider-width * 0.5) translateX(-50%);
+        .one-label {
+          color: $color-one-yellow;
+        }
+      }
+      &.static {
+        .one-icon {
+          color: transparent;
+        }
+      }
+      &.editor {
+        .one-icon {
+          margin-top: 0.1em;
+        }
+      }
+      &:hover {
+        .one-icon {
+          color: $main-text-color;
+        }
+      }
+      .action-icons {
+        position: absolute;
+        top: 50%;
+        left: 100%;
+        transform: translateY(-50%);
+        letter-spacing: -3px;
+        &.actions-left {
+          left: initial;
+          right: 100%;
+          margin-right: $padding-xs-horizontal;
+        }
+      }
+      .one-icon {
+        display: inline-block;
+        font-size: 170%;
+        &:hover {
+          color: lighten($main-text-color, 20%);
+        }
+      }
+      .form-control {
+        display: inline-block;
+        width: 4em;
+        height: initial;
+        padding: $padding-xs-vertical $padding-xs-horizontal;
+        text-align: center;
+        font-size: 90%;
+      }
+    }
+    .pacman-row {
+      position: absolute;
+      display: table;
+      width: 100%;
+      .used-space {
+        display: table-cell;
+      }
+      .pacman-cell {
+        display: table-cell;
+        position: relative;
+        height: $bar-height;
+        min-width: $pacman-size * 2 + $padding-xs-horizontal;
+        min-width: $pacman-size * 2 + $padding-xs-horizontal;
+        padding-right: $padding-xs-horizontal;
+        .pacman {
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: $pacman-size * 2;
+          height: $pacman-size;
+          .pacman-shape {
+            position: absolute;
+            right: 0;
+            .pacman-top {
+              position: relative;
+              width: $pacman-size;
+              height: $pacman-size;
+              animation: pacman-spin1 0.5s infinite linear;
+              &::before {
+                content: '';
+                display: block;
+                background-color: $color-one-yellow;
+                height: $pacman-size / 2;
+                width: $pacman-size;
+                border: $pacman-border;
+                border-bottom: 0;
+                border-radius: ($pacman-size / 2) ($pacman-size / 2) 0 0;
+              }
+              .pacman-eye {
+                position: absolute;
+                display: block;
+                top: 25%;
+                left: 25%;
+                width: $pacman-size / 10;
+                height: $pacman-size / 10;
+                border-radius: 100%;
+                background-color: black;
+              }
+              &::after {
+                content: '';
+                display: block;
+                width: $pacman-size / 2 - 1px;
+                border-top: $pacman-border;
+                margin-bottom: -1px;
+              }
+            }
+            
+            .pacman-bottom {
+              width: $pacman-size;
+              height: $pacman-size;
+              margin-top: -$pacman-size;
+              animation: pacman-spin2 0.5s infinite linear;
+              &::before {
+                content: '';
+                position: relative;
+                bottom: -50%;
+                display: block;
+                background-color:$color-one-yellow;
+                height: $pacman-size / 2;
+                width: $pacman-size;
+                border: $pacman-border;
+                border-top: 0;
+                border-radius: 0 0 ($pacman-size / 2) ($pacman-size / 2);
+              }
+              &::after {
+                content: '';
+                display: block;
+                width: $pacman-size / 2 - 1px;
+                border-top: $pacman-border;
+                margin-top: -1px;
+              }
             }
           }
           
-          .pacman-bottom {
-            width: $pacman-size;
-            height: $pacman-size;
-            margin-top: -$pacman-size;
-            animation: pacman-spin2 0.5s infinite linear;
-            &::before {
-              content: '';
-              position: relative;
-              bottom: -50%;
-              display: block;
-              background-color:$color-one-yellow;
-              height: $pacman-size / 2;
-              width: $pacman-size;
-              border: $pacman-border;
-              border-radius: 0 0 ($pacman-size / 2) ($pacman-size / 2);
-            }
+          .feed {
+            width: ($pacman-size / 8);
+            height: ($pacman-size / 8);
+            border-radius: 100%;
+            animation: pacman-eat 0.5s linear 0s infinite;
           }
-          &::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            display: block;
-            background-color:$color-one-yellow;
-            height: $pacman-size;
-            width: $pacman-size / 2;
-            border: $pacman-border;
-            border-left: 0;
-            border-radius: 0 ($pacman-size / 2) ($pacman-size / 2) 0;
-          }
-        }
-        
-        .feed {
-          width: ($pacman-size / 8);
-          height: ($pacman-size / 8);
-          border-radius: 100%;
-          animation: pacman-eat 0.5s linear 0s infinite;
         }
       }
     }
-  }
-  @keyframes pacman-spin1 {
-    0% {
-      transform: rotate(0deg);
+    @keyframes pacman-spin1 {
+      0% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(45deg);
+      }
+      
     }
-    50% {
-      transform: rotate(35deg);
+    @keyframes pacman-spin2 {
+      0% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(-45deg);
+      }	
     }
     
-  }
-  @keyframes pacman-spin2 {
-    0% {
-      transform: rotate(0deg);
+    @keyframes pacman-eat {
+      0% { 
+        box-shadow: 
+          0px ($pacman-size * 0.4375) 0 0 transparent, 
+          20px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
+      }
+      100% {
+        box-shadow: 
+          20px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
+          40px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
+      }
     }
-    50% {
-      transform: rotate(-35deg);
-    }	
-  }
-  
-  @keyframes pacman-eat {
-    0% { 
-      box-shadow: 
-        0px ($pacman-size * 0.4375) 0 0 transparent, 
-        20px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
-      }
-    100% {
-      box-shadow: 
-        20px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
-        40px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
-      }
+
+    @media (max-width: $screen-xs-max) {
+      margin: 3em;
+      margin-top: 1em;
+    }
   }
 }

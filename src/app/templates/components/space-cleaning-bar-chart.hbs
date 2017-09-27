@@ -1,40 +1,53 @@
-{{space-cleaning-bar-chart/inline-editor
-  class="target-editor"
-  position=cleanTargetPercent
-  value=cleanTarget 
-  allowEdition=(and _allowLabelsEdition (not _disabled))
-  onSave=(action "valueChanged" "cleanTarget")}}
-{{space-cleaning-bar-chart/inline-editor
-  class="threshold-editor"
-  position=cleanThresholdPercent
-  value=cleanThreshold
-  allowEdition=_allowLabelsEdition
-  onSave=(action "valueChanged" "cleanThreshold")}}
-<div class="bar">
-  <div class="chart-bar used-below-target"></div>
-  <div class="chart-bar not-used-below-target not-used"></div>
-  <div class="chart-bar used-below-threshold"></div>
-  <div class="chart-bar not-used-below-threshold not-used"></div>
-  <div class="chart-bar used-over-threshold"></div>
-  <div class="chart-bar not-used-over-threshold not-used"></div>
-  <div class="chart-bar used"></div>
-  <div class="pacman-row">
-    <div class="used-space"></div>
-    <div class="pacman-cell">
-      <div class="pacman">
-        <div class="pacman-shape">
-          <div class="pacman-top"></div>
-          <div class="pacman-bottom"></div>
-        </div>
-        <div class="feed"></div>
+<div class="indicators row content-row no-border">
+  <p>
+    <span class="total-space indicator"><span class="value">{{bytes-to-string data.spaceSize}}</span> {{t "components.spaceCleaningBarChart.totalSpace"}}</span>
+    <span class="free-space indicator"><span class="value">{{bytes-to-string freeSpace}}</span> {{t "components.spaceCleaningBarChart.freeSpace"}}</span>
+    <span class="used-space indicator"><span class="value">{{bytes-to-string data.usedSpace}}</span> {{t "components.spaceCleaningBarChart.usedSpace"}}</span>
+    <span class="to-release indicator"><span class="value">{{bytes-to-string toReleaseSpace}}</span> {{t "components.spaceCleaningBarChart.toRelease"}}</span>
+  </p>
+</div>
+<div class="bar-container">
+  {{space-cleaning-bar-chart/inline-editor
+    class="target-editor"
+    position=cleanTargetPercent
+    value=cleanTarget 
+    allowEdition=(and _allowLabelsEdition (not _disabled))
+    onSave=(action "valueChanged" "cleanTarget")}}
+  {{space-cleaning-bar-chart/inline-editor
+    class="threshold-editor"
+    position=cleanThresholdPercent
+    value=cleanThreshold
+    allowEdition=_allowLabelsEdition
+    onSave=(action "valueChanged" "cleanThreshold")}}
+  <div class="bar">
+    <div class="chart-bar used-below-target"></div>
+    <div class="chart-bar not-used-below-target not-used"></div>
+    <div class="chart-bar used-below-threshold"></div>
+    <div class="chart-bar not-used-below-threshold not-used"></div>
+    <div class="chart-bar used-over-threshold"></div>
+    <div class="chart-bar not-used-over-threshold not-used"></div>
+    <div class="chart-bar used"></div>
+    <div class="pacman-row">
+      <div class="used-space"></div>
+      <div class="pacman-cell">
+        {{#if data.isCleaning}}
+          <div class="pacman">
+            <div class="pacman-shape">
+              <div class="pacman-top">
+                <div class="pacman-eye"></div>
+              </div>
+              <div class="pacman-bottom"></div>
+            </div>
+            <div class="feed"></div>
+          </div>
+        {{/if}}
       </div>
     </div>
+    {{range-slider
+      range=sliderRange
+      start=sliderStartValues
+      disabled=_disabled
+      on-slide=(action "slide")
+      on-change=(action "sliderChanged")}}
   </div>
-  {{range-slider
-    range=sliderRange
-    start=sliderStartValues
-    disabled=_disabled
-    on-slide=(action "slide")
-    on-change=(action "sliderChanged")}}
 </div>
-

@@ -1,0 +1,51 @@
+<div class="row content-row no-border">
+  <h1>{{t "components.spaceCleaningRaports.cleaningRaports"}}</h1>
+</div>
+{{#if _mobileMode}}
+  {{#if (eq _processedData.length 0)}}
+    <div class="row content-row">
+      <p>{{_tableCustomMessages.noDataToShow}}</p>
+    </div>
+  {{else}}
+    {{#one-collapsible-list as |list|}}
+      {{#each _processedData as |raport|}}
+        {{#list.item as |listItem|}}
+          {{#listItem.header}}
+            <span class="item-icon-container">
+              {{one-icon icon="remove" class="item-icon"}}
+            </span>
+            <span class="one-label">{{raport.startedAtReadable}}</span>
+          {{/listItem.header}}
+          {{#listItem.content}}
+            <div class="item-table">
+              <div class="item-table-content-cell">
+                {{#each _columns as |column|}}
+                  <div class="row content-row">
+                    <strong>{{column.title}}:</strong>
+                    {{#if column.component}}
+                      {{component column.component data=_processedData record=raport column=column}}
+                    {{else}}
+                      {{get raport column.propertyName}}<br/>
+                    {{/if}}
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          {{/listItem.content}}
+        {{/list.item}}
+      {{/each}}
+    {{/one-collapsible-list}}
+  {{/if}}
+{{else}}
+  {{models-table
+    data=_processedData
+    columns=_columns
+    customIcons=_tableCustomIcons
+    customClasses=_tableCustomClasses
+    customMessages=_tableCustomMessages
+    showColumnsDropdown=false
+    showGlobalFilter=false
+    useFilteringByColumns=false
+    showComponentFooter=false
+    multipleColumnsSorting=false}}
+{{/if}}

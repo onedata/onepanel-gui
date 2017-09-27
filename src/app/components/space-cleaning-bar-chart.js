@@ -166,6 +166,30 @@ export default Component.extend({
   }),
 
   /**
+   * Free space.
+   * @type {computed.boolean}
+   */
+  freeSpace: computed('data.spaceSize', 'data.usedSpace', function () {
+    let {
+      spaceSize,
+      usedSpace,
+    } = this.get('data');
+    return spaceSize - usedSpace;
+  }),
+
+  /**
+   * Space to release.
+   * @type {computed.boolean}
+   */
+  toReleaseSpace: computed('cleanTarget', 'data.usedSpace', function () {
+    let {
+      cleanTarget,
+      data,
+    } = this.getProperties('cleanTarget', 'data');
+    return Math.max(0, data.get('usedSpace') - cleanTarget);
+  }),
+
+  /**
    * Percent of used space below clean target.
    * @type {computed.number}
    */

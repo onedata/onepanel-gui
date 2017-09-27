@@ -5,7 +5,7 @@
     onenter=(action "saveEdition")
     onescape=(action "cancelEdition")}}
   <span class="one-label">{{_readableValue.unit}}</span>
-  <span class="action-icons">
+  <span class="action-icons {{if (gt position 80) "actions-left"}}">
     {{one-icon icon="checked" click=(action "saveEdition")}}
     {{one-icon icon="ban-left" click=(action "cancelEdition")}}
   </span>
@@ -14,7 +14,7 @@
     {{_readableValue.number}} {{_readableValue.unit}}
   </span>
   {{#if allowEdition}}
-    <span class="action-icons">
+    <span class="action-icons {{if (gt position 80) "actions-left"}}">
       {{one-icon icon="rename" click=(action "startEdition")}}
     </span>
   {{/if}}
