@@ -1,3 +1,12 @@
+/**
+ * Inline editor for space cleaning bar quota values.
+ *
+ * @module components/space-cleaning-bar-chart/inline-editor
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
@@ -57,7 +66,7 @@ export default Component.extend({
    * Formatted value.
    * @type {computed.object}
    */
-  _readableValue: computed('value', function() {
+  _readableValue: computed('value', function () {
     return bytesToString(this.get('value'), { iecFormat: true, separated: true });
   }),
 
@@ -78,7 +87,7 @@ export default Component.extend({
       let {
         allowEdition,
         _readableValue,
-      }= this.getProperties('allowEdition', '_readableValue');
+      } = this.getProperties('allowEdition', '_readableValue');
       if (allowEdition) {
         this.setProperties({
           _editorValue: _readableValue.number,

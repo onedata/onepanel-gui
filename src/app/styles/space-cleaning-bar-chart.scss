@@ -46,30 +46,30 @@
         float: left;
         border-style: solid;
         border-width: 2px;
-        &.used-below-target {
+        &.used-below-soft-quota {
           border-color: $color-one-mint;
           border-right-width: 0;
           background-color: lighten($color-one-mint, 5%);
         }
-        &.not-used-below-target {
+        &.not-used-below-soft-quota {
           border-color: $color-one-mint;
           background-color: lighten($color-one-mint, 20%);
         }
-        &.used-below-threshold {
+        &.used-below-hard-quota {
           border-color: $color-one-yellow;
           border-right-width: 0;
           background-color: lighten($color-one-yellow, 10%);
         }
-        &.not-used-below-threshold {
+        &.not-used-below-hard-quota {
           border-color: $color-one-yellow;
           background-color: lighten($color-one-yellow, 25%);
         }
-        &.used-over-threshold {
+        &.used-over-hard-quota {
           border-color: $color-one-red;
           border-right-width: 0;
           background-color: lighten($color-one-red, 7%);
         }
-        &.not-used-over-threshold {
+        &.not-used-over-hard-quota {
           border-color: $color-one-red;
           background-color: lighten($color-one-red, 20%);
         }
@@ -220,7 +220,7 @@
           left: 0;
           top: 50%;
           transform: translateY(-50%);
-          width: $pacman-size * 2;
+          width: $pacman-size * 1.85;
           height: $pacman-size;
           .pacman-shape {
             position: absolute;
@@ -240,16 +240,6 @@
                 border-bottom: 0;
                 border-radius: ($pacman-size / 2) ($pacman-size / 2) 0 0;
               }
-              .pacman-eye {
-                position: absolute;
-                display: block;
-                top: 25%;
-                left: 25%;
-                width: $pacman-size / 10;
-                height: $pacman-size / 10;
-                border-radius: 100%;
-                background-color: black;
-              }
               &::after {
                 content: '';
                 display: block;
@@ -257,8 +247,16 @@
                 border-top: $pacman-border;
                 margin-bottom: -1px;
               }
+              .pacman-eye {
+                position: absolute;
+                top: 25%;
+                left: 25%;
+                width: $pacman-size / 10;
+                height: $pacman-size / 10;
+                border-radius: 100%;
+                background-color: black;
+              }
             }
-            
             .pacman-bottom {
               width: $pacman-size;
               height: $pacman-size;
@@ -317,12 +315,12 @@
       0% { 
         box-shadow: 
           0px ($pacman-size * 0.4375) 0 0 transparent, 
-          20px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
+          15px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
       }
       100% {
         box-shadow: 
-          20px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
-          40px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
+          15px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
+          30px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
       }
     }
 

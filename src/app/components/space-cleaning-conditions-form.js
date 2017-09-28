@@ -126,18 +126,18 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     let i18n = this.get('i18n');
     let tPrefix = 'components.spaceCleaningConditionsForm.timeUnits.';
     return [{
-        name: i18n.t(tPrefix + 'seconds'),
-        multiplicator: 1,
-      }, {
-        name: i18n.t(tPrefix + 'minutes'),
-        multiplicator: 60,
-      }, {
-        name: i18n.t(tPrefix + 'hours'),
-        multiplicator: 3600,
-      }, {
-        name: i18n.t(tPrefix + 'days'),
-        multiplicator: 86400,
-      }];
+      name: i18n.t(tPrefix + 'seconds'),
+      multiplicator: 1,
+    }, {
+      name: i18n.t(tPrefix + 'minutes'),
+      multiplicator: 60,
+    }, {
+      name: i18n.t(tPrefix + 'hours'),
+      multiplicator: 3600,
+    }, {
+      name: i18n.t(tPrefix + 'days'),
+      multiplicator: 86400,
+    }];
   }),
 
   /**
@@ -167,9 +167,9 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     let fieldsErrors = {};
     _sourceFieldNames
       .map((fieldName) => fieldName + 'Number')
-      .forEach((fieldName) => fieldsErrors[fieldName] = 
+      .forEach((fieldName) => fieldsErrors[fieldName] =
         _.find(errors, { attribute: '_formData.' + fieldName })
-    );
+      );
     return fieldsErrors;
   }),
 
@@ -201,8 +201,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     ].forEach((fieldName) => {
       if (get(data, fieldName)) {
         let value = bytesToString(
-          get(data, fieldName),
-          { iecFormat: true, separated: true }
+          get(data, fieldName), { iecFormat: true, separated: true }
         );
         _formData.setProperties({
           [fieldName + 'Number']: String(value.number),
@@ -235,7 +234,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     }
     this.set('_formData', _formData);
   })),
-
 
   init() {
     this._super(...arguments);
@@ -291,7 +289,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         'fileTimeNotActive',
       ].forEach((fieldName) => {
         if (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit')) {
-          data[fieldName] = _formData.get(fieldName + 'Number') * 
+          data[fieldName] = _formData.get(fieldName + 'Number') *
             _formData.get(fieldName + 'Unit').multiplicator;
         }
       });

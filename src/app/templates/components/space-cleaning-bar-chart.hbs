@@ -1,36 +1,36 @@
 <div class="indicators row content-row no-border">
   <p>
     <span class="total-space indicator"><span class="value">{{bytes-to-string data.spaceSize}}</span> {{t "components.spaceCleaningBarChart.totalSpace"}}</span>
-    <span class="used-space indicator"><span class="value">{{bytes-to-string data.usedSpace}}</span> {{t "components.spaceCleaningBarChart.usedSpace"}}</span>
-    <span class="free-space indicator"><span class="value">{{bytes-to-string freeSpace}}</span> {{t "components.spaceCleaningBarChart.freeSpace"}}</span>
-    <span class="to-release indicator"><span class="value">{{bytes-to-string toReleaseSpace}}</span> {{t "components.spaceCleaningBarChart.toRelease"}}</span>
+    <span class="used-space indicator"><span class="value">{{bytes-to-string data.spaceUsed}}</span> {{t "components.spaceCleaningBarChart.usedSpace"}}</span>
+    <span class="free-space indicator"><span class="value">{{bytes-to-string _freeSpace}}</span> {{t "components.spaceCleaningBarChart.freeSpace"}}</span>
+    <span class="to-release indicator"><span class="value">{{bytes-to-string _toReleaseSpace}}</span> {{t "components.spaceCleaningBarChart.toRelease"}}</span>
   </p>
 </div>
 <div class="bar-container">
   {{space-cleaning-bar-chart/inline-editor
     class="target-editor"
-    position=cleanTargetPercent
-    value=cleanTarget 
+    position=_spaceSoftQuotaPercent
+    value=_spaceSoftQuota
     allowEdition=(and _allowLabelsEdition (not _disabled))
-    onSave=(action "valueChanged" "cleanTarget")}}
+    onSave=(action "valueChanged" "spaceSoftQuota")}}
   {{space-cleaning-bar-chart/inline-editor
     class="threshold-editor"
-    position=cleanThresholdPercent
-    value=cleanThreshold
+    position=_spaceHardQuotaPercent
+    value=_spaceHardQuota
     allowEdition=_allowLabelsEdition
-    onSave=(action "valueChanged" "cleanThreshold")}}
+    onSave=(action "valueChanged" "spaceHardQuota")}}
   <div class="bar">
-    <div class="chart-bar used-below-target"></div>
-    <div class="chart-bar not-used-below-target not-used"></div>
-    <div class="chart-bar used-below-threshold"></div>
-    <div class="chart-bar not-used-below-threshold not-used"></div>
-    <div class="chart-bar used-over-threshold"></div>
-    <div class="chart-bar not-used-over-threshold not-used"></div>
+    <div class="chart-bar used-below-soft-quota"></div>
+    <div class="chart-bar not-used-below-soft-quota not-used"></div>
+    <div class="chart-bar used-below-hard-quota"></div>
+    <div class="chart-bar not-used-below-hard-quota not-used"></div>
+    <div class="chart-bar used-over-hard-quota"></div>
+    <div class="chart-bar not-used-over-hard-quota not-used"></div>
     <div class="chart-bar used"></div>
     <div class="pacman-row">
       <div class="used-space"></div>
       <div class="pacman-cell">
-        {{#if data.isCleaning}}
+        {{#if data.isWorking}}
           <div class="pacman">
             <div class="pacman-shape">
               <div class="pacman-top">
@@ -44,8 +44,8 @@
       </div>
     </div>
     {{range-slider
-      range=sliderRange
-      start=sliderStartValues
+      range=_sliderRange
+      start=_sliderStartValues
       disabled=_disabled
       on-slide=(action "slide")
       on-change=(action "sliderChanged")}}

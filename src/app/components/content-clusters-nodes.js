@@ -23,32 +23,30 @@ export default Component.extend({
   globalNotify: service(),
 
   data: [{
-      startedAt: new Date(),
-      stoppedAt: new Date(),
-      releasedSize: 10485760,
-      plannedReleasedSize: 20485760,
-      filesNumber: 24,
-      status: 'success',
-    }, {
-      startedAt: new Date(),
-      stoppedAt: new Date(),
-      releasedSize: 80485760,
-      plannedReleasedSize: 20485760,
-      filesNumber: 18,
-      status: 'failure',
-    },
-  ],
+    startedAt: new Date(),
+    stoppedAt: new Date(),
+    releasedSize: 10485760,
+    plannedReleasedSize: 20485760,
+    filesNumber: 24,
+    status: 'success',
+  }, {
+    startedAt: new Date(),
+    stoppedAt: new Date(),
+    releasedSize: 80485760,
+    plannedReleasedSize: 20485760,
+    filesNumber: 18,
+    status: 'failure',
+  }],
 
   bardata: Ember.Object.create({
     spaceSize: 10485760,
-    // usedSpace: 1048576,
-    usedSpace: 7340032,
-    // usedSpace: 9937184,
-    cleanThreshold: 8388608,
-    cleanTarget: 6291456,
-    isCleaning: true,
+    // spaceUsed: 1048576,
+    spaceUsed: 7340032,
+    // spaceUsed: 9937184,
+    spaceHardQuota: 8388608,
+    spaceSoftQuota: 6291456,
+    isWorking: true,
   }),
-
 
   /**
    * Resolves with EmberArray of ClusterHostInfo.
@@ -90,10 +88,10 @@ export default Component.extend({
     );
   },
   actions: {
-    sliderChange({ cleanTarget, cleanThreshold }) {
+    sliderChange({ spaceSoftQuota, spaceHardQuota }) {
       this.get('bardata').setProperties({
-        cleanTarget,
-        cleanThreshold,
+        spaceSoftQuota,
+        spaceHardQuota,
       });
       return new Ember.RSVP.Promise((resolve) => setTimeout(resolve, 500));
     },

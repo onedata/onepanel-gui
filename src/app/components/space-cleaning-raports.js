@@ -50,7 +50,7 @@ export default Component.extend({
    * Data ready for display.
    * @type {computed.Array.Object}
    */
-  _processedData: computed('data', function() {
+  _processedData: computed('data', function () {
     let {
       i18n,
       data,
@@ -69,8 +69,7 @@ export default Component.extend({
       let released = bytesToString(raport.get('releasedSize'), { iecFormat: true });
       let outOf = i18n.t('components.spaceCleaningRaports.releasedSizeOutOf');
       let planned = bytesToString(
-        raport.get('plannedReleasedSize'),
-        { iecFormat: true }
+        raport.get('plannedReleasedSize'), { iecFormat: true }
       );
       raport.set('releasedSizeReadable', `${released} (${outOf} ${planned})`);
       return raport;
@@ -91,7 +90,8 @@ export default Component.extend({
    */
   _tableCustomMessages: computed('noDataToShowMessage', function () {
     return Ember.Object.create({
-      noDataToShow: this.get('i18n').t('components.spaceCleaningRaports.noRaportsAvailable'),
+      noDataToShow: this.get('i18n').t(
+        'components.spaceCleaningRaports.noRaportsAvailable'),
     });
   }),
 
@@ -102,24 +102,24 @@ export default Component.extend({
   _columns: computed(function () {
     let i18n = this.get('i18n');
     return [{
-        propertyName: 'startedAtReadable',
-        sortedBy: 'startedAtSortable',
-        title: i18n.t('components.spaceCleaningRaports.start'),
-      }, {
-        propertyName: 'stoppedAtReadable',
-        sortedBy: 'stoppedAtSortable',
-        title: i18n.t('components.spaceCleaningRaports.stop'),
-      }, {
-        propertyName: 'releasedSizeReadable',
-        sortedBy: 'releasedSize',
-        title: i18n.t('components.spaceCleaningRaports.releasedSize'),
-      }, {
-        propertyName: 'filesNumber',
-        title: i18n.t('components.spaceCleaningRaports.filesNumber'),
-      }, {
-        propertyName: 'status',
-        title: i18n.t('components.spaceCleaningRaports.status'),
-        component: 'space-cleaning-raports/status-cell',
+      propertyName: 'startedAtReadable',
+      sortedBy: 'startedAtSortable',
+      title: i18n.t('components.spaceCleaningRaports.start'),
+    }, {
+      propertyName: 'stoppedAtReadable',
+      sortedBy: 'stoppedAtSortable',
+      title: i18n.t('components.spaceCleaningRaports.stop'),
+    }, {
+      propertyName: 'releasedSizeReadable',
+      sortedBy: 'releasedSize',
+      title: i18n.t('components.spaceCleaningRaports.releasedSize'),
+    }, {
+      propertyName: 'filesNumber',
+      title: i18n.t('components.spaceCleaningRaports.filesNumber'),
+    }, {
+      propertyName: 'status',
+      title: i18n.t('components.spaceCleaningRaports.status'),
+      component: 'space-cleaning-raports/status-cell',
     }];
   }),
 
