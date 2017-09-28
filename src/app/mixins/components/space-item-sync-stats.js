@@ -15,6 +15,8 @@ import Ember from 'ember';
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
 
+// FIXME: disable live fetching, when on other tab than storage synchronization
+
 const {
   Mixin,
   inject: { service },
@@ -49,7 +51,6 @@ export default Mixin.create({
    *
    * This property is updated automatically by some interval watchers
    *
-   * @virtual
    * @type {Onepanel.SpaceSyncStats}
    */
   _syncStats: null,

@@ -14,7 +14,11 @@ export default {
   syncDone: 'Synchronization done, live statistics disabled',
   cancelSyncConfig: 'Cancel sync. configuration',
   syncConfig: 'Configure data synchronization',
+  syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
+  tabSync: 'Storage synchronization',
+  tabPopular: 'Files popularity',
+  tabClean: 'Auto cleaning',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',

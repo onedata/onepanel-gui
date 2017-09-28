@@ -570,6 +570,15 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       }
     }),
 
+  _req_oneprovider_configureSpaceFilesPopularity: computed(function () {
+    return {
+      success: (id, { enabled }) => ({
+        enabled,
+        restUrl: enabled ? 'https://example.com/api/method' : undefined,
+      }),
+    };
+  }),
+
   // -- MOCKED RESOURCE STORE --
 
   __provider: PlainableObject.create({

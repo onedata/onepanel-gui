@@ -178,7 +178,7 @@ export default Service.extend({
       'oneprovider',
       'getProviderSpaceFilesPopularity',
       spaceId
-    );
+    ).then(({ data }) => data);
   },
 
   /**
@@ -190,7 +190,7 @@ export default Service.extend({
       'oneprovider',
       'getProviderSpaceAutoCleaning',
       spaceId
-    );
+    ).then(({ data }) => data);
   },
 
   /**
@@ -202,7 +202,7 @@ export default Service.extend({
       'oneprovider',
       'getProviderSpaceAutoCleaningStatus',
       spaceId
-    );
+    ).then(({ data }) => data);
   },
 
   /**
@@ -214,7 +214,17 @@ export default Service.extend({
       'oneprovider',
       'getProviderSpaceAutoCleaningReports',
       spaceId
-    );
+    ).then(({ data }) => data);
+  },
+
+  configureSpaceFilesPopularity(spaceId, enabled) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'configureSpaceFilesPopularity',
+      spaceId, {
+        enabled,
+      }
+    ).then(({ data }) => data);
   },
 
 });

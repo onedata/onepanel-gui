@@ -40,7 +40,7 @@
     <div class="row no-border">
       <div class="col-xs-12">
         <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
-          <h1 class="form-title">Data synchronization configuration</h1>
+          <h1 class="form-title">{{t "components.clusterSpacesTableItem.syncFormHeader"}}</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
             defaultValues=importFormDefaultValue
             mode=(if _importActive "edit" "new")
@@ -53,15 +53,15 @@
     <div class="row">
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
+          <strong>{{t "components.clusterSpacesTableItem.name"}}:</strong> 
           {{name-conflict item=space tagName="span" class="one-label space-name"}}
         </div>
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
+          <strong>{{t "components.clusterSpacesTableItem.id"}}:</strong>
           <span class="one-label space-id">{{space.id}}</span>
         </div>
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.mountInRoot'}}:</strong>
+          <strong>{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>
           {{one-way-toggle
             checked=space.mountInRoot
             isReadOnly=true
@@ -70,13 +70,13 @@
         </div>
         <div class="row content-row">
           {{#promise-proxy-container proxy=_storage}}
-            <strong>{{t 'components.clusterSpacesTableItem.storage'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storage"}}:</strong>
             <span class="one-label space-provider-storage">{{_storage.name}}</span>
           {{/promise-proxy-container}}
         </div>
         {{#if space.importEnabled}}
           <div class="row content-row space-import">
-            <strong>{{t 'components.clusterSpacesTableItem.storageImport.importStrategy'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storageImport.importStrategy"}}:</strong>
             <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
             {{#each importProperties as |property|}}
               <div class="row content-row nested-row">
@@ -86,7 +86,7 @@
             {{/each}}
           </div>
           <div class="row content-row space-update">
-            <strong>{{t 'components.clusterSpacesTableItem.storageUpdate.updateStrategy'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storageUpdate.updateStrategy"}}:</strong>
             <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
             {{#each updateProperties as |property|}}
               <div class="row content-row nested-row">
@@ -106,37 +106,59 @@
       
       <div class="col-xs-12 item-table-cell item-table-content-cell">
         <div class="row content-row">
-          {{!-- FIXME: use space.importEnabled to check which tab should be selectable etc. --}}
-          {{!-- FIXME: i18n --}}
-          {{#bs-tab fade=false as |tab|}}
-            {{#tab.pane
-              elementId=(concat space.id "-sync-tab")
-              title="Storage synchronization"
-              class=(unless tabStorageSynchronization "disabled")
-            }}
-              {{#if (eq tab.activeId (concat space.id "-sync-tab"))}}
-                {{space-storage-synchronization
-                  syncInterval=syncInterval
-                  statsFrozen=statsFrozen
-                  timeStats=timeStats
-                  timeStatsError=timeStatsError
-                  timeStatsLoading=timeStatsLoading
-                  syncIntervalChanged=(action "onSyncIntervalChange")
+
+          {{#bs-tab fade=false customTabs=true as |tab|}}
+            {{#bs-nav type="tabs" as |nav|}}
+              {{#nav.item class=tabSyncClass active=(bs-eq tab.activeId tabSyncId)}}
+                <a href={{concat "#" tabSyncId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabSyncId}}>
+                  {{t "components.clusterSpacesTableItem.tabSync"}}
+                </a>
+              {{/nav.item}}
+              {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
+                <a href= {{concat "#" tabPopularId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabPopularId}}>
+                  {{t "components.clusterSpacesTableItem.tabPopular"}}
+                </a>
+              {{/nav.item}}
+              {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
+                <a href= {{concat "#" tabCleanId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabCleanId}}>
+                  {{t "components.clusterSpacesTableItem.tabClean"}}
+                </a>
+              {{/nav.item}}
+            {{/bs-nav}}
+
+            <div class="tab-content">
+              {{#tab.pane elementId=tabSyncId}}
+                {{#if (eq tab.activeId tabSyncId)}}
+                  {{space-storage-synchronization
+                    syncInterval=syncInterval
+                    statsFrozen=statsFrozen
+                    timeStats=timeStats
+                    timeStatsError=timeStatsError
+                    timeStatsLoading=timeStatsLoading
+                    syncIntervalChanged=(action "onSyncIntervalChange")
+                  }}
+                {{/if}}
+              {{/tab.pane}}
+              {{#tab.pane elementId=tabPopularId}}
+                {{space-files-popularity
+                  spaceId=space.id
+                  filesPopularity=filesPopularity
+                  updateFilesPopularity=(action (mut filesPopularity))
                 }}
-              {{/if}}
-            {{/tab.pane}}
-            {{#tab.pane
-              title="Files popularity"
-              class=(unless tabFilesPopularity "disabled")
-            }}
-              {{space-files-popularity}}
-            {{/tab.pane}}
-            {{#tab.pane
-              title="Auto cleaning"
-              class=(unless tabAutoCleaning "disabled")
-            }}
-              {{space-auto-cleaning}}
-            {{/tab.pane}}
+              {{/tab.pane}}
+              {{#tab.pane elementId=tabCleanId}}
+                {{space-auto-cleaning
+                  autoCleaning=autoCleaning
+                }}
+              {{/tab.pane}}
+                             
+            </div>
           {{/bs-tab}}
         </div>
       </div>
