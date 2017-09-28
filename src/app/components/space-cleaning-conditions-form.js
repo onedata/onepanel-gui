@@ -1,3 +1,12 @@
+/**
+ * A form for file properties edition for space auto-cleaning functionality.
+ *
+ * @module components/space-cleaning-conditions-form
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 import _ from 'lodash';
@@ -33,9 +42,9 @@ const TIME_FIELD = {
 };
 
 const VALIDATORS = {
-  '_formData.largerThanNumber': createFieldValidator(SIZE_FIELD),
-  '_formData.smallerThanNumber': createFieldValidator(SIZE_FIELD),
-  '_formData.notActiveForNumber': createFieldValidator(TIME_FIELD),
+  '_formData.fileSizeGreaterThanNumber': createFieldValidator(SIZE_FIELD),
+  '_formData.fileSizeLesserThanNumber': createFieldValidator(SIZE_FIELD),
+  '_formData.fileTimeNotActiveNumber': createFieldValidator(TIME_FIELD),
 };
 
 export default Ember.Component.extend(buildValidations(VALIDATORS), {
@@ -77,6 +86,16 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @type {Window}
    */
   _window: window,
+
+  /**
+   * Array of field names.
+   * @type {Array.string}
+   */
+  _sourceFieldNames: [
+    'fileSizeGreaterThan',
+    'fileSizeLesserThan',
+    'fileTimeNotActive',
+  ],
 
   /**
    * Units used in 'file size' condition.
@@ -142,15 +161,14 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Fields errors.
    * @type {computed.Object}
    */
-  _formFieldsErrors: computed('validations.errors.[]', function () {
+  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
+    let _sourceFieldNames = this.get('_sourceFieldNames');
     let errors = this.get('validations.errors');
     let fieldsErrors = {};
-    [
-      'largerThanNumber',
-      'smallerThanNumber',
-      'notActiveForNumber',
-    ].forEach((fieldName) => fieldsErrors[fieldName] = 
-      _.find(errors, { attribute: '_formData.' + fieldName })
+    _sourceFieldNames
+      .map((fieldName) => fieldName + 'Number')
+      .forEach((fieldName) => fieldsErrors[fieldName] = 
+        _.find(errors, { attribute: '_formData.' + fieldName })
     );
     return fieldsErrors;
   }),
@@ -177,48 +195,42 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       data = {};
     }
     let _formData = Ember.Object.create();
-    if (get(data, 'largerThan')) {
-      let converterLargerThan = 
-        bytesToString(get(data, 'largerThan'), { iecFormat: true, separated: true });
-      _formData.setProperties({
-        largerThanNumber: String(converterLargerThan.number),
-        largerThanUnit: _.find(_sizeUnits, { name: converterLargerThan.unit }),
-      });
-    } else {
-      _formData.setProperties({
-        largerThanNumber: '',
-        largerThanUnit: _.find(_sizeUnits, { name: 'MiB' }),
-      });
-    }
-    if (get(data, 'smallerThan')) {
-      let converterSmallerThan = 
-        bytesToString(get(data, 'smallerThan'), { iecFormat: true, separated: true });
-      _formData.setProperties({
-        smallerThanNumber: String(converterSmallerThan.number),
-        smallerThanUnit: _.find(_sizeUnits, { name: converterSmallerThan.unit }),
-      });
-    } else {
-      _formData.setProperties({
-        smallerThanNumber: '',
-        smallerThanUnit: _.find(_sizeUnits, { name: 'MiB' }),
-      });
-    }
-    if (get(data, 'notActiveFor')) {
-      let notActiveFor = get(data, 'notActiveFor');
+    [
+      'fileSizeGreaterThan',
+      'fileSizeLesserThan',
+    ].forEach((fieldName) => {
+      if (get(data, fieldName)) {
+        let value = bytesToString(
+          get(data, fieldName),
+          { iecFormat: true, separated: true }
+        );
+        _formData.setProperties({
+          [fieldName + 'Number']: String(value.number),
+          [fieldName + 'Unit']: _.find(_sizeUnits, { name: value.unit }),
+        });
+      } else {
+        _formData.setProperties({
+          [fieldName + 'Number']: '',
+          [fieldName + 'Unit']: _.find(_sizeUnits, { name: 'MiB' }),
+        });
+      }
+    });
+    if (get(data, 'fileTimeNotActive')) {
+      let fileTimeNotActive = get(data, 'fileTimeNotActive');
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
-        if (notActiveFor / u.multiplicator >= 1) {
+        if (fileTimeNotActive / u.multiplicator >= 1) {
           unit = u;
         }
       });
       _formData.setProperties({
-        smallerThanNumber: String(notActiveFor / unit.multiplicator),
-        smallerThanUnit: unit,
+        fileTimeNotActiveNumber: String(fileTimeNotActive / unit.multiplicator),
+        fileTimeNotActiveUnit: unit,
       });
     } else {
       _formData.setProperties({
-        notActiveForNumber: '',
-        notActiveForUnit: _timeUnits[3],
+        fileTimeNotActiveNumber: '',
+        fileTimeNotActiveUnit: _timeUnits[_timeUnits.length - 1],
       });
     }
     this.set('_formData', _formData);
@@ -273,18 +285,16 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       console.log('send');
 
       let data = {};
-      if (modified.get('largerThanNumber') || modified.get('largerThanUnit')) {
-        data.largerThan = _formData.get('largerThanNumber') * 
-          _formData.get('largerThanUnit').multiplicator;
-      }
-      if (modified.get('smallerThanNumber') || modified.get('smallerThanUnit')) {
-        data.smallerThan = _formData.get('smallerThanNumber') * 
-          _formData.get('smallerThanUnit').multiplicator;
-      }
-      if (modified.get('notActiveForNumber') || modified.get('notActiveForThanUnit')) {
-        data.notActiveFor = _formData.get('notActiveForNumber') * 
-          _formData.get('notActiveForUnit').multiplicator;
-      }
+      [
+        'fileSizeGreaterThan',
+        'fileSizeLesserThan',
+        'fileTimeNotActive',
+      ].forEach((fieldName) => {
+        if (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit')) {
+          data[fieldName] = _formData.get(fieldName + 'Number') * 
+            _formData.get(fieldName + 'Unit').multiplicator;
+        }
+      });
       Object.keys(modified).forEach((key) => modified.set(key, false));
       console.log(data);
       onSave(data);
@@ -307,10 +317,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
 
   actions: {
     dataChanged(field, value) {
-      this.setProperties({
-        ['_formData.' + field]: value,
-        _isDirty: true,
-      });
+      this.set('_formData.' + field, value);
+      this.set('_isDirty', true);
       this.set('_formFieldsModified.' + field, true);
       // all dropdowns ends with 'Unit' word
       if (field.indexOf('Unit') + 4 === field.length || this.get('_lostInputFocus')) {
