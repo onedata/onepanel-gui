@@ -21,6 +21,7 @@
               <div class="item-table-content-cell">
                 {{#each _columns as |column|}}
                   <div class="row content-row">
+                    {{!-- using data processing similar to the one used by ember-models-table --}}
                     <strong>{{column.title}}:</strong>
                     {{#if column.component}}
                       {{component column.component data=_processedData record=raport column=column}}

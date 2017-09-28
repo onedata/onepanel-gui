@@ -1,5 +1,14 @@
+/**
+ * A table (or list in mobile view) for displaying information from space 
+ * cleaning raports.
+ *
+ * @module components/space-cleaning-reports
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
-import _ from 'lodash';
 import moment from 'moment';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
@@ -10,6 +19,8 @@ const {
     service,
   },
 } = Ember;
+
+const START_END_TIME_FORMAT = 'D MMM YYYY H:mm';
 
 export default Component.extend({
   classNames: ['space-cleaning-raports'],
@@ -45,20 +56,23 @@ export default Component.extend({
       data,
     } = this.getProperties('i18n', 'data');
     return data.map((raport) => {
-      raport = _.assign({}, raport);
+      raport = Ember.Object.create(raport);
 
-      let startedAt = moment(raport.startedAt);
-      raport.startedAtReadable = startedAt.format('D MMM YYYY H:mm');
+      let startedAt = moment(raport.get('startedAt'));
+      raport.startedAtReadable = startedAt.format(START_END_TIME_FORMAT);
       raport.startedAtSortable = startedAt.unix();
 
-      let stoppedAt = moment(raport.stoppedAt);
-      raport.stoppedAtReadable = stoppedAt.format('D MMM YYYY H:mm');
+      let stoppedAt = moment(raport.get('stoppedAt'));
+      raport.stoppedAtReadable = stoppedAt.format(START_END_TIME_FORMAT);
       raport.stoppedAtSortable = stoppedAt.unix();
 
-      let released = bytesToString(raport.releasedSize);
+      let released = bytesToString(raport.get('releasedSize'), { iecFormat: true });
       let outOf = i18n.t('components.spaceCleaningRaports.releasedSizeOutOf');
-      let planned = bytesToString(raport.plannedReleasedSize);
-      raport.releasedSizeReadable = `${released} (${outOf} ${planned})`;
+      let planned = bytesToString(
+        raport.get('plannedReleasedSize'),
+        { iecFormat: true }
+      );
+      raport.set('releasedSizeReadable', `${released} (${outOf} ${planned})`);
       return raport;
     });
   }),
