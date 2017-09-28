@@ -12,40 +12,4 @@
 @import 'space-sync-chart-throughput';
 @import 'login-box';
 
-// FIXME: temporary
-.tab-content {
-  margin: 1em 1em;
-}
-
-.tab-pane {
-  position: relative;
-}
-
-.tab-pane .content-row {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-}
-
-@media (max-width: $screen-xs-max) {
-  .btn-group-floating {
-    position: relative;
-    width: 100%;
-    &.btn-group-3-btns {
-      .btn {
-        width: 33.333%;
-      }
-    }
-  }
-}
-@media (min-width: $screen-sm-min) {
-  .btn-group-floating {
-    position: absolute;
-    right: 0px;
-    z-index: 1;
-  }
-}
-
-.tab-pane.disabled {
-  pointer-events: none;
-}
 

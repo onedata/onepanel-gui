@@ -108,19 +108,22 @@
         <div class="row content-row">
           {{!-- FIXME: use space.importEnabled to check which tab should be selectable etc. --}}
           {{!-- FIXME: i18n --}}
-          {{#bs-tab as |tab|}}
+          {{#bs-tab fade=false as |tab|}}
             {{#tab.pane
+              elementId=(concat space.id "-sync-tab")
               title="Storage synchronization"
               class=(unless tabStorageSynchronization "disabled")
             }}
-              {{space-storage-synchronization
-                syncInterval=syncInterval
-                statsFrozen=statsFrozen
-                timeStats=timeStats
-                timeStatsError=timeStatsError
-                timeStatsLoading=timeStatsLoading
-                syncIntervalChanged=(action "onSyncIntervalChange")
-              }}
+              {{#if (eq tab.activeId (concat space.id "-sync-tab"))}}
+                {{space-storage-synchronization
+                  syncInterval=syncInterval
+                  statsFrozen=statsFrozen
+                  timeStats=timeStats
+                  timeStatsError=timeStatsError
+                  timeStatsLoading=timeStatsLoading
+                  syncIntervalChanged=(action "onSyncIntervalChange")
+                }}
+              {{/if}}
             {{/tab.pane}}
             {{#tab.pane
               title="Files popularity"
