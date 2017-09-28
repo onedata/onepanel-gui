@@ -4,7 +4,7 @@
   <h1>Nodes of "{{cluster.name}}"</h1>
 </div>
 
-<div class="row">
+{{!-- <div class="row">
   {{#promise-proxy-container proxy=hostsProxy}}
     {{cluster-host-table
       hosts=hostsProxy.content
@@ -12,4 +12,17 @@
       isReadOnly=true
     }}
   {{/promise-proxy-container}}
+</div> --}}
+
+{{!-- <div style="width: 500px"> --}}
+<div class="row content-row no-border"><h1>Remove files</h1></div>
+<div class="cleaning-settings-row">
+  <div class="form-cell">
+    {{space-cleaning-conditions-form}}
+  </div>
+  <div class="bar-cell">
+    {{space-cleaning-bar-chart data=bardata onChange=(action "sliderChange")}}
+  </div>
 </div>
+{{!-- </div> --}}
+{{space-cleaning-raports data=data}}

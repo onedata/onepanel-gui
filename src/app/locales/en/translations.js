@@ -8,6 +8,7 @@ import brandInfo from './components/brand-info';
 import loginBox from './components/login-box';
 import spaceCleaningRaports from './components/space-cleaning-raports';
 import spaceCleaningBarChart from './components/space-cleaning-bar-chart';
+import spaceCleaningConditionsForm from './components/space-cleaning-conditions-form';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -24,6 +25,7 @@ let translations = {
     loginBox,
     spaceCleaningRaports,
     spaceCleaningBarChart,
+    spaceCleaningConditionsForm,
   },
 };
 

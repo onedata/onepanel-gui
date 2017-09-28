@@ -368,15 +368,15 @@ export default Component.extend({
           element.removeClass('hidden');
         }
       });
-      this.$('.used').css({
-        'width': usedPercent + '%',
-      });
-      this.$('.pacman-row .used-space').css({
-        'width': usedPercent + '%',
-      });
+      let usedWidth = { 'width': usedPercent + '%' };
+      this.$('.used').css(usedWidth);
+      this.$('.pacman-row .used-space').css(usedWidth);
     }
   )),
 
+  /**
+   * Sends data
+   */
   _change() {
     let {
       cleanTarget,
@@ -392,6 +392,10 @@ export default Component.extend({
   },
 
   actions: {
+    /**
+     * On slider move
+     * @param {Array.number} values 
+     */
     slide(values) {
       this.setProperties({
         cleanThreshold: values[1],
@@ -399,14 +403,23 @@ export default Component.extend({
         _allowLabelsEdition: false,
       });
     },
+    /**
+     * On slider move end
+     * @param {Array.number} values 
+     */
     sliderChanged(values) {
       this.setProperties({
-        cleanThresholdForSlider: values[1],
         cleanTargetForSlider: values[0],
+        cleanThresholdForSlider: values[1],
         _allowLabelsEdition: true,
       });
       this._change();
     },
+    /**
+     * Value changed by inputs
+     * @param {string} name field name
+     * @param {number} value value
+     */
     valueChanged(name, value) {
       let data = this.get('data');
       let {

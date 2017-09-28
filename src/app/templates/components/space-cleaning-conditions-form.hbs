@@ -1,0 +1,62 @@
+{{#bs-form as |form|}}
+  {{#form.group class=(concat-classes "largerThanGroup" (if _formFieldsErrors.largerThanNumber "has-error"))}}
+    <div class="row">
+      <label for="largerThan" class="col-xs-5 control-label">{{t 'components.spaceCleaningConditionsForm.largerThan'}}</label>
+      <div class="col-xs-7">
+        {{one-way-input value=_formData.largerThanNumber class="form-control input-sm" focusOut=(action "lostFocus") update=(action "dataChanged" "largerThanNumber") elementId="largerThan"}}
+        {{#power-select
+          triggerClass="small"
+          dropdownClass="small"
+          options=_sizeUnits
+          selected=_formData.largerThanUnit
+          onchange=(action "dataChanged" "largerThanUnit")
+          searchEnabled=false
+          renderInPlace=true
+          as |unit|
+        }}
+          {{unit.name}}
+        {{/power-select}}
+      </div>
+    </div>
+  {{/form.group}}
+  {{#form.group class="smallerThanGroup"}}
+    <div class="row">
+      <label for="smallerThan" class="col-xs-5 control-label">{{t 'components.spaceCleaningConditionsForm.smallerThan'}}</label>
+      <div class="col-xs-7">
+        {{one-way-input value=_formData.smallerThanNumber class="form-control input-sm" focusOut=(action "lostFocus") update=(action "dataChanged" "smallerThanNumber") elementId="smallerThan"}}
+        {{#power-select
+          triggerClass="small"
+          dropdownClass="small"
+          options=_sizeUnits
+          selected=_formData.smallerThanUnit
+          onchange=(action "dataChanged" "smallerThanUnit")
+          searchEnabled=false
+          renderInPlace=true
+          as |unit|
+        }}
+          {{unit.name}}
+        {{/power-select}}
+      </div>
+    </div>
+  {{/form.group}}
+  {{#form.group class="notActiveForGroup"}}
+    <div class="row">
+      <label for="notActiveFor" class="col-xs-5 control-label">{{t 'components.spaceCleaningConditionsForm.notActiveFor'}}</label>
+      <div class="col-xs-7">
+        {{one-way-input value=notActiveForNumber class="form-control input-sm" focusOut=(action "lostFocus") update=(action "dataChanged" "notActiveForNumber") elementId="notActiveFor"}}
+        {{#power-select
+          triggerClass="small"
+          dropdownClass="small"
+          options=_timeUnits
+          selected=_formData.notActiveForUnit
+          onchange=(action "dataChanged" "notActiveForUnit")
+          searchEnabled=false
+          renderInPlace=true
+          as |unit|
+        }}
+          {{unit.name}}
+        {{/power-select}}
+      </div>
+    </div>
+  {{/form.group}}
+{{/bs-form}}

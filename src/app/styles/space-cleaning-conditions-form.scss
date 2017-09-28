@@ -1,0 +1,30 @@
+.space-cleaning-conditions-form {
+  .form-control {
+    display: inline-block;
+    width: 4.5em;
+    padding: $padding-xs-horizontal;
+    text-align: center;
+    vertical-align: top;
+  }
+  .control-label {
+    padding-top: $padding-base-vertical / 2;
+    text-align: left;
+  }
+  .ember-basic-dropdown {
+    display: inline-block;
+    margin-left: $padding-small-vertical;
+  }
+  .form-group {
+    margin-bottom: $padding-small-vertical;
+  }
+  .largerThanGroup, .smallerThanGroup {
+    .ember-power-select-trigger {
+      width: 5em;
+    }
+  }
+  .notActiveForGroup {
+    .ember-power-select-trigger {
+      width: 7em;
+    }
+  }
+}

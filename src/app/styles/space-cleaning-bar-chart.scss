@@ -16,25 +16,14 @@
       }
       .value {
         font-weight: bold;
-      }
-      &.total-space .value {
         color: $color-one-blue-gray;
-      }
-      &.free-space .value {
-        color: $color-one-mint;
-      }
-      &.used-space .value {
-        color: $color-one-red;
-      }
-      &.to-release .value {
-        color: $color-one-yellow;
       }
     }
   }
   
   .bar-container {
     position: relative;
-    margin: 1em 0 3em 0;
+    margin: 0.3em 0 3em 0;
     .noUi-handle {
       cursor: pointer;
     }

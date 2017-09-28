@@ -22,6 +22,34 @@ export default Component.extend({
   clusterManager: service(),
   globalNotify: service(),
 
+  data: [{
+      startedAt: new Date(),
+      stoppedAt: new Date(),
+      releasedSize: 10485760,
+      plannedReleasedSize: 20485760,
+      filesNumber: 24,
+      status: 'success',
+    }, {
+      startedAt: new Date(),
+      stoppedAt: new Date(),
+      releasedSize: 80485760,
+      plannedReleasedSize: 20485760,
+      filesNumber: 18,
+      status: 'failure',
+    },
+  ],
+
+  bardata: Ember.Object.create({
+    spaceSize: 10485760,
+    // usedSpace: 1048576,
+    usedSpace: 7340032,
+    // usedSpace: 9937184,
+    cleanThreshold: 8388608,
+    cleanTarget: 6291456,
+    isCleaning: true,
+  }),
+
+
   /**
    * Resolves with EmberArray of ClusterHostInfo.
    * @type {PromiseObject.Array.ClusterHostInfo} hostsProxy
@@ -60,5 +88,14 @@ export default Component.extend({
         promise: clusterHostsPromise,
       })
     );
+  },
+  actions: {
+    sliderChange({ cleanTarget, cleanThreshold }) {
+      this.get('bardata').setProperties({
+        cleanTarget,
+        cleanThreshold,
+      });
+      return new Ember.RSVP.Promise((resolve) => setTimeout(resolve, 500));
+    },
   },
 });
