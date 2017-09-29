@@ -25,9 +25,12 @@ const {
     debounce,
     cancel,
   },
+  inject: {
+    service,
+  },
 } = Ember;
 
-const FORM_SEND_DEBOUNCE_TIME = 3000;
+const FORM_SEND_DEBOUNCE_TIME = 4000;
 
 const SIZE_FIELD = {
   type: 'number',
@@ -50,6 +53,8 @@ const VALIDATORS = {
 export default Ember.Component.extend(buildValidations(VALIDATORS), {
   classNames: ['space-cleaning-conditions-form'],
 
+  i18n: service(),
+
   /**
    * Initial data for form.
    * @type {Object}
@@ -62,6 +67,12 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @type {Function}
    */
   onSave: () => {},
+
+  /**
+   * Form send debounce time.
+   * @type {number}
+   */
+  _formSendDebounceTime: FORM_SEND_DEBOUNCE_TIME,
 
   /**
    * If true, form has some unsaved changes.
@@ -177,7 +188,9 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Modification state of fields.
    * @type {Ember.Object}
    */
-  _formFieldsModified: Ember.Object.create(),
+  _formFieldsModified: computed(function () {
+    return Ember.Object.create();
+  }),
 
   /**
    * If true, form is valid.
@@ -191,6 +204,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       _sizeUnits,
       _timeUnits,
     } = this.getProperties('data', '_sizeUnits', '_timeUnits');
+    this._cleanModificationState();
     if (!data) {
       data = {};
     }
@@ -261,7 +275,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Sends modified data.
    */
   _sendChanges() {
-    console.log('trying to send');
     let {
       _isDirty,
       _isFormValid,
@@ -280,7 +293,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         _lostInputFocus: false,
         _isDirty: false,
       });
-      console.log('send');
 
       let data = {};
       [
@@ -293,10 +305,18 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
             _formData.get(fieldName + 'Unit').multiplicator;
         }
       });
-      Object.keys(modified).forEach((key) => modified.set(key, false));
-      console.log(data);
+      this._cleanModificationState();
       onSave(data);
     }
+  },
+
+  /**
+   * Marks all fields as not modified.
+   */
+  _cleanModificationState() {
+    let _formFieldsModified = this.get('_formFieldsModified');
+    Object.keys(_formFieldsModified)
+      .forEach((key) => _formFieldsModified.set(key, false));
   },
 
   /**
@@ -304,12 +324,16 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @param {boolean} schedule If false, scheduled save will be canceled.
    */
   _scheduleSendChanges(schedule = true) {
+    let {
+      _saveDebounceTimer,
+      _formSendDebounceTime,
+    } = this.getProperties('_saveDebounceTimer', '_formSendDebounceTime');
     if (schedule === false) {
-      cancel(this.get('_saveDebounceTimer'));
+      cancel(_saveDebounceTimer);
     }
     this.set(
       '_saveDebounceTimer',
-      debounce(this, '_sendChanges', FORM_SEND_DEBOUNCE_TIME)
+      debounce(this, '_sendChanges', _formSendDebounceTime)
     );
   },
 

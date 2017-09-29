@@ -26,7 +26,7 @@
                     {{#if column.component}}
                       {{component column.component data=_processedData record=raport column=column}}
                     {{else}}
-                      {{get raport column.propertyName}}<br/>
+                      <span class="one-label">{{get raport column.propertyName}}</span>
                     {{/if}}
                   </div>
                 {{/each}}

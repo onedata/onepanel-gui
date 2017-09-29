@@ -8,13 +8,13 @@
 </div>
 <div class="bar-container">
   {{space-cleaning-bar-chart/inline-editor
-    class="target-editor"
+    class="soft-quota-editor"
     position=_spaceSoftQuotaPercent
     value=_spaceSoftQuota
     allowEdition=(and _allowLabelsEdition (not _disabled))
     onSave=(action "valueChanged" "spaceSoftQuota")}}
   {{space-cleaning-bar-chart/inline-editor
-    class="threshold-editor"
+    class="hard-quota-editor"
     position=_spaceHardQuotaPercent
     value=_spaceHardQuota
     allowEdition=_allowLabelsEdition

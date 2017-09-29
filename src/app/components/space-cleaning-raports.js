@@ -129,7 +129,7 @@ export default Component.extend({
    */
   _resizeEventHandler: computed(function () {
     return () => {
-      this.set('_mobileMode', window.innerWidth < 768);
+      this.set('_mobileMode', this.get('_window.innerWidth') < 768);
     };
   }),
 

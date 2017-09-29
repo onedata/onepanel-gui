@@ -75,6 +75,7 @@
         }
         &.used {
           border-color: transparent;
+          border-right: 0;
           &::before {
             $gradient-size: 8px;
             content: '';
@@ -143,7 +144,7 @@
       white-space: nowrap;
       font-size: 80%;
       font-weight: bold;
-      &.target-editor {
+      &.soft-quota-editor {
         top: 120%;
         bottom: initial;
         transform: translateX(-$slider-width * 0.5) translateX(-50%);
@@ -151,7 +152,7 @@
           color: $color-one-mint;
         }
       }
-      &.threshold-editor {
+      &.hard-quota-editor {
         bottom: 120%;
         transform: translateX($slider-width * 0.5) translateX(-50%);
         .one-label {
