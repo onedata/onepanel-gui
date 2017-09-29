@@ -45,7 +45,7 @@
             defaultValues=importFormDefaultValue
             mode=(if _importActive "edit" "new")
             isFormOpened=importConfigurationOpen
-            submit=(action "importUpdateConfigurationSubmit")
+            submit=(action "submitModifySpace")
           }}
         </div>
       </div>
@@ -106,8 +106,8 @@
       
       <div class="col-xs-12 item-table-cell item-table-content-cell">
         <div class="row content-row">
-
-          {{#bs-tab fade=false customTabs=true as |tab|}}
+          {{!-- FIXME: i18n tooltips for tabs in disabled state --}}
+          {{#bs-tab fade=false customTabs=true activeId=initActiveTabId as |tab|}}
             {{#bs-nav type="tabs" as |nav|}}
               {{#nav.item class=tabSyncClass active=(bs-eq tab.activeId tabSyncId)}}
                 <a href={{concat "#" tabSyncId}}
@@ -115,6 +115,7 @@
                   role="tab" {{action tab.select tabSyncId}}>
                   {{t "components.clusterSpacesTableItem.tabSync"}}
                 </a>
+                {{bs-tooltip title="This is an awesome feature"}}
               {{/nav.item}}
               {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
                 <a href= {{concat "#" tabPopularId}}
@@ -122,6 +123,7 @@
                   role="tab" {{action tab.select tabPopularId}}>
                   {{t "components.clusterSpacesTableItem.tabPopular"}}
                 </a>
+                {{bs-tooltip title="This is an awesome feature"}}
               {{/nav.item}}
               {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
                 <a href= {{concat "#" tabCleanId}}
@@ -129,6 +131,7 @@
                   role="tab" {{action tab.select tabCleanId}}>
                   {{t "components.clusterSpacesTableItem.tabClean"}}
                 </a>
+                {{bs-tooltip title="This is an awesome feature"}}
               {{/nav.item}}
             {{/bs-nav}}
 
@@ -147,14 +150,14 @@
               {{/tab.pane}}
               {{#tab.pane elementId=tabPopularId}}
                 {{space-files-popularity
-                  spaceId=space.id
                   filesPopularity=filesPopularity
-                  updateFilesPopularity=(action (mut filesPopularity))
+                  updateFilesPopularity=(action "updateFilesPopularity")
                 }}
               {{/tab.pane}}
               {{#tab.pane elementId=tabCleanId}}
                 {{space-auto-cleaning
                   autoCleaning=autoCleaning
+                  updateAutoCleaning=(action "updateAutoCleaning")
                 }}
               {{/tab.pane}}
                              

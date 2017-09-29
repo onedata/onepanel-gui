@@ -2,33 +2,46 @@
 
 import { computed } from '@ember/object';
 import Mixin from '@ember/object/mixin';
+import { camelize } from '@ember/string';
+import _ from 'lodash';
 
 const ENABLED = 'enabled';
 const DISABLED = 'disabled';
-const LOADING = 'disabled loading';
 
 export default Mixin.create({
-  tabSyncClass: computed('importEnabled', function () {
-    return this.get('importEnabled') ? ENABLED : DISABLED;
+  tabSyncClass: computed('space.importEnabled', function () {
+    return this.get('space.importEnabled') ? ENABLED : DISABLED;
   }),
 
   tabSyncId: computedTabId('sync'),
 
-  tabPopularClass: computed('filesPopularity.enabled', function () {
-    return this.get('filesPopularity.enabled') ? ENABLED : DISABLED;
-  }),
+  tabPopularClass: true,
 
   tabPopularId: computedTabId('popular'),
 
-  tabCleanClass: computed('autoCleaningLoading', 'autoCleaning.enabled', function () {
-    if (this.get('autoCleaningLoading')) {
-      return LOADING;
-    } else {
-      return this.get('autoCleaning.enabled') ? ENABLED : DISABLED;
-    }
+  tabCleanClass: computed('autoCleaning.enabled', function () {
+    return this.get('autoCleaning.enabled') ? ENABLED : DISABLED;
   }),
 
   tabCleanId: computedTabId('clean'),
+
+  getDefaultActiveTabId() {
+    const activeTabShort = _.find(['sync', 'popular', 'clean'], tab =>
+      this.get(camelize(`tab-${tab}-class`)) === ENABLED
+    );
+    return this.get(camelize(`tab-${activeTabShort}-id`));
+  },
+
+  /**
+   * Set only once on init
+   * @type {string}
+   */
+  initActiveTabId: undefined,
+
+  init() {
+    this._super(...arguments);
+    this.set('initActiveTabId', this.getDefaultActiveTabId());
+  },
 });
 
 /**

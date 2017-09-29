@@ -80,16 +80,16 @@ export default Service.extend({
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
    * @param {StorageImportDetails} spaceData.storageImport
    * @param {StorageUpdateDetails} spaceData.storageUpdate
+   * @param {boolean} reload if true, after success modify, fetch the record
    * @returns {PromiseObject<undefined|object>}
    */
-  modifySpaceDetails(id, spaceData) {
+  modifySpaceDetails(id, spaceData, reload = false) {
     let onepanelServer = this.get('onepanelServer');
-    let promise = new Promise((resolve, reject) => {
-      let req =
-        onepanelServer.request('oneprovider', 'modifySpace', id, spaceData);
-      req.then(({ data }) => resolve(data));
-      req.catch(reject);
-    });
+    let promise = onepanelServer
+      .request('oneprovider', 'modifySpace', id, spaceData)
+      .then(({ data }) => {
+        return reload ? this.getSpaceDetails(id) : data;
+      });
     return PromiseObject.create({ promise });
   },
 
@@ -167,30 +167,6 @@ export default Service.extend({
    */
   getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
     return this.getSyncStats(spaceId, period, SYNC_METRICS);
-  },
-
-  /**
-   * @param {string} spaceId 
-   * @returns {Promise<Onepanel.SpaceFilesPopularity>}
-   */
-  getFilesPopularity(spaceId) {
-    return this.get('onepanelServer').request(
-      'oneprovider',
-      'getProviderSpaceFilesPopularity',
-      spaceId
-    ).then(({ data }) => data);
-  },
-
-  /**
-   * @param {string} spaceId
-   * @returns {Promise<Onepanel.SpaceAutoCleaning>}
-   */
-  getAutoCleaning(spaceId) {
-    return this.get('onepanelServer').request(
-      'oneprovider',
-      'getProviderSpaceAutoCleaning',
-      spaceId
-    ).then(({ data }) => data);
   },
 
   /**
