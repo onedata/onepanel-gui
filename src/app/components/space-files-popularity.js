@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import { inject } from '@ember/service';
+import { Promise } from 'rsvp';
 
 export default Component.extend({
   globalNotify: inject(),

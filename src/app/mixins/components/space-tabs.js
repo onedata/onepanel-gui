@@ -19,8 +19,8 @@ export default Mixin.create({
 
   tabPopularId: computedTabId('popular'),
 
-  tabCleanClass: computed('autoCleaning.enabled', function () {
-    return this.get('autoCleaning.enabled') ? ENABLED : DISABLED;
+  tabCleanClass: computed('filesPopularity.enabled', function () {
+    return this.get('filesPopularity.enabled') ? ENABLED : DISABLED;
   }),
 
   tabCleanId: computedTabId('clean'),

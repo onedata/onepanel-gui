@@ -37,6 +37,7 @@ const {
   get,
   set,
   setProperties,
+  run,
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
@@ -164,12 +165,14 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
             },
           };
           let taskId = getTaskId(response);
-          resolve({
-            __request_method: method,
-            data: handler.success(...params),
-            response: response,
-            task: taskId && this.watchTaskStatus(taskId),
-            toString: responseToString,
+          run.later(() => {
+            resolve({
+              __request_method: method,
+              data: handler.success(...params),
+              response: response,
+              task: taskId && this.watchTaskStatus(taskId),
+              toString: responseToString,
+            }, 0);
           });
         } else {
           let response = {
@@ -183,8 +186,6 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           `onepanel-server-mock: mock has no method for: ${api}_${method}`
         );
       }
-
-      resolve();
     });
 
     promise.catch(error => this.handleRequestError(error));
@@ -533,7 +534,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         let spaces = this.get('__spaces');
         let space = _.find(spaces, s => s.id === id);
         if (space) {
-          if (!get(data, 'filesPopularity.enabled')) {
+          if (get(data, 'filesPopularity.enabled')) {
+            set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
+          } else {
             set(data, 'autoCleaning', { enabled: false });
           }
           setProperties(space, data);

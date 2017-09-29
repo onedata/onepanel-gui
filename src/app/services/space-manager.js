@@ -12,11 +12,14 @@ import Onepanel from 'npm:onepanel';
 
 import SpaceDetails from 'onepanel-gui/models/space-details';
 
+import _ from 'lodash';
+
 const {
   A,
   Service,
   inject: { service },
   RSVP: { Promise },
+  get,
 } = Ember;
 
 const {
@@ -31,28 +34,35 @@ const DEFAULT_SYNC_STATS_PERIOD = 'minute';
 export default Service.extend({
   onepanelServer: service(),
 
-  /**
-   * Fetch collection of onepanel SpaceDetails
-   * 
-   * @param {string} id
-   * @return {PromiseObject} resolves Ember.Array of SpaceDetails promise proxies
-   */
+  spacesCache: PromiseObject.create(),
+
   getSpaces() {
+    const spacesCache = this.get('spacesCache');
+    if (!get(spacesCache, 'content')) {
+      spacesCache.set('promise', this._getSpaces());
+    }
+    return spacesCache;
+  },
+
+  _getSpaces() {
     let onepanelServer = this.get('onepanelServer');
-
-    let promise = new Promise((resolve, reject) => {
-      let getSpaces = onepanelServer.requestValidData(
-        'oneprovider',
-        'getProviderSpaces'
-      );
-
-      getSpaces.then(({ data: { ids } }) => {
-        resolve(A(ids.map(id => this.getSpaceDetails(id))));
-      });
-      getSpaces.catch(reject);
+    return onepanelServer.requestValidData(
+      'oneprovider',
+      'getProviderSpaces'
+    ).then(({ data: { ids } }) => {
+      return A(ids.map(id => this.getSpaceDetails(id)));
     });
+  },
 
-    return PromiseObject.create({ promise });
+  updateSpaceDetailsCache(spaceId) {
+    const cacheArray = this.get('spacesCache.content');
+    const spaceIndex = _.findIndex(
+      cacheArray,
+      s => get(s, 'id') === spaceId
+    );
+    const promiseObj = this.getSpaceDetails(spaceId);
+    cacheArray.objectAt(spaceIndex).set('promise', promiseObj);
+    return promiseObj;
   },
 
   /**
@@ -62,16 +72,11 @@ export default Service.extend({
    * @return {PromiseObject} resolves SpaceDetails object
    */
   getSpaceDetails(id) {
-    let onepanelServer = this.get('onepanelServer');
-    let promise = new Promise((resolve, reject) => {
-      let req = onepanelServer.requestValidData(
-        'oneprovider',
-        'getSpaceDetails',
-        id
-      );
-      req.then(({ data }) => resolve(SpaceDetails.create(data)));
-      req.catch(reject);
-    });
+    const promise = this.get('onepanelServer').requestValidData(
+      'oneprovider',
+      'getSpaceDetails',
+      id
+    ).then(({ data }) => SpaceDetails.create(data));
     return PromiseObject.create({ promise });
   },
 
@@ -80,16 +85,13 @@ export default Service.extend({
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
    * @param {StorageImportDetails} spaceData.storageImport
    * @param {StorageUpdateDetails} spaceData.storageUpdate
-   * @param {boolean} reload if true, after success modify, fetch the record
    * @returns {PromiseObject<undefined|object>}
    */
-  modifySpaceDetails(id, spaceData, reload = false) {
+  modifySpaceDetails(id, spaceData) {
     let onepanelServer = this.get('onepanelServer');
     let promise = onepanelServer
       .request('oneprovider', 'modifySpace', id, spaceData)
-      .then(({ data }) => {
-        return reload ? this.getSpaceDetails(id) : data;
-      });
+      .then(({ data }) => data);
     return PromiseObject.create({ promise });
   },
 
