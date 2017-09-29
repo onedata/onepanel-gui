@@ -17,15 +17,15 @@ const {
 
 // TODO i18n
 const FORM_TITLES = {
-  show: `Registered provider details`,
-  edit: `Modify registered provider details`,
-  new: `Provider registration`,
+  show: 'Registered provider details',
+  edit: 'Modify registered provider details',
+  new: 'Provider registration',
 };
 
 const FORM_DESCRIPTIONS = {
-  show: `This provider was registered with following data`,
-  edit: `You can update registered provider details and submit the changes in form below`,
-  new: `The provider is currently not registered in any Zone. Please enter details of provider for registration.`,
+  show: 'This provider was registered with following data',
+  edit: 'You can update registered provider details and submit the changes in form below',
+  new: 'The provider is currently not registered in any Zone. Please enter details of provider for registration.',
 };
 
 export default Component.extend({
@@ -142,6 +142,7 @@ export default Component.extend({
      * @param {string} data.redirectionPoint
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
+     * @returns {Promise<any>} ProviderManager.modifyProvider promise
      */
     submitModify(data) {
       let {

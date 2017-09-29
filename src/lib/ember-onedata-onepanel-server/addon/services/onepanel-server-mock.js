@@ -1,7 +1,7 @@
 /**
  * Mock for REST backend of onepanel
  *
- * See ``REQ_HANDLER`` in this file to manipulate responses
+ * See `REQ_HANDLER` in this file to manipulate responses
  *
  * @module services/onepanel-server-mock
  * @author Jakub Liput
@@ -35,6 +35,8 @@ const {
     service,
   },
   get,
+  set,
+  setProperties,
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
@@ -256,6 +258,20 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           strategy: 'no_update',
         },
         supportingProviders: _genSupportingProviders(),
+        filesPopularity: {
+          enabled: true,
+          restUrl: 'https://example.com',
+        },
+        autoCleaning: {
+          enabled: true,
+          settings: {
+            fileSizeGreaterThan: 10000,
+            fileSizeLesserThan: 10000000,
+            fileTimeNotActive: 60 * 60 * 12,
+            spaceSoftQuota: 1000,
+            spaceHardQuota: 100000,
+          },
+        },
       });
       spaces.push({
         id: 'space2__verylongid',
@@ -277,7 +293,8 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         supportingProviders: _genSupportingProviders(),
       });
       // additional spaces to test issue VFS-3673
-      _.times(8, i => {
+      // FIXME: disabled for manual tests, re-enable before merging
+      _.times(0, i => {
         spaces.push({
           id: i + '-space',
           name: 'Test Space ' + i,
@@ -512,16 +529,14 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   _req_oneprovider_modifySpace: computed(function () {
     return {
-      success: (id, { storageImport, storageUpdate }) => {
+      success: (id, data) => {
         let spaces = this.get('__spaces');
         let space = _.find(spaces, s => s.id === id);
         if (space) {
-          if (storageImport) {
-            space.storageImport = storageImport;
+          if (!get(data, 'filesPopularity.enabled')) {
+            set(data, 'autoCleaning', { enabled: false });
           }
-          if (storageUpdate) {
-            space.storageUpdate = storageUpdate;
-          }
+          setProperties(space, data);
           return null;
         } else {
           return null;
@@ -570,7 +585,26 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       }
     }),
 
+  _req_oneprovider_getProviderSpaceAutoCleaningReports: computedResourceGetHandler(
+    '__spaceAutoCleaningReports', {
+      reportEntries: [],
+    }
+  ),
+
+  _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
+    '__spaceAutoCleaningStatus', {
+      isWorking: false,
+      spaceUsed: 100000,
+    }
+  ),
+
   // -- MOCKED RESOURCE STORE --
+
+  // space id -> AutCleaningStatus
+  __spaceAutoCleaningStatus: PlainableObject.create({}),
+
+  // space id -> AutoCleaningReports object
+  __spaceAutoCleaningReports: PlainableObject.create({}),
 
   __provider: PlainableObject.create({
     id: PROVIDER_ID,
@@ -608,3 +642,34 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   __spaces: A([]),
 });
+
+function computedResourceGetHandler(storeProperty, defaultData) {
+  return computed(function () {
+    return {
+      success: (id) => {
+        const record = get(this, `${storeProperty}.${id}`);
+        return record || defaultData;
+      },
+    };
+  });
+}
+
+// FIXME: to use
+// function computedResourceSetHandler(storeProperty, defaultData = {}) {
+//   return computed(function () {
+//     return {
+//       success: (id, data) => {
+//         return {
+//           success: (id) => {
+//             const record = get(this, `${storeProperty}.${id}`);
+//             if (record) {
+//               return setProperties(record, _.assign({}, defaultData, record));
+//             } else {
+//               return set(record, id, data);
+//             }
+//           },
+//         };
+//       },
+//     };
+//   });
+// }

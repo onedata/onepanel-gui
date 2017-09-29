@@ -96,7 +96,7 @@ export default SpaceSyncChartBase.extend({
         series: [{
           name: chartSeriesLabel,
           data: _chartValues,
-          className: `ct-series-0`,
+          className: 'ct-series-0',
         }],
         lastLabel: this.getChartLabel(0),
       };

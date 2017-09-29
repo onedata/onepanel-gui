@@ -1,11 +1,11 @@
-<div class="row content-row">
+<div class="row content-row no-border">
   <strong>Synchronization throughput</strong>
   {{one-label-tip
     title="The chart shows the throughput of file operations"
     placement="top"
   }}
 </div>
-<div class="row content-row chart-row">
+<div class="row content-row chart-row has-border">
   {{#if syncChartDataError}}
     {{resource-load-error reason=syncChartDataError}}
   {{else}}

@@ -1,0 +1,61 @@
+{{!-- FIXME: move i18n to component's file --}}
+{{#bs-button-group
+  class="btn-group-floating btn-group-3-btns"
+  value=syncInterval
+  type="radio"
+  onChange=syncIntervalChanged as |bg|
+}}
+  {{#bg.button type="default" class="btn-sm btn-sync-interval-minute" value="minute"}}
+    {{t "components.clusterSpacesTableItem.minute"}}
+    {{bs-tooltip title="Show statistics for last minute"}}
+  {{/bg.button}}
+  {{#bg.button type="default" class="btn-sm btn-sync-interval-hour" value="hour"}}
+    {{t "components.clusterSpacesTableItem.hour"}}
+    {{bs-tooltip title="Show statistics for last hour"}}
+  {{/bg.button}}
+  {{#bg.button type="default" class="btn-sm btn-sync-interval-day" value="day"}}
+    {{t "components.clusterSpacesTableItem.day"}}
+    {{bs-tooltip title="Show statistics for last day"}}
+  {{/bg.button}}
+{{/bs-button-group}}
+{{#if timeStatsLoading}}
+  {{spin-spinner-block
+    sizeClass="xs"
+    class="btn-group-addon btn-group-addon-sm pull-left"
+  }}
+{{/if}}
+{{#if statsFrozen}}
+  <div class="btn-group-addon btn-group-addon-sm one-info-label">
+    {{one-icon icon="sign-info"}}
+    <label>
+      {{t "components.clusterSpacesTableItem.syncDone"}}
+    </label>
+  </div>
+{{/if}}
+{{#if timeStatsError}}
+  <div class="row">
+    {{resource-load-error class="error-time-stats" reason=timeStatsError}}
+  </div> 
+{{!-- TODO: add a loader here in place of each chart --}}
+{{else if (not timeStatsLoading)}}
+  <div class="row row-time-stats-charts">
+    <div class="col-xs-12 item-table-cell item-table-content-cell">
+      {{space-sync-chart-operations
+        timeStats=timeStats
+        timeUnit=syncInterval
+      }}
+    </div>
+    <div class="col-xs-12 item-table-cell item-table-content-cell">
+      {{space-sync-chart-queue
+        timeStats=timeStats
+        timeUnit=syncInterval
+      }}
+    </div>
+    <div class="col-xs-12 item-table-cell item-table-content-cell">
+      {{space-sync-chart-throughput
+        timeStats=timeStats
+        timeUnit=syncInterval
+      }}
+    </div>
+  </div>
+{{/if}}

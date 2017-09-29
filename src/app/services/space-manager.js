@@ -80,22 +80,27 @@ export default Service.extend({
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
    * @param {StorageImportDetails} spaceData.storageImport
    * @param {StorageUpdateDetails} spaceData.storageUpdate
+   * @param {boolean} reload if true, after success modify, fetch the record
+   * @returns {PromiseObject<undefined|object>}
    */
-  modifySpaceDetails(id, spaceData) {
+  modifySpaceDetails(id, spaceData, reload = false) {
     let onepanelServer = this.get('onepanelServer');
-    let promise = new Promise((resolve, reject) => {
-      let req =
-        onepanelServer.request('oneprovider', 'modifySpace', id, spaceData);
-      req.then(({ data }) => resolve(data));
-      req.catch(reject);
-    });
+    let promise = onepanelServer
+      .request('oneprovider', 'modifySpace', id, spaceData)
+      .then(({ data }) => {
+        return reload ? this.getSpaceDetails(id) : data;
+      });
     return PromiseObject.create({ promise });
   },
 
   /**
    * Support space in current provider using some storage
    * 
-   * @param {Object} { size: Number, storageId: string, token: string, mountInRoot = false } 
+   * @param {Object} supportSpaceData
+   * @param {number} supportSpaceData.size
+   * @param {string} supportSpaceData.storageId
+   * @param {string} supportSpaceData.token
+   * @param {boolean} [supportSpaceData.mountInRoot=undefined]
    * @returns {Promise}
    */
   supportSpace(supportSpaceData) {
@@ -120,6 +125,7 @@ export default Service.extend({
    * @param {string} period one of: minute, hour, day
    * @param {Array.string} metrics array with any of: queueLength, insertCount,
    *  updateCount, deleteCount
+   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderSpaceSyncStats results
    */
   getSyncStats(spaceId, period, metrics) {
     // convert metrics to special-format string that holds an array
@@ -145,6 +151,7 @@ export default Service.extend({
   /**
    * Helper method to get only status of sync without statistics for charts
    * @param {string} spaceId
+   * @returns {Promise<object>}
    */
   getSyncStatusOnly(spaceId) {
     return this.getSyncStats(spaceId);
@@ -155,9 +162,45 @@ export default Service.extend({
    * all charts
    *
    * @param {*} spaceId 
-   * @param {string} period one of: minute, hour, day (like in Onepanel.SyncStats)
+   * @param {string} [period] one of: minute, hour, day (like in Onepanel.SyncStats)
+   * @returns {Promise<object>}
    */
   getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
     return this.getSyncStats(spaceId, period, SYNC_METRICS);
   },
+
+  /**
+   * @param {string} spaceId
+   * @returns {Promise<Onepanel.SpaceAutoCleaningStatus>}
+   */
+  getAutoCleaningStatus(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceAutoCleaningStatus',
+      spaceId
+    ).then(({ data }) => data);
+  },
+
+  /**
+   * @param {string} spaceId
+   * @returns {Promise<Onepanel.SpaceAutoCleaningReports>}
+   */
+  getAutoCleaningReports(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getProviderSpaceAutoCleaningReports',
+      spaceId
+    ).then(({ data }) => data);
+  },
+
+  configureSpaceFilesPopularity(spaceId, enabled) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'configureSpaceFilesPopularity',
+      spaceId, {
+        enabled,
+      }
+    ).then(({ data }) => data);
+  },
+
 });

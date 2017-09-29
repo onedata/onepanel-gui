@@ -40,12 +40,12 @@
     <div class="row no-border">
       <div class="col-xs-12">
         <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
-          <h1 class="form-title">Data synchronization configuration</h1>
+          <h1 class="form-title">{{t "components.clusterSpacesTableItem.syncFormHeader"}}</h1>
           {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
             defaultValues=importFormDefaultValue
             mode=(if _importActive "edit" "new")
             isFormOpened=importConfigurationOpen
-            submit=(action "importUpdateConfigurationSubmit")
+            submit=(action "submitModifySpace")
           }}
         </div>
       </div>
@@ -53,15 +53,15 @@
     <div class="row">
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.name'}}:</strong> 
+          <strong>{{t "components.clusterSpacesTableItem.name"}}:</strong> 
           {{name-conflict item=space tagName="span" class="one-label space-name"}}
         </div>
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.id'}}:</strong>
+          <strong>{{t "components.clusterSpacesTableItem.id"}}:</strong>
           <span class="one-label space-id">{{space.id}}</span>
         </div>
         <div class="row content-row">
-          <strong>{{t 'components.clusterSpacesTableItem.mountInRoot'}}:</strong>
+          <strong>{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>
           {{one-way-toggle
             checked=space.mountInRoot
             isReadOnly=true
@@ -70,13 +70,13 @@
         </div>
         <div class="row content-row">
           {{#promise-proxy-container proxy=_storage}}
-            <strong>{{t 'components.clusterSpacesTableItem.storage'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storage"}}:</strong>
             <span class="one-label space-provider-storage">{{_storage.name}}</span>
           {{/promise-proxy-container}}
         </div>
         {{#if space.importEnabled}}
           <div class="row content-row space-import">
-            <strong>{{t 'components.clusterSpacesTableItem.storageImport.importStrategy'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storageImport.importStrategy"}}:</strong>
             <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
             {{#each importProperties as |property|}}
               <div class="row content-row nested-row">
@@ -86,7 +86,7 @@
             {{/each}}
           </div>
           <div class="row content-row space-update">
-            <strong>{{t 'components.clusterSpacesTableItem.storageUpdate.updateStrategy'}}:</strong>
+            <strong>{{t "components.clusterSpacesTableItem.storageUpdate.updateStrategy"}}:</strong>
             <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
             {{#each updateProperties as |property|}}
               <div class="row content-row nested-row">
@@ -104,72 +104,68 @@
         {{/promise-proxy-container}}
       </div>
       
-      {{#if space.importEnabled}}
-        <div class="col-xs-12 item-table-cell item-table-content-cell">
-          <div class="row content-row">
-            <strong>Storage synchronization statistics</strong>
-          </div>
-          <div class="row content-row">
-            <label class="btn-group-addon btn-group-addon-sm pull-left">Time span:</label>
-            {{#bs-button-group
-              class="pull-left"
-              value=syncInterval
-              type="radio"
-              onChange=(action "onSyncIntervalChange") as |bg|
-            }}
-              {{#bg.button type="default" class="btn-sm" value="minute"}}
-                {{t "components.clusterSpacesTableItem.minute"}}
-              {{/bg.button}}
-              {{#bg.button type="default" class="btn-sm" value="hour"}}
-                {{t "components.clusterSpacesTableItem.hour"}}
-              {{/bg.button}}
-              {{#bg.button type="default" class="btn-sm" value="day"}}
-                {{t "components.clusterSpacesTableItem.day"}}
-              {{/bg.button}}
-            {{/bs-button-group}}
-            {{#if timeStatsLoading}}
-              {{spin-spinner-block
-                sizeClass="xs"
-                class="btn-group-addon btn-group-addon-sm pull-left"
-              }}
-            {{/if}}
-            {{#if statsFrozen}}
-              <div class="btn-group-addon btn-group-addon-sm one-info-label">
-                {{one-icon icon="sign-info"}}
-                <label>
-                  {{t "components.clusterSpacesTableItem.syncDone"}}
-                </label>
-              </div>
-            {{/if}}
-          </div>
-          {{#if timeStatsError}}
-            <div class="row">
-              {{resource-load-error reason=timeStatsError}}
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        <div class="row content-row">
+          {{!-- FIXME: i18n tooltips for tabs in disabled state --}}
+          {{#bs-tab fade=false customTabs=true activeId=initActiveTabId as |tab|}}
+            {{#bs-nav type="tabs" as |nav|}}
+              {{#nav.item class=tabSyncClass active=(bs-eq tab.activeId tabSyncId)}}
+                <a href={{concat "#" tabSyncId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabSyncId}}>
+                  {{t "components.clusterSpacesTableItem.tabSync"}}
+                </a>
+                {{bs-tooltip title="This is an awesome feature"}}
+              {{/nav.item}}
+              {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
+                <a href= {{concat "#" tabPopularId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabPopularId}}>
+                  {{t "components.clusterSpacesTableItem.tabPopular"}}
+                </a>
+                {{bs-tooltip title="This is an awesome feature"}}
+              {{/nav.item}}
+              {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
+                <a href= {{concat "#" tabCleanId}}
+                  class="nav-link"
+                  role="tab" {{action tab.select tabCleanId}}>
+                  {{t "components.clusterSpacesTableItem.tabClean"}}
+                </a>
+                {{bs-tooltip title="This is an awesome feature"}}
+              {{/nav.item}}
+            {{/bs-nav}}
+
+            <div class="tab-content">
+              {{#tab.pane elementId=tabSyncId}}
+                {{#if (eq tab.activeId tabSyncId)}}
+                  {{space-storage-synchronization
+                    syncInterval=syncInterval
+                    statsFrozen=statsFrozen
+                    timeStats=timeStats
+                    timeStatsError=timeStatsError
+                    timeStatsLoading=timeStatsLoading
+                    syncIntervalChanged=(action "onSyncIntervalChange")
+                  }}
+                {{/if}}
+              {{/tab.pane}}
+              {{#tab.pane elementId=tabPopularId}}
+                {{space-files-popularity
+                  filesPopularity=filesPopularity
+                  updateFilesPopularity=(action "updateFilesPopularity")
+                }}
+              {{/tab.pane}}
+              {{#tab.pane elementId=tabCleanId}}
+                {{space-auto-cleaning
+                  autoCleaning=autoCleaning
+                  updateAutoCleaning=(action "updateAutoCleaning")
+                }}
+              {{/tab.pane}}
+                             
             </div>
-          {{else if (not timeStatsLoading)}}
-            <div class="row">
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-operations
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-queue
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-              <div class="col-xs-12 item-table-cell item-table-content-cell">
-                {{space-sync-chart-throughput
-                  timeStats=timeStats
-                  timeUnit=syncInterval
-                }}
-              </div>
-            </div>
-          {{/if}}
+          {{/bs-tab}}
         </div>
-      {{/if}}
+      </div>
+      
     </div>
   </div>
 {{/listItem.content}}

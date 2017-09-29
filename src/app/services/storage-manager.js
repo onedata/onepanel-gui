@@ -37,8 +37,8 @@ export default Service.extend({
   /**
    * Fetch collection of onepanel ClusterStorage
    * 
-   * @param {string} id
-   * @return {PromiseObject} resolves ArrayProxy of SpaceDetails promise proxies
+   * @param {boolean} [reload=false] if true, force call to backend
+   * @return {PromiseObject<Ember.ArrayProxy>} resolves ArrayProxy of SpaceDetails promise proxies
    */
   getStorages(reload = false) {
     let onepanelServer = this.get('onepanelServer');
@@ -74,7 +74,8 @@ export default Service.extend({
 
   /**
    * @param {string} id
-   * @return {PromiseObject} resolves ClusterStorage ObjectProxy
+   * @param {boolean} [reload=false] if true, force call to backend
+   * @returns {PromiseObject} resolves ClusterStorage ObjectProxy
    */
   getStorageDetails(id, reload = false) {
     let onepanelServer = this.get('onepanelServer');

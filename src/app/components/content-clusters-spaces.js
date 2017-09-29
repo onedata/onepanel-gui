@@ -82,6 +82,7 @@ export default Component.extend({
    * @param {string} supportSpaceData.token
    * @param {number} supportSpaceData.size
    * @param {boolean} supportSpaceData.mountInRoot
+   * @returns {Promise.<any>} SpaceManager.supportSpace promise
    */
   _supportSpace(supportSpaceData) {
     return this.get('spaceManager').supportSpace(supportSpaceData);
@@ -91,8 +92,8 @@ export default Component.extend({
     return this.get('spaceManager').revokeSpaceSupport(spaceId);
   },
 
-  _modifySpace(id, data) {
-    return this.get('spaceManager').modifySpaceDetails(id, data);
+  _modifySpace(id, data, reload = false) {
+    return this.get('spaceManager').modifySpaceDetails(id, data, reload);
   },
 
   actions: {
@@ -113,7 +114,7 @@ export default Component.extend({
         this._updateSpacesList();
         this.set('_supportSpaceOpened', false);
         globalNotify.info(
-          `Added a new support for space`
+          'Added a new support for space'
         );
       });
       return supportingSpace;
@@ -133,9 +134,9 @@ export default Component.extend({
       });
       return revoking;
     },
-    modifySpace(space, data) {
+    modifySpace(space, data, reload = false) {
       let globalNotify = this.get('globalNotify');
-      let modifying = this._modifySpace(get(space, 'id'), data);
+      let modifying = this._modifySpace(get(space, 'id'), data, reload);
       let spaceName = get(space, 'name');
       modifying.then(() => {
         this._updateSpacesList();

@@ -69,6 +69,7 @@ export default Ember.Component.extend({
 
   /**
    * Force update storages list - makes an API call
+   * @returns {undefined}
    */
   _updateStoragesProxy() {
     let storageManager = this.get('storageManager');
@@ -77,6 +78,7 @@ export default Ember.Component.extend({
 
   /**
    * Force update spaces list - makes an API call
+   * @returns {undefined}
    */
   _updateSpacesProxy() {
     let spaceManager = this.get('spaceManager');
@@ -87,6 +89,7 @@ export default Ember.Component.extend({
    * Uses API to add new storage and updated storages list from remote if succeeds
    * @param {object} storageFormData should have properties needed to construct
    *  onepanel storage model
+   * @returns {Promise<undefined|object>}
    */
   _submitAddStorage(storageFormData) {
     let {
@@ -121,10 +124,10 @@ export default Ember.Component.extend({
 
     /**
      * Create an instance of ClusterStorages using data from add storage form
-     * @param {object} formData contains attributes for specific storage type as in REST API
-     * @param {object} formData.type required attribute for storage
-     * @param {object} formData.name required attribute for storage
-     * @returns {subclass of ClusterStorages}
+     * @param {object} storageFormData contains attributes for specific storage type as in REST API
+     * @param {object} storageFormData.type required attribute for storage
+     * @param {object} storageFormData.name required attribute for storage
+     * @returns {ClusterStorages} instance of ClusterStorages subclass
      */
     submitAddStorage(storageFormData) {
       let { name } = storageFormData;

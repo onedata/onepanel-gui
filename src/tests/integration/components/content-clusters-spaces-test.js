@@ -7,6 +7,8 @@ import wait from 'ember-test-helpers/wait';
 
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
+import providerManagerStub from '../../helpers/provider-manager-stub';
+import { registerService, lookupService } from '../../helpers/stub-service';
 
 const {
   Service,
@@ -41,16 +43,12 @@ describe('Integration | Component | content clusters spaces', function () {
   });
 
   beforeEach(function () {
-    this.register('service:space-manager', spaceManagerStub);
-    this.register('service:i18n', i18nStub);
-    this.register('service:storage-manager', storageManagerStub);
-    // Calling inject puts the service instance in the test's context,
-    // making it accessible as "locationService" within each test
-    this.inject.service('space-manager', { as: 'spaceManager' });
-    this.inject.service('i18n', { as: 'i18n' });
-    this.inject.service('storage-manager', { as: 'storageManager' });
+    registerService(this, 'space-manager', spaceManagerStub);
+    registerService(this, 'i18n', i18nStub);
+    registerService(this, 'storage-manager', storageManagerStub);
+    registerService(this, 'provider-manager', providerManagerStub);
 
-    let spaceManager = this.container.lookup('service:space-manager');
+    const spaceManager = lookupService(this, 'space-manager');
     spaceManager.set('__spaces', SPACES);
   });
 

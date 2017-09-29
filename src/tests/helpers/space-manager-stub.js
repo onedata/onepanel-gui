@@ -25,11 +25,28 @@ export default Service.extend({
       }),
     });
   },
+
   getSpaceDetails(id) {
     return PromiseObject.create({
       promise: new Promise((resolve) =>
         resolve(_.find(this.get('__spaces'), s => get(s, 'id') === id))
       ),
     });
+  },
+
+  getFilesPopularity() {
+    throw new Error('not implemented');
+  },
+
+  getAutoCleaning() {
+    throw new Error('not implemented');
+  },
+
+  getAutoCleaningStatus() {
+    throw new Error('not implemented');
+  },
+
+  getAutoCleaningReports() {
+    throw new Error('not implemented');
   },
 });

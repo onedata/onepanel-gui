@@ -5,6 +5,7 @@ import Plainable from 'ember-plainable/mixins/plainable';
 
 /**
  * Somehow hacky method to check if object is Ember Object
+ * @param {object|Ember.Object} obj
  * @returns {boolean} true if obj is Ember.Object
  */
 function isEmberObject(obj) {
@@ -14,13 +15,13 @@ function isEmberObject(obj) {
 export default function plainCopy(obj) {
   if (Ember.isArray(obj)) {
     return obj.map(plainCopy);
-  } else if (typeof (obj) === "object") {
+  } else if (typeof (obj) === 'object') {
     if (Plainable.detect(obj)) {
       return obj.plainCopy();
     } else if (!isEmberObject(obj)) {
       return obj;
     } else {
-      throw new Error(Ember.String.fmt("%@ is not Plainable", [obj]));
+      throw new Error(Ember.String.fmt('%@ is not Plainable', [obj]));
     }
   } else {
     return obj;

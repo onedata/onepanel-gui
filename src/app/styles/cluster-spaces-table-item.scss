@@ -4,4 +4,48 @@
       padding-right: 130px;
     }
   }
+  .tab-pane {
+    .row-time-stats-charts {
+      border-bottom: 0;
+      .item-table-content-cell:last-child {
+        .chart-row {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
+  @media (max-width: 900px) {
+    .nav-tabs li {
+      float: none;
+      &:not(:last-child) {
+        .nav-link {
+          border-radius: $border-radius-small;
+          border-bottom-color: $main-border-color;
+        }
+      }
+      .nav-link {
+        margin: 0;
+      }
+    }
+  }
+  @media (max-width: 900px) {
+    .btn-group-floating {
+      position: relative;
+      width: 100%;
+      padding: $padding-large-vertical $padding-large-horizontal;
+      &.btn-group-3-btns {
+        .btn {
+          width: 33.333%;
+        }
+      }
+    }
+  }
+  @media (min-width: 901px) {
+    .btn-group-floating {
+      position: absolute;
+      top: $padding-base-vertical;
+      right: $padding-large-horizontal;
+      z-index: 1;
+    }
+  }
 }
