@@ -165,7 +165,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
             },
           };
           let taskId = getTaskId(response);
-          run.later(() => {
+          run.next(() => {
             resolve({
               __request_method: method,
               data: handler.success(...params),
@@ -178,13 +178,13 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
           };
-          reject({ __request_method: method, response, toString: responseToString });
+          run.next(() => reject({ __request_method: method, response, toString: responseToString }));
         }
 
       } else {
-        reject(
+        run.next(() => reject(
           `onepanel-server-mock: mock has no method for: ${api}_${method}`
-        );
+        ));
       }
     });
 
@@ -208,9 +208,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     let fakeLoginFlag = cookies.read('fakeLoginFlag');
     let validating = new Promise((resolve, reject) => {
       if (fakeLoginFlag) {
-        resolve();
+        run.next(resolve);
       } else {
-        reject();
+        run.next(reject);
       }
     });
     return validating.then(() => this.initClient());
@@ -222,9 +222,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     let loginCall = new Promise((resolve, reject) => {
       if (username === 'admin' && password === 'password') {
         cookies.write('fakeLoginFlag', true);
-        resolve();
+        run.next(resolve);
       } else {
-        reject();
+        run.next(reject);
       }
     });
     return loginCall.then(() => this.validateSession());
@@ -298,7 +298,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       _.times(0, i => {
         spaces.push({
           id: i + '-space',
-          name: 'Test Space ' + i,
+          name: 'Test Space',
           storageId: storage1.id,
           supportingProviders: _genSupportingProviders(),
         });

@@ -59,15 +59,40 @@ export default Component.extend(
     listItem: null,
 
     /**
+     * @type {Ember.ObjectProxy<SpaceDetails>}
+     */
+    spaceProxy: null,
+
+    // TODO: support for errors after update
+    /**
      * @type {SpaceDetails}
      */
-    space: null,
+    space: computed('spaceProxy.isFulfilled', function () {
+      const spaceProxy = this.get('spaceProxy');
+      if (get(spaceProxy, 'isFulfilled') === true) {
+        return this.set('_spaceCache', get(spaceProxy, 'content'));
+      } else {
+        return this.get('_spaceCache');
+      }
+    }),
+
+    /**
+     * Last resolved SpaceDetails
+     * @type {SpaceDetails}
+     */
+    _spaceCache: null,
 
     /**
      * Storage that supports space on this panel's provider
      * @type {PromiseObject}
      */
-    _storage: null,
+    _storage: computed('space.storageId', function () {
+      let space = this.get('space');
+      if (space) {
+        let storageManager = this.get('storageManager');
+        return storageManager.getStorageDetails(get(space, 'storageId'));
+      }
+    }),
 
     /**
      * If true, space revoke modal is opened
@@ -168,18 +193,6 @@ export default Component.extend(
       }
       return space;
     }),
-
-    init() {
-      this._super(...arguments);
-      let space = this.get('space');
-      if (space) {
-        let storageManager = this.get('storageManager');
-        this.set(
-          '_storage',
-          storageManager.getStorageDetails(get(space, 'storageId'))
-        );
-      }
-    },
 
     actions: {
       startRevoke() {

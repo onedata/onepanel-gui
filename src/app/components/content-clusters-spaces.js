@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import ConflictIdsArray from 'onedata-gui-common/utils/conflict-ids-array';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 const {
   Component,
@@ -30,10 +30,17 @@ export default Component.extend({
 
   spacesProxy: null,
 
-  spaces: computed('spacesProxy.content.@each.isSettled', function () {
-    let content = this.get('spacesProxy.content');
-    if (isArray(content) && content.every(space => get(space, 'isSettled'))) {
-      return ConflictIdsArray.create({ content });
+  spaces: computed.oneWay('spacesProxy.content'),
+
+  /**
+   * Using observer, because when we use computed property for spaces,
+   * the whole spaces list will be generated every time name and isSettled
+   * are changed.
+   */
+  addConflictLabels: observer('spaces.@each.{name,isSettled}', function () {
+    const spaces = this.get('spaces');
+    if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
+      addConflictLabels(spaces);
     }
   }),
 

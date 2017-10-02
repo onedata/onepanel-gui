@@ -18,7 +18,7 @@ const {
 
 export default Component.extend({
   /**
-   * @type {SpaceDetails[]|Ember.ArrayProxy.SpaceDetails}
+   * @type {SpaceDetails[]|Ember.ArrayProxy<SpaceDetails>}
    */
   spaces: null,
 
