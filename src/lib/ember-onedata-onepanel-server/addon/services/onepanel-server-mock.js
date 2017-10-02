@@ -18,6 +18,7 @@ import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deploym
 import Plainable from 'onedata-gui-common/mixins/plainable';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
+import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -36,7 +37,6 @@ const {
   },
   get,
   set,
-  setProperties,
   run,
 } = Ember;
 
@@ -534,12 +534,13 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         let spaces = this.get('__spaces');
         let space = _.find(spaces, s => s.id === id);
         if (space) {
-          if (get(data, 'filesPopularity.enabled')) {
-            set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
-          } else {
+          const popEnabled = get(data, 'filesPopularity.enabled');
+          if (popEnabled === false) {
             set(data, 'autoCleaning', { enabled: false });
+          } else if (popEnabled === true) {
+            set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
           }
-          setProperties(space, data);
+          emberObjectMerge(space, data);
           return null;
         } else {
           return null;
