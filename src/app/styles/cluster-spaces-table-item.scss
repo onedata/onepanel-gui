@@ -4,6 +4,9 @@
       padding-right: 130px;
     }
   }
+  .tab-content {
+    padding: 0;
+  }
   .tab-pane {
     .row-time-stats-charts {
       border-bottom: 0;
@@ -43,7 +46,7 @@
   @media (min-width: 901px) {
     .btn-group-floating {
       position: absolute;
-      top: $padding-base-vertical;
+      top: $padding-large-vertical;
       right: $padding-large-horizontal;
       z-index: 1;
     }

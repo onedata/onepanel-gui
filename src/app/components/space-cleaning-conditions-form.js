@@ -301,8 +301,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         'fileTimeNotActive',
       ].forEach((fieldName) => {
         if (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit')) {
-          data[fieldName] = _formData.get(fieldName + 'Number') *
-            _formData.get(fieldName + 'Unit').multiplicator;
+          data[fieldName] = Math.floor(_formData.get(fieldName + 'Number') *
+            _formData.get(fieldName + 'Unit').multiplicator);
         }
       });
       this._cleanModificationState();

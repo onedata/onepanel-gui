@@ -1,1 +1,12 @@
-
+<div class="row cleaning-container">
+  <div class="row content-row no-border"><h1>Remove files</h1></div>
+  <div class="cleaning-settings-row">
+    <div class="form-cell">
+      {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
+    </div>
+    <div class="bar-cell">
+      {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+    </div>
+  </div>
+  {{space-cleaning-raports data=data}}
+</div>

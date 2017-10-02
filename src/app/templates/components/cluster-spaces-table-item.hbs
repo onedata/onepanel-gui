@@ -115,7 +115,7 @@
                   role="tab" {{action tab.select tabSyncId}}>
                   {{t "components.clusterSpacesTableItem.tabSync"}}
                 </a>
-                {{bs-tooltip title="This is an awesome feature"}}
+                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
               {{/nav.item}}
               {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
                 <a href= {{concat "#" tabPopularId}}
@@ -123,7 +123,7 @@
                   role="tab" {{action tab.select tabPopularId}}>
                   {{t "components.clusterSpacesTableItem.tabPopular"}}
                 </a>
-                {{bs-tooltip title="This is an awesome feature"}}
+                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
               {{/nav.item}}
               {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
                 <a href= {{concat "#" tabCleanId}}
@@ -131,7 +131,7 @@
                   role="tab" {{action tab.select tabCleanId}}>
                   {{t "components.clusterSpacesTableItem.tabClean"}}
                 </a>
-                {{bs-tooltip title="This is an awesome feature"}}
+                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
               {{/nav.item}}
             {{/bs-nav}}
 
@@ -155,10 +155,13 @@
                 }}
               {{/tab.pane}}
               {{#tab.pane elementId=tabCleanId}}
-                {{space-auto-cleaning
-                  autoCleaning=autoCleaning
-                  updateAutoCleaning=(action "updateAutoCleaning")
-                }}
+                {{#if autoCleaning}}
+                  {{space-auto-cleaning
+                    autoCleaning=autoCleaning
+                    spaceSize=space.spaceSize
+                    updateAutoCleaning=(action "updateAutoCleaning")
+                  }}
+                {{/if}}
               {{/tab.pane}}
                              
             </div>

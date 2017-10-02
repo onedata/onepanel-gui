@@ -106,7 +106,7 @@ export default Component.extend({
         _readableValue,
       } = this.getProperties('_editorValue', 'onSave', '_readableValue');
 
-      onSave(parseFloat(_editorValue) * _readableValue.multiplicator);
+      onSave(Math.floor(parseFloat(_editorValue) * _readableValue.multiplicator));
       this.set('_inEditionMode', false);
     },
   },

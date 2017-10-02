@@ -3,7 +3,7 @@
     {{#form.group 
       class=(concat-classes (concat fieldName "Group") (if (get _formFieldsErrors (concat fieldName "Number")) "has-error"))}}
       <div class="row">
-        <label for={{fieldName}} class="col-xs-5 control-label">
+        <label for={{concat elementId fieldName}} class="col-xs-5 control-label">
           {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
         </label>
         <div class="col-xs-7">
@@ -12,7 +12,7 @@
             class="form-control input-sm"
             focusOut=(action "lostFocus")
             update=(action "dataChanged" (concat fieldName "Number"))
-            elementId=fieldName}}
+            elementId=(concat elementId fieldName)}}
           {{#power-select
             triggerClass="small"
             dropdownClass="small"

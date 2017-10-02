@@ -12,6 +12,9 @@
   }
   .form-group {
     margin-bottom: $padding-small-vertical;
+    .row {
+      border-bottom: 0;
+    }
   }
   .ember-basic-dropdown {
     display: inline-block;

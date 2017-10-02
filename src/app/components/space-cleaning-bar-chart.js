@@ -417,8 +417,8 @@ export default Component.extend({
      */
     slide(values) {
       this.setProperties({
-        _spaceHardQuota: values[1],
-        _spaceSoftQuota: values[0],
+        _spaceHardQuota: Math.floor(values[1]),
+        _spaceSoftQuota: Math.floor(values[0]),
         _allowLabelsEdition: false,
       });
     },
@@ -428,8 +428,8 @@ export default Component.extend({
      */
     sliderChanged(values) {
       this.setProperties({
-        _spaceSoftQuotaForSlider: values[0],
-        _spaceHardQuotaForSlider: values[1],
+        _spaceSoftQuotaForSlider: Math.floor(values[0]),
+        _spaceHardQuotaForSlider: Math.floor(values[1]),
         _allowLabelsEdition: true,
       });
       this._change();

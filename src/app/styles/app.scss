@@ -6,6 +6,7 @@
 @import 'cluster-host-table';
 @import 'cluster-host-table-row';
 @import 'storage-item';
+@import 'space-auto-cleaning';
 @import 'space-cleaning-bar-chart';
 @import 'space-cleaning-conditions-form';
 @import 'space-cleaning-raports';
@@ -14,46 +15,3 @@
 @import 'space-sync-chart-queue';
 @import 'space-sync-chart-throughput';
 @import 'login-box';
-
-.cleaning-settings-row {
-  .form-cell {
-    width: 280px;
-    form {
-      margin: 0;
-      padding: 0;
-    }
-  }
-  @media (min-width: 901px) {
-    display: table;
-    width: 100%;
-    .form-cell {
-      display: table-cell;
-    }
-    .bar-cell {
-      display: table-cell;
-      .indicators {
-        padding-top: 0;
-      }
-    }
-    .space-cleaning-conditions-form {
-      form {
-        margin: 0;
-      }
-    }
-  }
-  @media (max-width: 900px) {
-    .form-cell {
-      margin: 0 auto;
-      label {
-        text-align: right;
-        padding-right: $padding-base-horizontal;
-      }
-    }
-    .bar-cell {
-      .indicators p {
-        padding: 0 3em;
-        text-align: center;
-      }
-    }
-  }
-}

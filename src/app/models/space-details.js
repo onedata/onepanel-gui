@@ -15,6 +15,10 @@
 import Ember from 'ember';
 
 const {
+  get,
+} = Ember;
+
+const {
   computed,
 } = Ember;
 
@@ -63,5 +67,19 @@ export default Ember.Object.extend({
   updateEnabled: computed('storageUpdate.strategy', function () {
     let strategy = this.get('storageUpdate.strategy');
     return strategy != null && strategy !== 'no_update';
+  }),
+
+  /**
+   * Space size.
+   * @type {computed.number}
+   */
+  spaceSize: computed('supportingProviders', function () {
+    let providers = this.get('supportingProviders');
+    if (providers) {
+      return Object.keys(providers)
+        .reduce((sum, id) => sum + get(providers, id), 0);
+    } else {
+      return 0;
+    }
   }),
 });
