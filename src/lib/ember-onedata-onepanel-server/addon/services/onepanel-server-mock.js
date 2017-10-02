@@ -15,7 +15,7 @@ import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
-import Plainable from 'ember-plainable/mixins/plainable';
+import Plainable from 'onedata-gui-common/mixins/plainable';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import _ from 'lodash';
