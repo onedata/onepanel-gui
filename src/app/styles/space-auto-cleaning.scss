@@ -47,23 +47,19 @@
       }
     }
   }
-  .item-table .item-table-content-cell & .row.cleaning-container {
-    border-bottom: 0;
-    @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-xs-max) {
+    .one-collapsible-list-item:last-child {
+      .one-collapsible-list-item-header {
+        border-bottom: 0;
+      }
+      .one-collapsible-list-item-content.opened {
+        border-top: 1px solid $main-border-color;
+        border-bottom: 0;
+      }
+    }
+    .one-collapsible-list-item-header.row {
       margin: 0;
-      .one-collapsible-list-item:last-child {
-        .one-collapsible-list-item-header {
-          border-bottom: 0;
-        }
-        .one-collapsible-list-item-content.opened {
-          border-top: 1px solid $main-border-color;
-          border-bottom: 0;
-        }
-      }
-      .one-collapsible-list-item-header.row {
-        margin: 0;
-        padding: $padding-large-horizontal $padding-large-vertical;
-      }
+      padding: $padding-large-horizontal $padding-large-vertical;
     }
   }
 }

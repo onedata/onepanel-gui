@@ -1,14 +1,25 @@
-<div class="row cleaning-container">
-  {{#if autoCleaning.enabled}}
-    <div class="row content-row no-border"><h1>Remove files</h1></div>
-    <div class="cleaning-settings-row">
-      <div class="form-cell">
-        {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
-      </div>
-      <div class="bar-cell">
-        {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
-      </div>
-    </div>
-    {{space-cleaning-raports data=data}}
-  {{/if}}
+<div class="row content-row no-border">
+  <label for="cleaning-enabled"><h1>
+    {{t 'components.spaceAutoCleaning.autoCleaning'}}
+    {{one-way-toggle inputId="cleaning-enabled"
+      checked=autoCleaning.enabled
+      class="pull-right right"
+      spinnerSide="left"
+      update=(action "toggleCleaning")}}
+  </h1>
+  </label>
 </div>
+{{#if autoCleaning.enabled}}
+  <div class="row content-row no-border no-padding-top">
+    <h1>{{t 'components.spaceAutoCleaning.removeFiles'}}</h1>
+  </div>
+  <div class="cleaning-settings-row">
+    <div class="form-cell">
+      {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
+    </div>
+    <div class="bar-cell">
+      {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+    </div>
+  </div>
+  {{space-cleaning-raports data=data}}
+{{/if}}

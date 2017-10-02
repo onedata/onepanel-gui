@@ -9,6 +9,7 @@ export default Component.extend({
 
   /**
    * Space size.
+   * @virtual
    * @type {number}
    */
   spaceSize: 0,
@@ -21,6 +22,7 @@ export default Component.extend({
 
   /**
    * Action called on autocleaning settings change.
+   * @virtual
    * @type {Function}
    */
   updateAutoCleaning: () => {},
@@ -38,6 +40,10 @@ export default Component.extend({
     };
   }),
 
+  /**
+   * Data for bar chart.
+   * @type {computed.Ember.Object}
+   */
   barData: computed(
     'autoCleaning.settings.{spaceSoftQuota,spaceHardQuota}',
     'status.{isWorking,spaceUsed}',
@@ -58,6 +64,10 @@ export default Component.extend({
     }
   ),
 
+  /**
+   * Data for file conditions form.
+   * @type {computed.Object}
+   */
   conditionsFormData: computed(
     'autoCleaning.settings.{fileSizeGreaterThan,fileSizeLesserThan,fileTimeNotActive}',
     function () {
@@ -87,6 +97,13 @@ export default Component.extend({
   }],
 
   actions: {
+    toggleCleaning() {
+      let {
+        updateAutoCleaning,
+        autoCleaning,
+      } = this.getProperties('updateAutoCleaning', 'autoCleaning');
+      updateAutoCleaning({ enabled: !get(autoCleaning, 'enabled') });
+    },
     barValuesChanged(values) {
       let updateAutoCleaning = this.get('updateAutoCleaning');
       let settings = this.get('autoCleaning.settings');
