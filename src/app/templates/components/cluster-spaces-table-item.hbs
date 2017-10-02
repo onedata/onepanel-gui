@@ -1,102 +1,104 @@
 {{!-- TODO change .storage-table class or make generic --}}
 {{!-- TODO i18n --}}
 
-{{#listItem.header disableToggleIcon=true as |itemHeader|}}
-  <span class="item-icon-container">
-    {{one-icon class="item-icon" icon="space"}}
-    {{one-tooltip
-      title=space.name
-      placement="top"
-      arrowPlacement="left"
-      triggerEvents="hover"
-    }}
-  </span>
-  {{name-conflict item=space tagName="span" class="one-label space-name-header"}}
-  {{space-status-icons space=space syncStats=_syncStats}}
+{{!-- TODO: loading and error states (check spaceProxy status) --}}
+{{#if space}}
+  {{#listItem.header disableToggleIcon=true as |itemHeader|}}
+    <span class="item-icon-container">
+      {{one-icon class="item-icon" icon="space"}}
+      {{one-tooltip
+        title=space.name
+        placement="top"
+        arrowPlacement="left"
+        triggerEvents="hover"
+      }}
+    </span>
+    {{name-conflict item=space tagName="span" class="one-label space-name-header"}}
+    {{space-status-icons space=space syncStats=_syncStats}}
 
-  {{#one-collapsible-toolbar
-    isMinimized=true
-    toggleBtnClass="btn-menu-toggle"
-    as |dropdown|
-  }}
-    
-    {{#dropdown.item
-      itemAction=(action _importButtonActionName itemHeader.toggleAction)
-      triggerClasses="btn-toggle-sync-config"
+    {{#one-collapsible-toolbar
+      isMinimized=true
+      toggleBtnClass="btn-menu-toggle"
+      as |dropdown|
     }}
-      {{_importButtonTip}}
-    {{/dropdown.item}}
-    {{#dropdown.item
-      itemAction=(action "startRevoke")
-      triggerClasses="btn-revoke-space-support"
-    }}
-       {{t "components.clusterSpacesTableItem.revokeSpaceSupport"}}
-    {{/dropdown.item}}
-  {{/one-collapsible-toolbar}}
-{{/listItem.header}}
+      
+      {{#dropdown.item
+        itemAction=(action _importButtonActionName itemHeader.toggleAction)
+        triggerClasses="btn-toggle-sync-config"
+      }}
+        {{_importButtonTip}}
+      {{/dropdown.item}}
+      {{#dropdown.item
+        itemAction=(action "startRevoke")
+        triggerClasses="btn-revoke-space-support"
+      }}
+        {{t "components.clusterSpacesTableItem.revokeSpaceSupport"}}
+      {{/dropdown.item}}
+    {{/one-collapsible-toolbar}}
+  {{/listItem.header}}
 
-{{#listItem.content}}
-  <div class="row item-table">
-    <div class="row no-border">
-      <div class="col-xs-12">
-        <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
-          <h1 class="form-title">{{t "components.clusterSpacesTableItem.syncFormHeader"}}</h1>
-          {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
-            defaultValues=importFormDefaultValue
-            mode=(if _importActive "edit" "new")
-            isFormOpened=importConfigurationOpen
-            submit=(action "submitModifySpace")
-          }}
+  {{#listItem.content}}
+    <div class="row item-table">
+      <div class="row no-border">
+        <div class="col-xs-12">
+          <div class="row content-row has-border row-small{{if (not importConfigurationOpen) " row-hidden"}}">
+            <h1 class="form-title">{{t "components.clusterSpacesTableItem.syncFormHeader"}}</h1>
+            {{storage-import-update-form class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
+              defaultValues=importFormDefaultValue
+              mode=(if _importActive "edit" "new")
+              isFormOpened=importConfigurationOpen
+              submit=(action "submitModifySpace")
+            }}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
-        <div class="row content-row">
-          <strong>{{t "components.clusterSpacesTableItem.name"}}:</strong> 
-          {{name-conflict item=space tagName="span" class="one-label space-name"}}
-        </div>
-        <div class="row content-row">
-          <strong>{{t "components.clusterSpacesTableItem.id"}}:</strong>
-          <span class="one-label space-id">{{space.id}}</span>
-        </div>
-        <div class="row content-row">
-          <strong>{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>
-          {{one-way-toggle
-            checked=space.mountInRoot
-            isReadOnly=true
-            class="space-mountInRoot"
-          }}
-        </div>
-        <div class="row content-row">
-          {{#promise-proxy-container proxy=_storage}}
-            <strong>{{t "components.clusterSpacesTableItem.storage"}}:</strong>
-            <span class="one-label space-provider-storage">{{_storage.name}}</span>
-          {{/promise-proxy-container}}
-        </div>
-        {{#if space.importEnabled}}
-          <div class="row content-row space-import">
-            <strong>{{t "components.clusterSpacesTableItem.storageImport.importStrategy"}}:</strong>
-            <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
-            {{#each importProperties as |property|}}
-              <div class="row content-row nested-row">
-                <strong>{{t (concat (concat (concat importTranslationPrefix property)) ".name")}}:</strong>
-                <span class="one-label space-import-{{property}}">{{get space.storageImport property}}</span>
-              </div>
-            {{/each}}
+      <div class="row">
+        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
+          <div class="row content-row">
+            <strong>{{t "components.clusterSpacesTableItem.name"}}:</strong> 
+            {{name-conflict item=space tagName="span" class="one-label space-name"}}
           </div>
-          <div class="row content-row space-update">
-            <strong>{{t "components.clusterSpacesTableItem.storageUpdate.updateStrategy"}}:</strong>
-            <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
-            {{#each updateProperties as |property|}}
-              <div class="row content-row nested-row">
-                <strong>{{t (concat (concat (concat updateTranslationPrefix property)) ".name")}}:</strong>
-                <span class="one-label space-update-{{property}}">{{get space.storageUpdate property}}</span>
-              </div>
-            {{/each}}
+          <div class="row content-row">
+            <strong>{{t "components.clusterSpacesTableItem.id"}}:</strong>
+            <span class="one-label space-id">{{space.id}}</span>
           </div>
-        {{/if}}
-      </div>
+          <div class="row content-row">
+            <strong>{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>
+            {{one-way-toggle
+              checked=space.mountInRoot
+              isReadOnly=true
+              class="space-mountInRoot"
+            }}
+          </div>
+          <div class="row content-row">
+            {{#promise-proxy-container proxy=_storage}}
+              <strong>{{t "components.clusterSpacesTableItem.storage"}}:</strong>
+              <span class="one-label space-provider-storage">{{_storage.name}}</span>
+            {{/promise-proxy-container}}
+          </div>
+          {{#if space.importEnabled}}
+            <div class="row content-row space-import">
+              <strong>{{t "components.clusterSpacesTableItem.storageImport.importStrategy"}}:</strong>
+              <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
+              {{#each importProperties as |property|}}
+                <div class="row content-row nested-row">
+                  <strong>{{t (concat (concat (concat importTranslationPrefix property)) ".name")}}:</strong>
+                  <span class="one-label space-import-{{property}}">{{get space.storageImport property}}</span>
+                </div>
+              {{/each}}
+            </div>
+            <div class="row content-row space-update">
+              <strong>{{t "components.clusterSpacesTableItem.storageUpdate.updateStrategy"}}:</strong>
+              <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
+              {{#each updateProperties as |property|}}
+                <div class="row content-row nested-row">
+                  <strong>{{t (concat (concat (concat updateTranslationPrefix property)) ".name")}}:</strong>
+                  <span class="one-label space-update-{{property}}">{{get space.storageUpdate property}}</span>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
 
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
         {{#promise-proxy-container proxy=spaceSupportersProxy}}
@@ -135,59 +137,61 @@
               {{/nav.item}}
             {{/bs-nav}}
 
-            <div class="tab-content">
-              {{#tab.pane elementId=tabSyncId}}
-                {{#if (eq tab.activeId tabSyncId)}}
-                  {{space-storage-synchronization
-                    syncInterval=syncInterval
-                    statsFrozen=statsFrozen
-                    timeStats=timeStats
-                    timeStatsError=timeStatsError
-                    timeStatsLoading=timeStatsLoading
-                    syncIntervalChanged=(action "onSyncIntervalChange")
+              <div class="tab-content">
+                {{#tab.pane elementId=tabSyncId}}
+                  {{#if (eq tab.activeId tabSyncId)}}
+                    {{space-storage-synchronization
+                      syncInterval=syncInterval
+                      statsFrozen=statsFrozen
+                      timeStats=timeStats
+                      timeStatsError=timeStatsError
+                      timeStatsLoading=timeStatsLoading
+                      syncIntervalChanged=(action "onSyncIntervalChange")
+                    }}
+                  {{/if}}
+                {{/tab.pane}}
+                {{#tab.pane elementId=tabPopularId}}
+                  {{space-files-popularity
+                    filesPopularity=filesPopularity
+                    updateFilesPopularity=(action "updateFilesPopularity")
                   }}
-                {{/if}}
-              {{/tab.pane}}
-              {{#tab.pane elementId=tabPopularId}}
-                {{space-files-popularity
-                  filesPopularity=filesPopularity
-                  updateFilesPopularity=(action "updateFilesPopularity")
-                }}
-              {{/tab.pane}}
-              {{#tab.pane elementId=tabCleanId}}
-                {{#if autoCleaning}}
-                  {{space-auto-cleaning
-                    autoCleaning=autoCleaning
-                    spaceSize=space.spaceSize
-                    updateAutoCleaning=(action "updateAutoCleaning")
-                  }}
-                {{/if}}
-              {{/tab.pane}}
-                             
-            </div>
-          {{/bs-tab}}
+                {{/tab.pane}}
+                {{#tab.pane elementId=tabCleanId}}
+                  {{#if autoCleaning}}
+                    {{space-auto-cleaning
+                      autoCleaning=autoCleaning
+                      spaceSize=space.spaceSize
+                      updateAutoCleaning=(action "updateAutoCleaning")
+                    }}
+                  {{/if}}
+                {{/tab.pane}}
+                              
+              </div>
+            {{/bs-tab}}
+          </div>
         </div>
+        
       </div>
-      
     </div>
-  </div>
-{{/listItem.content}}
+  {{/listItem.content}}
 
-{{#bs-modal
-  open=_openRevokeModal
-  onHide=(action "hideRevoke")
-}}
-  <h1>Revoke space support?</h1>
-    <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
-    <div class="btn-toolbar">
-      {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
-        No, keep the support
-      {{/bs-button}}
-      {{#one-spin-button
-        class="btn btn-sm btn-danger"
-        action=(action "revokeSpace")
-      }}
-        {{one-icon icon="remove"}} <span>Yes, revoke</span>
-      {{/one-spin-button}}
-    </div>
-{{/bs-modal}}
+  {{#bs-modal
+    open=_openRevokeModal
+    onHide=(action "hideRevoke")
+  }}
+    <h1>Revoke space support?</h1>
+      <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
+      <div class="btn-toolbar">
+        {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
+          No, keep the support
+        {{/bs-button}}
+        {{#one-spin-button
+          class="btn btn-sm btn-danger"
+          action=(action "revokeSpace")
+        }}
+          {{one-icon icon="remove"}} <span>Yes, revoke</span>
+        {{/one-spin-button}}
+      </div>
+  {{/bs-modal}}
+{{/if}}
+

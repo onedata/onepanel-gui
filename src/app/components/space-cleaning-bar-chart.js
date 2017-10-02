@@ -43,6 +43,7 @@ export default Component.extend({
    * Action called on slider value change. First argument is an object with
    * fields: spaceSoftQuota, spaceHardQuota.
    * @type {Function}
+   * @returns {Promise<any>}
    */
   onChange: () => Promise.resolve(),
 
@@ -377,8 +378,8 @@ export default Component.extend({
         let element = this.$('.' + classes[index]);
         let propertyValue = this.get(property);
         element.css({
-          'width': propertyValue + '%',
-          'left': percentSum + '%',
+          width: propertyValue + '%',
+          left: percentSum + '%',
         });
         percentSum += propertyValue;
         if (!propertyValue) {
@@ -387,7 +388,7 @@ export default Component.extend({
           element.removeClass('hidden');
         }
       });
-      let usedWidth = { 'width': usedPercent + '%' };
+      let usedWidth = { width: usedPercent + '%' };
       this.$('.used').css(usedWidth);
       this.$('.pacman-row .used-space').css(usedWidth);
     }

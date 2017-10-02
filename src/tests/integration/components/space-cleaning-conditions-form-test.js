@@ -102,14 +102,14 @@ describe('Integration | Component | space cleaning conditions form', function() 
   it('does not accept float numbers in fileTimeNotActive input', function(done) {
     this.render(hbs`{{space-cleaning-conditions-form _formSendDebounceTime=0}}`);
     
-    const group = this.$(`.fileTimeNotActiveGroup`);
+    const group = this.$('.fileTimeNotActiveGroup');
     fillIn(group.find('input')[0], '3.4').then(() => {
       expect(group).to.have.class('has-error');
       done();
     });
   });
 
-  it(`debounce changes save`, function(done) {
+  it('debounce changes save', function(done) {
     const saveSpy = sinon.spy();
     this.on('onSave', saveSpy);
     this.render(hbs`
@@ -121,8 +121,8 @@ describe('Integration | Component | space cleaning conditions form', function() 
       fileSizeGreaterThan: 2097152,
       fileSizeLesserThan: 3145728,
     };
-    const greaterInputSelector = `.fileSizeGreaterThanGroup input`;
-    const lesserInputSelector = `.fileSizeLesserThanGroup input`;
+    const greaterInputSelector = '.fileSizeGreaterThanGroup input';
+    const lesserInputSelector = '.fileSizeLesserThanGroup input';
     fillIn(lesserInputSelector, '3').then(() => {
       fillIn(greaterInputSelector, '2').then(() => {
         blur(greaterInputSelector).then(() => {

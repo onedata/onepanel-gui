@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import ConflictIdsArray from 'onedata-gui-common/utils/conflict-ids-array';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 const {
   Component,
@@ -30,10 +30,17 @@ export default Component.extend({
 
   spacesProxy: null,
 
-  spaces: computed('spacesProxy.content.@each.isSettled', function () {
-    let content = this.get('spacesProxy.content');
-    if (isArray(content) && content.every(space => get(space, 'isSettled'))) {
-      return ConflictIdsArray.create({ content });
+  spaces: computed.oneWay('spacesProxy.content'),
+
+  /**
+   * Using observer, because when we use computed property for spaces,
+   * the whole spaces list will be generated every time name and isSettled
+   * are changed.
+   */
+  addConflictLabels: observer('spaces.@each.{name,isSettled}', function () {
+    const spaces = this.get('spaces');
+    if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
+      addConflictLabels(spaces);
     }
   }),
 
@@ -92,8 +99,8 @@ export default Component.extend({
     return this.get('spaceManager').revokeSpaceSupport(spaceId);
   },
 
-  _modifySpace(id, data, reload = false) {
-    return this.get('spaceManager').modifySpaceDetails(id, data, reload);
+  _modifySpace(id, data) {
+    return this.get('spaceManager').modifySpaceDetails(id, data);
   },
 
   actions: {
@@ -134,23 +141,21 @@ export default Component.extend({
       });
       return revoking;
     },
-    modifySpace(space, data, reload = false) {
+    modifySpace(space, data) {
       let globalNotify = this.get('globalNotify');
-      let modifying = this._modifySpace(get(space, 'id'), data, reload);
+      let spaceManager = this.get('spaceManager');
       let spaceName = get(space, 'name');
-      modifying.then(() => {
-        this._updateSpacesList();
-        globalNotify.info(
-          `Configuration of "${spaceName}" space support has been changed`
-        );
-      });
-      modifying.catch(error => {
-        globalNotify.backendError(
-          `configuration of "${spaceName}" space support`,
-          error
-        );
-      });
-      return modifying;
+      let spaceId = get(space, 'id');
+      return this._modifySpace(spaceId, data)
+        .then(() => {
+          return spaceManager.updateSpaceDetailsCache(spaceId);
+        })
+        .catch(error => {
+          globalNotify.backendError(
+            `configuration of "${spaceName}" space support`,
+            error
+          );
+        });
     },
   },
 });

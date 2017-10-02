@@ -15,9 +15,10 @@ import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
-import Plainable from 'ember-plainable/mixins/plainable';
+import Plainable from 'onedata-gui-common/mixins/plainable';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
+import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -36,7 +37,7 @@ const {
   },
   get,
   set,
-  setProperties,
+  run,
 } = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
@@ -164,27 +165,27 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
             },
           };
           let taskId = getTaskId(response);
-          resolve({
-            __request_method: method,
-            data: handler.success(...params),
-            response: response,
-            task: taskId && this.watchTaskStatus(taskId),
-            toString: responseToString,
+          run.next(() => {
+            resolve({
+              __request_method: method,
+              data: handler.success(...params),
+              response: response,
+              task: taskId && this.watchTaskStatus(taskId),
+              toString: responseToString,
+            }, 0);
           });
         } else {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
           };
-          reject({ __request_method: method, response, toString: responseToString });
+          run.next(() => reject({ __request_method: method, response, toString: responseToString }));
         }
 
       } else {
-        reject(
+        run.next(() => reject(
           `onepanel-server-mock: mock has no method for: ${api}_${method}`
-        );
+        ));
       }
-
-      resolve();
     });
 
     promise.catch(error => this.handleRequestError(error));
@@ -207,9 +208,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     let fakeLoginFlag = cookies.read('fakeLoginFlag');
     let validating = new Promise((resolve, reject) => {
       if (fakeLoginFlag) {
-        resolve();
+        run.next(resolve);
       } else {
-        reject();
+        run.next(reject);
       }
     });
     return validating.then(() => this.initClient());
@@ -221,9 +222,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     let loginCall = new Promise((resolve, reject) => {
       if (username === 'admin' && password === 'password') {
         cookies.write('fakeLoginFlag', true);
-        resolve();
+        run.next(resolve);
       } else {
-        reject();
+        run.next(reject);
       }
     });
     return loginCall.then(() => this.validateSession());
@@ -297,7 +298,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       _.times(0, i => {
         spaces.push({
           id: i + '-space',
-          name: 'Test Space ' + i,
+          name: 'Test Space',
           storageId: storage1.id,
           supportingProviders: _genSupportingProviders(),
         });
@@ -533,10 +534,13 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         let spaces = this.get('__spaces');
         let space = _.find(spaces, s => s.id === id);
         if (space) {
-          if (!get(data, 'filesPopularity.enabled')) {
+          const popEnabled = get(data, 'filesPopularity.enabled');
+          if (popEnabled === false) {
             set(data, 'autoCleaning', { enabled: false });
+          } else if (popEnabled === true) {
+            set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
           }
-          setProperties(space, data);
+          emberObjectMerge(space, data);
           return null;
         } else {
           return null;
