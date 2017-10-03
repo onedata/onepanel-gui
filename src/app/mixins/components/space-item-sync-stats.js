@@ -22,7 +22,6 @@ const {
   inject: { service },
   get,
   set,
-  on,
   observer,
   computed,
   computed: { readOnly },
@@ -161,18 +160,22 @@ export default Mixin.create({
 
     // interval of this Looper will be set in reconfigureSyncWatchers observer
     let _syncChartStatsWatcher = Looper.create({ immediate: true });
-    _syncChartStatsWatcher.on('tick', () => safeMethodExecution(this,
-      'fetchAllSyncStats'));
+    _syncChartStatsWatcher.on('tick', () =>
+      safeMethodExecution(this, 'fetchAllSyncStats')
+    );
 
     let _syncStatusWatcher = Looper.create({
       immediate: true,
       interval: this.get('syncStatusRefreshTime'),
     });
-    _syncStatusWatcher.on('tick', () => safeMethodExecution(this,
-      'checkSyncStatusUpdate'));
+    _syncStatusWatcher.on('tick', () =>
+      safeMethodExecution(this, 'checkSyncStatusUpdate')
+    );
     this.checkSyncStatusUpdate();
 
     this.setProperties({ _syncChartStatsWatcher, _syncStatusWatcher });
+
+    this.reconfigureSyncWatchers();
   },
 
   willDestroyElement() {
@@ -283,42 +286,41 @@ export default Mixin.create({
     });
   },
 
-  reconfigureSyncWatchers: on('init',
-    observer(
-      '_isActive',
-      '_importActive',
-      'syncInterval',
-      '_syncChartStatsWatcher',
-      'statsFrozen',
-      function () {
-        let {
-          _isActive,
-          _importActive,
-          syncInterval,
-          _syncChartStatsWatcher,
-          _syncStatusWatcher,
-          statsFrozen,
-          syncStatusRefreshTime,
-        } = this.getProperties(
-          '_isActive',
-          '_importActive',
-          'syncInterval',
-          '_syncChartStatsWatcher',
-          '_syncStatusWatcher',
-          'statsFrozen',
-          'syncStatusRefreshTime'
-        );
+  reconfigureSyncWatchers: observer(
+    '_isActive',
+    '_importActive',
+    'syncInterval',
+    '_syncChartStatsWatcher',
+    'statsFrozen',
+    function () {
+      let {
+        _isActive,
+        _importActive,
+        syncInterval,
+        _syncChartStatsWatcher,
+        _syncStatusWatcher,
+        statsFrozen,
+        syncStatusRefreshTime,
+      } = this.getProperties(
+        '_isActive',
+        '_importActive',
+        'syncInterval',
+        '_syncChartStatsWatcher',
+        '_syncStatusWatcher',
+        'statsFrozen',
+        'syncStatusRefreshTime'
+      );
 
-        if (_importActive) {
-          _syncStatusWatcher.set('interval', syncStatusRefreshTime);
-        }
+      if (_importActive) {
+        _syncStatusWatcher.set('interval', syncStatusRefreshTime);
+      }
 
-        if (_importActive && _isActive && !statsFrozen) {
-          _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
-        } else {
-          _syncChartStatsWatcher.stop();
-        }
-      })),
+      if (_importActive && _isActive && !statsFrozen) {
+        _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
+      } else {
+        _syncChartStatsWatcher.stop();
+      }
+    }),
 
   actions: {
     /**

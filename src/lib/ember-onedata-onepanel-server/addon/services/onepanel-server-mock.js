@@ -50,6 +50,9 @@ const MOCKED_SUPPORT = {
 
 const MOCK_SERVICE_TYPE = 'provider';
 
+/** In milliseconds @type {number} */
+const RESPONSE_DELAY = 1;
+
 let providerSupportCounter = 1;
 
 function _genSupportingProviders() {
@@ -58,6 +61,38 @@ function _genSupportingProviders() {
   providerSupportCounter += 1;
   _.assign(supportingProviders, MOCKED_SUPPORT);
   return supportingProviders;
+}
+
+function _genAutoCleaningSettings() {
+  return {
+    fileSizeGreaterThan: 10000,
+    fileSizeLesserThan: 10000000,
+    fileTimeNotActive: 60 * 60 * 12,
+    spaceSoftQuota: 100000,
+    spaceHardQuota: 10000000,
+  };
+}
+
+function _genAutoCleaning() {
+  return {
+    enabled: true,
+    settings: _genAutoCleaningSettings(),
+  };
+}
+
+function _genReport(duration = 1, isSuccess = true) {
+  const startedAt = new Date();
+  startedAt.setHours(startedAt.getHours() - duration - 1);
+  const stoppedAt = new Date(startedAt);
+  stoppedAt.setHours(stoppedAt.getHours() - duration);
+  return {
+    startedAt,
+    stoppedAt,
+    releasedSize: 1024 * 1024 * 50,
+    plannedReleasedSize: 1024 * 1024 * 75,
+    filesNumber: 80,
+    status: isSuccess ? 'success' : 'failure',
+  };
 }
 
 /**
@@ -140,17 +175,19 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       );
 
       if (!cookies.read('fakeLoginFlag')) {
-        reject({
-          __request_method: method,
-          response: {
-            statusCode: 401,
-            body: {
-              error: 'Unauthorized',
-              description: 'User not authorized',
+        run.later(() => {
+          reject({
+            __request_method: method,
+            response: {
+              statusCode: 401,
+              body: {
+                error: 'Unauthorized',
+                description: 'User not authorized',
+              },
             },
-          },
-          toString: responseToString,
-        });
+            toString: responseToString,
+          });
+        }, RESPONSE_DELAY);
       }
 
       let handler = this.get(`_req_${api}_${method}`);
@@ -165,26 +202,30 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
             },
           };
           let taskId = getTaskId(response);
-          run.next(() => {
+          run.later(() => {
             resolve({
               __request_method: method,
               data: handler.success(...params),
               response: response,
               task: taskId && this.watchTaskStatus(taskId),
               toString: responseToString,
-            }, 0);
+            }, RESPONSE_DELAY);
           });
         } else {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
           };
-          run.next(() => reject({ __request_method: method, response, toString: responseToString }));
+          run.later(() => {
+            reject({ __request_method: method, response, toString: responseToString });
+          }, RESPONSE_DELAY);
         }
 
       } else {
-        run.next(() => reject(
-          `onepanel-server-mock: mock has no method for: ${api}_${method}`
-        ));
+        run.later(() => {
+          reject(
+            `onepanel-server-mock: mock has no method for: ${api}_${method}`
+          );
+        }, RESPONSE_DELAY);
       }
     });
 
@@ -265,13 +306,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         },
         autoCleaning: {
           enabled: true,
-          settings: {
-            fileSizeGreaterThan: 10000,
-            fileSizeLesserThan: 10000000,
-            fileTimeNotActive: 60 * 60 * 12,
-            spaceSoftQuota: 1000,
-            spaceHardQuota: 100000,
-          },
+          settings: _genAutoCleaningSettings(),
         },
       });
       spaces.push({
@@ -474,7 +509,8 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
       };
     }),
 
-  _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster', '__spaces.[]',
+  _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster',
+    '__spaces.[]',
     function () {
       if (this.get('mockInitializedCluster')) {
         // TODO use Object.keys if available
@@ -535,10 +571,16 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         let space = _.find(spaces, s => s.id === id);
         if (space) {
           const popEnabled = get(data, 'filesPopularity.enabled');
-          if (popEnabled === false) {
-            set(data, 'autoCleaning', { enabled: false });
-          } else if (popEnabled === true) {
+          if (popEnabled === true) {
             set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
+          } else if (popEnabled === false) {
+            set(data, 'autoCleaning', { enabled: false });
+          }
+          const cleanEnabled = get(data, 'autoCleaning.enabled');
+          if (cleanEnabled === true) {
+            set(data, 'autoCleaning', _genAutoCleaning());
+          } else if (cleanEnabled === false) {
+            set(data, 'autoCleaning', { enabled: false });
           }
           emberObjectMerge(space, data);
           return null;
@@ -596,19 +638,25 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
   ),
 
   _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
-    '__spaceAutoCleaningStatus', {
-      isWorking: false,
-      spaceUsed: 100000,
-    }
+    '__spaceAutoCleaningStatus'
   ),
 
   // -- MOCKED RESOURCE STORE --
 
+  // FIXME: make dynamic in mock
   // space id -> AutCleaningStatus
-  __spaceAutoCleaningStatus: PlainableObject.create({}),
+  __spaceAutoCleaningStatus: PlainableObject.create({
+    isWorking: true,
+    spaceUsed: 100000,
+  }),
 
   // space id -> AutoCleaningReports object
-  __spaceAutoCleaningReports: PlainableObject.create({}),
+  __spaceAutoCleaningReports: PlainableObject.create({
+    reportEntries: [
+      _genReport(1, true),
+      _genReport(2, false),
+    ],
+  }),
 
   __provider: PlainableObject.create({
     id: PROVIDER_ID,
