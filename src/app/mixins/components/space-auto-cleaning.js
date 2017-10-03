@@ -9,7 +9,6 @@ export default Mixin.create({
   space: undefined,
 
   /**
-   * Fetched on init
    * @type {Onepanel.AutoCleaning}
    */
   autoCleaning: computed.oneWay('space.autoCleaning'),

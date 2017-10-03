@@ -53,6 +53,7 @@
         </div>
       </div>
       <div class="row">
+        
         <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
           <div class="row content-row">
             <strong>{{t "components.clusterSpacesTableItem.name"}}:</strong> 
@@ -100,46 +101,46 @@
           {{/if}}
         </div>
 
-      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell">
-        {{#promise-proxy-container proxy=spaceSupportersProxy}}
-          {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
-        {{/promise-proxy-container}}
-      </div>
-      
-      <div class="col-xs-12 item-table-cell item-table-content-cell">
-        <div class="row content-row">
-          {{!-- FIXME: i18n tooltips for tabs in disabled state --}}
-          {{#bs-tab fade=false customTabs=true activeId=initActiveTabId as |tab|}}
-            {{#bs-nav type="tabs" as |nav|}}
-              {{#nav.item class=tabSyncClass active=(bs-eq tab.activeId tabSyncId)}}
-                <a href={{concat "#" tabSyncId}}
-                  class="nav-link"
-                  role="tab" {{action tab.select tabSyncId}}>
-                  {{t "components.clusterSpacesTableItem.tabSync"}}
-                </a>
-                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
-              {{/nav.item}}
-              {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
-                <a href= {{concat "#" tabPopularId}}
-                  class="nav-link"
-                  role="tab" {{action tab.select tabPopularId}}>
-                  {{t "components.clusterSpacesTableItem.tabPopular"}}
-                </a>
-                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
-              {{/nav.item}}
-              {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
-                <a href= {{concat "#" tabCleanId}}
-                  class="nav-link"
-                  role="tab" {{action tab.select tabCleanId}}>
-                  {{t "components.clusterSpacesTableItem.tabClean"}}
-                </a>
-                {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
-              {{/nav.item}}
-            {{/bs-nav}}
+        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-support">
+          {{#promise-proxy-container proxy=spaceSupportersProxy}}
+            {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
+          {{/promise-proxy-container}}
+        </div>
+        
+        <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
+          <div class="row content-row">
+            {{!-- FIXME: i18n tooltips for tabs in disabled state --}}
+            {{#bs-tab fade=false customTabs=true activeId=initActiveTabId as |tab|}}
+              {{#bs-nav type="tabs" as |nav|}}
+                {{#nav.item class=tabSyncClass active=(bs-eq tab.activeId tabSyncId)}}
+                  <a href={{concat "#" tabSyncId}}
+                    class="nav-link"
+                    role="tab" {{action tab.select tabSyncId}}>
+                    {{t "components.clusterSpacesTableItem.tabSync"}}
+                  </a>
+                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                {{/nav.item}}
+                {{#nav.item class=tabPopularClass active=(bs-eq tab.activeId tabPopularId)}}
+                  <a href= {{concat "#" tabPopularId}}
+                    class="nav-link"
+                    role="tab" {{action tab.select tabPopularId}}>
+                    {{t "components.clusterSpacesTableItem.tabPopular"}}
+                  </a>
+                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                {{/nav.item}}
+                {{#nav.item class=tabCleanClass active=(bs-eq tab.activeId tabCleanId)}}
+                  <a href= {{concat "#" tabCleanId}}
+                    class="nav-link"
+                    role="tab" {{action tab.select tabCleanId}}>
+                    {{t "components.clusterSpacesTableItem.tabClean"}}
+                  </a>
+                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                {{/nav.item}}
+              {{/bs-nav}}
 
               <div class="tab-content">
                 {{#tab.pane elementId=tabSyncId}}
-                  {{#if (eq tab.activeId tabSyncId)}}
+                  {{#if (and (eq tabSyncClass "enabled") (eq tab.activeId tabSyncId))}}
                     {{space-storage-synchronization
                       syncInterval=syncInterval
                       statsFrozen=statsFrozen
@@ -151,21 +152,22 @@
                   {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabPopularId}}
-                  {{space-files-popularity
-                    filesPopularity=filesPopularity
-                    updateFilesPopularity=(action "updateFilesPopularity")
-                  }}
+                  {{#if (eq tabPopularClass "enabled")}}
+                    {{space-files-popularity
+                      filesPopularity=filesPopularity
+                      updateFilesPopularity=(action "updateFilesPopularity")
+                    }}
+                  {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabCleanId}}
-                  {{#if autoCleaning}}
+                  {{#if (eq tabCleanClass "enabled")}}
                     {{space-auto-cleaning
                       autoCleaning=autoCleaning
                       spaceSize=space.spaceSize
                       updateAutoCleaning=(action "updateAutoCleaning")
                     }}
                   {{/if}}
-                {{/tab.pane}}
-                              
+                {{/tab.pane}}                
               </div>
             {{/bs-tab}}
           </div>

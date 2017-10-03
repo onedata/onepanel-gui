@@ -3,6 +3,9 @@ import EmberObject from '@ember/object';
 import { computed, get } from '@ember/object';
 import RSVP from 'rsvp';
 
+const BLANK_AUTO_CLEANING = {
+  enabled: false,
+};
 
 export default Component.extend({
   classNames: ['space-auto-cleaning'],
@@ -13,7 +16,7 @@ export default Component.extend({
    * @type {number}
    */
   spaceSize: 0,
-  
+
   /**
    * @virtual
    * @type {Onepanel.AutoCleaning}
@@ -96,6 +99,13 @@ export default Component.extend({
     status: 'failure',
   }],
 
+  init() {
+    this._super(...arguments);
+    // if the component is initialized with blank autoCleaning,
+    // we should provide an empty valid autoCleaning
+    this.set('autoCleaning', BLANK_AUTO_CLEANING);
+  },
+
   actions: {
     toggleCleaning() {
       let {
@@ -113,7 +123,7 @@ export default Component.extend({
           changedValues[fieldName] = values[fieldName];
         }
       });
-      return Object.keys(changedValues).length > 0 ? 
+      return Object.keys(changedValues).length > 0 ?
         updateAutoCleaning({ settings: changedValues }) : RSVP.Promise.resolve();
     },
     fileConditionsChanged(values) {
