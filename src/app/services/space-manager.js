@@ -195,14 +195,4 @@ export default Service.extend({
     ).then(({ data }) => data);
   },
 
-  configureSpaceFilesPopularity(spaceId, enabled) {
-    return this.get('onepanelServer').request(
-      'oneprovider',
-      'configureSpaceFilesPopularity',
-      spaceId, {
-        enabled,
-      }
-    ).then(({ data }) => data);
-  },
-
 });

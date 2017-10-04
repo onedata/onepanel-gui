@@ -15,7 +15,7 @@ export default Mixin.create({
 
   tabSyncId: computedTabId('sync'),
 
-  tabPopularClass: true,
+  tabPopularClass: 'enabled',
 
   tabPopularId: computedTabId('popular'),
 

@@ -4,23 +4,27 @@
       {{t 'components.spaceAutoCleaning.autoCleaning'}}
     </label>
     {{one-way-toggle inputId="cleaning-enabled"
-      checked=autoCleaning.enabled
+      checked=_isEnabled
       class="pull-right right"
       spinnerSide="left"
       update=(action "toggleCleaning")}}
   </h1>
 </div>
-{{#if autoCleaning.enabled}}
+{{#if _isEnabled}}
   <div class="row content-row no-border no-padding-top">
     <h1>{{t 'components.spaceAutoCleaning.removeFiles'}}</h1>
   </div>
-  <div class="cleaning-settings-row">
-    <div class="form-cell">
-      {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
+  {{#loading-container isLoading=_statusInitializing}}
+    <div class="cleaning-settings-row">
+      <div class="form-cell">
+        {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
+      </div>
+      <div class="bar-cell">
+        {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+      </div>
     </div>
-    <div class="bar-cell">
-      {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
-    </div>
-  </div>
-  {{space-cleaning-reports data=data}}
+  {{/loading-container}}
+  {{#loading-container isLoading=_reportsInitializing}}
+    {{space-cleaning-reports data=reports}}
+  {{/loading-container}}
 {{/if}}
