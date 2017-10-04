@@ -50,9 +50,15 @@ const MOCKED_SUPPORT = {
 
 const MOCK_SERVICE_TYPE = 'provider';
 
-/** In milliseconds @type {number} */
-const RESPONSE_DELAY = 1;
+/**
+ * Response delay in milliseconds
+ * @type {number}
+ */
+const RESPONSE_DELAY = 10;
 
+/**
+ * Used when generating providers support data
+ */
 let providerSupportCounter = 1;
 
 function _genSupportingProviders() {
@@ -209,8 +215,8 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
               response: response,
               task: taskId && this.watchTaskStatus(taskId),
               toString: responseToString,
-            }, RESPONSE_DELAY);
-          });
+            });
+          }, RESPONSE_DELAY);
         } else {
           let response = {
             statusCode: handler.statusCode && handler.statusCode(...params),
@@ -704,7 +710,7 @@ function computedResourceGetHandler(storeProperty, defaultData) {
   });
 }
 
-// FIXME: to use
+// FIXME: move to util
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {
 //   return computed(function () {
 //     return {
