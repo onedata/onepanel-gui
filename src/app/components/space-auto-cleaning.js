@@ -21,6 +21,7 @@ export default Component.extend({
 
   /**
    * ID of SpaceDetails for which auto cleaning view is rendered
+   * @virtual
    * @type {string}
    */
   spaceId: undefined,
@@ -46,11 +47,18 @@ export default Component.extend({
   updateAutoCleaning: () => {},
 
   /**
-   * Cleaning status.
-   * @virtual
+   * Cleaning status
+   * Updated by polling
    * @type {Onepanel.AutoCleaningStatus}
    */
   status: undefined,
+
+  /**
+   * Collectoion of cleaning reports
+   * Updated by polling
+   * @type {Array<Onepanel.SpaceAutoCleaningReport>}
+   */
+  reports: undefined,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -97,24 +105,21 @@ export default Component.extend({
     }
   ),
 
-  /**
-   * @type {Array<SpaceAutoCleaningReport>}
-   */
-  reports: [],
-
   init() {
     this._super(...arguments);
     // if the component is initialized with blank autoCleaning,
     // we should provide an empty valid autoCleaning
-    this.set('autoCleaning', BLANK_AUTO_CLEANING);
+    if (this.get('autoCleaning') == null) {
+      this.set('autoCleaning', BLANK_AUTO_CLEANING);
+    }
 
     this.setProperties({
-      autoCleaning: BLANK_AUTO_CLEANING,
       _statusIsUpdating: true,
       _reportsIsUpdating: true,
     });
 
     this.createWatchers();
+    this.reconfigureWatchers();
 
     // get properties to enable observers
     this.getProperties('_statusInterval', '_reportsInterval');

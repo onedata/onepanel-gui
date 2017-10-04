@@ -34,14 +34,6 @@ export default Service.extend({
     });
   },
 
-  getFilesPopularity() {
-    throw new Error('not implemented');
-  },
-
-  getAutoCleaning() {
-    throw new Error('not implemented');
-  },
-
   getAutoCleaningStatus() {
     throw new Error('not implemented');
   },

@@ -14,7 +14,7 @@
     <h1>{{t 'components.spaceAutoCleaning.removeFiles'}}</h1>
   </div>
   {{#loading-container isLoading=_statusInitializing}}
-    <div class="cleaning-settings-row">
+    <div class="space-cleaning-settings cleaning-settings-row">
       <div class="form-cell">
         {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
       </div>
