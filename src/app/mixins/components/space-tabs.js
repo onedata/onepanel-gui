@@ -9,21 +9,23 @@ const ENABLED = 'enabled';
 const DISABLED = 'disabled';
 
 export default Mixin.create({
+  // requires i18n service
+
   tabSyncClass: computed('space.importEnabled', function () {
     return this.get('space.importEnabled') ? ENABLED : DISABLED;
   }),
-
   tabSyncId: computedTabId('sync'),
+  tabSyncHint: computedTabHint('sync'),
 
   tabPopularClass: 'enabled',
-
   tabPopularId: computedTabId('popular'),
+  tabPopularHint: computedTabHint('popular'),
 
   tabCleanClass: computed('filesPopularity.enabled', function () {
     return this.get('filesPopularity.enabled') ? ENABLED : DISABLED;
   }),
-
   tabCleanId: computedTabId('clean'),
+  tabCleanHint: computedTabHint('clean'),
 
   _allTabsIdComputed: computed('tabSyncId', 'tabPopularId', 'tabCleanId', function () {
     return _.every(this.getProperties(
@@ -50,11 +52,25 @@ export default Mixin.create({
 
 /**
  * Create computed property that will return an ID for tab
- * @param {string} tab 
+ * @param {string} tab one of: sync, popular, clean
  * @returns {Ember.ComputedProperty}
  */
 function computedTabId(tab) {
   return computed('space.id', function () {
     return `tab-${tab}-${this.get('space.id')}`;
+  });
+}
+
+/**
+ * Create computed property that will return translated hint for tab
+ * @param {string} tab one of: sync, popular, clean
+ * @returns {Ember.ComputedProperty}
+ */
+function computedTabHint(tab) {
+  const classProperty = camelize(`tab-${tab}-class`);
+  return computed(classProperty, function () {
+    const classValue = this.get(classProperty);
+    return this.get('i18n')
+      .t(`components.clusterSpacesTableItem.tabs.${tab}.hints.${classValue}`);
   });
 }

@@ -116,25 +116,25 @@
                   <a href={{concat "#" tabSyncId}}
                     class="nav-link"
                     role="tab" {{action tab.select tabSyncId}}>
-                    {{t "components.clusterSpacesTableItem.tabSync"}}
+                    {{t "components.clusterSpacesTableItem.tabs.sync.title"}}
                   </a>
-                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                  {{one-tooltip triggerEvents="hover" title=tabSyncHint}}
                 {{/nav.item}}
                 {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
                   <a href= {{concat "#" tabPopularId}}
                     class="nav-link"
                     role="tab" {{action tab.select tabPopularId}}>
-                    {{t "components.clusterSpacesTableItem.tabPopular"}}
+                    {{t "components.clusterSpacesTableItem.tabs.popular.title"}}
                   </a>
-                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                  {{one-tooltip triggerEvents="hover" title=tabPopularHint}}
                 {{/nav.item}}
                 {{#nav.item class=tabCleanClass active=(eq tab.activeId tabCleanId)}}
                   <a href= {{concat "#" tabCleanId}}
                     class="nav-link"
                     role="tab" {{action tab.select tabCleanId}}>
-                    {{t "components.clusterSpacesTableItem.tabClean"}}
+                    {{t "components.clusterSpacesTableItem.tabs.clean.title"}}
                   </a>
-                  {{one-tooltip triggerEvents="hover" title="This is an awesome feature"}}
+                  {{one-tooltip triggerEvents="hover" title=tabCleanHint}}
                 {{/nav.item}}
               {{/bs-nav}}
 

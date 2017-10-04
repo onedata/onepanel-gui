@@ -16,9 +16,6 @@ export default {
   syncConfig: 'Configure data synchronization',
   syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
-  tabSync: 'Storage synchronization',
-  tabPopular: 'Files popularity',
-  tabClean: 'Auto cleaning',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',
@@ -27,5 +24,28 @@ export default {
     tableTip: 'The table shows how many space particular providers ' +
       'provide for this space',
     provider: 'Provider',
+  },
+  tabs: {
+    sync: {
+      title: 'Storage synchronization',
+      hints: {
+        enabled: 'Show statistics of synchronization with storage for this space',
+        disabled: 'Storage synchronization is not enabled, you can enable it in space options',
+      },
+    },
+    popular: {
+      title: 'Files popularity',
+      hints: {
+        enabled: 'Configure files popularity feature for this space',
+        // popular tab is never in disabled state
+      },
+    },
+    clean: {
+      title: 'Auto cleaning',
+      hints: {
+        enabled: 'Configure, show status and reports of auto cleaning feature for this space',
+        disabled: 'Auto cleaning can be cofigured only if files popularity feature is enabled',
+      },
+    },
   },
 };
