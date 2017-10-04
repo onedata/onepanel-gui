@@ -25,23 +25,27 @@ export default Mixin.create({
 
   tabCleanId: computedTabId('clean'),
 
-  getDefaultActiveTabId() {
-    const activeTabShort = _.find(['sync', 'popular', 'clean'], tab =>
-      this.get(camelize(`tab-${tab}-class`)) === ENABLED
-    );
-    return this.get(camelize(`tab-${activeTabShort}-id`));
-  },
+  _allTabsIdComputed: computed('tabSyncId', 'tabPopularId', 'tabCleanId', function () {
+    return _.every(this.getProperties(
+      'tabSyncId',
+      'tabPopularId',
+      'tabCleanId',
+    ));
+  }),
 
-  /**
-   * Set only once on init
-   * @type {string}
-   */
-  initActiveTabId: undefined,
-
-  init() {
-    this._super(...arguments);
-    this.set('initActiveTabId', this.getDefaultActiveTabId());
-  },
+  initActiveTabId: computed('_allTabsIdComputed', function () {
+    let _initActiveTabId = this.get('_initActiveTabId');
+    if (_initActiveTabId) {
+      return _initActiveTabId;
+    } else if (this.get('_allTabsIdComputed')) {
+      const activeTabShort = _.find(['sync', 'popular', 'clean'], tab =>
+        this.get(camelize(`tab-${tab}-class`)) === ENABLED
+      );
+      _initActiveTabId = this.get(camelize(`tab-${activeTabShort}-id`));
+      this.set('_initActiveTabId', _initActiveTabId);
+      return _initActiveTabId;
+    }
+  }),
 });
 
 /**
