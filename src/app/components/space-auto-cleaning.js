@@ -127,7 +127,13 @@ export default Component.extend({
         updateAutoCleaning({ settings: changedValues }) : Promise.resolve();
     },
     fileConditionsChanged(values) {
-      this.get('updateAutoCleaning')({ settings: values });
+      let {
+        updateAutoCleaning,
+        autoCleaning,
+      } = this.getProperties('updateAutoCleaning', 'autoCleaning');
+      if (get(autoCleaning, 'enabled')) {
+        updateAutoCleaning({ settings: values });
+      }
     },
   },
 });

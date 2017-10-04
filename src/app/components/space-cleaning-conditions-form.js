@@ -32,12 +32,10 @@ const FORM_SEND_DEBOUNCE_TIME = 4000;
 
 const SIZE_FIELD = {
   type: 'number',
-  optional: true,
   gte: 0,
 };
 const TIME_FIELD = {
   type: 'number',
-  optional: true,
   gte: 0,
   integer: true,
 };
@@ -155,23 +153,24 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       'fileSizeGreaterThan',
       'fileSizeLesserThan',
     ].forEach((fieldName) => {
-      if (get(data, fieldName)) {
-        let value = bytesToString(
-          get(data, fieldName), { iecFormat: true, separated: true }
-        );
+      let value = get(data, fieldName);
+      if (typeof value === 'number') {
+        value = bytesToString(value, { iecFormat: true, separated: true });
         _formData.setProperties({
+          [fieldName + 'Enabled']: true,
           [fieldName + 'Number']: String(value.number),
           [fieldName + 'Unit']: _.find(_sizeUnits, { name: value.unit }),
         });
       } else {
         _formData.setProperties({
+          [fieldName + 'Enabled']: false,
           [fieldName + 'Number']: '',
           [fieldName + 'Unit']: _.find(_sizeUnits, { name: 'MiB' }),
         });
       }
     });
-    if (get(data, 'fileTimeNotActive')) {
-      let fileTimeNotActive = get(data, 'fileTimeNotActive');
+    let fileTimeNotActive = get(data, 'fileTimeNotActive');
+    if (typeof fileTimeNotActive === 'number') {
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
         if (fileTimeNotActive / u.multiplicator >= 1) {
@@ -179,11 +178,13 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         }
       });
       _formData.setProperties({
+        fileTimeNotActiveEnabled: true,
         fileTimeNotActiveNumber: String(fileTimeNotActive / unit.multiplicator),
         fileTimeNotActiveUnit: unit,
       });
     } else {
       _formData.setProperties({
+        fileTimeNotActiveEnabled: false,
         fileTimeNotActiveNumber: '',
         fileTimeNotActiveUnit: _timeUnits[_timeUnits.length - 1],
       });
@@ -283,9 +284,14 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         'fileSizeLesserThan',
         'fileTimeNotActive',
       ].forEach((fieldName) => {
-        if (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit')) {
-          data[fieldName] = Math.floor(_formData.get(fieldName + 'Number') *
+        if (_formData.get(fieldName + 'Enabled') && 
+        (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit'))) {
+          const numberString = _formData.get(fieldName + 'Number').trim();
+          data[fieldName] = Math.floor(parseFloat(numberString) *
             _formData.get(fieldName + 'Unit').multiplicator);
+        } else if (modified.get(fieldName + 'Enabled') && 
+        !_formData.get(fieldName + 'Enabled')) {
+          data[fieldName] = null;
         }
       });
       this._cleanModificationState();
@@ -326,7 +332,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       this.set('_isDirty', true);
       this.set('_formFieldsModified.' + field, true);
       // all dropdowns ends with 'Unit' word
-      if (field.indexOf('Unit') + 4 === field.length || this.get('_lostInputFocus')) {
+      if (field.indexOf('Number') + 6 !== field.length || this.get('_lostInputFocus')) {
         this._scheduleSendChanges();
       }
     },

@@ -3,12 +3,13 @@
     {{#form.group 
       class=(concat-classes (concat fieldName "Group") (if (get _formFieldsErrors (concat fieldName "Number")) "has-error"))}}
       <div class="row">
-        <label for={{concat elementId fieldName}} class="col-xs-5 control-label">
+        <label for={{concat elementId fieldName}} class="col-xs-4 control-label">
           {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
         </label>
-        <div class="col-xs-7">
+        <div class="col-xs-8">
           {{one-way-input
             value=(get _formData (concat fieldName "Number"))
+            disabled=(not (get _formData (concat fieldName "Enabled")))
             class="form-control input-sm"
             focusOut=(action "lostFocus")
             update=(action "dataChanged" (concat fieldName "Number"))
@@ -16,6 +17,7 @@
           {{#power-select
             triggerClass="small"
             dropdownClass="small"
+            disabled=(not (get _formData (concat fieldName "Enabled")))
             options=(if (eq fieldName "fileTimeNotActive") _timeUnits _sizeUnits)
             selected=(get _formData (concat fieldName "Unit"))
             onchange=(action "dataChanged" (concat fieldName "Unit"))
@@ -24,6 +26,9 @@
             as |unit|}}
             {{unit.name}}
           {{/power-select}}
+          {{one-way-toggle
+            checked=(get _formData (concat fieldName "Enabled"))
+            update=(action "dataChanged" (concat fieldName "Enabled"))}}
         </div>
       </div>
     {{/form.group}}

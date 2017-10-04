@@ -43,8 +43,10 @@
       }
       .bar-cell {
         .indicators p {
-          padding: 0 3em;
-          text-align: center;
+          text-align: left;
+          .indicator-row {
+            display: block;
+          }
         }
       }
     }

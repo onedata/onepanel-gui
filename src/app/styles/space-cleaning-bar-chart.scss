@@ -9,11 +9,10 @@
   $pacman-border: 1px solid black;
   .indicators {
     text-align: right;
+    letter-spacing: 0.5em;
     .indicator {
       display: inline-block;
-      & ~ .indicator {
-        margin-left: 1em;
-      }
+      letter-spacing: initial;
       .value {
         font-weight: bold;
         color: $color-one-blue-gray;
