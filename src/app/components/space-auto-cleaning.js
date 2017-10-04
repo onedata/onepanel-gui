@@ -209,19 +209,22 @@ export default Component.extend({
   ),
 
   _setWatchersIntervals() {
-    const {
-      _statusInterval,
-      _reportsInterval,
-      _statusWatcher,
-      _reportsWatcher,
-    } = this.getProperties(
-      '_statusInterval',
-      '_reportsInterval',
-      '_statusWatcher',
-      '_reportsWatcher',
-    );
-    set(_statusWatcher, 'interval', _statusInterval);
-    set(_reportsWatcher, 'interval', _reportsInterval);
+    // this method is invoked from debounce, so it's this can be destroyed
+    if (this.isDestroyed === false) {
+      const {
+        _statusInterval,
+        _reportsInterval,
+        _statusWatcher,
+        _reportsWatcher,
+      } = this.getProperties(
+        '_statusInterval',
+        '_reportsInterval',
+        '_statusWatcher',
+        '_reportsWatcher',
+      );
+      set(_statusWatcher, 'interval', _statusInterval);
+      set(_reportsWatcher, 'interval', _reportsInterval);
+    }
   },
 
   updateStatus() {
