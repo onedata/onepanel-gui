@@ -1,105 +1,76 @@
-// FIXME: tests temporarily disabled
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import Ember from 'ember';
+import ComponentsComponentsSpaceTabsMixin from 'onepanel-gui/mixins/components/space-tabs';
 
-// import { expect } from 'chai';
-// import { describe, it } from 'mocha';
-// import Ember from 'ember';
-// import ComponentsComponentsSpaceTabsMixin from 'onepanel-gui/mixins/components/space-tabs';
+describe('Unit | Mixin | components/space tabs', function () {
+  it('enables tabSync', function () {
+    const ComponentsComponentsSpaceTabsObject =
+      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+    const subject = ComponentsComponentsSpaceTabsObject.create({
+      space: {
+        importEnabled: false,
+      },
+    });
 
-// describe('Unit | Mixin | components/space tabs', function () {
-//   it('enables tabSync', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create({
-//       importEnabled: false,
-//     });
+    subject.set('space.importEnabled', true);
 
-//     subject.set('importEnabled', true);
+    expect(subject.get('tabSyncClass')).to.equal('enabled');
+  });
 
-//     expect(subject.get('tabSyncClass')).to.equal('enabled');
-//   });
+  it('disables tabSync', function () {
+    const ComponentsComponentsSpaceTabsObject =
+      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+    const subject = ComponentsComponentsSpaceTabsObject.create({
+      space: {
+        importEnabled: true,
+      },
+    });
 
-//   it('disables tabSync', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create({
-//       importEnabled: true,
-//     });
+    expect(subject.get('tabSyncClass')).to.equal('enabled');
 
-//     expect(subject.get('tabSyncClass')).to.equal('enabled');
+    subject.set('space.importEnabled', false);
 
-//     subject.set('importEnabled', false);
+    expect(subject.get('tabSyncClass')).to.equal('disabled');
+  });
 
-//     expect(subject.get('tabSyncClass')).to.equal('disabled');
-//   });
+  it('has tabPopular always enabled', function () {
+    const ComponentsComponentsSpaceTabsObject =
+      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+    const subject = ComponentsComponentsSpaceTabsObject.create();
 
-//   it('enables tabPopular', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create({
-//       // before fetching
-//       filesPopularity: undefined,
-//     });
+    expect(subject.get('tabPopularClass')).to.equal('enabled');
+  });
 
-//     expect(subject.get('tabPopularClass'), 'before fetching')
-//       .to.equal('disabled');
+  it('enables tabClean', function () {
+    const ComponentsComponentsSpaceTabsObject =
+      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+    const subject = ComponentsComponentsSpaceTabsObject.create();
 
-//     subject.set('filesPopularity', {
-//       enabled: true,
-//     });
+    expect(subject.get('tabCleanClass'), 'before change').to.equal('disabled');
 
-//     expect(subject.get('tabPopularClass'), 'after setting')
-//       .to.equal('enabled');
-//   });
+    subject.set('filesPopularity', {
+      enabled: true,
+    });
 
-//   it('disables tabPopular', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create({
-//       filesPopularity: {
-//         enabled: true,
-//       },
-//     });
+    expect(subject.get('tabCleanClass'), 'after change').to.equal('enabled');
+  });
 
-//     expect(subject.get('tabPopularClass'), 'before disable')
-//       .to.equal('enabled');
+  it('disables tabClean', function () {
+    const ComponentsComponentsSpaceTabsObject =
+      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+    const subject = ComponentsComponentsSpaceTabsObject.create({
+      filesPopularity: {
+        enabled: true,
+      },
+    });
 
-//     subject.set('filesPopularity', {
-//       enabled: false,
-//     });
+    expect(subject.get('tabCleanClass'), 'before change').to.equal('enabled');
 
-//     expect(subject.get('tabPopularClass'), 'after disable')
-//       .to.equal('disabled');
-//   });
+    subject.set('filesPopularity', {
+      enabled: false,
+    });
 
-//   it('enables tabClean', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create();
-
-//     expect(subject.get('tabCleanClass'), 'before change').to.equal('disabled');
-
-//     subject.set('autoCleaning', {
-//       enabled: true,
-//     });
-
-//     expect(subject.get('tabCleanClass'), 'after change').to.equal('enabled');
-//   });
-
-//   it('disables tabClean', function () {
-//     const ComponentsComponentsSpaceTabsObject =
-//       Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
-//     const subject = ComponentsComponentsSpaceTabsObject.create({
-//       autoCleaning: {
-//         enabled: true,
-//       },
-//     });
-
-//     expect(subject.get('tabCleanClass'), 'before change').to.equal('enabled');
-
-//     subject.set('autoCleaning', {
-//       enabled: false,
-//     });
-
-//     expect(subject.get('tabCleanClass'), 'after change').to.equal('disabled');
-//   });
-// });
+    expect(subject.get('tabCleanClass'), 'after change').to.equal('disabled');
+  });
+});

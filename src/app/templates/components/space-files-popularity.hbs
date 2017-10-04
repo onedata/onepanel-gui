@@ -15,9 +15,9 @@
 
 {{#if filesPopularity.enabled}}
   <div class="row content-row no-border no-padding-top">
-    <h1>{{t 'components.spaceFilesPopularity.restApi'}}</h1>
+    <h1>{{t "components.spaceFilesPopularity.restApi"}}</h1>
     {{!-- TODO: a description of input, maybe one-form-field --}}
-    {{one-way-input class="form-control" value=filesPopularity.restUrl}}
+    {{one-way-input class="form-control files-popularity-rest-url" value=filesPopularity.restUrl}}
     {{!-- TODO: input with copy button component --}}
   </div>
 {{/if}}

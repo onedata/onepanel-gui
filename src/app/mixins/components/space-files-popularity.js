@@ -4,12 +4,12 @@ import Mixin from '@ember/object/mixin';
 export default Mixin.create({
   /**
    * @virtual
-   * @type {Space}
+   * @property space
+   * @type {SpaceDetails}
    */
-  space: undefined,
 
   /**
    * @type {Onepanel.FilesPopularity}
    */
-  filesPopularity: computed.oneWay('space.filesPopularity'),
+  filesPopularity: computed.reads('space.filesPopularity'),
 });

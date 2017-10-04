@@ -4,9 +4,9 @@ import Mixin from '@ember/object/mixin';
 export default Mixin.create({
   /**
    * @virtual
-   * @type {Space}
+   * @property space
+   * @type {SpaceDetails}
    */
-  space: undefined,
 
   /**
    * @type {Onepanel.AutoCleaning}

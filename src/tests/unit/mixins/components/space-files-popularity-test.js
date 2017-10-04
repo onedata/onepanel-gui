@@ -1,13 +1,20 @@
-// FIXME: currently no tests
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import EmberObject from '@ember/object';
+import ComponentsSpaceFilesPopularityMixin from 'onepanel-gui/mixins/components/space-files-popularity';
 
-// import { expect } from 'chai';
-// import { describe, it } from 'mocha';
-// import Ember from 'ember';
-// import ComponentsSpaceFilesPopularityMixin from 'onepanel-gui/mixins/components/space-files-popularity';
-// import wait from 'ember-test-helpers/wait';
+describe('Unit | Mixin | components/space files popularity', function () {
+  it('reads one-way filesPopularity from space', function () {
+    const filesPopularity = {};
 
-// import sinon from 'sinon';
+    const ComponentsSpaceFilesPopularityObject =
+      EmberObject.extend(ComponentsSpaceFilesPopularityMixin);
+    const subject = ComponentsSpaceFilesPopularityObject.create({
+      space: {
+        filesPopularity,
+      },
+    });
 
-// describe('Unit | Mixin | components/space files popularity', function () {
-
-// });
+    expect(subject.get('filesPopularity')).to.equal(filesPopularity);
+  });
+});
