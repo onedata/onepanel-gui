@@ -2,14 +2,14 @@
   <label for="cleaning-enabled"><h1>
     {{t 'components.spaceAutoCleaning.autoCleaning'}}
     {{one-way-toggle inputId="cleaning-enabled"
-      checked=autoCleaning.enabled
+      checked=_isEnabled
       class="pull-right right"
       spinnerSide="left"
       update=(action "toggleCleaning")}}
   </h1>
   </label>
 </div>
-{{#if autoCleaning.enabled}}
+{{#if _isEnabled}}
   <div class="row content-row no-border no-padding-top">
     <h1>{{t 'components.spaceAutoCleaning.removeFiles'}}</h1>
   </div>

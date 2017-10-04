@@ -1,14 +1,15 @@
 import Component from '@ember/component';
 import EmberObject from '@ember/object';
-import { computed, get, observer } from '@ember/object';
+import { computed, get, set, observer } from '@ember/object';
 import { inject } from '@ember/service';
+import { run } from '@ember/runloop';
 import { Promise } from 'rsvp';
 
 const BLANK_AUTO_CLEANING = {
   enabled: false,
 };
 
-const DEFAULT_UPDATE_INTERVAL = 1000;
+const DEFAULT_UPDATE_INTERVAL = 60 * 1000;
 
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
@@ -58,7 +59,7 @@ export default Component.extend({
 
   /**
    * Data for bar chart.
-   * @type {computed.Ember.Object}
+   * @type {Ember.ComputedProperty<Ember.Object>}
    */
   barData: computed(
     'autoCleaning.settings.{spaceSoftQuota,spaceHardQuota}',
@@ -113,19 +114,22 @@ export default Component.extend({
       _reportsIsUpdating: true,
     });
 
-    this.createAutoCleaningWatchers();
+    this.createWatchers();
+
+    // get properties to enable observers
+    this.getProperties('_statusInterval', '_reportsInterval');
   },
 
   /// -- FIXME: decide these data functions should be here
 
   /**
-   * Initialized with `createAutoCleaningWatchers`
+   * Initialized with `createWatchers`
    * @type {Looper}
    */
   _statusWatcher: undefined,
 
   /**
-   * Initialized with `createAutoCleaningWatchers`
+   * Initialized with `createWatchers`
    * @type {Looper}
    */
   _reportsWatcher: undefined,
@@ -155,31 +159,31 @@ export default Component.extend({
     'status',
     '_statusIsUpdating',
     function () {
-      return !!(!this.get('status') &&
-        this.get('updateAutoCleaningStatus')
-      );
+      return this.get('_statusIsUpdating') && this.get('status') == null;
     }),
 
   _reportsInitializing: computed(
     'reports',
     '_reportsIsUpdating',
     function () {
-      return !!(!this.get('reports') &&
-        this.get('updateAutoCleaningReports')
-      );
+      return this.get('_reportsIsUpdating') && this.get('reports') == null;
     }),
+
+  // TODO: there should be no watcher for reports at all - it should be updated:
+  // - after enabling
+  // - on change status.isWorking true -> false
 
   /**
    * Create watchers that will have intervals aliased from this component properties 
    */
-  createAutoCleaningWatchers() {
+  createWatchers() {
     // TODO: refactor: code redundancy
     const _statusWatcher = Looper.create({
       immediate: true,
     });
     _statusWatcher
       .on('tick', () =>
-        safeMethodExecution(this, 'updateAutoCleaningStatus')
+        safeMethodExecution(this, 'updateStatus')
       );
 
     const _reportsWatcher = Looper.create({
@@ -187,7 +191,7 @@ export default Component.extend({
     });
     _reportsWatcher
       .on('tick', () =>
-        safeMethodExecution(this, 'updateAutoCleaningReports')
+        safeMethodExecution(this, 'updateReports')
       );
 
     this.setProperties({
@@ -196,27 +200,31 @@ export default Component.extend({
     });
   },
 
-  reconfigureSyncWatchers: observer(
+  reconfigureWatchers: observer(
     '_statusInterval',
     '_reportsInterval',
     function () {
-      const {
-        _statusInterval,
-        _reportsInterval,
-        _statusWatcher,
-        _reportsWatcher,
-      } = this.getProperties(
-        '_statusInterval',
-        '_reportsInterval',
-        '_statusWatcher',
-        '_reportsWatcher',
-      );
-      _statusWatcher.set('interval', _statusInterval);
-      _reportsWatcher.set('interval', _reportsInterval);
+      run.debounce(this, '_setWatchersIntervals', 1);
     }
   ),
 
-  updateAutoCleaningStatus() {
+  _setWatchersIntervals() {
+    const {
+      _statusInterval,
+      _reportsInterval,
+      _statusWatcher,
+      _reportsWatcher,
+    } = this.getProperties(
+      '_statusInterval',
+      '_reportsInterval',
+      '_statusWatcher',
+      '_reportsWatcher',
+    );
+    set(_statusWatcher, 'interval', _statusInterval);
+    set(_reportsWatcher, 'interval', _reportsInterval);
+  },
+
+  updateStatus() {
     const {
       spaceManager,
       spaceId,
@@ -230,7 +238,7 @@ export default Component.extend({
     // .catch( /** FIXME: error handling */ );
   },
 
-  updateAutoCleaningReports() {
+  updateReports() {
     const {
       spaceManager,
       spaceId,

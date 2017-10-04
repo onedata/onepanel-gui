@@ -633,30 +633,28 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   _req_oneprovider_getProviderSpaceAutoCleaningReports: computedResourceGetHandler(
     '__spaceAutoCleaningReports', {
-      reportEntries: [],
+      reportEntries: [
+        _genReport(1, true),
+        _genReport(2, false),
+      ],
     }
   ),
 
   _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
-    '__spaceAutoCleaningStatus'
+    '__spaceAutoCleaningStates', {
+      isWorking: true,
+      spaceUsed: 100000,
+    }
   ),
 
   // -- MOCKED RESOURCE STORE --
 
   // FIXME: make dynamic in mock
   // space id -> AutCleaningStatus
-  __spaceAutoCleaningStatus: PlainableObject.create({
-    isWorking: true,
-    spaceUsed: 100000,
-  }),
+  __spaceAutoCleaningStates: PlainableObject.create({}),
 
   // space id -> AutoCleaningReports object
-  __spaceAutoCleaningReports: PlainableObject.create({
-    reportEntries: [
-      _genReport(1, true),
-      _genReport(2, false),
-    ],
-  }),
+  __spaceAutoCleaningReports: PlainableObject.create({}),
 
   __provider: PlainableObject.create({
     id: PROVIDER_ID,
