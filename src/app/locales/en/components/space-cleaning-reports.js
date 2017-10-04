@@ -1,6 +1,6 @@
 export default {
-  cleaningRaports: 'Cleaning raports',
-  noRaportsAvailable: 'No raports available.',
+  cleaningReports: 'Cleaning reports',
+  noReportsAvailable: 'No reports available.',
   start: 'Start',
   stop: 'Stop',
   releasedSize: 'Released size',

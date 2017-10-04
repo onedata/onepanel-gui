@@ -1,5 +1,5 @@
 .space-auto-cleaning {
-  $mobile-breakpoint: 900px;
+  $mobile-breakpoint: 1100px;
   .cleaning-settings-row {
     .form {
       .row {
@@ -7,7 +7,7 @@
       }
     }
     .form-cell {
-      width: 300px;
+      width: 320px;
       form {
         margin: 0;
         padding: 0;
@@ -18,9 +18,11 @@
       width: 100%;
       .form-cell {
         display: table-cell;
+        vertical-align: top;
       }
       .bar-cell {
         display: table-cell;
+        vertical-align: top;
         .indicators {
           padding-top: 0;
         }

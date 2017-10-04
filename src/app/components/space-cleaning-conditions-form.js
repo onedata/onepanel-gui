@@ -8,7 +8,7 @@
  */
 
 import Ember from 'ember';
-import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import bytesToString, { iecUnits } from 'onedata-gui-common/utils/bytes-to-string';
 import _ from 'lodash';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
@@ -19,8 +19,6 @@ const {
   computed: {
     equal,
   },
-  observer,
-  on,
   run: {
     debounce,
     cancel,
@@ -57,6 +55,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
 
   /**
    * Initial data for form.
+   * @virtual
    * @type {Object}
    */
   data: null,
@@ -64,6 +63,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   /**
    * Action called on data send. The only arguments is an object with 
    * modified data.
+   * @virtual
    * @type {Function}
    */
   onSave: () => {},
@@ -72,7 +72,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Form send debounce time.
    * @type {number}
    */
-  _formSendDebounceTime: FORM_SEND_DEBOUNCE_TIME,
+  formSendDebounceTime: FORM_SEND_DEBOUNCE_TIME,
 
   /**
    * If true, form has some unsaved changes.
@@ -112,22 +112,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Units used in 'file size' condition.
    * @type {Array.Object}
    */
-  _sizeUnits: [{
-    name: 'B',
-    multiplicator: 1,
-  }, {
-    name: 'KiB',
-    multiplicator: 1024,
-  }, {
-    name: 'MiB',
-    multiplicator: 1048576,
-  }, {
-    name: 'GiB',
-    multiplicator: 1073741824,
-  }, {
-    name: 'TiB',
-    multiplicator: 1099511627776,
-  }],
+  _sizeUnits: iecUnits,
 
   /**
    * Units used in 'not active for' condition.
@@ -155,50 +140,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Form data (has different format than the `data` property).
    * @type {Ember.Object}
    */
-  _formData: null,
-
-  /**
-   * Page unload handler.
-   * @type {computed.Function}
-   */
-  _unloadHandler: computed(function () {
-    return () => {
-      this._scheduleSendChanges(false);
-      this._sendChanges();
-    };
-  }),
-
-  /**
-   * Fields errors.
-   * @type {computed.Object}
-   */
-  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
-    let _sourceFieldNames = this.get('_sourceFieldNames');
-    let errors = this.get('validations.errors');
-    let fieldsErrors = {};
-    _sourceFieldNames
-      .map((fieldName) => fieldName + 'Number')
-      .forEach((fieldName) => fieldsErrors[fieldName] =
-        _.find(errors, { attribute: '_formData.' + fieldName })
-      );
-    return fieldsErrors;
-  }),
-
-  /**
-   * Modification state of fields.
-   * @type {Ember.Object}
-   */
-  _formFieldsModified: computed(function () {
-    return Ember.Object.create();
-  }),
-
-  /**
-   * If true, form is valid.
-   * @type {computed.boolean}
-   */
-  _isFormValid: equal('validations.errors.length', 0),
-
-  _dataObserver: on('init', observer('data', function () {
+  _formData: computed('data', '_sizeUnits', '_timeUnits', function () {
     let {
       data,
       _sizeUnits,
@@ -246,8 +188,49 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         fileTimeNotActiveUnit: _timeUnits[_timeUnits.length - 1],
       });
     }
-    this.set('_formData', _formData);
-  })),
+    return _formData;
+  }),
+
+  /**
+   * Page unload handler.
+   * @type {computed.Function}
+   */
+  _unloadHandler: computed(function () {
+    return () => {
+      this._scheduleSendChanges(false);
+      this._sendChanges();
+    };
+  }),
+
+  /**
+   * Fields errors.
+   * @type {computed.Object}
+   */
+  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
+    let _sourceFieldNames = this.get('_sourceFieldNames');
+    let errors = this.get('validations.errors');
+    let fieldsErrors = {};
+    _sourceFieldNames
+      .map((fieldName) => fieldName + 'Number')
+      .forEach((fieldName) => fieldsErrors[fieldName] =
+        _.find(errors, { attribute: '_formData.' + fieldName })
+      );
+    return fieldsErrors;
+  }),
+
+  /**
+   * Modification state of fields.
+   * @type {Ember.Object}
+   */
+  _formFieldsModified: computed(function () {
+    return Ember.Object.create();
+  }),
+
+  /**
+   * If true, form is valid.
+   * @type {computed.boolean}
+   */
+  _isFormValid: equal('validations.errors.length', 0),
 
   init() {
     this._super(...arguments);
@@ -326,14 +309,14 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   _scheduleSendChanges(schedule = true) {
     let {
       _saveDebounceTimer,
-      _formSendDebounceTime,
-    } = this.getProperties('_saveDebounceTimer', '_formSendDebounceTime');
+      formSendDebounceTime,
+    } = this.getProperties('_saveDebounceTimer', 'formSendDebounceTime');
     if (schedule === false) {
       cancel(_saveDebounceTimer);
     }
     this.set(
       '_saveDebounceTimer',
-      debounce(this, '_sendChanges', _formSendDebounceTime)
+      debounce(this, '_sendChanges', formSendDebounceTime)
     );
   },
 

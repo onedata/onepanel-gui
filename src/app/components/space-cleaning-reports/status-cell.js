@@ -1,3 +1,12 @@
+/**
+ * A table cell used to display report status using oneicon.
+ *
+ * @module components/space-cleaning-reports/status-cell
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Ember from 'ember';
 
 const {
@@ -21,7 +30,8 @@ export default Ember.Component.extend({
   record: null,
 
   /**
-   * Column.
+   * Column (object needs to have the same structure as the one used by 
+   * ember-models-table).
    * To inject.
    * @type {Object}
    */
@@ -29,7 +39,8 @@ export default Ember.Component.extend({
 
   /**
    * Status value.
-   * @typ {computed.string}
+   * Will be initialized by bindStatusProperty.
+   * @type {computed.string}
    */
   _status: null,
 
@@ -48,7 +59,7 @@ export default Ember.Component.extend({
     }
   }),
 
-  columnObserver: on('init', observer('column.propertyName', function () {
+  bindStatusProperty: on('init', observer('column.propertyName', function () {
     let propertyName = this.get('column.propertyName');
     this.set('_status', oneWay(`record.${propertyName}`));
   })),

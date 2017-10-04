@@ -8,7 +8,7 @@ import brandInfo from './components/brand-info';
 import loginBox from './components/login-box';
 import spaceFilesPopularity from './components/space-files-popularity';
 import spaceAutoCleaning from './components/space-auto-cleaning';
-import spaceCleaningRaports from './components/space-cleaning-raports';
+import spaceCleaningReports from './components/space-cleaning-reports';
 import spaceCleaningBarChart from './components/space-cleaning-bar-chart';
 import spaceCleaningConditionsForm from './components/space-cleaning-conditions-form';
 
@@ -27,7 +27,7 @@ let translations = {
     loginBox,
     spaceFilesPopularity,
     spaceAutoCleaning,
-    spaceCleaningRaports,
+    spaceCleaningReports,
     spaceCleaningBarChart,
     spaceCleaningConditionsForm,
   },

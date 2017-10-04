@@ -20,7 +20,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
     this.render(hbs`
       {{space-cleaning-conditions-form
         data=data
-        _formSendDebounceTime=0}}`);
+        formSendDebounceTime=0}}`);
 
     const greaterGroup = this.$('.fileSizeGreaterThanGroup');
     const lesserGroup = this.$('.fileSizeLesserThanGroup');
@@ -45,7 +45,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
     'fileTimeNotActive',
   ].forEach((fieldName) => {
     it(`does not accept letters in ${fieldName} input`, function(done) {
-      this.render(hbs`{{space-cleaning-conditions-form _formSendDebounceTime=0}}`);
+      this.render(hbs`{{space-cleaning-conditions-form formSendDebounceTime=0}}`);
       
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], 'asdf').then(() => {
@@ -55,7 +55,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
     });
 
     it(`does not accept negative numbers in ${fieldName} input`, function(done) {
-      this.render(hbs`{{space-cleaning-conditions-form _formSendDebounceTime=0}}`);
+      this.render(hbs`{{space-cleaning-conditions-form formSendDebounceTime=0}}`);
       
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], '-3').then(() => {
@@ -65,7 +65,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
     });
 
     it(`accepts positive numbers in ${fieldName} input`, function(done) {
-      this.render(hbs`{{space-cleaning-conditions-form _formSendDebounceTime=0}}`);
+      this.render(hbs`{{space-cleaning-conditions-form formSendDebounceTime=0}}`);
       
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], '10').then(() => {
@@ -79,7 +79,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
       this.on('onSave', saveSpy);
       this.render(hbs`
         {{space-cleaning-conditions-form
-          _formSendDebounceTime=0
+          formSendDebounceTime=0
           onSave=(action "onSave")}}`);
       
       const saveArg = {};
@@ -100,7 +100,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
   });
 
   it('does not accept float numbers in fileTimeNotActive input', function(done) {
-    this.render(hbs`{{space-cleaning-conditions-form _formSendDebounceTime=0}}`);
+    this.render(hbs`{{space-cleaning-conditions-form formSendDebounceTime=0}}`);
     
     const group = this.$('.fileTimeNotActiveGroup');
     fillIn(group.find('input')[0], '3.4').then(() => {
@@ -114,7 +114,7 @@ describe('Integration | Component | space cleaning conditions form', function() 
     this.on('onSave', saveSpy);
     this.render(hbs`
       {{space-cleaning-conditions-form
-        _formSendDebounceTime=0
+        formSendDebounceTime=0
         onSave=(action "onSave")}}`);
     
     const saveArg = {

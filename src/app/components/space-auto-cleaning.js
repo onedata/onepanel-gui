@@ -1,7 +1,17 @@
+/**
+ * A space auto cleaning tab with bar chart, file conditions form and 
+ * cleaning reports table.
+ *
+ * @module components/space-auto-cleaning
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import EmberObject from '@ember/object';
 import { computed, get } from '@ember/object';
-import RSVP from 'rsvp';
+import { Promise } from 'rsvp';
 
 
 export default Component.extend({
@@ -79,7 +89,7 @@ export default Component.extend({
       };
     }
   ),
-  // FIXME replace with real raports data
+  // FIXME replace with real reports data
   data: [{
     startedAt: new Date(),
     stoppedAt: new Date(),
@@ -114,7 +124,7 @@ export default Component.extend({
         }
       });
       return Object.keys(changedValues).length > 0 ? 
-        updateAutoCleaning({ settings: changedValues }) : RSVP.Promise.resolve();
+        updateAutoCleaning({ settings: changedValues }) : Promise.resolve();
     },
     fileConditionsChanged(values) {
       this.get('updateAutoCleaning')({ settings: values });

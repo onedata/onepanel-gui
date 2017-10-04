@@ -1,12 +1,13 @@
 <div class="row content-row no-border">
-  <label for="cleaning-enabled"><h1>
-    {{t 'components.spaceAutoCleaning.autoCleaning'}}
-    {{one-way-toggle inputId="cleaning-enabled"
-      checked=autoCleaning.enabled
-      class="pull-right right"
-      spinnerSide="left"
-      update=(action "toggleCleaning")}}
-  </h1>
+  <label for="cleaning-enabled">
+    <h1>
+      {{t 'components.spaceAutoCleaning.autoCleaning'}}
+      {{one-way-toggle inputId="cleaning-enabled"
+        checked=autoCleaning.enabled
+        class="pull-right right"
+        spinnerSide="left"
+        update=(action "toggleCleaning")}}
+    </h1>
   </label>
 </div>
 {{#if autoCleaning.enabled}}
@@ -21,5 +22,5 @@
       {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
     </div>
   </div>
-  {{space-cleaning-raports data=data}}
+  {{space-cleaning-reports data=data}}
 {{/if}}

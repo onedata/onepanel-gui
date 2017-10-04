@@ -1,4 +1,4 @@
 export default {
   filesPopularity: 'Files popularity',
-  restApi: 'REST Api',
+  restApi: 'REST API',
 };

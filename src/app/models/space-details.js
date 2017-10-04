@@ -16,9 +16,6 @@ import Ember from 'ember';
 
 const {
   get,
-} = Ember;
-
-const {
   computed,
 } = Ember;
 
