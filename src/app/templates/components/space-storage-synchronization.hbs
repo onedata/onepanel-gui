@@ -7,15 +7,15 @@
 }}
   {{#bg.button type="default" class="btn-sm btn-sync-interval-minute" value="minute"}}
     {{t "components.clusterSpacesTableItem.minute"}}
-    {{bs-tooltip title="Show statistics for last minute"}}
+    {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
   {{/bg.button}}
   {{#bg.button type="default" class="btn-sm btn-sync-interval-hour" value="hour"}}
     {{t "components.clusterSpacesTableItem.hour"}}
-    {{bs-tooltip title="Show statistics for last hour"}}
+    {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
   {{/bg.button}}
   {{#bg.button type="default" class="btn-sm btn-sync-interval-day" value="day"}}
     {{t "components.clusterSpacesTableItem.day"}}
-    {{bs-tooltip title="Show statistics for last day"}}
+    {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
   {{/bg.button}}
 {{/bs-button-group}}
 {{#if timeStatsLoading}}

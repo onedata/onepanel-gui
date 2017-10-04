@@ -109,7 +109,6 @@
         
         <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
           <div class="row content-row">
-            {{!-- FIXME: i18n tooltips for tabs in disabled state --}}
             {{#bs-tab fade=false customTabs=true activeId=initActiveTabId as |tab|}}
               {{#bs-nav type="tabs" as |nav|}}
                 {{#nav.item class=tabSyncClass active=(eq tab.activeId tabSyncId)}}
