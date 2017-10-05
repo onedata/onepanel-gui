@@ -24,7 +24,7 @@ describe('Integration | Component | space cleaning reports', function () {
       startedAt: new Date(),
       stoppedAt: new Date(),
       releasedSize: 1022976,
-      plannedReleasedSize: 20485760,
+      plannedReleasedSize: 1022976,
       filesNumber: 18,
       status: 'failure',
     }]);
@@ -50,9 +50,9 @@ describe('Integration | Component | space cleaning reports', function () {
     cellsValues.forEach((value, index) =>
       expect(cells.eq(index).text().trim()).to.be.equal(value)
     );
-    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled')).to.exist;
+    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled-x')).to.exist;
     expect(this.$(
-      'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled-x'
+      'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled'
     )).to.exist;
   });
 
@@ -68,14 +68,14 @@ describe('Integration | Component | space cleaning reports', function () {
     const cellsValues = [
       moment(data[1].startedAt).format(START_END_TIME_FORMAT),
       moment(data[1].stoppedAt).format(START_END_TIME_FORMAT),
-      '999 KiB (out of 19.5 MiB)',
+      '999 KiB (out of 999 KiB)',
       String(data[1].filesNumber),
     ];
     cellsValues.forEach((value, index) =>
       expect(cells.eq(index).text().trim()).to.be.equal(value)
     );
     expect(this.$('.one-collapsible-list-item:last-child .item-table ' +
-      '.content-row:last-child .oneicon.oneicon-checkbox-filled-x')).to.exist;
+      '.content-row:last-child .oneicon.oneicon-checkbox-filled')).to.exist;
   });
 
   it('renders message about no reports', function () {
