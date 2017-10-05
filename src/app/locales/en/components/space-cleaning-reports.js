@@ -6,5 +6,10 @@ export default {
   releasedSize: 'Released size',
   releasedSizeOutOf: 'out of',
   filesNumber: 'Files number',
-  status: 'Success',
+  status: 'Status',
+  statusValues: {
+    success: 'Success',
+    failure: 'Failure',
+    inProgress: 'In progress',
+  },
 };

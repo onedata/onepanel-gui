@@ -10,10 +10,43 @@
     padding-top: $padding-base-vertical / 2;
     text-align: left;
   }
-  .form-group {
-    margin-bottom: $padding-small-vertical;
-    .row {
-      border-bottom: 0;
+  .form {
+    display: table;
+    @media (max-width: $screen-xs-max) {
+      padding: 0 $padding-large-horizontal;
+    }
+    @media (max-width: 450px) {
+      display: block;
+    }
+    .form-group {
+      position: relative;
+      margin-bottom: $padding-small-vertical;
+
+      @media (min-width: 451px) { 
+        display: table-row;
+        width: 100%;
+        .label-column, .fields-column, .toggle-column {
+          display: table-cell;
+          vertical-align: top;
+        }
+        .fields-column {
+          padding: 0 $padding-large-horizontal;
+        }
+      }
+      @media (max-width: 450px) {
+        
+        .label-column, .fields-column, .toggle-column {
+          vertical-align: top;
+        }
+        .label-column {
+          text-align: left;
+        }
+        .toggle-column {
+          position: absolute;
+          top: 1.5em;
+          right: 0;
+        }
+      }
     }
   }
   .ember-basic-dropdown {

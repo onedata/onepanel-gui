@@ -1,4 +1,5 @@
 export default {
   autoCleaning: 'Auto cleaning',
-  removeFiles: 'Remove files',
+  cleanReplicatedFiles: 'Clean replicated files',
+  cleaningBoundaries: 'Cleaning boundaries',
 };

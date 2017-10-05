@@ -62,9 +62,15 @@ export default Component.extend({
       report.startedAtReadable = startedAt.format(START_END_TIME_FORMAT);
       report.startedAtSortable = startedAt.unix();
 
-      let stoppedAt = moment(report.get('stoppedAt'));
-      report.stoppedAtReadable = stoppedAt.format(START_END_TIME_FORMAT);
-      report.stoppedAtSortable = stoppedAt.unix();
+      let stoppedAt = report.get('stoppedAt');
+      if (stoppedAt) {
+        stoppedAt = moment(stoppedAt);
+        report.stoppedAtReadable = stoppedAt.format(START_END_TIME_FORMAT);
+        report.stoppedAtSortable = stoppedAt.unix();
+      } else {
+        report.stoppedAtReadable = '-';
+        report.stoppedAtSortable = 0;
+      }
 
       let released = bytesToString(report.get('releasedSize'), { iecFormat: true });
       let outOf = i18n.t('components.spaceCleaningReports.releasedSizeOutOf');

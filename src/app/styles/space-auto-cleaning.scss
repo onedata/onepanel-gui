@@ -2,16 +2,14 @@
   $mobile-breakpoint: 1100px;
   .cleaning-settings-row {
     .form {
+      margin: 0;
       .row {
         margin: 0;
       }
     }
-    .form-cell {
-      width: 320px;
-      form {
-        margin: 0;
-        padding: 0;
-      }
+    .bar-container {
+      margin-left: $padding-large-horizontal;
+      margin-right: $padding-large-horizontal;
     }
     @media (min-width: $mobile-breakpoint + 1px) {
       display: table;
@@ -19,10 +17,12 @@
       .form-cell {
         display: table-cell;
         vertical-align: top;
+        width: 360px;
       }
       .bar-cell {
         display: table-cell;
         vertical-align: top;
+        
         .indicators {
           padding-top: 0;
         }
@@ -34,19 +34,17 @@
       }
     }
     @media (max-width: $mobile-breakpoint) {
-      .form-cell {
-        margin: 0 auto;
-        label {
-          text-align: right;
-          padding-right: $padding-base-horizontal;
-        }
-      }
       .bar-cell {
+        padding-top: $padding-large-vertical;
         .indicators p {
           text-align: left;
           .indicator-row {
             display: block;
           }
+        }
+        .bar-container {
+          margin-left: $padding-large-horizontal * 2;
+          margin-right: $padding-large-horizontal * 2;
         }
       }
     }

@@ -86,18 +86,17 @@ function _genAutoCleaning() {
   };
 }
 
-function _genReport(duration = 1, isSuccess = true) {
+function _genReport(duration = 1, isSuccess = true, inProgress = false) {
   const startedAt = new Date();
   startedAt.setHours(startedAt.getHours() - duration - 1);
   const stoppedAt = new Date(startedAt);
   stoppedAt.setHours(stoppedAt.getHours() - duration);
   return {
     startedAt,
-    stoppedAt,
-    releasedSize: 1024 * 1024 * 50,
+    stoppedAt: (inProgress ? null : stoppedAt),
+    releasedSize: 1024 * 1024 * (isSuccess ? 75 : 50),
     plannedReleasedSize: 1024 * 1024 * 75,
     filesNumber: 80,
-    status: isSuccess ? 'success' : 'failure',
   };
 }
 
@@ -640,8 +639,9 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
   _req_oneprovider_getProviderSpaceAutoCleaningReports: computedResourceGetHandler(
     '__spaceAutoCleaningReports', {
       reportEntries: [
-        _genReport(1, true),
-        _genReport(2, false),
+        _genReport(1, false, true),
+        _genReport(2, true),
+        _genReport(3, false),
       ],
     }
   ),

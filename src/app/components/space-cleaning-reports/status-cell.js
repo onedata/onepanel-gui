@@ -10,17 +10,16 @@
 import Ember from 'ember';
 
 const {
-  observer,
   computed,
-  computed: {
-    oneWay,
+  inject: {
+    service,
   },
-  on,
 } = Ember;
 
 export default Ember.Component.extend({
   classNames: ['status-cell'],
-  classNameBindings: ['_status'],
+
+  i18n: service(),
 
   /**
    * Record.
@@ -48,19 +47,52 @@ export default Ember.Component.extend({
    * Icon name.
    * @type {computed.string}
    */
-  _iconName: computed('_status', function () {
-    switch (this.get('_status')) {
-      case 'success':
+  _iconName: computed(
+    'record.{stoppedAt,releasedSize,plannedReleasedSize}', 
+    function () {
+      let {
+        stoppedAt,
+        releasedSize,
+        plannedReleasedSize,
+      } = this.get('record').getProperties(
+        'stoppedAt',
+        'releasedSize',
+        'plannedReleasedSize'
+      );
+      if (!stoppedAt) {
+        return 'update';
+      } else if (releasedSize === plannedReleasedSize) {
         return 'checkbox-filled';
-      case 'failure':
+      } else {
         return 'checkbox-filled-x';
-      default:
-        return '';
+      }
     }
-  }),
+  ),
 
-  bindStatusProperty: on('init', observer('column.propertyName', function () {
-    let propertyName = this.get('column.propertyName');
-    this.set('_status', oneWay(`record.${propertyName}`));
-  })),
+  _tip: computed(
+    'record.{stoppedAt,releasedSize,plannedReleasedSize}', 
+    function () {
+      let {
+        i18n,
+        record,
+      } = this.getProperties('i18n', 'record');
+      let {
+        stoppedAt,
+        releasedSize,
+        plannedReleasedSize,
+      } = record.getProperties(
+        'stoppedAt',
+        'releasedSize',
+        'plannedReleasedSize'
+      );
+      const prefix = 'components.spaceCleaningReports.statusValues.';
+      if (!stoppedAt) {
+        return i18n.t(prefix + 'inProgress');
+      } else if (releasedSize === plannedReleasedSize) {
+        return i18n.t(prefix + 'success');
+      } else {
+        return i18n.t(prefix + 'failure');
+      }
+    }
+  ),
 });
