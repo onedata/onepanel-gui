@@ -327,12 +327,11 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   },
 
   actions: {
-    dataChanged(field, value) {
-      this.set('_formData.' + field, value);
+    dataChanged(fieldName, value) {
+      this.set('_formData.' + fieldName, value);
       this.set('_isDirty', true);
-      this.set('_formFieldsModified.' + field, true);
-      // all dropdowns ends with 'Unit' word
-      if (field.indexOf('Number') + 6 !== field.length || this.get('_lostInputFocus')) {
+      this.set('_formFieldsModified.' + fieldName, true);
+      if (!_.endsWith(fieldName, 'Number') || this.get('_lostInputFocus')) {
         this._scheduleSendChanges();
       }
     },

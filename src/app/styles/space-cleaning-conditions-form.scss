@@ -1,4 +1,5 @@
 .space-cleaning-conditions-form {
+  $-form-second-breakpoint: 450px;
   .form-control {
     display: inline-block;
     width: 4.5em;
@@ -15,14 +16,14 @@
     @media (max-width: $screen-xs-max) {
       padding: 0 $padding-large-horizontal;
     }
-    @media (max-width: 450px) {
+    @media (max-width: $-form-second-breakpoint) {
       display: block;
     }
     .form-group {
       position: relative;
       margin-bottom: $padding-small-vertical;
 
-      @media (min-width: 451px) { 
+      @media (min-width: $-form-second-breakpoint + 1px) { 
         display: table-row;
         width: 100%;
         .label-column, .fields-column, .toggle-column {
@@ -33,7 +34,7 @@
           padding: 0 $padding-large-horizontal;
         }
       }
-      @media (max-width: 450px) {
+      @media (max-width: $-form-second-breakpoint) {
         
         .label-column, .fields-column, .toggle-column {
           vertical-align: top;

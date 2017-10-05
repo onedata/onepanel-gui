@@ -24,7 +24,7 @@ export default Ember.Component.extend({
   /**
    * Record.
    * To inject.
-   * @type {Object}
+   * @type {Onepanel.SpaceAutoCleaningReport}
    */
   record: null,
 

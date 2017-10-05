@@ -65,33 +65,25 @@ export default Component.extend({
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
-  _spaceSoftQuota: oneWayModifiable('data.spaceSoftQuota', function () {
-    return this.get('data.spaceSoftQuota');
-  }),
+  _spaceSoftQuota: oneWayModifiable('data.spaceSoftQuota'),
 
   /**
    * Space hard quota value for bar chart.
    * @type {computed.boolean}
    */
-  _spaceHardQuota: oneWayModifiable('data.spaceHardQuota', function () {
-    return this.get('data.spaceHardQuota');
-  }),
+  _spaceHardQuota: oneWayModifiable('data.spaceHardQuota'),
 
   /**
    * Space soft quota value for slider.
    * @type {computed.boolean}
    */
-  _spaceSoftQuotaForSlider: oneWayModifiable('data.spaceSoftQuota', function () {
-    return this.get('data.spaceSoftQuota');
-  }),
+  _spaceSoftQuotaForSlider: oneWayModifiable('data.spaceSoftQuota'),
 
   /**
    * Space hard quota value for slider.
    * @type {computed.boolean}
    */
-  _spaceHardQuotaForSlider: oneWayModifiable('data.spaceHardQuota', function () {
-    return this.get('data.spaceHardQuota');
-  }),
+  _spaceHardQuotaForSlider: oneWayModifiable('data.spaceHardQuota'),
 
   /**
    * Space soft quota value for bar chart (in percents).
