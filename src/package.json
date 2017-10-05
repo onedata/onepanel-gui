@@ -50,7 +50,7 @@
     "ember-cookies": "0.0.13", 
     "ember-cp-validations": "3.4.0", 
     "ember-export-application-global": "2.0.0", 
-    "ember-gestures": "0.4.5", 
+    "ember-gestures": "git+https://github.com/html-next/ember-gestures.git#ab504b5a2cc77655f193ccae1e577c326ed00cef", 
     "ember-get-config": "0.2.2", 
     "ember-hammertime": "1.2.3", 
     "ember-i18n": "5.0.2", 
