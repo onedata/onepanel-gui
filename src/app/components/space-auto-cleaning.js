@@ -1,3 +1,13 @@
+/**
+ * A space auto cleaning tab with bar chart, file conditions form and 
+ * cleaning reports table.
+ *
+ * @module components/space-auto-cleaning
+ * @author Michal Borzecki
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import EmberObject from '@ember/object';
 import { computed, get, set, observer } from '@ember/object';
@@ -318,7 +328,13 @@ export default Component.extend({
         updateAutoCleaning({ settings: changedValues }) : Promise.resolve();
     },
     fileConditionsChanged(values) {
-      this.get('updateAutoCleaning')({ settings: values });
+      let {
+        updateAutoCleaning,
+        autoCleaning,
+      } = this.getProperties('updateAutoCleaning', 'autoCleaning');
+      if (get(autoCleaning, 'enabled')) {
+        updateAutoCleaning({ settings: values });
+      }
     },
   },
 });

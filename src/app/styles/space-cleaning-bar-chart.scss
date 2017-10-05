@@ -8,12 +8,15 @@
   $pacman-food-color: black;
   $pacman-border: 1px solid black;
   .indicators {
+    margin-bottom: 2.5em;
     text-align: right;
+    letter-spacing: 0.5em;
+    p {
+      padding: 0;
+    }
     .indicator {
       display: inline-block;
-      & ~ .indicator {
-        margin-left: 1em;
-      }
+      letter-spacing: initial;
       .value {
         font-weight: bold;
         color: $color-one-blue-gray;
@@ -323,11 +326,6 @@
           15px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
           30px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
       }
-    }
-
-    @media (max-width: $screen-xs-max) {
-      margin: 3em;
-      margin-top: 1em;
     }
   }
 }

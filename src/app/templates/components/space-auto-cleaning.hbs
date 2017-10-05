@@ -1,18 +1,16 @@
 <div class="row content-row no-border">
-  <label for="cleaning-enabled"><h1>
-    {{t 'components.spaceAutoCleaning.autoCleaning'}}
+  <h1>
+    <label for="cleaning-enabled">
+      {{t 'components.spaceAutoCleaning.autoCleaning'}}
+    </label>
     {{one-way-toggle inputId="cleaning-enabled"
       checked=_isEnabled
       class="pull-right right"
       spinnerSide="left"
       update=(action "toggleCleaning")}}
   </h1>
-  </label>
 </div>
 {{#if _isEnabled}}
-  <div class="row content-row no-border no-padding-top">
-    <h1>{{t 'components.spaceAutoCleaning.removeFiles'}}</h1>
-  </div>
   {{#loading-container isLoading=_statusInitializing}}
     <div class="space-cleaning-settings cleaning-settings-row">
       <div class="form-cell">
@@ -24,6 +22,6 @@
     </div>
   {{/loading-container}}
   {{#loading-container isLoading=_reportsInitializing}}
-    {{space-cleaning-raports data=reports}}
+    {{space-cleaning-reports data=reports}}
   {{/loading-container}}
 {{/if}}

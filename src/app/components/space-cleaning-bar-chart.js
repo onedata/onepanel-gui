@@ -18,12 +18,12 @@
  */
 
 import Ember from 'ember';
+import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
 
 const {
   Component,
   computed,
   observer,
-  on,
   RSVP: {
     Promise,
   },
@@ -35,6 +35,7 @@ export default Component.extend({
 
   /**
    * Chart data.
+   * @virtual
    * @type {SpaceCleaningBarData}
    */
   data: null,
@@ -42,6 +43,7 @@ export default Component.extend({
   /**
    * Action called on slider value change. First argument is an object with
    * fields: spaceSoftQuota, spaceHardQuota.
+   * @virtual
    * @type {Function}
    * @returns {Promise<any>}
    */
@@ -63,52 +65,32 @@ export default Component.extend({
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
-  _spaceSoftQuota: computed('data.spaceSoftQuota', {
-    get() {
-      return this.get('data.spaceSoftQuota');
-    },
-    set(key, value) {
-      return value;
-    },
+  _spaceSoftQuota: oneWayModifiable('data.spaceSoftQuota', function () {
+    return this.get('data.spaceSoftQuota');
   }),
 
   /**
    * Space hard quota value for bar chart.
    * @type {computed.boolean}
    */
-  _spaceHardQuota: computed('data.spaceHardQuota', {
-    get() {
-      return this.get('data.spaceHardQuota');
-    },
-    set(key, value) {
-      return value;
-    },
+  _spaceHardQuota: oneWayModifiable('data.spaceHardQuota', function () {
+    return this.get('data.spaceHardQuota');
   }),
 
   /**
    * Space soft quota value for slider.
    * @type {computed.boolean}
    */
-  _spaceSoftQuotaForSlider: computed('data.spaceSoftQuota', {
-    get() {
-      return this.get('data.spaceSoftQuota');
-    },
-    set(key, value) {
-      return value;
-    },
+  _spaceSoftQuotaForSlider: oneWayModifiable('data.spaceSoftQuota', function () {
+    return this.get('data.spaceSoftQuota');
   }),
 
   /**
    * Space hard quota value for slider.
    * @type {computed.boolean}
    */
-  _spaceHardQuotaForSlider: computed('data.spaceHardQuota', {
-    get() {
-      return this.get('data.spaceHardQuota');
-    },
-    set(key, value) {
-      return value;
-    },
+  _spaceHardQuotaForSlider: oneWayModifiable('data.spaceHardQuota', function () {
+    return this.get('data.spaceHardQuota');
   }),
 
   /**
@@ -166,7 +148,7 @@ export default Component.extend({
    * Percent of used space.
    * @type {computed.boolean}
    */
-  _usedPercent: computed('data.spaceSize', 'data.spaceUsed', function () {
+  _usedPercent: computed('data.{spaceSize,spaceUsed}', function () {
     let data = this.get('data');
     let {
       spaceSize,
@@ -177,7 +159,7 @@ export default Component.extend({
 
   /**
    * Free space.
-   * @type {computed.boolean}
+   * @type {computed.number}
    */
   _freeSpace: computed('data.spaceSize', 'data.spaceUsed', function () {
     let {
@@ -189,7 +171,7 @@ export default Component.extend({
 
   /**
    * Space to release.
-   * @type {computed.boolean}
+   * @type {computed.number}
    */
   _toReleaseSpace: computed('_spaceSoftQuota', 'data.spaceUsed', function () {
     let {
@@ -204,8 +186,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedBelowSoftQuotaPercent: computed(
-    'data.spaceSize',
-    'data.spaceUsed',
+    'data.{spaceSize,spaceUsed}',
     '_spaceSoftQuota',
     function () {
       let {
@@ -248,8 +229,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedBelowHardQuotaPercent: computed(
-    'data.spaceSize',
-    'data.spaceUsed',
+    'data.{spaceSize,spaceUsed}',
     '_spaceSoftQuota',
     '_spaceHardQuota',
     function () {
@@ -304,8 +284,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedOverHardQuotaPercent: computed(
-    'data.spaceSize',
-    'data.spaceUsed',
+    'data.{spaceSize,spaceUsed}',
     '_spaceHardQuota',
     function () {
       let {
@@ -347,7 +326,7 @@ export default Component.extend({
   /**
    * Sets chart elements styles.
    */
-  valuesOberserver: on('didInsertElement', observer(
+  valuesObserver: observer(
     '_usedPercent',
     '_usedBelowSoftQuotaPercent',
     '_notUsedBelowSoftQuotaPercent',
@@ -392,7 +371,12 @@ export default Component.extend({
       this.$('.used').css(usedWidth);
       this.$('.pacman-row .used-space').css(usedWidth);
     }
-  )),
+  ),
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.valuesObserver();
+  },
 
   /**
    * Sends data
@@ -423,6 +407,7 @@ export default Component.extend({
         _allowLabelsEdition: false,
       });
     },
+
     /**
      * On slider move end
      * @param {Array.number} values 
@@ -435,6 +420,7 @@ export default Component.extend({
       });
       this._change();
     },
+
     /**
      * Value changed by inputs
      * @param {string} name field name

@@ -7,8 +7,8 @@ import { click } from 'ember-native-dom-helpers';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm';
 
-describe('Integration | Component | space cleaning raports', function () {
-  setupComponentTest('space-cleaning-raports', {
+describe('Integration | Component | space cleaning reports', function () {
+  setupComponentTest('space-cleaning-reports', {
     integration: true,
   });
 
@@ -24,7 +24,7 @@ describe('Integration | Component | space cleaning raports', function () {
       startedAt: new Date(),
       stoppedAt: new Date(),
       releasedSize: 1022976,
-      plannedReleasedSize: 20485760,
+      plannedReleasedSize: 1022976,
       filesNumber: 18,
       status: 'failure',
     }]);
@@ -35,9 +35,9 @@ describe('Integration | Component | space cleaning raports', function () {
     });
   });
 
-  it('renders raports', function () {
+  it('renders reports', function () {
     const data = this.get('data');
-    this.render(hbs `{{space-cleaning-raports data=data _window=_window}}`);
+    this.render(hbs `{{space-cleaning-reports data=data _window=_window}}`);
 
     expect(this.$('tbody tr')).to.have.length(2);
     const cells = this.$('tbody tr:first-child td');
@@ -50,16 +50,16 @@ describe('Integration | Component | space cleaning raports', function () {
     cellsValues.forEach((value, index) =>
       expect(cells.eq(index).text().trim()).to.be.equal(value)
     );
-    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled')).to.exist;
+    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled-x')).to.exist;
     expect(this.$(
-      'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled-x'
+      'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled'
     )).to.exist;
   });
 
-  it('renders raports in mobile view', function () {
+  it('renders reports in mobile view', function () {
     this.set('_window.innerWidth', 500);
     const data = this.get('data');
-    this.render(hbs `{{space-cleaning-raports data=data _window=_window}}`);
+    this.render(hbs `{{space-cleaning-reports data=data _window=_window}}`);
 
     expect(this.$('.one-collapsible-list li')).to.have.length(2);
     const cells = this.$(
@@ -68,26 +68,26 @@ describe('Integration | Component | space cleaning raports', function () {
     const cellsValues = [
       moment(data[1].startedAt).format(START_END_TIME_FORMAT),
       moment(data[1].stoppedAt).format(START_END_TIME_FORMAT),
-      '999 KiB (out of 19.5 MiB)',
+      '999 KiB (out of 999 KiB)',
       String(data[1].filesNumber),
     ];
     cellsValues.forEach((value, index) =>
       expect(cells.eq(index).text().trim()).to.be.equal(value)
     );
     expect(this.$('.one-collapsible-list-item:last-child .item-table ' +
-      '.content-row:last-child .oneicon.oneicon-checkbox-filled-x')).to.exist;
+      '.content-row:last-child .oneicon.oneicon-checkbox-filled')).to.exist;
   });
 
-  it('renders message about no raports', function () {
+  it('renders message about no reports', function () {
     this.set('data', []);
-    this.render(hbs `{{space-cleaning-raports data=data _window=_window}}`);
+    this.render(hbs `{{space-cleaning-reports data=data _window=_window}}`);
 
     expect(this.$('tbody tr')).to.have.length(1);
-    expect(this.$('tbody td')).to.contain('No raports available.');
+    expect(this.$('tbody td')).to.contain('No reports available.');
   });
 
   it('allows to sort released size using raw bytes number', function (done) {
-    this.render(hbs `{{space-cleaning-raports data=data _window=_window}}`);
+    this.render(hbs `{{space-cleaning-reports data=data _window=_window}}`);
 
     const releasedTh = this.$('th:nth-child(3)')[0];
     click(releasedTh).then(() => {

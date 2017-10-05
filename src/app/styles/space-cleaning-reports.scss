@@ -1,4 +1,4 @@
-.space-cleaning-raports {
+.space-cleaning-reports {
   table thead tr th,
   table tbody tr td {
     padding: $padding-base-vertical;
@@ -10,15 +10,19 @@
     font-size: 170%;
     vertical-align: top;
     line-height: 0;
-    &.success {
-      color: $color-one-mint;
-    }
-    &.failure {
-      color: $color-one-red;
-    }
+    
     .one-icon {
       position: relative;
       top: -0.1em;
+      &.oneicon-checkbox-filled {
+        color: $color-one-mint;
+      }
+      &.oneicon-checkbox-filled-x {
+        color: $color-one-red;
+      }
+      &.oneicon-update {
+        font-size: 80%;
+      }
     }
   }
 }

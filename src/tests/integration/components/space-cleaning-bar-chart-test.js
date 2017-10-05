@@ -9,7 +9,7 @@ function approxEquals(value, targetValue) {
   return value >= targetValue - delta && value <= targetValue + delta;
 }
 
-describe('Integration | Component | space cleaning bar chart', function() {
+describe('Integration | Component | space cleaning bar chart', function () {
   setupComponentTest('space-cleaning-bar-chart', {
     integration: true,
   });
@@ -24,7 +24,7 @@ describe('Integration | Component | space cleaning bar chart', function() {
     }));
   });
 
-  it('renders pacman if cleaning is working', function() {
+  it('renders pacman if cleaning is working', function () {
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart data=data}}
@@ -33,7 +33,7 @@ describe('Integration | Component | space cleaning bar chart', function() {
     expect(this.$('.pacman')).to.exist;
   });
 
-  it('does not render pacman if cleaning is not working', function() {
+  it('does not render pacman if cleaning is not working', function () {
     this.set('data.isWorking', false);
     this.render(hbs `
       <div style="width: 500px">
@@ -43,7 +43,7 @@ describe('Integration | Component | space cleaning bar chart', function() {
     expect(this.$('.pacman')).not.to.exist;
   });
 
-  it('renders valid indicators', function() {
+  it('renders valid indicators', function () {
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart data=data}}
@@ -56,7 +56,7 @@ describe('Integration | Component | space cleaning bar chart', function() {
     expect(indicators.find('.to-release')).to.contain('1 MiB');
   });
 
-  it('renders valid slider values', function() {
+  it('renders valid slider values', function () {
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart data=data}}
@@ -66,7 +66,7 @@ describe('Integration | Component | space cleaning bar chart', function() {
     expect(this.$('.hard-quota-editor')).to.contain('8 MiB');
   });
 
-  it('renders valid bars', function() {
+  it('renders valid bars', function () {
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart data=data}}
@@ -93,12 +93,10 @@ describe('Integration | Component | space cleaning bar chart', function() {
     expect(approxEquals(barWidth('.used-below-hard-quota'), usedBelowHardQuota))
       .to.be.true;
     expect(approxEquals(
-      barWidth('.not-used-below-hard-quota'), notUsedBelowHardQuota)
-    ).to.be.true;
+      barWidth('.not-used-below-hard-quota'), notUsedBelowHardQuota)).to.be.true;
     expect(approxEquals(barWidth('.used-over-hard-quota'), 0)).to.be.true;
     expect(approxEquals(
-      barWidth('.not-used-over-hard-quota'), notUsedOverHardQuota)
-    ).to.be.true;
+      barWidth('.not-used-over-hard-quota'), notUsedOverHardQuota)).to.be.true;
     expect(approxEquals(barWidth('.chart-bar.used'), used)).to.be.true;
     expect(approxEquals(barWidth('.pacman-row .used-space'), used)).to.be.true;
   });
