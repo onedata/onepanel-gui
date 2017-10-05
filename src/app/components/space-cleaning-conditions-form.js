@@ -284,13 +284,13 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         'fileSizeLesserThan',
         'fileTimeNotActive',
       ].forEach((fieldName) => {
-        if (_formData.get(fieldName + 'Enabled') && 
-        (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit'))) {
+        if (_formData.get(fieldName + 'Enabled') &&
+          (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit'))) {
           const numberString = _formData.get(fieldName + 'Number').trim();
           data[fieldName] = Math.floor(parseFloat(numberString) *
             _formData.get(fieldName + 'Unit').multiplicator);
-        } else if (modified.get(fieldName + 'Enabled') && 
-        !_formData.get(fieldName + 'Enabled')) {
+        } else if (modified.get(fieldName + 'Enabled') &&
+          !_formData.get(fieldName + 'Enabled')) {
           data[fieldName] = null;
         }
       });

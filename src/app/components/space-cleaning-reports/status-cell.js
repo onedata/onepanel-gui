@@ -48,7 +48,7 @@ export default Ember.Component.extend({
    * @type {computed.string}
    */
   _iconName: computed(
-    'record.{stoppedAt,releasedSize,plannedReleasedSize}', 
+    'record.{stoppedAt,releasedSize,plannedReleasedSize}',
     function () {
       let {
         stoppedAt,
@@ -70,7 +70,7 @@ export default Ember.Component.extend({
   ),
 
   _tip: computed(
-    'record.{stoppedAt,releasedSize,plannedReleasedSize}', 
+    'record.{stoppedAt,releasedSize,plannedReleasedSize}',
     function () {
       let {
         i18n,

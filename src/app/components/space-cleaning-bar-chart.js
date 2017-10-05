@@ -420,7 +420,7 @@ export default Component.extend({
       });
       this._change();
     },
-    
+
     /**
      * Value changed by inputs
      * @param {string} name field name
