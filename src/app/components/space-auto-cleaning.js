@@ -4,6 +4,8 @@ import { computed, get, set, observer } from '@ember/object';
 import { inject } from '@ember/service';
 import { run } from '@ember/runloop';
 import { Promise } from 'rsvp';
+import moment from 'moment';
+import _ from 'lodash';
 
 const BLANK_AUTO_CLEANING = {
   enabled: false,
@@ -174,6 +176,15 @@ export default Component.extend({
       return this.get('_reportsIsUpdating') && this.get('reports') == null;
     }),
 
+  /**
+   * Initialized in `init()`
+   * @type {Moment}
+   */
+  _reportsFetchMoment: computed('_lastReportMoment', function () {
+    const _lastReportMoment = this.get('_lastReportMoment');
+    return _lastReportMoment || defaultReportsFetchMoment();
+  }),
+
   // TODO: there should be no watcher for reports at all - it should be updated:
   // - after enabling
   // - on change status.isWorking true -> false
@@ -232,6 +243,30 @@ export default Component.extend({
     }
   },
 
+  /**
+   * @returns {Moment}
+   */
+  _lastReportMoment: computed('reports.@each.{startedAt,stoppedAt}', function () {
+    const reports = this.get('reports');
+    if (reports) {
+      return _.max(
+        _.map(reports, report => {
+          const startedAt = get(report, 'startedAt');
+          if (startedAt) {
+            return moment(startedAt);
+          } else {
+            const stoppedAt = get(report, 'stoppedAt');
+            if (stoppedAt) {
+              return moment(stoppedAt);
+            } else {
+              return null;
+            }
+          }
+        })
+      );
+    }
+  }),
+
   updateStatus() {
     const {
       spaceManager,
@@ -250,9 +285,11 @@ export default Component.extend({
     const {
       spaceManager,
       spaceId,
-    } = this.getProperties('spaceManager', 'spaceId');
+      _reportsFetchMoment,
+    } = this.getProperties('spaceManager', 'spaceId', '_reportsFetchMoment');
+    const startedAfter = _reportsFetchMoment.toISOString();
     this.set('_reportsIsUpdating', true);
-    return spaceManager.getAutoCleaningReports(spaceId)
+    return spaceManager.getAutoCleaningReports(spaceId, startedAfter)
       .then(({ reportEntries }) => {
         return this.set('reports', reportEntries);
       })
@@ -285,3 +322,7 @@ export default Component.extend({
     },
   },
 });
+
+function defaultReportsFetchMoment() {
+  return moment().subtract(1, 'week');
+}
