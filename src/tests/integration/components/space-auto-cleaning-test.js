@@ -40,7 +40,7 @@ describe('Integration | Component | space auto cleaning', function () {
   //     fileSizeLesserThan: 1,
   //     fileTimeNotActive: 1,
   //     target: 1,
-  //     treshold: 1,
+  //     threshold: 1,
   //   };
   //   const autoCleaning = {
   //     enabled: true,

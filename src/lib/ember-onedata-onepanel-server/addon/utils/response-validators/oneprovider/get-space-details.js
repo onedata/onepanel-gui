@@ -14,7 +14,8 @@ export default function (data) {
     return !!(
       data.id &&
       data.name &&
-      typeof data.supportingProviders === 'object'
+      typeof data.supportingProviders === 'object' &&
+      (data.autoCleaning == null || validateAutoCleaningSettings(data.autoCleaning.settings))
     );
   } catch (error) {
     if (error instanceof TypeError) {
@@ -23,4 +24,22 @@ export default function (data) {
       throw error;
     }
   }
+}
+
+const cleanSettingsProps = [
+  'fileSizeGreaterThan',
+  'fileSizeLesserThan',
+  'fileTimeNotActive',
+  'threshold',
+  'target',
+];
+
+/** 
+ * @param {Onepanel.SpaceAutoCleaningSettings} data
+ * @returns {boolean} true if valid
+ */
+function validateAutoCleaningSettings(data) {
+  return data != null && cleanSettingsProps.every(prop =>
+    data[prop] === null || typeof data[prop] === 'number'
+  );
 }

@@ -48,20 +48,20 @@ export default Ember.Component.extend({
    * @type {computed.string}
    */
   _iconName: computed(
-    'record.{stoppedAt,releasedSize,plannedReleasedSize}',
+    'record.{stoppedAt,releasedBytes,bytesToRelease}',
     function () {
       let {
         stoppedAt,
-        releasedSize,
-        plannedReleasedSize,
+        releasedBytes,
+        bytesToRelease,
       } = this.get('record').getProperties(
         'stoppedAt',
-        'releasedSize',
-        'plannedReleasedSize'
+        'releasedBytes',
+        'bytesToRelease'
       );
       if (!stoppedAt) {
         return 'update';
-      } else if (releasedSize === plannedReleasedSize) {
+      } else if (releasedBytes === bytesToRelease) {
         return 'checkbox-filled';
       } else {
         return 'checkbox-filled-x';
@@ -70,7 +70,7 @@ export default Ember.Component.extend({
   ),
 
   _tip: computed(
-    'record.{stoppedAt,releasedSize,plannedReleasedSize}',
+    'record.{stoppedAt,releasedBytes,bytesToRelease}',
     function () {
       let {
         i18n,
@@ -78,17 +78,17 @@ export default Ember.Component.extend({
       } = this.getProperties('i18n', 'record');
       let {
         stoppedAt,
-        releasedSize,
-        plannedReleasedSize,
+        releasedBytes,
+        bytesToRelease,
       } = record.getProperties(
         'stoppedAt',
-        'releasedSize',
-        'plannedReleasedSize'
+        'releasedBytes',
+        'bytesToRelease'
       );
       const prefix = 'components.spaceCleaningReports.statusValues.';
       if (!stoppedAt) {
         return i18n.t(prefix + 'inProgress');
-      } else if (releasedSize === plannedReleasedSize) {
+      } else if (releasedBytes === bytesToRelease) {
         return i18n.t(prefix + 'success');
       } else {
         return i18n.t(prefix + 'failure');

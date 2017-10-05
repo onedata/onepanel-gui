@@ -3,8 +3,8 @@ export default {
   noReportsAvailable: 'No reports available.',
   start: 'Start',
   stop: 'Stop',
-  releasedSize: 'Released size',
-  releasedSizeOutOf: 'out of',
+  releasedBytes: 'Released size',
+  releasedBytesOutOf: 'out of',
   filesNumber: 'Files number',
   status: 'Status',
   statusValues: {

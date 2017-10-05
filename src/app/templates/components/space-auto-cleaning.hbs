@@ -11,17 +11,25 @@
   </h1>
 </div>
 {{#if _isEnabled}}
-  {{#loading-container isLoading=_statusInitializing}}
     <div class="space-cleaning-settings cleaning-settings-row">
       <div class="form-cell">
         {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
       </div>
       <div class="bar-cell">
-        {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+        {{#loading-container
+          isLoading=_statusInitializing
+          errorReason=_statusError
+          customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
+        }}
+          {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+        {{/loading-container}}
       </div>
     </div>
-  {{/loading-container}}
-  {{#loading-container isLoading=_reportsInitializing}}
+  {{#loading-container
+    isLoading=_reportsInitializing
+    errorReason=_reportsError
+    customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
+  }}
     {{space-cleaning-reports data=reports}}
   {{/loading-container}}
 {{/if}}

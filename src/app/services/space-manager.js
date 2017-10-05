@@ -176,7 +176,7 @@ export default Service.extend({
    * @returns {Promise<Onepanel.SpaceAutoCleaningStatus>}
    */
   getAutoCleaningStatus(spaceId) {
-    return this.get('onepanelServer').request(
+    return this.get('onepanelServer').requestValidData(
       'oneprovider',
       'getProviderSpaceAutoCleaningStatus',
       spaceId
@@ -188,7 +188,7 @@ export default Service.extend({
    * @returns {Promise<Onepanel.SpaceAutoCleaningReportCollection>}
    */
   getAutoCleaningReports(spaceId) {
-    return this.get('onepanelServer').request(
+    return this.get('onepanelServer').requestValidData(
       'oneprovider',
       'getProviderSpaceAutoCleaningReports',
       spaceId

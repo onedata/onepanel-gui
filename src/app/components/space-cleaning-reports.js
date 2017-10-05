@@ -72,12 +72,12 @@ export default Component.extend({
         report.stoppedAtSortable = 0;
       }
 
-      let released = bytesToString(report.get('releasedSize'), { iecFormat: true });
-      let outOf = i18n.t('components.spaceCleaningReports.releasedSizeOutOf');
+      let released = bytesToString(report.get('releasedBytes'), { iecFormat: true });
+      let outOf = i18n.t('components.spaceCleaningReports.releasedBytesOutOf');
       let planned = bytesToString(
-        report.get('plannedReleasedSize'), { iecFormat: true }
+        report.get('bytesToRelease'), { iecFormat: true }
       );
-      report.set('releasedSizeReadable', `${released} (${outOf} ${planned})`);
+      report.set('releasedBytesReadable', `${released} (${outOf} ${planned})`);
       return report;
     });
   }),
@@ -116,9 +116,9 @@ export default Component.extend({
       sortedBy: 'stoppedAtSortable',
       title: i18n.t('components.spaceCleaningReports.stop'),
     }, {
-      propertyName: 'releasedSizeReadable',
-      sortedBy: 'releasedSize',
-      title: i18n.t('components.spaceCleaningReports.releasedSize'),
+      propertyName: 'releasedBytesReadable',
+      sortedBy: 'releasedBytes',
+      title: i18n.t('components.spaceCleaningReports.releasedBytes'),
     }, {
       propertyName: 'filesNumber',
       title: i18n.t('components.spaceCleaningReports.filesNumber'),

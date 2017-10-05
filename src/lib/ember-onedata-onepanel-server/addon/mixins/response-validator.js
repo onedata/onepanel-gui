@@ -20,6 +20,8 @@ import getProviderSpaces from 'ember-onedata-onepanel-server/utils/response-vali
 import getSpaceDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-space-details';
 import getStorages from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storages';
 import getStorageDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storage-details';
+import getProviderSpaceAutoCleaningReports from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-reports';
+import getProviderSpaceAutoCleaningStatus from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-status';
 
 const {
   Mixin,
@@ -45,6 +47,8 @@ const VALIDATORS = {
     getSpaceDetails,
     getStorages,
     getStorageDetails,
+    getProviderSpaceAutoCleaningReports,
+    getProviderSpaceAutoCleaningStatus,
   },
 };
 

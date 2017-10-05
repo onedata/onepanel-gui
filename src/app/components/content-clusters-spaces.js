@@ -40,7 +40,7 @@ export default Component.extend({
   addConflictLabels: observer('spaces.@each.{name,isSettled}', function () {
     const spaces = this.get('spaces');
     if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
-      addConflictLabels(spaces);
+      addConflictLabels(spaces.filter(s => get(s, 'isFulfilled')));
     }
   }),
 

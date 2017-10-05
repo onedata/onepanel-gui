@@ -82,7 +82,7 @@ export default Component.extend({
    * @type {Ember.ComputedProperty<Ember.Object>}
    */
   barData: computed(
-    'autoCleaning.settings.{target,treshold}',
+    'autoCleaning.settings.{target,threshold}',
     'status.{isWorking,spaceUsed}',
     'spaceSize',
     function () {
@@ -96,7 +96,7 @@ export default Component.extend({
         spaceSize,
         spaceUsed: get(status, 'spaceUsed'),
         target: get(autoCleaning, 'settings.target'),
-        treshold: get(autoCleaning, 'settings.treshold'),
+        threshold: get(autoCleaning, 'settings.threshold'),
       });
     }
   ),
@@ -168,32 +168,63 @@ export default Component.extend({
     return this.get('_isEnabled') ? DEFAULT_UPDATE_INTERVAL : undefined;
   }),
 
+  /**
+   * It true, currently fetching reports from backend
+   * Set by some interval watcher
+   * @type {boolean}
+   */
   _statusIsUpdating: undefined,
 
+  /**
+   * It true, currently fetching reports from backend
+   * Set by some interval watcher
+   * @type {boolean}
+   */
   _reportsIsUpdating: undefined,
 
+  /**
+   * True if loading status for the first time after init
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   _statusInitializing: computed(
     'status',
     '_statusIsUpdating',
     function () {
       return this.get('_statusIsUpdating') && this.get('status') == null;
-    }),
+    }
+  ).readOnly(),
 
+  /**
+   * True if loading reports for the first time after init
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   _reportsInitializing: computed(
     'reports',
     '_reportsIsUpdating',
     function () {
       return this.get('_reportsIsUpdating') && this.get('reports') == null;
-    }),
+    }
+  ).readOnly(),
 
   /**
-   * Initialized in `init()`
-   * @type {Moment}
+   * Error object from fetching status rejection
+   * @type {any} typically a request error object
+   */
+  _statusError: null,
+
+  /**
+   * Error object from fetching reports rejection
+   * @type {any} typically a request error object
+   */
+  _reportsError: null,
+
+  /**
+   * @type {Ember.ComputedProperty<Moment>}
    */
   _reportsFetchMoment: computed('_lastReportMoment', function () {
     const _lastReportMoment = this.get('_lastReportMoment');
     return _lastReportMoment || defaultReportsFetchMoment();
-  }),
+  }).readOnly(),
 
   // TODO: there should be no watcher for reports at all - it should be updated:
   // - after enabling
@@ -230,6 +261,8 @@ export default Component.extend({
     '_statusInterval',
     '_reportsInterval',
     function () {
+      // debouncing does not let _setWatchersIntervals to be executed multiple
+      // times, which can occur for observer
       run.debounce(this, '_setWatchersIntervals', 1);
     }
   ),
@@ -254,7 +287,9 @@ export default Component.extend({
   },
 
   /**
-   * @returns {Moment}
+   * Last event time for reports, can be eg. `stoppedAt` moment of last report,
+   * but also can be a `startedAt` of report in progress
+   * @type {Ember.ComputedProperty<Moment>|null}
    */
   _lastReportMoment: computed('reports.@each.{startedAt,stoppedAt}', function () {
     const reports = this.get('reports');
@@ -285,10 +320,11 @@ export default Component.extend({
     this.set('_statusIsUpdating', true);
     return spaceManager.getAutoCleaningStatus(spaceId)
       .then(autoCleaningStatus => {
+        this.set('_statusError', null);
         return this.set('status', autoCleaningStatus);
       })
+      .catch(error => this.set('_statusError', error))
       .finally(() => this.set('_statusIsUpdating', false));
-    // .catch( /** FIXME: error handling */ );
   },
 
   updateReports() {
@@ -301,10 +337,11 @@ export default Component.extend({
     this.set('_reportsIsUpdating', true);
     return spaceManager.getAutoCleaningReports(spaceId, startedAfter)
       .then(({ reportEntries }) => {
+        this.set('_reportsError', null);
         return this.set('reports', reportEntries);
       })
+      .catch(error => this.set('_reportsError', error))
       .finally(() => this.set('_reportsIsUpdating', false));
-    // .catch( /** FIXME: error handling */ );
   },
 
   actions: {
@@ -319,7 +356,7 @@ export default Component.extend({
       let updateAutoCleaning = this.get('updateAutoCleaning');
       let settings = this.get('autoCleaning.settings');
       let changedValues = {};
-      ['target', 'treshold'].forEach((fieldName) => {
+      ['target', 'threshold'].forEach((fieldName) => {
         if (values[fieldName] !== get(settings, fieldName)) {
           changedValues[fieldName] = values[fieldName];
         }

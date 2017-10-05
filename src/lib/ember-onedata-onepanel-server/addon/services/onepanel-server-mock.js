@@ -75,7 +75,7 @@ function _genAutoCleaningSettings() {
     fileSizeLesserThan: 10000000,
     fileTimeNotActive: 60 * 60 * 12,
     target: 100000,
-    treshold: 10000000,
+    threshold: 10000000,
   };
 }
 
@@ -87,15 +87,17 @@ function _genAutoCleaning() {
 }
 
 function _genReport(duration = 1, isSuccess = true, inProgress = false) {
-  const startedAt = new Date();
+  let startedAt = new Date();
   startedAt.setHours(startedAt.getHours() - duration - 1);
-  const stoppedAt = new Date(startedAt);
+  startedAt = startedAt.toISOString();
+  let stoppedAt = new Date(startedAt);
   stoppedAt.setHours(stoppedAt.getHours() - duration);
+  stoppedAt = stoppedAt.toISOString();
   return {
     startedAt,
     stoppedAt: (inProgress ? null : stoppedAt),
-    releasedSize: 1024 * 1024 * (isSuccess ? 75 : 50),
-    plannedReleasedSize: 1024 * 1024 * 75,
+    releasedBytes: 1024 * 1024 * (isSuccess ? 75 : 50),
+    bytesToRelease: 1024 * 1024 * 75,
     filesNumber: 80,
   };
 }
@@ -635,6 +637,20 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
         };
       }
     }),
+
+  // FIXME: to remove - testing errors
+  // _req_oneprovider_getProviderSpaceAutoCleaningReports: computed(function () {
+  //   return {
+  //     success: () => ({ something: 'wrong' }),
+  //   };
+  // }),
+
+  // FIXME: to remove - testing errors
+  // _req_oneprovider_getProviderSpaceAutoCleaningStatus: computed(function () {
+  //   return {
+  //     success: () => ({ foo: 'bar' }),
+  //   };
+  // }),
 
   _req_oneprovider_getProviderSpaceAutoCleaningReports: computedResourceGetHandler(
     '__spaceAutoCleaningReports', {

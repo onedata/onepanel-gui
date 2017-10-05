@@ -16,15 +16,15 @@ describe('Integration | Component | space cleaning reports', function () {
     this.set('data', [{
       startedAt: new Date(),
       stoppedAt: new Date(),
-      releasedSize: 1048576,
-      plannedReleasedSize: 2097152,
+      releasedBytes: 1048576,
+      bytesToRelease: 2097152,
       filesNumber: 24,
       status: 'success',
     }, {
       startedAt: new Date(),
       stoppedAt: new Date(),
-      releasedSize: 1022976,
-      plannedReleasedSize: 1022976,
+      releasedBytes: 1022976,
+      bytesToRelease: 1022976,
       filesNumber: 18,
       status: 'failure',
     }]);
