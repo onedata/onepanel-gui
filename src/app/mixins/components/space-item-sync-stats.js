@@ -15,8 +15,6 @@ import Ember from 'ember';
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
 
-// FIXME: disable live fetching, when on other tab than storage synchronization
-
 const {
   Mixin,
   inject: { service },
@@ -286,12 +284,23 @@ export default Mixin.create({
     });
   },
 
+  /**
+   * Is sync tab currently opened
+   * NOTE: activeTabId is provided by `space-tabs` mixin
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  syncTabActive: computed('activeTabId', function () {
+    const activeTabId = this.get('activeTabId');
+    return activeTabId && /^tab-sync-/.test(activeTabId);
+  }),
+
   reconfigureSyncWatchers: observer(
     '_isActive',
     '_importActive',
     'syncInterval',
     '_syncChartStatsWatcher',
     'statsFrozen',
+    'syncTabActive',
     function () {
       let {
         _isActive,
@@ -301,6 +310,7 @@ export default Mixin.create({
         _syncStatusWatcher,
         statsFrozen,
         syncStatusRefreshTime,
+        syncTabActive,
       } = this.getProperties(
         '_isActive',
         '_importActive',
@@ -308,14 +318,15 @@ export default Mixin.create({
         '_syncChartStatsWatcher',
         '_syncStatusWatcher',
         'statsFrozen',
-        'syncStatusRefreshTime'
+        'syncStatusRefreshTime',
+        'syncTabActive',
       );
 
       if (_importActive) {
         _syncStatusWatcher.set('interval', syncStatusRefreshTime);
       }
 
-      if (_importActive && _isActive && !statsFrozen) {
+      if (syncTabActive && _importActive && _isActive && !statsFrozen) {
         _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
       } else {
         _syncChartStatsWatcher.stop();

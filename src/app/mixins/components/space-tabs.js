@@ -35,6 +35,12 @@ export default Mixin.create({
     ));
   }),
 
+  /**
+   * Store active tab (updated on bs-tab change action)
+   * @type {string}
+   */
+  activeTabId: undefined,
+
   initActiveTabId: computed('_allTabsIdComputed', function () {
     let _initActiveTabId = this.get('_initActiveTabId');
     if (_initActiveTabId) {
@@ -45,6 +51,8 @@ export default Mixin.create({
       );
       _initActiveTabId = this.get(camelize(`tab-${activeTabShort}-id`));
       this.set('_initActiveTabId', _initActiveTabId);
+      // using side effect to not use observer (should be fired only once)
+      this.set('activeTabId', _initActiveTabId);
       return _initActiveTabId;
     }
   }),
