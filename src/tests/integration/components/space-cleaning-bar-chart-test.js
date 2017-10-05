@@ -18,8 +18,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     this.set('data', Ember.Object.create({
       spaceSize: 10485760,
       spaceUsed: 7340032,
-      spaceHardQuota: 8388608,
-      spaceSoftQuota: 6291456,
+      treshold: 8388608,
+      target: 6291456,
       isWorking: true,
     }));
   });
@@ -75,16 +75,16 @@ describe('Integration | Component | space cleaning bar chart', function () {
     const {
       spaceSize,
       spaceUsed,
-      spaceHardQuota,
-      spaceSoftQuota,
+      treshold,
+      target,
     } = this.get('data');
     const barWidth = (name) => parseFloat(
       this.$(name).attr('style').match(/width:\s+(\d+)%;/)[1]
     );
-    const usedBelowSoftQuota = spaceSoftQuota * 100 / spaceSize;
-    const usedBelowHardQuota = (spaceUsed - spaceSoftQuota) * 100 / spaceSize;
-    const notUsedBelowHardQuota = (spaceHardQuota - spaceUsed) * 100 / spaceSize;
-    const notUsedOverHardQuota = (spaceSize - Math.max(spaceHardQuota, spaceUsed)) *
+    const usedBelowSoftQuota = target * 100 / spaceSize;
+    const usedBelowHardQuota = (spaceUsed - target) * 100 / spaceSize;
+    const notUsedBelowHardQuota = (treshold - spaceUsed) * 100 / spaceSize;
+    const notUsedOverHardQuota = (spaceSize - Math.max(treshold, spaceUsed)) *
       100 / spaceSize;
     const used = spaceUsed * 100 / spaceSize;
     expect(approxEquals(barWidth('.used-below-soft-quota'), usedBelowSoftQuota))

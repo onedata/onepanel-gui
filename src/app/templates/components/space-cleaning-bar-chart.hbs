@@ -28,16 +28,16 @@
 <div class="bar-container">
   {{space-cleaning-bar-chart/inline-editor
     class="soft-quota-editor"
-    position=_spaceSoftQuotaPercent
-    value=_spaceSoftQuota
+    position=_targetPercent
+    value=_target
     allowEdition=(and _allowLabelsEdition (not _disabled))
-    onSave=(action "valueChanged" "spaceSoftQuota")}}
+    onSave=(action "valueChanged" "target")}}
   {{space-cleaning-bar-chart/inline-editor
     class="hard-quota-editor"
-    position=_spaceHardQuotaPercent
-    value=_spaceHardQuota
+    position=_tresholdPercent
+    value=_treshold
     allowEdition=_allowLabelsEdition
-    onSave=(action "valueChanged" "spaceHardQuota")}}
+    onSave=(action "valueChanged" "treshold")}}
   <div class="bar">
     <div class="chart-bar used-below-soft-quota"></div>
     <div class="chart-bar not-used-below-soft-quota not-used"></div>

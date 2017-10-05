@@ -74,8 +74,8 @@ function _genAutoCleaningSettings() {
     fileSizeGreaterThan: 10000,
     fileSizeLesserThan: 10000000,
     fileTimeNotActive: 60 * 60 * 12,
-    spaceSoftQuota: 100000,
-    spaceHardQuota: 10000000,
+    target: 100000,
+    treshold: 10000000,
   };
 }
 

@@ -82,7 +82,7 @@ export default Component.extend({
    * @type {Ember.ComputedProperty<Ember.Object>}
    */
   barData: computed(
-    'autoCleaning.settings.{spaceSoftQuota,spaceHardQuota}',
+    'autoCleaning.settings.{target,treshold}',
     'status.{isWorking,spaceUsed}',
     'spaceSize',
     function () {
@@ -95,8 +95,8 @@ export default Component.extend({
         isWorking: get(status, 'isWorking'),
         spaceSize,
         spaceUsed: get(status, 'spaceUsed'),
-        spaceSoftQuota: get(autoCleaning, 'settings.spaceSoftQuota'),
-        spaceHardQuota: get(autoCleaning, 'settings.spaceHardQuota'),
+        target: get(autoCleaning, 'settings.target'),
+        treshold: get(autoCleaning, 'settings.treshold'),
       });
     }
   ),
@@ -319,7 +319,7 @@ export default Component.extend({
       let updateAutoCleaning = this.get('updateAutoCleaning');
       let settings = this.get('autoCleaning.settings');
       let changedValues = {};
-      ['spaceSoftQuota', 'spaceHardQuota'].forEach((fieldName) => {
+      ['target', 'treshold'].forEach((fieldName) => {
         if (values[fieldName] !== get(settings, fieldName)) {
           changedValues[fieldName] = values[fieldName];
         }

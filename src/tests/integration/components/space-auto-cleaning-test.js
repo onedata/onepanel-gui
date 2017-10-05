@@ -39,8 +39,8 @@ describe('Integration | Component | space auto cleaning', function () {
   //     fileSizeGreaterThan: 1,
   //     fileSizeLesserThan: 1,
   //     fileTimeNotActive: 1,
-  //     spaceSoftQuota: 1,
-  //     spaceHardQuota: 1,
+  //     target: 1,
+  //     treshold: 1,
   //   };
   //   const autoCleaning = {
   //     enabled: true,
