@@ -157,7 +157,7 @@
                   {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabPopularId}}
-                  {{#if (eq tabPopularClass "enabled")}}
+                  {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
                     {{space-files-popularity
                       filesPopularity=filesPopularity
                       updateFilesPopularity=(action "updateFilesPopularity")
@@ -165,7 +165,7 @@
                   {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabCleanId}}
-                  {{#if (eq tabCleanClass "enabled")}}
+                  {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
                     {{space-auto-cleaning
                       autoCleaning=autoCleaning
                       spaceSize=space.spaceSize

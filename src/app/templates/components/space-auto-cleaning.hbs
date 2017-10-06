@@ -4,30 +4,30 @@
       {{t 'components.spaceAutoCleaning.autoCleaning'}}
     </label>
     {{one-way-toggle inputId="cleaning-enabled"
-      checked=_isEnabled
+      checked=isCleanEnabled
       class="pull-right right"
       spinnerSide="left"
       update=(action "toggleCleaning")}}
   </h1>
 </div>
-{{#if _isEnabled}}
-    <div class="space-cleaning-settings cleaning-settings-row">
-      <div class="form-cell">
-        {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
-      </div>
-      <div class="bar-cell">
-        {{#loading-container
-          isLoading=_statusInitializing
-          errorReason=_statusError
-          customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
-        }}
-          {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
-        {{/loading-container}}
-      </div>
+{{#if isCleanEnabled}}
+  <div class="space-cleaning-settings cleaning-settings-row">
+    <div class="form-cell">
+      {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
     </div>
+    <div class="bar-cell">
+      {{#loading-container
+        isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
+        errorReason=spaceAutoCleaningUpdater.cleanStatusError
+        customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
+      }}
+        {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+      {{/loading-container}}
+    </div>
+  </div>
   {{#loading-container
-    isLoading=_reportsInitializing
-    errorReason=_reportsError
+    isLoading=spaceAutoCleaningUpdater.cleanReportsIsInitializing
+    errorReason=spaceAutoCleaningUpdater.cleanReportsError
     customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
   }}
     {{space-cleaning-reports data=reports}}
