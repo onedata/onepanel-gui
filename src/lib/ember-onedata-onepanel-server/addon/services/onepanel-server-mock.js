@@ -17,6 +17,7 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'onedata-gui-common/mixins/plainable';
 import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
+import SpaceCleaningMock from 'ember-onedata-onepanel-server/mixins/space-cleaning-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
@@ -74,8 +75,8 @@ function _genAutoCleaningSettings() {
     fileSizeGreaterThan: 10000,
     fileSizeLesserThan: 10000000,
     fileTimeNotActive: 60 * 60 * 12,
-    target: 100000,
-    threshold: 10000000,
+    target: 100000000,
+    threshold: 500000000,
   };
 }
 
@@ -112,7 +113,7 @@ function responseToString() {
 
 const PlainableObject = Ember.Object.extend(Plainable);
 
-export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
+export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, {
   cookies: service(),
 
   isLoading: readOnly('sessionValidator.isPending'),
@@ -664,8 +665,8 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
     '__spaceAutoCleaningStates', {
-      isWorking: true,
-      spaceUsed: 100000,
+      isWorking: false,
+      spaceUsed: 250000000,
     }
   ),
 
@@ -673,7 +674,14 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
 
   // FIXME: make dynamic in mock
   // space id -> AutCleaningStatus
-  __spaceAutoCleaningStates: PlainableObject.create({}),
+  __spaceAutoCleaningStates: computed(function () {
+    const self = this;
+    return {
+      get space1_verylongid() {
+        return self._getAutoCleaningStatus('space1_verylongid');
+      },
+    };
+  }),
 
   // space id -> AutoCleaningReports object
   __spaceAutoCleaningReports: PlainableObject.create({}),

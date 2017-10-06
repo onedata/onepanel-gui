@@ -5,8 +5,8 @@ import { assert } from '@ember/debug';
 import moment from 'moment';
 import _ from 'lodash';
 
-const IDLE_UPDATE_INTERVAL = 30 * 1000;
-const WORKING_UPDATE_INTERVAL = 10 * 1000;
+const IDLE_UPDATE_INTERVAL = 10 * 1000;
+const WORKING_UPDATE_INTERVAL = 5 * 1000;
 
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
