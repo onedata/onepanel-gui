@@ -15,7 +15,11 @@ export default function (data) {
       data.id &&
       data.name &&
       typeof data.supportingProviders === 'object' &&
-      (data.autoCleaning == null || validateAutoCleaningSettings(data.autoCleaning.settings))
+      (
+        data.autoCleaning == null ||
+        data.autoCleaning.enabled === false ||
+        validateAutoCleaningSettings(data.autoCleaning.settings)
+      )
     );
   } catch (error) {
     if (error instanceof TypeError) {
@@ -35,11 +39,11 @@ const cleanSettingsProps = [
 ];
 
 /** 
- * @param {Onepanel.SpaceAutoCleaningSettings} data
+ * @param {Onepanel.SpaceAutoCleaningSettings} settings
  * @returns {boolean} true if valid
  */
-function validateAutoCleaningSettings(data) {
-  return data != null && cleanSettingsProps.every(prop =>
-    data[prop] === null || typeof data[prop] === 'number'
+function validateAutoCleaningSettings(settings) {
+  return settings != null && cleanSettingsProps.every(prop =>
+    settings[prop] === null || typeof settings[prop] === 'number'
   );
 }
