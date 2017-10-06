@@ -12,24 +12,36 @@
 </div>
 {{#if isCleanEnabled}}
   <div class="space-cleaning-settings cleaning-settings-row">
-    <div class="form-cell">
+    <div class="form-cell cell">
       {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
     </div>
-    <div class="bar-cell">
-      {{#loading-container
-        isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
-        errorReason=spaceAutoCleaningUpdater.cleanStatusError
-        customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
-      }}
-        {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
-      {{/loading-container}}
+    <div class="bar-cell cell">
+    <div class="row content-row no-border no-padding-top">
+      <h1>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</h1>
+    </div>
+      <div class="row loadable-row">
+        {{#loading-container
+          isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
+          errorReason=spaceAutoCleaningUpdater.cleanStatusError
+          customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
+        }}
+          {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+        {{/loading-container}}
+      </div>
     </div>
   </div>
-  {{#loading-container
-    isLoading=spaceAutoCleaningUpdater.cleanReportsIsInitializing
-    errorReason=spaceAutoCleaningUpdater.cleanReportsError
-    customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
-  }}
-    {{space-cleaning-reports data=reports}}
-  {{/loading-container}}
+  <div class="content-row">
+    <div class="row content-row no-border">
+      <h1>{{t "components.spaceCleaningReports.cleaningReports"}}</h1>
+    </div>
+    <div class="row loadable-row">
+      {{#loading-container
+        isLoading=spaceAutoCleaningUpdater.cleanReportsIsInitializing
+        errorReason=spaceAutoCleaningUpdater.cleanReportsError
+        customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
+      }}
+        {{space-cleaning-reports data=reports}}
+      {{/loading-container}}  
+    </div>
+  </div>
 {{/if}}

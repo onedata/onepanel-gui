@@ -14,15 +14,14 @@
     @media (min-width: $mobile-breakpoint + 1px) {
       display: table;
       width: 100%;
-      .form-cell {
+      .cell {
         display: table-cell;
         vertical-align: top;
+      }
+      .form-cell {
         width: 360px;
       }
       .bar-cell {
-        display: table-cell;
-        vertical-align: top;
-        
         .indicators {
           padding-top: 0;
         }
