@@ -30,7 +30,35 @@ export default Component.extend({
 
   spacesProxy: null,
 
-  spaces: computed.oneWay('spacesProxy.content'),
+  spaces: computed.reads('spacesProxy.content'),
+
+  spacesListLoading: computed(
+    'spacesProxy.isPending',
+    '_hasNoSpaces',
+    'someSpaceSettled',
+    function () {
+      return this.get('spacesProxy.isPending') ||
+        !this.get('_hasNoSpaces') && !this.get('someSpaceSettled');
+    }
+  ),
+
+  someSpaceSettled: computed('spaces.@each.isSettled', function () {
+    const spaces = this.get('spaces');
+    if (spaces) {
+      return spaces.some(s => get(s, 'isSettled'));
+    } else {
+      return false;
+    }
+  }),
+
+  allSpacesSettled: computed('spaces.@each.isSettled', function () {
+    const spaces = this.get('spaces');
+    if (spaces) {
+      return spaces.every(s => get(s, 'isSettled'));
+    } else {
+      return false;
+    }
+  }),
 
   /**
    * Using observer, because when we use computed property for spaces,
