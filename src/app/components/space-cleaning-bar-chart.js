@@ -65,33 +65,25 @@ export default Component.extend({
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
-  _target: oneWayModifiable('data.target', function () {
-    return this.get('data.target');
-  }),
+  _target: oneWayModifiable('data.target'),
 
   /**
    * Space hard quota value for bar chart.
    * @type {computed.boolean}
    */
-  _threshold: oneWayModifiable('data.threshold', function () {
-    return this.get('data.threshold');
-  }),
+  _threshold: oneWayModifiable('data.threshold'),
 
   /**
    * Space soft quota value for slider.
    * @type {computed.boolean}
    */
-  _targetForSlider: oneWayModifiable('data.target', function () {
-    return this.get('data.target');
-  }),
+  _targetForSlider: oneWayModifiable('data.target'),
 
   /**
    * Space hard quota value for slider.
    * @type {computed.boolean}
    */
-  _thresholdForSlider: oneWayModifiable('data.threshold', function () {
-    return this.get('data.threshold');
-  }),
+  _thresholdForSlider: oneWayModifiable('data.threshold'),
 
   /**
    * Space soft quota value for bar chart (in percents).
