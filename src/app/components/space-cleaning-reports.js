@@ -130,6 +130,15 @@ export default Component.extend({
   }),
 
   /**
+   * Columns definition for mobile view.
+   * @type {ComputedProperty<Array<Object>>}
+   */
+  _mobileColumns: computed('_columns', function () {
+    let _columns = this.get('_columns');
+    return _columns.slice(0, _columns.length - 1);
+  }),
+
+  /**
    * Window resize event handler.
    * @type {computed.Function}
    */

@@ -30,17 +30,31 @@
     .noUi-handle {
       cursor: pointer;
     }
-    [disabled] {
-      &.noUi-target {
+    .bar {
+      .noUi-target[disabled] {
         cursor: initial;
-      }
-      .noUi-handle {
-        cursor: progress;
+        .noUi-handle {
+          &.noUi-handle-upper, &.noUi-handle-upper {
+            cursor: progress;
+            &::before {
+              background-image: repeating-linear-gradient(
+                to bottom,
+                $color-one-light-gray,
+                $color-one-light-gray $slider-gradient-width,
+                transparent $slider-gradient-width,
+                transparent $slider-gradient-width * 2
+              );
+            }
+          }
+        }
       }
     }
     .bar {
       position: relative;
       height: $bar-height;
+      .animate-bar {
+        transition: width 0.5s linear, left 0.5s linear;
+      }
       .chart-bar {
         position: absolute;
         top: 0;
@@ -325,6 +339,15 @@
         box-shadow: 
           15px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
           30px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
+      }
+    }
+  }
+  &.disabled {
+    .bar-container .inline-editor {
+      &.soft-quota-editor, &.hard-quota-editor {
+        .one-label {
+          color: $color-one-light-gray;
+        }
       }
     }
   }

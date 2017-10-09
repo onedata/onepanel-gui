@@ -7,16 +7,6 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-/**
- * @typedef {Ember.Object} SpaceCleaningBarData
- * @property {number} spaceSize Total space size (in bytes).
- * @property {number} spaceUsed Used space size (in bytes).
- * @property {number} threshold Size of space, that should be cleaned 
- * (in bytes).
- * @property {number} target Size of cleaned space (in bytes).
- * @property {boolean} isWorking If true, space is being cleaned.
- */
-
 import Ember from 'ember';
 import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
 
@@ -24,6 +14,8 @@ const {
   Component,
   computed,
   observer,
+  get,
+  getProperties,
   RSVP: {
     Promise,
   },
@@ -34,11 +26,25 @@ export default Component.extend({
   classNameBindings: ['_disabled:disabled'],
 
   /**
-   * Chart data.
+   * Space auto cleaning settings.
    * @virtual
-   * @type {SpaceCleaningBarData}
+   * @type {Object}
    */
-  data: null,
+  settings: null,
+
+  /**
+   * Space auto cleaning status.
+   * @virtual
+   * @type {Object}
+   */
+  status: null,
+
+  /**
+   * Space sizes.
+   * @virtual
+   * @type {number}
+   */
+  spaceSize: null,
 
   /**
    * Action called on slider value change. First argument is an object with
@@ -62,61 +68,67 @@ export default Component.extend({
   _disabled: false,
 
   /**
+   * If true, bar animations are enabled.
+   * @type {boolean}
+   */
+  _allowBarAnimations: true,
+
+  /**
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
-  _target: oneWayModifiable('data.target'),
+  _target: oneWayModifiable('settings.target'),
 
   /**
    * Space hard quota value for bar chart.
    * @type {computed.boolean}
    */
-  _threshold: oneWayModifiable('data.threshold'),
+  _threshold: oneWayModifiable('settings.threshold'),
 
   /**
    * Space soft quota value for slider.
    * @type {computed.boolean}
    */
-  _targetForSlider: oneWayModifiable('data.target'),
+  _targetForSlider: oneWayModifiable('settings.target'),
 
   /**
    * Space hard quota value for slider.
    * @type {computed.boolean}
    */
-  _thresholdForSlider: oneWayModifiable('data.threshold'),
+  _thresholdForSlider: oneWayModifiable('settings.threshold'),
 
   /**
    * Space soft quota value for bar chart (in percents).
    * @type {computed.number}
    */
-  _targetPercent: computed('_target', 'data.spaceSize', function () {
+  _targetPercent: computed('_target', 'spaceSize', function () {
     let {
       _target,
-      data,
-    } = this.getProperties('_target', 'data');
-    return (_target / data.get('spaceSize')) * 100;
+      spaceSize,
+    } = this.getProperties('_target', 'spaceSize');
+    return (_target / spaceSize) * 100;
   }),
 
   /**
    * Space hard quota value for bar chart (in percents).
    * @type {computed.number}
    */
-  _thresholdPercent: computed('_threshold', 'data.spaceSize', function () {
+  _thresholdPercent: computed('_threshold', 'spaceSize', function () {
     let {
       _threshold,
-      data,
-    } = this.getProperties('_threshold', 'data');
-    return (_threshold / data.get('spaceSize')) * 100;
+      spaceSize,
+    } = this.getProperties('_threshold', 'spaceSize');
+    return (_threshold / spaceSize) * 100;
   }),
 
   /**
    * Slider range.
    * @type {computed.Object}
    */
-  _sliderRange: computed('data.spaceSize', function () {
+  _sliderRange: computed('spaceSize', function () {
     return {
       min: 0,
-      max: this.get('data.spaceSize'),
+      max: this.get('spaceSize'),
     };
   }),
 
@@ -140,37 +152,36 @@ export default Component.extend({
    * Percent of used space.
    * @type {computed.boolean}
    */
-  _usedPercent: computed('data.{spaceSize,spaceUsed}', function () {
-    let data = this.get('data');
+  _usedPercent: computed('spaceSize', 'status.spaceUsed', function () {
     let {
       spaceSize,
-      spaceUsed,
-    } = data.getProperties('spaceSize', 'spaceUsed');
-    return (spaceUsed / spaceSize) * 100;
+      status,
+    } = this.getProperties('spaceSize', 'status');
+    return (get(status, 'spaceUsed') / spaceSize) * 100;
   }),
 
   /**
    * Free space.
    * @type {computed.number}
    */
-  _freeSpace: computed('data.spaceSize', 'data.spaceUsed', function () {
+  _freeSpace: computed('spaceSize', 'status.spaceUsed', function () {
     let {
       spaceSize,
-      spaceUsed,
-    } = this.get('data');
-    return spaceSize - spaceUsed;
+      status,
+    } = this.getProperties('spaceSize', 'status');
+    return spaceSize - get(status, 'spaceUsed');
   }),
 
   /**
    * Space to release.
    * @type {computed.number}
    */
-  _toReleaseSpace: computed('_target', 'data.spaceUsed', function () {
+  _toReleaseSpace: computed('_target', 'status.spaceUsed', function () {
     let {
       _target,
-      data,
-    } = this.getProperties('_target', 'data');
-    return Math.max(0, data.get('spaceUsed') - _target);
+      status,
+    } = this.getProperties('_target', 'status');
+    return Math.max(0, get(status, 'spaceUsed') - _target);
   }),
 
   /**
@@ -178,17 +189,16 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedBelowSoftQuotaPercent: computed(
-    'data.{spaceSize,spaceUsed}',
+    'spaceSize',
+    'status.spaceUsed',
     '_target',
     function () {
       let {
-        data,
-        _target,
-      } = this.getProperties('data', '_target');
-      let {
         spaceSize,
-        spaceUsed,
-      } = data.getProperties('spaceSize', 'spaceUsed');
+        status,
+        _target,
+      } = this.getProperties('spaceSize', 'status', '_target');
+      let spaceUsed = get(status, 'spaceUsed');
       if (spaceUsed >= _target) {
         return (_target / spaceSize) * 100;
       } else {
@@ -202,16 +212,15 @@ export default Component.extend({
    * @type {computed.number}
    */
   _notUsedBelowSoftQuotaPercent: computed(
-    'data.spaceSize',
+    'spaceSize',
     '_target',
     '_usedBelowSoftQuotaPercent',
     function () {
       let {
-        data,
+        spaceSize,
         _target,
         _usedBelowSoftQuotaPercent,
-      } = this.getProperties('data', '_target', '_usedBelowSoftQuotaPercent');
-      let spaceSize = data.get('spaceSize');
+      } = this.getProperties('spaceSize', '_target', '_usedBelowSoftQuotaPercent');
       return (_target / spaceSize) * 100 - _usedBelowSoftQuotaPercent;
     }
   ),
@@ -221,19 +230,18 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedBelowHardQuotaPercent: computed(
-    'data.{spaceSize,spaceUsed}',
+    'spaceSize',
+    'status.spaceUsed',
     '_target',
     '_threshold',
     function () {
       let {
-        data,
+        spaceSize,
+        status,
         _target,
         _threshold,
-      } = this.getProperties('data', '_target', '_threshold');
-      let {
-        spaceSize,
-        spaceUsed,
-      } = data.getProperties('spaceSize', 'spaceUsed');
+      } = this.getProperties('spaceSize', 'status', '_target', '_threshold');
+      let spaceUsed = get(status, 'spaceUsed');
       if (spaceUsed <= _target) {
         return 0;
       } else if (spaceUsed >= _threshold) {
@@ -249,23 +257,22 @@ export default Component.extend({
    * @type {computed.number}
    */
   _notUsedBelowHardQuotaPercent: computed(
-    'data.spaceSize',
+    'spaceSize',
     '_target',
     '_threshold',
     '_usedBelowHardQuotaPercent',
     function () {
       let {
-        data,
+        spaceSize,
         _target,
         _threshold,
         _usedBelowHardQuotaPercent,
       } = this.getProperties(
-        'data',
+        'spaceSize',
         '_target',
         '_threshold',
         '_usedBelowHardQuotaPercent'
       );
-      let spaceSize = data.get('spaceSize');
       return ((_threshold - _target) / spaceSize) * 100 -
         _usedBelowHardQuotaPercent;
     }
@@ -276,17 +283,16 @@ export default Component.extend({
    * @type {computed.number}
    */
   _usedOverHardQuotaPercent: computed(
-    'data.{spaceSize,spaceUsed}',
+    'spaceSize',
+    'status.spaceUsed',
     '_threshold',
     function () {
       let {
-        data,
-        _threshold,
-      } = this.getProperties('data', '_threshold');
-      let {
         spaceSize,
-        spaceUsed,
-      } = data.getProperties('spaceSize', 'spaceUsed');
+        status,
+        _threshold,
+      } = this.getProperties('spaceSize', 'status', '_threshold');
+      let spaceUsed = get(status, 'spaceUsed');
       if (spaceUsed <= _threshold) {
         return 0;
       } else {
@@ -300,16 +306,15 @@ export default Component.extend({
    * @type {computed.number}
    */
   _notUsedOverHardQuotaPercent: computed(
-    'data.spaceSize',
+    'spaceSize',
     '_threshold',
     '_usedOverHardQuotaPercent',
     function () {
       let {
-        data,
+        spaceSize,
         _threshold,
         _usedOverHardQuotaPercent,
-      } = this.getProperties('data', '_threshold', '_usedOverHardQuotaPercent');
-      let spaceSize = data.get('spaceSize');
+      } = this.getProperties('spaceSize', '_threshold', '_usedOverHardQuotaPercent');
       return ((spaceSize - _threshold) / spaceSize) * 100 -
         _usedOverHardQuotaPercent;
     }
@@ -353,11 +358,6 @@ export default Component.extend({
           left: percentSum + '%',
         });
         percentSum += propertyValue;
-        if (!propertyValue) {
-          element.addClass('hidden');
-        } else {
-          element.removeClass('hidden');
-        }
       });
       let usedWidth = { width: usedPercent + '%' };
       this.$('.used').css(usedWidth);
@@ -383,8 +383,14 @@ export default Component.extend({
       target: _target,
       threshold: _threshold,
     };
-    this.set('_disabled', true);
-    onChange(values).then(() => this.set('_disabled', false));
+    this.setProperties({
+      _disabled: true,
+      _allowLabelsEdition: false,
+    });
+    onChange(values).then(() => this.setProperties({
+      _disabled: false,
+      _allowLabelsEdition: true,
+    }));
   },
 
   actions: {
@@ -397,6 +403,7 @@ export default Component.extend({
         _threshold: Math.floor(values[1]),
         _target: Math.floor(values[0]),
         _allowLabelsEdition: false,
+        _allowBarAnimations: false,
       });
     },
 
@@ -409,6 +416,7 @@ export default Component.extend({
         _targetForSlider: Math.floor(values[0]),
         _thresholdForSlider: Math.floor(values[1]),
         _allowLabelsEdition: true,
+        _allowBarAnimations: true,
       });
       this._change();
     },
@@ -419,12 +427,14 @@ export default Component.extend({
      * @param {number} value value
      */
     valueChanged(name, value) {
-      let data = this.get('data');
       let {
         spaceSize,
+        settings,
+      } = this.getProperties('spaceSize', 'settings');
+      let {
         target,
         threshold,
-      } = data.getProperties('spaceSize', 'target', 'threshold');
+      } = getProperties(settings, 'target', 'threshold');
       switch (name) {
         case 'target':
           if (value >= 0 && value < threshold) {

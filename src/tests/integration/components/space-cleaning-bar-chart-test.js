@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
+import { getProperties } from '@ember/object';
 
 function approxEquals(value, targetValue) {
   const delta = 1;
@@ -15,29 +15,39 @@ describe('Integration | Component | space cleaning bar chart', function () {
   });
 
   beforeEach(function () {
-    this.set('data', Ember.Object.create({
+    this.setProperties({
+      settings: {
+        threshold: 8388608,
+        target: 6291456,
+      },
+      status: {
+        spaceUsed: 7340032,
+        isWorking: true,
+      },
       spaceSize: 10485760,
-      spaceUsed: 7340032,
-      threshold: 8388608,
-      target: 6291456,
-      isWorking: true,
-    }));
+    });
   });
 
   it('renders pacman if cleaning is working', function () {
     this.render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart data=data}}
+        {{space-cleaning-bar-chart
+          settings=settings
+          status=status
+          spaceSize=spaceSize}}
       </div>
     `);
     expect(this.$('.pacman')).to.exist;
   });
 
   it('does not render pacman if cleaning is not working', function () {
-    this.set('data.isWorking', false);
+    this.set('status.isWorking', false);
     this.render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart data=data}}
+        {{space-cleaning-bar-chart
+          settings=settings
+          status=status
+          spaceSize=spaceSize}}
       </div>
     `);
     expect(this.$('.pacman')).not.to.exist;
@@ -46,7 +56,10 @@ describe('Integration | Component | space cleaning bar chart', function () {
   it('renders valid indicators', function () {
     this.render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart data=data}}
+        {{space-cleaning-bar-chart
+          settings=settings
+          status=status
+          spaceSize=spaceSize}}
       </div>
     `);
     const indicators = this.$('.indicators');
@@ -59,7 +72,10 @@ describe('Integration | Component | space cleaning bar chart', function () {
   it('renders valid slider values', function () {
     this.render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart data=data}}
+        {{space-cleaning-bar-chart
+          settings=settings
+          status=status
+          spaceSize=spaceSize}}
       </div>
     `);
     expect(this.$('.soft-quota-editor')).to.contain('6 MiB');
@@ -69,15 +85,22 @@ describe('Integration | Component | space cleaning bar chart', function () {
   it('renders valid bars', function () {
     this.render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart data=data}}
+        {{space-cleaning-bar-chart
+          settings=settings
+          status=status
+          spaceSize=spaceSize}}
       </div>
     `);
     const {
       spaceSize,
-      spaceUsed,
+      settings,
+      status,
+    } = this.getProperties('spaceSize', 'settings', 'status');
+    const {
       threshold,
       target,
-    } = this.get('data');
+    } = getProperties(settings, 'threshold', 'target');
+    const spaceUsed = status.spaceUsed;
     const barWidth = (name) => parseFloat(
       this.$(name).attr('style').match(/width:\s+(\d+)%;/)[1]
     );
