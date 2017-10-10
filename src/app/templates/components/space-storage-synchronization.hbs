@@ -1,4 +1,5 @@
 {{!-- FIXME: move i18n to component's file --}}
+
 {{#bs-button-group
   class="btn-group-floating btn-group-3-btns"
   value=syncInterval
@@ -18,27 +19,21 @@
     {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
   {{/bg.button}}
 {{/bs-button-group}}
-{{#if timeStatsLoading}}
-  {{spin-spinner-block
-    sizeClass="xs"
-    class="btn-group-addon btn-group-addon-sm pull-left"
-  }}
-{{/if}}
 {{#if statsFrozen}}
-  <div class="btn-group-addon btn-group-addon-sm one-info-label">
-    {{one-icon icon="sign-info"}}
-    <label>
-      {{t "components.clusterSpacesTableItem.syncDone"}}
-    </label>
+  <div class="tab-info-floating one-info-label">
+    <span>
+      <label>{{t "components.clusterSpacesTableItem.syncDone"}}</label>
+      {{one-icon icon="checkbox-filled"}}
+    </span>
+    {{one-tooltip
+      title=(t "components.clusterSpacesTableItem.syncDoneHint")
+      placement="bottom"
+    }}
   </div>
 {{/if}}
-{{#if timeStatsError}}
-  <div class="row">
-    {{resource-load-error class="error-time-stats" reason=timeStatsError}}
-  </div> 
-{{!-- TODO: add a loader here in place of each chart --}}
-{{else if (not timeStatsLoading)}}
-  <div class="row row-time-stats-charts">
+
+<div class="row row-time-stats-charts">
+  {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
     <div class="col-xs-12 item-table-cell item-table-content-cell">
       {{space-sync-chart-operations
         timeStats=timeStats
@@ -57,5 +52,5 @@
         timeUnit=syncInterval
       }}
     </div>
-  </div>
-{{/if}}
+  {{/loading-container}}
+</div>
