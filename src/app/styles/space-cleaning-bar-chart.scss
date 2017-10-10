@@ -34,7 +34,7 @@
       .noUi-target[disabled] {
         cursor: initial;
         .noUi-handle {
-          &.noUi-handle-upper, &.noUi-handle-upper {
+          &.noUi-handle-upper, &.noUi-handle-lower {
             cursor: progress;
             &::before {
               background-image: repeating-linear-gradient(
@@ -110,6 +110,7 @@
         }
       }
       .noUi-target {
+        height: 0;
         background: none;
         border: 0;
         box-shadow: none;
