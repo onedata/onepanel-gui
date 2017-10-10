@@ -52,6 +52,12 @@ export default Component.extend(
     storageManager: service(),
 
     /**
+     * @virtual
+     * @type {function}
+     */
+    submitModifySpace: undefined,
+
+    /**
      * OneCollapsibleListItem that should be used to render this
      * To inject.
      * @type {Component.OneCollapsibleListItem}
@@ -65,16 +71,9 @@ export default Component.extend(
 
     // TODO: support for errors after update
     /**
-     * @type {SpaceDetails}
+     * @type {OnepanelGui.SpaceDetails}
      */
-    space: computed('spaceProxy.isFulfilled', function () {
-      const spaceProxy = this.get('spaceProxy');
-      if (get(spaceProxy, 'isFulfilled') === true) {
-        return this.set('_spaceCache', get(spaceProxy, 'content'));
-      } else {
-        return this.get('_spaceCache');
-      }
-    }),
+    space: computed.reads('spaceProxy.content'),
 
     /**
      * Last resolved SpaceDetails

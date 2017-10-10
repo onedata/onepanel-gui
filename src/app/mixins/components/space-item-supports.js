@@ -13,9 +13,7 @@ import _ from 'lodash';
 const {
   Mixin,
   computed,
-  computed: { readOnly },
   inject: { service },
-  RSVP: { Promise },
   get,
 } = Ember;
 
@@ -40,7 +38,7 @@ export default Mixin.create({
    * Maps: space Id: string -> supported space [b]: number
    * @type {object}
    */
-  supportingProviders: readOnly('space.supportingProviders'),
+  supportingProviders: computed.reads('space.supportingProviders'),
 
   /**
    * Each object of array has information about provider space support
@@ -58,18 +56,16 @@ export default Mixin.create({
       let _providerDetailsProxy = this.get('_providerDetailsProxy');
       let supportingProviders = this.get('supportingProviders');
       return PromiseObject.create({
-        promise: new Promise((resolve, reject) => {
-          _providerDetailsProxy.get('promise').then(provider => {
+        promise: _providerDetailsProxy.get('promise')
+          .then(provider => {
             let id = get(provider, 'id');
             let name = get(provider, 'name');
-            resolve(this.createSupportersArray(
+            return this.createSupportersArray(
               supportingProviders,
               id,
               name
-            ));
-          });
-          _providerDetailsProxy.catch(reject);
-        }),
+            );
+          }),
       });
     }),
 

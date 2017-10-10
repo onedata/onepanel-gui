@@ -337,8 +337,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, 
         supportingProviders: _genSupportingProviders(),
       });
       // additional spaces to test issue VFS-3673
-      // FIXME: disabled for manual tests, re-enable before merging
-      _.times(0, i => {
+      _.times(8, i => {
         spaces.push({
           id: i + '-space',
           name: 'Test Space',

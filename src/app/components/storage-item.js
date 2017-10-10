@@ -62,7 +62,7 @@ export default Component.extend({
   storage: null,
 
   /**
-   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
   spaces: [],
 

@@ -45,6 +45,7 @@ const {
   inject: {
     service,
   },
+  get,
 } = Ember;
 
 const IMPORT_GENERIC_FIELDS = [{
@@ -159,7 +160,7 @@ export default OneForm.extend(Validations, {
 
   /**
    * Default form values
-   * @type {Object}
+   * @type {Object|Ember.Object}
    */
   defaultValues: null,
 
@@ -413,12 +414,11 @@ export default OneForm.extend(Validations, {
     this.resetFormValues(true);
 
     if (defaultValues) {
-      defaultValues = Ember.Object.create(defaultValues);
       let selectedImportStrategy =
-        _find(importStrategies, { id: defaultValues.get('storageImport.strategy') }) ||
+        _find(importStrategies, { id: get(defaultValues, 'storageImport.strategy') }) ||
         importStrategies[0];
       let selectedUpdateStrategy =
-        _find(updateStrategies, { id: defaultValues.get('storageUpdate.strategy') }) ||
+        _find(updateStrategies, { id: get(defaultValues, 'storageUpdate.strategy') }) ||
         _find(updateStrategies, { id: 'no_update' });
       this.set('selectedImportStrategy', selectedImportStrategy);
       this.set('selectedUpdateStrategy', selectedUpdateStrategy);
@@ -426,12 +426,12 @@ export default OneForm.extend(Validations, {
       importGenericFields.concat(selectedImportStrategy.fields)
         .forEach(({ name }) =>
           this.set(`allFieldsValues.${name}`,
-            defaultValues.get(`storageImport.${this.cutOffPrefix(name)}`))
+            get(defaultValues, `storageImport.${this.cutOffPrefix(name)}`))
         );
       updateGenericFields.concat(selectedUpdateStrategy.fields)
         .forEach(({ name }) =>
           this.set(`allFieldsValues.${name}`,
-            defaultValues.get(`storageUpdate.${this.cutOffPrefix(name)}`))
+            get(defaultValues, `storageUpdate.${this.cutOffPrefix(name)}`))
         );
     }
     this._triggerValuesChanged();

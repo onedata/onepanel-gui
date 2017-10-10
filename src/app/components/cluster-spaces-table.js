@@ -18,6 +18,12 @@ const {
 
 export default Component.extend({
   /**
+   * @virtual
+   * @type {function}
+   */
+  modifySpace: undefined,
+
+  /**
    * @type {SpaceDetails[]|Ember.ArrayProxy<SpaceDetails>}
    */
   spaces: null,
@@ -37,7 +43,7 @@ export default Component.extend({
       this.set('anySpaceRejected', false);
     },
     submitModifySpace(space, data) {
-      return invokeAction(this, 'modifySpace', space, data);
+      return this.get('modifySpace')(space, data);
     },
   },
 });

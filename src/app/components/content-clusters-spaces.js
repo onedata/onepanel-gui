@@ -28,6 +28,10 @@ export default Component.extend({
   spaceManager: service(),
   globalNotify: service(),
 
+  /**
+   * Set by `_updateSpacesList`
+   * @type {PromiseObject<Array>}
+   */
   spacesProxy: null,
 
   spaces: computed.reads('spacesProxy.content'),
@@ -65,10 +69,14 @@ export default Component.extend({
    * the whole spaces list will be generated every time name and isSettled
    * are changed.
    */
-  addConflictLabels: observer('spaces.@each.{name,isSettled}', function () {
+  addConflictLabels: observer('spaces.@each.{content.name,isSettled}', function () {
     const spaces = this.get('spaces');
     if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
-      addConflictLabels(spaces.filter(s => get(s, 'isFulfilled')));
+      addConflictLabels(
+        spaces
+        .filter(s => get(s, 'isFulfilled'))
+        .map(s => get(s, 'content'))
+      );
     }
   }),
 
@@ -171,16 +179,13 @@ export default Component.extend({
     },
     modifySpace(space, data) {
       let globalNotify = this.get('globalNotify');
-      let spaceManager = this.get('spaceManager');
       let spaceName = get(space, 'name');
       let spaceId = get(space, 'id');
       return this._modifySpace(spaceId, data)
-        .then(() => {
-          return spaceManager.updateSpaceDetailsCache(spaceId);
-        })
         .catch(error => {
+          // TODO: handle error on higher levels to produce better message
           globalNotify.backendError(
-            `configuration of "${spaceName}" space support`,
+            `configuration of "${spaceName}"`,
             error
           );
         });

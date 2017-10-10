@@ -9,7 +9,7 @@ const IDLE_UPDATE_INTERVAL = 10 * 1000;
 const WORKING_UPDATE_INTERVAL = 5 * 1000;
 
 import Looper from 'onedata-gui-common/utils/looper';
-import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default EmberObject.extend({
   /**
@@ -222,7 +222,7 @@ export default EmberObject.extend({
     });
     _cleanStatusWatcher
       .on('tick', () =>
-        safeMethodExecution(this, 'fetchCleanStatus')
+        safeExec(this, 'fetchCleanStatus')
       );
 
     const _cleanReportsWatcher = Looper.create({
@@ -230,7 +230,7 @@ export default EmberObject.extend({
     });
     _cleanReportsWatcher
       .on('tick', () =>
-        safeMethodExecution(this, 'fetchCleanReports')
+        safeExec(this, 'fetchCleanReports')
       );
 
     this.setProperties({
@@ -282,12 +282,16 @@ export default EmberObject.extend({
     const startedAfter = _cleanReportsFetchMoment.toISOString();
     this.set('cleanReportsIsUpdating', true);
     return spaceManager.getAutoCleaningReports(spaceId, startedAfter)
-      .then(({ reportEntries }) => {
+      .then(({ reportEntries }) => safeExec(this, function () {
         this.set('cleanReportsError', null);
         return this.set('reports', reportEntries);
-      })
-      .catch(error => this.set('cleanReportsError', error))
-      .finally(() => this.set('cleanReportsIsUpdating', false));
+      }))
+      .catch(error => safeExec(this, function () {
+        this.set('cleanReportsError', error);
+      }))
+      .finally(() => safeExec(this, function () {
+        this.set('cleanReportsIsUpdating', false);
+      }));
   },
 
 });

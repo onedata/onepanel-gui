@@ -29,11 +29,11 @@
       }}
     {{/if}}
   </div>
-  {{#promise-proxy-container proxy=spacesProxy}}
+  {{#loading-container isLoading=spacesListLoading errorReason=spacesProxy.reason}}
     {{cluster-spaces-table
       spaces=spaces
       revokeSpace=(action "revokeSpace")
       modifySpace=(action "modifySpace")
     }}
-  {{/promise-proxy-container}}
+  {{/loading-container}}
 </div>

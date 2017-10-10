@@ -16,12 +16,14 @@ export default Ember.Component.extend({
   classNames: ['cluster-storage-table'],
 
   /**
+   * @virtual
    * @type {ObjectProxy.Array.ObjectProxy.Onepanel.StorageDetails}
    */
   storages: null,
 
   /**
-   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   * @virtual
+   * @type {Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>}
    */
   spaces: null,
 

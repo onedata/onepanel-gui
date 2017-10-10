@@ -27,6 +27,8 @@ const {
 } = Onepanel;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
+import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
 
 const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
 const DEFAULT_SYNC_STATS_PERIOD = 'minute';
@@ -34,8 +36,15 @@ const DEFAULT_SYNC_STATS_PERIOD = 'minute';
 export default Service.extend({
   onepanelServer: service(),
 
+  /**
+   * Stores collection of all fetched spaces
+   * @type {PromiseObject}
+   */
   spacesCache: PromiseObject.create(),
 
+  /**
+   * @returns {PromiseObject<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   */
   getSpaces() {
     const spacesCache = this.get('spacesCache');
     if (!get(spacesCache, 'content')) {
@@ -44,6 +53,9 @@ export default Service.extend({
     return spacesCache;
   },
 
+  /** 
+   * @returns {Promise<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   */
   _getSpaces() {
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer.requestValidData(
@@ -54,30 +66,49 @@ export default Service.extend({
     });
   },
 
+  /**
+   * Update record inside created spaces collection
+   * Requires former usage of `getSpaces`!
+   * @param {string} spaceId space with this ID will be updated
+   * @returns {Promise<OnepanelGui.SpaceDetails>}
+   */
   updateSpaceDetailsCache(spaceId) {
     const cacheArray = this.get('spacesCache.content');
-    const spaceIndex = _.findIndex(
+    const spaceCacheProxy = _.find(
       cacheArray,
-      s => get(s, 'id') === spaceId
+      s => get(s, 'content.id') === spaceId
     );
-    const promiseObj = this.getSpaceDetails(spaceId);
-    cacheArray.objectAt(spaceIndex).set('promise', promiseObj);
-    return promiseObj;
+    const spaceCache = get(spaceCacheProxy, 'content');
+    const promise = this._getSpaceDetails(spaceId)
+      .then(spaceDetails => {
+        return emberObjectReplace(spaceCache, spaceDetails);
+      });
+    spaceCacheProxy.set('promise', promise);
+    return promise;
   },
 
+  // TODO: if space details are in spaces proxy, get them
   /**
    * Fetch details of space support with given ID
    * 
    * @param {string} id
-   * @return {PromiseObject} resolves SpaceDetails object
+   * @return {PromiseUpdatedObject} resolves SpaceDetails object
    */
   getSpaceDetails(id) {
-    const promise = this.get('onepanelServer').requestValidData(
+    return PromiseUpdatedObject.create({ promise: this._getSpaceDetails(id) });
+  },
+
+  /**
+   * Fetch and create _new_ OnepanelGui.SpaceDetails object
+   * @param {string} id
+   * @returns {Promise<OnepanelGui.SpaceDetails>}
+   */
+  _getSpaceDetails(id) {
+    return this.get('onepanelServer').requestValidData(
       'oneprovider',
       'getSpaceDetails',
       id
     ).then(({ data }) => SpaceDetails.create(data));
-    return PromiseObject.create({ promise });
   },
 
   /**
@@ -85,14 +116,15 @@ export default Service.extend({
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
    * @param {StorageImportDetails} spaceData.storageImport
    * @param {StorageUpdateDetails} spaceData.storageUpdate
-   * @returns {PromiseObject<undefined|object>}
+   * @returns {Promise<undefined|object>} resolves after updating details cache
    */
   modifySpaceDetails(id, spaceData) {
     let onepanelServer = this.get('onepanelServer');
-    let promise = onepanelServer
+    return onepanelServer
       .request('oneprovider', 'modifySpace', id, spaceData)
-      .then(({ data }) => data);
-    return PromiseObject.create({ promise });
+      .then(() => {
+        return this.updateSpaceDetailsCache(id);
+      });
   },
 
   /**

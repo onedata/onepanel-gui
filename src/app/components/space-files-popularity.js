@@ -14,7 +14,7 @@ export default Component.extend({
    * @virtual
    * @type {function}
    */
-  submitModifySpace: undefined,
+  updateFilesPopularity: undefined,
 
   actions: {
     /**
