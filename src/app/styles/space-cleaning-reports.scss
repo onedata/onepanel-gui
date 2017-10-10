@@ -21,6 +21,10 @@
         color: $color-one-red;
       }
       &.oneicon-update {
+        top: 0;
+        @media (max-width: $screen-xs-max) {
+          margin: 0 10%;
+        }
         font-size: 80%;
       }
     }

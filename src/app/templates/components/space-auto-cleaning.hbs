@@ -19,22 +19,22 @@
     <div class="row content-row no-border no-padding-top">
       <h1>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</h1>
     </div>
-      <div class="row loadable-row">
+      <div class="row loadable-row content-row no-padding-top no-padding-bottom">
         {{#loading-container
           isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
           errorReason=spaceAutoCleaningUpdater.cleanStatusError
           customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
         }}
-          {{space-cleaning-bar-chart data=barData onChange=(action "barValuesChanged")}}
+          {{space-cleaning-bar-chart settings=autoCleaning.settings spaceSize=spaceSize status=status onChange=(action "barValuesChanged")}}
         {{/loading-container}}
       </div>
     </div>
   </div>
-  <div class="content-row">
+  <div>
     <div class="row content-row no-border">
       <h1>{{t "components.spaceCleaningReports.cleaningReports"}}</h1>
     </div>
-    <div class="row loadable-row">
+    <div class="loadable-row">
       {{#loading-container
         isLoading=spaceAutoCleaningUpdater.cleanReportsIsInitializing
         errorReason=spaceAutoCleaningUpdater.cleanReportsError

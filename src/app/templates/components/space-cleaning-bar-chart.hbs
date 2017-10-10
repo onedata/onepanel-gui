@@ -2,11 +2,11 @@
   <p>
     <span class="indicator-row">
       <span class="total-space indicator">
-        <span class="value">{{bytes-to-string data.spaceSize}}</span> 
+        <span class="value">{{bytes-to-string spaceSize}}</span> 
         {{t "components.spaceCleaningBarChart.totalSpace"}}
       </span>
       <span class="used-space indicator">
-        <span class="value">{{bytes-to-string data.spaceUsed}}</span>
+        <span class="value">{{bytes-to-string status.spaceUsed}}</span>
         {{t "components.spaceCleaningBarChart.usedSpace"}}
       </span>
     </span>
@@ -36,17 +36,17 @@
     allowEdition=_allowLabelsEdition
     onSave=(action "valueChanged" "threshold")}}
   <div class="bar">
-    <div class="chart-bar used-below-soft-quota"></div>
-    <div class="chart-bar not-used-below-soft-quota not-used"></div>
-    <div class="chart-bar used-below-hard-quota"></div>
-    <div class="chart-bar not-used-below-hard-quota not-used"></div>
-    <div class="chart-bar used-over-hard-quota"></div>
-    <div class="chart-bar not-used-over-hard-quota not-used"></div>
-    <div class="chart-bar used"></div>
+    <div class="chart-bar used-below-soft-quota {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar not-used-below-soft-quota not-used {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar used-below-hard-quota {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar not-used-below-hard-quota not-used {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar used-over-hard-quota {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar not-used-over-hard-quota not-used {{if _allowBarAnimations "animate-bar"}}"></div>
+    <div class="chart-bar used animate-bar"></div>
     <div class="pacman-row">
-      <div class="used-space"></div>
-      <div class="pacman-cell">
-        {{#if data.isWorking}}
+      <div class="used-space animate-bar"></div>
+      <div class="pacman-cell animate-bar">
+        {{#if status.isWorking}}
           <div class="pacman">
             <div class="pacman-shape">
               <div class="pacman-top">

@@ -74,8 +74,9 @@ describe('Integration | Component | space cleaning reports', function () {
     cellsValues.forEach((value, index) =>
       expect(cells.eq(index).text().trim()).to.be.equal(value)
     );
-    expect(this.$('.one-collapsible-list-item:last-child .item-table ' +
-      '.content-row:last-child .oneicon.oneicon-checkbox-filled')).to.exist;
+    expect(this.$('.one-collapsible-list-item:last-child' +
+        ' .one-collapsible-list-item-header .oneicon.oneicon-checkbox-filled'))
+      .to.exist;
   });
 
   it('renders message about no reports', function () {
