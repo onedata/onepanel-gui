@@ -1,8 +1,14 @@
+{{!-- FIXME: hints text --}}
+
 <div class="row content-row no-border">
   <h1>
     <label for="cleaning-enabled">
-      {{t 'components.spaceAutoCleaning.autoCleaning'}}
+      {{t "components.spaceAutoCleaning.autoCleaning"}}
     </label>
+    {{one-label-tip
+      title="Auto cleaning feature allows Oneprovider to remove replicated files data automatically using user-defined conditions"
+      placement="top"
+    }}
     {{one-way-toggle inputId="cleaning-enabled"
       checked=isCleanEnabled
       class="pull-right right"
@@ -17,7 +23,13 @@
     </div>
     <div class="bar-cell cell">
     <div class="row content-row no-border no-padding-top">
-      <h1>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</h1>
+      <h1>
+        <label>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</label>
+        {{one-label-tip
+          title="Schedule auto cleaning start and stop based on space usage"
+          placement="top"
+        }}
+      </h1>
     </div>
       <div class="row loadable-row content-row no-padding-top no-padding-bottom">
         {{#loading-container
@@ -32,7 +44,13 @@
   </div>
   <div>
     <div class="row content-row no-border">
-      <h1>{{t "components.spaceCleaningReports.cleaningReports"}}</h1>
+      <h1>
+        <label>{{t "components.spaceCleaningReports.cleaningReports"}}</label>
+        {{one-label-tip
+          title="Each report refers to a single auto cleaning started process"
+          placement="top"
+        }}
+      </h1>
     </div>
     <div class="loadable-row">
       {{#loading-container

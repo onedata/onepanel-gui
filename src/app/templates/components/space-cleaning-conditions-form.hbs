@@ -1,5 +1,11 @@
 <div class="row content-row no-border no-padding-top">
-  <h1>{{t "components.spaceAutoCleaning.cleanReplicatedFiles"}}</h1>
+  <h1>
+    <label>{{t "components.spaceAutoCleaning.cleanReplicatedFiles"}}</label>
+    {{one-label-tip
+      title="Configure what file replicas should be cleaned"
+      placement="top"
+    }}
+  </h1>
 </div>
 {{#bs-form as |form|}}
   {{#each _sourceFieldNames as |fieldName|}}

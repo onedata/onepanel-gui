@@ -1,10 +1,15 @@
 {{!-- FIXME: i18n --}}
+{{!-- FIXME: hints text --}}
 
 <div class="row content-row no-border">
   <h1>
     <label for="files-popularity-enabled">
-      {{t 'components.spaceFilesPopularity.filesPopularity'}}
+      {{t "components.spaceFilesPopularity.filesPopularity"}}
     </label>
+    {{one-label-tip
+      title="Files popularity feature allows Oneprovider to track files statistics for a selected space"
+      placement="top"
+    }}
     {{one-way-toggle inputId="files-popularity-enabled"
       checked=filesPopularity.enabled
       class="pull-right right"
