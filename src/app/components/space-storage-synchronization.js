@@ -1,3 +1,13 @@
+/**
+ * Space storage synchronization statistics container
+ * Mainly used in space storage synchronization tab
+ *
+ * @module components/space-storage-synchronization
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 
 export default Component.extend({

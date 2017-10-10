@@ -1,5 +1,5 @@
 /**
- * Validate SpaceDetails data
+ * Validate SpaceDetailsAutoCleaningReports data
  *
  * @module utils/response-validators/oneprovider/get-provider-space-auto-cleaning-reports
  * @author Jakub Liput

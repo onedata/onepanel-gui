@@ -1,7 +1,7 @@
 /**
- * Adds providers support visualization data to ``cluster-spaces-table-item``
+ * Adds providers support visualization data to `cluster-spaces-table-item`
  *
- * @module mixins/space-item-supports
+ * @module mixins/components/space-item-supports
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

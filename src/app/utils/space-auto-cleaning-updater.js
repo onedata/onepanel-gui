@@ -1,3 +1,13 @@
+/**
+ * A class for creating object that polls for auto cleaning status and reports
+ * To use in space auto cleaning components (`component:space-auto-cleaning`)
+ *
+ * @module utils/space-auto-cleaning-updater
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import { default as EmberObject, computed } from '@ember/object';
 import { get, set, observer } from '@ember/object';
 import { run } from '@ember/runloop';

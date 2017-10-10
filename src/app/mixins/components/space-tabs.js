@@ -1,4 +1,11 @@
-// FIXME: jsdoc
+/**
+ * Adds tools for rendering tabs in space view 
+ *
+ * @module mixins/components/space-tabs
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 
 import { computed } from '@ember/object';
 import Mixin from '@ember/object/mixin';

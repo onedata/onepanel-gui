@@ -1,3 +1,13 @@
+/**
+ * Configuration of space Files Popularity feature
+ * Used mainly in space files popularity tab
+ *
+ * @module components/space-files-popularity
+ * @author Jakub Liput
+ * @copyright (C) 2017 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { inject } from '@ember/service';
 
