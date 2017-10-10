@@ -216,7 +216,8 @@ export default Component.extend(
         this.set('importConfigurationOpen', false);
       },
       submitModifySpace() {
-        return this.get('submitModifySpace')(...arguments);
+        return this.get('submitModifySpace')(...arguments)
+          .then(() => this.set('importConfigurationOpen', false));
       },
       updateFilesPopularity(filesPopularity) {
         return this.get('submitModifySpace')({ filesPopularity });
