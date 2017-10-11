@@ -6,7 +6,7 @@
       {{t "components.spaceAutoCleaning.autoCleaning"}}
     </label>
     {{one-label-tip
-      title="Auto cleaning feature allows Oneprovider to remove replicated files data automatically using user-defined conditions"
+      title=(t "components.spaceAutoCleaning.headerHint")
       placement="top"
     }}
     {{one-way-toggle inputId="cleaning-enabled"
@@ -26,7 +26,7 @@
       <h1>
         <label>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</label>
         {{one-label-tip
-          title="Schedule auto cleaning start and stop based on space usage"
+          title=(t "components.spaceAutoCleaning.boundariesHint")
           placement="top"
         }}
       </h1>
@@ -47,7 +47,7 @@
       <h1>
         <label>{{t "components.spaceCleaningReports.cleaningReports"}}</label>
         {{one-label-tip
-          title="Each report refers to a single auto cleaning started process"
+          title=(t "components.spaceAutoCleaning.reportsHint")
           placement="top"
         }}
       </h1>

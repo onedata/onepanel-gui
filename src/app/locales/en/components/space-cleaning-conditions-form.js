@@ -8,4 +8,5 @@ export default {
     hours: 'Hours',
     days: 'Days',
   },
+  headerHint: 'Configure what file replicas should be cleaned',
 };

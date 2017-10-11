@@ -638,20 +638,6 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, 
       }
     }),
 
-  // FIXME: to remove - testing errors
-  // _req_oneprovider_getProviderSpaceAutoCleaningReports: computed(function () {
-  //   return {
-  //     success: () => ({ something: 'wrong' }),
-  //   };
-  // }),
-
-  // FIXME: to remove - testing errors
-  // _req_oneprovider_getProviderSpaceAutoCleaningStatus: computed(function () {
-  //   return {
-  //     success: () => ({ foo: 'bar' }),
-  //   };
-  // }),
-
   _req_oneprovider_getProviderSpaceAutoCleaningReports: computedResourceGetHandler(
     '__spaceAutoCleaningReports', {
       reportEntries: [
@@ -671,7 +657,6 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, 
 
   // -- MOCKED RESOURCE STORE --
 
-  // FIXME: make dynamic in mock
   // space id -> AutCleaningStatus
   __spaceAutoCleaningStates: computed(function () {
     const self = this;
@@ -733,7 +718,7 @@ function computedResourceGetHandler(storeProperty, defaultData) {
   });
 }
 
-// FIXME: move to util
+// TODO: not used now, but may be used in future
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {
 //   return computed(function () {
 //     return {

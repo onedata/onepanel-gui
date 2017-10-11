@@ -1,4 +1,3 @@
-{{!-- FIXME: i18n --}}
 {{!-- FIXME: hints text --}}
 
 <div class="row content-row no-border">
@@ -7,7 +6,7 @@
       {{t "components.spaceFilesPopularity.filesPopularity"}}
     </label>
     {{one-label-tip
-      title="Files popularity feature allows Oneprovider to track files statistics for a selected space"
+      title=(t "components.spaceFilesPopularity.headerHint")
       placement="top"
     }}
     {{one-way-toggle inputId="files-popularity-enabled"
