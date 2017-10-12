@@ -79,17 +79,23 @@ export default Component.extend({
 
   /**
    * Cleaning status
-   * Updated by polling
-   * @type {Onepanel.AutoCleaningStatus}
+   * Aliased and auto updated from SpaceAutoCleaningUpdater
+   * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
    */
   status: computed.reads('spaceAutoCleaningUpdater.status'),
 
   /**
-   * Collectoion of cleaning reports
-   * Updated by polling
-   * @type {Array<Onepanel.SpaceAutoCleaningReport>}
+   * Collection of cleaning reports
+   * Aliased and auto updated from SpaceAutoCleaningUpdater
+   * @type {Ember.ComputedProperty<Array<Onepanel.SpaceAutoCleaningReport>>}
    */
   reports: computed.reads('spaceAutoCleaningUpdater.reports'),
+
+  toggleUpdater: observer('isCleanEnabled', function () {
+    const isCleanEnabled = this.get('isCleanEnabled');
+    const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
+    spaceAutoCleaningUpdater.set('isEnabled', isCleanEnabled);
+  }),
 
   init() {
     this._super(...arguments);
@@ -115,15 +121,12 @@ export default Component.extend({
   },
 
   willDestroyElement() {
-    this._super(...arguments);
-    this.get('spaceAutoCleaningUpdater').destroy();
+    try {
+      this.get('spaceAutoCleaningUpdater').destroy();
+    } finally {
+      this._super(...arguments);
+    }
   },
-
-  toggleUpdater: observer('isCleanEnabled', function () {
-    const isCleanEnabled = this.get('isCleanEnabled');
-    const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
-    spaceAutoCleaningUpdater.set('isEnabled', isCleanEnabled);
-  }),
 
   actions: {
     toggleCleaning() {

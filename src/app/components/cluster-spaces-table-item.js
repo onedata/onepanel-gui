@@ -11,8 +11,6 @@ import Ember from 'ember';
 import _includes from 'lodash/includes';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
-import SpaceFilesPopularity from 'onepanel-gui/mixins/components/space-files-popularity';
-import SpaceAutoCleaning from 'onepanel-gui/mixins/components/space-auto-cleaning';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 
 const {
@@ -42,8 +40,6 @@ const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 export default Component.extend(
   SpaceItemSyncStats,
   SpaceItemSupports,
-  SpaceFilesPopularity,
-  SpaceAutoCleaning,
   SpaceTabs, {
     classNames: ['cluster-spaces-table-item'],
 
@@ -119,7 +115,6 @@ export default Component.extend(
         'startImportConfiguration';
     }),
 
-    // TODO i18n
     _importButtonTip: computed('importConfigurationOpen', function () {
       let i18n = this.get('i18n');
       return this.get('importConfigurationOpen') ?

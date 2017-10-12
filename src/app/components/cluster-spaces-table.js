@@ -9,6 +9,7 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const {
   Component,
@@ -21,7 +22,7 @@ export default Component.extend({
    * @virtual
    * @type {function}
    */
-  modifySpace: undefined,
+  modifySpace: notImplementedReject,
 
   /**
    * @type {SpaceDetails[]|Ember.ArrayProxy<SpaceDetails>}

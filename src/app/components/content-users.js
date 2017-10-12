@@ -38,8 +38,9 @@ export default ContentUsers.extend({
   /**
    * Make an API call to change password of current user
    * @override
-   * @param {string} currentPassword
-   * @param {string} newPassword
+   * @param {object} data
+   * @param {string} data.currentPassword
+   * @param {string} data.newPassword
    * @returns {Promise} resolves on change password success
    */
   _changePassword({ currentPassword, newPassword }) {

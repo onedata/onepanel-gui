@@ -41,8 +41,18 @@ export default EmberObject.extend({
    */
   isEnabled: false,
 
+  /**
+   * Collection of cleaning reports
+   * Updated by polling
+   * @type {Onepanel.AutoCleaningStatus}
+   */
   status: undefined,
 
+  /**
+   * Collection of cleaning reports
+   * Updated by polling
+   * @type {Array<Onepanel.SpaceAutoCleaningReport>}
+   */
   reports: undefined,
 
   /**
@@ -149,7 +159,7 @@ export default EmberObject.extend({
   /**
    * Last event time for reports, can be eg. `stoppedAt` moment of last report,
    * but also can be a `startedAt` of report in progress
-   * @type {Ember.ComputedProperty<Moment>|null}
+   * @type {Ember.ComputedProperty<Moment|null>}
    */
   _lastReportMoment: computed('reports.@each.{startedAt,stoppedAt}', function () {
     const reports = this.get('reports');

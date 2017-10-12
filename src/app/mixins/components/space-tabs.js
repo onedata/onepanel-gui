@@ -12,24 +12,31 @@ import Mixin from '@ember/object/mixin';
 import { camelize } from '@ember/string';
 import _ from 'lodash';
 
-const ENABLED = 'enabled';
-const DISABLED = 'disabled';
+const ENABLED_CLASS = 'enabled';
+const DISABLED_CLASS = 'disabled';
 
 export default Mixin.create({
   // requires i18n service
 
+  /**
+   * Store active tab (updated on bs-tab change action)
+   * @type {string}
+   */
+  activeTabId: undefined,
+
   tabSyncClass: computed('space.importEnabled', function () {
-    return this.get('space.importEnabled') ? ENABLED : DISABLED;
+    return this.get('space.importEnabled') ? ENABLED_CLASS : DISABLED_CLASS;
   }),
   tabSyncId: computedTabId('sync'),
   tabSyncHint: computedTabHint('sync'),
 
-  tabPopularClass: 'enabled',
+  tabPopularClass: ENABLED_CLASS,
   tabPopularId: computedTabId('popular'),
   tabPopularHint: computedTabHint('popular'),
 
-  tabCleanClass: computed('filesPopularity.enabled', function () {
-    return this.get('filesPopularity.enabled') ? ENABLED : DISABLED;
+  tabCleanClass: computed('space.filesPopularity.enabled', function () {
+    return this.get('space.filesPopularity.enabled') ? ENABLED_CLASS :
+      DISABLED_CLASS;
   }),
   tabCleanId: computedTabId('clean'),
   tabCleanHint: computedTabHint('clean'),
@@ -42,19 +49,13 @@ export default Mixin.create({
     ));
   }),
 
-  /**
-   * Store active tab (updated on bs-tab change action)
-   * @type {string}
-   */
-  activeTabId: undefined,
-
   initActiveTabId: computed('_allTabsIdComputed', function () {
     let _initActiveTabId = this.get('_initActiveTabId');
     if (_initActiveTabId) {
       return _initActiveTabId;
     } else if (this.get('_allTabsIdComputed')) {
       const activeTabShort = _.find(['sync', 'popular', 'clean'], tab =>
-        this.get(camelize(`tab-${tab}-class`)) === ENABLED
+        this.get(camelize(`tab-${tab}-class`)) === ENABLED_CLASS
       );
       _initActiveTabId = this.get(camelize(`tab-${activeTabShort}-id`));
       this.set('_initActiveTabId', _initActiveTabId);

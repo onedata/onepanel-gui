@@ -9,13 +9,16 @@
  */
 
 import Component from '@ember/component';
+import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 
 export default Component.extend({
   /**
+   * Callback to notify change of `syncInterval`
+   * Invoked with `syncInterval` arg (see `syncIterval` property)
    * @virtual
    * @type {Function}
    */
-  syncIntervalChanged: undefined,
+  syncIntervalChanged: notImplementedWarn,
 
   /**
    * See `mixins/components/space-item-sync-stats`
