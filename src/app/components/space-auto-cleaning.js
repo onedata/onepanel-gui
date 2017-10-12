@@ -128,13 +128,35 @@ export default Component.extend({
     }
   },
 
+  enabledSettings() {
+    let settings = this.get('autoCleaning.settings');
+    if (settings == null) {
+      const spaceSize = this.get('spaceSize');
+      settings = {
+        fileSizeGreaterThan: null,
+        fileSizeLessThan: null,
+        fileNotActiveHours: null,
+        target: spaceSize,
+        threshold: spaceSize,
+      };
+    }
+    return settings;
+  },
+
   actions: {
     toggleCleaning() {
       const {
         updateAutoCleaning,
         isCleanEnabled,
       } = this.getProperties('updateAutoCleaning', 'isCleanEnabled');
-      return updateAutoCleaning({ enabled: !isCleanEnabled });
+      const newCleanEnabled = !isCleanEnabled;
+      const spaceReq = {
+        enabled: newCleanEnabled,
+      };
+      if (newCleanEnabled) {
+        spaceReq.settings = this.enabledSettings();
+      }
+      return updateAutoCleaning(spaceReq);
     },
     barValuesChanged(values) {
       let updateAutoCleaning = this.get('updateAutoCleaning');

@@ -80,13 +80,6 @@ function _genAutoCleaningSettings() {
   };
 }
 
-function _genAutoCleaning() {
-  return {
-    enabled: true,
-    settings: _genAutoCleaningSettings(),
-  };
-}
-
 function _genReport(duration = 1, isSuccess = true, inProgress = false) {
   let startedAt = new Date();
   startedAt.setHours(startedAt.getHours() - duration - 1);
@@ -581,12 +574,6 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, 
           if (popEnabled === true) {
             set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
           } else if (popEnabled === false) {
-            set(data, 'autoCleaning', { enabled: false });
-          }
-          const cleanEnabled = get(data, 'autoCleaning.enabled');
-          if (cleanEnabled === true) {
-            set(data, 'autoCleaning', _genAutoCleaning());
-          } else if (cleanEnabled === false) {
             set(data, 'autoCleaning', { enabled: false });
           }
           emberObjectMerge(space, data);
