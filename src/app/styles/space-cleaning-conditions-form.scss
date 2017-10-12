@@ -54,12 +54,12 @@
     display: inline-block;
     margin-left: $padding-small-vertical;
   }
-  .fileSizeGreaterThanGroup, .fileSizeLesserThanGroup {
+  .fileSizeGreaterThanGroup, .fileSizeLessThanGroup {
     .ember-power-select-trigger {
       width: 5em;
     }
   }
-  .fileTimeNotActiveGroup {
+  .fileNotActiveHoursGroup {
     .ember-power-select-trigger {
       width: 7em;
     }

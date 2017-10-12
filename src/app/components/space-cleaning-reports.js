@@ -59,17 +59,24 @@ export default Component.extend({
       report = Ember.Object.create(report);
 
       let startedAt = moment(report.get('startedAt'));
-      report.startedAtReadable = startedAt.format(START_END_TIME_FORMAT);
-      report.startedAtSortable = startedAt.unix();
+      report.setProperties({
+        startedAtReadable: startedAt.format(START_END_TIME_FORMAT),
+        startedAtSortable: startedAt.unix(),
+      });
 
       let stoppedAt = report.get('stoppedAt');
       if (stoppedAt) {
         stoppedAt = moment(stoppedAt);
-        report.stoppedAtReadable = stoppedAt.format(START_END_TIME_FORMAT);
-        report.stoppedAtSortable = stoppedAt.unix();
+        report.setProperties({
+          stoppedAtReadable: stoppedAt.format(START_END_TIME_FORMAT),
+          stoppedAtSortable: stoppedAt.unix(),
+        });
       } else {
-        report.stoppedAtReadable = '-';
-        report.stoppedAtSortable = 0;
+        report.setProperties({
+          stoppedAtReadable: '-',
+          // bigger than any unix timestamp
+          stoppedAtSortable: 9999999999,
+        });
       }
 
       let released = bytesToString(report.get('releasedBytes'), { iecFormat: true });
@@ -86,8 +93,10 @@ export default Component.extend({
    * Custom classes for ember-models-table addon.
    * @type {Ember.Object}
    */
-  _tableCustomClasses: Ember.Object.create({
-    table: 'table',
+  _tableCustomClasses: computed(function () {
+    return Ember.Object.create({
+      table: 'table',
+    });
   }),
 
   /**

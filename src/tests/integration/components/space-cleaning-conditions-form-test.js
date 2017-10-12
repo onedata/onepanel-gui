@@ -14,8 +14,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
   beforeEach(function () {
     this.set('data', {
       fileSizeGreaterThan: 1048576,
-      fileSizeLesserThan: 2097152,
-      fileTimeNotActive: 7200,
+      fileSizeLessThan: 2097152,
+      fileNotActiveHours: 2,
     });
   });
 
@@ -26,8 +26,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
         formSendDebounceTime=0}}`);
 
     const greaterGroup = this.$('.fileSizeGreaterThanGroup');
-    const lesserGroup = this.$('.fileSizeLesserThanGroup');
-    const timeGroup = this.$('.fileTimeNotActiveGroup');
+    const lesserGroup = this.$('.fileSizeLessThanGroup');
+    const timeGroup = this.$('.fileNotActiveHoursGroup');
     expect(greaterGroup.find('input')).to.have.value('1');
     expect(lesserGroup.find('input')).to.have.value('2');
     expect(timeGroup.find('input')).to.have.value('2');
@@ -44,8 +44,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
   [
     'fileSizeGreaterThan',
-    'fileSizeLesserThan',
-    'fileTimeNotActive',
+    'fileSizeLessThan',
+    'fileNotActiveHours',
   ].forEach((fieldName) => {
     it(`does not accept letters in ${fieldName} input`, function (done) {
       this.render(hbs `
@@ -96,8 +96,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
           onSave=(action "onSave")}}`);
 
       const saveArg = {};
-      if (fieldName === 'fileTimeNotActive') {
-        saveArg.fileTimeNotActive = 10800;
+      if (fieldName === 'fileNotActiveHours') {
+        saveArg.fileNotActiveHours = 3;
       } else {
         saveArg[fieldName] = 3145728;
       }
@@ -112,13 +112,13 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not accept float numbers in fileTimeNotActive input', function (done) {
+  it('does not accept float numbers in fileNotActiveHours input', function (done) {
     this.render(hbs `
       {{space-cleaning-conditions-form
         data=data
         formSendDebounceTime=0}}`);
 
-    const group = this.$('.fileTimeNotActiveGroup');
+    const group = this.$('.fileNotActiveHoursGroup');
     fillIn(group.find('input')[0], '3.4').then(() => {
       expect(group).to.have.class('has-error');
       done();
@@ -136,10 +136,10 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
     const saveArg = {
       fileSizeGreaterThan: 2097152,
-      fileSizeLesserThan: 3145728,
+      fileSizeLessThan: 3145728,
     };
     const greaterInputSelector = '.fileSizeGreaterThanGroup input';
-    const lesserInputSelector = '.fileSizeLesserThanGroup input';
+    const lesserInputSelector = '.fileSizeLessThanGroup input';
     fillIn(lesserInputSelector, '3').then(() => {
       fillIn(greaterInputSelector, '2').then(() => {
         blur(greaterInputSelector).then(() => {

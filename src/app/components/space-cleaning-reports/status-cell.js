@@ -37,13 +37,6 @@ export default Ember.Component.extend({
   column: null,
 
   /**
-   * Status value.
-   * Will be initialized by bindStatusProperty.
-   * @type {computed.string}
-   */
-  _status: null,
-
-  /**
    * Icon name.
    * @type {computed.string}
    */
@@ -69,6 +62,10 @@ export default Ember.Component.extend({
     }
   ),
 
+  /**
+   * Tooltip content for status.
+   * @type {Ember.ComputedProperty<string>}
+   */
   _tip: computed(
     'record.{stoppedAt,releasedBytes,bytesToRelease}',
     function () {

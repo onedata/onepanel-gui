@@ -32,8 +32,8 @@ export default function (data) {
 
 const cleanSettingsProps = [
   'fileSizeGreaterThan',
-  'fileSizeLesserThan',
-  'fileTimeNotActive',
+  'fileSizeLessThan',
+  'fileNotActiveHours',
   'threshold',
   'target',
 ];

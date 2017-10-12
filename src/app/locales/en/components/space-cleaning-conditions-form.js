@@ -1,7 +1,7 @@
 export default {
   fileSizeGreaterThan: 'Larger than',
-  fileSizeLesserThan: 'Smaller than',
-  fileTimeNotActive: 'Not active for',
+  fileSizeLessThan: 'Smaller than',
+  fileNotActiveHours: 'Not active for',
   timeUnits: {
     seconds: 'Seconds',
     minutes: 'Minutes',

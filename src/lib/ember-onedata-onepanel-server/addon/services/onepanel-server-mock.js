@@ -73,8 +73,8 @@ function _genSupportingProviders() {
 function _genAutoCleaningSettings() {
   return {
     fileSizeGreaterThan: 10000,
-    fileSizeLesserThan: 10000000,
-    fileTimeNotActive: 60 * 60 * 12,
+    fileSizeLessThan: 10000000,
+    fileNotActiveHours: 12,
     target: 100000000,
     threshold: 500000000,
   };

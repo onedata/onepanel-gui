@@ -19,6 +19,7 @@ const {
   RSVP: {
     Promise,
   },
+  run,
 } = Ember;
 
 export default Component.extend({
@@ -198,12 +199,7 @@ export default Component.extend({
         status,
         _target,
       } = this.getProperties('spaceSize', 'status', '_target');
-      let spaceUsed = get(status, 'spaceUsed');
-      if (spaceUsed >= _target) {
-        return (_target / spaceSize) * 100;
-      } else {
-        return (spaceUsed / spaceSize) * 100;
-      }
+      return (Math.min(get(status, 'spaceUsed'), _target) / spaceSize) * 100;
     }
   ),
 
@@ -244,11 +240,9 @@ export default Component.extend({
       let spaceUsed = get(status, 'spaceUsed');
       if (spaceUsed <= _target) {
         return 0;
-      } else if (spaceUsed >= _threshold) {
-        return ((_threshold - _target) / spaceSize) * 100;
       } else {
-        return ((spaceUsed - _target) / spaceSize) * 100;
-      }
+        return ((Math.min(_threshold, spaceUsed) - _target) / spaceSize) * 100;
+      } 
     }
   ),
 
@@ -293,11 +287,7 @@ export default Component.extend({
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_threshold');
       let spaceUsed = get(status, 'spaceUsed');
-      if (spaceUsed <= _threshold) {
-        return 0;
-      } else {
-        return ((spaceUsed - _threshold) / spaceSize) * 100;
-      }
+      return (Math.max(spaceUsed - _threshold, 0) / spaceSize) * 100;
     }
   ),
 
@@ -435,6 +425,7 @@ export default Component.extend({
         target,
         threshold,
       } = getProperties(settings, 'target', 'threshold');
+      this.set('_allowBarAnimations', false);
       switch (name) {
         case 'target':
           if (value >= 0 && value < threshold) {
@@ -455,6 +446,7 @@ export default Component.extend({
           }
           break;
       }
+      run.next(() => this.set('_allowBarAnimations', true));
     },
   },
 });

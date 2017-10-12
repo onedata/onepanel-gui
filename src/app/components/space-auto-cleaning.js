@@ -9,7 +9,6 @@
  */
 
 import Component from '@ember/component';
-import EmberObject from '@ember/object';
 import { computed, get, observer } from '@ember/object';
 import { inject } from '@ember/service';
 import { Promise } from 'rsvp';
@@ -63,41 +62,17 @@ export default Component.extend({
   isCleanEnabled: computed.readOnly('autoCleaning.enabled'),
 
   /**
-   * Data for bar chart.
-   * @type {Ember.ComputedProperty<Ember.Object>}
-   */
-  barData: computed(
-    'autoCleaning.settings.{target,threshold}',
-    'status.{isWorking,spaceUsed}',
-    'spaceSize',
-    function () {
-      let {
-        autoCleaning,
-        status,
-        spaceSize,
-      } = this.getProperties('autoCleaning', 'status', 'spaceSize');
-      return EmberObject.create({
-        isWorking: get(status, 'isWorking'),
-        spaceSize,
-        spaceUsed: get(status, 'spaceUsed'),
-        target: get(autoCleaning, 'settings.target'),
-        threshold: get(autoCleaning, 'settings.threshold'),
-      });
-    }
-  ),
-
-  /**
    * Data for file conditions form.
    * @type {computed.Object}
    */
   conditionsFormData: computed(
-    'autoCleaning.settings.{fileSizeGreaterThan,fileSizeLesserThan,fileTimeNotActive}',
+    'autoCleaning.settings.{fileSizeGreaterThan,fileSizeLessThan,fileNotActiveHours}',
     function () {
       let settings = this.get('autoCleaning.settings');
       return {
         fileSizeGreaterThan: get(settings, 'fileSizeGreaterThan'),
-        fileSizeLesserThan: get(settings, 'fileSizeLesserThan'),
-        fileTimeNotActive: get(settings, 'fileTimeNotActive'),
+        fileSizeLessThan: get(settings, 'fileSizeLessThan'),
+        fileNotActiveHours: get(settings, 'fileNotActiveHours'),
       };
     }
   ),

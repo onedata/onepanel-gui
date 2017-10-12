@@ -14,7 +14,6 @@ const {
   Component,
   computed,
   observer,
-  on,
   run: {
     next,
   },
@@ -70,17 +69,23 @@ export default Component.extend({
     return bytesToString(this.get('value'), { iecFormat: true, separated: true });
   }),
 
-  positionObserver: on('didInsertElement', observer('position', function () {
+  positionObserver: observer('position', function () {
     this.$().css({
       left: this.get('position') + '%',
     });
-  })),
+  }),
 
-  allowEditionObserver: on('didInsertElement', observer('allowEdition', function () {
+  allowEditionObserver: observer('allowEdition', function () {
     if (this.get('_inEditionMode')) {
       this.send('cancelEdition');
     }
-  })),
+  }),
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.positionObserver();
+    this.allowEditionObserver();
+  },
 
   actions: {
     startEdition() {

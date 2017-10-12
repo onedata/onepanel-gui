@@ -42,8 +42,8 @@ const TIME_FIELD = {
 
 const VALIDATORS = {
   '_formData.fileSizeGreaterThanNumber': createFieldValidator(SIZE_FIELD),
-  '_formData.fileSizeLesserThanNumber': createFieldValidator(SIZE_FIELD),
-  '_formData.fileTimeNotActiveNumber': createFieldValidator(TIME_FIELD),
+  '_formData.fileSizeLessThanNumber': createFieldValidator(SIZE_FIELD),
+  '_formData.fileNotActiveHoursNumber': createFieldValidator(TIME_FIELD),
 };
 
 export default Ember.Component.extend(buildValidations(VALIDATORS), {
@@ -102,8 +102,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    */
   _sourceFieldNames: [
     'fileSizeGreaterThan',
-    'fileSizeLesserThan',
-    'fileTimeNotActive',
+    'fileSizeLessThan',
+    'fileNotActiveHours',
   ],
 
   /**
@@ -120,17 +120,11 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     let i18n = this.get('i18n');
     let tPrefix = 'components.spaceCleaningConditionsForm.timeUnits.';
     return [{
-      name: i18n.t(tPrefix + 'seconds'),
+      name: i18n.t(tPrefix + 'hours'),
       multiplicator: 1,
     }, {
-      name: i18n.t(tPrefix + 'minutes'),
-      multiplicator: 60,
-    }, {
-      name: i18n.t(tPrefix + 'hours'),
-      multiplicator: 3600,
-    }, {
       name: i18n.t(tPrefix + 'days'),
-      multiplicator: 86400,
+      multiplicator: 24,
     }];
   }),
 
@@ -151,7 +145,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     let _formData = Ember.Object.create();
     [
       'fileSizeGreaterThan',
-      'fileSizeLesserThan',
+      'fileSizeLessThan',
     ].forEach((fieldName) => {
       let value = get(data, fieldName);
       if (typeof value === 'number') {
@@ -169,24 +163,24 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         });
       }
     });
-    let fileTimeNotActive = get(data, 'fileTimeNotActive');
-    if (typeof fileTimeNotActive === 'number') {
+    let fileNotActiveHours = get(data, 'fileNotActiveHours');
+    if (typeof fileNotActiveHours === 'number') {
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
-        if (fileTimeNotActive / u.multiplicator >= 1) {
+        if (fileNotActiveHours / u.multiplicator >= 1) {
           unit = u;
         }
       });
       _formData.setProperties({
-        fileTimeNotActiveEnabled: true,
-        fileTimeNotActiveNumber: String(fileTimeNotActive / unit.multiplicator),
-        fileTimeNotActiveUnit: unit,
+        fileNotActiveHoursEnabled: true,
+        fileNotActiveHoursNumber: String(fileNotActiveHours / unit.multiplicator),
+        fileNotActiveHoursUnit: unit,
       });
     } else {
       _formData.setProperties({
-        fileTimeNotActiveEnabled: false,
-        fileTimeNotActiveNumber: '',
-        fileTimeNotActiveUnit: _timeUnits[_timeUnits.length - 1],
+        fileNotActiveHoursEnabled: false,
+        fileNotActiveHoursNumber: '',
+        fileNotActiveHoursUnit: _timeUnits[0],
       });
     }
     return _formData;
@@ -281,8 +275,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       let data = {};
       [
         'fileSizeGreaterThan',
-        'fileSizeLesserThan',
-        'fileTimeNotActive',
+        'fileSizeLessThan',
+        'fileNotActiveHours',
       ].forEach((fieldName) => {
         if (_formData.get(fieldName + 'Enabled') &&
           (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit'))) {
