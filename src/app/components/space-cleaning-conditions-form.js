@@ -16,9 +16,6 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 const {
   get,
   computed,
-  computed: {
-    equal,
-  },
   run: {
     debounce,
     cancel,
@@ -221,12 +218,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     return Ember.Object.create();
   }),
 
-  /**
-   * If true, form is valid.
-   * @type {computed.boolean}
-   */
-  _isFormValid: equal('validations.errors.length', 0),
-
   init() {
     this._super(...arguments);
     let {
@@ -255,31 +246,28 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   _sendChanges() {
     let {
       _isDirty,
-      _isFormValid,
+      _formFieldsErrors,
       _formFieldsModified: modified,
       _formData,
+      _sourceFieldNames,
       onSave,
     } = this.getProperties(
       '_isDirty',
-      '_isFormValid',
+      '_formFieldsErrors',
       '_formFieldsModified',
       '_formData',
+      '_sourceFieldNames',
       'onSave'
     );
-    if (_isDirty && _isFormValid) {
-      this.setProperties({
-        _lostInputFocus: false,
-        _isDirty: false,
-      });
-
+    if (_isDirty) {
       let data = {};
-      [
-        'fileSizeGreaterThan',
-        'fileSizeLessThan',
-        'fileNotActiveHours',
-      ].forEach((fieldName) => {
-        if (_formData.get(fieldName + 'Enabled') &&
-          (modified.get(fieldName + 'Number') || modified.get(fieldName + 'Unit'))) {
+      _sourceFieldNames.forEach((fieldName) => {
+        const isModified = modified.get(fieldName + 'Number') ||
+          modified.get(fieldName + 'Unit');
+        if (_formData.get(fieldName + 'Enabled') && isModified) {
+          if (_formFieldsErrors[fieldName + 'Number']) {
+            return;
+          }
           const numberString = _formData.get(fieldName + 'Number').trim();
           data[fieldName] = Math.floor(parseFloat(numberString) *
             _formData.get(fieldName + 'Unit').multiplicator);
@@ -288,8 +276,15 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
           data[fieldName] = null;
         }
       });
+      if (Object.keys(data).length === 0) {
+        return;
+      }
       this._cleanModificationState();
       onSave(data);
+      this.setProperties({
+        _lostInputFocus: false,
+        _isDirty: false,
+      });
     }
   },
 
