@@ -24,11 +24,12 @@
       isFormOpened=addStorageOpened}}
 </div>
 <div class="row">
-  {{#promise-proxy-container proxy=storagesProxy}}
-    {{#promise-proxy-container proxy=spacesProxy}}
+  {{#loading-container isLoading=storagesLoading errorReason=storagesError}}
+    {{#unless noStorages}}
       {{cluster-storage-table 
         storages=storagesProxy.content 
-        spaces=spacesProxy.content}}
-    {{/promise-proxy-container}}
-  {{/promise-proxy-container}}
+        spaces=spacesProxy.content
+      }}
+    {{/unless}}
+  {{/loading-container}}
 </div>

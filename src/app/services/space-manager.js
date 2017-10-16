@@ -43,11 +43,12 @@ export default Service.extend({
   spacesCache: PromiseObject.create(),
 
   /**
+   * @param {boolean} reload if true, force request to server even if there is cache
    * @returns {PromiseObject<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
    */
-  getSpaces() {
+  getSpaces(reload = true) {
     const spacesCache = this.get('spacesCache');
-    if (!get(spacesCache, 'content')) {
+    if (reload || !get(spacesCache, 'content')) {
       spacesCache.set('promise', this._getSpaces());
     }
     return spacesCache;
