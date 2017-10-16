@@ -12,6 +12,19 @@ import bytesToString, { iecUnits } from 'onedata-gui-common/utils/bytes-to-strin
 import _ from 'lodash';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
+import {
+  MIN_GREATER_FILE_SIZE,
+  MIN_LESS_FILE_SIZE,
+  MAX_FILE_SIZE,
+  MIN_FILE_HOURS,
+  MAX_FILE_HOURS,
+  DISABLE_GREATER_FILE_SIZE,
+  DISABLE_LESS_FILE_SIZE,
+  DISABLE_FILE_HOURS,
+  validFileGreaterThan,
+  validFileLessThan,
+  validFileNotActiveHours,
+} from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 
 const {
   get,
@@ -25,21 +38,48 @@ const {
   },
 } = Ember;
 
+function isFieldEnabled(fieldName, value) {
+  const fun = {
+    fileSizeGreaterThan: validFileGreaterThan,
+    fileSizeLessThan: validFileLessThan,
+    fileNotActiveHours: validFileNotActiveHours,
+  }[fieldName];
+  if (fun) {
+    return fun(value);
+  }
+}
+
+function disableFieldValue(fieldName) {
+  return {
+    fileSizeGreaterThan: DISABLE_GREATER_FILE_SIZE,
+    fileSizeLessThan: DISABLE_LESS_FILE_SIZE,
+    fileNotActiveHours: DISABLE_FILE_HOURS,
+  }[fieldName];
+}
+
 const FORM_SEND_DEBOUNCE_TIME = 4000;
 
-const SIZE_FIELD = {
+const SIZE_LT_FIELD = {
   type: 'number',
-  gte: 0,
+  gte: MIN_LESS_FILE_SIZE,
+  lte: MAX_FILE_SIZE,
+};
+const SIZE_GT_FIELD = {
+  type: 'number',
+  gte: MIN_GREATER_FILE_SIZE,
+  lte: MAX_FILE_SIZE,
 };
 const TIME_FIELD = {
   type: 'number',
-  gte: 0,
   integer: true,
+  gte: MIN_FILE_HOURS,
+  lte: MAX_FILE_HOURS,
 };
 
+// FIXME: these validators should be customized to not allow eg. 10 TiB
 const VALIDATORS = {
-  '_formData.fileSizeGreaterThanNumber': createFieldValidator(SIZE_FIELD),
-  '_formData.fileSizeLessThanNumber': createFieldValidator(SIZE_FIELD),
+  '_formData.fileSizeGreaterThanNumber': createFieldValidator(SIZE_GT_FIELD),
+  '_formData.fileSizeLessThanNumber': createFieldValidator(SIZE_LT_FIELD),
   '_formData.fileNotActiveHoursNumber': createFieldValidator(TIME_FIELD),
 };
 
@@ -145,7 +185,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       'fileSizeLessThan',
     ].forEach((fieldName) => {
       let value = get(data, fieldName);
-      if (typeof value === 'number') {
+      if (typeof value === 'number' && isFieldEnabled(fieldName, value)) {
         value = bytesToString(value, { iecFormat: true, separated: true });
         _formData.setProperties({
           [fieldName + 'Enabled']: true,
@@ -161,7 +201,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       }
     });
     let fileNotActiveHours = get(data, 'fileNotActiveHours');
-    if (typeof fileNotActiveHours === 'number') {
+    if (typeof fileNotActiveHours === 'number' &&
+      isFieldEnabled('fileNotActiveHours', fileNotActiveHours)) {
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
         if (fileNotActiveHours / u.multiplicator >= 1) {
@@ -273,7 +314,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
             _formData.get(fieldName + 'Unit').multiplicator);
         } else if (modified.get(fieldName + 'Enabled') &&
           !_formData.get(fieldName + 'Enabled')) {
-          data[fieldName] = null;
+          data[fieldName] = disableFieldValue(fieldName);
         }
       });
       if (Object.keys(data).length === 0) {
