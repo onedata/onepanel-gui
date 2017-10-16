@@ -36,16 +36,12 @@ export default Component.extend({
 
   spaces: computed.reads('spacesProxy.content'),
 
-  spacesListLoading: computed(
-    'spacesProxy.isPending',
-    '_hasNoSpaces',
-    'someSpaceSettled',
-    function () {
-      return this.get('spacesProxy.isPending') ||
-        !this.get('_hasNoSpaces') && !this.get('someSpaceSettled');
-    }
-  ),
+  spacesListLoading: computed.reads('spacesProxy.isPending'),
 
+  // TODO: global list loader cannot base on someSpacesSettled because it causes
+  // to reload child components when changing single space (isLoading -> isSettled)
+  // not removing it for now, because it is a base for creating additional
+  // spinner on bottom
   someSpaceSettled: computed('spaces.@each.isSettled', function () {
     const spaces = this.get('spaces');
     if (spaces) {
@@ -94,7 +90,7 @@ export default Component.extend({
     return this.get('_supportSpaceOpened') ? 'default' : 'primary';
   }),
 
-  _hasNoSpaces: computed('spaces.[]', function () {
+  _hasNoSpaces: computed('spaces.length', function () {
     let spaces = this.get('spaces');
     return isArray(spaces) && get(spaces, 'length') === 0;
   }),

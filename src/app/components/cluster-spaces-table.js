@@ -8,7 +8,6 @@
  */
 
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const {
@@ -18,11 +17,19 @@ const {
 } = Ember;
 
 export default Component.extend({
+  classNames: ['cluster-spaces-table'],
+
   /**
    * @virtual
    * @type {function}
    */
   modifySpace: notImplementedReject,
+
+  /**
+   * @virtual
+   * @type {function}
+   */
+  revokeSpace: notImplementedReject,
 
   /**
    * @type {SpaceDetails[]|Ember.ArrayProxy<SpaceDetails>}
@@ -38,7 +45,7 @@ export default Component.extend({
 
   actions: {
     revokeSpace(space) {
-      return invokeAction(this, 'revokeSpace', space);
+      return this.get('revokeSpace')(space);
     },
     closeRejectedError() {
       this.set('anySpaceRejected', false);
