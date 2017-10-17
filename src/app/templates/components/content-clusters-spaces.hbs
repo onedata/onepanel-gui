@@ -37,6 +37,11 @@
         revokeSpace=(action "revokeSpace")
         modifySpace=(action "modifySpace")
       }}
+      {{#if someSpaceIsLoading}}
+        <div class="loading-more-row">
+          {{spin-spinner-block sizeClass="sm" class="fill-middle-centered"}}
+        </div>
+      {{/if}}
     {{/loading-container}}
   {{/promise-proxy-container}}
 </div>

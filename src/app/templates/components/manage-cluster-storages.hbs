@@ -30,6 +30,11 @@
         storages=storagesProxy.content 
         spaces=spacesProxy.content
       }}
+      {{#if someStorageIsLoading}}
+        <div class="loading-more-row">
+          {{spin-spinner-block sizeClass="sm" class="fill-middle-centered"}}
+        </div>
+      {{/if}}
     {{/unless}}
   {{/loading-container}}
 </div>

@@ -66,6 +66,8 @@ export default Component.extend({
     }
   }),
 
+  someSpaceIsLoading: computed.not('allSpacesSettled'),
+
   /**
    * Using observer, because when we use computed property for spaces,
    * the whole spaces list will be generated every time name and isSettled

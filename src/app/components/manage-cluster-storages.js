@@ -23,6 +23,7 @@ const {
   RSVP: {
     Promise,
   },
+  get,
 } = Ember;
 
 export default Ember.Component.extend({
@@ -68,6 +69,13 @@ export default Ember.Component.extend({
     }),
 
   storagesError: computed.alias('storagesProxy.reason'),
+
+  someStorageIsLoading: computed('storagesProxy.content.@each.isSettled', function () {
+    let storages = this.get('storagesProxy.content');
+    if (storages) {
+      return storages.toArray().some(sp => get(sp, 'isPending'));
+    }
+  }),
 
   init() {
     this._super(...arguments);
