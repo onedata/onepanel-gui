@@ -88,17 +88,17 @@ const FIELDS_PREFIXES = [
 
 FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
   fields.forEach((field) => {
-  const validators = createFieldValidator(field);
-  if (field.name === 'subdomain') {
-    validators.push(validator('exclusion', {
-      in: computed.readOnly('model.excludedSubdomains'),
-      message: computed(function () {
-        return this.get('model.i18n')
-          .t('components.providerRegistrationForm.subdomainReserved');
-      }),
-    }));
-  }
-  VALIDATIONS_PROTO[`allFieldsValues.${prefix}.${field.name}`] = validators;
+    const validators = createFieldValidator(field);
+    if (field.name === 'subdomain') {
+      validators.push(validator('exclusion', {
+        in: computed.readOnly('model.excludedSubdomains'),
+        message: computed(function () {
+          return this.get('model.i18n')
+            .t('components.providerRegistrationForm.subdomainReserved');
+        }),
+      }));
+    }
+    VALIDATIONS_PROTO[`allFieldsValues.${prefix}.${field.name}`] = validators;
   });
 });
 
@@ -311,7 +311,7 @@ export default OneForm.extend(Validations, {
       );
     }
   ),
-  
+
   allFields: computed(
     '_editTopFields',
     '_editBottomFields',
@@ -362,7 +362,7 @@ export default OneForm.extend(Validations, {
         allFieldsValues.get('editTop.subdomainDelegation');
     }
   ),
-  
+
   /**
    * Submit button text
    * @type {computed.string}
@@ -391,7 +391,7 @@ export default OneForm.extend(Validations, {
   _subdomainSuffixObserver: on('init', observer(
     'mode',
     'allFields',
-    'allFieldsValues.editTop.onezoneDomainName', 
+    'allFieldsValues.editTop.onezoneDomainName',
     function () {
       let {
         mode,
@@ -433,8 +433,7 @@ export default OneForm.extend(Validations, {
         field.set('defaultValue', value);
       }
       if (field.get('name') === 'subdomain') {
-        // TODO load from provider object
-        field.set('rightText', '.onedata.org');
+        field.set('rightText', '.' + get(provider, 'onezoneDomainName'));
       }
     }
     field.set('name', `${prefix}.${field.get('name')}`);
@@ -461,7 +460,8 @@ export default OneForm.extend(Validations, {
       } = this.getProperties('mode', 'allFields');
       this.changeFormValue(fieldName, value);
       if (fieldName === 'editTop.name' && mode === 'new') {
-        let subdomainField = _.find(allFields, ((field) => field.get('name') === 'editSubdomain.subdomain'));
+        let subdomainField = _.find(allFields, ((field) => field.get('name') ===
+          'editSubdomain.subdomain'));
         if (!subdomainField.get('changed')) {
           this._proposeSubdomain(value);
         }
@@ -494,7 +494,7 @@ export default OneForm.extend(Validations, {
           // subdomain field may throw errors, so it should be marked as 
           // changed to show that errors
           let subdomainField = _.find(
-            allFields, 
+            allFields,
             ((field) => field.get('name') === 'editSubdomain.subdomain')
           );
           subdomainField.set('changed', true);

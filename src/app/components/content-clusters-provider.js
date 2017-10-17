@@ -42,7 +42,7 @@ export default Component.extend({
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
-  _excludedSubdomains: [],  
+  _excludedSubdomains: [],
 
   /**
    * @type {boolean}

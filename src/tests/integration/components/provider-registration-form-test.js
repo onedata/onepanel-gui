@@ -38,7 +38,7 @@ describe('Integration | Component | provider registration form', function () {
     this.render(hbs `
       {{provider-registration-form
         mode="new"}}`);
-    
+
     const toggleSelector = '.toggle-field-editTop-subdomainDelegation';
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     const hostnameInputSelector = '.field-editHostname-hostname';
@@ -66,7 +66,7 @@ describe('Integration | Component | provider registration form', function () {
       {{provider-registration-form
         mode="new"
         excludedSubdomains=excludedSubdomains}}`);
-    
+
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     expect(this.$('.has-error')).not.to.exist;
     fillIn(subdomainInputSelector, 'a').then(() => {

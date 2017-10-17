@@ -575,6 +575,7 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
   __provider: PlainableObject.create({
     id: PROVIDER_ID,
     name: 'Some provider 1',
+    onezoneDomainName: 'onezone.org',
     subdomainDelegation: true,
     subdomain: 'somedomain',
     urls: ['172.17.0.4'],
