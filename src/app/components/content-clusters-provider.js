@@ -39,6 +39,12 @@ export default Component.extend({
   providerProxy: null,
 
   /**
+   * Subdomains that are reserved and cannot be used
+   * @type {Array<string>}
+   */
+  _excludedSubdomains: [],  
+
+  /**
    * @type {boolean}
    */
   _editing: false,
@@ -147,7 +153,12 @@ export default Component.extend({
       let {
         globalNotify,
         providerManager,
-      } = this.getProperties('globalNotify', 'providerManager');
+        _excludedSubdomains,
+      } = this.getProperties(
+        'globalNotify',
+        'providerManager',
+        '_excludedSubdomains'
+      );
       let modifyProviderData = data.getProperties(
         'name', 'redirectionPoint', 'geoLongitude', 'geoLatitude'
       );
@@ -155,6 +166,9 @@ export default Component.extend({
       modifying.catch(error => {
         // TODO i18n
         globalNotify.backendError('provider data modification', error);
+        if (error && error.error && error.error === 'subdomainReserved') {
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
+        }
       });
       modifying.then(() => {
         // TODO i18n

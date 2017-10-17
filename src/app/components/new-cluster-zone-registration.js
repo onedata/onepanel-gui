@@ -31,6 +31,12 @@ export default Component.extend({
   onepanelServer: service(),
 
   /**
+   * Subdomains that are reserved and cannot be used
+   * @type {Array<string>}
+   */
+  _excludedSubdomains: [],
+
+  /**
    * @param {Ember.Object} providerData data from provider registration form
    * @returns {Onepanel.ProviderRegisterRequest}
    */
@@ -88,15 +94,22 @@ export default Component.extend({
      * @returns {Promise} ``_submit`` promise
      */
     submit(providerData) {
+      let {
+        globalNotify,
+        _excludedSubdomains,
+      } = this.getProperties('globalNotify', '_excludedSubdomains');
       let name = providerData.get('name');
       let submitting = this._submit(providerData);
       submitting.then(() => {
         // TODO i18n
-        this.get('globalNotify').info('Provider registered successfully');
+        globalNotify.info('Provider registered successfully');
         invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
+        if (error && error.error && error.error === 'subdomainReserved') {
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
+        }
         this.get('globalNotify').backendError(
           'provider registration',
           error

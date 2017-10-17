@@ -1,6 +1,7 @@
 export default {
   register: 'Register',
   modifyProviderDetails: 'Modify provider details',
+  subdomainReserved: 'This subdomain is reserved.',
   fields: {
     id: {
       label: 'ID',
@@ -11,8 +12,8 @@ export default {
     onezoneDomainName: {
       label: 'Onezone domain',
     },
-    subdomainEnabled: {
-      label: 'Subdomain enabled',
+    subdomainDelegation: {
+      label: 'Subdomain delegation',
       tip: 'Subdomain enabled',
     },
     hostname: {

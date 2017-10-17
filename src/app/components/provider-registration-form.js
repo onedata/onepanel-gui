@@ -19,6 +19,9 @@ const {
   observer,
   on,
   get,
+  inject: {
+    service,
+  },
 } = Ember;
 
 const COMMON_FIELDS_TOP = [{
@@ -34,8 +37,9 @@ const COMMON_FIELDS_TOP = [{
     type: 'text',
   },
   {
-    name: 'subdomainEnabled',
+    name: 'subdomainDelegation',
     type: 'checkbox',
+    defaultValue: true,
   },
 ];
 
@@ -83,10 +87,19 @@ const FIELDS_PREFIXES = [
 ];
 
 FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
-  fields.forEach((field) =>
-    VALIDATIONS_PROTO[`allFieldsValues.${prefix}.${field.name}`] =
-    createFieldValidator(field)
-  );
+  fields.forEach((field) => {
+  const validators = createFieldValidator(field);
+  if (field.name === 'subdomain') {
+    validators.push(validator('exclusion', {
+      in: computed.readOnly('model.excludedSubdomains'),
+      message: computed(function () {
+        return this.get('model.i18n')
+          .t('components.providerRegistrationForm.subdomainReserved');
+      }),
+    }));
+  }
+  VALIDATIONS_PROTO[`allFieldsValues.${prefix}.${field.name}`] = validators;
+  });
 });
 
 // validate onezoneDomainName only in "new" mode
@@ -115,6 +128,8 @@ const ALL_PREFIXES = [
 export default OneForm.extend(Validations, {
   classNames: ['provider-registration-form'],
 
+  i18n: service(),
+
   /**
    * To inject. One of: show, edit, new
    *
@@ -131,6 +146,13 @@ export default OneForm.extend(Validations, {
   provider: null,
 
   /**
+   * Subdomains that cannot be used.
+   * @virtual
+   * @type {Array<string>}
+   */
+  excludedSubdomains: [],
+
+  /**
    * If true, all fields and submit button will be disabled
    * @type {boolean}
    */
@@ -142,20 +164,20 @@ export default OneForm.extend(Validations, {
    */
   submit: () => {},
 
-  currentFieldsPrefix: computed('mode', '_subdomainEnabled', function () {
+  currentFieldsPrefix: computed('mode', '_subdomainDelegation', function () {
     let {
       mode,
-      _subdomainEnabled,
-    } = this.getProperties('mode', '_subdomainEnabled');
+      _subdomainDelegation,
+    } = this.getProperties('mode', '_subdomainDelegation');
     switch (mode) {
       case 'show':
-        if (_subdomainEnabled) {
+        if (_subdomainDelegation) {
           return ['showTop', 'showSubdomain', 'showBottom'];
         } else {
           return ['showTop', 'showHostname', 'showBottom'];
         }
       default:
-        if (_subdomainEnabled) {
+        if (_subdomainDelegation) {
           return ['editTop', 'editSubdomain', 'editBottom'];
         } else {
           return ['editTop', 'editHostname', 'editBottom'];
@@ -323,21 +345,21 @@ export default OneForm.extend(Validations, {
   }),
 
   /**
-   * If true, subdomainEnabled toggle is checked
+   * If true, subdomainDelegation toggle is checked
    * @type {computed.boolean}
    */
-  _subdomainEnabled: computed(
+  _subdomainDelegation: computed(
     'mode',
-    'allFieldsValues.editTop.subdomainEnabled',
-    'allFieldsValues.showTop.subdomainEnabled',
+    'allFieldsValues.editTop.subdomainDelegation',
+    'allFieldsValues.showTop.subdomainDelegation',
     function () {
       let {
         mode,
         allFieldsValues,
       } = this.getProperties('mode', 'allFieldsValues');
       return mode === 'show' ?
-        allFieldsValues.get('showTop.subdomainEnabled') :
-        allFieldsValues.get('editTop.subdomainEnabled');
+        allFieldsValues.get('showTop.subdomainDelegation') :
+        allFieldsValues.get('editTop.subdomainDelegation');
     }
   ),
   
@@ -452,7 +474,10 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      let formValues = this.get('formValues');
+      let {
+        formValues,
+        allFields,
+      } = this.getProperties('formValues', 'allFields');
       let values = Ember.Object.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);
@@ -464,6 +489,17 @@ export default OneForm.extend(Validations, {
       let submitting = this.get('submit')(values);
       submitting.finally(() => {
         this.set('_disabled', false);
+        Ember.run.next(() => {
+          this.validateSync();
+          // subdomain field may throw errors, so it should be marked as 
+          // changed to show that errors
+          let subdomainField = _.find(
+            allFields, 
+            ((field) => field.get('name') === 'editSubdomain.subdomain')
+          );
+          subdomainField.set('changed', true);
+          this.recalculateErrors();
+        });
       });
       return submitting;
     },
