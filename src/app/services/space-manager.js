@@ -218,13 +218,15 @@ export default Service.extend({
 
   /**
    * @param {string} spaceId
+   * @param {string} startedAfter date in ISO format
    * @returns {Promise<Onepanel.SpaceAutoCleaningReportCollection>}
    */
-  getAutoCleaningReports(spaceId) {
+  getAutoCleaningReports(spaceId, startedAfter) {
     return this.get('onepanelServer').requestValidData(
       'oneprovider',
       'getProviderSpaceAutoCleaningReports',
-      spaceId
+      spaceId,
+      startedAfter,
     ).then(({ data }) => data);
   },
 
