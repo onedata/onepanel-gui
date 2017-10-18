@@ -18,7 +18,7 @@ export default function (data) {
       (
         data.autoCleaning == null ||
         data.autoCleaning.enabled === false ||
-        validateAutoCleaningSettings(data.autoCleaning.settings)
+        typeof data.autoCleaning.settings === 'object'
       )
     );
   } catch (error) {
@@ -28,22 +28,4 @@ export default function (data) {
       throw error;
     }
   }
-}
-
-const cleanSettingsProps = [
-  'lowerFileSizeLimit',
-  'upperFileSizeLimit',
-  'maxFileNotOpenedHours',
-  'threshold',
-  'target',
-];
-
-/** 
- * @param {Onepanel.SpaceAutoCleaningSettings} settings
- * @returns {boolean} true if valid
- */
-function validateAutoCleaningSettings(settings) {
-  return settings != null && cleanSettingsProps.every(prop =>
-    settings[prop] === null || typeof settings[prop] === 'number'
-  );
 }
