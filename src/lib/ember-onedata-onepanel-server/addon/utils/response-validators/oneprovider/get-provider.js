@@ -11,8 +11,7 @@ export default function (data) {
     return !!(
       data.id &&
       data.name &&
-      Array.isArray(data.urls) &&
-      data.redirectionPoint
+      typeof data.subdomainDelegation === 'boolean'
     );
   } catch (error) {
     if (error instanceof TypeError) {

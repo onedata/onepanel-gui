@@ -17,7 +17,7 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders name, zone domain, redirection point, latitude and logitude fields in new mode',
+    'renders name, zone domain, subdomain[ delegation], latitude and logitude fields in new mode',
     function () {
       this.on('submit', function () {});
 
@@ -41,7 +41,7 @@ describe('Integration | Component | provider registration form', function () {
 
     const toggleSelector = '.toggle-field-editTop-subdomainDelegation';
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
-    const hostnameInputSelector = '.field-editHostname-hostname';
+    const hostnameInputSelector = '.field-editDomain-domain';
 
     expect(this.$(toggleSelector)).to.have.class('checked');
     expect(this.$(subdomainInputSelector)).to.exist;

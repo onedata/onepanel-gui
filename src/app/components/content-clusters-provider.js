@@ -145,7 +145,9 @@ export default Component.extend({
     /**
      * @param {Ember.Object} data
      * @param {string} data.name
-     * @param {string} data.redirectionPoint
+     * @param {boolean} data.subdomainDelegation
+     * @param {string} data.domain
+     * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
      */
@@ -160,7 +162,7 @@ export default Component.extend({
         '_excludedSubdomains'
       );
       let modifyProviderData = data.getProperties(
-        'name', 'redirectionPoint', 'geoLongitude', 'geoLatitude'
+        'name', 'subdomainDelegation', 'subdomain', 'domain', 'geoLongitude', 'geoLatitude'
       );
       let modifying = providerManager.modifyProvider(modifyProviderData);
       modifying.catch(error => {

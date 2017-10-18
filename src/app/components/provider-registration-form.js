@@ -40,15 +40,17 @@ const COMMON_FIELDS_TOP = [{
     name: 'subdomainDelegation',
     type: 'checkbox',
     defaultValue: true,
+    tip: true,
   },
 ];
 
 const HOSTNAME_FIELD = {
-  name: 'hostname',
+  name: 'domain',
   type: 'text',
   // regex taken from
   // https://stackoverflow.com/questions/7930751/regexp-for-subdomain
   regex: /^(?!.{256})(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{1,63}|xn--[a-z0-9]{1,59})$/,
+  tip: true,
 };
 
 const SUBDOMAIN_FIELD = {
@@ -57,6 +59,7 @@ const SUBDOMAIN_FIELD = {
   // regex taken from
   // https://stackoverflow.com/questions/7930751/regexp-for-subdomain
   regex: /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/,
+  tip: true,
 };
 
 const COMMON_FIELDS_BOTTOM = [{
@@ -81,7 +84,7 @@ const COMMON_FIELDS_BOTTOM = [{
 const VALIDATIONS_PROTO = {};
 const FIELDS_PREFIXES = [
   { fields: COMMON_FIELDS_TOP, prefix: 'editTop' },
-  { fields: [HOSTNAME_FIELD], prefix: 'editHostname' },
+  { fields: [HOSTNAME_FIELD], prefix: 'editDomain' },
   { fields: [SUBDOMAIN_FIELD], prefix: 'editSubdomain' },
   { fields: COMMON_FIELDS_BOTTOM, prefix: 'editBottom' },
 ];
@@ -117,11 +120,11 @@ const Validations = buildValidations(VALIDATIONS_PROTO);
 const ALL_PREFIXES = [
   'editTop',
   'editBottom',
-  'editHostname',
+  'editDomain',
   'editSubdomain',
   'showTop',
   'showBottom',
-  'showHostname',
+  'showDomain',
   'showSubdomain',
 ];
 
@@ -174,13 +177,13 @@ export default OneForm.extend(Validations, {
         if (_subdomainDelegation) {
           return ['showTop', 'showSubdomain', 'showBottom'];
         } else {
-          return ['showTop', 'showHostname', 'showBottom'];
+          return ['showTop', 'showDomain', 'showBottom'];
         }
       default:
         if (_subdomainDelegation) {
           return ['editTop', 'editSubdomain', 'editBottom'];
         } else {
-          return ['editTop', 'editHostname', 'editBottom'];
+          return ['editTop', 'editDomain', 'editBottom'];
         }
     }
   }),
@@ -199,7 +202,7 @@ export default OneForm.extend(Validations, {
     let fields = Ember.Object.create({
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
-      hostnameField: prepareField(HOSTNAME_FIELD),
+      domainField: prepareField(HOSTNAME_FIELD),
       subdomainField: prepareField(SUBDOMAIN_FIELD),
     });
     return fields;
@@ -237,14 +240,14 @@ export default OneForm.extend(Validations, {
   ),
 
   /**
-   * Hostname edition field
+   * Domain edition field
    * @type {computed.Ember.Object}
    */
-  _hostnameEditField: computed('_fieldsSource.hostnameField', 'provider',
+  _domainEditField: computed('_fieldsSource.domainField', 'provider',
     function () {
       return this._preprocessField(
-        this.get('_fieldsSource.hostnameField'),
-        'editHostname'
+        this.get('_fieldsSource.domainField'),
+        'editDomain'
       );
     }
   ),
@@ -285,14 +288,14 @@ export default OneForm.extend(Validations, {
   ),
 
   /**
-   * Hostname static field
+   * Domain static field
    * @type {computed.Ember.Object}
    */
-  _hostnameStaticField: computed('_fieldsSource.hostnameField', 'provider',
+  _domainStaticField: computed('_fieldsSource.domainField', 'provider',
     function () {
       return this._preprocessField(
-        this.get('_fieldsSource.hostnameField'),
-        'showHostname',
+        this.get('_fieldsSource.domainField'),
+        'showDomain',
         true
       );
     }
@@ -315,21 +318,21 @@ export default OneForm.extend(Validations, {
   allFields: computed(
     '_editTopFields',
     '_editBottomFields',
-    '_hostnameEditField',
+    '_domainEditField',
     '_subdomainEditField',
     '_staticTopFields',
     '_staticBottomFields',
-    '_hostnameStaticField',
+    '_domainStaticField',
     '_subdomainStaticField',
     function () {
       let properties = [
         '_editTopFields',
         '_editBottomFields',
-        '_hostnameEditField',
+        '_domainEditField',
         '_subdomainEditField',
         '_staticTopFields',
         '_staticBottomFields',
-        '_hostnameStaticField',
+        '_domainStaticField',
         '_subdomainStaticField',
       ];
       let fields = [];

@@ -578,8 +578,6 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, {
     onezoneDomainName: 'onezone.org',
     subdomainDelegation: true,
     subdomain: 'somedomain',
-    urls: ['172.17.0.4'],
-    redirectionPoint: 'https://172.17.0.4',
     geoLatitude: 49.698284,
     geoLongitude: 21.898093,
   }),
