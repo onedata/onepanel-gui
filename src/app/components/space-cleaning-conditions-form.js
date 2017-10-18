@@ -13,12 +13,12 @@ import _ from 'lodash';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import {
-  MIN_GREATER_FILE_SIZE,
-  MIN_LESS_FILE_SIZE,
+  MIN_LOWER_FILE_SIZE_LIMIT,
+  MIN_UPPER_FILE_SIZE_LIMIT,
   MAX_FILE_SIZE,
-  MIN_FILE_HOURS,
-  MAX_FILE_HOURS,
-  DISABLE_LOWER_SIZE_LIMIT,
+  MIN_MAX_FILE_NOT_OPENED_HOURS,
+  MAX_MAX_FILE_NOT_OPENED_HOURS,
+  DISABLE_LOWER_FILE_SIZE_LIMIT,
   DISABLE_UPPER_FILE_SIZE_LIMIT,
   DISABLE_MAX_FILE_NOT_OPENED_HOURS,
   valid_lowerFileSizeLimit,
@@ -52,7 +52,7 @@ function isFieldEnabled(fieldName, value) {
 
 function disableFieldValue(fieldName) {
   return {
-    lowerFileSizeLimit: DISABLE_LOWER_SIZE_LIMIT,
+    lowerFileSizeLimit: DISABLE_LOWER_FILE_SIZE_LIMIT,
     upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
     maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
   }[fieldName];
@@ -62,19 +62,19 @@ const FORM_SEND_DEBOUNCE_TIME = 4000;
 
 const SIZE_LT_FIELD = {
   type: 'number',
-  gte: MIN_LESS_FILE_SIZE,
+  gte: MIN_UPPER_FILE_SIZE_LIMIT,
   lte: MAX_FILE_SIZE,
 };
 const SIZE_GT_FIELD = {
   type: 'number',
-  gte: MIN_GREATER_FILE_SIZE,
+  gte: MIN_LOWER_FILE_SIZE_LIMIT,
   lte: MAX_FILE_SIZE,
 };
 const TIME_FIELD = {
   type: 'number',
   integer: true,
-  gte: MIN_FILE_HOURS,
-  lte: MAX_FILE_HOURS,
+  gte: MIN_MAX_FILE_NOT_OPENED_HOURS,
+  lte: MAX_MAX_FILE_NOT_OPENED_HOURS,
 };
 
 const TIME_NUMBER_FIELD = {
@@ -106,6 +106,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * modified data.
    * @virtual
    * @type {Function}
+   * @returns {Promise<undefined|any>} resolved value will be ignored
    */
   onSave: () => Promise.resolve(),
 

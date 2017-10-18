@@ -20,29 +20,29 @@ export const MAX_FILE_SIZE = 1125899906842624;
 /**
  * Minimal possible value in bytes of "file size greater than"
  */
-export const MIN_GREATER_FILE_SIZE = 1;
+export const MIN_LOWER_FILE_SIZE_LIMIT = 2;
 
 /**
  * Minimal possible value in bytes of "file size less than"
  */
-export const MIN_LESS_FILE_SIZE = 1;
+export const MIN_UPPER_FILE_SIZE_LIMIT = 1;
 
 /**
  * Minimal possible value in hours of "file not active for"
  * 0 hours makes no sense, because all files are affected
  */
-export const MIN_FILE_HOURS = 1;
+export const MIN_MAX_FILE_NOT_OPENED_HOURS = 1;
 
 /**
  * Maximal possible value in hours of "file not active for"
  * Approx. 47 years
  */
-export const MAX_FILE_HOURS = 1482192000;
+export const MAX_MAX_FILE_NOT_OPENED_HOURS = 1482192000;
 
 /**
  * A value to disable lowerFileSizeLimit condition
  */
-export const DISABLE_LOWER_SIZE_LIMIT = MIN_GREATER_FILE_SIZE - 1;
+export const DISABLE_LOWER_FILE_SIZE_LIMIT = MIN_LOWER_FILE_SIZE_LIMIT - 1;
 
 /**
  * A value to disable upperFileSizeLimit condition
@@ -52,14 +52,14 @@ export const DISABLE_UPPER_FILE_SIZE_LIMIT = MAX_FILE_SIZE + 1;
 /**
  * A value to disable for fileNotActiveForHours condition
  */
-export const DISABLE_MAX_FILE_NOT_OPENED_HOURS = MAX_FILE_HOURS + 1;
+export const DISABLE_MAX_FILE_NOT_OPENED_HOURS = MAX_MAX_FILE_NOT_OPENED_HOURS + 1;
 
 /**
  * @param {Number} value number of bytes
  * @returns {boolean} true if value means enabled condition; false otherwise
  */
 export function valid_lowerFileSizeLimit(value) {
-  return value > DISABLE_LOWER_SIZE_LIMIT && value <= MAX_FILE_SIZE;
+  return value > DISABLE_LOWER_FILE_SIZE_LIMIT && value <= MAX_FILE_SIZE;
 }
 
 /**
@@ -67,7 +67,7 @@ export function valid_lowerFileSizeLimit(value) {
  * @returns {boolean} true if value means enabled condition; false otherwise
  */
 export function valid_upperFileSizeLimit(value) {
-  return value >= MIN_LESS_FILE_SIZE && value < DISABLE_UPPER_FILE_SIZE_LIMIT;
+  return value >= MIN_UPPER_FILE_SIZE_LIMIT && value < DISABLE_UPPER_FILE_SIZE_LIMIT;
 }
 
 /**
@@ -75,5 +75,6 @@ export function valid_upperFileSizeLimit(value) {
  * @returns {boolean} true if value means enabled condition; false otherwise
  */
 export function valid_maxFileNotOpenedHours(value) {
-  return value >= MIN_FILE_HOURS && value < DISABLE_MAX_FILE_NOT_OPENED_HOURS;
+  return value >= MIN_MAX_FILE_NOT_OPENED_HOURS &&
+    value < DISABLE_MAX_FILE_NOT_OPENED_HOURS;
 }

@@ -1,7 +1,7 @@
 export default {
-  lowerFileSizeLimit: 'Larger than',
-  upperFileSizeLimit: 'Smaller than',
-  maxFileNotOpenedHours: 'Not active for',
+  lowerFileSizeLimit: 'Lower size limit',
+  upperFileSizeLimit: 'Upper size limit',
+  maxFileNotOpenedHours: 'Not opened for',
   timeUnits: {
     seconds: 'Seconds',
     minutes: 'Minutes',

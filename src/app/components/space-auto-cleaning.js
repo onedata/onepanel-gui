@@ -14,7 +14,7 @@ import { inject } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import {
-  DISABLE_LOWER_SIZE_LIMIT,
+  DISABLE_LOWER_FILE_SIZE_LIMIT,
   DISABLE_UPPER_FILE_SIZE_LIMIT,
   DISABLE_MAX_FILE_NOT_OPENED_HOURS,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
@@ -143,7 +143,7 @@ export default Component.extend({
     if (settings == null) {
       const spaceSize = this.get('spaceSize');
       settings = SpaceAutoCleaningSettings.constructFromObject({
-        lowerFileSizeLimit: DISABLE_LOWER_SIZE_LIMIT,
+        lowerFileSizeLimit: DISABLE_LOWER_FILE_SIZE_LIMIT,
         upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
         maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
         target: spaceSize,
