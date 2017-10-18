@@ -29,7 +29,7 @@
           triggerClass="small"
           dropdownClass="small"
           disabled=(not (get _formData (concat fieldName "Enabled")))
-          options=(if (eq fieldName "fileNotActiveHours") _timeUnits _sizeUnits)
+          options=(if (eq fieldName "maxFileNotOpenedHours") _timeUnits _sizeUnits)
           selected=(get _formData (concat fieldName "Unit"))
           onchange=(action "dataChanged" (concat fieldName "Unit"))
           searchEnabled=false

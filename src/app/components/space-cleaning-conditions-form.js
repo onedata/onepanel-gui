@@ -18,12 +18,12 @@ import {
   MAX_FILE_SIZE,
   MIN_FILE_HOURS,
   MAX_FILE_HOURS,
-  DISABLE_GREATER_FILE_SIZE,
-  DISABLE_LESS_FILE_SIZE,
-  DISABLE_FILE_HOURS,
-  validFileGreaterThan,
-  validFileLessThan,
-  validFileNotActiveHours,
+  DISABLE_LOWER_SIZE_LIMIT,
+  DISABLE_UPPER_FILE_SIZE_LIMIT,
+  DISABLE_MAX_FILE_NOT_OPENED_HOURS,
+  valid_lowerFileSizeLimit,
+  valid_upperFileSizeLimit,
+  valid_maxFileNotOpenedHours,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 
 const {
@@ -41,9 +41,9 @@ const {
 
 function isFieldEnabled(fieldName, value) {
   const fun = {
-    fileSizeGreaterThan: validFileGreaterThan,
-    fileSizeLessThan: validFileLessThan,
-    fileNotActiveHours: validFileNotActiveHours,
+    lowerFileSizeLimit: valid_lowerFileSizeLimit,
+    upperFileSizeLimit: valid_upperFileSizeLimit,
+    maxFileNotOpenedHours: valid_maxFileNotOpenedHours,
   }[fieldName];
   if (fun) {
     return fun(value);
@@ -52,9 +52,9 @@ function isFieldEnabled(fieldName, value) {
 
 function disableFieldValue(fieldName) {
   return {
-    fileSizeGreaterThan: DISABLE_GREATER_FILE_SIZE,
-    fileSizeLessThan: DISABLE_LESS_FILE_SIZE,
-    fileNotActiveHours: DISABLE_FILE_HOURS,
+    lowerFileSizeLimit: DISABLE_LOWER_SIZE_LIMIT,
+    upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
+    maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
   }[fieldName];
 }
 
@@ -83,10 +83,10 @@ const TIME_NUMBER_FIELD = {
 };
 
 const VALIDATORS = {
-  '_formData.fileSizeGreaterThan': createFieldValidator(SIZE_GT_FIELD),
-  '_formData.fileSizeLessThan': createFieldValidator(SIZE_LT_FIELD),
-  '_formData.fileNotActiveHours': createFieldValidator(TIME_FIELD),
-  '_formData.fileNotActiveHoursNumber': createFieldValidator(TIME_NUMBER_FIELD),
+  '_formData.lowerFileSizeLimit': createFieldValidator(SIZE_GT_FIELD),
+  '_formData.upperFileSizeLimit': createFieldValidator(SIZE_LT_FIELD),
+  '_formData.maxFileNotOpenedHours': createFieldValidator(TIME_FIELD),
+  '_formData.maxFileNotOpenedHoursNumber': createFieldValidator(TIME_NUMBER_FIELD),
 };
 
 export default Ember.Component.extend(buildValidations(VALIDATORS), {
@@ -156,9 +156,9 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @type {Array.string}
    */
   _sourceFieldNames: [
-    'fileSizeGreaterThan',
-    'fileSizeLessThan',
-    'fileNotActiveHours',
+    'lowerFileSizeLimit',
+    'upperFileSizeLimit',
+    'maxFileNotOpenedHours',
   ],
 
   /**
@@ -200,8 +200,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     }
     let _formData = Ember.Object.create();
     [
-      'fileSizeGreaterThan',
-      'fileSizeLessThan',
+      'lowerFileSizeLimit',
+      'upperFileSizeLimit',
     ].forEach((fieldName) => {
       let value = get(data, fieldName);
       if (typeof value === 'number' && isFieldEnabled(fieldName, value)) {
@@ -219,25 +219,25 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         });
       }
     });
-    let fileNotActiveHours = get(data, 'fileNotActiveHours');
-    if (typeof fileNotActiveHours === 'number' &&
-      isFieldEnabled('fileNotActiveHours', fileNotActiveHours)) {
+    let maxFileNotOpenedHours = get(data, 'maxFileNotOpenedHours');
+    if (typeof maxFileNotOpenedHours === 'number' &&
+      isFieldEnabled('maxFileNotOpenedHours', maxFileNotOpenedHours)) {
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
-        if (fileNotActiveHours / u.multiplicator >= 1) {
+        if (maxFileNotOpenedHours / u.multiplicator >= 1) {
           unit = u;
         }
       });
       _formData.setProperties({
-        fileNotActiveHoursEnabled: true,
-        fileNotActiveHoursNumber: String(fileNotActiveHours / unit.multiplicator),
-        fileNotActiveHoursUnit: unit,
+        maxFileNotOpenedHoursEnabled: true,
+        maxFileNotOpenedHoursNumber: String(maxFileNotOpenedHours / unit.multiplicator),
+        maxFileNotOpenedHoursUnit: unit,
       });
     } else {
       _formData.setProperties({
-        fileNotActiveHoursEnabled: false,
-        fileNotActiveHoursNumber: '',
-        fileNotActiveHoursUnit: _timeUnits[0],
+        maxFileNotOpenedHoursEnabled: false,
+        maxFileNotOpenedHoursNumber: '',
+        maxFileNotOpenedHoursUnit: _timeUnits[0],
       });
     }
     _sourceFieldNames.forEach(fieldName => {

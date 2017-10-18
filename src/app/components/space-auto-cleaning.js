@@ -14,9 +14,9 @@ import { inject } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import {
-  DISABLE_GREATER_FILE_SIZE,
-  DISABLE_LESS_FILE_SIZE,
-  DISABLE_FILE_HOURS,
+  DISABLE_LOWER_SIZE_LIMIT,
+  DISABLE_UPPER_FILE_SIZE_LIMIT,
+  DISABLE_MAX_FILE_NOT_OPENED_HOURS,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 
 const {
@@ -76,13 +76,13 @@ export default Component.extend({
    * @type {computed.Object}
    */
   conditionsFormData: computed(
-    'autoCleaning.settings.{fileSizeGreaterThan,fileSizeLessThan,fileNotActiveHours}',
+    'autoCleaning.settings.{lowerFileSizeLimit,upperFileSizeLimit,maxFileNotOpenedHours}',
     function () {
       let settings = this.get('autoCleaning.settings');
       return SpaceAutoCleaningSettings.constructFromObject({
-        fileSizeGreaterThan: get(settings, 'fileSizeGreaterThan'),
-        fileSizeLessThan: get(settings, 'fileSizeLessThan'),
-        fileNotActiveHours: get(settings, 'fileNotActiveHours'),
+        lowerFileSizeLimit: get(settings, 'lowerFileSizeLimit'),
+        upperFileSizeLimit: get(settings, 'upperFileSizeLimit'),
+        maxFileNotOpenedHours: get(settings, 'maxFileNotOpenedHours'),
       });
     }
   ),
@@ -143,9 +143,9 @@ export default Component.extend({
     if (settings == null) {
       const spaceSize = this.get('spaceSize');
       settings = SpaceAutoCleaningSettings.constructFromObject({
-        fileSizeGreaterThan: DISABLE_GREATER_FILE_SIZE,
-        fileSizeLessThan: DISABLE_LESS_FILE_SIZE,
-        fileNotActiveHours: DISABLE_FILE_HOURS,
+        lowerFileSizeLimit: DISABLE_LOWER_SIZE_LIMIT,
+        upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
+        maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
         target: spaceSize,
         threshold: spaceSize,
       });

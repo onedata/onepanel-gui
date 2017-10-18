@@ -72,9 +72,9 @@ function _genSupportingProviders() {
 
 function _genAutoCleaningSettings() {
   return {
-    fileSizeGreaterThan: 10000,
-    fileSizeLessThan: 10000000,
-    fileNotActiveHours: 12,
+    lowerFileSizeLimit: 10000,
+    upperFileSizeLimit: 10000000,
+    maxFileNotOpenedHours: 12,
     target: 100000000,
     threshold: 500000000,
   };
@@ -637,8 +637,8 @@ export default OnepanelServerBase.extend(SpaceSyncStatsMock, SpaceCleaningMock, 
 
   _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
     '__spaceAutoCleaningStates', {
-      isWorking: false,
-      spaceUsed: 250000000,
+      inProgress: false,
+      spaceOccupancy: 250000000,
     }
   ),
 

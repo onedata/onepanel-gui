@@ -96,14 +96,14 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isWorking: computed.equal('status.isWorking', true),
+  inProgress: computed.equal('status.inProgress', true),
 
   /**
    * @type {number}
    */
-  _sharedInterval: computed('isEnabled', 'isWorking', function () {
+  _sharedInterval: computed('isEnabled', 'inProgress', function () {
     if (this.get('isEnabled')) {
-      if (this.get('isWorking')) {
+      if (this.get('inProgress')) {
         return WORKING_UPDATE_INTERVAL;
       } else {
         return IDLE_UPDATE_INTERVAL;
@@ -231,7 +231,7 @@ export default EmberObject.extend({
 
   // TODO: there should be no watcher for reports at all - it should be updated:
   // - after enabling
-  // - on change status.isWorking true -> false
+  // - on change status.inProgress true -> false
 
   /**
    * Create watchers for fetching information space cleaning

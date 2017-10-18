@@ -153,36 +153,36 @@ export default Component.extend({
    * Percent of used space.
    * @type {computed.boolean}
    */
-  _usedPercent: computed('spaceSize', 'status.spaceUsed', function () {
+  _usedPercent: computed('spaceSize', 'status.spaceOccupancy', function () {
     let {
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
-    return (get(status, 'spaceUsed') / spaceSize) * 100;
+    return (get(status, 'spaceOccupancy') / spaceSize) * 100;
   }),
 
   /**
    * Free space.
    * @type {computed.number}
    */
-  _freeSpace: computed('spaceSize', 'status.spaceUsed', function () {
+  _freeSpace: computed('spaceSize', 'status.spaceOccupancy', function () {
     let {
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
-    return spaceSize - get(status, 'spaceUsed');
+    return spaceSize - get(status, 'spaceOccupancy');
   }),
 
   /**
    * Space to release.
    * @type {computed.number}
    */
-  _toReleaseSpace: computed('_target', 'status.spaceUsed', function () {
+  _toReleaseSpace: computed('_target', 'status.spaceOccupancy', function () {
     let {
       _target,
       status,
     } = this.getProperties('_target', 'status');
-    return Math.max(0, get(status, 'spaceUsed') - _target);
+    return Math.max(0, get(status, 'spaceOccupancy') - _target);
   }),
 
   /**
@@ -191,7 +191,7 @@ export default Component.extend({
    */
   _usedBelowSoftQuotaPercent: computed(
     'spaceSize',
-    'status.spaceUsed',
+    'status.spaceOccupancy',
     '_target',
     function () {
       let {
@@ -199,7 +199,7 @@ export default Component.extend({
         status,
         _target,
       } = this.getProperties('spaceSize', 'status', '_target');
-      return (Math.min(get(status, 'spaceUsed'), _target) / spaceSize) * 100;
+      return (Math.min(get(status, 'spaceOccupancy'), _target) / spaceSize) * 100;
     }
   ),
 
@@ -227,7 +227,7 @@ export default Component.extend({
    */
   _usedBelowHardQuotaPercent: computed(
     'spaceSize',
-    'status.spaceUsed',
+    'status.spaceOccupancy',
     '_target',
     '_threshold',
     function () {
@@ -237,11 +237,11 @@ export default Component.extend({
         _target,
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_target', '_threshold');
-      let spaceUsed = get(status, 'spaceUsed');
-      if (spaceUsed <= _target) {
+      let spaceOccupancy = get(status, 'spaceOccupancy');
+      if (spaceOccupancy <= _target) {
         return 0;
       } else {
-        return ((Math.min(_threshold, spaceUsed) - _target) / spaceSize) * 100;
+        return ((Math.min(_threshold, spaceOccupancy) - _target) / spaceSize) * 100;
       }
     }
   ),
@@ -278,7 +278,7 @@ export default Component.extend({
    */
   _usedOverHardQuotaPercent: computed(
     'spaceSize',
-    'status.spaceUsed',
+    'status.spaceOccupancy',
     '_threshold',
     function () {
       let {
@@ -286,8 +286,8 @@ export default Component.extend({
         status,
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_threshold');
-      let spaceUsed = get(status, 'spaceUsed');
-      return (Math.max(spaceUsed - _threshold, 0) / spaceSize) * 100;
+      let spaceOccupancy = get(status, 'spaceOccupancy');
+      return (Math.max(spaceOccupancy - _threshold, 0) / spaceSize) * 100;
     }
   ),
 

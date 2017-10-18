@@ -14,8 +14,8 @@
  */
 export default function (data) {
   try {
-    return typeof data.isWorking === 'boolean' &&
-      typeof data.spaceUsed === 'number';
+    return typeof data.inProgress === 'boolean' &&
+      typeof data.spaceOccupancy === 'number';
   } catch (error) {
     if (error instanceof TypeError) {
       return false;

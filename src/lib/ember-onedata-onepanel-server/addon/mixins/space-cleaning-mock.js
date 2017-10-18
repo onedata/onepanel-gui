@@ -16,21 +16,21 @@ const {
 
 class MockState {
   constructor(target, threshold, steps) {
-    this.spaceUsed = threshold;
+    this.spaceOccupancy = threshold;
     this.target = target;
     this.step = Math.floor((threshold - target) / steps);
-    this.isWorking = false;
+    this.inProgress = false;
     setTimeout(() => {
-      this.isWorking = true;
+      this.inProgress = true;
       this.interval = setInterval(this.tick.bind(this), 1000);
     }, 2000);
   }
   tick() {
-    if (this.isWorking) {
-      this.spaceUsed -= this.step;
-      if (this.spaceUsed <= this.target) {
-        this.spaceUsed = this.target;
-        this.isWorking = false;
+    if (this.inProgress) {
+      this.spaceOccupancy -= this.step;
+      if (this.spaceOccupancy <= this.target) {
+        this.spaceOccupancy = this.target;
+        this.inProgress = false;
         this.stop();
       }
     }
@@ -40,8 +40,8 @@ class MockState {
   }
   getData() {
     return {
-      isWorking: this.isWorking,
-      spaceUsed: this.spaceUsed,
+      inProgress: this.inProgress,
+      spaceOccupancy: this.spaceOccupancy,
     };
   }
 }

@@ -13,9 +13,9 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
   beforeEach(function () {
     this.set('data', {
-      fileSizeGreaterThan: 1048576,
-      fileSizeLessThan: 2097152,
-      fileNotActiveHours: 2,
+      lowerFileSizeLimit: 1048576,
+      upperFileSizeLimit: 2097152,
+      maxFileNotOpenedHours: 2,
     });
   });
 
@@ -26,9 +26,9 @@ describe('Integration | Component | space cleaning conditions form', function ()
         formSendDebounceTime=0
         formSavedInfoHideTimeout=0}}`);
 
-    const greaterGroup = this.$('.fileSizeGreaterThanGroup');
-    const lesserGroup = this.$('.fileSizeLessThanGroup');
-    const timeGroup = this.$('.fileNotActiveHoursGroup');
+    const greaterGroup = this.$('.lowerFileSizeLimitGroup');
+    const lesserGroup = this.$('.upperFileSizeLimitGroup');
+    const timeGroup = this.$('.maxFileNotOpenedHoursGroup');
     expect(greaterGroup.find('input')).to.have.value('1');
     expect(lesserGroup.find('input')).to.have.value('2');
     expect(timeGroup.find('input')).to.have.value('2');
@@ -44,9 +44,9 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   [
-    'fileSizeGreaterThan',
-    'fileSizeLessThan',
-    'fileNotActiveHours',
+    'lowerFileSizeLimit',
+    'upperFileSizeLimit',
+    'maxFileNotOpenedHours',
   ].forEach((fieldName) => {
     it(`does not accept letters in ${fieldName} input`, function (done) {
       this.render(hbs `
@@ -101,8 +101,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
           onSave=(action "onSave")}}`);
 
       const saveArg = {};
-      if (fieldName === 'fileNotActiveHours') {
-        saveArg.fileNotActiveHours = 3;
+      if (fieldName === 'maxFileNotOpenedHours') {
+        saveArg.maxFileNotOpenedHours = 3;
       } else {
         saveArg[fieldName] = 3145728;
       }
@@ -117,14 +117,14 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not accept float numbers in fileNotActiveHours input', function (done) {
+  it('does not accept float numbers in maxFileNotOpenedHours input', function (done) {
     this.render(hbs `
       {{space-cleaning-conditions-form
         data=data
         formSendDebounceTime=0
         formSavedInfoHideTimeout=0}}`);
 
-    const group = this.$('.fileNotActiveHoursGroup');
+    const group = this.$('.maxFileNotOpenedHoursGroup');
     fillIn(group.find('input')[0], '3.4').then(() => {
       expect(group).to.have.class('has-error');
       done();
@@ -142,11 +142,11 @@ describe('Integration | Component | space cleaning conditions form', function ()
         onSave=(action "onSave")}}`);
 
     const saveArg = {
-      fileSizeGreaterThan: 2097152,
-      fileSizeLessThan: 3145728,
+      lowerFileSizeLimit: 2097152,
+      upperFileSizeLimit: 3145728,
     };
-    const greaterInputSelector = '.fileSizeGreaterThanGroup input';
-    const lesserInputSelector = '.fileSizeLessThanGroup input';
+    const greaterInputSelector = '.lowerFileSizeLimitGroup input';
+    const lesserInputSelector = '.upperFileSizeLimitGroup input';
     fillIn(lesserInputSelector, '3').then(() => {
       fillIn(greaterInputSelector, '2').then(() => {
         blur(greaterInputSelector).then(() => {

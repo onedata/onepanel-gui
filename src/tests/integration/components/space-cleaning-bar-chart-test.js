@@ -21,8 +21,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
         target: 6291456,
       },
       status: {
-        spaceUsed: 7340032,
-        isWorking: true,
+        spaceOccupancy: 7340032,
+        inProgress: true,
       },
       spaceSize: 10485760,
     });
@@ -41,7 +41,7 @@ describe('Integration | Component | space cleaning bar chart', function () {
   });
 
   it('does not render pacman if cleaning is not working', function () {
-    this.set('status.isWorking', false);
+    this.set('status.inProgress', false);
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
@@ -100,16 +100,16 @@ describe('Integration | Component | space cleaning bar chart', function () {
       threshold,
       target,
     } = getProperties(settings, 'threshold', 'target');
-    const spaceUsed = status.spaceUsed;
+    const spaceOccupancy = status.spaceOccupancy;
     const barWidth = (name) => parseFloat(
       this.$(name).attr('style').match(/width:\s+(\d+)%;/)[1]
     );
     const usedBelowSoftQuota = target * 100 / spaceSize;
-    const usedBelowHardQuota = (spaceUsed - target) * 100 / spaceSize;
-    const notUsedBelowHardQuota = (threshold - spaceUsed) * 100 / spaceSize;
-    const notUsedOverHardQuota = (spaceSize - Math.max(threshold, spaceUsed)) *
+    const usedBelowHardQuota = (spaceOccupancy - target) * 100 / spaceSize;
+    const notUsedBelowHardQuota = (threshold - spaceOccupancy) * 100 / spaceSize;
+    const notUsedOverHardQuota = (spaceSize - Math.max(threshold, spaceOccupancy)) *
       100 / spaceSize;
-    const used = spaceUsed * 100 / spaceSize;
+    const used = spaceOccupancy * 100 / spaceSize;
     expect(approxEquals(barWidth('.used-below-soft-quota'), usedBelowSoftQuota))
       .to.be.true;
     expect(approxEquals(barWidth('.not-used-below-soft-quota'), 0)).to.be.true;

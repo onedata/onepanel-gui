@@ -64,12 +64,12 @@
     display: inline-block;
     margin-left: $padding-small-vertical;
   }
-  .fileSizeGreaterThanGroup, .fileSizeLessThanGroup {
+  .lowerFileSizeLimitGroup, .upperFileSizeLimitGroup {
     .ember-power-select-trigger {
       width: 5em;
     }
   }
-  .fileNotActiveHoursGroup {
+  .maxFileNotOpenedHoursGroup {
     .ember-power-select-trigger {
       width: 7em;
     }

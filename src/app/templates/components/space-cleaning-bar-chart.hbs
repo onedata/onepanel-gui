@@ -6,7 +6,7 @@
         {{t "components.spaceCleaningBarChart.totalSpace"}}
       </span>
       <span class="used-space indicator">
-        <span class="value">{{bytes-to-string status.spaceUsed}}</span>
+        <span class="value">{{bytes-to-string status.spaceOccupancy}}</span>
         {{t "components.spaceCleaningBarChart.usedSpace"}}
       </span>
     </span>
@@ -46,7 +46,7 @@
     <div class="pacman-row">
       <div class="used-space animate-bar"></div>
       <div class="pacman-cell animate-bar">
-        {{#if status.isWorking}}
+        {{#if status.inProgress}}
           <div class="pacman">
             <div class="pacman-shape">
               <div class="pacman-top">
