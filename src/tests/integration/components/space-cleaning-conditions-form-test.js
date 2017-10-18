@@ -23,7 +23,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
     this.render(hbs `
       {{space-cleaning-conditions-form
         data=data
-        formSendDebounceTime=0}}`);
+        formSendDebounceTime=0
+        formSavedInfoHideTimeout=0}}`);
 
     const greaterGroup = this.$('.fileSizeGreaterThanGroup');
     const lesserGroup = this.$('.fileSizeLessThanGroup');
@@ -51,7 +52,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
       this.render(hbs `
         {{space-cleaning-conditions-form
           data=data
-          formSendDebounceTime=0}}`);
+          formSendDebounceTime=0
+          formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], 'asdf').then(() => {
@@ -64,7 +66,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
       this.render(hbs `
         {{space-cleaning-conditions-form
           data=data
-          formSendDebounceTime=0}}`);
+          formSendDebounceTime=0
+          formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], '-3').then(() => {
@@ -77,7 +80,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
       this.render(hbs `
         {{space-cleaning-conditions-form
           data=data
-          formSendDebounceTime=0}}`);
+          formSendDebounceTime=0
+          formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
       fillIn(group.find('input')[0], '10').then(() => {
@@ -87,11 +91,12 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
 
     it(`sends data after ${fieldName} input focus lost`, function (done) {
-      const saveSpy = sinon.spy();
+      const saveSpy = sinon.spy(() => Promise.resolve());
       this.on('onSave', saveSpy);
       this.render(hbs `
         {{space-cleaning-conditions-form
           formSendDebounceTime=0
+          formSavedInfoHideTimeout=0
           data=data
           onSave=(action "onSave")}}`);
 
@@ -116,7 +121,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
     this.render(hbs `
       {{space-cleaning-conditions-form
         data=data
-        formSendDebounceTime=0}}`);
+        formSendDebounceTime=0
+        formSavedInfoHideTimeout=0}}`);
 
     const group = this.$('.fileNotActiveHoursGroup');
     fillIn(group.find('input')[0], '3.4').then(() => {
@@ -126,11 +132,12 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   it('debounce changes save', function (done) {
-    const saveSpy = sinon.spy();
+    const saveSpy = sinon.spy(() => Promise.resolve());
     this.on('onSave', saveSpy);
     this.render(hbs `
       {{space-cleaning-conditions-form
         formSendDebounceTime=0
+        formSavedInfoHideTimeout=0
         data=data
         onSave=(action "onSave")}}`);
 

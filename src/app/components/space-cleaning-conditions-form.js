@@ -2,7 +2,7 @@
  * A form for file properties edition for space auto-cleaning functionality.
  *
  * @module components/space-cleaning-conditions-form
- * @author Michal Borzecki
+ * @author Michal Borzecki, Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -29,6 +29,7 @@ import {
 const {
   get,
   computed,
+  run,
   run: {
     debounce,
     cancel,
@@ -76,11 +77,16 @@ const TIME_FIELD = {
   lte: MAX_FILE_HOURS,
 };
 
-// FIXME: these validators should be customized to not allow eg. 10 TiB
+const TIME_NUMBER_FIELD = {
+  type: 'number',
+  integer: true,
+};
+
 const VALIDATORS = {
-  '_formData.fileSizeGreaterThanNumber': createFieldValidator(SIZE_GT_FIELD),
-  '_formData.fileSizeLessThanNumber': createFieldValidator(SIZE_LT_FIELD),
-  '_formData.fileNotActiveHoursNumber': createFieldValidator(TIME_FIELD),
+  '_formData.fileSizeGreaterThan': createFieldValidator(SIZE_GT_FIELD),
+  '_formData.fileSizeLessThan': createFieldValidator(SIZE_LT_FIELD),
+  '_formData.fileNotActiveHours': createFieldValidator(TIME_FIELD),
+  '_formData.fileNotActiveHoursNumber': createFieldValidator(TIME_NUMBER_FIELD),
 };
 
 export default Ember.Component.extend(buildValidations(VALIDATORS), {
@@ -101,13 +107,25 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @virtual
    * @type {Function}
    */
-  onSave: () => {},
+  onSave: () => Promise.resolve(),
 
   /**
    * Form send debounce time.
    * @type {number}
    */
   formSendDebounceTime: FORM_SEND_DEBOUNCE_TIME,
+
+  /**
+   * Delay after "saved" text will be hidden
+   * @type {number}
+   */
+  formSavedInfoHideTimeout: 3000,
+
+  /**
+   * Save status text
+   * @type {string}
+   */
+  _formStatusText: '',
 
   /**
    * If true, form has some unsaved changes.
@@ -174,7 +192,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       data,
       _sizeUnits,
       _timeUnits,
-    } = this.getProperties('data', '_sizeUnits', '_timeUnits');
+      _sourceFieldNames,
+    } = this.getProperties('data', '_sizeUnits', '_timeUnits', '_sourceFieldNames');
     this._cleanModificationState();
     if (!data) {
       data = {};
@@ -221,6 +240,17 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         fileNotActiveHoursUnit: _timeUnits[0],
       });
     }
+    _sourceFieldNames.forEach(fieldName => {
+      _formData.set(fieldName, computed(
+        `${fieldName}Number`,
+        `${fieldName}Unit`,
+        function () {
+          const number = Math.floor(parseFloat(this.get(
+            `${fieldName}Number`)));
+          const unit = this.get(`${fieldName}Unit`);
+          return number > 0 && unit ? number * unit.multiplicator : '';
+        }));
+    });
     return _formData;
   }),
 
@@ -244,10 +274,11 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     let errors = this.get('validations.errors');
     let fieldsErrors = {};
     _sourceFieldNames
-      .map((fieldName) => fieldName + 'Number')
-      .forEach((fieldName) => fieldsErrors[fieldName] =
-        _.find(errors, { attribute: '_formData.' + fieldName })
-      );
+      .forEach((fieldName) => {
+        fieldsErrors[fieldName] =
+          _.find(errors, { attribute: `_formData.${fieldName}Number` }) ||
+          _.find(errors, { attribute: '_formData.' + fieldName });
+      });
     return fieldsErrors;
   }),
 
@@ -282,36 +313,62 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   },
 
   /**
+   * Checks if modified values are valid and can be saved
+   * @returns {boolean} true if values are valid, false otherwise
+   */
+  _isValid() {
+    let {
+      _formFieldsErrors,
+      _formFieldsModified: modified,
+      _formData,
+      _sourceFieldNames,
+    } = this.getProperties(
+      '_formFieldsErrors',
+      '_formFieldsModified',
+      '_formData',
+      '_sourceFieldNames',
+    );
+    let isValid = true;
+    _sourceFieldNames.forEach((fieldName) => {
+      const isModified = modified.get(fieldName + 'Number') ||
+        modified.get(fieldName + 'Unit');
+      if (_formData.get(fieldName + 'Enabled') && isModified &&
+        _formFieldsErrors[fieldName]) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  },
+
+  /**
    * Sends modified data.
    */
   _sendChanges() {
     let {
       _isDirty,
-      _formFieldsErrors,
       _formFieldsModified: modified,
       _formData,
       _sourceFieldNames,
       onSave,
+      i18n,
+      formSavedInfoHideTimeout,
     } = this.getProperties(
       '_isDirty',
-      '_formFieldsErrors',
       '_formFieldsModified',
       '_formData',
       '_sourceFieldNames',
-      'onSave'
+      'onSave',
+      'i18n',
+      'formSavedInfoHideTimeout'
     );
-    if (_isDirty) {
+    this.set('_saveDebounceTimer', null);
+    if (_isDirty && this._isValid()) {
       let data = {};
       _sourceFieldNames.forEach((fieldName) => {
         const isModified = modified.get(fieldName + 'Number') ||
           modified.get(fieldName + 'Unit');
         if (_formData.get(fieldName + 'Enabled') && isModified) {
-          if (_formFieldsErrors[fieldName + 'Number']) {
-            return;
-          }
-          const numberString = _formData.get(fieldName + 'Number').trim();
-          data[fieldName] = Math.floor(parseFloat(numberString) *
-            _formData.get(fieldName + 'Unit').multiplicator);
+          data[fieldName] = _formData.get(fieldName);
         } else if (modified.get(fieldName + 'Enabled') &&
           !_formData.get(fieldName + 'Enabled')) {
           data[fieldName] = disableFieldValue(fieldName);
@@ -321,7 +378,29 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         return;
       }
       this._cleanModificationState();
-      onSave(data);
+      this.set(
+        '_formStatusText',
+        i18n.t('components.spaceCleaningConditionsForm.saving')
+      );
+      onSave(data).then(() => {
+        if (!this.isDestroyed && !this.isDestroying) {
+          this.set(
+            '_formStatusText',
+            i18n.t('components.spaceCleaningConditionsForm.saved')
+          );
+          run.later(this, () => {
+            if (!this.isDestroyed && !this.isDestroying &&
+              !this.get('_saveDebounceTimer')) {
+              this.set('_formStatusText', '');
+            }
+          }, formSavedInfoHideTimeout);
+        }
+      }).catch(() => {
+        this.set(
+          '_formStatusText',
+          'failed'
+        );
+      });
       this.setProperties({
         _lostInputFocus: false,
         _isDirty: false,
@@ -349,11 +428,12 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     } = this.getProperties('_saveDebounceTimer', 'formSendDebounceTime');
     if (schedule === false) {
       cancel(_saveDebounceTimer);
+    } else {
+      this.set(
+        '_saveDebounceTimer',
+        debounce(this, '_sendChanges', formSendDebounceTime)
+      );
     }
-    this.set(
-      '_saveDebounceTimer',
-      debounce(this, '_sendChanges', formSendDebounceTime)
-    );
   },
 
   actions: {
@@ -363,6 +443,15 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       this.set('_formFieldsModified.' + fieldName, true);
       if (!_.endsWith(fieldName, 'Number') || this.get('_lostInputFocus')) {
         this._scheduleSendChanges();
+      }
+      if (_.endsWith(fieldName, 'Enabled') && value) {
+        const numberField =
+          fieldName.substring(0, fieldName.length - 'Enabled'.length);
+        run.next(() => {
+          if (!this.isDestroyed && !this.isDestroying) {
+            this.$(`#${this.get('elementId')}${numberField}`).focus();
+          }
+        });
       }
     },
     lostFocus() {

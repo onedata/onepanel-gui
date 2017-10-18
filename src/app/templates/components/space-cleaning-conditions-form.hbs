@@ -7,13 +7,14 @@
       title=(t "components.spaceAutoCleaning.headerHint")
       placement="top"
     }}
+    <span class="form-state">{{_formStatusText}}</span>
   </h1>
 </div>
 {{#bs-form as |form|}}
   {{#each _sourceFieldNames as |fieldName|}}
     {{#form.group 
-      class=(concat-classes (concat fieldName "Group") (if (get _formFieldsErrors (concat fieldName "Number")) "has-error"))}}
-      <label for={{concat elementId fieldName}} class="label-column control-label">
+      class=(concat-classes (concat fieldName "Group") (if (get _formFieldsErrors fieldName) "has-error"))}}
+      <label for={{concat elementId fieldName}} class="label-column control-label {{if (not (get _formData (concat fieldName "Enabled"))) "disabled"}}">
         {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
       </label>
       <div class="fields-column">
@@ -23,7 +24,7 @@
           class="form-control input-sm"
           focusOut=(action "lostFocus")
           update=(action "dataChanged" (concat fieldName "Number"))
-          elementId=(concat elementId fieldName)}}
+          id=(concat elementId fieldName)}}
         {{#power-select
           triggerClass="small"
           dropdownClass="small"

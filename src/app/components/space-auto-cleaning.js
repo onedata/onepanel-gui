@@ -186,7 +186,9 @@ export default Component.extend({
         autoCleaning,
       } = this.getProperties('updateAutoCleaning', 'autoCleaning');
       if (get(autoCleaning, 'enabled')) {
-        updateAutoCleaning({ settings: values });
+        return updateAutoCleaning({ settings: values });
+      } else {
+        return Promise.reject();
       }
     },
   },

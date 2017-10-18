@@ -9,4 +9,6 @@ export default {
     days: 'Days',
   },
   headerHint: 'Configure what file replicas should be cleaned',
+  saving: 'Saving...',
+  saved: 'Saved!',
 };

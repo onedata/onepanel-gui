@@ -10,6 +10,16 @@
   .control-label {
     padding-top: $padding-base-vertical / 2;
     text-align: left;
+    &.disabled {
+      color: $color-one-light-gray;
+    }
+  }
+  .form-state {
+    font-size: 9pt;
+    text-transform: none;
+    color: $color-one-light-gray;
+    font-weight: normal;
+    margin-left: 1em;
   }
   .form {
     display: table;

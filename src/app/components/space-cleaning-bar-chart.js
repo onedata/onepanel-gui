@@ -242,7 +242,7 @@ export default Component.extend({
         return 0;
       } else {
         return ((Math.min(_threshold, spaceUsed) - _target) / spaceSize) * 100;
-      } 
+      }
     }
   ),
 
