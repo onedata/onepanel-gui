@@ -5,7 +5,7 @@ import hbs from 'htmlbars-inline-precompile';
 import moment from 'moment';
 import { click } from 'ember-native-dom-helpers';
 
-const START_END_TIME_FORMAT = 'D MMM YYYY H:mm';
+const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
 describe('Integration | Component | space cleaning reports', function () {
   setupComponentTest('space-cleaning-reports', {

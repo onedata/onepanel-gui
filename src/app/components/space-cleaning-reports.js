@@ -18,9 +18,10 @@ const {
   inject: {
     service,
   },
+  A,
 } = Ember;
 
-const START_END_TIME_FORMAT = 'D MMM YYYY H:mm';
+const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
 export default Component.extend({
   classNames: ['space-cleaning-reports'],
@@ -30,9 +31,9 @@ export default Component.extend({
   /**
    * Input data.
    * To inject.
-   * @type {Array.Object}
+   * @type {EmberArray.Object}
    */
-  data: [],
+  data: A([]),
 
   /**
    * If true, component is rendered in mobile mode.
@@ -50,7 +51,7 @@ export default Component.extend({
    * Data ready for display.
    * @type {computed.Array.Object}
    */
-  _processedData: computed('data', function () {
+  _processedData: computed('data.[]', function () {
     let {
       i18n,
       data,
@@ -119,6 +120,8 @@ export default Component.extend({
     return [{
       propertyName: 'startedAtReadable',
       sortedBy: 'startedAtSortable',
+      sortPrecedence: 1,
+      sortDirection: 'desc',
       title: i18n.t('components.spaceCleaningReports.start'),
     }, {
       propertyName: 'stoppedAtReadable',

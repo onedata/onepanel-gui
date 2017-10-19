@@ -12,6 +12,7 @@ import { default as EmberObject, computed } from '@ember/object';
 import { get, set, observer } from '@ember/object';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
+import { A } from '@ember/array';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -20,6 +21,7 @@ const WORKING_UPDATE_INTERVAL = 5 * 1000;
 
 import Looper from 'onedata-gui-common/utils/looper';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import pushNewItems from 'onedata-gui-common/utils/push-new-items';
 
 export default EmberObject.extend({
   /**
@@ -51,7 +53,7 @@ export default EmberObject.extend({
   /**
    * Collection of cleaning reports
    * Updated by polling
-   * @type {Array<Onepanel.SpaceAutoCleaningReport>}
+   * @type {EmberArray<Onepanel.SpaceAutoCleaningReport>}
    */
   reports: undefined,
 
@@ -157,28 +159,27 @@ export default EmberObject.extend({
   }).readOnly(),
 
   /**
-   * Last event time for reports, can be eg. `stoppedAt` moment of last report,
-   * but also can be a `startedAt` of report in progress
+   * Last event time for reports, can be eg. `stoppedAt` moment of last recent
+   * report,    * but also can be a `startedAt` of a report in progress
    * @type {Ember.ComputedProperty<Moment|null>}
    */
   _lastReportMoment: computed('reports.@each.{startedAt,stoppedAt}', function () {
     const reports = this.get('reports');
     if (reports) {
-      return _.max(
-        _.map(reports, report => {
-          const startedAt = get(report, 'startedAt');
-          if (startedAt) {
-            return moment(startedAt);
+      const reportMoments = _.map(reports, report => {
+        const startedAt = get(report, 'startedAt');
+        if (startedAt) {
+          return moment(startedAt);
+        } else {
+          const stoppedAt = get(report, 'stoppedAt');
+          if (stoppedAt) {
+            return moment(stoppedAt);
           } else {
-            const stoppedAt = get(report, 'stoppedAt');
-            if (stoppedAt) {
-              return moment(stoppedAt);
-            } else {
-              return null;
-            }
+            return null;
           }
-        })
-      );
+        }
+      });
+      return _.max(reportMoments);
     }
   }),
 
@@ -189,8 +190,13 @@ export default EmberObject.extend({
       spaceId,
     } = this.getProperties('spaceManager', 'spaceId');
 
-    assert(typeof spaceManager !== 'object', 'spaceManager service should be injected');
-    assert(typeof spaceId !== 'string', 'spaceId should be injected');
+    // initialize empty reports collection
+    this.set('reports', A([]));
+
+    assert(typeof spaceManager !== 'object',
+      'spaceManager service should be injected');
+    assert(typeof spaceId !==
+      'string', 'spaceId should be injected');
 
     this.setProperties({
       cleanStatusIsUpdating: true,
@@ -304,7 +310,11 @@ export default EmberObject.extend({
     return spaceManager.getAutoCleaningReports(spaceId, startedAfter)
       .then(({ reportEntries }) => safeExec(this, function () {
         this.set('cleanReportsError', null);
-        return this.set('reports', reportEntries);
+        return pushNewItems(
+          this.get('reports'),
+          reportEntries,
+          (x, y) => x.startedAt === y.startedAt
+        );
       }))
       .catch(error => safeExec(this, function () {
         this.set('cleanReportsError', error);
@@ -322,5 +332,5 @@ export default EmberObject.extend({
  * @returns {Moment}
  */
 function defaultReportsFetchMoment() {
-  return moment().subtract(1, 'week');
+  return moment().subtract(1, 'day');
 }

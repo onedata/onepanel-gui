@@ -97,7 +97,7 @@ export default Component.extend({
   /**
    * Collection of cleaning reports
    * Aliased and auto updated from SpaceAutoCleaningUpdater
-   * @type {Ember.ComputedProperty<Array<Onepanel.SpaceAutoCleaningReport>>}
+   * @type {Ember.ComputedProperty<EmberArray<Onepanel.SpaceAutoCleaningReport>>}
    */
   reports: computed.reads('spaceAutoCleaningUpdater.reports'),
 
