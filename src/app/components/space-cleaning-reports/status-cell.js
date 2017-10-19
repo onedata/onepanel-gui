@@ -54,7 +54,7 @@ export default Ember.Component.extend({
       );
       if (!stoppedAt) {
         return 'update';
-      } else if (releasedBytes === bytesToRelease) {
+      } else if (releasedBytes >= bytesToRelease) {
         return 'checkbox-filled';
       } else {
         return 'checkbox-filled-x';
