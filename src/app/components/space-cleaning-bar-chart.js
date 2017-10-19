@@ -158,7 +158,7 @@ export default Component.extend({
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
-    return (get(status, 'spaceOccupancy') / spaceSize) * 100;
+    return (Math.min(get(status, 'spaceOccupancy'), spaceSize) / spaceSize) * 100;
   }),
 
   /**
@@ -170,7 +170,7 @@ export default Component.extend({
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
-    return spaceSize - get(status, 'spaceOccupancy');
+    return spaceSize - Math.min(get(status, 'spaceOccupancy'), spaceSize);
   }),
 
   /**
@@ -286,7 +286,7 @@ export default Component.extend({
         status,
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_threshold');
-      let spaceOccupancy = get(status, 'spaceOccupancy');
+      let spaceOccupancy = Math.min(get(status, 'spaceOccupancy'), spaceSize);
       return (Math.max(spaceOccupancy - _threshold, 0) / spaceSize) * 100;
     }
   ),

@@ -32,6 +32,7 @@
           class="form-control input-sm"
           focusOut=(action "lostFocus")
           update=(action "dataChanged" (concat fieldName "Number"))
+          onenter=(action "forceSave")
           id=(concat elementId fieldName)}}
         {{#power-select
           triggerClass="small"

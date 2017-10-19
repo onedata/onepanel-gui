@@ -461,5 +461,9 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       this.set('_lostInputFocus', true);
       this._scheduleSendChanges();
     },
+    forceSave() {
+      this._scheduleSendChanges(false);
+      this._sendChanges();
+    },
   },
 });

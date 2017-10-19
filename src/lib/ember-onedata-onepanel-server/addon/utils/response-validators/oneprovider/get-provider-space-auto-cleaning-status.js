@@ -15,7 +15,8 @@
 export default function (data) {
   try {
     return typeof data.inProgress === 'boolean' &&
-      typeof data.spaceOccupancy === 'number';
+      typeof data.spaceOccupancy === 'number' &&
+      data.spaceOccupancy >= 0;
   } catch (error) {
     if (error instanceof TypeError) {
       return false;
