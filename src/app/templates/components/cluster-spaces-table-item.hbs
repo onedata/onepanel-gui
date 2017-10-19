@@ -168,7 +168,7 @@
                   {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
                     {{space-auto-cleaning
                       autoCleaning=space.autoCleaning
-                      spaceSize=space.spaceSize
+                      spaceSize=spaceSizeForProvider
                       spaceId=space.id
                       updateAutoCleaning=(action "updateAutoCleaning")
                     }}

@@ -123,14 +123,12 @@ export default Service.extend({
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer
       .request('oneprovider', 'modifySpace', id, spaceData)
-      .catch(modifyError => {
+      .catch(modifyError => 
         this.updateSpaceDetailsCache(id).finally(() => {
           throw modifyError;
-        });
-      })
-      .then(() => {
-        return this.updateSpaceDetailsCache(id);
-      });
+        })
+      )
+      .then(() => this.updateSpaceDetailsCache(id));
   },
 
   /**

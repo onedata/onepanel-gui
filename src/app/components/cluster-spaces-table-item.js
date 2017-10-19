@@ -65,6 +65,11 @@ export default Component.extend(
      */
     spaceProxy: null,
 
+    /**
+     * @type {ProvidetDetails}
+     */
+    provider: null,
+
     // TODO: support for errors after update
     /**
      * @type {OnepanelGui.SpaceDetails}
@@ -187,6 +192,15 @@ export default Component.extend(
       }
       return space;
     }),
+
+    init() {
+      this._super(...arguments);
+      const provider = this.get('provider');
+      this.set(
+        'spaceSizeForProvider',
+        readOnly(`space.supportingProviders.${get(provider, 'id')}`)
+      );
+    },
 
     actions: {
       startRevoke() {

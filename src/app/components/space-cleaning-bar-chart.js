@@ -377,7 +377,19 @@ export default Component.extend({
       _disabled: true,
       _allowLabelsEdition: false,
     });
-    onChange(values).then(() => this.setProperties({
+    onChange(values).catch(() => {
+      const settings = this.get('settings');
+      const {
+        target,
+        threshold,
+      } = getProperties(settings, 'target', 'threshold');
+      this.setProperties({
+        _target: target,
+        _targetForSlider: target,
+        _threshold: threshold,
+        _thresholdForSlider: threshold,
+      });
+    }).then(() => this.setProperties({
       _disabled: false,
       _allowLabelsEdition: true,
     }));

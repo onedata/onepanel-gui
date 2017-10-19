@@ -49,8 +49,9 @@ describe('Integration | Component | cluster spaces table', function () {
       ];
 
       this.set('spaces', spaces);
+      this.set('provider', { id: '123' });
 
-      this.render(hbs `{{cluster-spaces-table spaces=spaces}}`);
+      this.render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
       expect(this.$('.alert-some-spaces-rejected')).to.exist;
     });
 
@@ -78,8 +79,9 @@ describe('Integration | Component | cluster spaces table', function () {
       ];
 
       this.set('spaces', spaces);
+      this.set('provider', { id: '123' });
 
-      this.render(hbs `{{cluster-spaces-table spaces=spaces}}`);
+      this.render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
       expect(this.$('.alert-some-spaces-rejected')).to.not.exist;
     });
 });

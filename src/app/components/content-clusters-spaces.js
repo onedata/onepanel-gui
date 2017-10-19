@@ -26,6 +26,7 @@ export default Component.extend({
   classNames: ['content-clusters-spaces'],
 
   spaceManager: service(),
+  providerManager: service(),
   globalNotify: service(),
 
   /**
@@ -33,6 +34,11 @@ export default Component.extend({
    * @type {PromiseObject<Array>}
    */
   spacesProxy: null,
+
+  /**
+   * @type {PromiseObject<ProviderDetails>}
+   */
+  providerProxy: null,
 
   spaces: computed.reads('spacesProxy.content'),
 
@@ -106,6 +112,7 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     this._updateSpacesList();
+    this.set('providerProxy', this.get('providerManager').getProviderDetails());
   },
 
   _updateSpacesList() {
@@ -184,6 +191,7 @@ export default Component.extend({
             `configuration of "${spaceName}"`,
             error
           );
+          throw error;
         });
     },
   },

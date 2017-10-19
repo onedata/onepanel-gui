@@ -123,10 +123,10 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
   formSavedInfoHideTimeout: 3000,
 
   /**
-   * Save status text
+   * Form save status
    * @type {string}
    */
-  _formStatusText: '',
+  _formStatus: '',
 
   /**
    * If true, form has some unsaved changes.
@@ -188,7 +188,78 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Form data (has different format than the `data` property).
    * @type {Ember.Object}
    */
-  _formData: computed('data', '_sizeUnits', '_timeUnits', function () {
+  _formData: computed('data', '_sizeUnits', '_timeUnits', {
+    get() {
+      return this._generateInitialData();
+    },
+    set(key, value) {
+      return value;
+    },
+  }),
+
+  /**
+   * Page unload handler.
+   * @type {computed.Function}
+   */
+  _unloadHandler: computed(function () {
+    return () => {
+      this._scheduleSendChanges(false);
+      this._sendChanges();
+    };
+  }),
+
+  /**
+   * Fields errors.
+   * @type {computed.Object}
+   */
+  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
+    let _sourceFieldNames = this.get('_sourceFieldNames');
+    let errors = this.get('validations.errors');
+    let fieldsErrors = {};
+    _sourceFieldNames
+      .forEach((fieldName) => {
+        fieldsErrors[fieldName] =
+          _.find(errors, { attribute: `_formData.${fieldName}Number` }) ||
+          _.find(errors, { attribute: '_formData.' + fieldName });
+      });
+    return fieldsErrors;
+  }),
+
+  /**
+   * Modification state of fields.
+   * @type {Ember.Object}
+   */
+  _formFieldsModified: computed(function () {
+    return Ember.Object.create();
+  }),
+
+  init() {
+    this._super(...arguments);
+    let {
+      _window,
+      _unloadHandler,
+    } = this.getProperties('_window', '_unloadHandler');
+    _window.addEventListener('beforeunload', _unloadHandler);
+  },
+
+  willDestroyElement() {
+    try {
+      let {
+        _window,
+        _unloadHandler,
+      } = this.getProperties('_window', '_unloadHandler');
+      _window.removeEventListener('beforeunload', _unloadHandler);
+      _unloadHandler();
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
+  /**
+   * Generates initial form data object using injected data
+   * @returns {Object}
+   */
+  _generateInitialData() {
     let {
       data,
       _sizeUnits,
@@ -253,64 +324,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         }));
     });
     return _formData;
-  }),
-
-  /**
-   * Page unload handler.
-   * @type {computed.Function}
-   */
-  _unloadHandler: computed(function () {
-    return () => {
-      this._scheduleSendChanges(false);
-      this._sendChanges();
-    };
-  }),
-
-  /**
-   * Fields errors.
-   * @type {computed.Object}
-   */
-  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
-    let _sourceFieldNames = this.get('_sourceFieldNames');
-    let errors = this.get('validations.errors');
-    let fieldsErrors = {};
-    _sourceFieldNames
-      .forEach((fieldName) => {
-        fieldsErrors[fieldName] =
-          _.find(errors, { attribute: `_formData.${fieldName}Number` }) ||
-          _.find(errors, { attribute: '_formData.' + fieldName });
-      });
-    return fieldsErrors;
-  }),
-
-  /**
-   * Modification state of fields.
-   * @type {Ember.Object}
-   */
-  _formFieldsModified: computed(function () {
-    return Ember.Object.create();
-  }),
-
-  init() {
-    this._super(...arguments);
-    let {
-      _window,
-      _unloadHandler,
-    } = this.getProperties('_window', '_unloadHandler');
-    _window.addEventListener('beforeunload', _unloadHandler);
-  },
-
-  willDestroyElement() {
-    try {
-      let {
-        _window,
-        _unloadHandler,
-      } = this.getProperties('_window', '_unloadHandler');
-      _window.removeEventListener('beforeunload', _unloadHandler);
-      _unloadHandler();
-    } finally {
-      this._super(...arguments);
-    }
   },
 
   /**
@@ -351,7 +364,6 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       _formData,
       _sourceFieldNames,
       onSave,
-      i18n,
       formSavedInfoHideTimeout,
     } = this.getProperties(
       '_isDirty',
@@ -359,10 +371,8 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
       '_formData',
       '_sourceFieldNames',
       'onSave',
-      'i18n',
       'formSavedInfoHideTimeout'
     );
-    this.set('_saveDebounceTimer', null);
     if (_isDirty && this._isValid()) {
       let data = {};
       _sourceFieldNames.forEach((fieldName) => {
@@ -379,28 +389,20 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
         return;
       }
       this._cleanModificationState();
-      this.set(
-        '_formStatusText',
-        i18n.t('components.spaceCleaningConditionsForm.saving')
-      );
+      this.set('_formStatus', 'saving');
       onSave(data).then(() => {
         if (!this.isDestroyed && !this.isDestroying) {
-          this.set(
-            '_formStatusText',
-            i18n.t('components.spaceCleaningConditionsForm.saved')
-          );
+          this.set('_formStatus', 'saved');
           run.later(this, () => {
-            if (!this.isDestroyed && !this.isDestroying &&
-              !this.get('_saveDebounceTimer')) {
-              this.set('_formStatusText', '');
+            if (!this.isDestroyed && !this.isDestroying) {
+              this.set('_formStatus', '');
             }
           }, formSavedInfoHideTimeout);
         }
       }).catch(() => {
-        this.set(
-          '_formStatusText',
-          'failed'
-        );
+        this.set('_formStatus', 'failed');
+        this.set('_formData', this._generateInitialData());
+        this._cleanModificationState();
       });
       this.setProperties({
         _lostInputFocus: false,

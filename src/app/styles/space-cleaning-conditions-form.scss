@@ -14,12 +14,17 @@
       color: $color-one-light-gray;
     }
   }
-  .form-state {
-    font-size: 9pt;
-    text-transform: none;
-    color: $color-one-light-gray;
-    font-weight: normal;
-    margin-left: 1em;
+  h1 {
+    .one-label-tip {
+      margin-right: 1em;
+    }
+    .form-state {
+      font-size: 9pt;
+      text-transform: none;
+      color: $color-one-light-gray;
+      font-weight: normal;
+      white-space: nowrap;
+    }
   }
   .form {
     display: table;

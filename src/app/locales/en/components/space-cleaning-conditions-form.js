@@ -10,4 +10,5 @@ export default {
   },
   saving: 'Saving...',
   saved: 'Saved!',
+  updateFailed: 'Update failed!',
 };

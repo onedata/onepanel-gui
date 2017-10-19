@@ -7,7 +7,15 @@
       title=(t "components.spaceAutoCleaning.headerHint")
       placement="top"
     }}
-    <span class="form-state">{{_formStatusText}}</span>
+    <span class="form-state">
+      {{#if (eq _formStatus "saving")}}
+        <span class="animated infinite semi-hinge pulse-mint">{{t "components.spaceCleaningConditionsForm.saving"}}</span>
+      {{else if (eq _formStatus "saved")}}
+        {{t "components.spaceCleaningConditionsForm.saved"}}
+      {{else if (eq _formStatus "failed")}}
+        <span class="text-danger">{{t "components.spaceCleaningConditionsForm.updateFailed"}}</span>
+      {{/if}}
+    </span>
   </h1>
 </div>
 {{#bs-form as |form|}}
@@ -20,7 +28,7 @@
       <div class="fields-column">
         {{one-way-input
           value=(get _formData (concat fieldName "Number"))
-          disabled=(not (get _formData (concat fieldName "Enabled")))
+          disabled=(or (not (get _formData (concat fieldName "Enabled"))) (eq _formStatus "saving"))
           class="form-control input-sm"
           focusOut=(action "lostFocus")
           update=(action "dataChanged" (concat fieldName "Number"))
@@ -28,7 +36,7 @@
         {{#power-select
           triggerClass="small"
           dropdownClass="small"
-          disabled=(not (get _formData (concat fieldName "Enabled")))
+          disabled=(or (not (get _formData (concat fieldName "Enabled"))) (eq _formStatus "saving"))
           options=(if (eq fieldName "maxFileNotOpenedHours") _timeUnits _sizeUnits)
           selected=(get _formData (concat fieldName "Unit"))
           onchange=(action "dataChanged" (concat fieldName "Unit"))
@@ -41,7 +49,8 @@
       <div class="toggle-column">
         {{one-way-toggle
           checked=(get _formData (concat fieldName "Enabled"))
-          update=(action "dataChanged" (concat fieldName "Enabled"))}}
+          update=(action "dataChanged" (concat fieldName "Enabled"))
+          isReadOnly=(eq _formStatus "saving")}}
       </div>
     {{/form.group}}
   {{/each}}
