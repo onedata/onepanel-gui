@@ -4,8 +4,9 @@
 CHANGELOG
 ---------
 
-### 17.06.1
+### Latest changes
 
+* VFS-3710 Using binary prefix units for displaying sizes (MiB, GiB, etc.)
 * VFS-3621 Fixing design of show error component
 * VFS-3620 Showing conflits in names of spaces
 * VFS-3449 Added sync ACL option to import/update settings
