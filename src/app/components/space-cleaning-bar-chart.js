@@ -75,6 +75,12 @@ export default Component.extend({
   _allowBarAnimations: true,
 
   /**
+   * Previous bar percent values. Set by valuesObserver.
+   * @type {Object}
+   */
+  _oldPercentValues: {},
+
+  /**
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
@@ -338,7 +344,37 @@ export default Component.extend({
         'used-over-hard-quota',
         'not-used-over-hard-quota',
       ];
-      let usedPercent = this.get('_usedPercent');
+      let {
+        _allowBarAnimations,
+        _usedPercent,
+        _oldPercentValues,
+      } = this.getProperties(
+        '_allowBarAnimations',
+        '_usedPercent',
+        '_oldPercentValues'
+      );
+      const deltaUsedPercent = _usedPercent - _oldPercentValues._usedPercent;
+      const transitions = {};
+      const transitionElements = deltaUsedPercent > 0 ?
+        properties : properties.slice(0).reverse();
+      let delaySum = 0;
+      for (let i = 0; i < transitionElements.length; i += 2) {
+        const subbarDelta = this.get(transitionElements[i]) -
+          _oldPercentValues[transitionElements[i]];
+        const animationTime = _allowBarAnimations ?
+          Math.abs(subbarDelta / deltaUsedPercent) * 0.5 : 0;
+        const delay = delaySum;
+        delaySum += animationTime;
+        const transition = {
+          'transition': `width ${animationTime}s linear, left ${animationTime}s linear`,
+          'transition-delay': `${delay}s`,
+        };
+        transitions[transitionElements[i]] = transition;
+        transitions[transitionElements[i + 1]] = transition;
+      }
+      properties.forEach((prop, index) => {
+        this.$('.' + classes[index]).css(transitions[prop]);
+      });
       let percentSum = 0;
       properties.forEach((property, index) => {
         let element = this.$('.' + classes[index]);
@@ -349,9 +385,12 @@ export default Component.extend({
         });
         percentSum += propertyValue;
       });
-      let usedWidth = { width: usedPercent + '%' };
+      let usedWidth = { width: _usedPercent + '%' };
       this.$('.used').css(usedWidth);
       this.$('.pacman-row .used-space').css(usedWidth);
+      properties.forEach((prop) => _oldPercentValues[prop] = this.get(prop));
+      _oldPercentValues._usedPercent = _usedPercent;
+      this.set('_oldPercentValues', _oldPercentValues);
     }
   ),
 
