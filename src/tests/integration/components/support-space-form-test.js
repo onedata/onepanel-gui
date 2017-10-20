@@ -4,24 +4,19 @@ import { setupComponentTest } from 'ember-mocha';
 import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
+import sinon from 'sinon';
+import Service from '@ember/service';
+import { Promise } from 'rsvp';
 
 import storageManagerStub from '../../helpers/storage-manager-stub';
-import globalNotifyStub from '../../helpers/global-notify-stub';
 import FormHelper from '../../helpers/form';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select';
-
-const {
-  RSVP: { Promise },
-} = Ember;
-
-const MEGA = Math.pow(10, 6);
-const GIGA = Math.pow(10, 9);
-const TERA = Math.pow(10, 12);
+import { registerService, lookupService } from '../../helpers/stub-service';
 
 const UNITS = {
-  mb: MEGA,
-  gb: GIGA,
-  tb: TERA,
+  mib: Math.pow(1024, 2),
+  gib: Math.pow(1024, 3),
+  tib: Math.pow(1024, 4),
 };
 
 class SupportSpaceFormHelper extends FormHelper {
@@ -49,7 +44,7 @@ describe('Integration | Component | support space form', function () {
         this.set('formValues', Ember.Object.create({
           token: 'some_token',
           size: '100',
-          sizeUnit: 'mb',
+          sizeUnit: 'mib',
           mountInRoot: false,
           _importEnabled: false,
         }));
@@ -74,9 +69,6 @@ describe('Integration | Component | support space form', function () {
     this.register('service:storage-manager', storageManagerStub);
     this.inject.service('storage-manager', { as: 'storageManager' });
 
-    this.register('service:global-notify', globalNotifyStub);
-    this.inject.service('global-notify', { as: 'globaNotify' });
-
     // TODO make some common helper for disabling global exception handling
     this.originalException = Ember.Test.adapter.exception;
     this.originalLoggerError = Ember.Logger.error;
@@ -89,7 +81,7 @@ describe('Integration | Component | support space form', function () {
 
   it('submits size multiplicated by chosen unit', function (done) {
     let sizeToInput = 30;
-    let unit = 'tb';
+    let unit = 'tib';
     let sizeOutput = sizeToInput * UNITS[unit];
 
     let submitInvoked = false;
@@ -97,7 +89,7 @@ describe('Integration | Component | support space form', function () {
       let { size } = supportSpaceData;
       expect(size).to.equal(sizeOutput);
       submitInvoked = true;
-      return new Promise(resolve => resolve());
+      return Promise.resolve();
     });
     this.prepareAllFields();
     this.render(hbs `
@@ -124,18 +116,17 @@ describe('Integration | Component | support space form', function () {
   });
 
   it('shows a global error notify when submit fails', function (done) {
-    let globalNotify = this.container.lookup('service:globalNotify');
-    let errorInvoked = false;
-    globalNotify.set('backendError', function () {
-      errorInvoked = true;
-    });
+    registerService(this, 'global-notify', Service.extend({
+      backendError() {},
+    }));
+    const globalNotify = lookupService(this, 'global-notify');
+    const backendError = sinon.spy(globalNotify, 'backendError');
     this.prepareAllFields();
 
     const EXPECTED_ERROR = 'some error';
     this.expectException(EXPECTED_ERROR);
     this.on('submitSupportSpace', function () {
-      let promise = new Promise((_, reject) => reject(EXPECTED_ERROR));
-      return promise;
+      return Promise.reject(EXPECTED_ERROR);
     });
 
     this.render(hbs `
@@ -149,7 +140,7 @@ describe('Integration | Component | support space form', function () {
     this.$('button[type=submit]').click();
 
     wait().then(() => {
-      expect(errorInvoked).to.be.true;
+      expect(backendError).to.be.calledOnce;
       done();
     });
   });
