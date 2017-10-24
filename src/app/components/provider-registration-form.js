@@ -427,7 +427,9 @@ export default OneForm.extend(Validations, {
     let provider = this.get('provider');
     field = Ember.Object.create(field);
     if (provider) {
-      let value = get(provider, field.get('name'));
+      const subdomainDelegation = get(provider, 'subdomainDelegation');
+      const name = field.get('name');
+      const value = get(provider, field.get('name'));
       if (value === undefined) {
         if (field.get('defaultValue') === undefined) {
           field.set('defaultValue', null);
@@ -435,8 +437,11 @@ export default OneForm.extend(Validations, {
       } else {
         field.set('defaultValue', value);
       }
-      if (field.get('name') === 'subdomain') {
+      if (name === 'subdomain') {
         field.set('rightText', '.' + get(provider, 'onezoneDomainName'));
+      }
+      if (name === 'domain' && subdomainDelegation) {
+        field.set('defaultValue', null);
       }
     }
     field.set('name', `${prefix}.${field.get('name')}`);
