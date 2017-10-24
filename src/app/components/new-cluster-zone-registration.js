@@ -113,7 +113,7 @@ export default Component.extend({
         invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
-        if (error && error.error && error.error === 'subdomainReserved') {
+        if (error && error.error && error.error === 'Subdomain reserved error') {
           this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
         }
         this.get('globalNotify').backendError(

@@ -168,7 +168,7 @@ export default Component.extend({
       modifying.catch(error => {
         // TODO i18n
         globalNotify.backendError('provider data modification', error);
-        if (error && error.error && error.error === 'subdomainReserved') {
+        if (error && error.error && error.error === 'Subdomain reserved error') {
           this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
         }
       });
