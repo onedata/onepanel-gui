@@ -22,6 +22,9 @@ const {
   run,
 } = Ember;
 
+// Bar animation time (in seconds).
+const ANIMATION_TIME = 2;
+
 export default Component.extend({
   classNames: ['space-cleaning-bar-chart'],
   classNameBindings: ['_disabled:disabled'],
@@ -359,16 +362,24 @@ export default Component.extend({
         properties : properties.slice(0).reverse();
       let delaySum = 0;
       for (let i = 0; i < transitionElements.length; i += 2) {
-        const subbarDelta = this.get(transitionElements[i]) -
-          _oldPercentValues[transitionElements[i]];
-        const animationTime = _allowBarAnimations ?
-          Math.abs(subbarDelta / deltaUsedPercent) * 0.5 : 0;
-        const delay = delaySum;
-        delaySum += animationTime;
-        const transition = {
-          'transition': `width ${animationTime}s linear, left ${animationTime}s linear`,
-          'transition-delay': `${delay}s`,
-        };
+        let transition;
+        if (_allowBarAnimations) {
+          const subbarDelta = this.get(transitionElements[i]) -
+            _oldPercentValues[transitionElements[i]];
+          const animationTime =
+            Math.abs(subbarDelta / deltaUsedPercent) * ANIMATION_TIME;
+          const delay = delaySum;
+          delaySum += animationTime;
+          transition = {
+            'transition': `width ${animationTime}s linear, left ${animationTime}s linear`,
+            'transition-delay': `${delay}s`,
+          };
+        } else {
+          transition = {
+            'transition': 'none',
+            'transition-delay': '0s',
+          };
+        }
         transitions[transitionElements[i]] = transition;
         transitions[transitionElements[i + 1]] = transition;
       }
@@ -386,8 +397,19 @@ export default Component.extend({
         percentSum += propertyValue;
       });
       let usedWidth = { width: _usedPercent + '%' };
-      this.$('.used').css(usedWidth);
-      this.$('.pacman-row .used-space').css(usedWidth);
+      let standardBarAnimation;
+      if (_allowBarAnimations) {
+        standardBarAnimation = {
+          transition: `width ${ANIMATION_TIME}s linear, left ${ANIMATION_TIME}s linear`,
+        };
+      } else {
+        standardBarAnimation = {
+          transition: 'none',
+        };
+      }
+      this.$('.used, .pacman-row .used-space, .pacman-cell')
+        .css(standardBarAnimation);
+      this.$('.used, .pacman-row .used-space').css(usedWidth);
       properties.forEach((prop) => _oldPercentValues[prop] = this.get(prop));
       _oldPercentValues._usedPercent = _usedPercent;
       this.set('_oldPercentValues', _oldPercentValues);

@@ -52,9 +52,6 @@
     .bar {
       position: relative;
       height: $bar-height;
-      .animate-bar {
-        transition: width 0.5s linear, left 0.5s linear;
-      }
       .chart-bar {
         position: absolute;
         top: 0;
