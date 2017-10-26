@@ -9,10 +9,11 @@
  */
 
 import { default as EmberObject, computed } from '@ember/object';
-import { get, set, observer } from '@ember/object';
+import { get, set, observer, getProperties } from '@ember/object';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { A } from '@ember/array';
+import { isEmpty } from '@ember/utils';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -160,26 +161,29 @@ export default EmberObject.extend({
 
   /**
    * Last event time for reports, can be eg. `stoppedAt` moment of last recent
-   * report,    * but also can be a `startedAt` of a report in progress
+   * report, but also can be a `startedAt` of a report in progress
    * @type {Ember.ComputedProperty<Moment|null>}
    */
   _lastReportMoment: computed('reports.@each.{startedAt,stoppedAt}', function () {
     const reports = this.get('reports');
-    if (reports) {
-      const reportMoments = _.map(reports, report => {
-        const startedAt = get(report, 'startedAt');
-        if (startedAt) {
-          return moment(startedAt);
-        } else {
+    let reportMoment;
+    if (!isEmpty(reports)) {
+      if (reports.length > 1) {
+        const reportMoments = _.map(reports, report => {
           const stoppedAt = get(report, 'stoppedAt');
-          if (stoppedAt) {
-            return moment(stoppedAt);
-          } else {
-            return null;
-          }
-        }
-      });
-      return _.max(reportMoments);
+          return stoppedAt && moment(stoppedAt);
+        });
+        reportMoment = _.max(reportMoments);
+      } else if (reports.length === 1) {
+        const {
+          startedAt,
+          stoppedAt,
+        } = getProperties(reports[0], 'startedAt', 'stoppedAt');
+        reportMoment = stoppedAt && moment(stoppedAt) ||
+          startedAt && moment(startedAt);
+      }
+
+      return reportMoment && reportMoment.subtract(1, 's');
     }
   }),
 
