@@ -2,22 +2,30 @@
   <p>
     <span class="indicator-row">
       <span class="total-space indicator">
-        <span class="value">{{bytes-to-string spaceSize}}</span> 
-        {{t "components.spaceCleaningBarChart.totalSpace"}}
+        <span class="indicator-label">
+          {{t "components.spaceCleaningBarChart.totalSpace"}}:
+        </span>
+        <span class="value">{{bytes-to-string spaceSize}}</span>
       </span>
       <span class="used-space indicator">
+        <span class="indicator-label">
+          {{t "components.spaceCleaningBarChart.usedSpace"}}:
+        </span>
         <span class="value">{{bytes-to-string status.spaceOccupancy}}</span>
-        {{t "components.spaceCleaningBarChart.usedSpace"}}
       </span>
     </span>
     <span class="indicator-row">
       <span class="free-space indicator">
+        <span class="indicator-label">
+          {{t "components.spaceCleaningBarChart.freeSpace"}}:
+        </span>
         <span class="value">{{bytes-to-string _freeSpace}}</span>
-        {{t "components.spaceCleaningBarChart.freeSpace"}}
       </span>
       <span class="to-release indicator">
+        <span class="indicator-label">
+          {{t "components.spaceCleaningBarChart.toRelease"}}:
+        </span>
         <span class="value">{{bytes-to-string _toReleaseSpace}}</span>
-        {{t "components.spaceCleaningBarChart.toRelease"}}
       </span>
     </span>
   </p>

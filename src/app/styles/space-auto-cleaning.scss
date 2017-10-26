@@ -31,6 +31,9 @@
           margin: 0;
         }
       }
+      .indicator-label {
+        padding-right: 0.2em;
+      }
     }
     @media (max-width: $mobile-breakpoint) {
       .bar-cell {
