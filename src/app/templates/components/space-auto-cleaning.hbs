@@ -37,7 +37,29 @@
           errorReason=spaceAutoCleaningUpdater.cleanStatusError
           customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
         }}
-          {{space-cleaning-bar-chart settings=autoCleaning.settings spaceSize=spaceSize status=status onChange=(action "barValuesChanged")}}
+          <div class="row content-row no-border no-padding-bottom">
+            {{space-cleaning-bar-chart
+              settings=autoCleaning.settings
+              spaceSize=spaceSize
+              status=status
+              onChange=(action "barValuesChanged")
+            }}
+          </div>
+          <div class="row content-row clean-now-row no-border no-padding-top">
+            {{one-label-tip
+              title=(t "components.spaceAutoCleaning.startCleaningHint")
+              class="clean-now-tip hidden-xs"
+              placement="top"
+              arrowPlacement="left"
+            }}
+            {{#one-spin-button
+              action=(action "startCleaning")
+              class="btn btn-sm btn-primary btn-clean-now"
+              disabled=(not startNowEnabled)
+            }}
+            {{t "components.spaceAutoCleaning.startCleaning"}}
+            {{/one-spin-button}}
+          </div>
         {{/loading-container}}
       </div>
     </div>

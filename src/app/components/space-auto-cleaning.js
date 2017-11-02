@@ -31,6 +31,7 @@ const BLANK_AUTO_CLEANING = {
 
 export default Component.extend({
   spaceManager: inject(),
+  globalNotify: inject(),
 
   classNames: ['space-auto-cleaning'],
 
@@ -60,6 +61,18 @@ export default Component.extend({
   spaceAutoCleaningUpdater: undefined,
 
   /**
+   * Cleaning target bytes (updated by event)
+   * @type {number}
+   */
+  target: undefined,
+
+  /**
+   * Cleaning threshold bytes (updated by event)
+   * @type {number}
+   */
+  threshold: undefined,
+
+  /**
    * Action called on autocleaning settings change.
    * @virtual
    * @type {Function}
@@ -86,6 +99,16 @@ export default Component.extend({
       });
     }
   ),
+
+  startNowEnabled: computed(
+    'isCleanEnabled',
+    'target',
+    'status.{spaceOccupancy,inProgress}',
+    function () {
+      return this.get('isCleanEnabled') &&
+        !this.get('status.inProgress') &&
+        this.get('target') < this.get('status.spaceOccupancy');
+    }),
 
   /**
    * Cleaning status
@@ -168,18 +191,24 @@ export default Component.extend({
       }
       return updateAutoCleaning(spaceReq);
     },
+
     barValuesChanged(values) {
       let updateAutoCleaning = this.get('updateAutoCleaning');
       let settings = this.get('autoCleaning.settings');
       let changedValues = {};
       ['target', 'threshold'].forEach((fieldName) => {
-        if (values[fieldName] !== get(settings, fieldName)) {
-          changedValues[fieldName] = values[fieldName];
+        const value = values[fieldName];
+        if (value != null) {
+          this.set(fieldName, value);
+        }
+        if (value !== get(settings, fieldName)) {
+          changedValues[fieldName] = value;
         }
       });
       return Object.keys(changedValues).length > 0 ?
         updateAutoCleaning({ settings: changedValues }) : Promise.resolve();
     },
+
     fileConditionsChanged(values) {
       let {
         updateAutoCleaning,
@@ -190,6 +219,32 @@ export default Component.extend({
       } else {
         return Promise.reject();
       }
+    },
+
+    /**
+     * Manual space cleaning start
+     * @returns {Promise<undefined|any>} resolves when starting cleaning
+     *  on backend succeeds
+     */
+    startCleaning() {
+      const {
+        spaceManager,
+        globalNotify,
+        spaceId,
+      } = this.getProperties('spaceManager', 'globalNotify', 'spaceId');
+      return spaceManager.startCleaning(spaceId)
+        .then(() => {
+          const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
+          // only a side effect
+          spaceAutoCleaningUpdater.fetchCleanStatus();
+        })
+        .catch(error => {
+          globalNotify.backendError(
+            'manually starting space cleaning',
+            error
+          );
+          throw error;
+        });
     },
   },
 });

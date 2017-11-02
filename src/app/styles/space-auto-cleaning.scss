@@ -48,8 +48,20 @@
           margin-left: $padding-large-horizontal * 2;
           margin-right: $padding-large-horizontal * 2;
         }
+        .clean-now-row {
+          text-align: center;
+          padding: 0;
+        }
       }
     }
+  }
+  .clean-now-row {
+    position: relative;
+    text-align: right;
+    padding-right: $padding-large-horizontal;
+  }
+  .clean-now-tip {
+    margin-right: $padding-large-horizontal / 2;
   }
   @media (max-width: $screen-xs-max) {
     .one-collapsible-list-item:last-child {
