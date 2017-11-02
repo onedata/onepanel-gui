@@ -627,6 +627,16 @@ export default OnepanelServerBase.extend(
       }
     ),
 
+    _req_oneprovider_providerSpaceStartCleaning: computed(function () {
+      return {
+        success: (id) => {
+          this._getAutoCleaningStatusMock(id).forceStart();
+          return undefined;
+        },
+        statusCode: () => 200,
+      };
+    }),
+
     // -- MOCKED RESOURCE STORE --
 
     // space id -> AutCleaningStatus

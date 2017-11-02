@@ -20,10 +20,20 @@ class MockState {
     this.target = target;
     this.step = Math.floor((threshold - target) / steps);
     this.inProgress = false;
-    setTimeout(() => {
-      this.inProgress = true;
-      this.interval = setInterval(this.tick.bind(this), 1000);
+    this.startTimeout = setTimeout(() => {
+      this._startLoop();
     }, 2000);
+  }
+  _startLoop() {
+    this.inProgress = true;
+    this.interval = setInterval(this.tick.bind(this), 1000);
+  }
+  forceStart() {
+    if (this.interval == null && this.inProgress === false) {
+      // TODO: currently fake target, because we do not remember real target
+      this.target = this.target - Math.pow(1024, 2);
+      this._startLoop();
+    }
   }
   tick() {
     if (this.inProgress) {
@@ -37,6 +47,7 @@ class MockState {
   }
   stop() {
     clearInterval(this.interval);
+    this.interval = null;
   }
   getData() {
     return {
@@ -49,15 +60,19 @@ class MockState {
 export default Mixin.create({
   cleanStatesCache: {},
 
-  _getAutoCleaningStatus(id, target = 100000000, threshold = 500000000, steps = 100) {
+  _getAutoCleaningStatus(id, target, threshold, steps) {
+    return this._getAutoCleaningStatusMock(id, target, threshold, steps).getData();
+  },
+
+  _getAutoCleaningStatusMock(id, target = 100000000, threshold = 500000000, steps = 100) {
     const cached = this.get(`cleanStatesCache.${id}`);
     if (cached) {
-      return cached.getData();
+      return cached;
     } else {
       return this.set(
         `cleanStatesCache.${id}`,
         new MockState(target, threshold, steps)
-      ).getData();
+      );
     }
   },
 

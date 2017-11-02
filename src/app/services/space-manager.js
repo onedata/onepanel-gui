@@ -233,4 +233,12 @@ export default Service.extend({
     ).then(({ data }) => data);
   },
 
+  startCleaning(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'providerSpaceStartCleaning',
+      spaceId,
+    ).then(({ data }) => data);
+  },
+
 });
