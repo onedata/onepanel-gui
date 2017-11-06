@@ -25,10 +25,14 @@ class ReportsCollection {
     this.reports = [...initialReports];
   }
   addReport() {
+    const lastReport = this.reports[this.reports.length - 1];
+    if (lastReport) {
+      lastReport.releasedBytes = lastReport.bytesToRelease;
+      lastReport.stoppedAt = moment().subtract(2, 's');
+    }
     const report = SpaceAutoCleaningReport.constructFromObject({
-      startedAt: moment().subtract(6, 's'),
-      stoppedAt: moment().subtract(1, 's'),
-      releasedBytes: Math.pow(1024, 3) * 5,
+      startedAt: moment(),
+      releasedBytes: Math.pow(1024, 3) * 4,
       bytesToRelease: Math.pow(1024, 3) * 5,
       filesNumber: 50,
     });
