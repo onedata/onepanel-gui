@@ -10,6 +10,8 @@
     <span class="form-state">
       {{#if (eq _formStatus "saving")}}
         <span class="animated infinite semi-hinge pulse-mint">{{t "components.spaceCleaningConditionsForm.saving"}}</span>
+      {{else if (eq _formStatus "modified")}}
+        {{t "components.spaceCleaningConditionsForm.modified"}}
       {{else if (eq _formStatus "saved")}}
         {{t "components.spaceCleaningConditionsForm.saved"}}
       {{else if (eq _formStatus "failed")}}

@@ -432,6 +432,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     if (schedule === false) {
       cancel(_saveDebounceTimer);
     } else {
+      this.set('_formStatus', 'modified');
       this.set(
         '_saveDebounceTimer',
         debounce(this, '_sendChanges', formSendDebounceTime)
