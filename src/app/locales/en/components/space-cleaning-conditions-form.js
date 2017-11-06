@@ -8,6 +8,7 @@ export default {
     hours: 'Hours',
     days: 'Days',
   },
+  modified: 'Not saved yet...',
   saving: 'Saving...',
   saved: 'Saved!',
   updateFailed: 'Update failed!',
