@@ -354,37 +354,45 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     return isValid;
   },
 
+  _modifiedData() {
+    const {
+      _formData,
+      _sourceFieldNames,
+      _formFieldsModified: modified,
+    } = this.getProperties(
+      '_formFieldsModified',
+      '_formData',
+      '_sourceFieldNames',
+    );
+    const data = {};
+    _sourceFieldNames.forEach((fieldName) => {
+      const isModified = modified.get(fieldName + 'Number') ||
+        modified.get(fieldName + 'Unit');
+      if (_formData.get(fieldName + 'Enabled') && isModified) {
+        data[fieldName] = _formData.get(fieldName);
+      } else if (modified.get(fieldName + 'Enabled') &&
+        !_formData.get(fieldName + 'Enabled')) {
+        data[fieldName] = disableFieldValue(fieldName);
+      }
+    });
+    return data;
+  },
+
   /**
    * Sends modified data.
    */
   _sendChanges() {
     let {
       _isDirty,
-      _formFieldsModified: modified,
-      _formData,
-      _sourceFieldNames,
       onSave,
       formSavedInfoHideTimeout,
     } = this.getProperties(
       '_isDirty',
-      '_formFieldsModified',
-      '_formData',
-      '_sourceFieldNames',
       'onSave',
       'formSavedInfoHideTimeout'
     );
     if (_isDirty && this._isValid()) {
-      let data = {};
-      _sourceFieldNames.forEach((fieldName) => {
-        const isModified = modified.get(fieldName + 'Number') ||
-          modified.get(fieldName + 'Unit');
-        if (_formData.get(fieldName + 'Enabled') && isModified) {
-          data[fieldName] = _formData.get(fieldName);
-        } else if (modified.get(fieldName + 'Enabled') &&
-          !_formData.get(fieldName + 'Enabled')) {
-          data[fieldName] = disableFieldValue(fieldName);
-        }
-      });
+      const data = this._modifiedData();
       if (Object.keys(data).length === 0) {
         return;
       }
@@ -395,7 +403,10 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
           this.set('_formStatus', 'saved');
           run.later(this, () => {
             if (!this.isDestroyed && !this.isDestroying) {
-              this.set('_formStatus', '');
+              // prevent resetting state other than saved
+              if (this.get('_formStatus') === 'saved') {
+                this.set('_formStatus', '');
+              }
             }
           }, formSavedInfoHideTimeout);
         }
@@ -432,11 +443,19 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     if (schedule === false) {
       cancel(_saveDebounceTimer);
     } else {
-      this.set('_formStatus', 'modified');
-      this.set(
-        '_saveDebounceTimer',
-        debounce(this, '_sendChanges', formSendDebounceTime)
-      );
+      const data = this._modifiedData();
+      if (Object.keys(data).length > 0 && this._isValid()) {
+        this.set('_formStatus', 'modified');
+        this.set(
+          '_saveDebounceTimer',
+          debounce(this, '_sendChanges', formSendDebounceTime)
+        );
+      } else {
+        if (this.get('_formStatus') === 'modified') {
+          this.set('_formStatus', '');
+        }
+        cancel(_saveDebounceTimer);
+      }
     }
   },
 
