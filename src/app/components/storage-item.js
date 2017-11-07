@@ -8,8 +8,10 @@
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
+import { isEmpty } from '@ember/utils';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 
-import Ember from 'ember';
 import _includes from 'lodash/includes';
 import _find from 'lodash/find';
 import _flatten from 'lodash/flatten';
@@ -17,11 +19,6 @@ import _flatten from 'lodash/flatten';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
-
-const {
-  Component,
-  computed,
-} = Ember;
 
 /**
  * Properties of Onepanel.StorageDetails that are common to all storage types
@@ -62,9 +59,13 @@ export default Component.extend({
   storage: null,
 
   /**
-   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
   spaces: [],
+
+  showSpacesSupport: computed('spaces.[]', function () {
+    return isEmpty(this.get('spaces')) === false;
+  }),
 
   /**
    * Readable name of storage typee

@@ -1,8 +1,10 @@
+/* eslint-env node */
+
 module.exports = {
   root: true,
   parserOptions: {
     ecmaVersion: 2017,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   extends: 'eslint:recommended',
   env: {
@@ -11,11 +13,6 @@ module.exports = {
     jquery: true,
   },
   rules: {
-    'eqeqeq': [
-      2,
-      'smart',
-    ],
-    'semi': 2,
     'no-console': 0,
     'dot-location': [
       1,
@@ -24,7 +21,30 @@ module.exports = {
     'eol-last': 1,
     'comma-dangle': [
       1,
-      "always-multiline",
-    ]
-  }
+      'always-multiline',
+    ],
+    'quotes': [
+      1,
+      'single',
+    ],
+    'quote-props': [
+      1,
+      'consistent-as-needed',
+    ],
+    'no-warning-comments': [
+      1,
+      {
+        terms: ['fixme'],
+      },
+    ],
+    'semi': 2,
+    'valid-jsdoc': [
+      1,
+      {
+        requireParamDescription: false,
+        requireReturnDescription: false,
+        requireReturn: false,
+      },
+    ],
+  },
 };

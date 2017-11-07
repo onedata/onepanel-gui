@@ -31,12 +31,6 @@ export default Ember.Component.extend({
   globalNotify: service(),
 
   /**
-   * If true, there are no storages
-   * @type {computed.boolean}
-   */
-  noStorages: equal('storagesProxy.length', 0),
-
-  /**
    * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
    */
   storagesProxy: null,
@@ -45,6 +39,12 @@ export default Ember.Component.extend({
    * @type {PromiseObject} spacesProxy resolves with spaces list ArrayProxy
    */
   spacesProxy: null,
+
+  /**
+   * If true, there are no storages
+   * @type {computed.boolean}
+   */
+  noStorages: equal('storagesProxy.length', 0),
 
   /**
    * Form for adding new storage is opened or not?
@@ -61,14 +61,23 @@ export default Ember.Component.extend({
     return this.get('nextStep') != null;
   }),
 
+  storagesLoading: computed('storagesProxy.isSettled', 'spacesProxy.isSettled',
+    function () {
+      return this.get('storagesProxy.isSettled') === false &&
+        this.get('spacesProxy.isSettled') == false;
+    }),
+
+  storagesError: computed.alias('storagesProxy.reason'),
+
   init() {
     this._super(...arguments);
     this._updateStoragesProxy();
-    this._updateSpacesProxy();
+    this._updateSpacesProxy(true);
   },
 
   /**
    * Force update storages list - makes an API call
+   * @returns {undefined}
    */
   _updateStoragesProxy() {
     let storageManager = this.get('storageManager');
@@ -77,16 +86,19 @@ export default Ember.Component.extend({
 
   /**
    * Force update spaces list - makes an API call
+   * @param {boolean} reload if true, force reload storages from backend
+   * @returns {undefined}
    */
-  _updateSpacesProxy() {
+  _updateSpacesProxy(reload = true) {
     let spaceManager = this.get('spaceManager');
-    this.set('spacesProxy', spaceManager.getSpaces());
+    this.set('spacesProxy', spaceManager.getSpaces(reload));
   },
 
   /**
    * Uses API to add new storage and updated storages list from remote if succeeds
    * @param {object} storageFormData should have properties needed to construct
    *  onepanel storage model
+   * @returns {Promise<undefined|object>}
    */
   _submitAddStorage(storageFormData) {
     let {
@@ -121,10 +133,10 @@ export default Ember.Component.extend({
 
     /**
      * Create an instance of ClusterStorages using data from add storage form
-     * @param {object} formData contains attributes for specific storage type as in REST API
-     * @param {object} formData.type required attribute for storage
-     * @param {object} formData.name required attribute for storage
-     * @returns {subclass of ClusterStorages}
+     * @param {object} storageFormData contains attributes for specific storage type as in REST API
+     * @param {object} storageFormData.type required attribute for storage
+     * @param {object} storageFormData.name required attribute for storage
+     * @returns {ClusterStorages} instance of ClusterStorages subclass
      */
     submitAddStorage(storageFormData) {
       let { name } = storageFormData;

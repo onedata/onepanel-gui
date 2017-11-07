@@ -24,7 +24,8 @@ export default Ember.Service.extend({
 
   /**
    * @param {string} type
-   * @returns {Promise}
+   * @param {string} id
+   * @returns {Promise<ClusterDetails|string>}
    */
   getModelFor(type, id) {
     switch (type) {

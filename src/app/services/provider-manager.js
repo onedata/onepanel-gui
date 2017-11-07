@@ -62,7 +62,7 @@ export default Service.extend({
   },
 
   /**
-   * Change registered provider data - see ``modifyProvider`` of Onepanel lib
+   * Change registered provider data - see `modifyProvider` of Onepanel lib
    * @param {Onepanel.ProviderModifyRequest} providerData
    * @returns {Promise} onepanel.modifyProvider request promise
    */

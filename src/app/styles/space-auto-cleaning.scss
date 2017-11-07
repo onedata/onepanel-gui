@@ -1,0 +1,82 @@
+.space-auto-cleaning {
+  $mobile-breakpoint: 1100px;
+  .cleaning-settings-row {
+    .form {
+      margin: 0;
+      .row {
+        margin: 0;
+      }
+    }
+    .bar-container {
+      margin-left: $padding-large-horizontal;
+      margin-right: $padding-large-horizontal;
+    }
+    @media (min-width: $mobile-breakpoint + 1px) {
+      display: table;
+      width: 100%;
+      .cell {
+        display: table-cell;
+        vertical-align: top;
+      }
+      .form-cell {
+        width: 360px;
+      }
+      .bar-cell {
+        .indicators {
+          padding-top: 0;
+        }
+      }
+      .space-cleaning-conditions-form {
+        form {
+          margin: 0;
+        }
+      }
+      .indicator-label {
+        padding-right: 0.2em;
+      }
+    }
+    @media (max-width: $mobile-breakpoint) {
+      .bar-cell {
+        padding-top: $padding-large-vertical;
+        .indicators p {
+          text-align: left;
+          .indicator-row {
+            display: block;
+          }
+        }
+        .bar-container {
+          margin-left: $padding-large-horizontal * 2;
+          margin-right: $padding-large-horizontal * 2;
+        }
+        .clean-now-row {
+          text-align: center;
+          padding: 0;
+        }
+      }
+    }
+  }
+  .clean-now-row {
+    position: relative;
+    text-align: right;
+    padding-right: $padding-large-horizontal;
+  }
+  .clean-now-tip {
+    margin-right: $padding-large-horizontal / 2;
+  }
+  @media (max-width: $screen-xs-max) {
+    .one-collapsible-list-item:last-child {
+      .one-collapsible-list-item-header {
+        border-bottom: 0;
+      }
+      .one-collapsible-list-item-content.opened {
+        border-top: 1px solid $main-border-color;
+        border-bottom: 0;
+      }
+    }
+    .one-collapsible-list-item-header.row {
+      margin: 0;
+      padding: $padding-large-horizontal $padding-large-vertical;
+    }
+  }
+}
+

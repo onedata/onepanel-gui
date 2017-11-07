@@ -22,14 +22,14 @@ export default OnePieChart.extend({
   i18n: service(),
 
   /**
-   * @implements
+   * @override
    */
   formatValue(value) {
     return bytesToString(value, { iecFormat: true });
   },
 
   /**
-   * @implements
+   * @override
    */
   generateChartDataSeries() {
     let {

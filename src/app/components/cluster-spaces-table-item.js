@@ -8,10 +8,10 @@
  */
 
 import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
 import _includes from 'lodash/includes';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
+import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 
 const {
   Component,
@@ -22,14 +22,14 @@ const {
 } = Ember;
 
 /**
- * Space's ``storageImport`` properties that shouldn't be listed as generic
+ * Space's `storageImport` properties that shouldn't be listed as generic
  * properties (can be handled separately)
  * @type {Array.string}
  */
 const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
 
 /**
- * Space's ``storageUpdate`` properties that shouldn't be listed as generic
+ * Space's `storageUpdate` properties that shouldn't be listed as generic
  * properties (can be handled separately)
  * @type {Array.string}
  */
@@ -37,156 +37,201 @@ const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 
 const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 
-export default Component.extend(SpaceItemSyncStats, SpaceItemSupports, {
-  classNames: ['cluster-spaces-table-item'],
+export default Component.extend(
+  SpaceItemSyncStats,
+  SpaceItemSupports,
+  SpaceTabs, {
+    classNames: ['cluster-spaces-table-item'],
 
-  i18n: service(),
+    i18n: service(),
 
-  storageManager: service(),
+    storageManager: service(),
 
-  /**
-   * OneCollapsibleListItem that should be used to render this
-   * To inject.
-   * @type {Component.OneCollapsibleListItem}
-   */
-  listItem: null,
+    /**
+     * @virtual
+     * @type {function}
+     */
+    submitModifySpace: undefined,
 
-  /**
-   * @type {SpaceDetails}
-   */
-  space: null,
+    /**
+     * OneCollapsibleListItem that should be used to render this
+     * To inject.
+     * @type {Component.OneCollapsibleListItem}
+     */
+    listItem: null,
 
-  /**
-   * Storage that supports space on this panel's provider
-   * @type {PromiseObject}
-   */
-  _storage: null,
+    /**
+     * @type {Ember.ObjectProxy<SpaceDetails>}
+     */
+    spaceProxy: null,
 
-  /**
-   * If true, space revoke modal is opened
-   * @type {boolean}
-   */
-  _openRevokeModal: false,
+    /**
+     * @type {ProvidetDetails}
+     */
+    provider: null,
 
-  /**
-   * If true, this space has synchronization import enabled
-   *
-   * That means, the view should be enriched with sync statuses and statistics
-   * @type {computed.boolean}
-   */
-  _importActive: readOnly('space.importEnabled'),
+    // TODO: support for errors after update
+    /**
+     * @type {OnepanelGui.SpaceDetails}
+     */
+    space: computed.reads('spaceProxy.content'),
 
-  /**
-   * If true, the space item is expanded
-   * @type {computed.boolean}
-   */
-  _isActive: readOnly('listItem.isActive'),
+    /**
+     * Last resolved SpaceDetails
+     * @type {SpaceDetails}
+     */
+    _spaceCache: null,
 
-  _importButtonActionName: computed('importConfigurationOpen', function () {
-    return this.get('importConfigurationOpen') ?
-      'endImportConfiguration' :
-      'startImportConfiguration';
-  }),
+    /**
+     * Storage that supports space on this panel's provider
+     * @type {PromiseObject}
+     */
+    _storage: computed('space.storageId', function () {
+      let space = this.get('space');
+      if (space) {
+        let storageManager = this.get('storageManager');
+        return storageManager.getStorageDetails(get(space, 'storageId'));
+      }
+    }),
 
-  // TODO i18n
-  _importButtonTip: computed('importConfigurationOpen', function () {
-    let i18n = this.get('i18n');
-    return this.get('importConfigurationOpen') ?
-      i18n.t(I18N_PREFIX + 'cancelSyncConfig') :
-      i18n.t(I18N_PREFIX + 'syncConfig');
-  }),
+    /**
+     * If true, space revoke modal is opened
+     * @type {boolean}
+     */
+    _openRevokeModal: false,
 
-  importTranslationPrefix: I18N_PREFIX + 'storageImport.',
-  updateTranslationPrefix: I18N_PREFIX + 'storageUpdate.',
+    /**
+     * If true, this space has synchronization import enabled
+     *
+     * That means, the view should be enriched with sync statuses and statistics
+     * @type {computed.boolean}
+     */
+    _importActive: readOnly('space.importEnabled'),
 
-  importStrategyLabel: computed('space.storageImport.strategy', function () {
-    let i18n = this.get('i18n');
-    let importTranslationPrefix = this.get('importTranslationPrefix');
-    let strategy = this.get('space.storageImport.strategy');
-    return i18n.t(`${importTranslationPrefix}strategies.${strategy}`);
-  }),
+    /**
+     * If true, the space item is expanded
+     * @type {computed.boolean}
+     */
+    _isActive: readOnly('listItem.isActive'),
 
-  updateStrategyLabel: computed('space.storageUpdate.strategy', function () {
-    let i18n = this.get('i18n');
-    let updateTranslationPrefix = this.get('updateTranslationPrefix');
-    let strategy = this.get('space.storageUpdate.strategy');
-    return i18n.t(`${updateTranslationPrefix}strategies.${strategy}`);
-  }),
+    _importButtonActionName: computed('importConfigurationOpen', function () {
+      return this.get('importConfigurationOpen') ?
+        'endImportConfiguration' :
+        'startImportConfiguration';
+    }),
 
-  /**
-   * List of specific non-empty, type-specific storage import properties
-   * @type {Array}
-   */
-  importProperties: computed('space.storageImport', 'space.content', function () {
-    let space = this.get('space');
-    // support for ObjectProxy
-    if (space != null && space.content != null) {
-      space = space.get('content');
-    }
-    let storageImport = get(space, 'storageImport');
-    return storageImport != null ?
-      Object.keys(storageImport).filter(p =>
-        get(storageImport, p) != null && !_includes(SKIPPED_IMPORT_PROPERTIES, p)
-      ) : [];
-  }),
+    _importButtonTip: computed('importConfigurationOpen', function () {
+      let i18n = this.get('i18n');
+      return this.get('importConfigurationOpen') ?
+        i18n.t(I18N_PREFIX + 'cancelSyncConfig') :
+        i18n.t(I18N_PREFIX + 'syncConfig');
+    }),
 
-  /**
-   * List of specific non-empty, type-specific storage update properties
-   * @type {Array}
-   */
-  updateProperties: computed('space.storageUpdate', 'space.content', function () {
-    let space = this.get('space');
-    // support for ObjectProxy
-    if (space != null && space.content != null) {
-      space = space.get('content');
-    }
-    let storageUpdate = get(space, 'storageUpdate');
-    return storageUpdate != null ?
-      Object.keys(storageUpdate).filter(p =>
-        get(storageUpdate, p) != null && !_includes(SKIPPED_UPDATE_PROPERTIES, p)
-      ) : [];
-  }),
+    /**
+     * Which tab should be shown for space details
+     * @type {Ember.ComputedProperty<string>}
+     */
+    _detailsToShow: '',
 
-  importFormDefaultValue: computed('space', function () {
-    let space = this.get('space');
-    // support for ObjectProxy
-    if (space != null && space.content != null) {
-      space = space.content;
-    }
-    return space;
-  }),
+    importTranslationPrefix: I18N_PREFIX + 'storageImport.',
+    updateTranslationPrefix: I18N_PREFIX + 'storageUpdate.',
 
-  init() {
-    this._super(...arguments);
-    let space = this.get('space');
-    if (space) {
-      let storageManager = this.get('storageManager');
+    importStrategyLabel: computed('space.storageImport.strategy', function () {
+      let i18n = this.get('i18n');
+      let importTranslationPrefix = this.get('importTranslationPrefix');
+      let strategy = this.get('space.storageImport.strategy');
+      return i18n.t(`${importTranslationPrefix}strategies.${strategy}`);
+    }),
+
+    updateStrategyLabel: computed('space.storageUpdate.strategy', function () {
+      let i18n = this.get('i18n');
+      let updateTranslationPrefix = this.get('updateTranslationPrefix');
+      let strategy = this.get('space.storageUpdate.strategy');
+      return i18n.t(`${updateTranslationPrefix}strategies.${strategy}`);
+    }),
+
+    /**
+     * List of specific non-empty, type-specific storage import properties
+     * @type {Array}
+     */
+    importProperties: computed('space.storageImport', 'space.content', function () {
+      let space = this.get('space');
+      // support for ObjectProxy
+      if (space != null && space.content != null) {
+        space = space.get('content');
+      }
+      let storageImport = get(space, 'storageImport');
+      return storageImport != null ?
+        Object.keys(storageImport).filter(p =>
+          get(storageImport, p) != null && !_includes(SKIPPED_IMPORT_PROPERTIES, p)
+        ) : [];
+    }),
+
+    /**
+     * List of specific non-empty, type-specific storage update properties
+     * @type {Array}
+     */
+    updateProperties: computed('space.storageUpdate', 'space.content', function () {
+      let space = this.get('space');
+      // support for ObjectProxy
+      if (space != null && space.content != null) {
+        space = space.get('content');
+      }
+      let storageUpdate = get(space, 'storageUpdate');
+      return storageUpdate != null ?
+        Object.keys(storageUpdate).filter(p =>
+          get(storageUpdate, p) != null && !_includes(SKIPPED_UPDATE_PROPERTIES, p)
+        ) : [];
+    }),
+
+    importFormDefaultValue: computed('space', function () {
+      let space = this.get('space');
+      // support for ObjectProxy
+      if (space != null && space.content != null) {
+        space = space.content;
+      }
+      return space;
+    }),
+
+    init() {
+      this._super(...arguments);
+      const provider = this.get('provider');
       this.set(
-        '_storage',
-        storageManager.getStorageDetails(get(space, 'storageId'))
+        'spaceSizeForProvider',
+        readOnly(`space.supportingProviders.${get(provider, 'id')}`)
       );
-    }
-  },
+    },
 
-  actions: {
-    startRevoke() {
-      this.set('_openRevokeModal', true);
+    actions: {
+      startRevoke() {
+        this.set('_openRevokeModal', true);
+      },
+      hideRevoke() {
+        this.set('_openRevokeModal', false);
+      },
+      revokeSpace() {
+        const {
+          revokeSpace,
+          space,
+        } = this.getProperties('revokeSpace', 'space');
+        return revokeSpace(space);
+      },
+      startImportConfiguration(toggleAction) {
+        this.set('importConfigurationOpen', true);
+        toggleAction.call(null, true);
+      },
+      endImportConfiguration() {
+        this.set('importConfigurationOpen', false);
+      },
+      submitModifySpace() {
+        return this.get('submitModifySpace')(...arguments)
+          .then(() => this.set('importConfigurationOpen', false));
+      },
+      updateFilesPopularity(filesPopularity) {
+        return this.get('submitModifySpace')({ filesPopularity });
+      },
+      updateAutoCleaning(autoCleaning) {
+        return this.get('submitModifySpace')({ autoCleaning });
+      },
     },
-    hideRevoke() {
-      this.set('_openRevokeModal', false);
-    },
-    revokeSpace() {
-      return invokeAction(this, 'revokeSpace', this.get('space'));
-    },
-    startImportConfiguration(toggleAction) {
-      this.set('importConfigurationOpen', true);
-      toggleAction.call(null, true);
-    },
-    endImportConfiguration() {
-      this.set('importConfigurationOpen', false);
-    },
-    importUpdateConfigurationSubmit(configuration) {
-      return invokeAction(this, 'submitModifySpace', configuration);
-    },
-  },
-});
+  });

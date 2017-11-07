@@ -47,7 +47,8 @@ function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) 
  *
  * @param {OnepanelServer} onepanelServer
  * @param {string} taskId
- * @return {jQuery.Promise}
+ * @param {number} [interval] interval of requests in ms
+ * @returns {jQuery.Promise}
  */
 function watchTaskStatus(onepanelServer, taskId, interval = 1000) {
   let deferred = new Deferred();

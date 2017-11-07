@@ -1,0 +1,32 @@
+.space-cleaning-reports {
+  table thead tr th,
+  table tbody tr td {
+    padding: $padding-base-vertical;
+    text-align: center;
+  }
+
+  .status-cell {
+    display: inline-block;
+    font-size: 170%;
+    vertical-align: top;
+    line-height: 0;
+    
+    .one-icon {
+      position: relative;
+      top: -0.1em;
+      &.oneicon-checkbox-filled {
+        color: $color-one-mint;
+      }
+      &.oneicon-checkbox-filled-x {
+        color: $color-one-red;
+      }
+      &.oneicon-update {
+        top: 0;
+        @media (max-width: $screen-xs-max) {
+          margin: 0 10%;
+        }
+        font-size: 80%;
+      }
+    }
+  }
+}

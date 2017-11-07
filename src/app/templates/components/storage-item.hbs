@@ -51,9 +51,12 @@
           </div>
         {{/each}}
       </div>
-      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
-        {{storage-item/supported-spaces spaces=spaces storageId=storage.id}}
-      </div>
+      {{!-- TODO: maybe a placeholder when not loaded --}}
+      {{#if showSpacesSupport}}
+        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
+          {{storage-item/supported-spaces spaces=spaces storageId=storage.id}}
+        </div>
+      {{/if}}
     </div>
   </div>
 {{/listItem.content}}

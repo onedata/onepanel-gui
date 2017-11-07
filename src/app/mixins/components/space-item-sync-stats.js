@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 /**
- * Adds space sync statistics fetch capabilities to ``cluster-spaces-table-item``
+ * Adds space sync statistics fetch capabilities to `cluster-spaces-table-item`
  *
  * @module mixins/space-item-sync-stats
  * @author Jakub Liput
@@ -20,7 +20,6 @@ const {
   inject: { service },
   get,
   set,
-  on,
   observer,
   computed,
   computed: { readOnly },
@@ -43,6 +42,15 @@ const SYNC_STATUS_REFRESH_TIME = 15000;
 
 export default Mixin.create({
   spaceManager: service(),
+
+  /**
+   * Sync statistics object fetched from backend
+   *
+   * This property is updated automatically by some interval watchers
+   *
+   * @type {Onepanel.SpaceSyncStats}
+   */
+  _syncStats: null,
 
   // TODO maybe this could be computed from import/update algorightm's loop period
   /**
@@ -92,14 +100,6 @@ export default Mixin.create({
    * @type {Looper}
    */
   _syncStatusWatcher: null,
-
-  /**
-   * Sync statistics object fetched from backend
-   *
-   * This property is updated automatically by some interval watchers
-   * @type {Onepanel.SpaceSyncStats}
-   */
-  _syncStats: null,
 
   timeStatsCollection: readOnly('_syncStats.stats'),
 
@@ -158,18 +158,22 @@ export default Mixin.create({
 
     // interval of this Looper will be set in reconfigureSyncWatchers observer
     let _syncChartStatsWatcher = Looper.create({ immediate: true });
-    _syncChartStatsWatcher.on('tick', () => safeMethodExecution(this,
-      'fetchAllSyncStats'));
+    _syncChartStatsWatcher.on('tick', () =>
+      safeMethodExecution(this, 'fetchAllSyncStats')
+    );
 
     let _syncStatusWatcher = Looper.create({
       immediate: true,
       interval: this.get('syncStatusRefreshTime'),
     });
-    _syncStatusWatcher.on('tick', () => safeMethodExecution(this,
-      'checkSyncStatusUpdate'));
+    _syncStatusWatcher.on('tick', () =>
+      safeMethodExecution(this, 'checkSyncStatusUpdate')
+    );
     this.checkSyncStatusUpdate();
 
     this.setProperties({ _syncChartStatsWatcher, _syncStatusWatcher });
+
+    this.reconfigureSyncWatchers();
   },
 
   willDestroyElement() {
@@ -201,6 +205,7 @@ export default Mixin.create({
 
   /**
    * If sync status was not updated for some mininal time, fetch sync status
+   * @returns {undefined}
    */
   checkSyncStatusUpdate() {
     if (this.shouldRefreshSyncStatus()) {
@@ -210,6 +215,7 @@ export default Mixin.create({
 
   /**
    * @param {Onepanel.SpaceSyncStats} newSyncStats syncStats without time stats
+   * @returns {undefined}
    */
   updateSyncStatsWithStatusOnly(newSyncStats) {
     let currentSyncStats = this.get('_syncStats');
@@ -278,44 +284,60 @@ export default Mixin.create({
     });
   },
 
-  reconfigureSyncWatchers: on('init',
-    observer(
-      '_isActive',
-      '_importActive',
-      'syncInterval',
-      '_syncChartStatsWatcher',
-      'statsFrozen',
-      function () {
-        let {
-          _isActive,
-          _importActive,
-          syncInterval,
-          _syncChartStatsWatcher,
-          _syncStatusWatcher,
-          statsFrozen,
-          syncStatusRefreshTime,
-        } = this.getProperties(
-          '_isActive',
-          '_importActive',
-          'syncInterval',
-          '_syncChartStatsWatcher',
-          '_syncStatusWatcher',
-          'statsFrozen',
-          'syncStatusRefreshTime'
-        );
+  /**
+   * Is sync tab currently opened
+   * NOTE: activeTabId is provided by `space-tabs` mixin
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  syncTabActive: computed('activeTabId', function () {
+    const activeTabId = this.get('activeTabId');
+    return activeTabId && /^tab-sync-/.test(activeTabId);
+  }),
 
-        if (_importActive) {
-          _syncStatusWatcher.set('interval', syncStatusRefreshTime);
-        }
+  reconfigureSyncWatchers: observer(
+    '_isActive',
+    '_importActive',
+    'syncInterval',
+    '_syncChartStatsWatcher',
+    'statsFrozen',
+    'syncTabActive',
+    function () {
+      let {
+        _isActive,
+        _importActive,
+        syncInterval,
+        _syncChartStatsWatcher,
+        _syncStatusWatcher,
+        statsFrozen,
+        syncStatusRefreshTime,
+        syncTabActive,
+      } = this.getProperties(
+        '_isActive',
+        '_importActive',
+        'syncInterval',
+        '_syncChartStatsWatcher',
+        '_syncStatusWatcher',
+        'statsFrozen',
+        'syncStatusRefreshTime',
+        'syncTabActive',
+      );
 
-        if (_importActive && _isActive && !statsFrozen) {
-          _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
-        } else {
-          _syncChartStatsWatcher.stop();
-        }
-      })),
+      if (_importActive) {
+        _syncStatusWatcher.set('interval', syncStatusRefreshTime);
+      }
+
+      if (syncTabActive && _importActive && _isActive && !statsFrozen) {
+        _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
+      } else {
+        _syncChartStatsWatcher.stop();
+      }
+    }),
 
   actions: {
+    /**
+     * @param {string} syncInterval one of: minute, hour, day
+     * @returns {undefined}
+     */
     onSyncIntervalChange(syncInterval) {
       let currentSyncInterval = this.get('syncInterval');
       if (syncInterval !== currentSyncInterval) {
