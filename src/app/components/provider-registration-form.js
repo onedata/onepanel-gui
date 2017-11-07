@@ -93,8 +93,8 @@ FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
   fields.forEach((field) => {
     const validators = createFieldValidator(field);
     if (field.name === 'subdomain') {
-      validators.push(validator('exclusion', {
-        in: computed.readOnly('model.excludedSubdomains'),
+      validators.push(validator('exclusion', { in: computed.readOnly(
+          'model.excludedSubdomains'),
         message: computed(function () {
           return this.get('model.i18n')
             .t('components.providerRegistrationForm.subdomainReserved');

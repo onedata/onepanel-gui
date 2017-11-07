@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 
 const {
   computed,
@@ -162,15 +163,22 @@ export default Component.extend({
         '_excludedSubdomains'
       );
       let modifyProviderData = data.getProperties(
-        'name', 'subdomainDelegation', 'subdomain', 'domain', 'geoLongitude', 'geoLatitude'
+        'name',
+        'subdomainDelegation',
+        'subdomain',
+        'domain',
+        'geoLongitude',
+        'geoLatitude'
       );
       let modifying = providerManager.modifyProvider(modifyProviderData);
       modifying.catch(error => {
+        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
+        if (subdomainReservedMsg) {
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
+          error = { error: error.error, message: subdomainReservedMsg };
+        }
         // TODO i18n
         globalNotify.backendError('provider data modification', error);
-        if (error && error.error && error.error === 'Subdomain reserved error') {
-          this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
-        }
       });
       modifying.then(() => {
         // TODO i18n

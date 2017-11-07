@@ -11,6 +11,7 @@ import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
+import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 
 const {
   inject: {
@@ -113,8 +114,10 @@ export default Component.extend({
         invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
-        if (error && error.error && error.error === 'Subdomain reserved error') {
+        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
+        if (subdomainReservedMsg) {
           this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
+          error = { error: error.error, message: subdomainReservedMsg };
         }
         this.get('globalNotify').backendError(
           'provider registration',
