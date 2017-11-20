@@ -1,8 +1,5 @@
-import Ember from 'ember';
-
-const {
-  computed,
-} = Ember;
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 
 /**
  * Creates component for displaying cluster storages.
@@ -12,16 +9,18 @@ const {
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['cluster-storage-table'],
 
   /**
+   * @virtual
    * @type {ObjectProxy.Array.ObjectProxy.Onepanel.StorageDetails}
    */
   storages: null,
 
   /**
-   * @type {Array.ObjectProxy.Onepanel.SpaceDetails}
+   * @virtual
+   * @type {Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>}
    */
   spaces: null,
 

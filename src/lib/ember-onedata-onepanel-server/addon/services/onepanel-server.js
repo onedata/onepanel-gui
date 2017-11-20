@@ -85,7 +85,7 @@ export default OnepanelServerBase.extend({
    * Make an API call using onepanel library (onepanel-javascript-client).
    *
    * It's like creating API object of onepanel library and invoking its method
-   * with parameters. Eg. ``new Onepanel.SomeApi().someMethod(...params)``
+   * with parameters. Eg. `new Onepanel.SomeApi().someMethod(...params)`
    *
    * @param {string} api name of API: onepanel, oneprovider, onezone
    * @param {string} method name of method of onepanel library
@@ -130,7 +130,7 @@ export default OnepanelServerBase.extend({
    * 
    * If the session is valid, it automatically (re)initializes the main client.
    * 
-   * @returns {Promise} an ``initClient`` promise if ``getSession`` succeeds
+   * @returns {Promise} an `initClient` promise if `getSession` succeeds
    */
   validateSession() {
     return new Promise((resolve, reject) => {
@@ -152,6 +152,7 @@ export default OnepanelServerBase.extend({
    * domain are set (using /login method).
    *
    * @param {string} [origin]
+   * @returns {Onepanel.ApiClient}
    */
   createClient(origin = null) {
     let client = new Onepanel.ApiClient();
@@ -260,7 +261,7 @@ export default OnepanelServerBase.extend({
   login(username, password) {
     let client = this.createClient();
     client.defaultHeaders['Authorization'] =
-      'Basic ' + btoa(username + ":" + password);
+      'Basic ' + btoa(username + ':' + password);
     let api = new Onepanel.OnepanelApi(client);
 
     let loginCall = new Promise((resolve, reject) => {

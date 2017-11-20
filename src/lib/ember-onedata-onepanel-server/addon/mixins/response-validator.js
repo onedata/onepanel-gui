@@ -20,6 +20,8 @@ import getProviderSpaces from 'ember-onedata-onepanel-server/utils/response-vali
 import getSpaceDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-space-details';
 import getStorages from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storages';
 import getStorageDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storage-details';
+import getProviderSpaceAutoCleaningReports from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-reports';
+import getProviderSpaceAutoCleaningStatus from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-status';
 
 const {
   Mixin,
@@ -45,6 +47,8 @@ const VALIDATORS = {
     getSpaceDetails,
     getStorages,
     getStorageDetails,
+    getProviderSpaceAutoCleaningReports,
+    getProviderSpaceAutoCleaningStatus,
   },
 };
 
@@ -55,7 +59,8 @@ export default Mixin.create({
 
   /**
    * See eg. onepanel-server for implementation
-   * @abstract
+   * @virtual
+   * @returns {Promise}
    */
   request() {
     throw new Error('not implemented');
@@ -64,6 +69,9 @@ export default Mixin.create({
   /**
    * Check if backend response can be used by frontend
    *
+   * @param {string} api one of: onepanel, onezone, oneprovider
+   * @param {string} method onepanel API method name
+   * @param {string} data response data of remote method call
    * @returns {any|null} if data is not valid, return error message
    */
   validateResponseData(api, method, data) {
@@ -84,7 +92,8 @@ export default Mixin.create({
    * 
    * @param {string} api 
    * @param {string} method 
-   * @param {any} params 
+   * @param {any} params
+   * @returns {Promise}
    */
   requestValidData(api, method, ...params) {
     return this.request(api, method, ...params).then(

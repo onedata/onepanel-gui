@@ -11,9 +11,12 @@
 
 import Ember from 'ember';
 import { invokeAction } from 'ember-invoke-action';
+import _ from 'lodash';
+
 import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
+import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
 
 const {
   isEmpty,
@@ -26,45 +29,7 @@ const {
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
-const FORM_FIELDS = [{
-    name: 'token',
-    type: 'text',
-    tip: 'Globally unique identifier assigned by onezone',
-    example: 'MDAxNWxvY...',
-  },
-  { name: 'size', type: 'number', gt: 0, example: '100' },
-  {
-    name: 'sizeUnit',
-    type: 'radio-group',
-    nolabel: true,
-    options: [
-      { value: 'mb', label: 'MB' },
-      { value: 'gb', label: 'GB' },
-      { value: 'tb', label: 'TB' },
-    ],
-  },
-  {
-    name: 'mountInRoot',
-    type: 'checkbox',
-    optional: true,
-  },
-  {
-    name: '_importEnabled',
-    type: 'checkbox',
-    tip: 'Configure import files from storage',
-    optional: true,
-  },
-];
-
-const MEGA = Math.pow(10, 6);
-const GIGA = Math.pow(10, 9);
-const TERA = Math.pow(10, 12);
-
-const UNITS = {
-  mb: MEGA,
-  gb: GIGA,
-  tb: TERA,
-};
+const UNITS = _.find(FORM_FIELDS, { name: 'sizeUnit' }).options;
 
 const VALIDATIONS_PROTO = {};
 
@@ -103,7 +68,7 @@ export default OneFormSimple.extend(Validations, {
   values: Ember.Object.create({
     token: '',
     size: '',
-    sizeUnit: 'mb',
+    sizeUnit: 'mib',
     _importEnabled: false,
   }),
 
@@ -196,7 +161,7 @@ export default OneFormSimple.extend(Validations, {
         '_importEnabled'
       );
 
-      size = size * UNITS[sizeUnit];
+      size = size * _.find(UNITS, { value: sizeUnit })._multiplicator;
 
       if (!_importEnabled) {
         storageImport = {

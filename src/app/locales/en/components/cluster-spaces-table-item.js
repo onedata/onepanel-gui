@@ -11,9 +11,11 @@ export default {
   minute: 'Minute',
   hour: 'Hour',
   day: 'Day',
-  syncDone: 'Synchronization done, live statistics disabled',
+  syncDone: 'Import done',
+  syncDoneHint: 'Synchronization is done, live statistics are disabled',
   cancelSyncConfig: 'Cancel sync. configuration',
   syncConfig: 'Configure data synchronization',
+  syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
@@ -23,5 +25,28 @@ export default {
     tableTip: 'The table shows how many space particular providers ' +
       'provide for this space',
     provider: 'Provider',
+  },
+  tabs: {
+    sync: {
+      title: 'Storage synchronization',
+      hints: {
+        enabled: 'Show statistics of synchronization with storage for this space',
+        disabled: 'Storage synchronization is not enabled, you can enable it in space options',
+      },
+    },
+    popular: {
+      title: 'Files popularity',
+      hints: {
+        enabled: 'Configure files popularity feature for this space',
+        // popular tab is never in disabled state
+      },
+    },
+    clean: {
+      title: 'Auto cleaning',
+      hints: {
+        enabled: 'Configure, show status and reports of auto cleaning feature for this space',
+        disabled: 'Auto cleaning can be configured only if files popularity feature is enabled',
+      },
+    },
   },
 };

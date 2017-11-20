@@ -239,7 +239,8 @@ export default Ember.Component.extend({
 
   /**
    * Show progress of deployment using deployment task promise.
-   * @param {jQuery.Promise} deployment 
+   * @param {jQuery.Promise} deployment
+   * @returns {undefined}
    */
   showDeployProgress(deployment) {
     this.set('deploymentPromise', deployment);
@@ -251,7 +252,8 @@ export default Ember.Component.extend({
 
   /**
    * Bind on events of deployment task. 
-   * @param {jQuery.Promise} task 
+   * @param {jQuery.Promise} task
+   * @returns {undefined}
    */
   watchDeployStatus(task) {
     task.done(taskStatus => {
@@ -302,7 +304,8 @@ export default Ember.Component.extend({
     /**
      * Handle new validation state of user options in hosts table. 
      *
-     * @param {boolean} isValid 
+     * @param {boolean} isValid
+     * @returns {undefined}
      */
     hostTableValidChanged(isValid) {
       this.set('_hostTableValid', isValid);

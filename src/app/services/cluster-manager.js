@@ -68,6 +68,8 @@ export default Service.extend({
   // TODO: in future this should be able to get details of any cluster 
   // in system 
   /**
+   * @param {string} clusterId
+   * @param {boolean} [reload=false]
    * @returns {PromiseObject}
    */
   getClusterDetails(clusterId, reload = false) {
@@ -319,6 +321,7 @@ export default Service.extend({
   },
 
   /**
+   * @param {boolean} [discovered=false] see discovered option in REST API
    * @return {Promise} resolves with Array.{ hostname: string }
    */
   getHosts(discovered = false) {

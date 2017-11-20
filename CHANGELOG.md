@@ -4,8 +4,12 @@
 CHANGELOG
 ---------
 
-### 17.06.1
+### Latest changes
 
+* VFS-3661 Improvements in presenting loading state of views and errors
+* VFS-3685 Added space files popularity and space auto cleaning views
+    * redesigned single space view to use tabs (sync. stats, files pop., space auto cleaning)
+* VFS-3710 Using binary prefix units for displaying sizes (MiB, GiB, etc.)
 * VFS-3621 Fixing design of show error component
 * VFS-3620 Showing conflits in names of spaces
 * VFS-3449 Added sync ACL option to import/update settings

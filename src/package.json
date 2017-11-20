@@ -39,6 +39,7 @@
     "ember-cli-mocha": "0.14.4",
     "ember-cli-moment-shim": "3.4.0",
     "ember-cli-node-assets": "0.2.2",
+    "ember-cli-nouislider": "0.13.0",
     "ember-cli-release": "1.0.0-beta.2",
     "ember-cli-sass": "7.0.0",
     "ember-cli-shims": "1.1.0",
@@ -49,7 +50,7 @@
     "ember-cookies": "0.0.13",
     "ember-cp-validations": "3.4.0",
     "ember-export-application-global": "2.0.0",
-    "ember-gestures": "0.4.5",
+    "ember-gestures": "0.4.8",
     "ember-get-config": "0.2.2",
     "ember-hammertime": "1.2.3",
     "ember-i18n": "5.0.2",
@@ -70,7 +71,7 @@
     "ember-sinon": "0.7.0",
     "ember-source": "2.14.1",
     "ember-spin-button": "git+https://github.com/kliput/ember-spin-button.git#4ff0f820b2eafd00775bc81e408898f657112fd3",
-    "ember-spin-spinner": "0.3.1",
+    "ember-spin-spinner": "git+https://github.com/kliput/ember-spin-spinner.git#0740479",
     "ember-truth-helpers": "1.3.0",
     "loader.js": "4.6.0",
     "onepanel": "git+ssh://git@git.plgrid.pl:7999/vfs/onepanel-javascript-client.git#e9aa8381135",
@@ -85,7 +86,6 @@
   "ember-addon": {
     "paths": [
       "lib/ember-onedata-onepanel-server",
-      "lib/ember-plainable",
       "lib/onedata-gui-common"
     ]
   }

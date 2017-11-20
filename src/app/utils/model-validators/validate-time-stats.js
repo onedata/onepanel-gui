@@ -14,6 +14,7 @@ const REQUIRED_PROPERTIES = [
 ];
 
 /**
+ * @param {object} timeStats see TimeStats from onepanel API
  * @returns {boolean} true if timeStats record is valid
  */
 export default function validateTimeStats(timeStats) {

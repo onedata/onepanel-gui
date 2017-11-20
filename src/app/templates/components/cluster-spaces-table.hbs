@@ -8,16 +8,15 @@
 
 {{#one-collapsible-list as |list|}}
   {{#each spaces as |spaceProxy|}}
-    {{!-- TODO error handling, loading indicators? --}}
-    {{#if spaceProxy.isFulfilled}}
-      {{#list.item as |listItem|}}
-        {{cluster-spaces-table-item
-          listItem=listItem
-          space=spaceProxy.content
-          revokeSpace=(action "revokeSpace")
-          submitModifySpace=(action "submitModifySpace" spaceProxy.content)
-        }}
-      {{/list.item}}
-    {{/if}}
+    {{!-- TODO error handling, loading indicators inside item (because of reload) --}}
+    {{#list.item as |listItem|}}
+      {{cluster-spaces-table-item
+        listItem=listItem
+        spaceProxy=spaceProxy
+        provider=provider
+        revokeSpace=(action "revokeSpace")
+        submitModifySpace=(action "submitModifySpace" spaceProxy.content)
+      }}
+    {{/list.item}}
   {{/each}}
 {{/one-collapsible-list}}
