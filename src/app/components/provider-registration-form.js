@@ -422,6 +422,7 @@ export default OneForm.extend(Validations, {
    * @param {FieldType} field Field
    * @param {string} prefix Field prefix
    * @param {boolean} isStatic Should field be static
+   * @returns {object} prepared field
    */
   _preprocessField(field, prefix, isStatic = false) {
     let provider = this.get('provider');

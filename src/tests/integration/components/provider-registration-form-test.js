@@ -17,7 +17,7 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders name, zone domain, subdomain[ delegation], latitude and logitude fields in new mode',
+    'renders name, zone domain, subdomain delegation, latitude and logitude fields in new mode',
     function () {
       this.on('submit', function () {});
 

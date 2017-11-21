@@ -13,9 +13,9 @@ export default {
       label: 'Onezone domain',
     },
     subdomainDelegation: {
-      label: 'Request subdomain',
+      label: 'Request a subdomain',
       tip: 'If enabled, this provider will be assigned a subdomain of your ' +
-        'choice in onezone\'s domain. Onezone will automatically handle DNS ' +
+        'choice in Onezone\'s domain. Onezone will automatically handle DNS ' +
         'configuration for this provider. If disabled, you will need to ' +
         'manually configure hostname and DNS entries for this provider.',
     },
