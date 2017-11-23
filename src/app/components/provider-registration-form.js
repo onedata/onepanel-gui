@@ -392,8 +392,6 @@ export default OneForm.extend(Validations, {
     this.resetFormValues(ALL_PREFIXES);
   })),
 
-  // TODO add domain loading when mode===edit 
-  // (provider does not have information about onezone domain)
   _subdomainSuffixObserver: on('init', observer(
     'mode',
     'allFields',
@@ -502,6 +500,9 @@ export default OneForm.extend(Validations, {
       submitting.finally(() => {
         this.set('_disabled', false);
         Ember.run.next(() => {
+          if (this.isDestroyed) {
+            return;
+          }
           this.validateSync();
           // subdomain field may throw errors, so it should be marked as 
           // changed to show that errors

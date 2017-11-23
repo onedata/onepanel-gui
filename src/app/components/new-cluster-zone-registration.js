@@ -27,9 +27,12 @@ const {
   ProviderRegisterRequest,
 } = Onepanel;
 
+const I18N_PREFIX = 'components.newClusterZoneRegistration.';
+
 export default Component.extend({
   globalNotify: service(),
   onepanelServer: service(),
+  i18n: service(),
 
   /**
    * Subdomains that are reserved and cannot be used
@@ -104,12 +107,12 @@ export default Component.extend({
       let {
         globalNotify,
         _excludedSubdomains,
-      } = this.getProperties('globalNotify', '_excludedSubdomains');
+        i18n,
+      } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n');
       let name = providerData.get('name');
       let submitting = this._submit(providerData);
       submitting.then(() => {
-        // TODO i18n
-        globalNotify.info('Provider registered successfully');
+        globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
         invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
       });
