@@ -6,11 +6,13 @@ import storageImportUpdateForm from './components/storage-import-update-form';
 import spaceStatusIcons from './components/space-status-icons';
 import brandInfo from './components/brand-info';
 import loginBox from './components/login-box';
+import providerRegistrationForm from './components/provider-registration-form';
 import spaceFilesPopularity from './components/space-files-popularity';
 import spaceAutoCleaning from './components/space-auto-cleaning';
 import spaceCleaningReports from './components/space-cleaning-reports';
 import spaceCleaningBarChart from './components/space-cleaning-bar-chart';
 import spaceCleaningConditionsForm from './components/space-cleaning-conditions-form';
+import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -25,11 +27,13 @@ let translations = {
     spaceStatusIcons,
     brandInfo,
     loginBox,
+    providerRegistrationForm,
     spaceFilesPopularity,
     spaceAutoCleaning,
     spaceCleaningReports,
     spaceCleaningBarChart,
     spaceCleaningConditionsForm,
+    newClusterZoneRegistration,
   },
 };
 

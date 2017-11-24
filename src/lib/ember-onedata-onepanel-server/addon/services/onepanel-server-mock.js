@@ -652,8 +652,10 @@ export default OnepanelServerBase.extend(
     __provider: PlainableObject.create({
       id: PROVIDER_ID,
       name: 'Some provider 1',
-      urls: ['172.17.0.4'],
-      redirectionPoint: 'https://172.17.0.4',
+      onezoneDomainName: 'onezone.org',
+      subdomainDelegation: true,
+      subdomain: 'somedomain',
+      domain: 'somedomain.onezone.org',
       geoLatitude: 49.698284,
       geoLongitude: 21.898093,
     }),

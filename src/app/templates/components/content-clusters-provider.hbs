@@ -27,6 +27,7 @@
     <p class="form-description">{{_formDescription}}</p>
     {{#promise-proxy-container proxy=providerProxy}}
       {{provider-registration-form
+        excludedSubdomains=_excludedSubdomains
         mode=_providerFormMode
         provider=providerProxy.content
         submit=(action "submitModify")

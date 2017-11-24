@@ -11,6 +11,7 @@ import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
+import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 
 const {
   inject: {
@@ -26,9 +27,18 @@ const {
   ProviderRegisterRequest,
 } = Onepanel;
 
+const I18N_PREFIX = 'components.newClusterZoneRegistration.';
+
 export default Component.extend({
   globalNotify: service(),
   onepanelServer: service(),
+  i18n: service(),
+
+  /**
+   * Subdomains that are reserved and cannot be used
+   * @type {Array<string>}
+   */
+  _excludedSubdomains: [],
 
   /**
    * @param {Ember.Object} providerData data from provider registration form
@@ -38,13 +48,17 @@ export default Component.extend({
     let {
       name,
       onezoneDomainName,
-      redirectionPoint,
+      subdomainDelegation,
+      subdomain,
+      domain,
       geoLongitude,
       geoLatitude,
     } = providerData.getProperties(
       'name',
       'onezoneDomainName',
-      'redirectionPoint',
+      'subdomainDelegation',
+      'subdomain',
+      'domain',
       'geoLongitude',
       'geoLatitude'
     );
@@ -52,7 +66,9 @@ export default Component.extend({
     let reqProto = stripObject({
       name,
       onezoneDomainName,
-      redirectionPoint,
+      subdomainDelegation,
+      subdomain,
+      domain,
       geoLongitude: Number.parseFloat(geoLongitude),
       geoLatitude: Number.parseFloat(geoLatitude),
     }, [undefined, null, NaN, '']);
@@ -88,15 +104,24 @@ export default Component.extend({
      * @returns {Promise} ``_submit`` promise
      */
     submit(providerData) {
+      let {
+        globalNotify,
+        _excludedSubdomains,
+        i18n,
+      } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n');
       let name = providerData.get('name');
       let submitting = this._submit(providerData);
       submitting.then(() => {
-        // TODO i18n
-        this.get('globalNotify').info('Provider registered successfully');
+        globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
         invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
       });
       submitting.catch(error => {
+        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
+        if (subdomainReservedMsg) {
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
+          error = { error: error.error, message: subdomainReservedMsg };
+        }
         this.get('globalNotify').backendError(
           'provider registration',
           error

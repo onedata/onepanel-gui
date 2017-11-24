@@ -18,10 +18,11 @@ export default Service.extend({
   __providerDetails: {
     id: PROVIDER_ID,
     name: 'Some provider 1',
-    urls: ['172.17.0.4'],
-    redirectionPoint: 'https://172.17.0.4',
+    subdomainDelegation: true,
+    subdomain: 'subdomain',
     geoLatitude: 49.698284,
     geoLongitude: 21.898093,
+    onezoneDomainName: 'zonedomain.com',
   },
 
   providerCache: computed(function () {

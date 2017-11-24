@@ -8,6 +8,7 @@
  */
 
 import Ember from 'ember';
+import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 
 const {
   computed,
@@ -37,6 +38,12 @@ export default Component.extend({
    * @type {PromiseObject}
    */
   providerProxy: null,
+
+  /**
+   * Subdomains that are reserved and cannot be used
+   * @type {Array<string>}
+   */
+  _excludedSubdomains: [],
 
   /**
    * @type {boolean}
@@ -139,7 +146,9 @@ export default Component.extend({
     /**
      * @param {Ember.Object} data
      * @param {string} data.name
-     * @param {string} data.redirectionPoint
+     * @param {boolean} data.subdomainDelegation
+     * @param {string} data.domain
+     * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
      * @returns {Promise<any>} ProviderManager.modifyProvider promise
@@ -148,12 +157,27 @@ export default Component.extend({
       let {
         globalNotify,
         providerManager,
-      } = this.getProperties('globalNotify', 'providerManager');
+        _excludedSubdomains,
+      } = this.getProperties(
+        'globalNotify',
+        'providerManager',
+        '_excludedSubdomains'
+      );
       let modifyProviderData = data.getProperties(
-        'name', 'redirectionPoint', 'geoLongitude', 'geoLatitude'
+        'name',
+        'subdomainDelegation',
+        'subdomain',
+        'domain',
+        'geoLongitude',
+        'geoLatitude'
       );
       let modifying = providerManager.modifyProvider(modifyProviderData);
       modifying.catch(error => {
+        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
+        if (subdomainReservedMsg) {
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
+          error = { error: error.error, message: subdomainReservedMsg };
+        }
         // TODO i18n
         globalNotify.backendError('provider data modification', error);
       });
