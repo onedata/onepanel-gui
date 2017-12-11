@@ -85,7 +85,7 @@ export default Ember.Component.extend({
       const prefix = 'components.spaceCleaningReports.statusValues.';
       if (!stoppedAt) {
         return i18n.t(prefix + 'inProgress');
-      } else if (releasedBytes === bytesToRelease) {
+      } else if (releasedBytes >= bytesToRelease) {
         return i18n.t(prefix + 'success');
       } else {
         return i18n.t(prefix + 'failure');

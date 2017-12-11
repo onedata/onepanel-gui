@@ -1,20 +1,13 @@
-<h1>Deregister provider?</h1>
-<p>
-  Deregistering provider from Zone will cause drop spaces support on 
-  this provider and lost of access to data kept only in this provider.
-</p>
-<p>
-  After leaving a Zone you can register again, but current support 
-  provided for spaces will be lost.
-</p>
+<h1>{{t "components.deregisterProviderConfirm.deregisterProviderHeader"}}</h1>
+<p>{{t "components.deregisterProviderConfirm.deregistrationResults"}}</p>
 <div class="btn-toolbar">
   {{#bs-button class="btn btn-sm" type="info" onClick=closeAction}}
-    No, keep it registered
+    {{t "components.deregisterProviderConfirm.keepItRegistered"}}
   {{/bs-button}}
   {{#one-spin-button
     class="btn btn-sm btn-danger"
     action=submitAction
   }}
-    {{one-icon icon="remove"}} <span>Yes, deregister</span>
+    {{one-icon icon="remove"}} <span>{{t "components.deregisterProviderConfirm.yesDeregister"}}</span>
   {{/one-spin-button}}
 </div>
