@@ -11,7 +11,7 @@
         action=(action "startDeploy")
       }}
         <span>Deploy</span>{{one-icon icon="arrow-right"}}
-        {{bs-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
+        {{one-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
       {{/one-spin-button}}
     </div>
   </h1>
