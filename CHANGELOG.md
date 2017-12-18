@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3883 Porting recent improvements in common components and utils from op-gui-default
 * VFS-3882 Fixed space auto-cleaning report status tooltips; deregister provider message update 
 * VFS-3606 Subdomain delegation functionality for provider
 * VFS-3661 Improvements in presenting loading state of views and errors
