@@ -9,6 +9,7 @@ const {
 export default OnedataApplicationRoute.extend({
   onepanelServer: service(),
   beforeModel() {
+    this._super(...arguments);
     return this.get('onepanelServer').fetchAndSetServiceType();
   },
 });
