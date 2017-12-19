@@ -8,9 +8,11 @@
   </h1>
 </div>
 <div class="row content-row chart-row has-border">
-  {{#if syncChartDataError}}
-    {{resource-load-error reason=syncChartDataError}}
-  {{else}}
-    {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
-  {{/if}}
+  <div class="scrollable-row">
+    {{#if syncChartDataError}}
+      {{resource-load-error reason=syncChartDataError}}
+    {{else}}
+      {{chartist-chart data=chartData options=chartOptions type="bar" class="hide-middle-x-labels"}}
+    {{/if}}
+  </div>
 </div>

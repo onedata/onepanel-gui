@@ -74,6 +74,26 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
     }
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<function>}
+   */
+  chartScrollHandler: computed(function () {
+    return () => this.handleChartScroll();
+  }),
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.$('.scrollable-row').scroll(this.get('chartScrollHandler'));
+  },
+
+  willDestroyElement() {
+    try {
+      this.$('.scrollable-row').off('scroll', this.get('chartScrollHandler'));
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
   getChartLabel(offset) {
     let {
       lastUpdateTime,
@@ -92,5 +112,17 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
     return moment(lastUpdateTime)
       .subtract(offset * timePeriod, timeUnit + 's')
       .format(timeFormat);
+  },
+
+  /**
+   * Hides chart tooltip on scroll and translates tooltip position 
+   * according to x-scroll.
+   */
+  handleChartScroll() {
+    const scrollableRow = this.$('.scrollable-row');
+    const offsetX = scrollableRow.scrollLeft();
+    this.$('.chart-tooltip').css({
+      transform: `translateY(-100%) translateX(-50%) translateX(${-offsetX}px)`,
+    }).removeClass('active');
   },
 });

@@ -1,14 +1,19 @@
 .space-sync-chart-base {
   .chart-row {
+    position: relative;
     .ct-chart .ct-legend {
       white-space: nowrap;
     }
     @media (max-width: 500px) {
-      overflow-x: auto;
-      overflow-y: hidden;
       svg {
         min-width: 400px;
       }
     }
+  }
+  .scrollable-row {
+    overflow-x: auto;
+  }
+  .ct-square {
+    position: initial;
   }
 }
