@@ -9,19 +9,24 @@
 
 import AspectRoute from 'onedata-gui-common/routes/onedata/sidebar/content/aspect';
 import { get } from '@ember/object';
+import { inject } from '@ember/service';
+import { reads } from '@ember/object/computed';
 
 export default AspectRoute.extend({
+  onepanelServer: inject(),
+  onepanelServiceType: reads('onepanelServer.serviceType'),
+
   beforeModel(transition) {
     this._super(...arguments);
-    this._redirectIfClusterNotInitialized(transition);
+    this._redirectClusterAspect(transition);
   },
 
   /**
    * Do not allow to go into clusters' aspects other than index if cluster
-   * is not initialized yet
+   * is not initialized yet or allow only nodes if in Zone
    * @param {Ember.Transition} transition 
    */
-  _redirectIfClusterNotInitialized(transition) {
+  _redirectClusterAspect(transition) {
     const resourceType = get(transition.params['onedata.sidebar'], 'type');
     if (resourceType === 'clusters') {
       const aspectId = get(
@@ -29,8 +34,12 @@ export default AspectRoute.extend({
         'aspectId'
       );
       if (aspectId !== 'index') {
+        const onepanelServiceType = this.get('onepanelServiceType');
         const cluster = get(this.modelFor('onedata.sidebar.content'), 'resource');
-        if (get(cluster, 'isInitialized') === false) {
+        if (
+          get(cluster, 'isInitialized') === false ||
+          (onepanelServiceType === 'zone' && aspectId !== 'nodes')
+        ) {
           this.transitionTo('onedata');
         }
       }
