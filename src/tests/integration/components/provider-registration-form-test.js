@@ -111,4 +111,15 @@ describe('Integration | Component | provider registration form', function () {
       });
     }
   );
+
+  it('accepts valid subdomain field value', function (done) {
+    this.render(hbs `
+      {{provider-registration-form
+        mode="new"}}`);
+
+    fillIn('.field-editSubdomain-subdomain', 'test').then(() => {
+      expect(this.$('.has-error')).not.to.exist;
+      done();
+    });
+  });
 });

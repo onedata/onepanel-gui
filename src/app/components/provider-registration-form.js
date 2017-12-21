@@ -26,6 +26,7 @@ const {
 
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
+const SUBDOMAIN_REGEX = /^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
 
 const COMMON_FIELDS_TOP = [{
     name: 'id',
@@ -57,7 +58,7 @@ const HOSTNAME_FIELD = {
 const SUBDOMAIN_FIELD = {
   name: 'subdomain',
   type: 'text',
-  regex: /^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/,
+  regex: SUBDOMAIN_REGEX,
   tip: true,
 };
 
