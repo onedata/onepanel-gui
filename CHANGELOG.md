@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3706 Do not allow to enter improper routes in panel (fixes also VFS-3895: PATCH request after provider deregistration)
 * VFS-3928 Less restrictive validation of provider/onezone domain name
 * VFS-3592 Added common favicon
 * VFS-3883 Porting recent improvements in common components and utils from op-gui-default
