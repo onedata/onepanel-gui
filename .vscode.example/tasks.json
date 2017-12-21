@@ -9,13 +9,20 @@
   "options": {
     "env": {
       "ONEPANEL_SERVICE_TYPE": "provider",
-      "TMP_GUI_PARENT_DIR": "/Users/kliput/Ubuntu/tmp"
+      "TMP_GUI_PARENT_DIR": "/Users/kliput/Ubuntu/tmp",
+      "TMP_GUI_PARENT_DIR_R": "/home/kliput/tmp"
     }
   },
   "tasks": [
     {
-      "taskName": "deploy to docker",
+      "taskName": "deploy to ct_run docker",
       "args": ["./scripts/deploy-gui-to-onepanel-docker.sh"],
+      "isBuildCommand": false,
+      "suppressTaskName": true
+    },
+    {
+      "taskName": "deploy to getting started docker",
+      "args": ["./scripts/deploy-to-getting-started.sh"],
       "isBuildCommand": true,
       "suppressTaskName": true
     }
