@@ -24,6 +24,9 @@ const {
   },
 } = Ember;
 
+const DOMAIN_REGEX =
+  /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
+
 const COMMON_FIELDS_TOP = [{
     name: 'id',
     type: 'static',
@@ -47,18 +50,14 @@ const COMMON_FIELDS_TOP = [{
 const HOSTNAME_FIELD = {
   name: 'domain',
   type: 'text',
-  // regex taken from
-  // https://stackoverflow.com/questions/7930751/regexp-for-subdomain
-  regex: /^(?!.{256})(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{1,63}|xn--[a-z0-9]{1,59})$/,
+  regex: DOMAIN_REGEX,
   tip: true,
 };
 
 const SUBDOMAIN_FIELD = {
   name: 'subdomain',
   type: 'text',
-  // regex taken from
-  // https://stackoverflow.com/questions/7930751/regexp-for-subdomain
-  regex: /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/,
+  regex: /^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/,
   tip: true,
 };
 
@@ -116,6 +115,10 @@ VALIDATIONS_PROTO['allFieldsValues.editTop.onezoneDomainName'] = [
     disabled: computed('model.mode', function () {
       return this.get('model.mode') !== 'new';
     }),
+  }),
+  validator('format', {
+    regex: DOMAIN_REGEX,
+    allowBlank: true,
   }),
 ];
 

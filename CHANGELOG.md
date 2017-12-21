@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3928 Less restrictive validation of provider/onezone domain name
 * VFS-3592 Added common favicon
 * VFS-3883 Porting recent improvements in common components and utils from op-gui-default
 * VFS-3677 Fix for tooltip positioning in mobile view
