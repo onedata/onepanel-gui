@@ -14,6 +14,7 @@ import spaceCleaningBarChart from './components/space-cleaning-bar-chart';
 import spaceCleaningConditionsForm from './components/space-cleaning-conditions-form';
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import deregisterProviderConfirm from './components/deregister-provider-confirm';
+import contentClustersSpaces from './components/content-clusters-spaces';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -36,6 +37,7 @@ let translations = {
     spaceCleaningConditionsForm,
     newClusterZoneRegistration,
     deregisterProviderConfirm,
+    contentClustersSpaces,
   },
 };
 
