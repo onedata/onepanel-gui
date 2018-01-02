@@ -363,7 +363,9 @@ export default OnepanelServerBase.extend(
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
           } else {
-            return null;
+            throw new Error(
+              `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
+            );
           }
         },
       };

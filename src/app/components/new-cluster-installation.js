@@ -15,6 +15,8 @@ import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 
 const {
   A,
@@ -37,7 +39,7 @@ const {
   },
 } = Onepanel;
 
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
 function getClusterHostname(hostnames) {
   return hostnames.objectAt(0);
@@ -65,8 +67,17 @@ export default Ember.Component.extend({
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
+  cookies: service(),
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
+
+  /**
+   * @virtual optional
+   * @type {string}
+   * If the cluster deployment is in progress on initializing this component,
+   * this property should contain ID of server deployment task.
+   */
+  deploymentTaskId: undefined,
 
   primaryClusterManager: null,
 
@@ -83,6 +94,15 @@ export default Ember.Component.extend({
    * @type {boolean}
    */
   canDeploy: false,
+
+  /**
+   * The promise resolves when we know if we have unfinished deployment.
+   * Initiliazed in `init`.
+   * @type {PromiseObject}
+   */
+  deploymentStatusProxy: undefined,
+
+  deploymentStatusLoading: computed.reads('deploymentStatusProxy.isPending'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
@@ -118,8 +138,20 @@ export default Ember.Component.extend({
       })
     );
 
-    if (this.get('onepanelServiceType') === 'provider') {
+    const {
+      deploymentTaskId,
+      onepanelServiceType,
+      onepanelServer,
+    } = this.getProperties('deploymentTaskId', 'onepanelServer', 'onepanelServiceType');
+
+    if (onepanelServiceType === 'provider') {
       this.set('_zoneOptionsValid', true);
+    }
+
+    if (deploymentTaskId) {
+      const task = watchTaskStatus(onepanelServer, deploymentTaskId);
+      this.showDeployProgress(task);
+      this.watchDeployStatus(task);
     }
   },
 
@@ -217,9 +249,29 @@ export default Ember.Component.extend({
   },
 
   /**
+   * Save deployment server task ID in case if page will be refreshed
+   * @param {string} taskId
+   */
+  storeDeploymentTask(taskId) {
+    assert(
+      'component:new-cluster-installation: tried to store empty taskId',
+      taskId
+    );
+    this.get('cookies').write(COOKIE_DEPLOYMENT_TASK_ID, taskId);
+  },
+
+  /**
+   * Clear stored last deployment task ID (deployment task has finished)
+   */
+  clearDeploymentTask() {
+    this.get('cookies').clear(COOKIE_DEPLOYMENT_TASK_ID);
+  },
+
+  /**
    * Makes a backend call to start cluster deployment and watches deployment process.
    * Returned promise resolves when deployment started (NOTE: not when it finishes).
-   * The promise resolves with a jq.Promise of deployment task.
+   * The promise resolves with a onepanelServer.request resolve result
+   * (contains task property with jq.Promise of deployment task).
    * @return {Promise}
    */
   _startDeploy() {
@@ -257,6 +309,7 @@ export default Ember.Component.extend({
    */
   watchDeployStatus(task) {
     task.done(taskStatus => {
+      this.clearDeploymentTask();
       if (taskStatus.status === StatusEnum.ok) {
         this.configureFinished(taskStatus);
       } else {
@@ -332,6 +385,7 @@ export default Ember.Component.extend({
 
       let start = this._startDeploy();
       start.then(({ task }) => {
+        this.storeDeploymentTask(task.taskId);
         this.showDeployProgress(task);
         this.watchDeployStatus(task);
       });

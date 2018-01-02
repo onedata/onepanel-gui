@@ -15,6 +15,7 @@ import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: { service },
+  computed,
   computed: { readOnly },
 } = Ember;
 
@@ -40,30 +41,86 @@ const STEPS_ZONE = [{
   title: 'summary',
 }];
 
+const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
+
 export default Ember.Component.extend({
   onepanelServer: service(),
+  cookies: service(),
+
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   currentStepIndex: 0,
 
   _isInProcess: false,
 
+  /**
+   * @type {boolean}
+   */
+  isLoading: false,
+
   // TODO: i18n
   steps: [],
+
+  wizardIndex: computed('currentStepIndex', function () {
+    return Math.floor(this.get('currentStepIndex'));
+  }),
 
   init() {
     this._super(...arguments);
     let onepanelServiceType = this.get('onepanelServiceType');
     let clusterInitStep = this.get('cluster.initStep');
-    this.set('currentStepIndex', clusterInitStep);
-    this.set('_isInProcess', clusterInitStep > 0);
-    this.set('steps', onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE);
+    this.setProperties({
+      currentStepIndex: clusterInitStep,
+      _isInProcess: clusterInitStep > 0,
+      steps: onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE,
+    });
+    if (clusterInitStep === 0) {
+      this.set('isLoading', true);
+      this._checkUnfinishedDeployment()
+        .then(taskId => {
+          if (!this.isDestroyed && taskId) {
+            this.setProperties({
+              deploymentTaskId: taskId ? taskId : undefined,
+              _isInProcess: true,
+              currentStepIndex: 0.5,
+            });
+          }
+        })
+        .finally(() => !this.isDestroyed && this.set('isLoading', false));
+    }
+  },
+
+  /**
+   * Checks if there is saved task in cookies for checking for deployment status
+   * @returns {Promise} resolves with deployment task ID if the deployment is in progress;
+   *   resolves with false if there is no (known for us) deployment in progress;
+   *   if there is a request error it resolves with false (eg. when task status cannot be fetched)
+   */
+  _checkUnfinishedDeployment() {
+    const {
+      cookies,
+      onepanelServer,
+    } = this.getProperties('cookies', 'onepanelServer');
+    const deploymentTaskId = cookies.read(COOKIE_DEPLOYMENT_TASK_ID);
+    if (deploymentTaskId) {
+      return onepanelServer.request('onepanel', 'getTaskStatus', deploymentTaskId)
+        .then(({ data: { status } }) => {
+          return status === 'running' ? deploymentTaskId : false;
+        })
+        .catch(() => {
+          cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
+          return false;
+        });
+    } else {
+      return Promise.resolve(false);
+    }
   },
 
   actions: {
     next() {
-      this.set('cluster.initStep', this.get('currentStepIndex') + 1);
-      this.incrementProperty('currentStepIndex');
+      const nextStep = nextInt(this.get('currentStepIndex'));
+      this.set('cluster.initStep', nextStep);
+      this.set('currentStepIndex', nextStep);
     },
     changeClusterName(name) {
       this.set('cluster.name', name);
@@ -73,3 +130,7 @@ export default Ember.Component.extend({
     },
   },
 });
+
+function nextInt(i) {
+  return Number.isInteger(i) ? (i + 1) : Math.ceil(i);
+}
