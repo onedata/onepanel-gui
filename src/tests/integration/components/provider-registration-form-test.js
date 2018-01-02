@@ -77,4 +77,49 @@ describe('Integration | Component | provider registration form', function () {
       });
     });
   });
+
+  it('accepts IP address in onezone domain and provider domain fields',
+    function (done) {
+      this.render(hbs `
+        {{provider-registration-form
+          mode="new"}}`);
+
+      click('.toggle-field-editTop-subdomainDelegation').then(() => {
+        fillIn('.field-editTop-onezoneDomainName', '10.10.10.10').then(() => {
+          fillIn('.field-editDomain-domain', '12.12.12.12').then(() => {
+            expect(this.$('.has-error')).not.to.exist;
+            done();
+          });
+        });
+      });
+    }
+  );
+
+  it('accepts domain name in onezone domain and provider domain fields',
+    function (done) {
+      this.render(hbs `
+        {{provider-registration-form
+          mode="new"}}`);
+
+      click('.toggle-field-editTop-subdomainDelegation').then(() => {
+        fillIn('.field-editTop-onezoneDomainName', 'abc.def.com').then(() => {
+          fillIn('.field-editDomain-domain', 'xyz.com').then(() => {
+            expect(this.$('.has-error')).not.to.exist;
+            done();
+          });
+        });
+      });
+    }
+  );
+
+  it('accepts valid subdomain field value', function (done) {
+    this.render(hbs `
+      {{provider-registration-form
+        mode="new"}}`);
+
+    fillIn('.field-editSubdomain-subdomain', 'test').then(() => {
+      expect(this.$('.has-error')).not.to.exist;
+      done();
+    });
+  });
 });
