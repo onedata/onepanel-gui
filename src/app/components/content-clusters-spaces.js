@@ -156,41 +156,65 @@ export default Component.extend({
       return this.set('_supportSpaceOpened', false);
     },
     submitSupportSpace(supportSpaceData) {
-      let globalNotify = this.get('globalNotify');
+      const {
+        globalNotify,
+        i18n,
+      } = this.getProperties('globalNotify', 'i18n');
       let supportingSpace = this._supportSpace(supportSpaceData);
       supportingSpace.then(() => {
         this._updateSpacesList();
         this.set('_supportSpaceOpened', false);
         globalNotify.info(
-          'Added a new support for space'
+          i18n.t('components.contentClustersSpaces.supportSuccess')
         );
       });
       return supportingSpace;
     },
     // TODO currently space can be either object or ember object
     revokeSpace(space) {
-      let globalNotify = this.get('globalNotify');
+      const {
+        globalNotify,
+        i18n,
+      } = this.getProperties('globalNotify', 'i18n');
       let revoking = this._revokeSpace(get(space, 'id'));
+      const spaceName = get(space, 'name');
       revoking.then(() => {
         this._updateSpacesList();
         globalNotify.info(
-          `Support for space "${get(space, 'name')}" has been revoked`
+          i18n.t('components.contentClustersSpaces.revokeSuccess', {
+            spaceName,
+          })
         );
       });
       revoking.catch(error => {
-        globalNotify.backendError('space support revocation', error);
+        globalNotify.backendError(
+          i18n.t('components.contentClustersSpaces.revocationAction'),
+          error
+        );
       });
       return revoking;
     },
     modifySpace(space, data) {
-      let globalNotify = this.get('globalNotify');
+      const {
+        globalNotify,
+        i18n,
+      } = this.getProperties('globalNotify', 'i18n');
       let spaceName = get(space, 'name');
       let spaceId = get(space, 'id');
       return this._modifySpace(spaceId, data)
+        .then(() => {
+          globalNotify.info(
+            i18n.t('components.contentClustersSpaces.configurationChanged', {
+              spaceName,
+            })
+          );
+        })
         .catch(error => {
           // TODO: handle error on higher levels to produce better message
           globalNotify.backendError(
-            `configuration of "${spaceName}"`,
+            i18n.t('components.contentClustersSpaces.configurationAction', {
+              spaceName,
+            }),
             error
           );
           throw error;
