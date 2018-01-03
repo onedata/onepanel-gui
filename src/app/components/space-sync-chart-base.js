@@ -16,7 +16,6 @@ import SpaceSyncChartDataValidator from 'onepanel-gui/mixins/components/space-sy
 
 const {
   computed,
-  computed: { readOnly },
 } = Ember;
 
 export default Ember.Component.extend(SpaceSyncChartDataValidator, {
@@ -38,7 +37,7 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
    * A date on right side of the chart
    * @type {Date}
    */
-  lastUpdateTime: readOnly('timeStats.lastValueDate'),
+  lastUpdateTime: computed.reads('timeStats.firstObject.lastValueDate'),
 
   emptyTimePeriod: computed('timeParts', function () {
     return _.times(this.get('timeParts'), () => 0);
