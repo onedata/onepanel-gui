@@ -11,13 +11,21 @@
  */
 
 import Ember from 'ember';
+import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
 
 const {
   inject: { service },
   computed,
   computed: { readOnly },
+  get,
 } = Ember;
+
+const {
+  TaskStatus: {
+    StatusEnum,
+  },
+} = Onepanel;
 
 const STEPS_PROVIDER = [{
   id: 'installation',
@@ -46,6 +54,7 @@ const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 export default Ember.Component.extend({
   onepanelServer: service(),
   cookies: service(),
+  clusterManager: service(),
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
@@ -91,10 +100,11 @@ export default Ember.Component.extend({
   },
 
   /**
-   * Checks if there is saved task in cookies for checking for deployment status
+   * Checks if there is saved task in cookies for checking for deployment status.
+   * Should be invoked only if the clusterInitStep is 0!
    * @returns {Promise} resolves with deployment task ID if the deployment is in progress;
-   *   resolves with false if there is no (known for us) deployment in progress;
-   *   if there is a request error it resolves with false (eg. when task status cannot be fetched)
+   *   resolves with undefined if there is no (known for us) deployment in progress;
+   *   if there is a request error it resolves with undefined (eg. when task status cannot be fetched)
    */
   _checkUnfinishedDeployment() {
     const {
@@ -105,25 +115,55 @@ export default Ember.Component.extend({
     if (deploymentTaskId) {
       return onepanelServer.request('onepanel', 'getTaskStatus', deploymentTaskId)
         .then(({ data: { status } }) => {
-          return status === 'running' ? deploymentTaskId : false;
+          switch (status) {
+            case StatusEnum.running:
+              return deploymentTaskId;
+            case StatusEnum.ok:
+              if (this.get('currentStepIndex') < 1) {
+                cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
+                this.set('cluster.initStep', 1);
+                this.setProperties({
+                  _isInProcess: true,
+                  currentStepIndex: 1,
+                });
+              }
+              return undefined;
+            case StatusEnum.error:
+            default:
+              cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
+              return undefined;
+          }
         })
         .catch(() => {
           cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
-          return false;
+          return undefined;
         });
     } else {
-      return Promise.resolve(false);
+      return Promise.resolve(undefined);
     }
+  },
+
+  /**
+   * Go to next deployment step
+   */
+  _next() {
+    const nextStep = nextInt(this.get('currentStepIndex'));
+    this.set('cluster.initStep', nextStep);
+    this.set('currentStepIndex', nextStep);
   },
 
   actions: {
     next() {
-      const nextStep = nextInt(this.get('currentStepIndex'));
-      this.set('cluster.initStep', nextStep);
-      this.set('currentStepIndex', nextStep);
+      this._next();
     },
     changeClusterName(name) {
-      this.set('cluster.name', name);
+      if (!name) {
+        this.get('clusterManager')
+          .getClusterDetails(this.get('cluster.id'), true)
+          .then(cluster => get(cluster, 'name'));
+      } else {
+        this.set('cluster.name', name);
+      }
     },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');
