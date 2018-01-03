@@ -171,6 +171,11 @@ export default Ember.Component.extend({
   },
 });
 
+/**
+ * Returns next integer for given number (e.g. 1 => 2; 1.3 => 2; 1.6 => 2)
+ * @param {number} i
+ * @returns {number} an integer
+ */
 function nextInt(i) {
-  return Number.isInteger(i) ? (i + 1) : Math.ceil(i);
+  return Math.floor(i + 1);
 }
