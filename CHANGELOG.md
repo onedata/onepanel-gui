@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3636 Fix for invalid date in synchronization statistics charts
 * VFS-3202 Try to detect unfinished cluster deployment on page refresh
 * VFS-3870 Show notify after space support settings change
 * VFS-3706 Do not allow to enter improper routes in panel (fixes also VFS-3895: PATCH request after provider deregistration)
