@@ -1,8 +1,18 @@
-<h1>Deploying cluster, please wait...</h1>
+<h1>{{t "components.newClusterDeployProgress.deploying"}}</h1>
 {{#bs-progress as |p|}}
-  {{p.bar
-    value=progress minValue=0 maxValue=1 showLabel=false
-    type="primary" animate=true
-  }}
+  {{#if step}}
+    {{p.bar
+      value=progress minValue=0 maxValue=1 showLabel=false
+      type="primary" animate=true
+    }}
+  {{else}}
+    {{p.bar
+      value=1 minValue=0 maxValue=1 showLabel=false
+      type="unknown" class="progress-bar-striped active"
+    }}
+  {{/if}}
 {{/bs-progress}}
-<p><strong>Stage:</strong> {{step}}</p>
+<p>
+  <strong>{{t "components.newClusterDeployProgress.stage"}}:</strong>
+  {{stepText}}
+</p>

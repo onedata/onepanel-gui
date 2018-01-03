@@ -46,8 +46,11 @@ function workerSteps(type) {
  * @param {string} type one of: "zone", "provider"
  * @returns {Array<string>}
  */
-function clusterDeploySteps(type) {
+export default function clusterDeploySteps(type) {
   return COMMON_DEPLOY_STEPS.concat(workerSteps(type));
 }
 
-export default clusterDeploySteps;
+export const KNOWN_STEPS = COMMON_DEPLOY_STEPS.concat(
+  workerSteps('p'),
+  workerSteps('z'),
+);

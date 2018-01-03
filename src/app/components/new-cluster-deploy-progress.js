@@ -8,18 +8,22 @@
  */
 
 import Ember from 'ember';
+import _ from 'lodash';
 
-import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
+import { default as generateClusterDeploySteps, KNOWN_STEPS } from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
+  Component,
   computed,
   computed: { readOnly },
   observer,
   inject: { service },
 } = Ember;
 
+const RE_STEP = /service_?(.*):(.*)/;
+
 // TODO this can be made a generic taskStatus progress component
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['new-cluster-deploy-progress'],
 
   onepanelServer: service(),
@@ -34,9 +38,39 @@ export default Ember.Component.extend({
   step: null,
   isDone: false,
 
+  /**
+   * Number in range 0..1 - last known progress, in case when there is an unknown
+   * step to display between known steps
+   * @type {number}
+   */
+  _lastKnownProgress: undefined,
+
+  stepText: computed('step', function () {
+    const {
+      step,
+      i18n,
+    } = this.getProperties('step', 'i18n');
+    if (step) {
+      const [, service, action] = RE_STEP.exec(step);
+      if (_.includes(KNOWN_STEPS, step)) {
+        const tservice = service ?
+          i18n.t(`components.newClusterDeployProgress.steps.service.${service}`) :
+          '';
+        return i18n.t(`components.newClusterDeployProgress.steps.action.${action}`, {
+          service: tservice,
+        });
+      } else {
+        return step;
+      }
+    } else {
+      return i18n.t('components.newClusterDeployProgress.steps.unknown');
+    }
+  }),
+
   clusterDeploySteps: computed('onepanelServiceType', function () {
+    // return generateClusterDeploySteps(this.get('onepanelServiceType'));
     return generateClusterDeploySteps(this.get('onepanelServiceType'));
-  }).readOnly(),
+  }),
 
   /**
    * A progress in range 0..1 for progress bar.
@@ -46,14 +80,15 @@ export default Ember.Component.extend({
     if (this.get('isDone')) {
       return 1;
     } else {
-      let step = this.get('step');
-      let clusterDeploySteps = this.get('clusterDeploySteps');
-      let stepIndex = clusterDeploySteps.indexOf(step);
+      const step = this.get('step');
+      const clusterDeploySteps = this.get('clusterDeploySteps');
+      const stepIndex = clusterDeploySteps.indexOf(step);
       if (stepIndex !== -1) {
-        return stepIndex / clusterDeploySteps.length;
+        const progress = stepIndex / clusterDeploySteps.length;
+        this.set('_lastKnownProgress', progress);
+        return progress;
       } else {
-        // TODO handle invalid/not known steps
-        return undefined;
+        return this.get('_lastKnownProgress');
       }
     }
   }),

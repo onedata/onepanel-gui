@@ -15,6 +15,7 @@ import spaceCleaningConditionsForm from './components/space-cleaning-conditions-
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import deregisterProviderConfirm from './components/deregister-provider-confirm';
 import contentClustersSpaces from './components/content-clusters-spaces';
+import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -38,6 +39,7 @@ let translations = {
     newClusterZoneRegistration,
     deregisterProviderConfirm,
     contentClustersSpaces,
+    newClusterDeployProgress,
   },
 };
 
