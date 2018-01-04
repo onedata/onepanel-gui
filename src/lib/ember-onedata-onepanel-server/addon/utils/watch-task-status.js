@@ -1,3 +1,12 @@
+/**
+ * Periodically checks the status of server task using REST API, eg. of deployment
+ *
+ * @module utils/watch-task-status
+ * @author Jakub Liput
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Onepanel from 'npm:onepanel';
 
 const {
