@@ -21,6 +21,7 @@ const {
 } = Ember;
 
 const RE_STEP = /service_?(.*):(.*)/;
+const I18N_PREFIX_STEPS = 'components.newClusterDeployProgress.steps.';
 
 // TODO this can be made a generic taskStatus progress component
 export default Component.extend({
@@ -45,7 +46,11 @@ export default Component.extend({
    */
   _lastKnownProgress: undefined,
 
-  stepText: computed('step', function () {
+  /**
+   * Translated step description
+   * @type {string}
+   */
+  stepText: computed('step', function getStepText() {
     const {
       step,
       i18n,
@@ -54,21 +59,20 @@ export default Component.extend({
       const [, service, action] = RE_STEP.exec(step);
       if (_.includes(KNOWN_STEPS, step)) {
         const tservice = service ?
-          i18n.t(`components.newClusterDeployProgress.steps.service.${service}`) :
+          i18n.t(`${I18N_PREFIX_STEPS}service.${service}`) :
           '';
-        return i18n.t(`components.newClusterDeployProgress.steps.action.${action}`, {
+        return i18n.t(`${I18N_PREFIX_STEPS}action.${action}`, {
           service: tservice,
         });
       } else {
         return step;
       }
     } else {
-      return i18n.t('components.newClusterDeployProgress.steps.unknown');
+      return i18n.t(`${I18N_PREFIX_STEPS}unknown`);
     }
   }),
 
   clusterDeploySteps: computed('onepanelServiceType', function () {
-    // return generateClusterDeploySteps(this.get('onepanelServiceType'));
     return generateClusterDeploySteps(this.get('onepanelServiceType'));
   }),
 
@@ -76,12 +80,15 @@ export default Component.extend({
    * A progress in range 0..1 for progress bar.
    * @type {computed<number>}
    */
-  progress: computed('step', 'isDone', function () {
-    if (this.get('isDone')) {
+  progress: computed('step', 'isDone', 'clusterDeploySteps', function getProgress() {
+    const {
+      isDone,
+      step,
+      clusterDeploySteps,
+    } = this.getProperties('isDone', 'step', 'clusterDeploySteps');
+    if (isDone) {
       return 1;
     } else {
-      const step = this.get('step');
-      const clusterDeploySteps = this.get('clusterDeploySteps');
       const stepIndex = clusterDeploySteps.indexOf(step);
       if (stepIndex !== -1) {
         const progress = stepIndex / clusterDeploySteps.length;
