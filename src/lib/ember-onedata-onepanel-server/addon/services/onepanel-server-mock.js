@@ -5,7 +5,7 @@
  *
  * @module services/onepanel-server-mock
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -363,7 +363,9 @@ export default OnepanelServerBase.extend(
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
           } else {
-            return null;
+            throw new Error(
+              `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
+            );
           }
         },
       };

@@ -1,3 +1,12 @@
+/**
+ * Periodically checks the status of server task using REST API, eg. of deployment
+ *
+ * @module utils/watch-task-status
+ * @author Jakub Liput
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Onepanel from 'npm:onepanel';
 
 const {
@@ -48,7 +57,8 @@ function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) 
  * @param {OnepanelServer} onepanelServer
  * @param {string} taskId
  * @param {number} [interval] interval of requests in ms
- * @returns {jQuery.Promise}
+ * @returns {jQuery.Promise} it has additional property: `taskId` which stores
+ *    passed taskId
  */
 function watchTaskStatus(onepanelServer, taskId, interval = 1000) {
   let deferred = new Deferred();
@@ -62,7 +72,9 @@ function watchTaskStatus(onepanelServer, taskId, interval = 1000) {
 
   scheduleTaskCheck();
 
-  return deferred.promise();
+  const promise = deferred.promise();
+  promise.taskId = taskId;
+  return promise;
 }
 
 export default watchTaskStatus;
