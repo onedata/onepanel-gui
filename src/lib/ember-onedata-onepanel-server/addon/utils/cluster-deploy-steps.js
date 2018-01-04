@@ -3,7 +3,7 @@
  *
  * @module utils/cluster-deploy-steps
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -46,8 +46,11 @@ function workerSteps(type) {
  * @param {string} type one of: "zone", "provider"
  * @returns {Array<string>}
  */
-function clusterDeploySteps(type) {
+export default function clusterDeploySteps(type) {
   return COMMON_DEPLOY_STEPS.concat(workerSteps(type));
 }
 
-export default clusterDeploySteps;
+export const KNOWN_STEPS = COMMON_DEPLOY_STEPS.concat(
+  workerSteps('p'),
+  workerSteps('z'),
+);
