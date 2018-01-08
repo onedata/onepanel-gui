@@ -11,4 +11,8 @@
   .login-logo {
     background-image: url($root-url + 'assets/images/control-panel.svg');
   }
+  .basicauth-login-form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
 }

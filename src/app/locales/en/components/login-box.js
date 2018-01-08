@@ -1,3 +1,5 @@
 export default {
-  brandSubtitle: 'control panel',
+  header: {
+    brandSubtitle: 'control panel',
+  },
 };

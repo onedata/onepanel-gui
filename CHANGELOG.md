@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3619 Refactor of login page components
 * VFS-3205 Improvements in displaying deployment steps
 * VFS-3636 Fix for invalid date in synchronization statistics charts
 * VFS-3202 Try to detect unfinished cluster deployment on page refresh
