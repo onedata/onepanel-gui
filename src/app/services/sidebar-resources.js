@@ -36,4 +36,16 @@ export default Ember.Service.extend({
         return new Promise((resolve, reject) => reject('No such collection: ' + type));
     }
   },
+
+  /**
+   * Returns sidebar buttons definitions
+   * @param {string} type
+   * @returns {Array<object>}
+   */
+  getButtonsFor(type) {
+    switch (type) {
+      default:
+        return [];
+    }
+  },
 });
