@@ -18,6 +18,10 @@
           nextStep=(action "next")
           changeClusterName=(action "changeClusterName")
         }}
+      {{else if (eq w.step.id "provider-cert")}}
+        {{new-cluster-provider-cert
+          nextStep=(action "next")
+        }}
       {{else if (eq w.step.id "provider-storage")}}
         {{manage-cluster-storages nextStep=(action "next")}}
       {{else if (eq w.step.id "summary")}}

@@ -1,3 +1,7 @@
+const ONEPROVIDER_CERT_INTRO =
+  'Every Oneprovider instance requires valid, trusted TLS certificates ' +
+  'to communicate with other providers and ensure safety of its users. ';
+
 export default {
   register: 'Register',
   modifyProviderDetails: 'Modify provider details',
@@ -8,6 +12,12 @@ export default {
     },
     name: {
       label: 'Provider name',
+    },
+    adminEmail: {
+      label: 'Admin e-mail',
+      tip: 'Provide your e-mail address so that the Onezone admin can reach you. ' +
+        'The e-mail will be used only for contact concerning administration ' +
+        'of your Oneprovider instance.',
     },
     onezoneDomainName: {
       label: 'Onezone domain',
@@ -26,6 +36,12 @@ export default {
         'nodes, otherwise the load will not be distributed between them. You ' +
         'will need a web certificate issued for that domain and signed by a ' +
         'trusted CA to ensure safe connection for users.',
+    },
+    letsEncryptEnabled: {
+      label: 'Use Let\'s Encrypt',
+      tip: ONEPROVIDER_CERT_INTRO +
+        'Certificates can be automatically obtained from the Let\'s Encrypt service. ' +
+        'Otherwise, you have to manually obtain and set up proper certificates.',
     },
     subdomain: {
       label: 'Subdomain',

@@ -53,6 +53,7 @@ export default Component.extend({
       domain,
       geoLongitude,
       geoLatitude,
+      adminEmail,
     } = providerData.getProperties(
       'name',
       'onezoneDomainName',
@@ -60,7 +61,8 @@ export default Component.extend({
       'subdomain',
       'domain',
       'geoLongitude',
-      'geoLatitude'
+      'geoLatitude',
+      'adminEmail',
     );
 
     let reqProto = stripObject({
@@ -69,6 +71,7 @@ export default Component.extend({
       subdomainDelegation,
       subdomain,
       domain,
+      adminEmail,
       geoLongitude: Number.parseFloat(geoLongitude),
       geoLatitude: Number.parseFloat(geoLatitude),
     }, [undefined, null, NaN, '']);

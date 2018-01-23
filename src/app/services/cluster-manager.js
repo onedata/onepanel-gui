@@ -9,7 +9,7 @@
 
 import Ember from 'ember';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import ClusterDetails from 'onepanel-gui/models/cluster-details';
+import ClusterDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 
 const {
@@ -22,6 +22,7 @@ const {
   computed: { alias, readOnly },
   ObjectProxy,
   String: { camelize },
+  get,
 } = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -224,7 +225,8 @@ export default Service.extend({
   // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
-   * @returns {Promise}
+   * @returns {Promise} resolves with
+   *  `{ isRegistered: boolean, [providerDetails]: <provider details object if avail.> }`
    */
   _checkIsProviderRegistered(onepanelServer) {
     return new Promise((resolve, reject) => {
@@ -233,7 +235,7 @@ export default Service.extend({
 
       gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
-        resolve(!!providerDetails);
+        resolve({ isRegistered: !!providerDetails, providerDetails: providerDetails });
       });
       gettingProvider.catch(error => {
         if (error == null || error.response == null) {
@@ -275,8 +277,9 @@ export default Service.extend({
    * - 0: no installation done, initial
    * state, show "you have no cluster yet..."
    * - 1: installation done, but not registered - show registration step
-   * - 2: installation and registration done, but no storage added yet - show add storage step
-   * - 3: all done, should not show steps
+   * - 2: installation and registration done, can generate cert
+   * - 3: cert installed, no storage added yet - show add storage step
+   * - 4: all done, should not show steps
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
@@ -286,28 +289,41 @@ export default Service.extend({
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
 
     return new Promise((resolve, reject) => {
-      let checkConfig = this._checkIsConfigurationDone(onepanelServer);
+      const checkConfig = this._checkIsConfigurationDone(onepanelServer);
 
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {
           // TODO VFS-3119
           if (onepanelServiceType === 'zone') {
-            resolve(1);
+            resolve(STEP.ZONE_DEPLOY + 1);
           } else {
-            let checkRegister = this._checkIsProviderRegistered(onepanelServer);
-            checkRegister.then(isProviderRegistered => {
+            const checkRegister = this._checkIsProviderRegistered(
+              onepanelServer
+            );
+            checkRegister.then(({
+              isRegistered: isProviderRegistered,
+              providerDetails,
+            }) => {
               if (isProviderRegistered) {
-                let checkStorage = this._checkIsAnyStorage(onepanelServer);
-                checkStorage.then(isAnyStorage => {
-                  if (isAnyStorage) {
-                    resolve(3);
-                  } else {
-                    resolve(2);
-                  }
-                });
-                checkStorage.catch(reject);
+                if (
+                  get(providerDetails, 'letsEncryptEnabled') !== undefined
+                ) {
+                  const checkStorage = this._checkIsAnyStorage(
+                    onepanelServer
+                  );
+                  checkStorage.then(isAnyStorage => {
+                    if (isAnyStorage) {
+                      resolve(STEP.PROVIDER_STORAGE_ADD + 1);
+                    } else {
+                      resolve(STEP.PROVIDER_STORAGE_ADD);
+                    }
+                  });
+                  checkStorage.catch(reject);
+                } else {
+                  resolve(STEP.PROVIDER_CERT_GENERATE);
+                }
               } else {
-                resolve(1);
+                resolve(STEP.PROVIDER_REGISTER);
               }
             });
             checkRegister.catch(reject);

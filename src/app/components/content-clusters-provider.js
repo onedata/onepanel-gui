@@ -148,6 +148,7 @@ export default Component.extend({
      * @param {string} data.name
      * @param {boolean} data.subdomainDelegation
      * @param {string} data.domain
+     * @param {string} data.letsEncryptEnabled
      * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
@@ -168,6 +169,8 @@ export default Component.extend({
         'subdomainDelegation',
         'subdomain',
         'domain',
+        'letsEncryptEnabled',
+        'adminEmail',
         'geoLongitude',
         'geoLatitude'
       );

@@ -28,6 +28,9 @@ const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
 const SUBDOMAIN_REGEX = /^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
 
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 const COMMON_FIELDS_TOP = [{
     name: 'id',
     type: 'static',
@@ -55,6 +58,13 @@ const HOSTNAME_FIELD = {
   tip: true,
 };
 
+const LETSENCRYPT_ENABLED_FIELD = {
+  name: 'letsEncryptEnabled',
+  type: 'checkbox',
+  defaultValue: false,
+  tip: true,
+};
+
 const SUBDOMAIN_FIELD = {
   name: 'subdomain',
   type: 'text',
@@ -63,6 +73,11 @@ const SUBDOMAIN_FIELD = {
 };
 
 const COMMON_FIELDS_BOTTOM = [{
+    name: 'adminEmail',
+    type: 'text',
+    regex: EMAIL_REGEX,
+    tip: true,
+  }, {
     name: 'geoLatitude',
     type: 'number',
     step: 0.000001,
@@ -128,10 +143,12 @@ const ALL_PREFIXES = [
   'editTop',
   'editBottom',
   'editDomain',
+  'editletsEncryptEnabled',
   'editSubdomain',
   'showTop',
   'showBottom',
   'showDomain',
+  'showletsEncryptEnabled',
   'showSubdomain',
 ];
 
@@ -182,9 +199,19 @@ export default OneForm.extend(Validations, {
     switch (mode) {
       case 'show':
         if (_subdomainDelegation) {
-          return ['showTop', 'showSubdomain', 'showBottom'];
+          return ['showTop', 'showSubdomain', 'showletsEncryptEnabled',
+            'showBottom',
+          ];
         } else {
           return ['showTop', 'showDomain', 'showBottom'];
+        }
+      case 'edit':
+        if (_subdomainDelegation) {
+          return ['editTop', 'editSubdomain', 'editletsEncryptEnabled',
+            'editBottom',
+          ];
+        } else {
+          return ['editTop', 'editDomain', 'editBottom'];
         }
       default:
         if (_subdomainDelegation) {
@@ -210,6 +237,7 @@ export default OneForm.extend(Validations, {
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
+      letsEncryptEnabledField: prepareField(LETSENCRYPT_ENABLED_FIELD),
       subdomainField: prepareField(SUBDOMAIN_FIELD),
     });
     return fields;
@@ -255,6 +283,20 @@ export default OneForm.extend(Validations, {
       return this._preprocessField(
         this.get('_fieldsSource.domainField'),
         'editDomain'
+      );
+    }
+  ),
+
+  /**
+   * Let's Encrypt toggle field
+   * @type {computed.Ember.Object}
+   */
+  _letsEncryptEnabledEditField: computed('_fieldsSource.letsEncryptEnabledField',
+    'provider',
+    function () {
+      return this._preprocessField(
+        this.get('_fieldsSource.letsEncryptEnabledField'),
+        'editletsEncryptEnabled'
       );
     }
   ),
@@ -309,6 +351,21 @@ export default OneForm.extend(Validations, {
   ),
 
   /**
+   * Domain static field
+   * @type {computed.Ember.Object}
+   */
+  _letsEncryptEnabledStaticField: computed('_fieldsSource.letsEncryptEnabledField',
+    'provider',
+    function () {
+      return this._preprocessField(
+        this.get('_fieldsSource.letsEncryptEnabledField'),
+        'showletsEncryptEnabled',
+        true
+      );
+    }
+  ),
+
+  /**
    * Subdomain static field
    * @type {computed.Ember.Object}
    */
@@ -326,20 +383,24 @@ export default OneForm.extend(Validations, {
     '_editTopFields',
     '_editBottomFields',
     '_domainEditField',
+    '_letsEncryptEnabledEditField',
     '_subdomainEditField',
     '_staticTopFields',
     '_staticBottomFields',
     '_domainStaticField',
+    '_letsEncryptEnabledStaticField',
     '_subdomainStaticField',
     function () {
       let properties = [
         '_editTopFields',
         '_editBottomFields',
         '_domainEditField',
+        '_letsEncryptEnabledEditField',
         '_subdomainEditField',
         '_staticTopFields',
         '_staticBottomFields',
         '_domainStaticField',
+        '_letsEncryptEnabledStaticField',
         '_subdomainStaticField',
       ];
       let fields = [];
