@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import Service from '@ember/service';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
@@ -9,10 +9,6 @@ import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
 import providerManagerStub from '../../helpers/provider-manager-stub';
 import { registerService, lookupService } from '../../helpers/stub-service';
-
-const {
-  Service,
-} = Ember;
 
 const SPACES = [{
     id: 'a1',

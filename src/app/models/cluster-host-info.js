@@ -9,11 +9,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-
-const {
-  computed,
-} = Ember;
+import EmberObject, { computed } from '@ember/object';
 
 /**
  * @typedef {EmberObject} ClusterHostInfo
@@ -22,7 +18,7 @@ const {
  * @property {computed.boolean} clusterWorker true if host will run cluster worker
  * @property {computed.boolean} clusterManager true if host will run cluster manager
  */
-export default Ember.Object.extend({
+export default EmberObject.extend({
   hostname: null,
 
   // roles

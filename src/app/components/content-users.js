@@ -8,7 +8,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { get } from '@ember/object';
+
+import { inject as service } from '@ember/service';
 
 import Onepanel from 'npm:onepanel';
 
@@ -18,11 +20,6 @@ import layout from 'onedata-gui-common/templates/components/content-users';
 const {
   UserModifyRequest,
 } = Onepanel;
-
-const {
-  get,
-  inject: { service },
-} = Ember;
 
 export default ContentUsers.extend({
   layout,

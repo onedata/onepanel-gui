@@ -7,18 +7,14 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import Onepanel from 'npm:onepanel';
+import { A } from '@ember/array';
 
-const {
-  A,
-  Service,
-  ObjectProxy,
-  ArrayProxy,
-  computed: { alias },
-  inject: { service },
-  RSVP: { Promise },
-} = Ember;
+import ObjectProxy from '@ember/object/proxy';
+import ArrayProxy from '@ember/array/proxy';
+import { alias } from '@ember/object/computed';
+import Service, { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
+import Onepanel from 'npm:onepanel';
 
 const {
   StorageCreateRequest,
@@ -29,10 +25,15 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 export default Service.extend({
   onepanelServer: service(),
 
-  _collectionMap: {},
+  _collectionMap: undefined,
 
   collectionCache: ArrayProxy.create({ content: null }),
   _collectionCache: alias('collectionCache.content'),
+
+  init() {
+    this._super(...arguments);
+    this.set('_collectionMap', {});
+  },
 
   /**
    * Fetch collection of onepanel ClusterStorage

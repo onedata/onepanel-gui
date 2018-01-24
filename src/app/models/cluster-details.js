@@ -10,16 +10,12 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import ObjectProxy from '@ember/object/proxy';
 
-const {
-  computed,
-  computed: {
-    alias,
-  },
-} = Ember;
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
 
-export default Ember.ObjectProxy.extend({
+export default ObjectProxy.extend({
   content: alias('clusterInfo'),
 
   /**

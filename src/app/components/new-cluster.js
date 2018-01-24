@@ -10,16 +10,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { inject as service } from '@ember/service';
+import { readOnly } from '@ember/object/computed';
+import { get, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-
-const {
-  inject: { service },
-  computed,
-  computed: { readOnly },
-  get,
-} = Ember;
 
 const {
   TaskStatus: {
@@ -51,7 +48,7 @@ const STEPS_ZONE = [{
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
-export default Ember.Component.extend({
+export default Component.extend({
   onepanelServer: service(),
   cookies: service(),
   clusterManager: service(),
@@ -68,7 +65,7 @@ export default Ember.Component.extend({
   isLoading: false,
 
   // TODO: i18n
-  steps: [],
+  steps: Object.freeze([]),
 
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));

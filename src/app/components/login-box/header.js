@@ -7,6 +7,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { readOnly } from '@ember/object/computed';
+
 import Header from 'onedata-gui-common/components/login-box/header';
 import { computed } from '@ember/object';
 import { inject } from '@ember/service';
@@ -16,13 +18,13 @@ export default Header.extend({
   layout,
 
   onepanelServer: inject(),
-  onepanelServiceType: computed.readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
    * @override
    */
-  loginMainTitleClass: computed.readOnly('onepanelServiceType'),
-  
+  loginMainTitleClass: readOnly('onepanelServiceType'),
+
   /**
    * @override
    */

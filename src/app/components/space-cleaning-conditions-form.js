@@ -7,7 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import EmberObject, { computed, get } from '@ember/object';
+import { cancel, debounce, run } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 import bytesToString, { iecUnits } from 'onedata-gui-common/utils/bytes-to-string';
 import _ from 'lodash';
 import { buildValidations } from 'ember-cp-validations';
@@ -25,19 +29,6 @@ import {
   valid_upperFileSizeLimit,
   valid_maxFileNotOpenedHours,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
-
-const {
-  get,
-  computed,
-  run,
-  run: {
-    debounce,
-    cancel,
-  },
-  inject: {
-    service,
-  },
-} = Ember;
 
 function isFieldEnabled(fieldName, value) {
   const fun = {
@@ -89,7 +80,7 @@ const VALIDATORS = {
   '_formData.maxFileNotOpenedHoursNumber': createFieldValidator(TIME_NUMBER_FIELD),
 };
 
-export default Ember.Component.extend(buildValidations(VALIDATORS), {
+export default Component.extend(buildValidations(VALIDATORS), {
   classNames: ['space-cleaning-conditions-form'],
 
   i18n: service(),
@@ -156,11 +147,11 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * Array of field names.
    * @type {Array.string}
    */
-  _sourceFieldNames: [
+  _sourceFieldNames: Object.freeze([
     'lowerFileSizeLimit',
     'upperFileSizeLimit',
     'maxFileNotOpenedHours',
-  ],
+  ]),
 
   /**
    * Units used in 'file size' condition.
@@ -230,7 +221,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
    * @type {Ember.Object}
    */
   _formFieldsModified: computed(function () {
-    return Ember.Object.create();
+    return EmberObject.create();
   }),
 
   init() {
@@ -270,7 +261,7 @@ export default Ember.Component.extend(buildValidations(VALIDATORS), {
     if (!data) {
       data = {};
     }
-    let _formData = Ember.Object.create();
+    let _formData = EmberObject.create();
     [
       'lowerFileSizeLimit',
       'upperFileSizeLimit',

@@ -7,12 +7,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
 
-const {
-  Mixin,
-  inject: { service },
-} = Ember;
+import { inject as service } from '@ember/service';
 
 function isLogoutResponse(response) {
   return response && response.req.method === 'DELETE' &&

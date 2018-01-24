@@ -8,11 +8,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-
-const {
-  Mixin,
-} = Ember;
+import Mixin from '@ember/object/mixin';
 
 class MockState {
   constructor(target, threshold, steps) {

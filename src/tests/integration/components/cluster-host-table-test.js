@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
+import $ from 'jquery';
 
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import ToggleHelper from '../../helpers/toggle';

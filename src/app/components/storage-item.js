@@ -61,7 +61,7 @@ export default Component.extend({
   /**
    * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
-  spaces: [],
+  spaces: Object.freeze([]),
 
   showSpacesSupport: computed('spaces.[]', function () {
     return isEmpty(this.get('spaces')) === false;

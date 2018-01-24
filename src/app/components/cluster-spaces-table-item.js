@@ -7,19 +7,15 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { readOnly, reads } from '@ember/object/computed';
+import { get, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 import _includes from 'lodash/includes';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
-
-const {
-  Component,
-  computed,
-  computed: { readOnly },
-  get,
-  inject: { service },
-} = Ember;
 
 /**
  * Space's `storageImport` properties that shouldn't be listed as generic
@@ -74,7 +70,7 @@ export default Component.extend(
     /**
      * @type {OnepanelGui.SpaceDetails}
      */
-    space: computed.reads('spaceProxy.content'),
+    space: reads('spaceProxy.content'),
 
     /**
      * Last resolved SpaceDetails
@@ -154,7 +150,7 @@ export default Component.extend(
      * List of specific non-empty, type-specific storage import properties
      * @type {Array}
      */
-    importProperties: computed('space.storageImport', 'space.content', function () {
+    importProperties: computed('space.{storageImport,content}', function () {
       let space = this.get('space');
       // support for ObjectProxy
       if (space != null && space.content != null) {
@@ -171,7 +167,7 @@ export default Component.extend(
      * List of specific non-empty, type-specific storage update properties
      * @type {Array}
      */
-    updateProperties: computed('space.storageUpdate', 'space.content', function () {
+    updateProperties: computed('space.{storageUpdate,content}', function () {
       let space = this.get('space');
       // support for ObjectProxy
       if (space != null && space.content != null) {

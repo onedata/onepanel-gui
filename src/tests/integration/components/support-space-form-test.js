@@ -1,5 +1,11 @@
+import EmberObject from '@ember/object';
 import { expect } from 'chai';
-import { describe, it, beforeEach, afterEach } from 'mocha';
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+} from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
@@ -41,7 +47,7 @@ describe('Integration | Component | support space form', function () {
           name: 'POSIX',
           id: 'posix',
         });
-        this.set('formValues', Ember.Object.create({
+        this.set('formValues', EmberObject.create({
           token: 'some_token',
           size: '100',
           sizeUnit: 'mib',

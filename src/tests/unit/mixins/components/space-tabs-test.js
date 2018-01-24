@@ -1,12 +1,12 @@
+import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import Ember from 'ember';
 import ComponentsComponentsSpaceTabsMixin from 'onepanel-gui/mixins/components/space-tabs';
 
 describe('Unit | Mixin | components/space tabs', function () {
   it('enables tabSync', function () {
     const ComponentsComponentsSpaceTabsObject =
-      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create({
       space: {
         importEnabled: false,
@@ -20,7 +20,7 @@ describe('Unit | Mixin | components/space tabs', function () {
 
   it('disables tabSync', function () {
     const ComponentsComponentsSpaceTabsObject =
-      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create({
       space: {
         importEnabled: true,
@@ -36,7 +36,7 @@ describe('Unit | Mixin | components/space tabs', function () {
 
   it('has tabPopular always enabled', function () {
     const ComponentsComponentsSpaceTabsObject =
-      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create();
 
     expect(subject.get('tabPopularClass')).to.equal('enabled');
@@ -44,7 +44,7 @@ describe('Unit | Mixin | components/space tabs', function () {
 
   it('enables tabClean', function () {
     const ComponentsComponentsSpaceTabsObject =
-      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create();
 
     expect(subject.get('tabCleanClass'), 'before change').to.equal('disabled');
@@ -60,7 +60,7 @@ describe('Unit | Mixin | components/space tabs', function () {
 
   it('disables tabClean', function () {
     const ComponentsComponentsSpaceTabsObject =
-      Ember.Object.extend(ComponentsComponentsSpaceTabsMixin);
+      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create({
       space: {
         filesPopularity: {

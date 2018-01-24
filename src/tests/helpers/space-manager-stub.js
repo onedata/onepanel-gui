@@ -1,18 +1,19 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import Service from '@ember/service';
+import { Promise } from 'rsvp';
+import { get } from '@ember/object';
 
 import _ from 'lodash';
-
-const {
-  A,
-  Service,
-  RSVP: { Promise },
-  get,
-} = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
-  __spaces: [],
+  __spaces: undefined,
+
+  init() {
+    this._super(...arguments);
+    this.set('__spaces', []);
+  },
 
   getSpaces() {
     return PromiseObject.create({

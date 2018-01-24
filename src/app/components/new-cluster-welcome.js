@@ -7,16 +7,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { computed } from '@ember/object';
+
+import { readOnly } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import ContentInfo from 'onedata-gui-common/components/content-info';
 import layout from 'onedata-gui-common/templates/components/content-info';
 import { invokeAction } from 'ember-invoke-action';
-
-const {
-  computed,
-  computed: { readOnly },
-  inject: { service },
-} = Ember;
 
 // TODO: i18n
 export default ContentInfo.extend({

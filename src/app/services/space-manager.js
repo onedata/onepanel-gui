@@ -7,20 +7,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { A } from '@ember/array';
+
+import Service, { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
+import { get } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 
 import SpaceDetails from 'onepanel-gui/models/space-details';
 
 import _ from 'lodash';
-
-const {
-  A,
-  Service,
-  inject: { service },
-  RSVP: { Promise },
-  get,
-} = Ember;
 
 const {
   SpaceSupportRequest,

@@ -7,19 +7,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
 
-const {
-  computed,
-  computed: { readOnly },
-  inject: { service },
-} = Ember;
+import { computed } from '@ember/object';
+import { readOnly } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 
 function t(i18n, key) {
   return i18n.t('components.spaceStatusIcons.' + key);
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['space-status-icons'],
   classNameBindings: ['_noStatus:hidden'],
 

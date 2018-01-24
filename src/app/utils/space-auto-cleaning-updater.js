@@ -8,6 +8,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { equal, reads } from '@ember/object/computed';
+
 import { default as EmberObject, computed } from '@ember/object';
 import { get, set, observer, getProperties } from '@ember/object';
 import { run } from '@ember/runloop';
@@ -99,7 +101,7 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  inProgress: computed.equal('status.inProgress', true),
+  inProgress: equal('status.inProgress', true),
 
   /**
    * @type {number}
@@ -120,13 +122,13 @@ export default EmberObject.extend({
    * Interval [ms] used by `_cleanStatusWatcher`
    * @type {number}
    */
-  _cleanStatusInterval: computed.reads('_sharedInterval'),
+  _cleanStatusInterval: reads('_sharedInterval'),
 
   /**
    * Interval [ms] used by `_cleanReportsWatcher`
    * @type {number}
    */
-  _cleanReportsInterval: computed.reads('_sharedInterval'),
+  _cleanReportsInterval: reads('_sharedInterval'),
 
   /**
    * True if loading status for the first time after init

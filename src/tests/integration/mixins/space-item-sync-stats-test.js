@@ -1,17 +1,12 @@
+import EmberObject from '@ember/object';
+import { getOwner } from '@ember/application';
+import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
-import Ember from 'ember';
 import SpaceItemSyncStatsMixin from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceManagerStub from '../../helpers/space-manager-stub';
 import wait from 'ember-test-helpers/wait';
-
-const {
-  getOwner,
-  RSVP: {
-    Promise,
-  },
-} = Ember;
 
 const FAKE_STATS_1 = [{
   name: 'something',
@@ -20,7 +15,7 @@ const FAKE_STATS_1 = [{
   values: [1],
 }];
 
-const SPACE_ONLY_IMPORT = Ember.Object.create({
+const SPACE_ONLY_IMPORT = EmberObject.create({
   importEnabled: true,
   updateEnabled: false,
 });
@@ -29,7 +24,7 @@ describe('Integration | Mixin | components/space item sync stats', function () {
   setupTest('mixin:components/space-item-sync-stats', {
     integration: true,
     subject(objectContent = {}) {
-      let SpaceItemSyncStats = Ember.Object.extend(
+      let SpaceItemSyncStats = EmberObject.extend(
         SpaceItemSyncStatsMixin,
         objectContent
       );

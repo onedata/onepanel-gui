@@ -7,13 +7,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
 
-const {
-  Component,
-  inject: { service },
-  RSVP: { Promise },
-} = Ember;
+import { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 

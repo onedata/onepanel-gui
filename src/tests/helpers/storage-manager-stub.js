@@ -1,11 +1,7 @@
-import Ember from 'ember';
-
-const {
-  A,
-  Service,
-  ArrayProxy,
-  RSVP: { Promise },
-} = Ember;
+import { A } from '@ember/array';
+import Service from '@ember/service';
+import ArrayProxy from '@ember/array/proxy';
+import { Promise } from 'rsvp';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -16,7 +12,12 @@ export default Service.extend({
   /**
    * Add storages here in tests (key: storage id, value: storage object)
    */
-  __storages: {},
+  __storages: undefined,
+
+  init() {
+    this._super(...arguments);
+    this.set('__storages', {});
+  },
 
   getStorages() {
     return PromiseObject.create({

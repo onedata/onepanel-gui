@@ -1,10 +1,6 @@
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
 
 import OnedataApplicationRoute from 'onedata-gui-common/routes/application';
-
-const {
-  inject: { service },
-} = Ember;
 
 export default OnedataApplicationRoute.extend({
   onepanelServer: service(),

@@ -7,22 +7,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Service, { inject as service } from '@ember/service';
+
+import { Promise } from 'rsvp';
+import { A } from '@ember/array';
+import { readOnly, alias } from '@ember/object/computed';
+import ObjectProxy from '@ember/object/proxy';
+import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails from 'onepanel-gui/models/cluster-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
-
-const {
-  Service,
-  inject: {
-    service,
-  },
-  RSVP: { Promise },
-  A,
-  computed: { alias, readOnly },
-  ObjectProxy,
-  String: { camelize },
-} = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 

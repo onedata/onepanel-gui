@@ -7,14 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
+import { computed } from '@ember/object';
 
-const {
-  computed,
-  Component,
-  inject: { service },
-} = Ember;
+import Component from '@ember/component';
+import { inject as service } from '@ember/service';
+import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 
 // TODO i18n
 const FORM_TITLES = {
@@ -43,7 +40,7 @@ export default Component.extend({
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
-  _excludedSubdomains: [],
+  _excludedSubdomains: Object.freeze([]),
 
   /**
    * @type {boolean}

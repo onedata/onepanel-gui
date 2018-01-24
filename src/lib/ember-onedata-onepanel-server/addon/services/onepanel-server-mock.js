@@ -9,7 +9,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { A } from '@ember/array';
+
+import { Promise } from 'rsvp';
+import { readOnly } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import EmberObject, { set, get, computed } from '@ember/object';
+import { run } from '@ember/runloop';
 
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -24,23 +30,6 @@ import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-
-const {
-  A,
-  RSVP: {
-    Promise,
-  },
-  computed,
-  computed: {
-    readOnly,
-  },
-  inject: {
-    service,
-  },
-  get,
-  set,
-  run,
-} = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -89,7 +78,7 @@ function responseToString() {
   return `Request ${this.__request_method} failed: ${JSON.stringify(this)}`;
 }
 
-const PlainableObject = Ember.Object.extend(Plainable);
+const PlainableObject = EmberObject.extend(Plainable);
 
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
@@ -273,9 +262,9 @@ export default OnepanelServerBase.extend(
           lumaCacheTimeout: 10,
           lumaApiKey: 'some_storage',
         };
-        this.get('__storages').push(
-          clusterStorageClass(storage1.type).constructFromObject(storage1)
-        );
+        this.set('__storages', [
+          clusterStorageClass(storage1.type).constructFromObject(storage1),
+        ]);
         let spaces = this.get('__spaces');
         spaces.push({
           id: 'space1_verylongid',
@@ -326,6 +315,8 @@ export default OnepanelServerBase.extend(
             supportingProviders: _genSupportingProviders(),
           });
         });
+      } else {
+        this.set('__storages', []);
       }
     },
 
@@ -685,7 +676,7 @@ export default OnepanelServerBase.extend(
       },
     }),
 
-    __storages: [],
+    __storages: undefined,
 
     __spaces: A([]),
   });

@@ -1,3 +1,6 @@
+import PromiseProxyMixin from '@ember/object/promise-proxy-mixin';
+import ObjectProxy from '@ember/object/proxy';
+import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
@@ -7,15 +10,10 @@ import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 
-import Ember from 'ember';
-const {
-  RSVP: { Promise },
-} = Ember;
-
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
 
-const PromiseObject = Ember.ObjectProxy.extend(Ember.PromiseProxyMixin);
+const PromiseObject = ObjectProxy.extend(PromiseProxyMixin);
 
 describe('Integration | Component | storage item', function () {
   setupComponentTest('storage-item', {

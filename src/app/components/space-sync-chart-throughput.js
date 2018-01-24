@@ -9,7 +9,8 @@
 
 /* global Chartist */
 
-import Ember from 'ember';
+import { computed } from '@ember/object';
+
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
@@ -19,17 +20,13 @@ import centerLineChart from 'onedata-gui-common/utils/chartist/center-line-chart
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 
-const {
-  computed,
-} = Ember;
-
 export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-throughput'],
 
   /**
    * @implements SpaceSyncChartDataValidator
    */
-  usedMetrics: ['insertCount', 'updateCount', 'deleteCount'],
+  usedMetrics: Object.freeze(['insertCount', 'updateCount', 'deleteCount']),
 
   /**
    * Chartist settings
@@ -82,7 +79,7 @@ export default SpaceSyncChartBase.extend({
    */
   chartSeriesLabel: 'Throughput',
 
-  _chartValues: [],
+  _chartValues: computed(function () { return []; }),
 
   throughputDivisor: computed('timeUnit', 'timePeriod', function () {
     let {

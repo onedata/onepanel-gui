@@ -10,7 +10,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+
+import { Promise } from 'rsvp';
+import { htmlSafe } from '@ember/string';
 
 import getZoneConfiguration from 'ember-onedata-onepanel-server/utils/response-validators/onezone/get-zone-configuration';
 import getProviderConfiguration from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-configuration';
@@ -22,12 +25,6 @@ import getStorages from 'ember-onedata-onepanel-server/utils/response-validators
 import getStorageDetails from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-storage-details';
 import getProviderSpaceAutoCleaningReports from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-reports';
 import getProviderSpaceAutoCleaningStatus from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-status';
-
-const {
-  Mixin,
-  RSVP: { Promise },
-  String: { htmlSafe },
-} = Ember;
 
 /**
  * Contains <api> -> <method> -> <validation function> mapping

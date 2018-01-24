@@ -7,18 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { Promise } from 'rsvp';
 
-const {
-  RSVP: {
-    Promise,
-  },
-  inject: {
-    service,
-  },
-} = Ember;
+import Service, { inject as service } from '@ember/service';
 
-export default Ember.Service.extend({
+export default Service.extend({
   clusterManager: service(),
   userManager: service(),
 
@@ -44,8 +37,7 @@ export default Ember.Service.extend({
    */
   getButtonsFor(type) {
     switch (type) {
-      default:
-        return [];
+      default: return [];
     }
   },
 });

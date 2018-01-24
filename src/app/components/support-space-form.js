@@ -9,7 +9,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { isEmpty } from '@ember/utils';
+
+import { inject as service } from '@ember/service';
+import { oneWay } from '@ember/object/computed';
+import EmberObject, {
+  observer,
+  computed,
+  get,
+} from '@ember/object';
+import { Promise } from 'rsvp';
 import { invokeAction } from 'ember-invoke-action';
 import _ from 'lodash';
 
@@ -17,15 +26,6 @@ import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
-
-const {
-  isEmpty,
-  inject: { service },
-  computed,
-  computed: { oneWay },
-  observer,
-  RSVP: { Promise },
-} = Ember;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -65,7 +65,7 @@ export default OneFormSimple.extend(Validations, {
   allStoragesProxy: null,
 
   _selectedStorage: null,
-  values: Ember.Object.create({
+  values: EmberObject.create({
     token: '',
     size: '',
     sizeUnit: 'mib',
@@ -197,7 +197,7 @@ export default OneFormSimple.extend(Validations, {
       if (areValuesValid) {
         let formValues = this.get('formValues.main');
         Object.keys(importFormValues).forEach(key => {
-          formValues.set(key, Ember.get(importFormValues, key));
+          formValues.set(key, get(importFormValues, key));
         });
       }
     },

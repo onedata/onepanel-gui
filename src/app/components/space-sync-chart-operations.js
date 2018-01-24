@@ -9,7 +9,8 @@
 
 /* global Chartist */
 
-import Ember from 'ember';
+import { computed } from '@ember/object';
+
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
@@ -21,23 +22,19 @@ import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
-const {
-  computed,
-} = Ember;
-
 export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-operations'],
 
   /**
    * @implements SpaceSyncChartDataValidator
    */
-  usedMetrics: ['insertCount', 'updateCount', 'deleteCount'],
+  usedMetrics: Object.freeze(['insertCount', 'updateCount', 'deleteCount']),
 
   /**
    * Chartist settings
    * @type {Object}
    */
-  chartOptions: {
+  chartOptions: Object.freeze({
     axisY: {
       onlyInteger: true,
     },
@@ -61,19 +58,19 @@ export default SpaceSyncChartBase.extend({
       Chartist.plugins.legend(),
       refreshLegendFilter(),
     ],
-  },
+  }),
 
   /**
    * Series labels for chart
    * @type {Array.string}
    */
-  chartSeriesLabels: ['Inserted', 'Updated', 'Deleted'],
+  chartSeriesLabels: Object.freeze(['Inserted', 'Updated', 'Deleted']),
 
-  _chartValues: [
+  _chartValues: Object.freeze([
     [],
     [],
     [],
-  ],
+  ]),
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
     let {

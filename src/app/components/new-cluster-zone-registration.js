@@ -7,21 +7,14 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
+import { Promise } from 'rsvp';
+import Component from '@ember/component';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
-
-const {
-  inject: {
-    service,
-  },
-  RSVP: {
-    Promise,
-  },
-  Component,
-} = Ember;
 
 const {
   ProviderRegisterRequest,
@@ -38,7 +31,7 @@ export default Component.extend({
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
-  _excludedSubdomains: [],
+  _excludedSubdomains: Object.freeze([]),
 
   /**
    * @param {Ember.Object} providerData data from provider registration form
