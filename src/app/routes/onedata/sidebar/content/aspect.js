@@ -31,7 +31,7 @@ export default AspectRoute.extend({
     if (resourceType === 'clusters') {
       const aspectId = get(
         transition.params['onedata.sidebar.content.aspect'],
-        'aspectId'
+        'aspect_id'
       );
       if (aspectId !== 'index') {
         const onepanelServiceType = this.get('onepanelServiceType');
