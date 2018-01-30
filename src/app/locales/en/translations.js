@@ -17,6 +17,7 @@ import deregisterProviderConfirm from './components/deregister-provider-confirm'
 import contentClustersSpaces from './components/content-clusters-spaces';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterProviderCert from './components/new-cluster-provider-cert';
+import newClusterInstallation from './components/new-cluster-installation';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -42,6 +43,7 @@ let translations = {
     contentClustersSpaces,
     newClusterDeployProgress,
     newClusterProviderCert,
+    newClusterInstallation,
   },
 };
 

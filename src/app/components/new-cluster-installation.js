@@ -16,6 +16,7 @@ import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   A,
@@ -60,13 +61,15 @@ function configurationClass(serviceType) {
   return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(I18n, {
   classNames: ['new-cluster-installation', 'container-fluid'],
 
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
   cookies: service(),
+
+  i18nPrefix: 'components.newClusterInstallation',
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
