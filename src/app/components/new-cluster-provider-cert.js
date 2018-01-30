@@ -4,7 +4,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { default as EmberObject, computed } from '@ember/object';
 import { dasherize, camelize } from '@ember/string';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import _ from 'lodash';
+import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 
 export default Component.extend(I18n, {
   providerManager: inject(),
@@ -38,7 +38,7 @@ export default Component.extend(I18n, {
    * that says the Let's Encrypt is unavailable in this moment.
    * @type {boolean}
    */
-  _specialErrorOccured: false,
+  _lockLetsEncrypt: computed.reads('_limitErrorOccured'),
 
   /**
    * True if the "Let's Encrypt Limit Error" has occured on current view
@@ -181,12 +181,19 @@ export default Component.extend(I18n, {
         letsEncryptEnabled: enabled,
       })
       .catch(error => {
-        const errorType = specialLetsEncryptError(error);
+        const errorType = getSpecialLetsEncryptError(error);
         if (errorType) {
-          this.set('_specialErrorOccured', true);
           this.set(`_${camelize(errorType + 'ErrorOccured')}`, true);
-          this.set('formValues.letsEncryptEnabled', false);
+          if (this.get('_lockLetsEncrypt')) {
+            this.set('formValues.letsEncryptEnabled', false);
+          }
           error = { message: this.t(camelize(errorType + 'ErrorInfo')) };
+        } else {
+          this.setProperties({
+            _authorizationErrorOccured: false,
+            _limitErrorOccured: false,
+            _lockLetsEncrypt: false,
+          });
         }
         const message = this.t(enabled ?
           'certificateGeneration' :
@@ -235,23 +242,3 @@ export default Component.extend(I18n, {
     },
   },
 });
-
-/**
- * Detect if the backend error is one of predefined Let's Encrypt errors
- * @param {object} error data from backend response
- * @returns {string} type of Let's Encrypt error, one of: Limit, Authorization
- */
-function specialLetsEncryptError(error) {
-  const errorHosts = error && error.response &&
-    error.response.body && error.response.body.hosts;
-  if (errorHosts && typeof errorHosts === 'object') {
-    for (const host of _.values(errorHosts)) {
-      if (host.error) {
-        const m = host.error.match(/Let's Encrypt (.*?) Error/);
-        if (m) {
-          return m[1];
-        }
-      }
-    }
-  }
-}

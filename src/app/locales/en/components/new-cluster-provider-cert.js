@@ -5,7 +5,7 @@ const ONEPROVIDER_CERT_INTRO =
 const AUTHORIZATION_ERROR_INFO_P1 = 'Failed to authorize the domain in Let\'s Encrypt. ' +
   'Ensure that your Oneprovider is reachable under';
 const AUTHORIZATION_ERROR_INFO_P2 =
-  'or contact your Onezone administrator if problem persists.';
+  'and contact your onezone administrator in case of further problems.';
 
 export default {
   header: 'Provider certificate',
