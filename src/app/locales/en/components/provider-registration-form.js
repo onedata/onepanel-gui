@@ -1,6 +1,4 @@
-const ONEPROVIDER_CERT_INTRO =
-  'Every Oneprovider instance requires valid, trusted TLS certificates ' +
-  'to communicate with other providers and ensure safety of its users. ';
+import { oneproviderCertInfo } from './-certificates';
 
 export default {
   register: 'Register',
@@ -39,7 +37,7 @@ export default {
     },
     letsEncryptEnabled: {
       label: 'Use Let\'s Encrypt',
-      tip: ONEPROVIDER_CERT_INTRO +
+      tip: oneproviderCertInfo +
         'Certificates can be automatically obtained from the Let\'s Encrypt service. ' +
         'Otherwise, you have to manually obtain and set up proper certificates.',
     },
