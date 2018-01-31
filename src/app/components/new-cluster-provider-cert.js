@@ -230,7 +230,7 @@ export default Component.extend(I18n, {
     changeFormValue(fieldName, value) {
       this.set(`formValues.${fieldName}`, value);
     },
-    btnAction() {
+    proceed() {
       const {
         status,
         letsEncryptEnabled,

@@ -9,6 +9,7 @@ import { registerService } from '../../helpers/stub-service';
 import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import Service from '@ember/service';
+import { click } from 'ember-native-dom-helpers';
 
 const PROVIDER_DETAILS = {
   id: 'provider_id',
@@ -59,7 +60,7 @@ describe('Integration | Component | new cluster provider cert', function () {
     });
   });
 
-  it('does not changes the domain on next step if subdomainDelegation is diabled',
+  it('does not change the domain on next step if subdomainDelegation is diabled',
     function (done) {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: false,
@@ -79,8 +80,7 @@ describe('Integration | Component | new cluster provider cert', function () {
         nextStep=(action "nextStep")
       }}`);
 
-      this.$('.btn-cert-next').click();
-      wait().then(() => {
+      click('.btn-cert-next').then(() => {
         expect(changeDomain).to.be.not.called;
         expect(nextStep).to.be.called;
         done();
@@ -110,20 +110,17 @@ describe('Integration | Component | new cluster provider cert', function () {
       }}`);
 
       wait().then(() => {
-        wait().then(() => {
-          this.$('.btn-cert-next').click();
-          wait().then(() => {
-            expect(changeDomain).to.be.called;
-            expect(nextStep).to.be.not.called;
-            done();
-          });
+        click('.btn-cert-next').then(() => {
+          expect(changeDomain).to.be.called;
+          expect(nextStep).to.be.not.called;
+          done();
         });
       });
     }
   );
 
   it(
-    'does not changes the domain if LetsEncrypt is disabled',
+    'does not change the domain if LetsEncrypt is disabled',
     function (done) {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
@@ -144,10 +141,8 @@ describe('Integration | Component | new cluster provider cert', function () {
       }}`);
 
       wait().then(() => {
-        this.$('.toggle-field-letsEncryptEnabled').click();
-        wait().then(() => {
-          this.$('.btn-cert-next').click();
-          wait().then(() => {
+        click('.toggle-field-letsEncryptEnabled').then(() => {
+          click('.btn-cert-next').then(() => {
             expect(changeDomain, 'changeDomain').to.be.not.called;
             expect(nextStep, 'nextStep').to.be.called;
             done();
