@@ -7,7 +7,8 @@ export default {
   certificateGeneration: 'certificate setup',
   modifyProvider: 'provider configuration',
   generationSuccess: 'The certificate has been obtained and installed successfully',
-  redirectInfo: 'When the new certificate has been installed, you will be redirected to the new oneprovider domain.',
+  redirectInfo: 'When the new certificate has been installed, the page will be ' +
+    'reloaded with the new Oneprovider domain.',
   text: {
     subdomainP1: oneproviderCertInfo +
       'Certificates can be automatically obtained from the Let\'s Encrypt service. ' +

@@ -13,6 +13,7 @@ import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import Ember from 'ember';
 import _ from 'lodash';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   computed,
@@ -143,19 +144,21 @@ const ALL_PREFIXES = [
   'editTop',
   'editBottom',
   'editDomain',
-  'editletsEncryptEnabled',
+  'editLetsEncryptEnabled',
   'editSubdomain',
   'showTop',
   'showBottom',
   'showDomain',
-  'showletsEncryptEnabled',
+  'showLetsEncryptEnabled',
   'showSubdomain',
 ];
 
-export default OneForm.extend(Validations, {
+export default OneForm.extend(Validations, I18n, {
   classNames: ['provider-registration-form'],
 
   i18n: service(),
+
+  i18nPrefix: 'components.providerRegistrationForm',
 
   /**
    * To inject. One of: show, edit, new
@@ -186,6 +189,12 @@ export default OneForm.extend(Validations, {
   _disabled: false,
 
   /**
+   * Using intermediate var for testing purposes
+   * @type {Location}
+   */
+  _location: window.location,
+
+  /**
    * Action called on form submit. Action arguments:
    * * formData {Object} data from form
    */
@@ -199,7 +208,7 @@ export default OneForm.extend(Validations, {
     switch (mode) {
       case 'show':
         if (_subdomainDelegation) {
-          return ['showTop', 'showSubdomain', 'showletsEncryptEnabled',
+          return ['showTop', 'showSubdomain', 'showLetsEncryptEnabled',
             'showBottom',
           ];
         } else {
@@ -207,7 +216,7 @@ export default OneForm.extend(Validations, {
         }
       case 'edit':
         if (_subdomainDelegation) {
-          return ['editTop', 'editSubdomain', 'editletsEncryptEnabled',
+          return ['editTop', 'editSubdomain', 'editLetsEncryptEnabled',
             'editBottom',
           ];
         } else {
@@ -296,7 +305,7 @@ export default OneForm.extend(Validations, {
     function () {
       return this._preprocessField(
         this.get('_fieldsSource.letsEncryptEnabledField'),
-        'editletsEncryptEnabled'
+        'editLetsEncryptEnabled'
       );
     }
   ),
@@ -359,7 +368,7 @@ export default OneForm.extend(Validations, {
     function () {
       return this._preprocessField(
         this.get('_fieldsSource.letsEncryptEnabledField'),
-        'showletsEncryptEnabled',
+        'showLetsEncryptEnabled',
         true
       );
     }
@@ -453,6 +462,31 @@ export default OneForm.extend(Validations, {
     }
   }),
 
+  /**
+   * True if the modify request should cause change of Provider domain,
+   * so we will reload the application on new domain.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  _willChangeDomainAfterSubmit: computed(
+    'mode',
+    'currentFields.@each.changed',
+    'allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled',
+    function getWillChangeDomainAfterSubmit() {
+      if (this.get('mode') === 'edit') {
+        const currentFields = this.get('currentFields');
+        const domainField = _.find(currentFields, { name: 'editDomain.domain' });
+        const subdomainField = _.find(currentFields, { name: 'editSubdomain.subdomain' });
+        const letsEncryptField = _.find(currentFields, { name: 'editLetsEncryptEnabled.letsEncryptEnabled' });
+        return domainField && get(domainField, 'changed') ||
+          subdomainField && get(subdomainField, 'changed') ||
+          letsEncryptField && get(letsEncryptField, 'changed') &&
+          this.get('allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled');
+      } else {
+        return false;
+      }
+    }
+  ),
+
   _modeObserver: on('init', observer('mode', function () {
     this.resetFormValues(ALL_PREFIXES);
   })),
@@ -527,6 +561,17 @@ export default OneForm.extend(Validations, {
     this.set('allFieldsValues.editSubdomain.subdomain', proposedSubdomain);
   },
 
+  _changeDomain() {
+    this.set('_redirectPage', true);
+    const domain = this.get('provider.domain');
+    const _location = this.get('_location');
+    if (_location.hostname === domain) {
+      _location.reload();
+    } else {
+      _location.hostname = domain;
+    }
+  },
+
   actions: {
     inputChanged(fieldName, value) {
       let {
@@ -549,10 +594,11 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      let {
+      const {
         formValues,
         allFields,
-      } = this.getProperties('formValues', 'allFields');
+        _willChangeDomainAfterSubmit,
+      } = this.getProperties('formValues', 'allFields', '_willChangeDomainAfterSubmit');
       let values = Ember.Object.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);
@@ -561,25 +607,29 @@ export default OneForm.extend(Validations, {
         );
       });
       this.set('_disabled', true);
-      let submitting = this.get('submit')(values);
-      submitting.finally(() => {
-        this.set('_disabled', false);
-        Ember.run.next(() => {
-          if (this.isDestroyed) {
-            return;
+      return this.get('submit')(values)
+        .then(() => {
+          if (_willChangeDomainAfterSubmit) {
+            this._changeDomain();
           }
-          this.validateSync();
-          // subdomain field may throw errors, so it should be marked as 
-          // changed to show that errors
-          let subdomainField = _.find(
-            allFields,
-            ((field) => field.get('name') === 'editSubdomain.subdomain')
-          );
-          subdomainField.set('changed', true);
-          this.recalculateErrors();
+        })
+        .finally(() => {
+          this.set('_disabled', false);
+          Ember.run.next(() => {
+            if (this.isDestroyed) {
+              return;
+            }
+            this.validateSync();
+            // subdomain field may throw errors, so it should be marked as 
+            // changed to show that errors
+            let subdomainField = _.find(
+              allFields,
+              ((field) => field.get('name') === 'editSubdomain.subdomain')
+            );
+            subdomainField.set('changed', true);
+            this.recalculateErrors();
+          });
         });
-      });
-      return submitting;
     },
   },
 });

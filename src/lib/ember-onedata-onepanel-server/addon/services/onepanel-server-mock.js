@@ -190,7 +190,11 @@ export default OnepanelServerBase.extend(
           }, RESPONSE_DELAY);
         }
 
-        let handler = this.get(`_req_${api}_${method}`);
+        const handlerName = `_req_${api}_${method}`;
+        let handler = this.get(handlerName);
+        if (typeof this[handlerName] === 'function') {
+          handler = this[handlerName]();
+        }
         if (handler) {
           if (handler.success) {
             let response = {
@@ -451,9 +455,17 @@ export default OnepanelServerBase.extend(
         success: (data) => {
           let __provider = this.get('__provider');
           for (let prop in data) {
-            __provider.set(prop, data[prop]);
+            if (data[prop] !== undefined) {
+              __provider.set(prop, data[prop]);
+            }
             if (prop === 'name') {
               this.set('__configuration.oneprovider.name', data[prop]);
+            } else if (prop === 'subdomain') {
+              set(
+                __provider,
+                'domain',
+                `${get(__provider, 'subdomain')}.${get(__provider, 'onezoneDomainName')}`
+              );
             }
           }
 
@@ -518,20 +530,17 @@ export default OnepanelServerBase.extend(
         }
       }),
 
-    _req_oneprovider_getProvider: computed(
-      '__provider',
-      function () {
-        if (this.get('__provider')) {
-          return {
-            success: () => this.get('__provider').plainCopy(),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
+    _req_oneprovider_getProvider() {
+      if (this.get('__provider')) {
+        return {
+          success: () => this.get('__provider').plainCopy(),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
       }
-    ),
+    },
 
     _req_oneprovider_getStorages: computed('__storages',
       function () {

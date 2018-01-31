@@ -72,15 +72,13 @@ export default Service.extend({
       clusterManager,
     } = this.getProperties('onepanelServer', 'clusterManager');
     let providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
-    let modifying = onepanelServer.request(
-      'oneprovider',
-      'modifyProvider',
-      providerModifyRequest
-    );
-    modifying.then(() => {
-      clusterManager.getDefaultRecord(true);
-    });
-    return modifying;
+    return onepanelServer.request(
+        'oneprovider',
+        'modifyProvider',
+        providerModifyRequest
+      )
+      .then(() => this.getProviderDetails(true))
+      .then(() => clusterManager.getDefaultRecord(true));
   },
 
   /**
