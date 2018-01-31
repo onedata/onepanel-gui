@@ -109,8 +109,8 @@ export default OnepanelServerBase.extend(
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
     // see STEP import for more info
-    mockStep: STEP.PROVIDER_CERT_GENERATE,
-    // mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE,
+    // mockStep: STEP.PROVIDER_REGISTER,
+    mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE,
 
     mockInitializedCluster: computed.equal(
       'mockStep',
@@ -277,11 +277,11 @@ export default OnepanelServerBase.extend(
           this.set('__provider', PlainableObject.create({
             id: PROVIDER_ID,
             name: 'Some provider 1',
-            onezoneDomainName: 'onezone.org',
+            onezoneDomainName: 'localhost',
             subdomainDelegation: true,
             letsEncryptEnabled: undefined,
             subdomain: 'somedomain',
-            domain: 'somedomain.onezone.org',
+            domain: 'somedomain.localhost',
             adminEmail: 'some@example.com',
             geoLatitude: 49.698284,
             geoLongitude: 21.898093,

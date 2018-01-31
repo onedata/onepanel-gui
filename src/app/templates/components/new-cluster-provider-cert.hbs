@@ -32,15 +32,15 @@
 
 {{#if _limitErrorOccured}}
   <div class="alert alert-warning fade in">
-    {{tt this "limitErrorInfo"}}
+    {{tt this "letsEncrypt.limitErrorInfo"}}
   </div>
 {{/if}}
 
 {{#if _authorizationErrorOccured}}
   <div class="alert alert-warning fade in">
-    {{tt this "authorizationErrorInfoP1"}}
+    {{tt this "letsEncrypt.authorizationErrorInfoP1"}}
     <a href={{_providerUrl}}>{{_providerUrl}}</a>
-    {{tt this "authorizationErrorInfoP2"}}
+    {{tt this "letsEncrypt.authorizationErrorInfoP2"}}
   </div>
 {{/if}}
 

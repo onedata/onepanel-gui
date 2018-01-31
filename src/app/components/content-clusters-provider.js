@@ -9,6 +9,9 @@
 
 import Ember from 'ember';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
+import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
+import { camelize } from '@ember/string';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   computed,
@@ -16,22 +19,11 @@ const {
   inject: { service },
 } = Ember;
 
-// TODO i18n
-const FORM_TITLES = {
-  show: 'Registered provider details',
-  edit: 'Modify registered provider details',
-  new: 'Provider registration',
-};
-
-const FORM_DESCRIPTIONS = {
-  show: 'This provider was registered with following data',
-  edit: 'You can update registered provider details and submit the changes in form below',
-  new: 'The provider is currently not registered in any Zone. Please enter details of provider for registration.',
-};
-
-export default Component.extend({
+export default Component.extend(I18n, {
   providerManager: service(),
   globalNotify: service(),
+
+  i18nPrefix: 'components.contentClustersProvider',
 
   /**
    * Initialized in ``_initProviderProxy``
@@ -59,9 +51,10 @@ export default Component.extend({
     return this.get('_editing') ? 'default' : 'primary';
   }),
 
-  // TODO i18n
   _editProviderButtonLabel: computed('_editing', function () {
-    return this.get('_editing') ? 'Cancel modifying' : 'Modify provider details';
+    return this.get('_editing') ?
+      this.t('cancelModifying') :
+      this.t('modifyProviderDetails');
   }),
 
   _providerFormMode: computed('_editing', 'providerProxy.content', function () {
@@ -74,21 +67,19 @@ export default Component.extend({
     }
   }),
 
-  // TODO i18n  
   _formTitle: computed('_providerFormMode', 'providerProxy.isFulfilled', function () {
     if (!this.get('providerProxy.isFulfilled')) {
       return '';
     } else {
-      return FORM_TITLES[this.get('_providerFormMode')];
+      return this.t('formTitles.' + this.get('_providerFormMode'));
     }
   }),
 
-  // TODO i18n  
   _formDescription: computed('_providerFormMode', 'providerProxy.isFulfilled', function () {
     if (!this.get('providerProxy.isFulfilled')) {
       return '';
     } else {
-      return FORM_DESCRIPTIONS[this.get('_providerFormMode')];
+      return this.t('formDescriptions.' + this.get('_providerFormMode'));
     }
   }),
 
@@ -133,11 +124,10 @@ export default Component.extend({
       } = this.getProperties('globalNotify', 'providerManager');
       let deregistering = providerManager.deregisterProvider();
       deregistering.catch(error => {
-        globalNotify.backendError('provider deregistration', error);
+        globalNotify.backendError(this.t('providerDeregistration'), error);
       });
       deregistering.then(() => {
-        globalNotify.info('Provider has been deregistered');
-        // TODO for now, we does not support not registered provider views
+        globalNotify.info(this.t('deregisterSuccess'));
         setTimeout(() => window.location.reload(), 1000);
       });
       return deregistering;
@@ -174,23 +164,31 @@ export default Component.extend({
         'geoLongitude',
         'geoLatitude'
       );
-      let modifying = providerManager.modifyProvider(modifyProviderData);
-      modifying.catch(error => {
-        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
-        if (subdomainReservedMsg) {
-          this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
-          error = { error: error.error, message: subdomainReservedMsg };
-        }
-        // TODO i18n
-        globalNotify.backendError('provider data modification', error);
-      });
-      modifying.then(() => {
-        // TODO i18n
-        globalNotify.info('Provider data has been modified');
-        this._initProviderProxy(true);
-        this.set('_editing', false);
-      });
-      return modifying;
+      return providerManager.modifyProvider(modifyProviderData)
+        .catch(error => {
+          const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
+          if (subdomainReservedMsg) {
+            this.set('_excludedSubdomains', _excludedSubdomains.concat(data.subdomain));
+            error = { error: error.error, message: subdomainReservedMsg };
+          } else {
+            const letsEncryptError = getSpecialLetsEncryptError(error);
+            if (letsEncryptError) {
+              error = {
+                error: error.error,
+                message: this.t(
+                  'letsEncrypt.' + camelize(letsEncryptError + 'ErrorInfo')
+                ),
+              };
+            }
+          }
+          globalNotify.backendError(this.t('providerDataModification'), error);
+          throw error;
+        })
+        .then(() => {
+          globalNotify.info(this.t('modifySuccess'));
+          this._initProviderProxy(true);
+          this.set('_editing', false);
+        });
     },
   },
 });

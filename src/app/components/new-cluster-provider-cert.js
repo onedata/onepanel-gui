@@ -187,7 +187,9 @@ export default Component.extend(I18n, {
           if (this.get('_lockLetsEncrypt')) {
             this.set('formValues.letsEncryptEnabled', false);
           }
-          error = { message: this.t(camelize(errorType + 'ErrorInfo')) };
+          error = {
+            message: 'letsEncrypt.' + this.t(camelize(errorType + 'ErrorInfo')),
+          };
         } else {
           this.setProperties({
             _authorizationErrorOccured: false,
