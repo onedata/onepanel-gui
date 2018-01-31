@@ -434,7 +434,8 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_configureProvider: computed(function () {
       return {
         success: (data) => {
-          let __provider = this.get('__provider');
+          let __provider = this.get('__provider') ||
+            this.set('__provider', Ember.Object.create({}));
           for (let prop in data) {
             __provider.set(prop, data[prop]);
           }
