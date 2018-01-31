@@ -14,6 +14,7 @@ import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   inject: { service },
@@ -32,43 +33,31 @@ const {
  * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
  * for provider
  */
-const STEPS_PROVIDER = [{
-    id: 'installation',
-    title: 'cluster installation',
-  }, {
-    id: 'provider-registration',
-    title: 'zone registration',
-  }, {
-    id: 'provider-cert',
-    title: 'certificate setup',
-  }, {
-    id: 'provider-storage',
-    title: 'storage configuration',
-  },
-  {
-    id: 'summary',
-    title: 'summary',
-  },
+const STEPS_PROVIDER = [
+  'installation',
+  'providerRegistration',
+  'providerCert',
+  'providerStorage',
+  'summary',
 ];
 
 /**
  * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
  * for zone
  */
-const STEPS_ZONE = [{
-  id: 'installation',
-  title: 'cluster installation',
-}, {
-  id: 'summary',
-  title: 'summary',
-}];
+const STEPS_ZONE = [
+  'installation',
+  'summary',
+];
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
   clusterManager: service(),
+
+  i18nPrefix: 'components.newCluster',
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
@@ -81,9 +70,6 @@ export default Ember.Component.extend({
    */
   isLoading: false,
 
-  // TODO: i18n
-  steps: [],
-
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));
   }),
@@ -95,7 +81,11 @@ export default Ember.Component.extend({
     this.setProperties({
       currentStepIndex: clusterInitStep,
       _isInProcess: clusterInitStep > STEP.DEPLOY,
-      steps: onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE,
+      steps: (onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE).map(
+        id => ({
+          id,
+          title: this.t(`steps.${onepanelServiceType}.${id}`),
+        })),
     });
     if (clusterInitStep === STEP.DEPLOY) {
       this.set('isLoading', true);

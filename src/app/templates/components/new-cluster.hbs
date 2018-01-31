@@ -13,16 +13,16 @@
           changeClusterName=(action "changeClusterName")
           deploymentTaskId=deploymentTaskId
         }}
-      {{else if (eq w.step.id "provider-registration")}}
+      {{else if (eq w.step.id "providerRegistration")}}
         {{new-cluster-zone-registration
           nextStep=(action "next")
           changeClusterName=(action "changeClusterName")
         }}
-      {{else if (eq w.step.id "provider-cert")}}
+      {{else if (eq w.step.id "providerCert")}}
         {{new-cluster-provider-cert
           nextStep=(action "next")
         }}
-      {{else if (eq w.step.id "provider-storage")}}
+      {{else if (eq w.step.id "providerStorage")}}
         {{manage-cluster-storages nextStep=(action "next")}}
       {{else if (eq w.step.id "summary")}}
         {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}

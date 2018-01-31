@@ -19,6 +19,7 @@ import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
 import contentClustersProvider from './components/content-clusters-provider';
+import newCluster from './components/new-cluster';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -46,6 +47,7 @@ let translations = {
     newClusterProviderCert,
     newClusterInstallation,
     contentClustersProvider,
+    newCluster,
   },
 };
 
