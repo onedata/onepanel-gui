@@ -30,6 +30,7 @@ export default Component.extend(I18n, {
 
   /**
    * Using intermediate var for testing purposes
+   * @type {Location}
    */
   _location: window.location,
 
@@ -217,7 +218,12 @@ export default Component.extend(I18n, {
   _changeDomain() {
     this.set('_redirectPage', true);
     const domain = this.get('providerDetailsProxy.content.domain');
-    this.get('_location').hostname = domain;
+    const _location = this.get('_location');
+    if (_location.hostname === domain) {
+      _location.reload();
+    } else {
+      _location.hostname = domain;
+    }
   },
 
   actions: {
