@@ -44,8 +44,7 @@ export default Ember.Service.extend({
    */
   getButtonsFor(type) {
     switch (type) {
-      default:
-        return [];
+      default: return [];
     }
   },
 });

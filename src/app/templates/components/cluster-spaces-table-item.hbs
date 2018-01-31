@@ -105,6 +105,13 @@
           {{#promise-proxy-container proxy=spaceSupportersProxy}}
             {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
           {{/promise-proxy-container}}
+          <div class="row content-row space-occupancy-row">
+            <strong>{{tt this "spaceUsageOnThisProvider"}}</strong>
+            {{one-label-tip
+              title=(tt this "spaceUsageOnThisProviderTip")
+              placement="top"}}
+            {{one-space-indicator totalSize=_thisProviderSupportSize occupiedSize=_spaceOccupancy}}
+          </div>
         </div>
         
         <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
@@ -171,6 +178,7 @@
                       spaceSize=spaceSizeForProvider
                       spaceId=space.id
                       updateAutoCleaning=(action "updateAutoCleaning")
+                      spaceOccupancyChanged=(action "spaceOccupancyChanged")
                     }}
                   {{/if}}
                 {{/tab.pane}}                

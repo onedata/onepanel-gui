@@ -8,10 +8,11 @@
  */
 
 import Ember from 'ember';
-import _includes from 'lodash/includes';
+import _ from 'lodash';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   Component,
@@ -40,12 +41,18 @@ const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 export default Component.extend(
   SpaceItemSyncStats,
   SpaceItemSupports,
-  SpaceTabs, {
+  SpaceTabs,
+  I18n, {
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
 
     storageManager: service(),
+
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.clusterSpacesTableItem',
 
     /**
      * @virtual
@@ -77,10 +84,48 @@ export default Component.extend(
     space: computed.reads('spaceProxy.content'),
 
     /**
+     * The newest version of known space occupancy level
+     * @type {number}
+     */
+    _updatedSpaceOccupancy: undefined,
+
+    /**
      * Last resolved SpaceDetails
      * @type {SpaceDetails}
      */
     _spaceCache: null,
+
+    /**
+     * @type {Ember.ComputedProperty<number>}
+     */
+    _thisProviderSupportSize: computed(
+      'spaceSupportersProxy.content',
+      function () {
+        const spaceSupporters = this.get('spaceSupportersProxy.content');
+        if (typeof spaceSupporters === 'object') {
+          const thisProviderSupport =
+            _.find(spaceSupporters, { isCurrentProvider: true }) || {};
+          return thisProviderSupport.size;
+        } else {
+          return undefined;
+        }
+      }
+    ),
+
+    /**
+     * Space occupancy used to prepare used-space chart.
+     * @type {Ember.ComputedProperty<number|undefined>}
+     */
+    _spaceOccupancy: computed(
+      'space.spaceOccupancy',
+      '_updatedSpaceOccupancy',
+      function () {
+        const preloadedSpaceOccupancy = this.get('space.spaceOccupancy');
+        const _updatedSpaceOccupancy = this.get('_updatedSpaceOccupancy');
+        return typeof _updatedSpaceOccupancy === 'number' ?
+          _updatedSpaceOccupancy : preloadedSpaceOccupancy;
+      }
+    ),
 
     /**
      * Storage that supports space on this panel's provider
@@ -163,7 +208,7 @@ export default Component.extend(
       let storageImport = get(space, 'storageImport');
       return storageImport != null ?
         Object.keys(storageImport).filter(p =>
-          get(storageImport, p) != null && !_includes(SKIPPED_IMPORT_PROPERTIES, p)
+          get(storageImport, p) != null && !_.includes(SKIPPED_IMPORT_PROPERTIES, p)
         ) : [];
     }),
 
@@ -180,7 +225,7 @@ export default Component.extend(
       let storageUpdate = get(space, 'storageUpdate');
       return storageUpdate != null ?
         Object.keys(storageUpdate).filter(p =>
-          get(storageUpdate, p) != null && !_includes(SKIPPED_UPDATE_PROPERTIES, p)
+          get(storageUpdate, p) != null && !_.includes(SKIPPED_UPDATE_PROPERTIES, p)
         ) : [];
     }),
 
@@ -232,6 +277,9 @@ export default Component.extend(
       },
       updateAutoCleaning(autoCleaning) {
         return this.get('submitModifySpace')({ autoCleaning });
+      },
+      spaceOccupancyChanged(spaceOccupancy) {
+        this.set('_updatedSpaceOccupancy', spaceOccupancy);
       },
     },
   });
