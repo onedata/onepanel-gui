@@ -189,7 +189,7 @@ export default Component.extend(I18n, {
             this.set('formValues.letsEncryptEnabled', false);
           }
           error = {
-            message: 'letsEncrypt.' + this.t(camelize(errorType + 'ErrorInfo')),
+            message: this.t('letsEncrypt.' + camelize(errorType + 'ErrorInfo')),
           };
         } else {
           this.setProperties({
