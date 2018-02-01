@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3968 Update to EmberJS 2.18.0
 * VFS-3571 Common libraries update
 * VFS-3955 Better truncating of too long names in sidebar, sidebar buttons
 * VFS-3619 Refactor of login page components
