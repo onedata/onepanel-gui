@@ -45,6 +45,11 @@ export default Component.extend(I18n, {
   /**
    * @type {boolean}
    */
+  _submitting: false,
+
+  /**
+   * @type {boolean}
+   */
   _deregisterModalOpen: false,
 
   _editProviderButtonType: computed('_editing', function () {
@@ -56,6 +61,11 @@ export default Component.extend(I18n, {
       this.t('cancelModifying') :
       this.t('modifyProviderDetails');
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  _editButtonEnabled: computed.not('_submitting'),
 
   _providerFormMode: computed('_editing', 'providerProxy.content', function () {
     let _editing = this.get('_editing');
@@ -138,7 +148,7 @@ export default Component.extend(I18n, {
      * @param {string} data.name
      * @param {boolean} data.subdomainDelegation
      * @param {string} data.domain
-     * @param {string} data.letsEncryptEnabled
+     * @param {stri_submittingng} data.letsEncryptEnabled
      * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
@@ -164,6 +174,7 @@ export default Component.extend(I18n, {
         'geoLongitude',
         'geoLatitude'
       );
+      this.set('_submitting', true);
       return providerManager.modifyProvider(modifyProviderData)
         .catch(error => {
           const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
@@ -188,6 +199,9 @@ export default Component.extend(I18n, {
           globalNotify.info(this.t('modifySuccess'));
           this._initProviderProxy(true);
           this.set('_editing', false);
+        })
+        .finally(() => {
+          this.set('_submitting', false);
         });
     },
   },
