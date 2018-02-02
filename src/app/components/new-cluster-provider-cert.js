@@ -219,11 +219,15 @@ export default Component.extend(I18n, {
     this.set('_redirectPage', true);
     const domain = this.get('providerDetailsProxy.content.domain');
     const _location = this.get('_location');
-    if (_location.hostname === domain) {
-      _location.reload();
-    } else {
-      _location.hostname = domain;
-    }
+    // this timeout is used because the onprovider server can be unavailable
+    // for a while after cert setup operation
+    setTimeout(() => {
+      if (_location.hostname === domain) {
+        _location.reload();
+      } else {
+        _location.hostname = domain;
+      }
+    }, 3000);
   },
 
   actions: {
