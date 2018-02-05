@@ -6,7 +6,6 @@ export default {
   subdomainReserved: 'This subdomain is reserved.',
   redirectInfo: 'Upon successful modification of domain, subdomain or enabling ' +
     'Let\'s Encrypt, the page will be reloaded with the new Oneprovider domain.',
-  redirectingProgress: 'Redirecting to the new Oneprovider domain...',
   fields: {
     id: {
       label: 'ID',

@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import { inject } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { default as EmberObject, computed } from '@ember/object';
+import { default as EmberObject, computed, trySet } from '@ember/object';
 import { dasherize, camelize } from '@ember/string';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
@@ -172,6 +172,15 @@ export default Component.extend(I18n, {
   },
 
   /**
+   * Alias for testing puproses
+   * Using the same parameters as `util:changeDomain`
+   * @returns {Promise} resolves after setting window.location
+   */
+  _changeDomain() {
+    return changeDomain(...arguments);
+  },
+
+  /**
    * Configure Let's Encrypt feature for provider
    * @param {boolean} enabled 
    * @returns {Promise} invoke server `modifyProvider` method
@@ -212,11 +221,10 @@ export default Component.extend(I18n, {
           const domain = this.get('providerDetailsProxy.content.domain');
           const _location = this.get('_location');
           globalNotify.success(this.t('generationSuccess'));
-          return changeDomain(domain, {
+          this._changeDomain(domain, {
             location: _location,
-            tryCount: 10,
-            tryInterval: 1000,
-          });
+            timeout: 5000,
+          }).catch(() => trySet('_redirectPage', false));
         } else {
           this.get('nextStep')();
         }

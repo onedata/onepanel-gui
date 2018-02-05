@@ -40,7 +40,7 @@ describe('Integration | Component | new cluster provider cert', function () {
     this.set('_location', {});
   });
 
-  it('renders information about disabled cert generation', function (done) {
+  it('renders information about disabled cert generation', function () {
     const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
       subdomainDelegation: false,
     });
@@ -53,15 +53,14 @@ describe('Integration | Component | new cluster provider cert', function () {
       _location=_location
     }}`);
 
-    wait().then(() => {
+    return wait().then(() => {
       expect(this.$('.text-subdomain'), 'subdomain text').to.not.exist;
       expect(this.$('.text-no-subdomain'), 'no-subdomain text').to.exist;
-      done();
     });
   });
 
   it('does not change the domain on next step if subdomainDelegation is diabled',
-    function (done) {
+    function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: false,
       });
@@ -80,24 +79,24 @@ describe('Integration | Component | new cluster provider cert', function () {
         nextStep=(action "nextStep")
       }}`);
 
-      click('.btn-cert-next').then(() => {
+      return click('.btn-cert-next').then(() => {
         expect(changeDomain).to.be.not.called;
         expect(nextStep).to.be.called;
-        done();
       });
     }
   );
 
   it(
     'changes the domain on next step if subdomainDelegation and LetsEncrypt are enabled',
-    function (done) {
+    function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
       });
       this.set('providerDetailsProxy', PromiseObject.create({
         promise: Promise.resolve(providerDetails),
       }));
-      const changeDomain = sinon.spy();
+      const changeDomain = sinon.stub();
+      changeDomain.resolves(undefined);
       this.on('changeDomain', changeDomain);
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
@@ -109,11 +108,10 @@ describe('Integration | Component | new cluster provider cert', function () {
         nextStep=(action "nextStep")
       }}`);
 
-      wait().then(() => {
-        click('.btn-cert-next').then(() => {
+      return wait().then(() => {
+        return click('.btn-cert-next').then(() => {
           expect(changeDomain).to.be.called;
           expect(nextStep).to.be.not.called;
-          done();
         });
       });
     }
@@ -121,7 +119,7 @@ describe('Integration | Component | new cluster provider cert', function () {
 
   it(
     'does not change the domain if LetsEncrypt is disabled',
-    function (done) {
+    function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
       });
@@ -140,12 +138,11 @@ describe('Integration | Component | new cluster provider cert', function () {
         nextStep=(action "nextStep")
       }}`);
 
-      wait().then(() => {
-        click('.toggle-field-letsEncryptEnabled').then(() => {
-          click('.btn-cert-next').then(() => {
+      return wait().then(() => {
+        return click('.toggle-field-letsEncryptEnabled').then(() => {
+          return click('.btn-cert-next').then(() => {
             expect(changeDomain, 'changeDomain').to.be.not.called;
             expect(nextStep, 'nextStep').to.be.called;
-            done();
           });
         });
       });

@@ -12,11 +12,13 @@ import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reser
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import { camelize } from '@ember/string';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import changeDomain from 'onepanel-gui/utils/change-domain';
 
 const {
   computed,
   Component,
   inject: { service },
+  trySet,
 } = Ember;
 
 export default Component.extend(I18n, {
@@ -46,6 +48,12 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   _submitting: false,
+
+  /**
+   * If true, show blocking message about redirection pending
+   * @type {boolean}
+   */
+  _redirectPage: false,
 
   /**
    * @type {boolean}
@@ -203,6 +211,12 @@ export default Component.extend(I18n, {
         .finally(() => {
           this.set('_submitting', false);
         });
+    },
+    changeDomain(domain) {
+      this.set('_redirectPage', true);
+      changeDomain(domain, {
+        timeout: 5000,
+      }).catch(() => trySet('_redirectPage', false));
     },
   },
 });

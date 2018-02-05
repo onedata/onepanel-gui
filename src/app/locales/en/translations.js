@@ -20,6 +20,7 @@ import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
 import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
+import modalRedirect from './components/modal-redirect';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -48,6 +49,7 @@ let translations = {
     newClusterInstallation,
     contentClustersProvider,
     newCluster,
+    modalRedirect,
   },
 };
 

@@ -26,16 +26,3 @@
     </div>
   {{/if}}
 {{/bs-form}}
-
-{{#bs-modal
-  id="redirecting"
-  open=_redirectPage
-  keyboard=false
-  backdropClose=false
-  as |modal|
-}}
-  {{#modal.body}}
-    {{spin-spinner-block sizeClass="md" class="inline-centered description-bottom"}}
-    <p class="loading-info">{{tt this "redirectingProgress"}}</p>
-  {{/modal.body}}
-{{/bs-modal}}
