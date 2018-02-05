@@ -1,30 +1,41 @@
-{{#loading-container isLoading=_redirectPage}}
-  {{#bs-form submitOnEnter=false class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal" as |form|}}
-    {{one-form-fields
-      bsForm=form
-      fields=currentFields
-      formValues=formValues
-      inputChanged=(action "inputChanged")
-      onFocusOut=(action "focusOut")
-      disabled=_disabled
-    }}
-    {{#if _willChangeDomainAfterSubmit}}
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="alert alert-info">
-            {{tt this "redirectInfo"}}
-          </div>
+{{#bs-form submitOnEnter=false class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal" as |form|}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+    disabled=_disabled
+  }}
+  {{#if _willChangeDomainAfterSubmit}}
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="alert alert-info">
+          {{tt this "redirectInfo"}}
         </div>
       </div>
-    {{/if}}
-    {{#if (not (eq mode "show"))}}
-      <div class="row">
-        <div class={{layoutConfig.formSubmitColumns}}>
-          {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-            {{submitText}}  
-          {{/one-spin-button}}
-        </div>
+    </div>
+  {{/if}}
+  {{#if (not (eq mode "show"))}}
+    <div class="row">
+      <div class={{layoutConfig.formSubmitColumns}}>
+        {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+          {{submitText}}  
+        {{/one-spin-button}}
       </div>
-    {{/if}}
-  {{/bs-form}}
-{{/loading-container}}
+    </div>
+  {{/if}}
+{{/bs-form}}
+
+{{#bs-modal
+  id="redirecting"
+  open=_redirectPage
+  keyboard=false
+  backdropClose=false
+  as |modal|
+}}
+  {{#modal.body}}
+    {{spin-spinner-block sizeClass="md" class="inline-centered description-bottom"}}
+    <p class="loading-info">{{tt this "redirectingProgress"}}</p>
+  {{/modal.body}}
+{{/bs-modal}}

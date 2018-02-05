@@ -5,6 +5,7 @@ import { default as EmberObject, computed } from '@ember/object';
 import { dasherize, camelize } from '@ember/string';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
+import changeDomain from 'onepanel-gui/utils/change-domain';
 
 export default Component.extend(I18n, {
   providerManager: inject(),
@@ -207,27 +208,19 @@ export default Component.extend(I18n, {
       })
       .then(() => {
         if (enabled) {
+          this.set('_redirectPage', true);
+          const domain = this.get('providerDetailsProxy.content.domain');
+          const _location = this.get('_location');
           globalNotify.success(this.t('generationSuccess'));
-          this._changeDomain();
+          return changeDomain(domain, {
+            location: _location,
+            tryCount: 10,
+            tryInterval: 1000,
+          });
         } else {
           this.get('nextStep')();
         }
       });
-  },
-
-  _changeDomain() {
-    this.set('_redirectPage', true);
-    const domain = this.get('providerDetailsProxy.content.domain');
-    const _location = this.get('_location');
-    // this timeout is used because the onprovider server can be unavailable
-    // for a while after cert setup operation
-    setTimeout(() => {
-      if (_location.hostname === domain) {
-        _location.reload();
-      } else {
-        _location.hostname = domain;
-      }
-    }, 3000);
   },
 
   actions: {

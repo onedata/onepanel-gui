@@ -14,6 +14,8 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 import Ember from 'ember';
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import changeDomain from 'onepanel-gui/utils/change-domain';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   computed,
@@ -561,17 +563,6 @@ export default OneForm.extend(Validations, I18n, {
     this.set('allFieldsValues.editSubdomain.subdomain', proposedSubdomain);
   },
 
-  _changeDomain() {
-    this.set('_redirectPage', true);
-    const domain = this.get('provider.domain');
-    const _location = this.get('_location');
-    if (_location.hostname === domain) {
-      _location.reload();
-    } else {
-      _location.hostname = domain;
-    }
-  },
-
   actions: {
     inputChanged(fieldName, value) {
       let {
@@ -610,7 +601,14 @@ export default OneForm.extend(Validations, I18n, {
       return this.get('submit')(values)
         .then(() => {
           if (_willChangeDomainAfterSubmit) {
-            this._changeDomain();
+            this.set('_redirectPage', true);
+            const domain = this.get('provider.domain');
+            const _location = this.get('_location');
+            return changeDomain(domain, {
+              location: _location,
+              tryCount: 10,
+              tryInterval: 1000,
+            }).catch(() => safeExec(this, 'set', '_redirectPage', false));
           }
         })
         .finally(() => {
