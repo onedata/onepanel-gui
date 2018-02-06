@@ -24,6 +24,7 @@ import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
 
 const {
   A,
@@ -106,7 +107,17 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    mockInitializedCluster: true,
+    // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
+    // see STEP import for more info
+    // mockStep: STEP.PROVIDER_REGISTER,
+    // NOTE: below: first step of deployment
+    // mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY,
+    mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE,
+
+    mockInitializedCluster: computed.equal(
+      'mockStep',
+      MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
+    ),
 
     /**
      * @type {computed<Boolean>}
@@ -179,7 +190,11 @@ export default OnepanelServerBase.extend(
           }, RESPONSE_DELAY);
         }
 
-        let handler = this.get(`_req_${api}_${method}`);
+        const handlerName = `_req_${api}_${method}`;
+        let handler = this.get(handlerName);
+        if (typeof this[handlerName] === 'function') {
+          handler = this[handlerName]();
+        }
         if (handler) {
           if (handler.success) {
             let response = {
@@ -262,70 +277,93 @@ export default OnepanelServerBase.extend(
 
     init() {
       this._super(...arguments);
-      if (this.get('mockInitializedCluster')) {
-        let storage1 = {
-          id: 'storage1_verylongid',
-          type: 'posix',
-          name: 'Some storage',
-          mountPoint: '/mnt/st1',
-          lumaEnabled: true,
-          lumaUrl: 'http://localhost:9090',
-          lumaCacheTimeout: 10,
-          lumaApiKey: 'some_storage',
-        };
-        this.get('__storages').push(
-          clusterStorageClass(storage1.type).constructFromObject(storage1)
-        );
-        let spaces = this.get('__spaces');
-        spaces.push({
-          id: 'space1_verylongid',
-          name: 'Space One',
-          storageId: storage1.id,
-          mountInRoot: true,
-          storageImport: {
-            strategy: 'no_import',
-          },
-          storageUpdate: {
-            strategy: 'no_update',
-          },
-          supportingProviders: _genSupportingProviders(),
-          filesPopularity: {
-            enabled: true,
-            restUrl: 'https://example.com',
-          },
-          autoCleaning: {
-            enabled: true,
-            settings: _genAutoCleaningSettings(),
-          },
-        });
-        spaces.push({
-          id: 'space2_verylongid',
-          name: 'Space Two',
-          storageId: storage1.id,
-          storageImport: {
-            strategy: 'simple_scan',
-            maxDepth: 4,
-            syncAcl: true,
-          },
-          storageUpdate: {
-            strategy: 'simple_scan',
-            maxDepth: 3,
-            scanInterval: 1000,
-            writeOnce: false,
-            deleteEnable: false,
-            syncAcl: true,
-          },
-          supportingProviders: _genSupportingProviders(),
-        });
-        // additional spaces to test issue VFS-3673
-        _.times(8, i => {
-          spaces.push({
-            id: i + '-space',
-            name: 'Test Space',
-            storageId: storage1.id,
-            supportingProviders: _genSupportingProviders(),
-          });
-        });
+      const mockStep = this.get('mockStep');
+      if (MOCK_SERVICE_TYPE === 'provider') {
+        if (mockStep > STEP.PROVIDER_REGISTER) {
+          this.set('__provider', PlainableObject.create({
+            id: PROVIDER_ID,
+            name: 'Some provider 1',
+            onezoneDomainName: 'localhost',
+            subdomainDelegation: true,
+            letsEncryptEnabled: undefined,
+            subdomain: 'somedomain',
+            domain: 'somedomain.localhost',
+            adminEmail: 'some@example.com',
+            geoLatitude: 49.698284,
+            geoLongitude: 21.898093,
+          }));
+        }
+        if (mockStep > STEP.PROVIDER_CERT_GENERATE) {
+          this.set('__provider.letsEncryptEnabled', true);
+        }
+        if (mockStep > STEP.PROVIDER_STORAGE_ADD) {
+          let storage1 = {
+            id: 'storage1_verylongid',
+            type: 'posix',
+            name: 'Some storage',
+            mountPoint: '/mnt/st1',
+            lumaEnabled: true,
+            lumaUrl: 'http://localhost:9090',
+            lumaCacheTimeout: 10,
+            lumaApiKey: 'some_storage',
+          };
+          this.get('__storages').push(
+            clusterStorageClass(storage1.type).constructFromObject(storage1)
+          );
+
+          if (mockStep >= STEP.PROVIDER_DONE) {
+            let spaces = this.get('__spaces');
+            spaces.push({
+              id: 'space1_verylongid',
+              name: 'Space One',
+              storageId: storage1.id,
+              mountInRoot: true,
+              storageImport: {
+                strategy: 'no_import',
+              },
+              storageUpdate: {
+                strategy: 'no_update',
+              },
+              supportingProviders: _genSupportingProviders(),
+              filesPopularity: {
+                enabled: true,
+                restUrl: 'https://example.com',
+              },
+              autoCleaning: {
+                enabled: true,
+                settings: _genAutoCleaningSettings(),
+              },
+            });
+            spaces.push({
+              id: 'space2_verylongid',
+              name: 'Space Two',
+              storageId: storage1.id,
+              storageImport: {
+                strategy: 'simple_scan',
+                maxDepth: 4,
+                syncAcl: true,
+              },
+              storageUpdate: {
+                strategy: 'simple_scan',
+                maxDepth: 3,
+                scanInterval: 1000,
+                writeOnce: false,
+                deleteEnable: false,
+                syncAcl: true,
+              },
+              supportingProviders: _genSupportingProviders(),
+            });
+            // additional spaces to test issue VFS-3673
+            _.times(8, i => {
+              spaces.push({
+                id: i + '-space',
+                name: 'Test Space',
+                storageId: storage1.id,
+                supportingProviders: _genSupportingProviders(),
+              });
+            });
+          }
+        }
       }
     },
 
@@ -402,7 +440,8 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_configureProvider: computed(function () {
       return {
         success: (data) => {
-          let __provider = this.get('__provider');
+          let __provider = this.get('__provider') ||
+            this.set('__provider', Ember.Object.create({}));
           for (let prop in data) {
             __provider.set(prop, data[prop]);
           }
@@ -416,9 +455,17 @@ export default OnepanelServerBase.extend(
         success: (data) => {
           let __provider = this.get('__provider');
           for (let prop in data) {
-            __provider.set(prop, data[prop]);
+            if (data[prop] !== undefined) {
+              __provider.set(prop, data[prop]);
+            }
             if (prop === 'name') {
               this.set('__configuration.oneprovider.name', data[prop]);
+            } else if (prop === 'subdomain') {
+              set(
+                __provider,
+                'domain',
+                `${get(__provider, 'subdomain')}.${get(__provider, 'onezoneDomainName')}`
+              );
             }
           }
 
@@ -436,7 +483,19 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_addProvider: computed(function () {
       return {
-        success: () => null,
+        success: (provider) => {
+          this.set('__provider', PlainableObject.create({ id: '3i92ry78ngq78' }));
+          for (const prop in provider) {
+            if (provider.hasOwnProperty(prop)) {
+              this.set('__provider.' + prop, provider[prop]);
+            }
+          }
+          this.set(
+            '__provider.domain',
+            provider.subdomain + '.' + provider.onezoneDomainName
+          );
+          return null;
+        },
       };
     }),
 
@@ -456,10 +515,11 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getProviderConfiguration: computed('mockInitializedCluster',
+    _req_oneprovider_getProviderConfiguration: computed(
+      'mockStep',
       '__configuration',
       function () {
-        if (this.get('mockInitializedCluster')) {
+        if (this.get('mockStep') > STEP.PROVIDER_DEPLOY) {
           return {
             success: () => this.get('__configuration').plainCopy(),
           };
@@ -470,18 +530,17 @@ export default OnepanelServerBase.extend(
         }
       }),
 
-    _req_oneprovider_getProvider: computed('mockInitializedCluster', '__provider',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          return {
-            success: () => this.get('__provider').plainCopy(),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getProvider() {
+      if (this.get('__provider')) {
+        return {
+          success: () => this.get('__provider').plainCopy(),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
     _req_oneprovider_getStorages: computed('__storages',
       function () {
@@ -651,16 +710,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    __provider: PlainableObject.create({
-      id: PROVIDER_ID,
-      name: 'Some provider 1',
-      onezoneDomainName: 'onezone.org',
-      subdomainDelegation: true,
-      subdomain: 'somedomain',
-      domain: 'somedomain.onezone.org',
-      geoLatitude: 49.698284,
-      geoLongitude: 21.898093,
-    }),
+    __provider: undefined,
 
     __configuration: PlainableObject.create({
       cluster: {

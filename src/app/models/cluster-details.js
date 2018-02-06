@@ -1,26 +1,33 @@
 /**
  * A complete model for Cluster entity used in panel
  *
- * A ``ClusterInfo`` object should be referenced to provide basic information
+ * A `ClusterInfo` object should be referenced to provide basic information
  * about cluster.
  *
  * @module models/cluster-details
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import ObjectProxy from '@ember/object/proxy';
+import { computed } from '@ember/object';
 
-const {
-  computed,
-  computed: {
-    alias,
-  },
-} = Ember;
+export const CLUSTER_INIT_STEPS = Object.freeze({
+  DEPLOY: 0,
+  // pseudo-step: should be always between DEPLOY and DEPLOY + 1
+  DEPLOYMENT_PROGRESS: 0.5,
+  ZONE_DEPLOY: 0,
+  ZONE_DONE: 1,
+  PROVIDER_DEPLOY: 0,
+  PROVIDER_REGISTER: 1,
+  PROVIDER_CERT_GENERATE: 2,
+  PROVIDER_STORAGE_ADD: 3,
+  PROVIDER_DONE: 4,
+});
 
-export default Ember.ObjectProxy.extend({
-  content: alias('clusterInfo'),
+export default ObjectProxy.extend({
+  content: computed.alias('clusterInfo'),
 
   /**
    * @type {string}
@@ -33,7 +40,7 @@ export default Ember.ObjectProxy.extend({
    */
   clusterInfo: null,
 
-  initStep: 0,
+  initStep: CLUSTER_INIT_STEPS.DEPLOY,
 
   /**
    * @type {string|null}
@@ -53,6 +60,8 @@ export default Ember.ObjectProxy.extend({
       initStep,
       onepanelServiceType,
     } = this.getProperties('initStep', 'onepanelServiceType');
-    return onepanelServiceType === 'provider' ? initStep >= 3 : initStep >= 1;
+    return onepanelServiceType === 'provider' ?
+      initStep >= CLUSTER_INIT_STEPS.PROVIDER_DONE :
+      initStep >= CLUSTER_INIT_STEPS.ZONE_DONE;
   }),
 });

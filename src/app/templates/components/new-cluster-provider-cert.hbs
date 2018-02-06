@@ -1,0 +1,73 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "header"}}
+    <div class="btn-toolbar">
+      {{#if (not _redirectPage)}}
+        {{#one-spin-button
+          class=(concat "btn btn-sm btn-primary btn-cert-next " btnClass)
+          action=(action "proceed")
+        }}
+          <span>{{btnLabel}}</span>{{one-icon icon="arrow-right"}}
+        {{/one-spin-button}}
+      {{/if}}
+    </div>
+  </h1>
+</div>
+
+<div class="row content-row no-border">
+  {{#promise-proxy-container proxy=providerDetailsProxy}}
+    {{#if (eq status "subdomain")}}
+      <p class="{{textClass}}">
+        {{tt this "text.subdomainP1"}}
+      </p>
+      <p class="{{textClass}}">
+        {{tt this "text.subdomainP21"}}
+        (<a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>).
+        {{tt this "text.subdomainP22"}}
+      </p>
+    {{else if (eq status "noSubdomain")}}
+      <p class="{{textClass}}">
+        {{tt this "text.noSubdomain"}}
+      </p>
+    {{/if}}
+  {{/promise-proxy-container}}
+</div>
+
+{{#if _limitErrorOccured}}
+  <div class="alert alert-warning fade in">
+    {{tt this "letsEncrypt.limitErrorInfo"}}
+  </div>
+{{/if}}
+
+{{#if _authorizationErrorOccured}}
+  <div class="alert alert-warning fade in">
+    {{tt this "letsEncrypt.authorizationErrorInfoP1"}}
+    <a href={{_providerUrl}}>{{_providerUrl}}</a>
+    {{tt this "letsEncrypt.authorizationErrorInfoP2"}}
+  </div>
+{{/if}}
+
+{{#if (eq status "subdomain")}}
+  <div class="row">
+    {{#bs-form
+      submitOnEnter=false
+      class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
+      as |form|
+    }}
+      {{one-form-fields
+        bsForm=form
+        fields=formFields
+        formValues=formValues
+        inputChanged=(action "changeFormValue")
+        disabled=(or isWorking _lockLetsEncrypt)
+      }}
+    {{/bs-form}}
+  </div>
+  
+  {{#if letsEncryptEnabled}}
+    <div class="alert alert-info fade in">
+      {{tt this "redirectInfo"}}
+    </div>
+  {{/if}}
+{{/if}}
+
+{{modal-redirect open=_redirectPage}}

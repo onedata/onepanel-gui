@@ -7,9 +7,15 @@
       {{#dropdown.item buttonStyle="danger" triggerClasses="btn-deregister-provider" itemAction=(action "openDeregisterModal")}}
         Deregister provider
       {{/dropdown.item}}
-      {{#dropdown.item buttonStyle=_editProviderButtonType triggerClasses="btn-modify-provider" itemAction=(action "toggleModifyProvider")}}
-        {{_editProviderButtonLabel}}
-      {{/dropdown.item}}
+      {{#if _editButtonEnabled}}
+        {{#dropdown.item
+          buttonStyle=_editProviderButtonType
+          triggerClasses="btn-modify-provider"
+          itemAction=(action "toggleModifyProvider")
+        }}
+          {{_editProviderButtonLabel}}
+        {{/dropdown.item}}
+      {{/if}}
     {{/one-collapsible-toolbar}}
   </h1>
   {{#one-switchable-popover-modal
@@ -31,7 +37,10 @@
         mode=_providerFormMode
         provider=providerProxy.content
         submit=(action "submitModify")
+        changeDomain=(action "changeDomain")
       }}
     {{/promise-proxy-container}}
   </div>
 </div>
+
+{{modal-redirect open=_redirectPage}}

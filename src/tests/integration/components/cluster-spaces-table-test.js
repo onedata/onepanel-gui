@@ -55,7 +55,7 @@ describe('Integration | Component | cluster spaces table', function () {
       expect(this.$('.alert-some-spaces-rejected')).to.exist;
     });
 
-  it('does not render error message when at all spaces are fetched successfully',
+  it('does not render error message when all spaces are fetched successfully',
     function () {
       let spaces = [
         Ember.Object.create({

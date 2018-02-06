@@ -3,7 +3,7 @@
  *
  * @module components/provider-registration-form
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -13,6 +13,7 @@ import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import Ember from 'ember';
 import _ from 'lodash';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   computed,
@@ -27,6 +28,9 @@ const {
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
 const SUBDOMAIN_REGEX = /^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
+
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const COMMON_FIELDS_TOP = [{
     name: 'id',
@@ -55,6 +59,13 @@ const HOSTNAME_FIELD = {
   tip: true,
 };
 
+const LETSENCRYPT_ENABLED_FIELD = {
+  name: 'letsEncryptEnabled',
+  type: 'checkbox',
+  defaultValue: false,
+  tip: true,
+};
+
 const SUBDOMAIN_FIELD = {
   name: 'subdomain',
   type: 'text',
@@ -63,6 +74,11 @@ const SUBDOMAIN_FIELD = {
 };
 
 const COMMON_FIELDS_BOTTOM = [{
+    name: 'adminEmail',
+    type: 'text',
+    regex: EMAIL_REGEX,
+    tip: true,
+  }, {
     name: 'geoLatitude',
     type: 'number',
     step: 0.000001,
@@ -128,17 +144,21 @@ const ALL_PREFIXES = [
   'editTop',
   'editBottom',
   'editDomain',
+  'editLetsEncryptEnabled',
   'editSubdomain',
   'showTop',
   'showBottom',
   'showDomain',
+  'showLetsEncryptEnabled',
   'showSubdomain',
 ];
 
-export default OneForm.extend(Validations, {
+export default OneForm.extend(Validations, I18n, {
   classNames: ['provider-registration-form'],
 
   i18n: service(),
+
+  i18nPrefix: 'components.providerRegistrationForm',
 
   /**
    * To inject. One of: show, edit, new
@@ -169,6 +189,12 @@ export default OneForm.extend(Validations, {
   _disabled: false,
 
   /**
+   * Change current domain with timeout
+   * @type {Function} `(domain: string) => Promise`
+   */
+  changeDomain: () => {},
+
+  /**
    * Action called on form submit. Action arguments:
    * * formData {Object} data from form
    */
@@ -182,9 +208,19 @@ export default OneForm.extend(Validations, {
     switch (mode) {
       case 'show':
         if (_subdomainDelegation) {
-          return ['showTop', 'showSubdomain', 'showBottom'];
+          return ['showTop', 'showSubdomain', 'showLetsEncryptEnabled',
+            'showBottom',
+          ];
         } else {
           return ['showTop', 'showDomain', 'showBottom'];
+        }
+      case 'edit':
+        if (_subdomainDelegation) {
+          return ['editTop', 'editSubdomain', 'editLetsEncryptEnabled',
+            'editBottom',
+          ];
+        } else {
+          return ['editTop', 'editDomain', 'editBottom'];
         }
       default:
         if (_subdomainDelegation) {
@@ -210,6 +246,7 @@ export default OneForm.extend(Validations, {
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
+      letsEncryptEnabledField: prepareField(LETSENCRYPT_ENABLED_FIELD),
       subdomainField: prepareField(SUBDOMAIN_FIELD),
     });
     return fields;
@@ -255,6 +292,20 @@ export default OneForm.extend(Validations, {
       return this._preprocessField(
         this.get('_fieldsSource.domainField'),
         'editDomain'
+      );
+    }
+  ),
+
+  /**
+   * Let's Encrypt toggle field
+   * @type {computed.Ember.Object}
+   */
+  _letsEncryptEnabledEditField: computed('_fieldsSource.letsEncryptEnabledField',
+    'provider',
+    function () {
+      return this._preprocessField(
+        this.get('_fieldsSource.letsEncryptEnabledField'),
+        'editLetsEncryptEnabled'
       );
     }
   ),
@@ -309,6 +360,21 @@ export default OneForm.extend(Validations, {
   ),
 
   /**
+   * Domain static field
+   * @type {computed.Ember.Object}
+   */
+  _letsEncryptEnabledStaticField: computed('_fieldsSource.letsEncryptEnabledField',
+    'provider',
+    function () {
+      return this._preprocessField(
+        this.get('_fieldsSource.letsEncryptEnabledField'),
+        'showLetsEncryptEnabled',
+        true
+      );
+    }
+  ),
+
+  /**
    * Subdomain static field
    * @type {computed.Ember.Object}
    */
@@ -326,20 +392,24 @@ export default OneForm.extend(Validations, {
     '_editTopFields',
     '_editBottomFields',
     '_domainEditField',
+    '_letsEncryptEnabledEditField',
     '_subdomainEditField',
     '_staticTopFields',
     '_staticBottomFields',
     '_domainStaticField',
+    '_letsEncryptEnabledStaticField',
     '_subdomainStaticField',
     function () {
       let properties = [
         '_editTopFields',
         '_editBottomFields',
         '_domainEditField',
+        '_letsEncryptEnabledEditField',
         '_subdomainEditField',
         '_staticTopFields',
         '_staticBottomFields',
         '_domainStaticField',
+        '_letsEncryptEnabledStaticField',
         '_subdomainStaticField',
       ];
       let fields = [];
@@ -391,6 +461,31 @@ export default OneForm.extend(Validations, {
         break;
     }
   }),
+
+  /**
+   * True if the modify request should cause change of Provider domain,
+   * so we will reload the application on new domain.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  _willChangeDomainAfterSubmit: computed(
+    'mode',
+    'currentFields.@each.changed',
+    'allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled',
+    function getWillChangeDomainAfterSubmit() {
+      if (this.get('mode') === 'edit') {
+        const currentFields = this.get('currentFields');
+        const domainField = _.find(currentFields, { name: 'editDomain.domain' });
+        const subdomainField = _.find(currentFields, { name: 'editSubdomain.subdomain' });
+        const letsEncryptField = _.find(currentFields, { name: 'editLetsEncryptEnabled.letsEncryptEnabled' });
+        return domainField && get(domainField, 'changed') ||
+          subdomainField && get(subdomainField, 'changed') ||
+          letsEncryptField && get(letsEncryptField, 'changed') &&
+          this.get('allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled');
+      } else {
+        return false;
+      }
+    }
+  ),
 
   _modeObserver: on('init', observer('mode', function () {
     this.resetFormValues(ALL_PREFIXES);
@@ -488,10 +583,11 @@ export default OneForm.extend(Validations, {
     },
 
     submit() {
-      let {
+      const {
         formValues,
         allFields,
-      } = this.getProperties('formValues', 'allFields');
+        _willChangeDomainAfterSubmit,
+      } = this.getProperties('formValues', 'allFields', '_willChangeDomainAfterSubmit');
       let values = Ember.Object.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);
@@ -500,25 +596,30 @@ export default OneForm.extend(Validations, {
         );
       });
       this.set('_disabled', true);
-      let submitting = this.get('submit')(values);
-      submitting.finally(() => {
-        this.set('_disabled', false);
-        Ember.run.next(() => {
-          if (this.isDestroyed) {
-            return;
+      return this.get('submit')(values)
+        .then(() => {
+          if (_willChangeDomainAfterSubmit) {
+            const domain = this.get('provider.domain');
+            this.get('changeDomain')(domain);
           }
-          this.validateSync();
-          // subdomain field may throw errors, so it should be marked as 
-          // changed to show that errors
-          let subdomainField = _.find(
-            allFields,
-            ((field) => field.get('name') === 'editSubdomain.subdomain')
-          );
-          subdomainField.set('changed', true);
-          this.recalculateErrors();
+        })
+        .finally(() => {
+          this.set('_disabled', false);
+          Ember.run.next(() => {
+            if (this.isDestroyed) {
+              return;
+            }
+            this.validateSync();
+            // subdomain field may throw errors, so it should be marked as 
+            // changed to show that errors
+            let subdomainField = _.find(
+              allFields,
+              ((field) => field.get('name') === 'editSubdomain.subdomain')
+            );
+            subdomainField.set('changed', true);
+            this.recalculateErrors();
+          });
         });
-      });
-      return submitting;
     },
   },
 });

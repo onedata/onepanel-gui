@@ -3,7 +3,7 @@
  *
  * @module components/new-cluster-zone-registration
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -53,6 +53,7 @@ export default Component.extend({
       domain,
       geoLongitude,
       geoLatitude,
+      adminEmail,
     } = providerData.getProperties(
       'name',
       'onezoneDomainName',
@@ -60,7 +61,8 @@ export default Component.extend({
       'subdomain',
       'domain',
       'geoLongitude',
-      'geoLatitude'
+      'geoLatitude',
+      'adminEmail',
     );
 
     let reqProto = stripObject({
@@ -69,6 +71,7 @@ export default Component.extend({
       subdomainDelegation,
       subdomain,
       domain,
+      adminEmail,
       geoLongitude: Number.parseFloat(geoLongitude),
       geoLatitude: Number.parseFloat(geoLatitude),
     }, [undefined, null, NaN, '']);
