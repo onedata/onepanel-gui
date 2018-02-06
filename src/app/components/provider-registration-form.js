@@ -190,7 +190,7 @@ export default OneForm.extend(Validations, I18n, {
 
   /**
    * Change current domain with timeout
-   * @type {function} `function(domain: string): Promise`
+   * @type {Function} `(domain: string) => Promise`
    */
   changeDomain: () => {},
 

@@ -13,6 +13,7 @@ import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encr
 import { camelize } from '@ember/string';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import changeDomain from 'onepanel-gui/utils/change-domain';
+import config from 'ember-get-config';
 
 const {
   computed,
@@ -20,6 +21,12 @@ const {
   inject: { service },
   trySet,
 } = Ember;
+
+const {
+  time: {
+    redirectDomainDelay,
+  },
+} = config;
 
 export default Component.extend(I18n, {
   providerManager: service(),
@@ -156,7 +163,7 @@ export default Component.extend(I18n, {
      * @param {string} data.name
      * @param {boolean} data.subdomainDelegation
      * @param {string} data.domain
-     * @param {stri_submittingng} data.letsEncryptEnabled
+     * @param {string} data.letsEncryptEnabled
      * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
@@ -215,8 +222,8 @@ export default Component.extend(I18n, {
     changeDomain(domain) {
       this.set('_redirectPage', true);
       changeDomain(domain, {
-        timeout: 5000,
-      }).catch(() => trySet('_redirectPage', false));
+        delay: redirectDomainDelay,
+      }).catch(() => trySet(this, '_redirectPage', false));
     },
   },
 });

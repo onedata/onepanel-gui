@@ -6,6 +6,13 @@ import { dasherize, camelize } from '@ember/string';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import changeDomain from 'onepanel-gui/utils/change-domain';
+import config from 'ember-get-config';
+
+const {
+  time: {
+    redirectDomainDelay,
+  },
+} = config;
 
 export default Component.extend(I18n, {
   providerManager: inject(),
@@ -223,8 +230,8 @@ export default Component.extend(I18n, {
           globalNotify.success(this.t('generationSuccess'));
           this._changeDomain(domain, {
             location: _location,
-            timeout: 5000,
-          }).catch(() => trySet('_redirectPage', false));
+            delay: redirectDomainDelay,
+          }).catch(() => trySet(this, '_redirectPage', false));
         } else {
           this.get('nextStep')();
         }

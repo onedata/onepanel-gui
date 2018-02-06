@@ -11,10 +11,10 @@ describe('Unit | Utility | change domain', function () {
         return `https://${this.hostname}/#/hello`;
       },
     };
-    const timeout = 10;
+    const delay = 10;
     return changeDomain('example.com', {
       location: mockLocation,
-      timeout,
+      delay,
     }).then(() => {
       expect(mockLocation.hostname).to.equal('example.com');
     });

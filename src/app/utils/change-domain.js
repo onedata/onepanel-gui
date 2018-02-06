@@ -1,22 +1,22 @@
 /**
- * Change domain in browser window with timeout
+ * Change domain in browser window with delay
  *
  * @module utils/change-domain
  * @author Jakub Liput
  * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
- *
- * @param {string} domain new hostname
- * @param {Location} [location]
- * @returns {undefined}
  */
 
 import { Promise } from 'rsvp';
 
+const DEFAULT_DELAY = 5000;
+
 /**
- * Read current location and change the domain of it (hostname) with timeout
+ * Read current location and change the domain of it (hostname) with delay
  * @param {string} domain
  * @param {object} [options]
+ * @param {Location} [options.location=window.location]
+ * @param {number} [options.delay=5000]
  * @returns {Promise} rejects on change location error
  */
 export default function changeDomain(domain, options) {
@@ -27,8 +27,8 @@ export default function changeDomain(domain, options) {
   if (!_options.location) {
     _options.location = window.location;
   }
-  if (!_options.timeout) {
-    _options.timeout = 5000;
+  if (!_options.delay) {
+    _options.delay = DEFAULT_DELAY;
   }
   return new Promise((resolve, reject) => {
     try {
@@ -39,7 +39,7 @@ export default function changeDomain(domain, options) {
           _options.location.hostname = domain;
         }
         resolve();
-      }, _options.timeout);
+      }, _options.delay);
     } catch (error) {
       reject(error);
     }
