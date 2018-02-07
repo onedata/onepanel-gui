@@ -1,6 +1,6 @@
 export default {
-  mountPoint: 'Mount point',
-  timeout: 'Timeout [ms]',
-  readonly: 'Read only',
-  insecure: 'Insecure',
+  mountPoint: { name: 'Mount point'},
+  timeout: { name: 'Timeout [ms]' },
+  readonly: { name: 'Read only' },
+  insecure: { name: 'Insecure' },
 };
