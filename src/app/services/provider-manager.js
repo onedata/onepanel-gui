@@ -3,7 +3,7 @@
  *
  * @module services/provider-manager
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -72,15 +72,13 @@ export default Service.extend({
       clusterManager,
     } = this.getProperties('onepanelServer', 'clusterManager');
     let providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
-    let modifying = onepanelServer.request(
-      'oneprovider',
-      'modifyProvider',
-      providerModifyRequest
-    );
-    modifying.then(() => {
-      clusterManager.getDefaultRecord(true);
-    });
-    return modifying;
+    return onepanelServer.request(
+        'oneprovider',
+        'modifyProvider',
+        providerModifyRequest
+      )
+      .then(() => this.getProviderDetails(true))
+      .then(() => clusterManager.getDefaultRecord(true));
   },
 
   /**

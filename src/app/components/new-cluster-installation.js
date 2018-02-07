@@ -13,10 +13,10 @@
 
 import Ember from 'ember';
 import Onepanel from 'npm:onepanel';
-import { invokeAction } from 'ember-invoke-action';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   A,
@@ -61,13 +61,15 @@ function configurationClass(serviceType) {
   return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(I18n, {
   classNames: ['new-cluster-installation', 'container-fluid'],
 
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
   cookies: service(),
+
+  i18nPrefix: 'components.newClusterInstallation',
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
@@ -116,10 +118,21 @@ export default Ember.Component.extend({
    * @type {boolean}
    */
   _zoneOptionsValid: false,
+
   /**
    * @type {boolean}
    */
   _hostTableValid: false,
+
+  /**
+   * @type {function}
+   */
+  changeClusterName: undefined,
+
+  /**
+   * @type {function}
+   */
+  nextStep: undefined,
 
   init() {
     this._super(...arguments);
@@ -168,9 +181,9 @@ export default Ember.Component.extend({
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
     if (onepanelServiceType === 'zone') {
-      invokeAction(this, 'changeClusterName', _zoneName);
+      this.get('changeClusterName')(_zoneName);
     }
-    invokeAction(this, 'nextStep');
+    this.get('nextStep')();
   },
 
   configureFailed({ taskStatus }) {
