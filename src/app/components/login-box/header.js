@@ -22,7 +22,7 @@ export default Header.extend({
    * @override
    */
   loginMainTitleClass: computed.readOnly('onepanelServiceType'),
-  
+
   /**
    * @override
    */
