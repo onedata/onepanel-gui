@@ -6,7 +6,7 @@ const {
   Ceph,
   Swift,
   Glusterfs,
-  NullDevice,
+  Nulldevice,
 } = Onepanel;
 
 function clusterStorageClass(storageType) {
@@ -22,7 +22,7 @@ function clusterStorageClass(storageType) {
     case 'glusterfs':
       return Glusterfs;
     case 'nulldevice':
-      return NullDevice;
+      return Nulldevice;
     default:
       return undefined;
   }
