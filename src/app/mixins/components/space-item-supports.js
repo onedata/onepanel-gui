@@ -82,6 +82,7 @@ export default Mixin.create({
       name: pid === currentProviderId ?
         currentProviderName : providerIdToName(pid),
       size,
+      isCurrentProvider: pid === currentProviderId,
     }));
   },
 });

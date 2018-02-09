@@ -80,6 +80,15 @@ export default Component.extend({
   updateAutoCleaning: () => {},
 
   /**
+   * Action called on space occupancy change.
+   * @virtual
+   * @type {Function}
+   * @param {number} spaceOccupancy
+   * @return {undefined}
+   */
+  spaceOccupancyChanged: () => {},
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   isCleanEnabled: computed.readOnly('autoCleaning.enabled'),
@@ -128,6 +137,14 @@ export default Component.extend({
     const isCleanEnabled = this.get('isCleanEnabled');
     const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
     spaceAutoCleaningUpdater.set('isEnabled', isCleanEnabled);
+  }),
+
+  cleaningStatusObserver: observer('status.spaceOccupancy', function () {
+    const status = this.get('status');
+    const spaceOccupancy = status ? get(status, 'spaceOccupancy') : null;
+    if (typeof spaceOccupancy === 'number') {
+      this.get('spaceOccupancyChanged')(spaceOccupancy);
+    }
   }),
 
   init() {

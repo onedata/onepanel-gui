@@ -318,6 +318,7 @@ export default OnepanelServerBase.extend(
               name: 'Space One',
               storageId: storage1.id,
               mountInRoot: true,
+              spaceOccupancy: 800000000,
               storageImport: {
                 strategy: 'no_import',
               },
@@ -338,6 +339,7 @@ export default OnepanelServerBase.extend(
               id: 'space2_verylongid',
               name: 'Space Two',
               storageId: storage1.id,
+              spaceOccupancy: 800000000,
               storageImport: {
                 strategy: 'simple_scan',
                 maxDepth: 4,
@@ -359,6 +361,7 @@ export default OnepanelServerBase.extend(
                 id: i + '-space',
                 name: 'Test Space',
                 storageId: storage1.id,
+                spaceOccupancy: 700000000,
                 supportingProviders: _genSupportingProviders(),
               });
             });
