@@ -4,8 +4,8 @@
  * Used to generate add storage forms and display information about storages.
  *
  * @module utils/cluster-storages/storage-types
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -14,6 +14,7 @@ import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
 import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-fields';
+import NULLDEVICE_FIELDS from 'onepanel-gui/utils/cluster-storage/nulldevice-fields';
 
 export default [{
   id: 'ceph',
@@ -35,4 +36,8 @@ export default [{
   id: 'glusterfs',
   name: 'GlusterFS',
   fields: GLUSTERFS_FIELDS,
+}, {
+  id: 'nulldevice',
+  name: 'NullDevice',
+  fields: NULLDEVICE_FIELDS,
 }];

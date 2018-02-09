@@ -1,10 +1,10 @@
 export default {
-  username: 'Username',
-  key: 'Key',
-  monitorHostname: 'Monitor hostname',
-  clusterName: 'Cluster name',
-  poolName: 'Pool name',
-  timeout: 'Timeout [ms]',
-  insecure: 'Insecure',
-  readonly: 'Read only',
+  username: { name: 'Username' },
+  key: { name: 'Key' },
+  monitorHostname: { name: 'Monitor hostname' },
+  clusterName: { name: 'Cluster name' },
+  poolName: { name: 'Pool name' },
+  timeout: { name: 'Timeout [ms]' },
+  insecure: { name: 'Insecure' },
+  readonly: { name: 'Read only' },
 };
