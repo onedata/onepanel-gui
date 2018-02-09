@@ -105,7 +105,7 @@
           {{#promise-proxy-container proxy=spaceSupportersProxy}}
             {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
           {{/promise-proxy-container}}
-          <div class="row content-row space-occupancy-row">
+          <div class="row content-row">
             <strong>{{tt this "spaceUsageOnThisProvider"}}</strong>
             {{one-label-tip
               title=(tt this "spaceUsageOnThisProviderTip")

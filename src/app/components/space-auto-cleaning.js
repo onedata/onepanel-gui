@@ -139,7 +139,7 @@ export default Component.extend({
     spaceAutoCleaningUpdater.set('isEnabled', isCleanEnabled);
   }),
 
-  cleaningStatusObserver: observer('status', function () {
+  cleaningStatusObserver: observer('status.spaceOccupancy', function () {
     const status = this.get('status');
     const spaceOccupancy = status ? get(status, 'spaceOccupancy') : null;
     if (typeof spaceOccupancy === 'number') {
