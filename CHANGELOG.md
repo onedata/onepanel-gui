@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-3985 Added a bar chart, that shows storage usage for a space
+* VFS-4016 Added NullDevice storage support
 * VFS-3986 Added Let's Encrypt certificate setup step in provider cluster deployment; improved error backend error descriptions
 * VFS-3571 Common libraries update
 * VFS-3955 Better truncating of too long names in sidebar, sidebar buttons

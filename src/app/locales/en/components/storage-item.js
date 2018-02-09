@@ -3,6 +3,7 @@ import ceph from './storage-item/ceph';
 import s3 from './storage-item/s3';
 import swift from './storage-item/swift';
 import glusterfs from './storage-item/glusterfs';
+import nulldevice from './storage-item/nulldevice';
 
 export default {
   generic: {
@@ -20,4 +21,5 @@ export default {
   s3,
   swift,
   glusterfs,
+  nulldevice,
 };
