@@ -7,14 +7,14 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import EmberObject from '@ember/object';
 
 /**
  * @typedef {ClusterInfo}
  * @param {string} name
  * @param {number} initStep
  */
-export default Ember.Object.extend({
+export default EmberObject.extend({
   id: null,
   name: null,
 });

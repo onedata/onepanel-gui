@@ -7,20 +7,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+import Component from '@ember/component';
 
-const {
-  Component,
-  inject: { service },
-  get,
-  computed,
-  computed: {
-    not,
-  },
-  observer,
-  isArray,
-} = Ember;
+import { inject as service } from '@ember/service';
+import { not, reads } from '@ember/object/computed';
+import { observer, computed, get } from '@ember/object';
+import { isArray } from '@ember/array';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 export default Component.extend({
   classNames: ['content-clusters-spaces'],
@@ -40,9 +33,9 @@ export default Component.extend({
    */
   providerProxy: null,
 
-  spaces: computed.reads('spacesProxy.content'),
+  spaces: reads('spacesProxy.content'),
 
-  spacesListLoading: computed.reads('spacesProxy.isPending'),
+  spacesListLoading: reads('spacesProxy.isPending'),
 
   // TODO: global list loader cannot base on someSpacesSettled because it causes
   // to reload child components when changing single space (isLoading -> isSettled)
@@ -66,7 +59,7 @@ export default Component.extend({
     }
   }),
 
-  someSpaceIsLoading: computed.not('allSpacesSettled'),
+  someSpaceIsLoading: not('allSpacesSettled'),
 
   /**
    * Using observer, because when we use computed property for spaces,

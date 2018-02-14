@@ -7,14 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
+import Component from '@ember/component';
 
-const {
-  Component,
-  RSVP: { Promise },
-  run: { scheduleOnce },
-} = Ember;
+import { Promise } from 'rsvp';
+import { scheduleOnce } from '@ember/runloop';
+import { invokeAction } from 'ember-invoke-action';
 
 export default Component.extend({
   initProcess: false,

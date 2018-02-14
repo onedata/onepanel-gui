@@ -12,14 +12,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import EmberObject, { computed, get } from '@ember/object';
 
-const {
-  get,
-  computed,
-} = Ember;
-
-export default Ember.Object.extend({
+export default EmberObject.extend({
   /**
    * @type {string}
    */

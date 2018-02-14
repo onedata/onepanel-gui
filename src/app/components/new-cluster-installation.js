@@ -11,25 +11,21 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { A } from '@ember/array';
+import { assert } from '@ember/debug';
+import { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
+import { readOnly, reads } from '@ember/object/computed';
+import { camelize } from '@ember/string';
+import { scheduleOnce } from '@ember/runloop';
+import { observer, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-
-const {
-  A,
-  assert,
-  inject: { service },
-  RSVP: { Promise },
-  computed,
-  computed: { readOnly },
-  String: { camelize },
-  run: { scheduleOnce },
-  on,
-  observer,
-} = Ember;
 
 const {
   ProviderConfiguration,
@@ -61,7 +57,7 @@ function configurationClass(serviceType) {
   return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
-export default Ember.Component.extend(I18n, {
+export default Component.extend(I18n, {
   classNames: ['new-cluster-installation', 'container-fluid'],
 
   onepanelServer: service(),
@@ -104,7 +100,7 @@ export default Ember.Component.extend(I18n, {
    */
   deploymentStatusProxy: undefined,
 
-  deploymentStatusLoading: computed.reads('deploymentStatusProxy.isPending'),
+  deploymentStatusLoading: reads('deploymentStatusProxy.isPending'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
@@ -137,6 +133,7 @@ export default Ember.Component.extend(I18n, {
   init() {
     this._super(...arguments);
 
+    this.changeCanDeploy();
     this.set(
       'hostsProxy',
       PromiseObject.create({
@@ -333,11 +330,11 @@ export default Ember.Component.extend(I18n, {
     task.always(() => this.hideDeployProgress());
   },
 
-  changeCanDeploy: on('init', observer('_hostTableValid', '_zoneOptionsValid',
+  changeCanDeploy: observer('_hostTableValid', '_zoneOptionsValid',
     function () {
       let canDeploy = this.get('_hostTableValid') && this.get('_zoneOptionsValid');
       scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
-    })),
+    }),
 
   actions: {
     zoneFormChanged(fieldName, value) {

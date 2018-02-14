@@ -7,13 +7,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import _ from 'lodash';
+import Mixin from '@ember/object/mixin';
 
-const {
-  Mixin,
-  get,
-} = Ember;
+import { get } from '@ember/object';
+import _ from 'lodash';
 
 const PERIODS = [
   'minute',

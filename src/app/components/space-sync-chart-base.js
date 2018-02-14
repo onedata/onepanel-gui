@@ -8,17 +8,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { reads } from '@ember/object/computed';
+
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 import moment from 'moment';
 import _ from 'lodash';
 
 import SpaceSyncChartDataValidator from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';
 
-const {
-  computed,
-} = Ember;
-
-export default Ember.Component.extend(SpaceSyncChartDataValidator, {
+export default Component.extend(SpaceSyncChartDataValidator, {
   classNames: ['space-sync-chart-base'],
 
   /**
@@ -37,7 +36,7 @@ export default Ember.Component.extend(SpaceSyncChartDataValidator, {
    * A date on right side of the chart
    * @type {Date}
    */
-  lastUpdateTime: computed.reads('timeStats.firstObject.lastValueDate'),
+  lastUpdateTime: reads('timeStats.firstObject.lastValueDate'),
 
   emptyTimePeriod: computed('timeParts', function () {
     return _.times(this.get('timeParts'), () => 0);

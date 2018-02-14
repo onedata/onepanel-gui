@@ -1,19 +1,16 @@
+import EmberObject from '@ember/object';
+import { getOwner } from '@ember/application';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
-import Ember from 'ember';
 import ComponentsSpaceItemSupportsMixin from 'onepanel-gui/mixins/components/space-item-supports';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
-
-const {
-  getOwner,
-} = Ember;
 
 describe('Integration | Mixin | components/space item supports', function () {
   setupTest('mixin:components/space-item-supports', {
     integration: true,
     subject() {
-      let SpaceSupportsObject = Ember.Object.extend(
+      let SpaceSupportsObject = EmberObject.extend(
         ComponentsSpaceItemSupportsMixin
       );
       this.register('test-container:space-support-object', SpaceSupportsObject);

@@ -1,15 +1,11 @@
+import { readOnly } from '@ember/object/computed';
+import { observer, computed } from '@ember/object';
 import {
   InvokeActionMixin,
 } from 'ember-invoke-action';
 import BasicTable from 'onedata-gui-common/components/basic-table';
-import Ember from 'ember';
 
 import { validator, buildValidations } from 'ember-cp-validations';
-
-const {
-  computed,
-  observer,
-} = Ember;
 
 const roles = ['database', 'clusterWorker', 'clusterManager'];
 
@@ -78,7 +74,7 @@ export default BasicTable.extend(
 
     primaryClusterManager: null,
 
-    allValid: computed.readOnly('validations.isValid'),
+    allValid: readOnly('validations.isValid'),
     // TODO make/use valid properties for each column
     // databaseHostsValid: computed.readOnly('validations.attrs.databaseHosts.isValid'),
 

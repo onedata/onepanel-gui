@@ -7,26 +7,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { equal, oneWay, alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
+import { get, computed } from '@ember/object';
 import { invokeAction } from 'ember-invoke-action';
 
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
-const {
-  computed,
-  computed: {
-    equal,
-  },
-  inject: {
-    service,
-  },
-  RSVP: {
-    Promise,
-  },
-  get,
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   storageManager: service(),
   spaceManager: service(),
   globalNotify: service(),
@@ -51,7 +42,7 @@ export default Ember.Component.extend({
    * Form for adding new storage is opened or not?
    * @type {computed.boolean}
    */
-  addStorageOpened: computed.oneWay('noStorages'),
+  addStorageOpened: oneWay('noStorages'),
 
   /**
    * If true, render additional finish button that will invoke "nextStep" action
@@ -68,7 +59,7 @@ export default Ember.Component.extend({
         this.get('spacesProxy.isSettled') == false;
     }),
 
-  storagesError: computed.alias('storagesProxy.reason'),
+  storagesError: alias('storagesProxy.reason'),
 
   someStorageIsLoading: computed('storagesProxy.content.@each.isSettled', function () {
     let storages = this.get('storagesProxy.content');

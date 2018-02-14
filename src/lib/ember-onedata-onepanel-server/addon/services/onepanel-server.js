@@ -12,7 +12,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { Promise } from 'rsvp';
+
+import { computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -21,13 +23,6 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
 }
-
-const {
-  RSVP: {
-    Promise,
-  },
-  computed,
-} = Ember;
 
 /**
  * Contains alternative implementation of onepanel client methods

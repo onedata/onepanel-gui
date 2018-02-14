@@ -7,18 +7,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { readOnly } from '@ember/object/computed';
+import { observer, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 import _ from 'lodash';
 
-import { default as generateClusterDeploySteps, KNOWN_STEPS } from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
-
-const {
-  Component,
-  computed,
-  computed: { readOnly },
-  observer,
-  inject: { service },
-} = Ember;
+import {
+  default as generateClusterDeploySteps,
+  KNOWN_STEPS,
+} from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const RE_STEP = /service_?(.*):(.*)/;
 const I18N_PREFIX_STEPS = 'components.newClusterDeployProgress.steps.';

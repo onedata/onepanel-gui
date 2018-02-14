@@ -7,15 +7,12 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import _ from 'lodash';
+import { reads } from '@ember/object/computed';
 
-const {
-  Mixin,
-  computed,
-  inject: { service },
-  get,
-} = Ember;
+import Mixin from '@ember/object/mixin';
+import { inject as service } from '@ember/service';
+import { get, computed } from '@ember/object';
+import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -38,7 +35,7 @@ export default Mixin.create({
    * Maps: space Id: string -> supported space [b]: number
    * @type {object}
    */
-  supportingProviders: computed.reads('space.supportingProviders'),
+  supportingProviders: reads('space.supportingProviders'),
 
   /**
    * Each object of array has information about provider space support

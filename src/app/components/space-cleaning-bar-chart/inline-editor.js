@@ -7,17 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import Component from '@ember/component';
 
-const {
-  Component,
-  computed,
-  observer,
-  run: {
-    next,
-  },
-} = Ember;
+import { observer, computed } from '@ember/object';
+import { next } from '@ember/runloop';
+import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
 export default Component.extend({
   classNames: ['inline-editor'],

@@ -1,8 +1,8 @@
+import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
 import i18n from 'ember-i18n/services/i18n';
 
 describe('Integration | Component | space status icons', function () {
@@ -16,7 +16,7 @@ describe('Integration | Component | space status icons', function () {
   });
 
   it('shows only import icon when import is enabled and update is disabled', function () {
-    this.set('space', Ember.Object.create({
+    this.set('space', EmberObject.create({
       importEnabled: true,
       updateEnabled: false,
     }));
@@ -33,7 +33,7 @@ describe('Integration | Component | space status icons', function () {
   });
 
   it('shows import and update icons when enabled', function () {
-    this.set('space', Ember.Object.create({
+    this.set('space', EmberObject.create({
       importEnabled: true,
       updateEnabled: true,
     }));
@@ -51,7 +51,7 @@ describe('Integration | Component | space status icons', function () {
   });
 
   it('does not render status toolbar if import and update are disabled', function () {
-    this.set('space', Ember.Object.create({
+    this.set('space', EmberObject.create({
       importEnabled: false,
       updateEnabled: false,
     }));

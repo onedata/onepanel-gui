@@ -11,17 +11,15 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+
+import { computed } from '@ember/object';
+import { isEmpty } from '@ember/utils';
 import _ from 'lodash';
 
 import validateTimeStats from 'onepanel-gui/utils/model-validators/validate-time-stats';
 
-const {
-  computed,
-  isEmpty,
-} = Ember;
-
-export default Ember.Mixin.create({
+export default Mixin.create({
   /**
    * To implement in subclasses.
    * Should contain metric names that are used by chart.

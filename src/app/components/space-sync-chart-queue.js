@@ -9,7 +9,8 @@
 
 /* global Chartist */
 
-import Ember from 'ember';
+import { computed } from '@ember/object';
+
 import _ from 'lodash';
 
 import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
@@ -20,23 +21,19 @@ import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
-const {
-  computed,
-} = Ember;
-
 export default SpaceSyncChartBase.extend({
   classNames: ['space-sync-chart-queue'],
 
   /**
    * @implements SpaceSyncChartDataValidator
    */
-  usedMetrics: ['queueLength'],
+  usedMetrics: Object.freeze(['queueLength']),
 
   /**
    * Chartist settings
    * @type {Object}
    */
-  chartOptions: {
+  chartOptions: Object.freeze({
     axisY: {
       onlyInteger: true,
     },
@@ -61,7 +58,7 @@ export default SpaceSyncChartBase.extend({
         clickable: false,
       }),
     ],
-  },
+  }),
 
   /**
    * Label for chart
@@ -73,7 +70,7 @@ export default SpaceSyncChartBase.extend({
     return _.find(this.get('timeStats'), ts => ts && ts.name === 'queueLength');
   }),
 
-  _chartValues: [],
+  _chartValues: computed(function () { return []; }),
 
   /**
    * Data for chartist

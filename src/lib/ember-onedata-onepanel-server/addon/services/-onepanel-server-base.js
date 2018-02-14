@@ -9,9 +9,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Service from '@ember/service';
 
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 
-export default Ember.Service.extend(RequestErrorHandler, ResponseValidator, {});
+export default Service.extend(RequestErrorHandler, ResponseValidator, {});

@@ -7,7 +7,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { next } from '@ember/runloop';
+
+import EmberObject, { observer, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
@@ -18,14 +21,6 @@ import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
-
-const {
-  computed,
-  observer,
-  inject: {
-    service,
-  },
-} = Ember;
 
 function createValidations(storageTypes, genericFields, lumaFields) {
   let validations = {};
@@ -100,9 +95,9 @@ export default OneForm.extend(Validations, {
   selectedStorageType: null,
 
   allFieldsValues: computed('genericFields', 'lumaFields', 'storageTypes', function () {
-    let fields = Ember.Object.create({
-      generic: Ember.Object.create({}),
-      luma: Ember.Object.create({}),
+    let fields = EmberObject.create({
+      generic: EmberObject.create({}),
+      luma: EmberObject.create({}),
     });
     let {
       genericFields,
@@ -110,7 +105,7 @@ export default OneForm.extend(Validations, {
       storageTypes,
     } = this.getProperties('genericFields', 'lumaFields', 'storageTypes');
     storageTypes.forEach(type => {
-      fields.set(type.id, Ember.Object.create({}));
+      fields.set(type.id, EmberObject.create({}));
       type.fields.forEach(field => fields.set(field.get('name'), null));
     });
     genericFields.concat(lumaFields).forEach(field =>
@@ -143,20 +138,20 @@ export default OneForm.extend(Validations, {
         this.get('storageTypes.firstObject'));
     }
     this.set('genericFields', GENERIC_FIELDS.map(fields =>
-      Ember.Object.create(fields)));
+      EmberObject.create(fields)));
     this.get('genericFields').forEach(field => {
       let fieldName = field.get('name');
       field.set('name', `generic.${fieldName}`);
     });
     this.set('lumaFields', LUMA_FIELDS.map(fields =>
-      Ember.Object.create(fields)));
+      EmberObject.create(fields)));
     this.get('lumaFields').forEach(field => {
       let fieldName = field.get('name');
       field.set('name', `luma.${fieldName}`);
     });
     this.get('storageTypes').forEach(type =>
       type.fields = type.fields.map(field =>
-        Ember.Object.create(field))
+        EmberObject.create(field))
     );
     this.get('storageTypes').forEach(type =>
       type.fields.forEach(field =>
@@ -232,7 +227,7 @@ export default OneForm.extend(Validations, {
             VISIBILITY_ANIMATION_TIME
           ));
         }
-        Ember.run.next(() => this._toggleLumaPrefixAnimation(value));
+        next(() => this._toggleLumaPrefixAnimation(value));
       }
     },
 

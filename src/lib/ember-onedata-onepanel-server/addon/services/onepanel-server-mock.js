@@ -9,7 +9,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { A } from '@ember/array';
+
+import { Promise } from 'rsvp';
+import { readOnly } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import EmberObject, { set, get, computed } from '@ember/object';
+import { run } from '@ember/runloop';
 
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -25,23 +31,6 @@ import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
-
-const {
-  A,
-  RSVP: {
-    Promise,
-  },
-  computed,
-  computed: {
-    readOnly,
-  },
-  inject: {
-    service,
-  },
-  get,
-  set,
-  run,
-} = Ember;
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -90,7 +79,7 @@ function responseToString() {
   return `Request ${this.__request_method} failed: ${JSON.stringify(this)}`;
 }
 
-const PlainableObject = Ember.Object.extend(Plainable);
+const PlainableObject = EmberObject.extend(Plainable);
 
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
@@ -109,10 +98,10 @@ export default OnepanelServerBase.extend(
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
     // see STEP import for more info
-    // mockStep: STEP.PROVIDER_REGISTER,
+    // mockStep: Number(STEP.PROVIDER_REGISTER),
     // NOTE: below: first step of deployment
-    // mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY,
-    mockStep: MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE,
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.equal(
       'mockStep',
@@ -307,6 +296,7 @@ export default OnepanelServerBase.extend(
             lumaCacheTimeout: 10,
             lumaApiKey: 'some_storage',
           };
+          this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
             clusterStorageClass(storage1.type).constructFromObject(storage1)
           );
@@ -366,6 +356,8 @@ export default OnepanelServerBase.extend(
               });
             });
           }
+        } else {
+          this.set('__storages', []);
         }
       }
     },
@@ -444,7 +436,7 @@ export default OnepanelServerBase.extend(
       return {
         success: (data) => {
           let __provider = this.get('__provider') ||
-            this.set('__provider', Ember.Object.create({}));
+            this.set('__provider', EmberObject.create({}));
           for (let prop in data) {
             __provider.set(prop, data[prop]);
           }
@@ -561,26 +553,26 @@ export default OnepanelServerBase.extend(
         };
       }),
 
-    _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster',
-      '__spaces.[]',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          // TODO use Object.keys if available
-          let spaces = this.get('__spaces');
-          let spaceIds = spaces.map(s => s.id);
-          return {
-            success: () => ({
-              ids: spaceIds,
-            }),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getProviderSpaces() {
+      if (this.get('mockInitializedCluster')) {
+        // TODO use Object.keys if available
+        let spaces = this.get('__spaces');
+        let spaceIds = spaces.map(s => s.id);
+        return {
+          success: () => ({
+            ids: spaceIds,
+          }),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
-    _req_oneprovider_getSpaceDetails: computed('mockInitializedCluster', 'spaces',
+    _req_oneprovider_getSpaceDetails: computed(
+      'mockInitializedCluster',
+      '__spaces',
       function () {
         if (this.get('mockInitializedCluster')) {
           let spaces = this.get('__spaces');
@@ -738,7 +730,7 @@ export default OnepanelServerBase.extend(
       },
     }),
 
-    __storages: [],
+    __storages: undefined,
 
     __spaces: A([]),
   });

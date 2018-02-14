@@ -1,14 +1,10 @@
+import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import wait from 'ember-test-helpers/wait';
-import Ember from 'ember';
 
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
-
-const {
-  RSVP: { Promise },
-} = Ember;
 
 describe('Unit | Service | storage manager', function () {
   setupTest('service:storage-manager', {

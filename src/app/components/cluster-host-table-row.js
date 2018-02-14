@@ -1,13 +1,10 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { alias } from '@ember/object/computed';
 import {
   InvokeActionMixin,
 } from 'ember-invoke-action';
 
-const {
-  computed: { alias },
-} = Ember;
-
-export default Ember.Component.extend(InvokeActionMixin, {
+export default Component.extend(InvokeActionMixin, {
   tagName: 'tr',
   classNames: 'cluster-host-table-row',
   classNameBindings: ['active'],

@@ -7,7 +7,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import EmberObject, { computed } from '@ember/object';
+
 import Onepanel from 'npm:onepanel';
 import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
@@ -18,17 +19,13 @@ const {
   },
 } = Onepanel;
 
-const {
-  computed,
-} = Ember;
-
 /**
  * How many steps should be done in one progress state fetch
  * @type {number}
  */
 const PROGRESS_SPEED = 4;
 
-export default Ember.Object.extend({
+export default EmberObject.extend({
   /**
    * To inject.
    * @type {string}

@@ -7,20 +7,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
+import Component from '@ember/component';
 
-const {
-  Component,
-  computed,
-  observer,
-  get,
+import {
   getProperties,
-  RSVP: {
-    Promise,
-  },
-  run,
-} = Ember;
+  get,
+  observer,
+  computed,
+} from '@ember/object';
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
+import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
 
 // Bar animation time (in seconds).
 const ANIMATION_TIME = 2;
@@ -81,7 +78,7 @@ export default Component.extend({
    * Previous bar percent values. Set by valuesObserver.
    * @type {Object}
    */
-  _oldPercentValues: {},
+  _oldPercentValues: undefined,
 
   /**
    * Space soft quota value for bar chart.
@@ -415,6 +412,11 @@ export default Component.extend({
       this.set('_oldPercentValues', _oldPercentValues);
     }
   ),
+
+  init() {
+    this._super(...arguments);
+    this.set('_oldPercentValues', {});
+  },
 
   didInsertElement() {
     this._super(...arguments);

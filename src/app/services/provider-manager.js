@@ -7,16 +7,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import Onepanel from 'npm:onepanel';
+import EmberObject from '@ember/object';
 
-const {
-  Service,
-  inject: { service },
-  ObjectProxy,
-  RSVP: { Promise },
-  computed: { alias },
-} = Ember;
+import Service, { inject as service } from '@ember/service';
+import ObjectProxy from '@ember/object/proxy';
+import { Promise } from 'rsvp';
+import { alias } from '@ember/object/computed';
+import Onepanel from 'npm:onepanel';
 
 const {
   ProviderModifyRequest,
@@ -45,7 +42,7 @@ export default Service.extend({
         resolve(providerCache);
       } else {
         gettingProvider.then(({ data: provider }) => {
-          let newProviderCache = Ember.Object.create(provider);
+          let newProviderCache = EmberObject.create(provider);
           this.set('_providerCache', newProviderCache);
           return resolve(providerCache);
         });

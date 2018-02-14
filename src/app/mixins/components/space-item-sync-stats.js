@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import moment from 'moment';
-
 /**
  * Adds space sync statistics fetch capabilities to `cluster-spaces-table-item`
  *
@@ -10,21 +7,16 @@ import moment from 'moment';
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { inject as service } from '@ember/service';
+import { computed, observer, set, get } from '@ember/object';
+import { readOnly, equal, not } from '@ember/object/computed';
+import { isEmpty } from '@ember/utils';
+import _ from 'lodash';
+import moment from 'moment';
 
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
-
-const {
-  Mixin,
-  inject: { service },
-  get,
-  set,
-  observer,
-  computed,
-  computed: { readOnly },
-  isEmpty,
-} = Ember;
 
 /**
  * How often watchers should sample for stats for given metrics [ms]
@@ -70,8 +62,8 @@ export default Mixin.create({
    */
   _prevSyncInterval: null,
 
-  hideSyncStats: computed.equal('syncInterval', null),
-  showSyncStats: computed.not('hideSyncStats'),
+  hideSyncStats: equal('syncInterval', null),
+  showSyncStats: not('hideSyncStats'),
 
   /**
    * When the sync status was updated last time?

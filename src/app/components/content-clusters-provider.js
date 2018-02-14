@@ -7,20 +7,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Component from '@ember/component';
+import { inject as service } from '@ember/service';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import { camelize } from '@ember/string';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
-
-const {
-  computed,
-  Component,
-  inject: { service },
-  trySet,
-} = Ember;
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   time: {
@@ -44,7 +40,7 @@ export default Component.extend(I18n, {
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
-  _excludedSubdomains: [],
+  _excludedSubdomains: Object.freeze([]),
 
   /**
    * @type {boolean}
@@ -223,7 +219,7 @@ export default Component.extend(I18n, {
       this.set('_redirectPage', true);
       changeDomain(domain, {
         delay: redirectDomainDelay,
-      }).catch(() => trySet(this, '_redirectPage', false));
+      }).catch(() => safeExec(this, 'set', '_redirectPage', false));
     },
   },
 });

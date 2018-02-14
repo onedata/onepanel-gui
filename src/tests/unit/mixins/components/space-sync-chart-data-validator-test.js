@@ -1,3 +1,4 @@
+import EmberObject from '@ember/object';
 import {
   expect,
 } from 'chai';
@@ -5,14 +6,13 @@ import {
   describe,
   it,
 } from 'mocha';
-import Ember from 'ember';
 import ComponentsSpaceSyncChartDataValidatorMixin from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';
 
 import wait from 'ember-test-helpers/wait';
 
 describe('Unit | Mixin | components/space sync chart data validator', function () {
   it('recomputes validation when timeStats changes', function (done) {
-    let ComponentsSpaceSyncChartDataValidatorObject = Ember.Object.extend(
+    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
       ComponentsSpaceSyncChartDataValidatorMixin);
 
     let validateSyncChartData = () => {
@@ -34,7 +34,7 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = Ember.Object.extend(
+    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
       ComponentsSpaceSyncChartDataValidatorMixin
     );
     let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
@@ -51,7 +51,7 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is lack of at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = Ember.Object.extend(
+    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
       ComponentsSpaceSyncChartDataValidatorMixin
     );
     let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
@@ -68,7 +68,7 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = Ember.Object.extend(
+    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
       ComponentsSpaceSyncChartDataValidatorMixin
     );
     let subject = ComponentsSpaceSyncChartDataValidatorObject.create({

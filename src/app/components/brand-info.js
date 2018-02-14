@@ -9,15 +9,12 @@
 
 // TODO i18n
 
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
+import { readOnly } from '@ember/object/computed';
+import { computed } from '@ember/object';
 import BrandInfo from 'onedata-gui-common/components/brand-info';
 import layout from 'onedata-gui-common/templates/components/brand-info';
-
-const {
-  inject: { service },
-  computed: { readOnly },
-  computed,
-} = Ember;
 
 export default BrandInfo.extend({
   layout,

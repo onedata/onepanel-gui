@@ -8,6 +8,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { readOnly, reads } from '@ember/object/computed';
+
 import Component from '@ember/component';
 import { computed, get, observer } from '@ember/object';
 import { inject } from '@ember/service';
@@ -91,7 +93,7 @@ export default Component.extend({
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isCleanEnabled: computed.readOnly('autoCleaning.enabled'),
+  isCleanEnabled: readOnly('autoCleaning.enabled'),
 
   /**
    * Data for file conditions form.
@@ -124,14 +126,14 @@ export default Component.extend({
    * Aliased and auto updated from SpaceAutoCleaningUpdater
    * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
    */
-  status: computed.reads('spaceAutoCleaningUpdater.status'),
+  status: reads('spaceAutoCleaningUpdater.status'),
 
   /**
    * Collection of cleaning reports
    * Aliased and auto updated from SpaceAutoCleaningUpdater
    * @type {Ember.ComputedProperty<EmberArray<Onepanel.SpaceAutoCleaningReport>>}
    */
-  reports: computed.reads('spaceAutoCleaningUpdater.reports'),
+  reports: reads('spaceAutoCleaningUpdater.reports'),
 
   toggleUpdater: observer('isCleanEnabled', function () {
     const isCleanEnabled = this.get('isCleanEnabled');

@@ -7,18 +7,15 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { oneWay } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import EmberObject, { get, computed } from '@ember/object';
+import { A } from '@ember/array';
 import generateColors from 'onedata-gui-common/utils/generate-colors';
 
-const {
-  computed,
-  computed: { oneWay },
-  inject: { service },
-  get,
-  A,
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['storage-item-supported-spaces'],
 
   providerManager: service(),
@@ -77,7 +74,7 @@ export default Ember.Component.extend({
     } = this.getProperties('supportedSpaces', 'providerId');
     let colors = generateColors(supportedSpaces.length);
     if (providerId && supportedSpaces.length) {
-      return A(supportedSpaces.map((space, index) => Ember.Object.create({
+      return A(supportedSpaces.map((space, index) => EmberObject.create({
         id: String(index),
         label: get(space, 'name'),
         value: get(space, `supportingProviders.${providerId}`),

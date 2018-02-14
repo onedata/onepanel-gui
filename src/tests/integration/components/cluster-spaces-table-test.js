@@ -1,12 +1,12 @@
+import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import StorageManagerStub from '../../helpers/storage-manager-stub';
-import ProviderManagerStub from '../../helpers/provider-manager-stub';
 
-import Ember from 'ember';
+import ProviderManagerStub from '../../helpers/provider-manager-stub';
 
 describe('Integration | Component | cluster spaces table', function () {
   setupComponentTest('cluster-spaces-table', {
@@ -24,7 +24,7 @@ describe('Integration | Component | cluster spaces table', function () {
   it('renders error message when at least one space details fetch was rejected',
     function () {
       let spaces = [
-        Ember.Object.create({
+        EmberObject.create({
           isSettled: true,
           isRejected: false,
           isFulfilled: true,
@@ -34,13 +34,13 @@ describe('Integration | Component | cluster spaces table', function () {
             storageId: 'storage-one',
           }),
         }),
-        Ember.Object.create({
+        EmberObject.create({
           isSettled: true,
           isRejected: true,
           isFulfilled: false,
           reason: 'reason-one',
         }),
-        Ember.Object.create({
+        EmberObject.create({
           isSettled: true,
           isRejected: true,
           isFulfilled: false,
@@ -58,7 +58,7 @@ describe('Integration | Component | cluster spaces table', function () {
   it('does not render error message when all spaces are fetched successfully',
     function () {
       let spaces = [
-        Ember.Object.create({
+        EmberObject.create({
           isSettled: true,
           isRejected: false,
           isFulfilled: true,
@@ -67,7 +67,7 @@ describe('Integration | Component | cluster spaces table', function () {
             name: 'Space 1',
           }),
         }),
-        Ember.Object.create({
+        EmberObject.create({
           isSettled: true,
           isRejected: false,
           isFulfilled: true,

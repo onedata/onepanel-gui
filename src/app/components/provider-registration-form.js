@@ -7,23 +7,22 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { readOnly } from '@ember/object/computed';
+
+import { next } from '@ember/runloop';
+import EmberObject, {
+  get,
+  observer,
+  computed,
+} from '@ember/object';
+import { inject as service } from '@ember/service';
+
 import OneForm from 'onedata-gui-common/components/one-form';
 import simplifyString from 'onedata-gui-common/utils/simplify-string';
 import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
-import Ember from 'ember';
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-
-const {
-  computed,
-  observer,
-  on,
-  get,
-  inject: {
-    service,
-  },
-} = Ember;
 
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
@@ -111,7 +110,7 @@ FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
     if (field.name === 'subdomain') {
       validators.push(
         validator(
-          'exclusion', { in: computed.readOnly('model.excludedSubdomains'),
+          'exclusion', { in: readOnly('model.excludedSubdomains'),
             message: computed(function () {
               return this.get('model.i18n')
                 .t('components.providerRegistrationForm.subdomainReserved');
@@ -180,7 +179,7 @@ export default OneForm.extend(Validations, I18n, {
    * @virtual
    * @type {Array<string>}
    */
-  excludedSubdomains: [],
+  excludedSubdomains: Object.freeze([]),
 
   /**
    * If true, all fields and submit button will be disabled
@@ -242,7 +241,7 @@ export default OneForm.extend(Validations, I18n, {
       label: i18n.t(tPrefix + field.name + '.label'),
       tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
     });
-    let fields = Ember.Object.create({
+    let fields = EmberObject.create({
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
@@ -419,8 +418,8 @@ export default OneForm.extend(Validations, I18n, {
   ),
 
   allFieldsValues: computed('provider', 'allFields', function () {
-    let values = Ember.Object.create({});
-    ALL_PREFIXES.forEach((prefix) => values.set(prefix, Ember.Object.create()));
+    let values = EmberObject.create({});
+    ALL_PREFIXES.forEach((prefix) => values.set(prefix, EmberObject.create()));
     return values;
   }),
 
@@ -430,8 +429,7 @@ export default OneForm.extend(Validations, I18n, {
    */
   _subdomainDelegation: computed(
     'mode',
-    'allFieldsValues.editTop.subdomainDelegation',
-    'allFieldsValues.showTop.subdomainDelegation',
+    'allFieldsValues.{editTop.subdomainDelegation,showTop.subdomainDelegation}',
     function () {
       let {
         mode,
@@ -486,12 +484,11 @@ export default OneForm.extend(Validations, I18n, {
       }
     }
   ),
-
-  _modeObserver: on('init', observer('mode', function () {
+  _modeObserver: observer('mode', function () {
     this.resetFormValues(ALL_PREFIXES);
-  })),
+  }),
 
-  _subdomainSuffixObserver: on('init', observer(
+  _subdomainSuffixObserver: observer(
     'mode',
     'allFields',
     'allFieldsValues.editTop.onezoneDomainName',
@@ -510,11 +507,13 @@ export default OneForm.extend(Validations, I18n, {
         subdomainField.set('rightText', domain ? '.' + domain : null);
       }
     }
-  )),
+  ),
 
   init() {
     this._super(...arguments);
     this.prepareFields();
+    this._subdomainSuffixObserver();
+    next(() => this._modeObserver());
   },
 
   /**
@@ -526,7 +525,7 @@ export default OneForm.extend(Validations, I18n, {
    */
   _preprocessField(field, prefix, isStatic = false) {
     let provider = this.get('provider');
-    field = Ember.Object.create(field);
+    field = EmberObject.create(field);
     if (provider) {
       const subdomainDelegation = get(provider, 'subdomainDelegation');
       const name = field.get('name');
@@ -588,7 +587,7 @@ export default OneForm.extend(Validations, I18n, {
         allFields,
         _willChangeDomainAfterSubmit,
       } = this.getProperties('formValues', 'allFields', '_willChangeDomainAfterSubmit');
-      let values = Ember.Object.create();
+      let values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);
         Object.keys(prefixValues).forEach(
@@ -605,7 +604,7 @@ export default OneForm.extend(Validations, I18n, {
         })
         .finally(() => {
           this.set('_disabled', false);
-          Ember.run.next(() => {
+          next(() => {
             if (this.isDestroyed) {
               return;
             }

@@ -8,18 +8,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import EmberObject, { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { A } from '@ember/array';
 import moment from 'moment';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
-
-const {
-  Component,
-  computed,
-  inject: {
-    service,
-  },
-  A,
-} = Ember;
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
@@ -57,7 +52,7 @@ export default Component.extend({
       data,
     } = this.getProperties('i18n', 'data');
     return data.map((report) => {
-      report = Ember.Object.create(report);
+      report = EmberObject.create(report);
 
       let startedAt = moment(report.get('startedAt'));
       report.setProperties({
@@ -95,7 +90,7 @@ export default Component.extend({
    * @type {Ember.Object}
    */
   _tableCustomClasses: computed(function () {
-    return Ember.Object.create({
+    return EmberObject.create({
       table: 'table',
     });
   }),
@@ -105,7 +100,7 @@ export default Component.extend({
    * @type {Ember.Object}
    */
   _tableCustomMessages: computed('noDataToShowMessage', function () {
-    return Ember.Object.create({
+    return EmberObject.create({
       noDataToShow: this.get('i18n').t(
         'components.spaceCleaningReports.noReportsAvailable'),
     });

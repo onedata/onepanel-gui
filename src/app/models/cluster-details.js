@@ -12,6 +12,7 @@
 
 import ObjectProxy from '@ember/object/proxy';
 import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
 
 export const CLUSTER_INIT_STEPS = Object.freeze({
   DEPLOY: 0,
@@ -27,7 +28,7 @@ export const CLUSTER_INIT_STEPS = Object.freeze({
 });
 
 export default ObjectProxy.extend({
-  content: computed.alias('clusterInfo'),
+  content: alias('clusterInfo'),
 
   /**
    * @type {string}

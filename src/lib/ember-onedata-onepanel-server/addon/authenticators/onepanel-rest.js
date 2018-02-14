@@ -8,13 +8,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
 
-const {
-  inject: { service },
-  RSVP: { Promise },
-} = Ember;
+import { Promise } from 'rsvp';
+
+import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 
 export default BaseAuthenticator.extend({
   onepanelServer: service('onepanelServer'),

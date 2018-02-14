@@ -7,14 +7,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import Component from '@ember/component';
 
-const {
-  Component,
-  computed,
-  get,
-} = Ember;
+import { get, computed } from '@ember/object';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 export default Component.extend({
   classNames: ['cluster-spaces-table'],

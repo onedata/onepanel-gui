@@ -7,16 +7,12 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
-import UserDetails from 'onepanel-gui/models/user-details';
+import Service, { inject as service } from '@ember/service';
 
-const {
-  Service,
-  inject: { service },
-  RSVP: { Promise },
-  A,
-  computed: { oneWay },
-} = Ember;
+import { Promise } from 'rsvp';
+import { A } from '@ember/array';
+import { oneWay } from '@ember/object/computed';
+import UserDetails from 'onepanel-gui/models/user-details';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 

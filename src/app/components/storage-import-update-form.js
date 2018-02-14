@@ -29,7 +29,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
+import EmberObject, {
+  get,
+  observer,
+  computed,
+} from '@ember/object';
 import { invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _object from 'lodash/object';
@@ -38,15 +44,6 @@ import _find from 'lodash/find';
 import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import stripObject from 'onedata-gui-common/utils/strip-object';
-
-const {
-  computed,
-  observer,
-  inject: {
-    service,
-  },
-  get,
-} = Ember;
 
 const IMPORT_GENERIC_FIELDS = [{
     name: 'maxDepth',
@@ -206,10 +203,10 @@ export default OneForm.extend(Validations, {
     }),
 
   importGenericFields: computed(() => IMPORT_GENERIC_FIELDS.map(field =>
-    Ember.Object.create(field)
+    EmberObject.create(field)
   )),
   updateGenericFields: computed(() => UPDATE_GENERIC_FIELDS.map(field =>
-    Ember.Object.create(field)
+    EmberObject.create(field)
   )),
   importStrategies: computed(() => IMPORT_STRATEGIES.map(strategy =>
     _object.assign({}, strategy)
@@ -246,18 +243,18 @@ export default OneForm.extend(Validations, {
         updateStrategies,
       } = this.getProperties('importGenericFields', 'updateGenericFields',
         'importStrategies', 'updateStrategies');
-      let fields = Ember.Object.create({
-        import_generic: Ember.Object.create({}),
-        update_generic: Ember.Object.create({}),
+      let fields = EmberObject.create({
+        import_generic: EmberObject.create({}),
+        update_generic: EmberObject.create({}),
       });
       importStrategies.forEach(type => {
-        fields.set('import_' + type.id, Ember.Object.create({}));
+        fields.set('import_' + type.id, EmberObject.create({}));
         type.fields.forEach(field => {
           fields.set(field.get('name'), null);
         });
       });
       updateStrategies.forEach(type => {
-        fields.set('update_' + type.id, Ember.Object.create({}));
+        fields.set('update_' + type.id, EmberObject.create({}));
         type.fields.forEach(field => {
           fields.set(field.get('name'), null);
         });
@@ -322,13 +319,13 @@ export default OneForm.extend(Validations, {
     this.get('updateGenericFields').forEach(field => field.set('name',
       'update_generic.' + field.get('name')));
     this.get('importStrategies').forEach(strategy => {
-      strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
+      strategy.fields = strategy.fields.map(field => EmberObject.create(field));
       strategy.fields.forEach(field =>
         field.set('name', 'import_' + strategy.id + '.' + field.get('name'))
       );
     });
     this.get('updateStrategies').forEach(strategy => {
-      strategy.fields = strategy.fields.map(field => Ember.Object.create(field));
+      strategy.fields = strategy.fields.map(field => EmberObject.create(field));
       strategy.fields.forEach(field =>
         field.set('name', 'update_' + strategy.id + '.' + field.get('name'))
       );
