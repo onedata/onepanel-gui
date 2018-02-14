@@ -1,54 +1,59 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "clusterDeployment"}}
+    <div class="btn-toolbar">
+      {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
+      {{#one-spin-button
+        class=(concat "btn btn-sm btn-primary btn-deploy-cluster " (unless canDeploy "disabled"))
+        action=(action "startDeploy")
+      }}
+        <span>{{tt this "deploy"}}</span>{{one-icon icon="arrow-right"}}
+        {{one-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
+      {{/one-spin-button}}
+    </div>
+  </h1>
+</div>
 {{!-- TODO i18n --}}
-
-  <div class="row content-row header-row">
-    <h1>Cluster deployment
-      <div class="btn-toolbar">
-        {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
-        {{#one-spin-button
-          class=(concat "btn btn-sm btn-primary btn-deploy-cluster " (unless canDeploy "disabled"))
-          action=(action "startDeploy")
-        }}
-          <span>Deploy</span>{{one-icon icon="arrow-right"}}
-          {{one-tooltip title="Configuration is invalid!" placement="left" class=(if canDeploy "hidden" "") triggerElement=".btn-deploy-cluster" }}
-        {{/one-spin-button}}
-      </div>
-    </h1>
-  </div>
-  {{!-- TODO i18n --}}
-  {{#if (eq onepanelServiceType "zone")}}
-    <div class="row content-row">
-      {{!-- TODO i18n --}}
-      <h1>Zone options</h1>
+{{#if (eq onepanelServiceType "zone")}}
+  <div class="row content-row">
+    <div class="row">
+      <h1>{{tt this "zoneOptions"}}</h1>
       {{zone-installation-form
         zoneFormChanged=(action "zoneFormChanged")
         allValidChanged=(action "zoneOptionsValidChanged")
       }}
     </div>
-  {{/if}}
-  <div class="row content-row">
-    <h1>Cluster hosts</h1>
-    {{#promise-proxy-container proxy=hostsProxy}}
-      {{cluster-host-table
-        hosts=hosts
-        primaryClusterManager=primaryClusterManager
-        hostOptionChanged=(action "hostOptionChanged")
-        primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
-        allValidChanged=(action "hostTableValidChanged")
-      }}
-    {{/promise-proxy-container}}
+    <div class="row">
+      <div class="alert alert-info">
+        {{tt this "domainInfo"}}
+        <a href="https://onedata.org/#/home/documentation/doc/administering_onedata/onezone_tutorial[dns-zone-setup].html">{{tt this "domainLink"}}</a>.
+      </div>
+    </div>
   </div>
-
-  {{!-- TODO maybe keep the modal opened short after promise resolve --}}
-  {{#if deploymentPromise}}
-    {{#bs-modal
-      id="cluster-deploy-progress"
-      open=deploymentPromise
-      keyboard=false
-      backdropClose=false
-      as |modal|
+{{/if}}
+<div class="row content-row">
+  <h1>{{tt this "clusterHosts"}}</h1>
+  {{#promise-proxy-container proxy=hostsProxy}}
+    {{cluster-host-table
+      hosts=hosts
+      primaryClusterManager=primaryClusterManager
+      hostOptionChanged=(action "hostOptionChanged")
+      primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
+      allValidChanged=(action "hostTableValidChanged")
     }}
-      {{#modal.body}}
-        {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
-      {{/modal.body}}
-    {{/bs-modal}}
-  {{/if}}
+  {{/promise-proxy-container}}
+</div>
+
+{{!-- TODO maybe keep the modal opened short after promise resolve --}}
+{{#if deploymentPromise}}
+  {{#bs-modal
+    id="cluster-deploy-progress"
+    open=deploymentPromise
+    keyboard=false
+    backdropClose=false
+    as |modal|
+  }}
+    {{#modal.body}}
+      {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
+    {{/modal.body}}
+  {{/bs-modal}}
+{{/if}}

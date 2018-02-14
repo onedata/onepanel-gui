@@ -17,6 +17,9 @@ import { readOnly } from '@ember/object/computed';
 import { get, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
+import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import $ from 'jquery';
 
 const {
   TaskStatus: {
@@ -24,38 +27,39 @@ const {
   },
 } = Onepanel;
 
-const STEPS_PROVIDER = [{
-  id: 'installation',
-  title: 'cluster installation',
-}, {
-  id: 'provider-registration',
-  title: 'zone registration',
-}, {
-  id: 'provider-storage',
-  title: 'storage configuration',
-}, {
-  id: 'summary',
-  title: 'summary',
-}];
+/**
+ * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
+ * for provider
+ */
+const STEPS_PROVIDER = [
+  'installation',
+  'providerRegistration',
+  'providerCert',
+  'providerStorage',
+  'summary',
+];
 
-const STEPS_ZONE = [{
-  id: 'installation',
-  title: 'cluster installation',
-}, {
-  id: 'summary',
-  title: 'summary',
-}];
+/**
+ * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
+ * for zone
+ */
+const STEPS_ZONE = [
+  'installation',
+  'summary',
+];
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
-export default Component.extend({
+export default Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
   clusterManager: service(),
 
+  i18nPrefix: 'components.newCluster',
+
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
-  currentStepIndex: 0,
+  currentStepIndex: STEP.DEPLOY,
 
   _isInProcess: false,
 
@@ -64,7 +68,6 @@ export default Component.extend({
    */
   isLoading: false,
 
-  // TODO: i18n
   steps: Object.freeze([]),
 
   wizardIndex: computed('currentStepIndex', function () {
@@ -77,10 +80,14 @@ export default Component.extend({
     let clusterInitStep = this.get('cluster.initStep');
     this.setProperties({
       currentStepIndex: clusterInitStep,
-      _isInProcess: clusterInitStep > 0,
-      steps: onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE,
+      _isInProcess: clusterInitStep > STEP.DEPLOY,
+      steps: (onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE).map(
+        id => ({
+          id,
+          title: this.t(`steps.${onepanelServiceType}.${id}`),
+        })),
     });
-    if (clusterInitStep === 0) {
+    if (clusterInitStep === STEP.DEPLOY) {
       this.set('isLoading', true);
       this._checkUnfinishedDeployment()
         .then(taskId => {
@@ -88,7 +95,7 @@ export default Component.extend({
             this.setProperties({
               deploymentTaskId: taskId ? taskId : undefined,
               _isInProcess: true,
-              currentStepIndex: 0.5,
+              currentStepIndex: STEP.DEPLOYMENT_PROGRESS,
             });
           }
         })
@@ -151,6 +158,7 @@ export default Component.extend({
 
   actions: {
     next() {
+      $('.col-content').scrollTop(0);
       this._next();
     },
     changeClusterName(name) {

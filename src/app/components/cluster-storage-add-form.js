@@ -187,7 +187,12 @@ export default OneForm.extend(Validations, {
   _addFieldLabelTranslation(typeId, field, i18n) {
     if (!field.label) {
       field.set('label', i18n.t(
-        `components.clusterStorageAddForm.${typeId}.${this.cutOffPrefix(field.name)}`
+        `components.clusterStorageAddForm.${typeId}.${this.cutOffPrefix(field.name)}.name`
+      ));
+    }
+    if (field.tip === true) {
+      field.set('tip', i18n.t(
+        `components.clusterStorageAddForm.${typeId}.${this.cutOffPrefix(field.name)}.tip`
       ));
     }
   },

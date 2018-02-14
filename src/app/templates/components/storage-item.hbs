@@ -21,7 +21,7 @@
           <strong>Type:</strong> <span class="one-label">{{storageType}}</span>
         </div>
         <div class="row content-row">
-          <strong>{{t (concat "components.clusterStorageAddForm.generic.lumaEnabled")}}:</strong> 
+          <strong>{{t (concat "components.clusterStorageAddForm.generic.lumaEnabled.name")}}:</strong> 
           {{one-way-toggle
             checked=(get storage "lumaEnabled")
             isReadOnly=true
@@ -31,7 +31,7 @@
           {{#each lumaProperties as |lumaProperty|}}
             {{#unless (eq (get storage lumaProperty) undefined)}}
               <div class="row content-row">
-                <strong>{{t (concat "components.clusterStorageAddForm.luma." lumaProperty)}}:</strong> 
+                <strong>{{t (concat (concat "components.clusterStorageAddForm.luma." lumaProperty) ".name")}}:</strong> 
                 <span class="one-label">{{get storage lumaProperty}}</span>
               </div>
             {{/unless}}
@@ -39,7 +39,7 @@
         {{/if}}
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
-            <strong>{{t (concat translationPrefix storageProperty)}}:</strong>
+            <strong>{{t (concat (concat translationPrefix storageProperty) ".name")}}:</strong>
             {{#if (eq (data-type (get storage storageProperty)) "boolean")}}
               {{one-way-toggle
                 checked=(get storage storageProperty)

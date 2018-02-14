@@ -17,6 +17,9 @@ export default {
   syncConfig: 'Configure data synchronization',
   syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
+  spaceUsageOnThisProvider: 'Space usage on this provider',
+  spaceUsageOnThisProviderTip: 'The bar shows current provider storage usage ' +
+    'for this space.',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',

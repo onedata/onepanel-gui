@@ -7,7 +7,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'ember'
+    'ember',
   ],
   extends: [
     'eslint:recommended',

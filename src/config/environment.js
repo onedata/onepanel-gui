@@ -43,6 +43,13 @@ module.exports = function (environment) {
       routeAfterAuthentication: 'onedata',
       routeIfAlreadyAuthenticated: 'onedata',
     },
+    'time': {
+      /**
+       * How long to wait before redirecting to new configured domain of Oneprovider [ms]
+       * @type {number}
+       */
+      redirectDomainDelay: 5000,
+    },
     'i18n': {
       defaultLocale: 'en',
     },
