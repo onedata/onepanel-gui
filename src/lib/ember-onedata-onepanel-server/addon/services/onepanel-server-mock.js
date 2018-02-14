@@ -98,10 +98,10 @@ export default OnepanelServerBase.extend(
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
     // see STEP import for more info
-    // mockStep: String(STEP.PROVIDER_REGISTER),
+    // mockStep: Number(STEP.PROVIDER_REGISTER),
     // NOTE: below: first step of deployment
-    // mockStep: String(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: String(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.equal(
       'mockStep',
@@ -296,6 +296,7 @@ export default OnepanelServerBase.extend(
             lumaCacheTimeout: 10,
             lumaApiKey: 'some_storage',
           };
+          this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
             clusterStorageClass(storage1.type).constructFromObject(storage1)
           );
@@ -552,26 +553,26 @@ export default OnepanelServerBase.extend(
         };
       }),
 
-    _req_oneprovider_getProviderSpaces: computed('mockInitializedCluster',
-      '__spaces.[]',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          // TODO use Object.keys if available
-          let spaces = this.get('__spaces');
-          let spaceIds = spaces.map(s => s.id);
-          return {
-            success: () => ({
-              ids: spaceIds,
-            }),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getProviderSpaces() {
+      if (this.get('mockInitializedCluster')) {
+        // TODO use Object.keys if available
+        let spaces = this.get('__spaces');
+        let spaceIds = spaces.map(s => s.id);
+        return {
+          success: () => ({
+            ids: spaceIds,
+          }),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
-    _req_oneprovider_getSpaceDetails: computed('mockInitializedCluster', 'spaces',
+    _req_oneprovider_getSpaceDetails: computed(
+      'mockInitializedCluster',
+      '__spaces',
       function () {
         if (this.get('mockInitializedCluster')) {
           let spaces = this.get('__spaces');
