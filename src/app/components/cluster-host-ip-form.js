@@ -29,9 +29,10 @@ export default BasicTable.extend(I18n, {
   hosts: Object.freeze({}),
 
   /**
-   * @type {Array<{ip: string, hostname: string}>}
+   * @virtual optional
+   * @type {boolean}
    */
-  _hostsData: undefined,
+  readonly: false,
 
   /**
    * @virtual
@@ -44,6 +45,11 @@ export default BasicTable.extend(I18n, {
    * @type {function} `(hostsData: EmberArray<{hostname: string, ip: string}>)`
    */
   hostDataChanged: notImplementedWarn,
+
+  /**
+   * @type {Array<{ip: string, hostname: string}>}
+   */
+  _hostsData: undefined,
 
   allValid: computed('_hostsData.@each.isValid', function getAllValid() {
     return this.get('_hostsData').mapBy('isValid').every(i => i === true);

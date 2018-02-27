@@ -98,10 +98,10 @@ export default OnepanelServerBase.extend(
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
     // see STEP import for more info
-    mockStep: Number(STEP.PROVIDER_IPS),
+    // mockStep: Number(STEP.PROVIDER_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.equal(
       'mockStep',

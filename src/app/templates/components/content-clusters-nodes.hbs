@@ -1,15 +1,51 @@
-{{!-- TODO i18n --}}
-
 <div class="row content-row header-row hidden-xs">
-  <h1>Nodes of "{{cluster.name}}"</h1>
+  <h1>{{tt this "header" name=cluster.name}}</h1>
 </div>
 
 <div class="row">
-  {{#promise-proxy-container proxy=hostsProxy}}
-    {{cluster-host-table
-      hosts=hostsProxy.content
-      primaryClusterManager=primaryClusterManager
-      isReadOnly=true
-    }}
-  {{/promise-proxy-container}}
+  {{#bs-tab class="only-tab-bar" as |tab|}}
+    {{#tab.pane title=(tt this "tabServices")}}
+      <div class="row content-row">
+        {{#promise-proxy-container proxy=hostsProxy}}
+          {{cluster-host-table
+            hosts=hostsProxy.content
+            primaryClusterManager=primaryClusterManager
+            isReadOnly=true
+          }}
+        {{/promise-proxy-container}}
+      </div>
+    {{/tab.pane}}
+    {{#tab.pane title=(tt this "tabIps")}}
+      <div class="row content-row header-row">
+        <h1>{{tt this "clusterHosts"}}
+          <div class="btn-toolbar">
+            {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
+            {{#one-spin-button
+              class=(concat "btn btn-sm btn-primary btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
+              action=(action "startSetup")
+            }}
+              <span>{{tt this "setupIpsButton"}}</span>{{one-icon icon="arrow-right"}}
+              {{one-tooltip
+                title=(tt this "configurationInvalid") 
+                placement="left" 
+                class=(if _hostsIpsFormValid "hidden" "")
+                triggerElement=".btn-setup-ips"
+              }}
+            {{/one-spin-button}}
+          </div>
+        </h1>
+      </div>
+      <div class="row content-row">
+        {{#promise-proxy-container proxy=hostsProxy}}
+          {{!-- FIXME: edit switch --}}
+          {{cluster-host-ip-form
+            readonly=true
+            hosts=hostsIpsProxy.content
+            hostDataChanged=(action "hostsIpsDataChanged")
+            allValidChanged=(action "hostsIpsFormValidChanged")
+          }}
+        {{/promise-proxy-container}}
+      </div>
+    {{/tab.pane}}
+  {{/bs-tab}}
 </div>

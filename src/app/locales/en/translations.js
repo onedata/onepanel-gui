@@ -15,6 +15,7 @@ import spaceCleaningConditionsForm from './components/space-cleaning-conditions-
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import deregisterProviderConfirm from './components/deregister-provider-confirm';
 import contentClustersSpaces from './components/content-clusters-spaces';
+import contentClustersNodes from './components/content-clusters-nodes';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
@@ -54,6 +55,7 @@ let translations = {
     newCluster,
     modalRedirect,
     clusterHostIpForm,
+    contentClustersNodes,
   },
 };
 

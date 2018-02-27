@@ -9,14 +9,11 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { scheduleOnce } from '@ember/runloop';
-import { Promise } from 'rsvp';
 import { reads } from '@ember/object/computed';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 
-export default Component.extend(I18n, {
+export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-dns', 'container-fluid'],
 
   onepanelServer: service(),
@@ -26,112 +23,27 @@ export default Component.extend(I18n, {
 
   i18nPrefix: 'components.newClusterIps',
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
-
   /**
-   * Initialized on init
-   * @type {PromiseObject<Object>}
-   */
-  hostsProxy: undefined,
-
-  hosts: reads('hostsProxy.content'),
-
-  /**
-   * If true, the deploy action can be invoked
-   * @type {boolean}
-   */
-  canDeploy: false,
-
-  /**
-   * The promise resolves when we know if we have unfinished deployment.
-   * Initiliazed in `init`.
-   * @type {PromiseObject}
-   */
-  deploymentStatusProxy: undefined,
-
-  deploymentStatusLoading: reads('deploymentStatusProxy.isPending'),
-
-  /**
-   * @type {boolean}
-   */
-  _hostFormValid: false,
-
-  /**
-   * Stores most recent mapping: hostname -> ip.
-   * Initialized right after get cluster IPs resolve.
-   * Updated by host form events.
-   * @type {Object}
-   */
-  _formData: undefined,
-
-  /**
-   * @type {function}
+   * @virtual
+   * @type {Function} `() => any`
    */
   nextStep: undefined,
 
-  _willSubmit: false,
+  onepanelServiceType: reads('onepanelServer.serviceType'),
 
-  init() {
-    this._super(...arguments);
-
-    this.set(
-      'hostsProxy',
-      PromiseObject.create({
-        promise: this.get('clusterManager').getClusterIps()
-          .then(({ hosts }) => {
-            for (const hostname in hosts) {
-              if (hosts[hostname] === '127.0.0.1') {
-                hosts[hostname] = '';
-              }
-            }
-            this.set('_formData', hosts);
-            return hosts;
-          }),
-      }),
-    );
-
+  /**
+   * @override 
+   * @param {Object} hosts 
+   */
+  prepareHosts(hosts) {
+    for (const hostname in hosts) {
+      if (hosts[hostname] === '127.0.0.1') {
+        hosts[hostname] = '';
+      }
+    }
   },
 
   _startSetup() {
-    return this.get('clusterManager').modifyClusterIps(this.get('_formData'))
-      .catch(error => {
-        this.get('globalNotify').backendError(this.t('dnsSetup'), error);
-        throw error;
-      })
-      .then(() => this.get('nextStep')());
-  },
-
-  actions: {
-    startSetup() {
-      if (this.get('_hostFormValid') === true) {
-        return this._startSetup();
-      } else {
-        return Promise.reject();
-      }
-    },
-
-    /**
-     * @param {boolean} isValid 
-     */
-    hostFormValidChanged(isValid) {
-      scheduleOnce(
-        'afterRender',
-        this,
-        () => safeExec(this, () => {
-          if (this.get('_hostFormValid') !== isValid) {
-            this.set('_hostFormValid', isValid);
-          }
-        })
-      );
-    },
-
-    /**
-     * Handle update of hostname -> ip mapping event from IPs table
-     * @param {string} hostname can contain dots `.`
-     * @param {string} ip 
-     */
-    hostDataChanged(hostname, ip) {
-      this.get('_formData')[hostname] = ip;
-    },
+    this._super(...arguments).then(() => this.get('nextStep')());
   },
 });

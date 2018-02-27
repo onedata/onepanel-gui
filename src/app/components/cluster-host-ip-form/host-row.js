@@ -41,6 +41,12 @@ export default Component.extend(Validations, I18n, {
 
   /**
    * @virtual
+   * @type {boolean}
+   */
+  readonly: false,
+
+  /**
+   * @virtual
    * @type {function} `(hostname: string, ipAddress: string) => any`
    */
   valueChanged: notImplementedWarn,

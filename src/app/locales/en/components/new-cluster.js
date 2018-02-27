@@ -3,7 +3,7 @@ export default {
     provider: {
       installation: 'cluster installation',
       ips: 'cluster IP adresses',
-      providerRegistration: 'zone registration',
+      providerRegistration: 'provider registration',
       providerCert: 'certificate setup',
       providerStorage: 'storage configuration',
       summary: 'summary',

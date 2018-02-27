@@ -11,13 +11,17 @@ import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 
-export default Component.extend({
+export default Component.extend(I18n, clusterIpsConfigurator, {
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
+
+  i18nPrefix: 'components.contentClustersNodes',
 
   /**
    * Resolves with EmberArray of ClusterHostInfo.
@@ -30,6 +34,8 @@ export default Component.extend({
    * @type {string}
    */
   primaryClusterManager: null,
+
+  _ipsFormData: undefined,
 
   init() {
     this._super(...arguments);
@@ -56,6 +62,22 @@ export default Component.extend({
       PromiseObject.create({
         promise: clusterHostsPromise,
       })
+    );
+
+    this.set(
+      'hostIpsProxy',
+      PromiseObject.create({
+        promise: this.get('clusterManager').getClusterIps()
+          .then(({ hosts }) => {
+            for (const hostname in hosts) {
+              if (hosts[hostname] === '127.0.0.1') {
+                hosts[hostname] = '';
+              }
+            }
+            this.set('_ipsFormData', hosts);
+            return hosts;
+          }),
+      }),
     );
   },
 });
