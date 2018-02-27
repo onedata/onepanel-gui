@@ -1,0 +1,27 @@
+<td class="row-header truncate cell-hostname" {{action "headerClick" on="click"}} data-option="name">
+  <span class="item-icon-container">
+    {{one-icon class="item-icon" icon="node"}}
+    {{one-tooltip
+      title=hostname
+      placement="top"
+      arrowPlacement="left"
+      triggerEvents="hover"
+    }}
+  </span>
+  <span class="one-label">{{hostname}}</span>
+</td>
+<td class="text-center toggle-column cell-ip-address" data-option="ip-address">
+  <div class="row">
+    <div class="input-group">
+      <div class="row">
+        <input
+          class="form-control input-host-ip"
+          value={{ip}}
+          oninput={{action "valueChanged"}}
+          disabled={{disabled}}
+        >
+        <div class="form-message">{{validationMessage}}</div>
+      </div>
+    </div>
+  </div>
+</td>

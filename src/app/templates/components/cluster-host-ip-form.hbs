@@ -1,0 +1,16 @@
+<thead>
+  <tr>
+    <th>{{tt this "hostname"}}</th>
+    <th>{{tt this "ip"}}</th>
+  </tr>
+</thead>
+<tbody>
+  {{#each _hostsData as |host|}}
+    {{cluster-host-ip-form/host-row
+      valueChanged=(action "valueChanged")
+      validationChanged=(action "validationChanged")
+      hostname=host.hostname
+      ip=host.ip
+    }}
+  {{/each}}
+</tbody>

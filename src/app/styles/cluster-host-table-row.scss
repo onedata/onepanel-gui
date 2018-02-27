@@ -1,12 +1,1 @@
-table:not(.bt) .cluster-host-table-row {
-  &:hover {
-    //override table-striped style
-    background-color: $main-content-hover-background !important;
-    td {
-      position: relative;
-    }
-  }
-  td:first-child {
-    padding-left: 16px;
-  }
-}
+// FIXME: to remove? styles moved

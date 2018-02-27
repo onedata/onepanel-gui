@@ -191,6 +191,37 @@ export default Service.extend({
     );
   },
 
+  // FIXME: multiple request to servers
+  getClusterIps() {
+    const {
+      onepanelServer,
+      onepanelServiceType,
+    } = this.getProperties('onepanelServer', 'onepanelServiceType');
+    return onepanelServer.request(
+        'one' + onepanelServiceType,
+        camelize(`get-${onepanelServiceType}-cluster-ips`)
+      )
+      .then(({ data }) => data);
+  },
+
+  /**
+   * @param {Object} hostsData 
+   * @return {Promise<Object>}
+   */
+  modifyClusterIps(hostsData) {
+    const {
+      onepanelServer,
+      onepanelServiceType,
+    } = this.getProperties('onepanelServer', 'onepanelServiceType');
+    return onepanelServer.request(
+        'one' + onepanelServiceType,
+        camelize(`modify-${onepanelServiceType}-cluster-ips`), {
+          hosts: hostsData,
+        },
+      )
+      .then(({ data }) => data);
+  },
+
   /**
    * @returns {Promise}
    */
@@ -262,17 +293,15 @@ export default Service.extend({
     });
   },
 
+  _checkIsIpsConfigured() {
+    return this.getClusterIps()
+      .then(({ isConfigured }) => isConfigured);
+  },
+
   /**
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
-   *
-   * The returned promise resolves with one of Number indicating wchich step had been done:
-   * - 0: no installation done, initial
-   * state, show "you have no cluster yet..."
-   * - 1: installation done, but not registered - show registration step
-   * - 2: installation and registration done, can generate cert
-   * - 3: cert installed, no storage added yet - show add storage step
-   * - 4: all done, should not show steps
+   * See `model:cluster-details CLUSTER_INIT_STEPS` for code explaination.
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
@@ -288,38 +317,51 @@ export default Service.extend({
         if (isConfigurationDone) {
           // TODO VFS-3119
           if (onepanelServiceType === 'zone') {
-            resolve(STEP.ZONE_DEPLOY + 1);
+            const checkIps = this._checkIsIpsConfigured();
+            checkIps.then(isConfigured => {
+              resolve(isConfigured ? STEP.ZONE_IPS + 1 : STEP.ZONE_IPS);
+            });
+            checkIps.catch(reject);
           } else {
-            const checkRegister = this._checkIsProviderRegistered(
-              onepanelServer
-            );
-            checkRegister.then(({
-              isRegistered: isProviderRegistered,
-              providerDetails,
-            }) => {
-              if (isProviderRegistered) {
-                if (
-                  get(providerDetails, 'letsEncryptEnabled') !== undefined
-                ) {
-                  const checkStorage = this._checkIsAnyStorage(
-                    onepanelServer
-                  );
-                  checkStorage.then(isAnyStorage => {
-                    if (isAnyStorage) {
-                      resolve(STEP.PROVIDER_STORAGE_ADD + 1);
+            const checkIps = this._checkIsIpsConfigured();
+            checkIps.then(isConfigured => {
+              if (isConfigured) {
+                const checkRegister = this._checkIsProviderRegistered(
+                  onepanelServer
+                );
+                checkRegister.then(({
+                  isRegistered: isProviderRegistered,
+                  providerDetails,
+                }) => {
+                  if (isProviderRegistered) {
+                    if (
+                      get(providerDetails, 'letsEncryptEnabled') !==
+                      undefined
+                    ) {
+                      const checkStorage = this._checkIsAnyStorage(
+                        onepanelServer
+                      );
+                      checkStorage.then(isAnyStorage => {
+                        if (isAnyStorage) {
+                          resolve(STEP.PROVIDER_STORAGE_ADD + 1);
+                        } else {
+                          resolve(STEP.PROVIDER_STORAGE_ADD);
+                        }
+                      });
+                      checkStorage.catch(reject);
                     } else {
-                      resolve(STEP.PROVIDER_STORAGE_ADD);
+                      resolve(STEP.PROVIDER_CERT_GENERATE);
                     }
-                  });
-                  checkStorage.catch(reject);
-                } else {
-                  resolve(STEP.PROVIDER_CERT_GENERATE);
-                }
+                  } else {
+                    resolve(STEP.PROVIDER_REGISTER);
+                  }
+                });
+                checkRegister.catch(reject);
               } else {
-                resolve(STEP.PROVIDER_REGISTER);
+                resolve(STEP.PROVIDER_IPS);
               }
             });
-            checkRegister.catch(reject);
+            checkIps.catch(reject);
           }
         } else {
           resolve(0);

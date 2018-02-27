@@ -33,6 +33,7 @@ const {
  */
 const STEPS_PROVIDER = [
   'installation',
+  'ips',
   'providerRegistration',
   'providerCert',
   'providerStorage',
@@ -45,6 +46,7 @@ const STEPS_PROVIDER = [
  */
 const STEPS_ZONE = [
   'installation',
+  'ips',
   'summary',
 ];
 

@@ -18,9 +18,11 @@ import contentClustersSpaces from './components/content-clusters-spaces';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
+import newClusterIps from './components/new-cluster-ips';
 import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
+import clusterHostIpForm from './components/cluster-host-ip-form';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -47,9 +49,11 @@ let translations = {
     newClusterDeployProgress,
     newClusterProviderCert,
     newClusterInstallation,
+    newClusterIps,
     contentClustersProvider,
     newCluster,
     modalRedirect,
+    clusterHostIpForm,
   },
 };
 
