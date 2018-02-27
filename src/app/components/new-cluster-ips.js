@@ -79,6 +79,11 @@ export default Component.extend(I18n, {
       PromiseObject.create({
         promise: this.get('clusterManager').getClusterIps()
           .then(({ hosts }) => {
+            for (const hostname in hosts) {
+              if (hosts[hostname] === '127.0.0.1') {
+                hosts[hostname] = '';
+              }
+            }
             this.set('_formData', hosts);
             return hosts;
           }),

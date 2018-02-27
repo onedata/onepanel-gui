@@ -12,16 +12,19 @@
 </td>
 <td class="text-center toggle-column cell-ip-address" data-option="ip-address">
   <div class="row">
-    <div class="input-group">
-      <div class="row">
+    {{#bs-form class="compact form-horizontal" as |form|}}
+      {{#form.group
+        validation=(if validationMessage "error" "success")
+      }}
         <input
           class="form-control input-host-ip"
           value={{ip}}
           oninput={{action "valueChanged"}}
           disabled={{disabled}}
+          placeholder={{tt this "example"}}
         >
         <div class="form-message">{{validationMessage}}</div>
-      </div>
-    </div>
+      {{/form.group}}
+    {{/bs-form}}
   </div>
 </td>

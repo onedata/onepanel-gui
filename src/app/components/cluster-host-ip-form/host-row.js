@@ -2,6 +2,7 @@ import Component from '@ember/component';
 import { observer } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import { validator, buildValidations } from 'ember-cp-validations';
 
@@ -18,11 +19,13 @@ const Validations = buildValidations({
   ],
 });
 
-export default Component.extend(Validations, {
+export default Component.extend(Validations, I18n, {
   tagName: 'tr',
   classNames: 'cluster-host-ip-form-row',
   classNameBindings: ['active'],
   attributeBindings: ['hostname:data-hostname'],
+
+  i18nPrefix: 'components.clusterHostIpForm.hostRow',
 
   /**
    * @virtual

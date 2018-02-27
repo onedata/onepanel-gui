@@ -714,7 +714,7 @@ export default OnepanelServerBase.extend(
         success: () => ({
           isConfigured: this.get('mockStep') > STEP.PROVIDER_IPS,
           hosts: {
-            'node2.example.com': '192.168.0.3',
+            'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
           },
         }),
@@ -726,7 +726,7 @@ export default OnepanelServerBase.extend(
         success: () => ({
           isConfigured: this.get('mockStep') > STEP.ZONE_IPS,
           hosts: {
-            'node2.example.com': '192.168.0.3',
+            'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
           },
         }),

@@ -191,7 +191,6 @@ export default Service.extend({
     );
   },
 
-  // FIXME: multiple request to servers
   getClusterIps() {
     const {
       onepanelServer,
@@ -318,22 +317,22 @@ export default Service.extend({
           // TODO VFS-3119
           if (onepanelServiceType === 'zone') {
             const checkIps = this._checkIsIpsConfigured();
-            checkIps.then(isConfigured => {
-              resolve(isConfigured ? STEP.ZONE_IPS + 1 : STEP.ZONE_IPS);
+            checkIps.then(isIpsConfigured => {
+              resolve(isIpsConfigured ? STEP.ZONE_IPS + 1 : STEP.ZONE_IPS);
             });
             checkIps.catch(reject);
           } else {
-            const checkIps = this._checkIsIpsConfigured();
-            checkIps.then(isConfigured => {
-              if (isConfigured) {
-                const checkRegister = this._checkIsProviderRegistered(
-                  onepanelServer
-                );
-                checkRegister.then(({
-                  isRegistered: isProviderRegistered,
-                  providerDetails,
-                }) => {
-                  if (isProviderRegistered) {
+            const checkRegister = this._checkIsProviderRegistered(
+              onepanelServer
+            );
+            checkRegister.then(({
+              isRegistered: isProviderRegistered,
+              providerDetails,
+            }) => {
+              if (isProviderRegistered) {
+                const checkIps = this._checkIsIpsConfigured();
+                checkIps.then(isIpsConfigured => {
+                  if (isIpsConfigured) {
                     if (
                       get(providerDetails, 'letsEncryptEnabled') !==
                       undefined
@@ -343,7 +342,9 @@ export default Service.extend({
                       );
                       checkStorage.then(isAnyStorage => {
                         if (isAnyStorage) {
-                          resolve(STEP.PROVIDER_STORAGE_ADD + 1);
+                          resolve(
+                            STEP.PROVIDER_STORAGE_ADD + 1
+                          );
                         } else {
                           resolve(STEP.PROVIDER_STORAGE_ADD);
                         }
@@ -353,15 +354,15 @@ export default Service.extend({
                       resolve(STEP.PROVIDER_CERT_GENERATE);
                     }
                   } else {
-                    resolve(STEP.PROVIDER_REGISTER);
+                    resolve(STEP.PROVIDER_IPS);
                   }
                 });
-                checkRegister.catch(reject);
+                checkIps.catch(reject);
               } else {
-                resolve(STEP.PROVIDER_IPS);
+                resolve(STEP.PROVIDER_REGISTER);
               }
             });
-            checkIps.catch(reject);
+            checkRegister.catch(reject);
           }
         } else {
           resolve(0);

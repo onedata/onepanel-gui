@@ -58,4 +58,19 @@
       }
     }
   }
+  
+  &.with-form.bt {
+    form {
+      display: block;
+      float: right;
+      width: 50%;
+    }
+    tr td.active::before {
+      // TODO: use value from form-control height
+      line-height: 46px;
+      width: 50%;
+      margin-right: 0px;
+      padding-right: 0px;
+    }
+  }
 }

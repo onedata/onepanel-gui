@@ -2,6 +2,7 @@ import BasicTable from 'onedata-gui-common/components/basic-table';
 import { get, set, observer, computed } from '@ember/object';
 import { assert } from '@ember/debug';
 import { A } from '@ember/array';
+import { next } from '@ember/runloop';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import _ from 'lodash';
@@ -10,6 +11,7 @@ export default BasicTable.extend(I18n, {
   tagName: 'table',
   classNames: [
     'cluster-host-table',
+    'with-form',
     'cluster-host-ip-form',
     'table',
     'table-striped',
@@ -43,6 +45,14 @@ export default BasicTable.extend(I18n, {
    */
   hostDataChanged: notImplementedWarn,
 
+  allValid: computed('_hostsData.@each.isValid', function getAllValid() {
+    return this.get('_hostsData').mapBy('isValid').every(i => i === true);
+  }),
+
+  observeAllValid: observer('allValid', function notifyAllValid() {
+    this.get('allValidChanged')(this.get('allValid'));
+  }),
+
   init() {
     this._super(...arguments);
     this.set(
@@ -57,13 +67,13 @@ export default BasicTable.extend(I18n, {
     this.observeAllValid();
   },
 
-  allValid: computed('_hostsData.@each.isValid', function getAllValid() {
-    return this.get('_hostsData').mapBy('isValid').every(i => i === true);
-  }),
+  didInsertElement() {
+    this._super(...arguments);
+    next(() => {
+      this.$('tbody .row-header').click();
+    });
 
-  observeAllValid: observer('allValid', function notifyAllValid() {
-    this.get('allValidChanged')(this.get('allValid'));
-  }),
+  },
 
   actions: {
     valueChanged(hostname, ip) {

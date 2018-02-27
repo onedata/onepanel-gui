@@ -33,8 +33,8 @@ const {
  */
 const STEPS_PROVIDER = [
   'installation',
-  'ips',
   'providerRegistration',
+  'ips',
   'providerCert',
   'providerStorage',
   'summary',
