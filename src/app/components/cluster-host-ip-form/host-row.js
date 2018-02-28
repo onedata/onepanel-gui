@@ -21,7 +21,7 @@ const Validations = buildValidations({
 
 export default Component.extend(Validations, I18n, {
   tagName: 'tr',
-  classNames: 'cluster-host-ip-form-row',
+  classNames: ['cluster-host-ip-form-row'],
   classNameBindings: ['active'],
   attributeBindings: ['hostname:data-hostname'],
 
@@ -66,6 +66,8 @@ export default Component.extend(Validations, I18n, {
    * @type {Ember.ComputedProperty<string>}
    */
   validationMessage: reads('validations.attrs.ip.message'),
+
+  isReadOnly: reads('readonly'),
 
   // TODO security - check if cannot make HTML injection using hostname
   /**

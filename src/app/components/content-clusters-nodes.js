@@ -15,6 +15,8 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import _ from 'lodash';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
   onepanelServer: service(),
@@ -35,7 +37,15 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    */
   primaryClusterManager: null,
 
+  /**
+   * If true, table of IPs is in edition mode
+   * @type {boolean}
+   */
+  ipsEdit: false,
+
   _ipsFormData: undefined,
+
+  _origIpsFormData: undefined,
 
   init() {
     this._super(...arguments);
@@ -63,21 +73,31 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         promise: clusterHostsPromise,
       })
     );
+  },
 
-    this.set(
-      'hostIpsProxy',
-      PromiseObject.create({
-        promise: this.get('clusterManager').getClusterIps()
-          .then(({ hosts }) => {
-            for (const hostname in hosts) {
-              if (hosts[hostname] === '127.0.0.1') {
-                hosts[hostname] = '';
-              }
-            }
-            this.set('_ipsFormData', hosts);
-            return hosts;
-          }),
-      }),
-    );
+  /**
+   * @override
+   */
+  _startSetup() {
+    return this._super(...arguments).then(() => {
+      safeExec(this, 'set', 'ipsEdit', false);
+    });
+  },
+
+  actions: {
+    enableIpsEdit() {
+      this.setProperties({
+        ipsEdit: true,
+        _origIpsFormData: _.cloneDeep(this.get('_ipsFormData')),
+      });
+    },
+
+    cancelIpsEdit() {
+      this.setProperties({
+        ipsEdit: false,
+        _ipsFormData: this.get('_origIpsFormData'),
+        _origIpsFormData: undefined,
+      });
+    },
   },
 });

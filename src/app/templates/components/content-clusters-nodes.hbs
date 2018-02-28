@@ -16,33 +16,41 @@
       </div>
     {{/tab.pane}}
     {{#tab.pane title=(tt this "tabIps")}}
-      <div class="row content-row header-row">
-        <h1>{{tt this "clusterHosts"}}
+      <div class="row header-row">
+        <h1>
           <div class="btn-toolbar">
-            {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
-            {{#one-spin-button
-              class=(concat "btn btn-sm btn-primary btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
-              action=(action "startSetup")
-            }}
-              <span>{{tt this "setupIpsButton"}}</span>{{one-icon icon="arrow-right"}}
-              {{one-tooltip
-                title=(tt this "configurationInvalid") 
-                placement="left" 
-                class=(if _hostsIpsFormValid "hidden" "")
-                triggerElement=".btn-setup-ips"
+            {{#if (or ipsEdit ipsSetupProxy.isPending)}}
+              {{#one-spin-button
+                class=(concat "btn btn-sm btn-primary btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
+                action=(action "startSetup")
               }}
-            {{/one-spin-button}}
+                <span>{{tt this "setupIpsButton"}}</span>
+                {{one-tooltip
+                  title=(tt this "configurationInvalid") 
+                  placement="left" 
+                  class=(if _hostsIpsFormValid "hidden" "")
+                  triggerElement=".btn-setup-ips"
+                }}
+              {{/one-spin-button}}
+            {{/if}}
+            {{#bs-button
+              onClick=(action (if ipsEdit "cancelIpsEdit" "enableIpsEdit"))
+              type="default"
+              class="btn-sm"
+              disabled=ipsSetupProxy.isPending
+            }}
+              {{tt this (if ipsEdit "cancelIpsEdit" "editIps")}}
+            {{/bs-button}}            
           </div>
         </h1>
       </div>
       <div class="row content-row">
         {{#promise-proxy-container proxy=hostsProxy}}
-          {{!-- FIXME: edit switch --}}
           {{cluster-host-ip-form
-            readonly=true
-            hosts=hostsIpsProxy.content
+            hosts=_ipsFormData
             hostDataChanged=(action "hostsIpsDataChanged")
             allValidChanged=(action "hostsIpsFormValidChanged")
+            readonly=(or (not ipsEdit) ipsSetupProxy.isPending)
           }}
         {{/promise-proxy-container}}
       </div>

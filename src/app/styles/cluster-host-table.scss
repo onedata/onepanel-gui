@@ -65,7 +65,7 @@
       float: right;
       width: 50%;
     }
-    tr td.active::before {
+    tr td:not(.row-header)::before {
       // TODO: use value from form-control height
       line-height: 46px;
       width: 50%;

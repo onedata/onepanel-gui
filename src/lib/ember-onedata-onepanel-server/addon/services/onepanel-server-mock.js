@@ -46,7 +46,7 @@ const MOCK_SERVICE_TYPE = 'provider';
  * Response delay in milliseconds
  * @type {number}
  */
-const RESPONSE_DELAY = 100;
+const RESPONSE_DELAY = 1000;
 
 /**
  * Used when generating providers support data

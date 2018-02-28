@@ -10,22 +10,25 @@
   </span>
   <span class="one-label">{{hostname}}</span>
 </td>
-<td class="text-center toggle-column cell-ip-address" data-option="ip-address">
+<td class="toggle-column cell-ip-address" data-option="ip-address">
   <div class="row">
-    {{#bs-form class="compact form-horizontal" as |form|}}
-      {{#form.group
-        validation=(if validationMessage "error" "success")
-      }}
-        <input
-          class="form-control input-host-ip"
-          value={{ip}}
-          oninput={{action "valueChanged"}}
-          disabled={{disabled}}
-          placeholder={{tt this "example"}}
-          readonly={{readonly}}
-        >
-        <div class="form-message">{{validationMessage}}</div>
-      {{/form.group}}
-    {{/bs-form}}
+    {{#if isReadOnly}}
+      <span>{{ip}}</span>
+    {{else}}
+      {{#bs-form class="compact form-horizontal" as |form|}}
+        {{#form.group
+          validation=(if validationMessage "error" "success")
+        }}
+          <input
+            class="form-control input-host-ip"
+            value={{ip}}
+            oninput={{action "valueChanged"}}
+            placeholder={{tt this "example"}}
+            disabled={{isReadOnly}}
+          >
+          <div class="form-message">{{validationMessage}}</div>
+        {{/form.group}}
+      {{/bs-form}}
+    {{/if}}
   </div>
 </td>

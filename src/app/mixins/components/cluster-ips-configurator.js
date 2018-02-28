@@ -4,6 +4,7 @@ import { scheduleOnce } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { computed } from '@ember/object';
 
 export default Mixin.create(I18n, {
   // FIXME: change to use mixin translations
@@ -34,8 +35,27 @@ export default Mixin.create(I18n, {
    */
   _formData: undefined,
 
+  /**
+   * @type {Promise}
+   */
+  _ipsSetupPromise: undefined,
+
+  /**
+   * @type {PromiseObject}
+   */
+  ipsSetupProxy: computed('_ipsSetupPromise', function () {
+    const _ipsSetupPromise = this.get('_ipsSetupPromise');
+    const obj = _ipsSetupPromise ?
+      PromiseObject.create({
+        promise: _ipsSetupPromise,
+      }) :
+      undefined;
+    return obj;
+  }),
+
   _startSetup() {
-    return this.get('clusterManager').modifyClusterIps(this.get('_ipsFormData'))
+    return this.get('clusterManager')
+      .modifyClusterIps(this.get('_ipsFormData'))
       .catch(error => {
         // FIXME: translations for mixin
         this.get('globalNotify').backendError(this.t('dnsSetup'), error);
@@ -66,11 +86,13 @@ export default Mixin.create(I18n, {
 
   actions: {
     startSetup() {
-      if (this.get('_hostsIpsFormValid') === true) {
-        return this._startSetup();
-      } else {
-        return Promise.reject();
-      }
+      const _ipsSetupPromise = this.get('_hostsIpsFormValid') ?
+        this._startSetup() : Promise.reject();
+      const pro = this.set(
+        '_ipsSetupPromise',
+        _ipsSetupPromise
+      );
+      return pro;
     },
 
     /**

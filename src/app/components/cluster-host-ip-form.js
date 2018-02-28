@@ -49,7 +49,14 @@ export default BasicTable.extend(I18n, {
   /**
    * @type {Array<{ip: string, hostname: string}>}
    */
-  _hostsData: undefined,
+  _hostsData: computed('hosts', function () {
+    return A(
+      _.map(
+        this.get('hosts'),
+        (ip, hostname) => ({ hostname, ip })
+      )
+    );
+  }),
 
   allValid: computed('_hostsData.@each.isValid', function getAllValid() {
     return this.get('_hostsData').mapBy('isValid').every(i => i === true);
@@ -61,15 +68,6 @@ export default BasicTable.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    this.set(
-      '_hostsData',
-      A(
-        _.map(
-          this.get('hosts'),
-          (ip, hostname) => ({ hostname, ip })
-        )
-      )
-    );
     this.observeAllValid();
   },
 
