@@ -16,6 +16,17 @@
       </div>
     {{/tab.pane}}
     {{#tab.pane title=(tt this "tabIps")}}
+      <div class="row">
+        <div class="alert alert-info">
+          {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
+        </div>
+        
+        {{#if subdomainDelegation}}
+          <div class="alert alert-info">
+            {{t "mixins.components.clusterIpsConfigurator.infoSubdomain"}}
+          </div>
+        {{/if}}
+      </div>
       <div class="row header-row">
         <h1>
           <div class="btn-toolbar">
@@ -26,7 +37,7 @@
               }}
                 <span>{{tt this "setupIpsButton"}}</span>
                 {{one-tooltip
-                  title=(tt this "configurationInvalid") 
+                  title=(t "mixins.components.clusterIpsConfigurator" "configurationInvalid") 
                   placement="left" 
                   class=(if _hostsIpsFormValid "hidden" "")
                   triggerElement=".btn-setup-ips"

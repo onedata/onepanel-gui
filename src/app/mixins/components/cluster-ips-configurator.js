@@ -2,13 +2,11 @@ import Mixin from '@ember/object/mixin';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { scheduleOnce } from '@ember/runloop';
 import { Promise } from 'rsvp';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
 
-export default Mixin.create(I18n, {
-  // FIXME: change to use mixin translations
-  i18nPrefix: 'components.newClusterIps',
+export default Mixin.create({
+  i18nPrefix: 'mixins.components.clusterIpsConfigurator',
 
   /**
    * @virtual
@@ -52,8 +50,10 @@ export default Mixin.create(I18n, {
     return this.get('clusterManager')
       .modifyClusterIps(this.get('_ipsFormData'))
       .catch(error => {
-        // FIXME: translations for mixin
-        this.get('globalNotify').backendError(this.t('dnsSetup'), error);
+        this.get('globalNotify').backendError(
+          this.get('i18n').t('mixins.components.clusterIpsConfigurator.setupAction'),
+          error
+        );
         throw error;
       });
   },

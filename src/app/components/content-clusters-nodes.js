@@ -26,6 +26,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   i18nPrefix: 'components.contentClustersNodes',
 
   /**
+   * @virtual
+   * @type {boolean}
+   */
+  subdomainDelegation: false,
+
+  /**
    * Resolves with EmberArray of ClusterHostInfo.
    * @type {PromiseObject.Array.ClusterHostInfo} hostsProxy
    */

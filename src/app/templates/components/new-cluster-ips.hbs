@@ -1,5 +1,5 @@
 <div class="row content-row header-row">
-  <h1>{{tt this "dnsSetup"}}
+  <h1>{{tt this "header"}}
     <div class="btn-toolbar">
       {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
       {{#one-spin-button
@@ -8,7 +8,7 @@
       }}
         <span>{{tt this "setupIpsButton"}}</span>{{one-icon icon="arrow-right"}}
         {{one-tooltip
-          title=(tt this "configurationInvalid") 
+          title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid") 
           placement="left" 
           class=(if _hostsIpsFormValid "hidden" "")
           triggerElement=".btn-setup-ips"
@@ -20,17 +20,17 @@
 
 <div class="row content-row">
   <div class="alert alert-info">
-    {{tt this "generalInfo1"}}
+    {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
   </div>
   
   {{#if subdomainDelegation}}
     <div class="alert alert-info">
-      {{tt this "withSubdomainInfo"}}
+      {{t "mixins.components.clusterIpsConfigurator.infoSubdomain"}}
     </div>
   {{/if}}
   
   <div class="alert alert-info">
-    {{tt this "generalInfo2"}}
+    {{tt this "infoAutoDetect"}}
   </div>
   
   <h1>{{tt this "clusterHosts"}}</h1>

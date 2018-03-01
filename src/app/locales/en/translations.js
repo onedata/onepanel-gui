@@ -25,6 +25,8 @@ import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
 
+import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
+
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
@@ -56,6 +58,11 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
+  },
+  mixins: {
+    components: {
+      clusterIpsConfigurator,
+    },
   },
 };
 
