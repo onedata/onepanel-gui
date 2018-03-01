@@ -4,6 +4,7 @@ import { scheduleOnce } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export default Mixin.create({
   i18nPrefix: 'mixins.components.clusterIpsConfigurator',
@@ -13,6 +14,17 @@ export default Mixin.create({
    * @type {Ember.Service}
    */
   clusterManager: undefined,
+
+  /**
+   * @virtual 
+   * @type {PromiseObject<ProviderDetails>}
+   */
+  providerDetailsProxy: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  subdomainDelegation: reads('providerDetailsProxy.content.subdomainDelegation'),
 
   /**
    * Initialized on init

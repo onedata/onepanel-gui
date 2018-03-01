@@ -25,12 +25,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
 
   /**
    * @virtual
-   * @type {boolean}
-   */
-  subdomainDelegation: false,
-
-  /**
-   * @virtual
    * @type {Function} `() => any`
    */
   nextStep: undefined,

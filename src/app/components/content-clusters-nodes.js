@@ -11,6 +11,7 @@ import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
+import { computed } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -21,15 +22,20 @@ import _ from 'lodash';
 export default Component.extend(I18n, clusterIpsConfigurator, {
   onepanelServer: service(),
   clusterManager: service(),
+  providerManager: service(),
   globalNotify: service(),
 
   i18nPrefix: 'components.contentClustersNodes',
 
   /**
-   * @virtual
-   * @type {boolean}
+   * @override
+   * @type {PromiseObject<ProviderDetails>}
    */
-  subdomainDelegation: false,
+  providerDetailsProxy: computed(function getProviderDetailsProxy() {
+    if (this.get('onepanelServer.serviceType') === 'provider') {
+      return this.get('providerManager').getProviderDetails();
+    }
+  }),
 
   /**
    * Resolves with EmberArray of ClusterHostInfo.

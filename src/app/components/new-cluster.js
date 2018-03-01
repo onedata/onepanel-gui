@@ -56,12 +56,13 @@ export default Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
   clusterManager: service(),
+  providerManager: service(),
 
   i18nPrefix: 'components.newCluster',
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
-  currentStepIndex: STEP.DEPLOY,
+  currentStepIndex: Number(STEP.DEPLOY),
 
   _isInProcess: false,
 
@@ -74,6 +75,22 @@ export default Component.extend(I18n, {
 
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));
+  }),
+
+  isAfterDeploy: computed('currentStepIndex', function getIsAfterDeploy() {
+    return this.get('currentStepIndex') > (STEP.DEPLOY + 1);
+  }),
+
+  /**
+   * @type {PromiseObject<ProviderDetails>}
+   */
+  providerDetailsProxy: computed('isAfterDeploy', function getProviderDetailsProxy() {
+    if (
+      this.get('isAfterDeploy') &&
+      this.get('onepanelServer.serviceType') === 'provider'
+    ) {
+      return this.get('providerManager').getProviderDetails();
+    }
   }),
 
   init() {
