@@ -44,13 +44,8 @@ export default Mixin.create(I18n, {
    * @type {PromiseObject}
    */
   ipsSetupProxy: computed('_ipsSetupPromise', function () {
-    const _ipsSetupPromise = this.get('_ipsSetupPromise');
-    const obj = _ipsSetupPromise ?
-      PromiseObject.create({
-        promise: _ipsSetupPromise,
-      }) :
-      undefined;
-    return obj;
+    const promise = this.get('_ipsSetupPromise');
+    return promise ? PromiseObject.create({ promise }) : undefined;
   }),
 
   _startSetup() {

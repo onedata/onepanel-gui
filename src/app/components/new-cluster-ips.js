@@ -44,6 +44,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   },
 
   _startSetup() {
-    this._super(...arguments).then(() => this.get('nextStep')());
+    return this._super(...arguments).then(() => this.get('nextStep')());
   },
 });
