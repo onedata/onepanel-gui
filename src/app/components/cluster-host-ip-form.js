@@ -32,7 +32,7 @@ export default BasicTable.extend(I18n, {
    * @virtual optional
    * @type {boolean}
    */
-  readonly: false,
+  isReadOnly: false,
 
   /**
    * @virtual
@@ -46,17 +46,10 @@ export default BasicTable.extend(I18n, {
    */
   hostDataChanged: notImplementedWarn,
 
-  /**
-   * @type {Array<{ip: string, hostname: string}>}
+  /** 
+   * @type {EmberArray<{ip: string, hostname: string}>}
    */
-  _hostsData: computed('hosts', function () {
-    return A(
-      _.map(
-        this.get('hosts'),
-        (ip, hostname) => ({ hostname, ip })
-      )
-    );
-  }),
+  _hostsData: undefined,
 
   allValid: computed('_hostsData.@each.isValid', function getAllValid() {
     return this.get('_hostsData').mapBy('isValid').every(i => i === true);
@@ -66,8 +59,38 @@ export default BasicTable.extend(I18n, {
     this.get('allValidChanged')(this.get('allValid'));
   }),
 
+  /**
+   * We do not want to change `_hostsData` reference because it leads
+   * to rows re-render and thus corrupting the basic table.
+   * Istead observe if `hosts` instance changes after render and modify
+   * entries of `_hostsData`.
+   */
+  observeHostsData: observer('hosts', function updateExternalHostsData() {
+    const {
+      _hostsData,
+      hosts,
+    } = this.getProperties('_hostsData', 'hosts');
+    const hostsDataArray = _hostsData.toArray();
+    for (const hostname in hosts) {
+      const host = _.find(hostsDataArray, h => get(h, 'hostname') === hostname);
+      if (host) {
+        set(host, 'ip', hosts[hostname]);
+      }
+    }
+  }),
+
   init() {
     this._super(...arguments);
+
+    const _hostsData = A(
+      _.map(
+        this.get('hosts'),
+        (ip, hostname) => ({ hostname, ip })
+      )
+    );
+
+    this.set('_hostsData', _hostsData);
+
     this.observeAllValid();
   },
 

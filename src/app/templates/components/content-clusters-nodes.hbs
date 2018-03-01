@@ -61,7 +61,7 @@
             hosts=_ipsFormData
             hostDataChanged=(action "hostsIpsDataChanged")
             allValidChanged=(action "hostsIpsFormValidChanged")
-            readonly=(or (not ipsEdit) ipsSetupProxy.isPending)
+            isReadOnly=(or (not ipsEdit) ipsSetupProxy.isPending)
           }}
         {{/promise-proxy-container}}
       </div>

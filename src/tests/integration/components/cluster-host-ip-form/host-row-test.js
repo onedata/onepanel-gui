@@ -10,7 +10,7 @@ describe('Integration | Component | cluster host ip form/host row', function () 
 
   it('renders static text if readonly flag is true', function () {
     this.render(hbs `{{cluster-host-ip-form/host-row
-      readonly=true
+      isReadOnly=true
       hostname="hostname.one"
       ip="172.17.0.1"
     }}`);
@@ -21,7 +21,7 @@ describe('Integration | Component | cluster host ip form/host row', function () 
 
   it('renders input if readonly flag is false', function () {
     this.render(hbs `{{cluster-host-ip-form/host-row
-      readonly=false
+      isReadOnly=false
       hostname="hostname.one"
       ip="172.17.0.1"
     }}`);

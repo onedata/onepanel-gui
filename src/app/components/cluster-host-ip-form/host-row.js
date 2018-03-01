@@ -43,7 +43,7 @@ export default Component.extend(Validations, I18n, {
    * @virtual
    * @type {boolean}
    */
-  readonly: false,
+  isReadOnly: false,
 
   /**
    * @virtual
@@ -66,8 +66,6 @@ export default Component.extend(Validations, I18n, {
    * @type {Ember.ComputedProperty<string>}
    */
   validationMessage: reads('validations.attrs.ip.message'),
-
-  isReadOnly: reads('readonly'),
 
   // TODO security - check if cannot make HTML injection using hostname
   /**

@@ -63,14 +63,20 @@
     form {
       display: block;
       float: right;
-      width: 50%;
+      width: 70%;
     }
     tr td:not(.row-header)::before {
       // TODO: use value from form-control height
       line-height: 46px;
-      width: 50%;
+      width: 30%;
       margin-right: 0px;
       padding-right: 0px;
+    }
+    tr td:not(.row-header) {
+      &::before,
+      .bt-content {
+        line-height: 46px;  
+      }
     }
   }
 }

@@ -10,12 +10,12 @@
   </span>
   <span class="one-label">{{hostname}}</span>
 </td>
-<td class="toggle-column cell-ip-address" data-option="ip-address">
+<td class="cell-ip-address" data-option="ip-address">
   <div class="row">
     {{#if isReadOnly}}
       <span>{{ip}}</span>
     {{else}}
-      {{#bs-form class="compact form-horizontal" as |form|}}
+      {{#bs-form class="compact form-horizontal without-labels" as |form|}}
         {{#form.group
           validation=(if validationMessage "error" "success")
         }}

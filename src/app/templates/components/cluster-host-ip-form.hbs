@@ -7,7 +7,7 @@
 <tbody>
   {{#each _hostsData as |host|}}
     {{cluster-host-ip-form/host-row
-      readonly=readonly
+      isReadOnly=isReadOnly
       valueChanged=(action "valueChanged")
       validationChanged=(action "validationChanged")
       hostname=host.hostname
