@@ -1,3 +1,12 @@
+/**
+ * A responsive table with hostname -> IP address to set
+ * 
+ * @module components/cluster-host-ip-form
+ * @author Jakub Liput
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import { get, set, observer, computed } from '@ember/object';
 import { assert } from '@ember/debug';

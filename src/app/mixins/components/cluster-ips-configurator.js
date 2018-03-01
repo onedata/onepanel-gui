@@ -1,3 +1,13 @@
+/**
+ * Common logic used in components that implement configuration of cluster
+ * IP adresses
+ * 
+ * @module mixins/components/cluster-ips-configurator
+ * @author Jakub Liput
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Mixin from '@ember/object/mixin';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { scheduleOnce } from '@ember/runloop';

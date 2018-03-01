@@ -5,7 +5,7 @@
  * about cluster.
  *
  * @module models/cluster-details
- * @author Jakub Liputmock
+ * @author Jakub Liput
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
