@@ -8,15 +8,27 @@ describe('Integration | Component | cluster host ip form/host row', function () 
     integration: true,
   });
 
-  it('renders input as readonly if readonly flag is true', function () {
+  it('renders static text if readonly flag is true', function () {
     this.render(hbs `{{cluster-host-ip-form/host-row
       readonly=true
       hostname="hostname.one"
       ip="172.17.0.1"
     }}`);
 
-    console.log(this.$('.cluster-host-ip-form-row input').parent().html());
+    expect(this.$('input')).to.not.exist;
+    expect(this.$('.cluster-host-ip-form-row').text()).to.match(/.*172\.17\.0\.1.*/);
+  });
 
-    expect(this.$('.cluster-host-ip-form-row input')).to.have.attr('disabled');
+  it('renders input if readonly flag is false', function () {
+    this.render(hbs `{{cluster-host-ip-form/host-row
+      readonly=false
+      hostname="hostname.one"
+      ip="172.17.0.1"
+    }}`);
+
+    const $input = this.$('input');
+
+    expect($input).to.exist;
+    expect($input.val()).to.equal('172.17.0.1');
   });
 });
