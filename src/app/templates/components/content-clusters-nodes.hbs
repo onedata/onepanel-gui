@@ -17,14 +17,13 @@
     {{/tab.pane}}
     {{#tab.pane title=(tt this "tabIps")}}
       <div class="row">
-        <div class="alert alert-info">
+        <p>
           {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
-        </div>
-        
+        </p>
         {{#if subdomainDelegation}}
-          <div class="alert alert-info">
+          <p>
             {{t "mixins.components.clusterIpsConfigurator.infoSubdomain"}}
-          </div>
+          </p>
         {{/if}}
       </div>
       <div class="row header-row">

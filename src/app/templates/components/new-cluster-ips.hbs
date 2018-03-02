@@ -12,26 +12,24 @@
           placement="left" 
           class=(if _hostsIpsFormValid "hidden" "")
           triggerElement=".btn-setup-ips"
-        }}
+        }}  
       {{/one-spin-button}}
     </div>
   </h1>
 </div>
 
 <div class="row content-row">
-  <div class="alert alert-info">
+  <p>
     {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
-  </div>
-  
+  </p>
   {{#if subdomainDelegation}}
-    <div class="alert alert-info">
+    <p>
       {{t "mixins.components.clusterIpsConfigurator.infoSubdomain"}}
-    </div>
+    </p>
   {{/if}}
-  
-  <div class="alert alert-info">
+  <p>
     {{tt this "infoAutoDetect"}}
-  </div>
+  </p>
   
   <h1>{{tt this "clusterHosts"}}</h1>
   
