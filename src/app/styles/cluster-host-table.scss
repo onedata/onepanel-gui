@@ -75,7 +75,10 @@
     tr td:not(.row-header) {
       &::before,
       .bt-content {
-        line-height: 46px;  
+        line-height: 46px;
+      }
+      .form-message {
+        line-height: initial;
       }
     }
   }

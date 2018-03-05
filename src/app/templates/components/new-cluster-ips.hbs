@@ -30,9 +30,7 @@
   <p>
     {{tt this "infoAutoDetect"}}
   </p>
-  
-  <h1>{{tt this "clusterHosts"}}</h1>
-  
+    
   {{#promise-proxy-container proxy=hostsIpsProxy}}
     {{cluster-host-ip-form
       hosts=hostsIpsProxy.content
