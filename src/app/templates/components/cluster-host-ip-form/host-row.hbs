@@ -1,0 +1,34 @@
+<td class="row-header truncate cell-hostname" {{action "headerClick" on="click"}} data-option="name">
+  <span class="item-icon-container">
+    {{one-icon class="item-icon" icon="node"}}
+    {{one-tooltip
+      title=hostname
+      placement="top"
+      arrowPlacement="left"
+      triggerEvents="hover"
+    }}
+  </span>
+  <span class="one-label">{{hostname}}</span>
+</td>
+<td class="cell-ip-address" data-option="ip-address">
+  <div class="row">
+    {{#if isReadOnly}}
+      <span>{{ip}}</span>
+    {{else}}
+      {{#bs-form class="compact form-horizontal without-labels" as |form|}}
+        {{#form.group
+          validation=(if validationMessage "error" "success")
+        }}
+          <input
+            class="form-control input-host-ip"
+            value={{ip}}
+            oninput={{action "valueChanged"}}
+            placeholder={{tt this "example"}}
+            disabled={{isReadOnly}}
+          >
+          <div class="form-message">{{validationMessage}}</div>
+        {{/form.group}}
+      {{/bs-form}}
+    {{/if}}
+  </div>
+</td>

@@ -98,7 +98,7 @@ export default OnepanelServerBase.extend(
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
     // see STEP import for more info
-    // mockStep: Number(STEP.PROVIDER_REGISTER),
+    // mockStep: Number(STEP.PROVIDER_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
@@ -432,7 +432,8 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_configureProvider: computed(function () {
+    _req_oneprovider_configureProvider() {
+      this.incrementProperty('mockStep');
       return {
         success: (data) => {
           let __provider = this.get('__provider') ||
@@ -443,7 +444,7 @@ export default OnepanelServerBase.extend(
         },
         taskId: 'configure',
       };
-    }),
+    },
 
     _req_oneprovider_modifyProvider: computed(function () {
       return {
@@ -648,12 +649,13 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onezone_configureZone: computed(function () {
+    _req_onezone_configureZone() {
+      this.incrementProperty('mockStep');
       return {
         success: () => null,
         taskId: 'configure',
       };
-    }),
+    },
 
     _req_onezone_getZoneConfiguration: computed('mockInitializedCluster',
       '__configuration',
@@ -692,6 +694,44 @@ export default OnepanelServerBase.extend(
         statusCode: () => 200,
       };
     }),
+
+    // TODO: maybe implement real 
+    _req_oneprovider_modifyProviderClusterIps() {
+      return {
+        success: () => 204,
+      };
+    },
+
+    // TODO: maybe implement real 
+    _req_onezone_modifyZoneClusterIps() {
+      return {
+        success: () => 204,
+      };
+    },
+
+    _req_oneprovider_getProviderClusterIps() {
+      return {
+        success: () => ({
+          isConfigured: this.get('mockStep') > STEP.PROVIDER_IPS,
+          hosts: {
+            'node2.example.com': '127.0.0.1',
+            'node3.example.com': '192.168.0.4',
+          },
+        }),
+      };
+    },
+
+    _req_onezone_getZoneClusterIps() {
+      return {
+        success: () => ({
+          isConfigured: this.get('mockStep') > STEP.ZONE_IPS,
+          hosts: {
+            'node2.example.com': '127.0.0.1',
+            'node3.example.com': '192.168.0.4',
+          },
+        }),
+      };
+    },
 
     // -- MOCKED RESOURCE STORE --
 

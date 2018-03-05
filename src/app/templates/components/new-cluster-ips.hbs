@@ -1,0 +1,42 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "header"}}
+    <div class="btn-toolbar">
+      {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
+      {{#one-spin-button
+        class=(concat "btn btn-sm btn-primary btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
+        action=(action "startSetup")
+      }}
+        <span>{{tt this "setupIpsButton"}}</span>{{one-icon icon="arrow-right"}}
+        {{one-tooltip
+          title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid") 
+          placement="left" 
+          class=(if _hostsIpsFormValid "hidden" "")
+          triggerElement=".btn-setup-ips"
+        }}  
+      {{/one-spin-button}}
+    </div>
+  </h1>
+</div>
+
+<div class="row content-row">
+  <p>
+    {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
+  </p>
+  {{#if subdomainDelegation}}
+    <p>
+      {{t "mixins.components.clusterIpsConfigurator.infoSubdomain"}}
+    </p>
+  {{/if}}
+  <p>
+    {{tt this "infoAutoDetect"}}
+  </p>
+    
+  {{#promise-proxy-container proxy=hostsIpsProxy}}
+    {{cluster-host-ip-form
+      hosts=hostsIpsProxy.content
+      hostDataChanged=(action "hostsIpsDataChanged")
+      allValidChanged=(action "hostsIpsFormValidChanged")
+      readonly=ipsSetupProxy.isPending
+    }}
+  {{/promise-proxy-container}}
+</div>

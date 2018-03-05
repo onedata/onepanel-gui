@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4097 Added cluster IPs configuration step and view for changing IPs after deployment
 * VFS-4125 Fixed lack of integrity check for CSS files
 * VFS-3968 Update to EmberJS 2.18.0
 * VFS-3985 Added a bar chart, that shows storage usage for a space

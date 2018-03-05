@@ -15,12 +15,17 @@ import spaceCleaningConditionsForm from './components/space-cleaning-conditions-
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import deregisterProviderConfirm from './components/deregister-provider-confirm';
 import contentClustersSpaces from './components/content-clusters-spaces';
+import contentClustersNodes from './components/content-clusters-nodes';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
+import newClusterIps from './components/new-cluster-ips';
 import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
+import clusterHostIpForm from './components/cluster-host-ip-form';
+
+import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -47,9 +52,17 @@ let translations = {
     newClusterDeployProgress,
     newClusterProviderCert,
     newClusterInstallation,
+    newClusterIps,
     contentClustersProvider,
     newCluster,
     modalRedirect,
+    clusterHostIpForm,
+    contentClustersNodes,
+  },
+  mixins: {
+    components: {
+      clusterIpsConfigurator,
+    },
   },
 };
 

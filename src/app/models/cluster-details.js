@@ -19,12 +19,14 @@ export const CLUSTER_INIT_STEPS = Object.freeze({
   // pseudo-step: should be always between DEPLOY and DEPLOY + 1
   DEPLOYMENT_PROGRESS: 0.5,
   ZONE_DEPLOY: 0,
-  ZONE_DONE: 1,
+  ZONE_IPS: 1,
+  ZONE_DONE: 2,
   PROVIDER_DEPLOY: 0,
   PROVIDER_REGISTER: 1,
-  PROVIDER_CERT_GENERATE: 2,
-  PROVIDER_STORAGE_ADD: 3,
-  PROVIDER_DONE: 4,
+  PROVIDER_IPS: 2,
+  PROVIDER_CERT_GENERATE: 3,
+  PROVIDER_STORAGE_ADD: 4,
+  PROVIDER_DONE: 5,
 });
 
 export default ObjectProxy.extend({
