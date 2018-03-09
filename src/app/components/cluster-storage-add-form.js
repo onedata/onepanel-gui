@@ -47,6 +47,15 @@ const Validations = buildValidations(createValidations(
 
 const VISIBILITY_ANIMATION_TIME = 333;
 
+const storagePathTypeDefaults = {
+  posix: 'canonical',
+  glusterfs: 'canonical',
+  nulldevice: 'canonical',
+  ceph: 'flat',
+  s3: 'flat',
+  swift: 'flat',
+};
+
 export default OneForm.extend(Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
   currentFieldsPrefix: computed('selectedStorageType.id', 'showLumaPrefix', function () {
@@ -161,6 +170,17 @@ export default OneForm.extend(Validations, {
     this.prepareFields();
     this._addFieldsLabels();
     this.resetFormValues();
+  },
+
+  /**
+   * @override
+   */
+  resetFormValues() {
+    this._super(...arguments);
+    this.set(
+      'allFieldsValues.generic.storagePathType',
+      storagePathTypeDefaults[this.get('selectedStorageType.id')]
+    );
   },
 
   // TODO move to some helper or something  

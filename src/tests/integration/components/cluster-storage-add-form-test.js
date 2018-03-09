@@ -21,8 +21,9 @@ describe('Integration | Component | cluster storage add form', function () {
   });
 
   it('renders fields for POSIX storage type if "posix" is injected', function () {
+    // +1 - a storage type selector
     let totalFields = Object.keys(GenericFields).length + Object.keys(PosixFields)
-      .length;
+      .length + 1;
 
     this.set('selectedStorageType', {
       id: 'posix',
@@ -34,7 +35,7 @@ describe('Integration | Component | cluster storage add form', function () {
     let helper = new ClusterStorageAddHelper(this.$());
 
     // TODO use chai-jquery, chai-dom or something    
-    expect(this.$('input')).to.have.length(totalFields);
+    expect(this.$('.form-group')).to.have.length(totalFields);
     ['generic-name', 'posix-mountPoint', 'posix-timeout'].forEach(fieldName => {
       expect(helper.getInput(fieldName)).to.have.length(1);
       expect(helper.getInput(fieldName)[0].tagName).to.be.equal('INPUT');
