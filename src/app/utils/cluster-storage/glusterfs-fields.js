@@ -7,8 +7,8 @@ export default [
     type: 'radio-group',
     defaultValue: 'tcp',
     options: [
-      { value: 'tcp', label: 'tcp' },
-      { value: 'rdma', label: 'rdma' },
+      { value: 'tcp', label: 'TCP' },
+      { value: 'rdma', label: 'RDMA' },
       { value: 'socket', label: 'socket' },
     ],
   },

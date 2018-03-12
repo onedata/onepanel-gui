@@ -37,6 +37,12 @@
             {{/unless}}
           {{/each}}
         {{/if}}
+        {{#if (get storage "storagePathType")}}
+          <div class="row content-row">
+            <strong>{{t (concat "components.clusterStorageAddForm.generic.storagePathType.name")}}:</strong> 
+            <span class="one-label">{{get storage "storagePathType"}}</span>
+          </div>
+        {{/if}}
         {{#each storageProperties as |storageProperty|}}
           <div class="row content-row">
             <strong>{{t (concat (concat translationPrefix storageProperty) ".name")}}:</strong>
