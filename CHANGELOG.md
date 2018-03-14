@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4206 Added capability to display speed in bit/s (ported)
 * VFS-4197 Added "storage path type" option for storages
 * VFS-4097 Added cluster IPs configuration step and view for changing IPs after deployment
 * VFS-4125 Fixed lack of integrity check for CSS files
