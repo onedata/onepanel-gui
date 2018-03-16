@@ -1,3 +1,6 @@
+import clusters from './tabs/clusters';
+import users from './tabs/users';
+
 import clusterStorageAddForm from './components/cluster-storage-add-form';
 import supportSpaceForm from './components/support-space-form';
 import storageItem from './components/storage-item';
@@ -31,6 +34,10 @@ import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
 let translations = {
+  tabs: {
+    clusters,
+    users,
+  },
   components: {
     clusterStorageAddForm,
     supportSpaceForm,

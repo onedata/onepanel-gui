@@ -23,7 +23,7 @@ export default TwoLevelSidebar.extend({
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   // TODO this will not work in generic multi-clusters menu  
-  cluster: readOnly('model.collection.firstObject'),
+  cluster: readOnly('model.collection.list.firstObject'),
 
   firstLevelItemIcon: 'menu-clusters',
 
