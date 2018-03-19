@@ -8,7 +8,6 @@
  */
 
 import { Promise } from 'rsvp';
-
 import Service, { inject as service } from '@ember/service';
 
 export default Service.extend({
@@ -24,7 +23,9 @@ export default Service.extend({
       case 'clusters':
         return this.get('clusterManager').getClusters().get('promise');
       case 'users':
-        return this.get('userManager').getUsers().get('promise');
+        return this.get('userManager').getUsers().get('promise').then(users => {
+          return Promise.resolve({ list: users });
+        });
       default:
         return new Promise((resolve, reject) => reject('No such collection: ' + type));
     }

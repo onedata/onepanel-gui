@@ -418,6 +418,7 @@ export default OnepanelServerBase.extend(
       return {
         success() {
           return {
+            userId: 'usrid123',
             username: MOCK_USERNAME,
           };
         },
