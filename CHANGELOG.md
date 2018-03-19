@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4229 Merged recent changes of onedata-gui-common library (ia. improved mobile view, styles improvements)
 * VFS-4027 Added support for peta-, exa-, zetta- and yottabytes
 * VFS-4206 Added capability to display speed in bit/s (ported)
 * VFS-4197 Added "storage path type" option for storages
