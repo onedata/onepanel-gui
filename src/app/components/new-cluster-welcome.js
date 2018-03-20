@@ -13,7 +13,7 @@ import { readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import ContentInfo from 'onedata-gui-common/components/content-info';
 import layout from 'onedata-gui-common/templates/components/content-info';
-import { invokeAction } from 'ember-invoke-action';
+import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 
 // TODO: i18n
 export default ContentInfo.extend({
@@ -24,6 +24,12 @@ export default ContentInfo.extend({
 
   layout,
 
+  /**
+   * @virtual
+   * @type {function}
+   */
+  start: notImplementedThrow,
+
   header: 'welcome',
   subheader: computed('onepanelServiceType', function () {
     return `to ${this.get('onepanelServiceType')} panel`;
@@ -32,6 +38,6 @@ export default ContentInfo.extend({
   buttonLabel: 'Create new cluster',
 
   buttonAction() {
-    invokeAction(this, 'start', true);
+    return this.get('start')(true);
   },
 });
