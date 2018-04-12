@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4210 New layout for main menu in desktop view mode
 * VFS-4259 Fixing not working create new cluster button
 * VFS-4229 Merged recent changes of onedata-gui-common library (ia. improved mobile view, styles improvements)
 * VFS-4027 Added support for peta-, exa-, zetta- and yottabytes
