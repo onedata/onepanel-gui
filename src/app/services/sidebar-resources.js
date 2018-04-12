@@ -8,9 +8,10 @@
  */
 
 import { Promise } from 'rsvp';
-import Service, { inject as service } from '@ember/service';
+import { inject as service } from '@ember/service';
+import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
-export default Service.extend({
+export default SidebarResources.extend({
   clusterManager: service(),
   userManager: service(),
 
