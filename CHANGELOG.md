@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4356 Improvements in navigation related to incorrect urls
 * VFS-4210 New layout for main menu in desktop view mode
 * VFS-4259 Fixing not working create new cluster button
 * VFS-4229 Merged recent changes of onedata-gui-common library (ia. improved mobile view, styles improvements)

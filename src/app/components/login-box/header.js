@@ -13,6 +13,7 @@ import Header from 'onedata-gui-common/components/login-box/header';
 import { computed } from '@ember/object';
 import { inject } from '@ember/service';
 import layout from 'onedata-gui-common/templates/components/login-box/header';
+import _ from 'lodash';
 
 export default Header.extend({
   layout,
@@ -34,7 +35,7 @@ export default Header.extend({
       onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
-      'One' + i18n.t(`components.brandInfo.serviceType.${onepanelServiceType}`) :
+      'One' + _.lowerCase(i18n.t(`services.guiUtils.serviceType.${onepanelServiceType}`)) :
       null;
   }),
 });
