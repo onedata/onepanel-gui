@@ -32,8 +32,5 @@ export default GuiUtils.extend({
   /**
    * @override
    */
-  guiIcon: computed('serviceType', function () {
-    const serviceType = this.get('serviceType') || 'provider';
-    return `assets/images/${serviceType}-panel-logo.svg`;
-  }),
+  guiIcon: 'assets/images/onepanel-logo.svg',
 });
