@@ -23,8 +23,8 @@ import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution'
  */
 const WATCHER_INTERVAL = {
   minute: 5000 + 1,
-  hour: 60 * 60000 + 1,
-  day: 24 * 60000 + 1,
+  hour: 1 * 60 * 1000 + 1,
+  day: 10 * 60 * 1000 + 1,
 };
 
 /**
