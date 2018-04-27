@@ -1,5 +1,5 @@
 /**
- * Provides data specific for onepanel gui.
+ * Provides data and implementation of utils specific for onepanel gui.
  *
  * @module services/gui-utils
  * @author Michal Borzecki
