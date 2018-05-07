@@ -27,12 +27,15 @@ export default AspectRoute.extend({
    * @param {Ember.Transition} transition 
    */
   _redirectClusterAspect(transition) {
+    const aspectId = get(
+      transition.params['onedata.sidebar.content.aspect'],
+      'aspect_id'
+    );
+    if (aspectId === 'not-found') {
+      return;
+    }
     const resourceType = get(transition.params['onedata.sidebar'], 'type');
     if (resourceType === 'clusters') {
-      const aspectId = get(
-        transition.params['onedata.sidebar.content.aspect'],
-        'aspect_id'
-      );
       if (aspectId !== 'index') {
         const onepanelServiceType = this.get('onepanelServiceType');
         const cluster = get(this.modelFor('onedata.sidebar.content'), 'resource');

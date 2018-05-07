@@ -7,7 +7,6 @@ import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import storageImportUpdateForm from './components/storage-import-update-form';
 import spaceStatusIcons from './components/space-status-icons';
-import brandInfo from './components/brand-info';
 import loginBox from './components/login-box';
 import providerRegistrationForm from './components/provider-registration-form';
 import spaceFilesPopularity from './components/space-files-popularity';
@@ -30,6 +29,8 @@ import clusterHostIpForm from './components/cluster-host-ip-form';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
+import guiUtils from './services/gui-utils';
+
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
@@ -45,7 +46,6 @@ let translations = {
     clusterSpacesTableItem,
     storageImportUpdateForm,
     spaceStatusIcons,
-    brandInfo,
     loginBox,
     providerRegistrationForm,
     spaceFilesPopularity,
@@ -70,6 +70,9 @@ let translations = {
     components: {
       clusterIpsConfigurator,
     },
+  },
+  services: {
+    guiUtils,
   },
 };
 

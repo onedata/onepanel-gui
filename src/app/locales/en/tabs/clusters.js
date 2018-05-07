@@ -4,5 +4,6 @@ export default {
     provider: 'Provider',
     storages: 'Storages',
     spaces: 'Spaces',
+    notFound: 'Cluster not found',
   },
 };
