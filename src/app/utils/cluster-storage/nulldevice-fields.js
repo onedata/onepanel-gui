@@ -26,6 +26,20 @@ export default [{
   tip: true,
   optional: true,
 }, {
+  name: 'simulatedFilesystemParameters',
+  type: 'text',
+  tip: true,
+  optional: true,
+  regex: /^(\d+-\d+(:\d+-\d+)*)?$/,
+  regexAllowBlank: true,
+  regexMessage: 'This field should be in format described in the hint',
+}, {
+  name: 'simulatedFilesystemGrowSpeed',
+  type: 'number',
+  tip: true,
+  optional: true,
+  gte: 0,
+}, {
   name: 'timeout',
   type: 'number',
   optional: true,
