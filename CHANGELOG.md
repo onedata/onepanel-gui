@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4380 Added new parameters in null device form: simulated filesystem paramers and grow speed
 * VFS-4356 Improvements in navigation related to incorrect URLs
 * VFS-4241 Polling for synchronization statistics with higher frequency.
 * VFS-4210 New layout for main menu in desktop view mode
