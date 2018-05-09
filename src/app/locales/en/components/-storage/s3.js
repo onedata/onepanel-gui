@@ -3,7 +3,6 @@ export default {
   secretKey: { name: 'Admin secret key' },
   hostname: { name: 'Hostname' },
   bucketName: { name: 'Bucket name' },
-  signatureVersion: { name: 'Signature Version' },
   blockSize: { name: 'Block size [bytes]' },
   timeout: { name: 'Timeout [ms]' },
   insecure: { name: 'Insecure' },
