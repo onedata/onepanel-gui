@@ -144,6 +144,11 @@ export default OnepanelServerBase.extend(
 
     /// APIs provided by onepanel client library
 
+    requestStatic( /* api, method, params, username, password */ ) {
+      return Promise.reject('request static not implemented in mock');
+      // FIXME: not implemented
+    },
+
     /**
      * Mocks an onepanel API call.
      *
@@ -731,6 +736,13 @@ export default OnepanelServerBase.extend(
             'node3.example.com': '192.168.0.4',
           },
         }),
+      };
+    },
+
+    _req_onepanel_addUser() {
+      return {
+        success: () => undefined,
+        statusCode: () => 204,
       };
     },
 

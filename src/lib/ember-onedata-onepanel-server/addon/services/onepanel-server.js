@@ -19,6 +19,7 @@ import Onepanel from 'npm:onepanel';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import { classify } from '@ember/string';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -273,6 +274,30 @@ export default OnepanelServerBase.extend({
     });
 
     return loginCall.then(() => this.validateSession());
+  },
+
+  staticRequest(apiName, method, callArgs, username, password) {
+    const client = this.createClient();
+    if (username && password) {
+      client.defaultHeaders['Authorization'] =
+        'Basic ' + btoa(username + ':' + password);
+    }
+    const ApiConstructor = Onepanel[classify(`${apiName}-api`)];
+    const api = new ApiConstructor(client);
+
+    return new Promise((resolve, reject) => {
+      let callback = function (error, data, response) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({
+            response,
+            data,
+          });
+        }
+      };
+      api[method](...callArgs, callback);
+    });
   },
 
 });

@@ -13,7 +13,6 @@ import { Promise } from 'rsvp';
 import { A } from '@ember/array';
 import { oneWay } from '@ember/object/computed';
 import UserDetails from 'onepanel-gui/models/user-details';
-
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
@@ -40,5 +39,32 @@ export default Service.extend({
       resolve(A([this.getCurrentUser()]));
     });
     return PromiseObject.create({ promise });
+  },
+
+  /**
+   * @returns {Promise<boolean|any>}
+   */
+  checkAdminUserExists() {
+    return this.get('onepanelServer')
+      .staticRequest('onepanel', 'getUsers', [{ role: 'admin' }])
+      .then(({ data: { usernames } }) => usernames.length > 0)
+      .catch(error => {
+        if (error.status === 403) {
+          return true;
+        } else {
+          throw error;
+        }
+      });
+  },
+
+  addUser(username, password, userRole) {
+    const userCreateRequest = {
+      username,
+      password,
+      userRole,
+    };
+
+    return this.get('onepanelServer')
+      .staticRequest('onepanel', 'addUser', [userCreateRequest]);
   },
 });
