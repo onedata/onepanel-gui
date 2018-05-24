@@ -373,12 +373,11 @@ export default Service.extend({
   },
 
   /**
-   * @param {boolean} [discovered=false] see discovered option in REST API
    * @return {Promise} resolves with Array.{ hostname: string }
    */
-  getHosts(discovered = false) {
+  getHosts() {
     return new Promise((resolve, reject) => {
-      let gettingHostNames = this.getHostNames(discovered);
+      let gettingHostNames = this.getHostNames();
 
       gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
@@ -396,12 +395,12 @@ export default Service.extend({
     });
   },
 
-  getHostNames(discovered = false) {
+  getHostNames() {
     let onepanelServer = this.get('onepanelServer');
     return new Promise((resolve, reject) => {
       let gettingClusterHosts = onepanelServer.requestValidData(
         'onepanel',
-        'getClusterHosts', { discovered }
+        'getClusterHosts',
       );
       gettingClusterHosts.then(resolve, reject);
     });
