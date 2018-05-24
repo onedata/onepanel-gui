@@ -57,6 +57,13 @@ export default Service.extend({
       });
   },
 
+  /**
+   * Create Panel user
+   * @param {string} username 
+   * @param {string} password 
+   * @param {string} userRole one of: admin, regular
+   * @returns {Promise<undefined|any>}
+   */
   addUser(username, password, userRole) {
     const userCreateRequest = {
       username,
