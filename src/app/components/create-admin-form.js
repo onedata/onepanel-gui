@@ -131,7 +131,10 @@ export default Component.extend(I18n, {
               'admin',
             )
             .catch(error => {
-              this.get('globalNotify').backendError(this.tt('creationBackendError'));
+              this.get('globalNotify').backendError(
+                this.tt('creationBackendError'),
+                error
+              );
               safeExec(this, 'set', 'addUserError', error || 'unknown');
               throw error;
             });
@@ -139,15 +142,17 @@ export default Component.extend(I18n, {
           promise = Promise.reject();
         }
         return promise
+          .then(() => safeExec(this, 'registerSuccess'))
           .then(() => {
             return this.get('session').authenticate(
               'authenticator:application',
               username,
               password
-            );
+            ).catch(() => {
+              // in very rare cases, new account can be broken (unavailable)
+              window.location.reload();
+            });
           })
-          .then(() => safeExec(this, 'registerSuccess'))
-          .catch(() => safeExec(this, 'registerFailure'))
           .finally(() => safeExec(this, 'set', 'isDisabled', false));
       } else {
         return Promise.reject();

@@ -94,6 +94,8 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
+    adminUserPresent: true,
+
     username: MOCK_USERNAME,
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
@@ -144,9 +146,8 @@ export default OnepanelServerBase.extend(
 
     /// APIs provided by onepanel client library
 
-    requestStatic( /* api, method, params, username, password */ ) {
-      return Promise.reject('request static not implemented in mock');
-      // FIXME: not implemented
+    staticRequest(api, method, params) {
+      return this._request(true, api, method, ...params);
     },
 
     /**
@@ -160,6 +161,10 @@ export default OnepanelServerBase.extend(
      *                    reject(error: string)
      */
     request(api, method, ...params) {
+      return this._request(false, api, method, ...params);
+    },
+
+    _request(staticReq, api, method, ...params) {
       let cookies = this.get('cookies');
 
       // TODO protect property read
@@ -168,7 +173,7 @@ export default OnepanelServerBase.extend(
           `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
         );
 
-        if (!cookies.read('fakeLoginFlag')) {
+        if (!staticReq && !cookies.read('fakeLoginFlag')) {
           run.later(() => {
             reject({
               __request_method: method,
@@ -744,6 +749,23 @@ export default OnepanelServerBase.extend(
         success: () => undefined,
         statusCode: () => 204,
       };
+    },
+
+    /**
+     * Currently only unauthenticated response
+     * @returns {object}
+     */
+    _req_onepanel_getUsers() {
+      if (this.get('adminUserPresent')) {
+        return {
+          statusCode: () => 403,
+        };
+      } else {
+        return {
+          success: () => ({ usernames: [] }),
+          statusCode: () => 200,
+        };
+      }
     },
 
     // -- MOCKED RESOURCE STORE --

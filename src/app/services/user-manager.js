@@ -49,7 +49,7 @@ export default Service.extend({
       .staticRequest('onepanel', 'getUsers', [{ role: 'admin' }])
       .then(({ data: { usernames } }) => usernames.length > 0)
       .catch(error => {
-        if (error.status === 403) {
+        if (error.response.statusCode === 403) {
           return true;
         } else {
           throw error;
