@@ -83,3 +83,12 @@
     }
   }
 }
+
+.cluster-host-table + .pseudo-table-row {
+  margin-top: -$line-height-computed;
+  margin-bottom: $line-height-computed;
+  // copied from bootstrap table style
+  padding: 20px 20px 20px 16px;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}

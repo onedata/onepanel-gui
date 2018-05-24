@@ -1,10 +1,19 @@
+/**
+ * Table with cluster hosts
+ *
+ * @module components/cluster-host-table
+ * @author Jakub Liput
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import { readOnly } from '@ember/object/computed';
 import { observer, computed } from '@ember/object';
 import {
   InvokeActionMixin,
 } from 'ember-invoke-action';
 import BasicTable from 'onedata-gui-common/components/basic-table';
-
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
 
 const roles = ['database', 'clusterWorker', 'clusterManager'];
@@ -54,11 +63,14 @@ let Validations = buildValidations(generateColumnValidations(roles));
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default BasicTable.extend(
+  I18n,
   InvokeActionMixin,
   hostColumnComputedProperties(roles),
   Validations, {
     tagName: 'table',
     classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown-table-rows'],
+
+    i18nPrefix: 'components.clusterHostTable',
 
     /**
      * To inject.

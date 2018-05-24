@@ -1,0 +1,18 @@
+.new-cluster-installation {
+  .cluster-host-table-row {
+    // basictable breakpoint
+    @media (min-width: 1200px) {
+      
+    }
+  }
+  .form-group-new-host {
+    display: inline-block;
+    width: 400px;
+    max-width: 65%;
+    margin-bottom: 0;
+    margin-right: 0.6em;
+  }
+  .btn-submit-new-host {
+    margin-top: -2px;
+  }
+}

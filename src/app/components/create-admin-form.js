@@ -52,9 +52,19 @@ export default Component.extend(I18n, {
   passwordEntered: false,
   confirmEntered: false,
   confirmTyped: false,
+  usernameEntered: false,
 
   passwordsMatch: computed('password', 'confirmPassword', function () {
     return this.get('password') === this.get('confirmPassword');
+  }),
+
+  usernameInvalidMessage: computed('username', function () {
+    const username = this.get('username');
+    if (username.length < 2) {
+      return 'tooShort';
+    } else {
+      return null;
+    }
   }),
 
   confirmInvalid: computed('confirmEntered', 'passwordsMatch', function () {
@@ -81,26 +91,35 @@ export default Component.extend(I18n, {
     'username',
     'password',
     'passwordInvalidMessage',
+    'usernameInvalidMessage',
     function () {
       const {
         confirmValid,
         username,
         password,
         passwordInvalidMessage,
+        usernameInvalidMessage,
       } = this.getProperties(
         'confirmValid',
         'username',
         'password',
         'passwordInvalidMessage',
+        'usernameInvalidMessage',
       );
 
       return username &&
         password &&
         !passwordInvalidMessage &&
+        !usernameInvalidMessage &&
         confirmValid;
     }),
 
   didInsertElement() {
+    this.$('.add-user-username').on('focusout', () => {
+      if (!this.get('usernameEntered')) {
+        safeExec(this, 'set', 'usernameEntered', true);
+      }
+    });
     this.$('.password').on('focusout', () => {
       if (!this.get('passwordEntered')) {
         safeExec(this, 'set', 'passwordEntered', true);

@@ -7,4 +7,8 @@ export default {
     'your Zone, you need to properly set up DNS zone delegation. ' +
     'For more information, see',
   domainLink: 'the documentation',
+  addNewHost: 'Add new host',
+  newHostnameExample: 'Enter hostname or IP address',
+  save: 'Save',
+  addingNewHost: 'adding new host',
 };

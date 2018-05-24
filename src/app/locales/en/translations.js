@@ -28,6 +28,7 @@ import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
 import createAdminBox from './components/create-admin-box';
 import createAdminForm from './components/create-admin-form';
+import clusterHostTable from './components/cluster-host-table';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -69,6 +70,7 @@ let translations = {
     contentClustersNodes,
     createAdminBox,
     createAdminForm,
+    clusterHostTable,
   },
   mixins: {
     components: {

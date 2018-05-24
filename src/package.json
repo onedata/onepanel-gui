@@ -77,7 +77,7 @@
     "ember-truth-helpers": "2.0.0",
     "eslint-plugin-ember": "5.0.3",
     "loader.js": "4.6.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#74fc24da194",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#6e72957884ee532b781328354a5ee7b3a9c2e77d",
     "perfect-scrollbar": "0.8.1",
     "round10": "1.0.3",
     "sinon": "4.2.0",

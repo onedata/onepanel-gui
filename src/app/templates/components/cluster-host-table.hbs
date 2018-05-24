@@ -1,11 +1,10 @@
-{{!-- TODO i18n --}}
 <thead>
   <tr>
-    <th>Hosts</th>
-    <th class="text-center toggle-column">Database</th>
-    <th class="text-center toggle-column">Cluster Worker</th>
-    <th class="text-center toggle-column">Cluster Manager</th>
-    <th class="text-center toggle-column">Primary Cluster Manager</th>
+    <th>{{tt this "headers.hosts"}}</th>
+    <th class="text-center toggle-column">{{tt this "headers.database"}}</th>
+    <th class="text-center toggle-column">{{tt this "headers.clusterWorker"}}</th>
+    <th class="text-center toggle-column">{{tt this "headers.clusterManager"}}</th>
+    <th class="text-center toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
   </tr>
 </thead>
 {{!-- TODO validation - highlight cols/rows if not valid --}}
@@ -21,4 +20,3 @@
     }}
   {{/each}}
 </tbody>
-  

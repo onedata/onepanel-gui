@@ -5,18 +5,23 @@
       formLayout="horizontal"
       as |form|
     }}
-      {{#form.group class=(if error "has-error")}}
+      {{#form.group class=(if (and usernameInvalidMessage usernameEntered) "has-error")}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
             {{one-icon icon="user"}}
           </div>
           {{one-way-input username
-            class="form-control login-username"
+            class="form-control add-user-username"
             update=(action (mut username))
             placeholder=(tt this "username")
             disabled=isDisabled
           }}
         </div>
+        {{#if (and usernameInvalidMessage usernameEntered)}}
+          <div class="form-message">
+            {{tt this (concat "invalidUsername." usernameInvalidMessage)}}
+          </div>
+        {{/if}}
       {{/form.group}}
       {{#form.group class=(if (and passwordInvalidMessage passwordEntered) "has-error")}}
         <div class="input-group with-icon-addon">

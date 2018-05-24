@@ -39,7 +39,51 @@
       hostOptionChanged=(action "hostOptionChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
       allValidChanged=(action "hostTableValidChanged")
+      addingNewHost=addingNewHost
+      submitAddress=(action "submitNewHost")
     }}
+    {{#if addingNewHost}}
+      <div class="row row-new-host pseudo-table-row cluster-host-table-row">
+        <span class="item-icon-container">
+          {{one-icon class="item-icon" icon="node"}}
+          {{one-tooltip
+            title=host.hostname
+            placement="top"
+            arrowPlacement="left"
+            triggerEvents="hover"
+          }}
+        </span>
+        <div class="form-group form-group-sm form-group-new-host">
+          <input
+            class="form-control input-add-host"
+            value={{_newHostname}}
+            oninput={{action (mut _newHostname) value="target.value"}}
+            onkeydown={{invoke-on-enter (action "submitNewHost")}}
+            placeholder={{tt this "newHostnameExample"}}
+            disabled={{_isSubmittingNewHost}}
+          >
+        </div>
+        {{#one-spin-button
+          class="btn btn-default btn-sm btn-submit-new-host"
+          action=(action "submitNewHost")
+          disabled=(not _newHostname)
+          inFlight=_isSubmittingNewHost
+        }}
+          {{tt this "save"}}
+        {{/one-spin-button}}
+      </div>
+    {{else}}
+      <div class="row">
+        {{#bs-button 
+          type="default"
+          class="btn-sm"
+          onClick=(action (mut addingNewHost) true)
+        }}
+          {{one-icon icon="add-filled"}}
+          {{tt this "addNewHost"}}
+        {{/bs-button}}
+      </div>
+    {{/if}}
   {{/promise-proxy-container}}
 </div>
 
