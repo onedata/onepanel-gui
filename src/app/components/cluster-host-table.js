@@ -16,6 +16,7 @@ import BasicTable from 'onedata-gui-common/components/basic-table';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import { scheduleOnce } from '@ember/runloop';
 
 const roles = ['database', 'clusterWorker', 'clusterManager'];
 
@@ -96,6 +97,9 @@ export default BasicTable.extend(
     // TODO make/use valid properties for each column
     // databaseHostsValid: computed.readOnly('validations.attrs.databaseHosts.isValid'),
 
+    /**
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     removeHostAvailable: computed('removeHost', function () {
       return this.get('removeHost') !== notImplementedReject;
     }),
@@ -104,9 +108,16 @@ export default BasicTable.extend(
       this.invokeAction('allValidChanged', this.get('allValid') === true);
     }),
 
+    hostsChanged: observer('hosts.[]', function () {
+      scheduleOnce('afterRender', this, '_reinitializeBasictable');
+    }),
+
     init() {
       this._super(...arguments);
       this.tableValidChanged();
+
+      // enable observers
+      this.get('hosts.[]');
     },
 
     actions: {

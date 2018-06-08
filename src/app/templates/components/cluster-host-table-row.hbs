@@ -56,15 +56,21 @@
       class={{concat-classes "btn-remove-node" _removeHostBtnClass}}
       {{action "removeHost"}}
     >
-      {{one-icon icon="checkbox-filled-x"}}
+      {{#if isMobile}}
+        {{#one-spin-button
+          class="btn btn-sm btn-danger"
+        }}
+          {{t "components.clusterHostTableRow.removeBtn"}}
+        {{/one-spin-button}}
+      {{else}}
+        {{one-icon icon="checkbox-filled-x"}}
+        {{one-tooltip
+          title=(t "components.clusterHostTableRow.removeBtn")
+          placement="top"
+          arrowPlacement="right"
+          triggerEvents="hover"
+        }}
+      {{/if}}
     </div>
-    {{!-- FIXME: bug DOMException: Failed to execute 'removeChild' on 'Node':
-      The node to be removed is not a child of this node. --}}
-    {{!-- {{one-tooltip
-      title=(t "components.clusterHostTableRow.removeBtn")
-      placement="top"
-      arrowPlacement="right"
-      triggerEvents="hover"
-    }} --}}
   </td>
 {{/if}}

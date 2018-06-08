@@ -66,9 +66,9 @@ export default OnepanelServerBase.extend({
   nodeProxy: computed(function () {
     return PromiseObject.create({
       promise: this.staticRequest('onepanel', 'getNode')
-        .then(({ data: { hostname, application } }) => ({
+        .then(({ data: { hostname, componentType } }) => ({
           hostname,
-          componentType: application,
+          componentType,
         })),
     });
   }),
@@ -218,7 +218,7 @@ export default OnepanelServerBase.extend({
   getServiceType() {
     return this.get('nodeProxy').then(({ componentType }) =>
       componentType.match(/one(.*)/)[1]
-    ).catch(() => this._fallbackGetServiceType());
+    );
   },
 
   /**
@@ -228,27 +228,6 @@ export default OnepanelServerBase.extend({
   getHostname() {
     return this.get('nodeProxy')
       .then(({ hostname }) => hostname);
-  },
-
-  _fallbackGetServiceType() {
-    return new Promise((resolve) => {
-      let client = this.createClient();
-      let api = new Onepanel.OneproviderApi(client);
-
-      let callback = function (error) {
-        if (error) {
-          let statusCode = error.response.statusCode;
-          if (statusCode === 406) {
-            resolve('zone');
-          } else {
-            resolve('provider');
-          }
-        } else {
-          resolve('provider');
-        }
-      };
-      api.getProvider(callback);
-    });
   },
 
   /**

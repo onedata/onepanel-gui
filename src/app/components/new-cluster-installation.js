@@ -163,7 +163,7 @@ export default Component.extend(I18n, {
     this.set(
       'hostsProxy',
       PromiseObject.create({
-        promise: this.get('clusterManager').getHosts('known')
+        promise: this.get('clusterManager').getHosts()
           .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
       })
     );

@@ -46,7 +46,7 @@
     {{#if addingNewHost}}
       <div class="row row-new-host pseudo-table-row cluster-host-table-row">
         <span class="new-host-icon item-icon-container">
-          {{one-icon class="item-icon" icon="add-filled"}}
+          {{one-icon class="item-icon" icon="node"}}
         </span>
         <div class="form-group form-group-sm form-group-new-host">
           <input
@@ -68,7 +68,8 @@
             {{tt this "save"}}
           {{/one-spin-button}}
           {{#bs-button
-            class="btn-sm btn-cancel-new-host"
+            class="btn-cancel-new-host"
+            size="sm"
             type="default"
             onClick=(action (mut addingNewHost) false)
           }}
@@ -80,7 +81,7 @@
       <div class="row inner-row-content">
         {{#bs-button 
           type="default"
-          class="btn-sm"
+          size="sm"
           onClick=(action (mut addingNewHost) true)
         }}
           {{one-icon icon="add-filled"}}

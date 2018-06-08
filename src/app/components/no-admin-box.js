@@ -51,6 +51,9 @@ export default Component.extend(I18n, {
 
   isBusy: false,
 
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<string>>}
+   */
   hostnameProxy: computed(function () {
     return PromiseObject.create({
       promise: this.get('onepanelServer')

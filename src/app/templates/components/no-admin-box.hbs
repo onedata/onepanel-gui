@@ -6,22 +6,30 @@
     {{!-- TODO loading --}}
   {{else}}  
     {{login-box/header model=headerModel}}
-        
+    
     <div class="row row-login-header text-center">
       <div class="col-xs-12">
         <h4>
           <span class="one-label">
             {{tt this (concat "headers." mode)}}
           </span>
-          {{#if (eq mode "first")}}
-            {{one-label-tip
-              title=(tt this "hints.first")
-              placement="bottom"
-            }}
-          {{/if}}
         </h4>
       </div>
     </div>
+    {{#if (eq mode "first")}}
+      <div class="row row-first-decription">
+        <p class="description first-description">
+          {{tt this "descriptions.first"}}
+          {{#unless showMoreFirst}}
+            <a {{action (mut showMoreFirst) true}}>
+              {{tt this "showMoreLink"}}
+            </a>
+          {{else}}
+            {{tt this "descriptions.firstMore"}}
+          {{/unless}}
+        </p>
+      </div>
+    {{/if}}
     {{!-- TODO remove .additional-bottom-margin after icons resize --}}
     <div class="row additional-bottom-margin">
       <div class="col-xs-10 col-centered">
@@ -33,10 +41,6 @@
             }}
               {{tt this "createNewCluster"}}
             {{/bs-button}}
-            {{one-label-tip
-              title=(tt this "createNewClusterHint")
-              placement="top"
-            }}
           </div>
           <div class="row row-first-button">
             {{#bs-button
@@ -45,10 +49,6 @@
             }}
               {{tt this "joinCluster"}}
             {{/bs-button}}
-            {{one-label-tip
-              title=(tt this "joinClusterHint")
-              placement="top"
-            }}
           </div>
         {{else if (eq mode "create")}}
           {{create-admin-form
@@ -59,10 +59,10 @@
             back=(action "changeMode" "first")
           }}
         {{else if (eq mode "join")}}
-          <h4 class="description join-description">
+          <p class="description join-description">
             {{tt this "descriptions.join"}}
-          </h4>
-          <div class="hostname-row loadable-row">            
+          </p>
+          <div class="hostname-row {{unless hostnameProxy.isSettled "loadable-row"}}">            
             {{#promise-proxy-container proxy=hostnameProxy}}
               {{clipboard-line value=hostnameProxy.content}}
             {{/promise-proxy-container}}
