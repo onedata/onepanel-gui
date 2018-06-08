@@ -19,6 +19,7 @@ import Onepanel from 'npm:onepanel';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { classify } from '@ember/string';
 
 function replaceUrlOrigin(url, newOrigin) {
@@ -56,6 +57,21 @@ export default OnepanelServerBase.extend({
   isInitialized: computed('client', function () {
     return this.get('client') != null;
   }).readOnly(),
+
+  /**
+   * hostname - hostname of this host known by panel
+   * componentType - one of: oneprovider, onezone
+   * @type {Ember.ComputedProperty<PromiseObject<{hostname, componentType}>>}
+   */
+  nodeProxy: computed(function () {
+    return PromiseObject.create({
+      promise: this.staticRequest('onepanel', 'getNode')
+        .then(({ data: { hostname, application } }) => ({
+          hostname,
+          componentType: application,
+        })),
+    });
+  }),
 
   _onepanelApi: computed('client', function () {
     let client = this.get('client');
@@ -200,6 +216,21 @@ export default OnepanelServerBase.extend({
    * @returns {Promise} resolves with 'provider' or 'zone'; rejects on error
    */
   getServiceType() {
+    return this.get('nodeProxy').then(({ componentType }) =>
+      componentType.match(/one(.*)/)[1]
+    ).catch(() => this._fallbackGetServiceType());
+  },
+
+  /**
+   * Get hostname of this panel
+   * @returns {Promise<string>}
+   */
+  getHostname() {
+    return this.get('nodeProxy')
+      .then(({ hostname }) => hostname);
+  },
+
+  _fallbackGetServiceType() {
     return new Promise((resolve) => {
       let client = this.createClient();
       let api = new Onepanel.OneproviderApi(client);
@@ -276,7 +307,7 @@ export default OnepanelServerBase.extend({
     return loginCall.then(() => this.validateSession());
   },
 
-  staticRequest(apiName, method, callArgs, username, password) {
+  staticRequest(apiName, method, callArgs = [], username, password) {
     const client = this.createClient();
     if (username && password) {
       client.defaultHeaders['Authorization'] =

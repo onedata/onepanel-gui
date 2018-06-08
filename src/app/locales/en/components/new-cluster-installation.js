@@ -9,6 +9,7 @@ export default {
   domainLink: 'the documentation',
   addNewHost: 'Add new host',
   newHostnameExample: 'Enter hostname or IP address',
-  save: 'Save',
+  save: 'Add host',
+  cancel: 'Cancel',
   addingNewHost: 'adding new host',
 };

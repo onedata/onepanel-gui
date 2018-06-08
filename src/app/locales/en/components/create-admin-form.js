@@ -14,4 +14,5 @@ export default {
   invalidUsername: {
     tooShort: 'Username should be at least 2 characters long',
   },
+  back: 'Back',
 };

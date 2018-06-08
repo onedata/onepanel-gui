@@ -102,8 +102,8 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.PROVIDER_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.equal(
       'mockStep',
@@ -146,7 +146,7 @@ export default OnepanelServerBase.extend(
 
     /// APIs provided by onepanel client library
 
-    staticRequest(api, method, params) {
+    staticRequest(api, method, params = []) {
       return this._request(true, api, method, ...params);
     },
 
@@ -381,12 +381,8 @@ export default OnepanelServerBase.extend(
 
     _req_onepanel_getClusterHosts: computed(function () {
       return {
-        success({ discovered }) {
-          if (discovered) {
-            return ['node1.example.com', 'node2.example.com'];
-          } else {
-            return ['node1.example.com'];
-          }
+        success() {
+          return ['node1.example.com'];
         },
       };
     }),
@@ -766,6 +762,16 @@ export default OnepanelServerBase.extend(
           statusCode: () => 200,
         };
       }
+    },
+
+    _req_onepanel_getNode() {
+      return {
+        success: () => ({
+          hostname: 'example.com',
+          application: `one${MOCK_SERVICE_TYPE}`,
+        }),
+        statusCode: () => 200,
+      };
     },
 
     // -- MOCKED RESOURCE STORE --

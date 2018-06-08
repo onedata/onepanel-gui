@@ -400,11 +400,11 @@ export default Service.extend({
    * @param {string} type one of: known, cluster
    * @returns {Promise}
    */
-  getHostNames(type = 'known') {
+  getHostNames() {
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer.requestValidData(
       'onepanel',
-      type === 'known' ? 'getKnownHosts' : 'getClusterHosts',
+      'getClusterHosts',
     );
   },
 
@@ -415,7 +415,7 @@ export default Service.extend({
   addKnownHost(address) {
     return this.get('onepanelServer').request(
       'onepanel',
-      'addKnownHost', { address }
+      'addHost', { address }
     ).then(({ data }) => data);
   },
 });

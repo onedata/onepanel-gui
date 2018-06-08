@@ -26,9 +26,10 @@ import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
-import createAdminBox from './components/create-admin-box';
+import noAdminBox from './components/no-admin-box';
 import createAdminForm from './components/create-admin-form';
 import clusterHostTable from './components/cluster-host-table';
+import clusterHostTableRow from './components/cluster-host-table-row';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -68,9 +69,10 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
-    createAdminBox,
+    noAdminBox,
     createAdminForm,
     clusterHostTable,
+    clusterHostTableRow,
   },
   mixins: {
     components: {

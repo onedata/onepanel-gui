@@ -41,17 +41,12 @@
       allValidChanged=(action "hostTableValidChanged")
       addingNewHost=addingNewHost
       submitAddress=(action "submitNewHost")
+      removeHost=(action "removeHost")
     }}
     {{#if addingNewHost}}
       <div class="row row-new-host pseudo-table-row cluster-host-table-row">
-        <span class="item-icon-container">
-          {{one-icon class="item-icon" icon="node"}}
-          {{one-tooltip
-            title=host.hostname
-            placement="top"
-            arrowPlacement="left"
-            triggerEvents="hover"
-          }}
+        <span class="new-host-icon item-icon-container">
+          {{one-icon class="item-icon" icon="add-filled"}}
         </span>
         <div class="form-group form-group-sm form-group-new-host">
           <input
@@ -63,17 +58,26 @@
             disabled={{_isSubmittingNewHost}}
           >
         </div>
-        {{#one-spin-button
-          class="btn btn-default btn-sm btn-submit-new-host"
-          action=(action "submitNewHost")
-          disabled=(not _newHostname)
-          inFlight=_isSubmittingNewHost
-        }}
-          {{tt this "save"}}
-        {{/one-spin-button}}
+        <span class="new-host-btn-group row-btn-spacing">
+          {{#one-spin-button
+            class="btn btn-primary btn-sm btn-submit-new-host"
+            action=(action "submitNewHost")
+            disabled=(not _newHostname)
+            inFlight=_isSubmittingNewHost
+          }}
+            {{tt this "save"}}
+          {{/one-spin-button}}
+          {{#bs-button
+            class="btn-sm btn-cancel-new-host"
+            type="default"
+            onClick=(action (mut addingNewHost) false)
+          }}
+            {{tt this "cancel"}}
+          {{/bs-button}}
+        </span>
       </div>
     {{else}}
-      <div class="row">
+      <div class="row inner-row-content">
         {{#bs-button 
           type="default"
           class="btn-sm"

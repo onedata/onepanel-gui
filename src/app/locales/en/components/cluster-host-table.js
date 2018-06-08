@@ -6,4 +6,5 @@ export default {
     clusterManager: 'Cluster Manager',
     primaryClusterManager: 'Primary Cluster Manager',
   },
+  removingHost: 'removing host from list',
 };

@@ -1,10 +1,13 @@
 <thead>
   <tr>
     <th>{{tt this "headers.hosts"}}</th>
-    <th class="text-center toggle-column">{{tt this "headers.database"}}</th>
-    <th class="text-center toggle-column">{{tt this "headers.clusterWorker"}}</th>
-    <th class="text-center toggle-column">{{tt this "headers.clusterManager"}}</th>
-    <th class="text-center toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
+    <th class="text-center column toggle-column">{{tt this "headers.database"}}</th>
+    <th class="text-center column toggle-column">{{tt this "headers.clusterWorker"}}</th>
+    <th class="text-center column toggle-column">{{tt this "headers.clusterManager"}}</th>
+    <th class="text-center column toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
+    {{#if removeHostAvailable}}
+      <th class="text-center column btn-column"></th>
+    {{/if}}
   </tr>
 </thead>
 {{!-- TODO validation - highlight cols/rows if not valid --}}
@@ -15,8 +18,10 @@
       host=host
       isPrimaryClusterManager=(eq primaryClusterManager host.hostname)
       checkboxChanged=(action "checkboxChanged")
+      removeHost=(action "removeHost")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
       isReadOnly=isReadOnly
+      removeAvailable=removeHostAvailable
     }}
   {{/each}}
 </tbody>

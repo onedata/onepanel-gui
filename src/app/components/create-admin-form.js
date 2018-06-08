@@ -26,9 +26,29 @@ export default Component.extend(I18n, {
 
   i18nPrefix: 'components.createAdminForm.',
 
+  /**
+   * @virtual 
+   * @type {Function}
+   */
   registerStarted: notImplementedWarm,
+
+  /**
+   * @virtual 
+   * @type {Function}
+   */
   registerFailure: notImplementedWarm,
+
+  /**
+   * @virtual 
+   * @type {Function}
+   */
   registerSuccess: notImplementedWarm,
+
+  /**
+   * @virtual 
+   * @type {Function}
+   */
+  back: notImplementedWarm,
 
   /**
    * @type {string}
@@ -176,6 +196,10 @@ export default Component.extend(I18n, {
       } else {
         return Promise.reject();
       }
+    },
+
+    back() {
+      this.get('back')(...arguments);
     },
   },
 });

@@ -20,7 +20,7 @@ import { Promise } from 'rsvp';
 import { readOnly, reads } from '@ember/object/computed';
 import { camelize } from '@ember/string';
 import { scheduleOnce } from '@ember/runloop';
-import { observer, computed } from '@ember/object';
+import { observer, computed, get } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -148,6 +148,12 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   addingNewHost: false,
+
+  addingNewHostChanged: observer('addingNewHost', function () {
+    if (!this.get('addingNewHost')) {
+      this.set('_newHostname', '');
+    }
+  }),
 
   init() {
     this._super(...arguments);
@@ -443,6 +449,24 @@ export default Component.extend(I18n, {
           )
           .finally(() => safeExec(this, 'set', '_isSubmittingNewHost', false));
       }
+    },
+
+    removeHost(hostname) {
+      const {
+        onepanelServer,
+        globalNotify,
+        hosts,
+      } = this.getProperties('onepanelServer', 'globalNotify', 'hosts');
+
+      return onepanelServer
+        .request('onepanel', 'removeClusterHost', hostname)
+        .then(() => {
+          hosts.removeObject(hosts.find(h => get(h, 'hostname') === hostname));
+        })
+        .catch(error => {
+          globalNotify.backendError(this.t('removingHost'), error);
+          throw error;
+        });
     },
   },
 });

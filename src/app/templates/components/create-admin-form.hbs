@@ -62,7 +62,15 @@
       <div class="login-error-message {{if error "active" ""}}">
         {{tt this "error"}} {{if error error (tt this "unknownError")}}
       </div>
-      <div class="row text-center">
+      <div class="row row-btn-spacing text-center">
+        {{#bs-button
+          type="default"
+          onClick=(action "back")
+          class="btn-back"
+        }}
+          {{one-icon icon="arrow-right"}}
+          {{tt this "back"}}
+        {{/bs-button}}
         {{#one-spin-button class="btn btn-primary"
           buttonStyle="expand-left"
           disabled=(not submitEnabled)

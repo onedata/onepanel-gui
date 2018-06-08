@@ -15,6 +15,7 @@ import {
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const roles = ['database', 'clusterWorker', 'clusterManager'];
 
@@ -73,6 +74,11 @@ export default BasicTable.extend(
     i18nPrefix: 'components.clusterHostTable',
 
     /**
+     * @virtual optional
+     */
+    removeHost: notImplementedReject,
+
+    /**
      * To inject.
      * @type {Array.ClusterHostInfo}
      */
@@ -90,6 +96,10 @@ export default BasicTable.extend(
     // TODO make/use valid properties for each column
     // databaseHostsValid: computed.readOnly('validations.attrs.databaseHosts.isValid'),
 
+    removeHostAvailable: computed('removeHost', function () {
+      return this.get('removeHost') !== notImplementedReject;
+    }),
+
     tableValidChanged: observer('allValid', function () {
       this.invokeAction('allValidChanged', this.get('allValid') === true);
     }),
@@ -106,6 +116,10 @@ export default BasicTable.extend(
 
       primaryClusterManagerChanged(hostname, isSet) {
         this.invokeAction('primaryClusterManagerChanged', isSet ? hostname : null);
+      },
+
+      removeHost(hostname) {
+        return this.get('removeHost')(hostname);
       },
     },
   }
