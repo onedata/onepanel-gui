@@ -138,7 +138,7 @@ export default Component.extend(I18n, {
       'hostsProxy',
       PromiseObject.create({
         promise: new Promise((resolve, reject) => {
-          let gettingHosts = this.get('clusterManager').getHosts(true);
+          let gettingHosts = this.get('clusterManager').getHosts();
           gettingHosts.then(hosts => {
             hosts = A(hosts.map(h => ClusterHostInfo.create(h)));
             resolve(hosts);

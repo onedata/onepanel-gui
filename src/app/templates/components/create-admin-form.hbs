@@ -1,0 +1,71 @@
+<div class="row text-center">
+  <div class="col-xs-12">
+    {{#bs-form class="form-horizontal"
+      onSubmit=(action "submitAddUser" username password confirmPassword)
+      formLayout="horizontal"
+      as |form|
+    }}
+      {{#form.group class=(if error "has-error")}}
+        <div class="input-group with-icon-addon">
+          <div class="input-group-addon">
+            {{one-icon icon="user"}}
+          </div>
+          {{one-way-input username
+            class="form-control login-username"
+            update=(action (mut username))
+            placeholder=(tt this "username")
+            disabled=isDisabled
+          }}
+        </div>
+      {{/form.group}}
+      {{#form.group class=(if (and passwordInvalidMessage passwordEntered) "has-error")}}
+        <div class="input-group with-icon-addon">
+          <div class="input-group-addon">
+            {{one-icon icon="lock"}}
+          </div>
+          {{one-way-password password
+            class="form-control login-lock password"
+            update=(action (mut password))
+            placeholder=(tt this "password")
+            disabled=isDisabled
+          }}
+        </div>
+        {{#if (and passwordInvalidMessage passwordEntered)}}
+          <div class="form-message">
+            {{tt this (concat "invalidPassword." passwordInvalidMessage)}}
+          </div>
+        {{/if}}
+      {{/form.group}}
+      {{#form.group
+        class=(if confirmValid "has-success" (if confirmInvalid "has-error"))
+      }}
+        <div class="input-group with-icon-addon">
+          <div class="input-group-addon">
+            {{one-icon icon="lock-checked"}}
+          </div>
+          {{one-way-password confirmPassword
+            class="form-control login-lock confirm-password"
+            update=(action (mut confirmPassword))
+            placeholder=(tt this "confirmPassword")
+            disabled=isDisabled
+          }}
+        </div>
+        {{#if confirmInvalid}}
+          <div class="form-message">{{tt this "passwordsNotMatch"}}</div>
+        {{/if}}
+      {{/form.group}}      
+      <div class="login-error-message {{if error "active" ""}}">
+        {{tt this "error"}} {{if error error (tt this "unknownError")}}
+      </div>
+      <div class="row text-center">
+        {{#one-spin-button class="btn btn-primary"
+          buttonStyle="expand-left"
+          disabled=(not submitEnabled)
+          action=(action "submitAddUser" username password confirmPassword)
+        }}
+          {{tt this "create"}}
+        {{/one-spin-button}}
+      </div>
+    {{/bs-form}}
+  </div>
+</div>
