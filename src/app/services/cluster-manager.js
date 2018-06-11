@@ -415,7 +415,7 @@ export default Service.extend({
   addKnownHost(address) {
     return this.get('onepanelServer').request(
       'onepanel',
-      'addHost', { address }
+      'addClusterHost', { address }
     ).then(({ data }) => data);
   },
 });

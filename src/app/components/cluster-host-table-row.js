@@ -17,6 +17,12 @@ export default Component.extend({
 
   /**
    * @virtual
+   * @type {ClusterHostInfo}
+   */
+  host: undefined,
+
+  /**
+   * @virtual
    * @type {Function}
    */
   checkboxChanged: notImplementedWarn,

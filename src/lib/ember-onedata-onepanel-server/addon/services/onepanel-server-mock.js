@@ -94,6 +94,10 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
+    /**
+     * Set to false if want to see create cluster init options (add admin, etc.)
+     * @type {boolean}
+     */
     adminUserPresent: true,
 
     username: MOCK_USERNAME,
@@ -102,8 +106,8 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.PROVIDER_IPS),
     // NOTE: below: first step of deployment
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.equal(
       'mockStep',
@@ -763,8 +767,11 @@ export default OnepanelServerBase.extend(
     _req_onepanel_addClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
-        success: (hostname) => {
+        success: ({ address: hostname }) => {
           __clusterHosts.push(hostname);
+          return {
+            hostname,
+          };
         },
         statusCode: () => 204,
       };

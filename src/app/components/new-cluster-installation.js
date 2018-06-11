@@ -20,7 +20,7 @@ import { Promise } from 'rsvp';
 import { readOnly, reads } from '@ember/object/computed';
 import { camelize } from '@ember/string';
 import { scheduleOnce } from '@ember/runloop';
-import { observer, computed, get } from '@ember/object';
+import { observer, computed, get, set } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -209,7 +209,7 @@ export default Component.extend(I18n, {
 
   getNodes() {
     let hosts = this.get('hosts');
-    let hostnames = hosts.map(h => h.hostname);
+    let hostnames = hosts.map(h => get(h, 'hostname'));
     let nodes = {};
     hostnames.forEach(hn => {
       nodes[hn] = {
@@ -380,12 +380,12 @@ export default Component.extend(I18n, {
 
     hostOptionChanged(hostname, option, value) {
       let hosts = this.get('hosts');
-      let host = hosts.find(h => h.hostname === hostname);
+      let host = hosts.find(h => get(h, 'hostname') === hostname);
       assert(
         host,
         'host for which option was changed, must be present in collection'
       );
-      host.set(option, value);
+      set(host, option, value);
     },
 
     primaryClusterManagerChanged(hostname) {

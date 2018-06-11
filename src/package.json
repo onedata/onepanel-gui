@@ -15,6 +15,7 @@
     "test": "ember test"
   },
   "devDependencies": {
+    "basictable": "git+https://github.com/kliput/basictable.git#f26107155103dbe7e924a3c9e150022087106cb4",
     "bootstrap-sass": "3.3.7",
     "broccoli-asset-rev": "2.6.0",
     "chai-jquery": "2.0.0",
@@ -77,7 +78,7 @@
     "ember-truth-helpers": "2.0.0",
     "eslint-plugin-ember": "5.0.3",
     "loader.js": "4.6.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#5285e66a88412458affd3ac665bc343673dcbc63",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#6d20114b18f1fa4013ac99a46bde6026325e3a3c",
     "perfect-scrollbar": "0.8.1",
     "round10": "1.0.3",
     "sinon": "4.2.0",
