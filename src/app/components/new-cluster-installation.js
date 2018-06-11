@@ -20,12 +20,13 @@ import { Promise } from 'rsvp';
 import { readOnly, reads } from '@ember/object/computed';
 import { camelize } from '@ember/string';
 import { scheduleOnce } from '@ember/runloop';
-import { observer, computed } from '@ember/object';
+import { observer, computed, get, set } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   ProviderConfiguration,
@@ -42,11 +43,13 @@ function getClusterHostname(hostnames) {
 }
 
 function getDomain(hostname) {
-  return hostname.split('.').splice(1).join('.');
+  const segments = hostname.split('.');
+  return segments[segments.length - 1];
 }
 
 function getHostname(hostname) {
-  return hostname.split('.')[0];
+  const segments = hostname.split('.');
+  return segments.splice(0, segments.length - 1).join('.');
 }
 
 function getHostnamesOfType(hosts, type) {
@@ -121,6 +124,16 @@ export default Component.extend(I18n, {
   _hostTableValid: false,
 
   /**
+   * @type {string}
+   */
+  _newHostname: '',
+
+  /**
+   * @type {boolean}
+   */
+  _isSubmittingAddress: false,
+
+  /**
    * @type {function}
    */
   changeClusterName: undefined,
@@ -130,21 +143,28 @@ export default Component.extend(I18n, {
    */
   nextStep: undefined,
 
+  /**
+   * Changed on add new host button click
+   * @type {boolean}
+   */
+  addingNewHost: false,
+
+  addingNewHostChanged: observer('addingNewHost', function () {
+    if (!this.get('addingNewHost')) {
+      this.set('_newHostname', '');
+    }
+  }),
+
   init() {
     this._super(...arguments);
 
+    this.observeResetNewHostname();
     this.changeCanDeploy();
     this.set(
       'hostsProxy',
       PromiseObject.create({
-        promise: new Promise((resolve, reject) => {
-          let gettingHosts = this.get('clusterManager').getHosts();
-          gettingHosts.then(hosts => {
-            hosts = A(hosts.map(h => ClusterHostInfo.create(h)));
-            resolve(hosts);
-          });
-          gettingHosts.catch(reject);
-        }),
+        promise: this.get('clusterManager').getHosts()
+          .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
       })
     );
 
@@ -189,7 +209,7 @@ export default Component.extend(I18n, {
 
   getNodes() {
     let hosts = this.get('hosts');
-    let hostnames = hosts.map(h => h.hostname);
+    let hostnames = hosts.map(h => get(h, 'hostname'));
     let nodes = {};
     hostnames.forEach(hn => {
       nodes[hn] = {
@@ -336,6 +356,14 @@ export default Component.extend(I18n, {
       scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
     }),
 
+  observeResetNewHostname: observer('addingNewHost', function () {
+    if (this.get('addingNewHost')) {
+      scheduleOnce('afterRender', () => this.$('.input-add-host')[0].focus());
+    } else {
+      this.set('_newHostname', '');
+    }
+  }),
+
   actions: {
     zoneFormChanged(fieldName, value) {
       switch (fieldName) {
@@ -352,12 +380,12 @@ export default Component.extend(I18n, {
 
     hostOptionChanged(hostname, option, value) {
       let hosts = this.get('hosts');
-      let host = hosts.find(h => h.hostname === hostname);
+      let host = hosts.find(h => get(h, 'hostname') === hostname);
       assert(
         host,
         'host for which option was changed, must be present in collection'
       );
-      host.set(option, value);
+      set(host, option, value);
     },
 
     primaryClusterManagerChanged(hostname) {
@@ -403,6 +431,42 @@ export default Component.extend(I18n, {
         this.get('globalNotify').backendError('deployment start', error);
       });
       return start;
+    },
+
+    submitNewHost() {
+      if (!this.get('_newHostname')) {
+        return Promise.reject();
+      } else {
+        const _newHostname = this.get('_newHostname');
+        this.set('_isSubmittingNewHost', true);
+        return this.get('clusterManager').addKnownHost(_newHostname)
+          .then(knownHost =>
+            this.get('hosts').pushObject(ClusterHostInfo.create(knownHost))
+          )
+          .then(() => safeExec(this, 'set', 'addingNewHost', false))
+          .catch(error =>
+            this.get('globalNotify').backendError(this.tt('addingNewHost'), error)
+          )
+          .finally(() => safeExec(this, 'set', '_isSubmittingNewHost', false));
+      }
+    },
+
+    removeHost(hostname) {
+      const {
+        onepanelServer,
+        globalNotify,
+        hosts,
+      } = this.getProperties('onepanelServer', 'globalNotify', 'hosts');
+
+      return onepanelServer
+        .request('onepanel', 'removeClusterHost', hostname)
+        .then(() => {
+          hosts.removeObject(hosts.find(h => get(h, 'hostname') === hostname));
+        })
+        .catch(error => {
+          globalNotify.backendError(this.t('removingHost'), error);
+          throw error;
+        });
     },
   },
 });

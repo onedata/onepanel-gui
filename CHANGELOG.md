@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4435 New feature: adding hosts in cluster deployment table
 * VFS-4436 Added view for registering first admin user
 * VFS-4424 Improved sidebar content presentation and animation 
 * VFS-4381 Removed signature version option from S3 storage form, because we support only V4

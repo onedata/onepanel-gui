@@ -1,0 +1,84 @@
+<div class="container">
+  {{#if errorMessage}}
+    {{!-- TODO error screen --}}
+    {{errorMessage}}
+  {{else if isLoading}}
+    {{!-- TODO loading --}}
+  {{else}}  
+    {{login-box/header model=headerModel}}
+    
+    <div class="row row-login-header text-center">
+      <div class="col-xs-12">
+        <h4>
+          <span class="one-label">
+            {{tt this (concat "headers." mode)}}
+          </span>
+        </h4>
+      </div>
+    </div>
+    {{#if (eq mode "first")}}
+      <div class="row row-first-decription">
+        <p class="description first-description">
+          {{tt this "descriptions.first"}}
+          {{#unless showMoreFirst}}
+            <a {{action (mut showMoreFirst) true}}>
+              {{tt this "showMoreLink"}}
+            </a>
+          {{else}}
+            {{tt this "descriptions.firstMore"}}
+          {{/unless}}
+        </p>
+      </div>
+    {{/if}}
+    {{!-- TODO remove .additional-bottom-margin after icons resize --}}
+    <div class="row additional-bottom-margin">
+      <div class="col-xs-10 col-centered">
+        {{#if (eq mode "first")}}
+          <div class="row row-first-button">
+            {{#bs-button
+              type="primary"
+              onClick=(action "changeMode" "create")
+            }}
+              {{tt this "createNewCluster"}}
+            {{/bs-button}}
+          </div>
+          <div class="row row-first-button">
+            {{#bs-button
+              type="primary"
+              onClick=(action "changeMode" "join")
+            }}
+              {{tt this "joinCluster"}}
+            {{/bs-button}}
+          </div>
+        {{else if (eq mode "create")}}
+          {{create-admin-form
+            isBusy=isBusy
+            registerSuccess=(action "registerSuccess")
+            registerFailure=(action "registerFailure")
+            registerStarted=(action "registerStarted")
+            back=(action "changeMode" "first")
+          }}
+        {{else if (eq mode "join")}}
+          <p class="description join-description">
+            {{tt this "descriptions.join"}}
+          </p>
+          <div class="hostname-row {{unless hostnameProxy.isSettled "loadable-row"}}">            
+            {{#promise-proxy-container proxy=hostnameProxy}}
+              {{clipboard-line value=hostnameProxy.content}}
+            {{/promise-proxy-container}}
+          </div>
+          <div class="row text-center">
+            {{#bs-button
+              type="default"
+              onClick=(action "changeMode" "first")
+              class="btn-back"
+            }}
+              {{one-icon icon="arrow-right"}}
+              {{tt this "back"}}
+            {{/bs-button}}  
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  {{/if}}
+</div>

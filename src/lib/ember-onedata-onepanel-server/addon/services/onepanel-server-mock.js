@@ -94,6 +94,10 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
+    /**
+     * Set to false if want to see create cluster init options (add admin, etc.)
+     * @type {boolean}
+     */
     adminUserPresent: true,
 
     username: MOCK_USERNAME,
@@ -146,7 +150,7 @@ export default OnepanelServerBase.extend(
 
     /// APIs provided by onepanel client library
 
-    staticRequest(api, method, params) {
+    staticRequest(api, method, params = []) {
       return this._request(true, api, method, ...params);
     },
 
@@ -237,9 +241,21 @@ export default OnepanelServerBase.extend(
       return promise;
     },
 
+    nodeProxy: computed(function () {
+      return PromiseObject.create({
+        promise: Promise.resolve({
+          hostname: 'example.com',
+          componentType: 'one' + MOCK_SERVICE_TYPE,
+        }),
+      });
+    }),
+
     getServiceType() {
-      let serviceType = this.get('serviceType');
-      return new Promise(resolve => resolve(serviceType));
+      return Promise.resolve(this.get('serviceType'));
+    },
+
+    getHostname() {
+      return Promise.resolve('example.com');
     },
 
     watchTaskStatus(taskId) {
@@ -380,13 +396,10 @@ export default OnepanelServerBase.extend(
     /// mocked request handlers - override to change server behaviour
 
     _req_onepanel_getClusterHosts: computed(function () {
+      const __clusterHosts = _.clone(this.get('__clusterHosts'));
       return {
-        success({ discovered }) {
-          if (discovered) {
-            return ['node1.example.com', 'node2.example.com'];
-          } else {
-            return ['node1.example.com'];
-          }
+        success() {
+          return __clusterHosts;
         },
       };
     }),
@@ -751,6 +764,29 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_addClusterHost() {
+      const __clusterHosts = this.get('__clusterHosts');
+      return {
+        success: ({ address: hostname }) => {
+          __clusterHosts.push(hostname);
+          return {
+            hostname,
+          };
+        },
+        statusCode: () => 204,
+      };
+    },
+
+    _req_onepanel_removeClusterHost() {
+      const __clusterHosts = this.get('__clusterHosts');
+      return {
+        success: (hostname) => {
+          _.remove(__clusterHosts, hostname);
+        },
+        statusCode: () => 204,
+      };
+    },
+
     /**
      * Currently only unauthenticated response
      * @returns {object}
@@ -768,7 +804,21 @@ export default OnepanelServerBase.extend(
       }
     },
 
+    _req_onepanel_getNode() {
+      return {
+        success: () => ({
+          hostname: 'example.com',
+          componentType: `one${MOCK_SERVICE_TYPE}`,
+        }),
+        statusCode: () => 200,
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
+
+    __clusterHosts: computed(function () {
+      return ['example.com'];
+    }),
 
     // space id -> AutCleaningStatus
     __spaceAutoCleaningStates: computed(function () {

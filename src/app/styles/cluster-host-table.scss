@@ -3,14 +3,19 @@
   table-layout: fixed;
 
   &:not(.bt) {
-    .toggle-column {
-      width: 15%;
+    .column {
       // toggles are a little bigger than a normal text 
       // so padding must be smaller to preserve row height
       padding: $table-cell-padding * 0.75 $table-cell-padding;
+    }
+    .toggle-column {
+      width: 15%;
       .one-way-toggle {
         font-size: 1.2em;
       }
+    }
+    .btn-column {
+      width: 70px;
     }
   }
 
@@ -82,4 +87,28 @@
       }
     }
   }
+  
+  .btn-remove-node {
+    .oneicon {
+      font-size: 2em;
+      color: $main-text-color;
+      &:hover {
+        color: $color-one-red;
+      }
+    }
+    &.disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}
+
+.cluster-host-table + .pseudo-table-row {
+  margin-top: -$line-height-computed;
+  margin-bottom: $line-height-computed;
+  // copied from bootstrap table style
+  padding: 20px 20px 20px 16px;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
 }

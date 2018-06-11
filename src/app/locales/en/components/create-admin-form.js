@@ -11,4 +11,8 @@ export default {
     tooShort: 'Password should be at least 8 characters long',
     semicolon: 'Password should not contain colon character',
   },
+  invalidUsername: {
+    tooShort: 'Username should be at least 2 characters long',
+  },
+  back: 'Back',
 };
