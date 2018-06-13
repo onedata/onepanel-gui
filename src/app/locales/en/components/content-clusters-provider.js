@@ -1,8 +1,10 @@
 import letsEncrypt from './-lets-encrypt';
 
 export default {
+  provider: 'Provider',
   cancelModifying: 'Cancel modifying',
   modifyProviderDetails: 'Modify provider details',
+  deregisterProvider: 'Deregister provider',
   providerDataModification: 'provider data modification',
   providerDeregistration: 'provider deregistration',
   modifySuccess: 'Provider data has been modified',
