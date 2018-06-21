@@ -116,8 +116,12 @@ export default Component.extend(I18n, GlobalActions, {
         finishButton,
         finishAction,
         noStorages,
-      } = this.getProperties('addStorageAction', 'finishButton', 'finishAction',
-        'noStorages');
+      } = this.getProperties(
+        'addStorageAction',
+        'finishButton',
+        'finishAction',
+        'noStorages'
+      );
       if (noStorages) {
         return [];
       } else {
