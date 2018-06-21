@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4559 Fixed global actions display in mobile view
+* VFS-4587 Fixing lack of space occupancy bar by updating onepanel client
 * VFS-4424 Improved sidebar content presentation and animation 
 * VFS-4381 Removed signature version option from S3 storage form, because we support only V4
 * VFS-4380 Added new parameters in null device form: simulated filesystem paramers and grow speed
