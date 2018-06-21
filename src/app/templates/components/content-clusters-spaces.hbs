@@ -1,7 +1,9 @@
   {{!-- TODO i18n --}}
   
 <div class="row content-row header-row hidden-xs">
-  <h1>Spaces
+  <h1 class="with-menu">
+    <span class="one-label">{{tt this "spaces"}}</span>
+    {{actions-toolbar actionsArray=globalActions}}
     {{!-- Only for development --}}
     {{!--{{#one-spin-button
       action=(action "updateSpacesList")
@@ -9,20 +11,13 @@
     }}
       Refresh list
     {{/one-spin-button}}--}}
-    {{#if _isToolbarVisible}}
-      {{#one-collapsible-toolbar isGlobal=true isMinimized=false as |dropdown|}}
-        {{#dropdown.item buttonStyle=_supportSpaceButtonType triggerClasses="btn-support-space" itemAction=(action "toggleSupportSpaceForm")}}
-          {{_supportSpaceButtonLabel}}
-        {{/dropdown.item}}
-      {{/one-collapsible-toolbar}}
-    {{/if}}
   </h1>
 </div>
 
 <div class="row">
   <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
     {{#if _supportSpaceOpened}}
-      <h1 class="form-title">Add support for a space</h1>
+      <h1 class="form-title">{{tt this "addSupportForSpace"}}</h1>
       {{support-space-form
         submitSupportSpace=(action "submitSupportSpace")
         isFormOpened=_supportSpaceOpened

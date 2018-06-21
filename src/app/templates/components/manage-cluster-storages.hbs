@@ -1,23 +1,11 @@
 <div class="row content-row header-row {{unless nextStep "hidden-xs"}}">
-  <h1>Storages
-    <div class="btn-toolbar">
-      {{#unless noStorages}}
-        {{#one-collapsible-toolbar isGlobal=true isMinimized=false as |dropdown|}}
-          {{#dropdown.item buttonStyle="default" triggerClasses="btn-add-storage" itemAction=(action "toggleAddStorageForm")}}
-            {{_addStorageButtonLabel}}
-          {{/dropdown.item}}
-          {{#if finishButton}}
-            {{#dropdown.item buttonStyle="primary" triggerClasses="btn-add-storage" itemAction=(action "next")}}
-              Finish
-            {{/dropdown.item}}
-          {{/if}}
-        {{/one-collapsible-toolbar}}
-      {{/unless}}
-    </div>
+  <h1 class="with-menu">
+    <span class="one-label">{{tt this "storages"}}</span>
+    {{actions-toolbar minimumFullWindowSize=0 actionsArray=globalActions}}
   </h1>
 </div>
 <div class="row content-row row-small {{unless addStorageOpened "row-hidden"}}">
-  <h1 class="form-title">Add a new storage</h1>
+  <h1 class="form-title">{{tt this "addNewStorage"}}</h1>
     {{cluster-storage-add-form 
       class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered" 
       submit=(action "submitAddStorage")

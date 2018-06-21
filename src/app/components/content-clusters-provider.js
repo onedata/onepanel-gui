@@ -2,7 +2,7 @@
  * A content page for managing registration data of provider
  *
  * @module components/content-clusters-provider
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -10,6 +10,7 @@
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
+import { next } from '@ember/runloop';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import { camelize } from '@ember/string';
@@ -17,6 +18,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 
 const {
   time: {
@@ -24,10 +26,14 @@ const {
   },
 } = config;
 
-export default Component.extend(I18n, {
+export default Component.extend(I18n, GlobalActions, {
   providerManager: service(),
   globalNotify: service(),
+  i18n: service(),
 
+  /**
+   * @override
+   */
   i18nPrefix: 'components.contentClustersProvider',
 
   /**
@@ -63,15 +69,10 @@ export default Component.extend(I18n, {
    */
   _deregisterModalOpen: false,
 
-  _editProviderButtonType: computed('_editing', function () {
-    return this.get('_editing') ? 'default' : 'primary';
-  }),
-
-  _editProviderButtonLabel: computed('_editing', function () {
-    return this.get('_editing') ?
-      this.t('cancelModifying') :
-      this.t('modifyProviderDetails');
-  }),
+  /**
+   * @type {string}
+   */
+  _deregisterPopoverSelector: '',
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -104,9 +105,59 @@ export default Component.extend(I18n, {
     }
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  _openDeregisterModalAction: computed(function () {
+    return {
+      action: () => this.send('openDeregisterModal'),
+      title: this.t('deregisterProvider'),
+      class: 'btn-deregister-provider',
+      buttonStyle: 'danger',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  _toggleModifyProviderAction: computed('_editing', function () {
+    const _editing = this.get('_editing');
+    return {
+      action: () => this.send('toggleModifyProvider'),
+      title: this.t(_editing ? 'cancelModifying' : 'modifyProviderDetails'),
+      class: 'btn-modify-provider',
+      buttonStyle: _editing ? 'default' : 'primary',
+    };
+  }),
+
+  /**
+   * @override 
+   * @type {Ember.ComputedProperty<Array<Action>>}
+   */
+  globalActions: computed(
+    '_openDeregisterModalAction',
+    '_toggleModifyProviderAction',
+    function () {
+      const {
+        _openDeregisterModalAction,
+        _toggleModifyProviderAction,
+      } = this.getProperties(
+        '_openDeregisterModalAction',
+        '_toggleModifyProviderAction'
+      );
+      return [_openDeregisterModalAction, _toggleModifyProviderAction];
+    }
+  ),
+
   init() {
     this._super(...arguments);
     this._initProviderProxy();
+    next(() => safeExec(
+      this,
+      'set',
+      '_deregisterPopoverSelector',
+      '.btn-deregister-provider.btn;a.btn-deregister-provider:modal'
+    ));
   },
 
   _initProviderProxy(reload) {

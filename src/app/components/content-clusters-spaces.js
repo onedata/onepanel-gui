@@ -2,8 +2,8 @@
  * A content page for managing cluster's spaces
  *
  * @module components/content-clusters-spaces.js
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -14,13 +14,21 @@ import { not, reads } from '@ember/object/computed';
 import { observer, computed, get } from '@ember/object';
 import { isArray } from '@ember/array';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default Component.extend({
+export default Component.extend(I18n, GlobalActions, {
   classNames: ['content-clusters-spaces'],
 
   spaceManager: service(),
   providerManager: service(),
   globalNotify: service(),
+  i18n: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.contentClustersSpaces',
 
   /**
    * Set by `_updateSpacesList`
@@ -80,23 +88,34 @@ export default Component.extend({
   _supportSpaceOpened: false,
   _currentToken: '',
 
-  // TODO maybe generic component for opening/closing forms inline 
-  _supportSpaceButtonLabel: computed('_supportSpaceOpened', function () {
-    // TODO i18n
-    return this.get('_supportSpaceOpened') ?
-      'Cancel supporting space' : 'Support space';
-  }).readOnly(),
-
-  _supportSpaceButtonType: computed('_supportSpaceOpened', function () {
-    return this.get('_supportSpaceOpened') ? 'default' : 'primary';
-  }),
-
   _hasNoSpaces: computed('spaces.length', function () {
     let spaces = this.get('spaces');
     return isArray(spaces) && get(spaces, 'length') === 0;
   }),
 
-  _isToolbarVisible: not('_hasNoSpaces'),
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  _supportSpaceAction: computed('_supportSpaceOpened', function () {
+    const _supportSpaceOpened = this.get('_supportSpaceOpened');
+    return {
+      action: () => this.send('toggleSupportSpaceForm'),
+      title: this.t(_supportSpaceOpened ? 'cancelSupporting' : 'supportSpace'),
+      class: 'btn-support-space',
+      buttonStyle: _supportSpaceOpened ? 'default' : 'primary',
+    };
+  }),
+
+  /**
+   * @override
+   */
+  globalActions: computed('_hasNoSpaces', '_supportSpaceAction', function () {
+    const {
+      _hasNoSpaces,
+      _supportSpaceAction,
+    } = this.getProperties('_hasNoSpaces', '_supportSpaceAction');
+    return _hasNoSpaces ? [] : [_supportSpaceAction];
+  }),
 
   _hasNoSpacesObserver: observer('_hasNoSpaces', function () {
     if (this.get('_hasNoSpaces')) {
@@ -149,65 +168,43 @@ export default Component.extend({
       return this.set('_supportSpaceOpened', false);
     },
     submitSupportSpace(supportSpaceData) {
-      const {
-        globalNotify,
-        i18n,
-      } = this.getProperties('globalNotify', 'i18n');
+      const globalNotify = this.get('globalNotify');
       let supportingSpace = this._supportSpace(supportSpaceData);
       supportingSpace.then(() => {
         this._updateSpacesList();
         this.set('_supportSpaceOpened', false);
         globalNotify.info(
-          i18n.t('components.contentClustersSpaces.supportSuccess')
+          this.t('supportSuccess')
         );
       });
       return supportingSpace;
     },
     // TODO currently space can be either object or ember object
     revokeSpace(space) {
-      const {
-        globalNotify,
-        i18n,
-      } = this.getProperties('globalNotify', 'i18n');
+      const globalNotify = this.get('globalNotify');
       let revoking = this._revokeSpace(get(space, 'id'));
       const spaceName = get(space, 'name');
       revoking.then(() => {
         this._updateSpacesList();
-        globalNotify.info(
-          i18n.t('components.contentClustersSpaces.revokeSuccess', {
-            spaceName,
-          })
-        );
+        globalNotify.info(this.t('revokeSuccess', { spaceName }));
       });
       revoking.catch(error => {
-        globalNotify.backendError(
-          i18n.t('components.contentClustersSpaces.revocationAction'),
-          error
-        );
+        globalNotify.backendError(this.t('revocationAction'), error);
       });
       return revoking;
     },
     modifySpace(space, data) {
-      const {
-        globalNotify,
-        i18n,
-      } = this.getProperties('globalNotify', 'i18n');
+      const globalNotify = this.get('globalNotify');
       let spaceName = get(space, 'name');
       let spaceId = get(space, 'id');
       return this._modifySpace(spaceId, data)
         .then(() => {
-          globalNotify.info(
-            i18n.t('components.contentClustersSpaces.configurationChanged', {
-              spaceName,
-            })
-          );
+          globalNotify.info(this.t('configurationChanged', { spaceName }));
         })
         .catch(error => {
           // TODO: handle error on higher levels to produce better message
           globalNotify.backendError(
-            i18n.t('components.contentClustersSpaces.configurationAction', {
-              spaceName,
-            }),
+            this.t('configurationAction', { spaceName }),
             error
           );
           throw error;

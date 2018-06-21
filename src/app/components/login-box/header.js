@@ -35,7 +35,8 @@ export default Header.extend({
       onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
-      'One' + _.lowerCase(i18n.t(`services.guiUtils.serviceType.${onepanelServiceType}`)) :
-      null;
+      'One' + _.lowerCase(i18n.t(
+        `services.guiUtils.serviceType.${onepanelServiceType}`
+      )) : null;
   }),
 });
