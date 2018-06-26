@@ -9,8 +9,8 @@ import { inject as service } from '@ember/service';
 
 export default Component.extend({
   tagName: 'tr',
-  classNames: 'cluster-host-table-row',
-  classNameBindings: ['active'],
+  classNames: ['cluster-host-table-row', 'animated', 'infinite'],
+  classNameBindings: ['active', 'blinking:pulse-bg-mint'],
   attributeBindings: ['dataHostname:data-hostname'],
 
   onepanelServer: service(),
@@ -47,6 +47,11 @@ export default Component.extend({
    * @type {boolean}
    */
   active: false,
+
+  /**
+   * @type {boolean}
+   */
+  blinking: false,
 
   /**
    * @type {ClusterHostInfo}

@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4594 UX improvements of deployment process
 * VFS-4435 New feature: adding hosts in cluster deployment table
 * VFS-4436 Added view for registering first admin user
 * VFS-4424 Improved sidebar content presentation and animation 

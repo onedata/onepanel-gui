@@ -60,8 +60,8 @@ let Validations = buildValidations(generateColumnValidations(roles));
  * - primaryClusterManagerChanged(hostname: string, isSet: boolean)
  *
  * @module components/cluster-host-table
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 export default BasicTable.extend(
@@ -81,7 +81,7 @@ export default BasicTable.extend(
 
     /**
      * To inject.
-     * @type {Array.ClusterHostInfo}
+     * @type {Array<ClusterHostInfo>}
      */
     hosts: null,
 
@@ -92,6 +92,12 @@ export default BasicTable.extend(
     isReadOnly: false,
 
     primaryClusterManager: null,
+
+    /**
+     * These host entries will blink to indicate some action
+     * @type {Array<ClusterHostInfo>}
+     */
+    blinkingHosts: Object.freeze([]),
 
     allValid: readOnly('validations.isValid'),
     // TODO make/use valid properties for each column
