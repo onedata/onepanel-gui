@@ -6,7 +6,7 @@
  * - nextStep() - a next step of cluster init should be presented
  *
  * @module components/new-cluster-installation
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,9 +17,9 @@ import { A } from '@ember/array';
 import { assert } from '@ember/debug';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
-import { readOnly, reads } from '@ember/object/computed';
+import { readOnly, reads, sort } from '@ember/object/computed';
 import { camelize } from '@ember/string';
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleOnce, later } from '@ember/runloop';
 import { observer, computed, get, set } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
@@ -27,6 +27,7 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import _ from 'lodash';
 
 const {
   ProviderConfiguration,
@@ -67,6 +68,7 @@ export default Component.extend(I18n, {
   clusterManager: service(),
   globalNotify: service(),
   cookies: service(),
+  i18n: service(),
 
   i18nPrefix: 'components.newClusterInstallation',
 
@@ -89,6 +91,16 @@ export default Component.extend(I18n, {
   hostsProxy: null,
 
   hosts: readOnly('hostsProxy.content'),
+
+  /**
+   * @type {Array<string>}
+   */
+  hostsSorting: Object.freeze(['hostname']),
+
+  /**
+   * @type {Ember.ComputedProperty<Ember.Array<HostInfo>>}
+   */
+  hostsSorted: sort('hosts', 'hostsSorting'),
 
   /**
    * If true, the deploy action can be invoked
@@ -149,6 +161,50 @@ export default Component.extend(I18n, {
    */
   addingNewHost: false,
 
+  /**
+   * @type {number}
+   */
+  newHostExpirationTimeout: 2000,
+
+  /**
+   * @type {Ember.A}
+   */
+  newHosts: undefined,
+
+  /**
+   * @type {boolean}
+   */
+  addMoreInfoVisible: false,
+
+  /**
+   * @type {string}
+   */
+  couchbasePorts: '4369, 8091, 8092, 11207, 11209, 11210, 11211, 18091, 18092, ' +
+    '21100 - 21299',
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  clusterPorts: computed('onepanelServiceType', function () {
+    const onepanelServiceType = this.get('onepanelServiceType');
+    return (onepanelServiceType === 'zone' ? '52, ' : '') +
+      '80, 443, 4369, 9100 - 9139';
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  panelType: computed('onepanelServiceType', function () {
+    const {
+      i18n,
+      onepanelServiceType,
+    } = this.getProperties('i18n', 'onepanelServiceType');
+    return onepanelServiceType ?
+      'One' + _.lowerCase(i18n.t(
+        `services.guiUtils.serviceType.${onepanelServiceType}`
+      )) : null;
+  }),
+
   addingNewHostChanged: observer('addingNewHost', function () {
     if (!this.get('addingNewHost')) {
       this.set('_newHostname', '');
@@ -167,6 +223,7 @@ export default Component.extend(I18n, {
           .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
       })
     );
+    this.set('newHosts', A());
 
     const {
       deploymentTaskId,
@@ -364,6 +421,23 @@ export default Component.extend(I18n, {
     }
   }),
 
+  /**
+   * Temporary adds host to newHosts array
+   * @param {ClusterHostInfo} host 
+   */
+  markHostAsNew(host) {
+    const {
+      newHosts,
+      newHostExpirationTimeout,
+    } = this.getProperties('newHosts', 'newHostExpirationTimeout');
+    newHosts.pushObject(host);
+    later(
+      this,
+      () => safeExec(newHosts, 'removeObject', host),
+      newHostExpirationTimeout
+    );
+  },
+
   actions: {
     zoneFormChanged(fieldName, value) {
       switch (fieldName) {
@@ -440,10 +514,15 @@ export default Component.extend(I18n, {
         const _newHostname = this.get('_newHostname');
         this.set('_isSubmittingNewHost', true);
         return this.get('clusterManager').addKnownHost(_newHostname)
-          .then(knownHost =>
-            this.get('hosts').pushObject(ClusterHostInfo.create(knownHost))
-          )
-          .then(() => safeExec(this, 'set', 'addingNewHost', false))
+          .then(knownHost => {
+            const newHost = ClusterHostInfo.create(knownHost);
+            this.get('hosts').pushObject(newHost);
+            this.markHostAsNew(newHost);
+          })
+          .then(() => safeExec(this, 'setProperties', {
+            addingNewHost: false,
+            addMoreInfoVisible: false,
+          }))
           .catch(error =>
             this.get('globalNotify').backendError(this.tt('addingNewHost'), error)
           )
@@ -462,6 +541,9 @@ export default Component.extend(I18n, {
         .request('onepanel', 'removeClusterHost', hostname)
         .then(() => {
           hosts.removeObject(hosts.find(h => get(h, 'hostname') === hostname));
+          if (this.get('primaryClusterManager') === hostname) {
+            safeExec(this, 'set', 'primaryClusterManager', undefined);
+          }
         })
         .catch(error => {
           globalNotify.backendError(this.t('removingHost'), error);

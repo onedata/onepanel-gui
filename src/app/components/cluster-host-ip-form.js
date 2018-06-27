@@ -91,14 +91,14 @@ export default BasicTable.extend(I18n, {
   init() {
     this._super(...arguments);
 
-    const _hostsData = A(
-      _.map(
-        this.get('hosts'),
-        (ip, hostname) => ({ hostname, ip })
-      )
+    const hostsArray = _.map(
+      this.get('hosts'),
+      (ip, hostname) => ({ hostname, ip })
     );
 
-    this.set('_hostsData', _hostsData);
+    this.set('_hostsData', A(
+      _.sortBy(hostsArray, ['hostname'])
+    ));
 
     this.observeAllValid();
   },
