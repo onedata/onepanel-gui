@@ -78,7 +78,7 @@
           {{/bs-button}}
         </span>
         <div class="add-instructions">
-          <a {{action (mut addMoreInfoVisible) (not addMoreInfoVisible)}}>
+          <a class="show-add-instructions" {{action (mut addMoreInfoVisible) (not addMoreInfoVisible)}}>
             {{tt this (if addMoreInfoVisible "hideAddInformation" "showAddInformation")}}
           </a>
           {{#if addMoreInfoVisible}}

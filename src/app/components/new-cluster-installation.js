@@ -195,7 +195,7 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<string>}
    */
   panelType: computed('onepanelServiceType', function () {
-    let {
+    const {
       i18n,
       onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
@@ -512,7 +512,7 @@ export default Component.extend(I18n, {
         return Promise.reject();
       } else {
         const _newHostname = this.get('_newHostname');
-        this.setProperties('_isSubmittingNewHost', true);
+        this.set('_isSubmittingNewHost', true);
         return this.get('clusterManager').addKnownHost(_newHostname)
           .then(knownHost => {
             const newHost = ClusterHostInfo.create(knownHost);
