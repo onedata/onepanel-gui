@@ -9,14 +9,13 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-dns', 'container-fluid'],
 
-  onepanelServer: service(),
+  guiUtils: service(),
   clusterManager: service(),
   globalNotify: service(),
   cookies: service(),
@@ -28,8 +27,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    * @type {Function} `() => any`
    */
   nextStep: undefined,
-
-  onepanelServiceType: reads('onepanelServer.serviceType'),
 
   /**
    * @override 
