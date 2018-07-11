@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4233 Using submodules for own libs on separate repos
+* VFS-4629 Fixed translations
 * VFS-4559 Fixed global actions display in mobile view
 * VFS-4587 Fixing lack of space occupancy bar by updating onepanel client
 * VFS-4424 Improved sidebar content presentation and animation 
