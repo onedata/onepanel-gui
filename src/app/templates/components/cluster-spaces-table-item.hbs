@@ -60,8 +60,11 @@
             {{name-conflict item=space tagName="span" class="one-label space-name"}}
           </div>
           <div class="row content-row">
-            <strong class="property-label">{{t "components.clusterSpacesTableItem.id"}}:</strong>
-            <span class="one-label space-id">{{space.id}}</span>
+            {{clipboard-line
+              value=space.id
+              size="sm"
+              label=(concat (t "components.clusterSpacesTableItem.id") ":")
+            }}
           </div>
           <div class="row content-row">
             <strong class="property-label">{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>

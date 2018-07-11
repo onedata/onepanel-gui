@@ -7,7 +7,7 @@ import nulldevice from './storage-item/nulldevice';
 
 export default {
   generic: {
-    id: 'ID',
+    id: 'Id',
     type: 'Type',
     timeout: 'Timeout',
     readonly: 'Is readonly',
