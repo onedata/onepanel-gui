@@ -18,7 +18,7 @@
     {{#tab.pane title=(tt this "tabIps")}}
       <div class="row">
         <p>
-          {{t "mixins.components.clusterIpsConfigurator.infoExplain"}}
+          {{t "mixins.components.clusterIpsConfigurator.infoExplain" serviceName=serviceName}}
         </p>
         {{#if subdomainDelegation}}
           <p>
@@ -36,7 +36,7 @@
               }}
                 <span>{{tt this "setupIpsButton"}}</span>
                 {{one-tooltip
-                  title=(t "mixins.components.clusterIpsConfigurator" "configurationInvalid") 
+                  title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid") 
                   placement="left" 
                   class=(if _hostsIpsFormValid "hidden" "")
                   triggerElement=".btn-setup-ips"

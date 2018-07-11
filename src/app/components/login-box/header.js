@@ -7,36 +7,23 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { readOnly } from '@ember/object/computed';
-
 import Header from 'onedata-gui-common/components/login-box/header';
-import { computed } from '@ember/object';
-import { inject } from '@ember/service';
+import { reads } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import layout from 'onedata-gui-common/templates/components/login-box/header';
-import _ from 'lodash';
 
 export default Header.extend({
   layout,
 
-  onepanelServer: inject(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  guiUtils: service(),
 
   /**
    * @override
    */
-  loginMainTitleClass: readOnly('onepanelServiceType'),
+  loginMainTitleClass: reads('guiUtils.serviceType'),
 
   /**
    * @override
    */
-  brandTitle: computed('onepanelServiceType', function () {
-    let {
-      i18n,
-      onepanelServiceType,
-    } = this.getProperties('i18n', 'onepanelServiceType');
-    return onepanelServiceType ?
-      'One' + _.lowerCase(i18n.t(
-        `services.guiUtils.serviceType.${onepanelServiceType}`
-      )) : null;
-  }),
+  brandTitle: reads('guiUtils.fullServiceName'),
 });

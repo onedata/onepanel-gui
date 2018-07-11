@@ -30,6 +30,7 @@ import noAdminBox from './components/no-admin-box';
 import createAdminForm from './components/create-admin-form';
 import clusterHostTable from './components/cluster-host-table';
 import clusterHostTableRow from './components/cluster-host-table-row';
+import manageClusterStorages from './components/manage-cluster-storages';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -73,6 +74,7 @@ let translations = {
     createAdminForm,
     clusterHostTable,
     clusterHostTableRow,
+    manageClusterStorages,
   },
   mixins: {
     components: {

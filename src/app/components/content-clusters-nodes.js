@@ -20,10 +20,10 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
-  onepanelServer: service(),
   clusterManager: service(),
   providerManager: service(),
   globalNotify: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.contentClustersNodes',
 
@@ -32,7 +32,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    * @type {PromiseObject<ProviderDetails>}
    */
   providerDetailsProxy: computed(function getProviderDetailsProxy() {
-    if (this.get('onepanelServer.serviceType') === 'provider') {
+    if (this.get('guiUtils.serviceType') === 'provider') {
       return this.get('providerManager').getProviderDetails();
     }
   }),

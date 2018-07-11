@@ -2,8 +2,8 @@
  * Storage management for cluster - can be used both in wizard and after cluster deployment
  *
  * @module components/manage-cluster-storages
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -14,13 +14,21 @@ import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { get, computed } from '@ember/object';
 import { invokeAction } from 'ember-invoke-action';
+import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
-export default Component.extend({
+export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
   spaceManager: service(),
   globalNotify: service(),
+  i18n: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.manageClusterStorages',
 
   /**
    * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
@@ -67,6 +75,64 @@ export default Component.extend({
       return storages.toArray().some(sp => get(sp, 'isPending'));
     }
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  addStorageAction: computed('addStorageOpened', function () {
+    const addStorageOpened = this.get('addStorageOpened');
+    return {
+      action: () => this.send('toggleAddStorageForm'),
+      title: this.t(addStorageOpened ? 'cancel' : 'addStorage'),
+      class: 'btn-add-storage',
+      buttonStyle: 'default',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  finishAction: computed(function () {
+    return {
+      action: () => this.send('next'),
+      title: this.t('finish'),
+      class: 'btn-next-step',
+      buttonStyle: 'primary',
+    };
+  }),
+
+  /**
+   * @override 
+   * @type {Ember.ComputedProperty<Array<Action>>}
+   */
+  globalActions: computed(
+    'addStorageAction',
+    'finishButton',
+    'finishAction',
+    'noStorages',
+    function () {
+      const {
+        addStorageAction,
+        finishButton,
+        finishAction,
+        noStorages,
+      } = this.getProperties(
+        'addStorageAction',
+        'finishButton',
+        'finishAction',
+        'noStorages'
+      );
+      if (noStorages) {
+        return [];
+      } else {
+        const actions = [addStorageAction];
+        if (finishButton) {
+          actions.push(finishAction);
+        }
+        return actions;
+      }
+    }
+  ),
 
   init() {
     this._super(...arguments);
