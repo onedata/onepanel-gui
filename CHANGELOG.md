@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4463 Showing storage ID on storages view
 * VFS-4233 Using submodules for own libs on separate repos
 * VFS-4629 Fixed translations
 * VFS-4559 Fixed global actions display in mobile view
