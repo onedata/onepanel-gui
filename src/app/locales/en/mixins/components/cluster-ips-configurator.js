@@ -1,6 +1,6 @@
 export default {
   setupAction: 'configuring cluster IP adresses',
-  infoExplain: 'Oneprovider application needs to be aware of external IP ' +
+  infoExplain: '{{serviceName}} application needs to be aware of external IP ' +
     'address of each node hosting a Cluster Worker or RTransfer Service. ' +
     'This is required for inter-provider communication.',
   infoSubdomain: 'Since you have enabled subdomain delegation, these IP ' +
