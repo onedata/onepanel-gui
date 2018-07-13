@@ -14,21 +14,16 @@
 </div>
 
 <div class="row content-row no-border">
-  {{#promise-proxy-container proxy=providerDetailsProxy}}
-    {{#if (eq status "subdomain")}}
-      <p class="{{textClass}}">
-        {{tt this "text.subdomainP1"}}
+  {{#promise-proxy-container proxy=webCertProxy}}
+      <p>
+        {{tt this (concat "text.intro." onepanelServiceType)}}
+        {{tt this "text.infoP1"}}
       </p>
-      <p class="{{textClass}}">
-        {{tt this "text.subdomainP21"}}
+      <p>
+        {{tt this "text.infoP21"}}
         (<a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>).
-        {{tt this "text.subdomainP22"}}
+        {{tt this "text.infoP22"}}
       </p>
-    {{else if (eq status "noSubdomain")}}
-      <p class="{{textClass}}">
-        {{tt this "text.noSubdomain"}}
-      </p>
-    {{/if}}
   {{/promise-proxy-container}}
 </div>
 
@@ -41,33 +36,38 @@
 {{#if _authorizationErrorOccured}}
   <div class="alert alert-warning fade in">
     {{tt this "letsEncrypt.authorizationErrorInfoP1"}}
-    <a href={{_providerUrl}}>{{_providerUrl}}</a>
+    <a href={{_redirectUrl}}>{{_redirectUrl}}</a>
     {{tt this "letsEncrypt.authorizationErrorInfoP2"}}
   </div>
 {{/if}}
 
-{{#if (eq status "subdomain")}}
-  <div class="row">
-    {{#bs-form
-      submitOnEnter=false
-      class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
-      as |form|
+<div class="row">
+  {{#bs-form
+    submitOnEnter=false
+    class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
+    as |form|
+  }}
+    {{one-form-fields
+      bsForm=form
+      fields=formFields
+      formValues=formValues
+      inputChanged=(action "changeFormValue")
+      disabled=(or isWorking _lockLetsEncrypt)
     }}
-      {{one-form-fields
-        bsForm=form
-        fields=formFields
-        formValues=formValues
-        inputChanged=(action "changeFormValue")
-        disabled=(or isWorking _lockLetsEncrypt)
-      }}
-    {{/bs-form}}
+  {{/bs-form}}
+</div>
+
+{{#if letsEncrypt}}
+  <div class="alert alert-info fade in">
+    {{tt this "redirectInfo"}}
   </div>
-  
-  {{#if letsEncryptEnabled}}
-    <div class="alert alert-info fade in">
-      {{tt this "redirectInfo"}}
-    </div>
-  {{/if}}
+{{else}}
+  <div class="alert alert-warning fade in">
+    {{tt this "manualWarning"}}
+    <a href={{one-doc-url "administering_onedata/ssl_certificate_management.html"}}>
+      {{tt this "certDocsLink"}}
+    </a>
+  </div>
 {{/if}}
 
 {{modal-redirect open=_redirectPage}}

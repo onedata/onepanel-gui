@@ -11,7 +11,6 @@ import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
 import { A } from '@ember/array';
-import { get } from '@ember/object';
 import { readOnly, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
@@ -88,7 +87,7 @@ export default Service.extend({
         gettingStep.then(step => {
           clusterStep = step;
 
-          let gettingConfiguration = this._getConfiguration();
+          let gettingConfiguration = this.getConfiguration();
 
           return new Promise(resolveName => {
             gettingConfiguration.then(({ data: configuration }) => {
@@ -130,7 +129,7 @@ export default Service.extend({
    */
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this._getConfiguration(true);
+      let gettingConfiguration = this.getConfiguration(true);
       gettingConfiguration.then(({ data: { cluster } }) => {
         resolve(this._clusterConfigurationToHostsInfo(cluster));
       });
@@ -177,7 +176,7 @@ export default Service.extend({
    * @param {boolean} [validateData] if true, make validation of cluster configuration
    * @returns {Promise} result of GET configuration request
    */
-  _getConfiguration(validateData) {
+  getConfiguration(validateData) {
     let {
       onepanelServer,
       onepanelServiceType,
@@ -226,7 +225,7 @@ export default Service.extend({
    */
   _checkIsConfigurationDone() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this._getConfiguration();
+      let gettingConfiguration = this.getConfiguration();
       gettingConfiguration.then(({ data }) => resolve(!!data));
 
       gettingConfiguration.catch(error => {
@@ -318,7 +317,8 @@ export default Service.extend({
           if (onepanelServiceType === 'zone') {
             const checkIps = this._checkIsIpsConfigured();
             checkIps.then(isIpsConfigured => {
-              resolve(isIpsConfigured ? STEP.ZONE_IPS + 1 : STEP.ZONE_IPS);
+              // NOTE: we don't have web cert configured flag, so skipping detection
+              resolve(isIpsConfigured ? STEP.ZONE_DONE : STEP.ZONE_IPS);
             });
             checkIps.catch(reject);
           } else {
@@ -327,34 +327,27 @@ export default Service.extend({
             );
             checkRegister.then(({
               isRegistered: isProviderRegistered,
-              providerDetails,
             }) => {
               if (isProviderRegistered) {
                 const checkIps = this._checkIsIpsConfigured();
                 checkIps.then(isIpsConfigured => {
                   if (isIpsConfigured) {
-                    if (
-                      get(providerDetails, 'letsEncryptEnabled') !==
-                      undefined
-                    ) {
-                      const checkStorage = this._checkIsAnyStorage(
-                        onepanelServer
-                      );
-                      checkStorage.then(isAnyStorage => {
-                        if (isAnyStorage) {
-                          resolve(
-                            STEP.PROVIDER_STORAGE_ADD + 1
-                          );
-                        } else {
-                          resolve(STEP.PROVIDER_STORAGE_ADD);
-                        }
-                      });
-                      checkStorage.catch(reject);
-                    } else {
-                      resolve(STEP.PROVIDER_CERT_GENERATE);
-                    }
+                    const checkStorage = this._checkIsAnyStorage(
+                      onepanelServer
+                    );
+                    checkStorage.then(isAnyStorage => {
+                      if (isAnyStorage) {
+                        resolve(
+                          STEP.PROVIDER_STORAGE_ADD + 1
+                        );
+                      } else {
+                        resolve(STEP.PROVIDER_STORAGE_ADD);
+                      }
+                    });
+                    checkStorage.catch(reject);
                   } else {
-                    resolve(STEP.PROVIDER_IPS);
+                    // NOTE: we don't have web cert configured flag, so skipping detection
+                    resolve(STEP.PROVIDER_STORAGE_ADD);
                   }
                 });
                 checkIps.catch(reject);

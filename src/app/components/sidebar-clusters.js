@@ -13,11 +13,14 @@ import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
 import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default TwoLevelSidebar.extend({
+export default TwoLevelSidebar.extend(I18n, {
   layout,
 
   classNames: ['sidebar-clusters'],
+
+  i18nPrefix: 'components.sidebarClusters',
 
   onepanelServer: service(),
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
@@ -26,16 +29,6 @@ export default TwoLevelSidebar.extend({
   cluster: readOnly('model.collection.list.firstObject'),
 
   firstLevelItemIcon: 'menu-clusters',
-
-  triggerEventOnPrimaryItemSelection: computed('cluster.isInitialized',
-    'onepanelServiceType',
-    function () {
-      let {
-        cluster,
-        onepanelServiceType,
-      } = this.getProperties('cluster', 'onepanelServiceType');
-      return !cluster.get('isInitialized') || onepanelServiceType === 'zone';
-    }),
 
   /**
    * @implements TwoLevelSidebar
@@ -47,31 +40,50 @@ export default TwoLevelSidebar.extend({
       onepanelServiceType,
       cluster,
     } = this.getProperties('onepanelServiceType', 'cluster');
-    if (onepanelServiceType === 'provider' && cluster.get('isInitialized')) {
-      // TODO i18n
-      return [{
-          id: 'nodes',
-          label: 'Nodes',
-          icon: 'node',
-        },
-        {
-          id: 'provider',
-          label: 'Provider',
-          icon: 'provider',
-        },
-        {
-          id: 'storages',
-          label: 'Storages',
-          icon: 'support',
-        },
-        {
-          id: 'spaces',
-          label: 'Spaces',
-          icon: 'space',
-        },
-      ];
-    } else {
-      return [];
+    if (cluster.get('isInitialized')) {
+      switch (onepanelServiceType) {
+        case 'provider':
+          return [{
+              id: 'nodes',
+              label: this.t('menuItems.nodes'),
+              icon: 'node',
+            },
+            {
+              id: 'certificate',
+              label: this.t('menuItems.certificate'),
+              icon: 'certificate',
+            },
+            {
+              id: 'provider',
+              label: this.t('menuItems.provider'),
+              icon: 'provider',
+            },
+            {
+              id: 'storages',
+              label: this.t('menuItems.storages'),
+              icon: 'support',
+            },
+            {
+              id: 'spaces',
+              label: this.t('menuItems.spaces'),
+              icon: 'space',
+            },
+          ];
+        case 'zone':
+          return [{
+              id: 'nodes',
+              label: this.t('menuItems.nodes'),
+              icon: 'node',
+            },
+            {
+              id: 'certificate',
+              label: this.t('menuItems.certificate'),
+              icon: 'certificate',
+            },
+          ];
+        default:
+          return [];
+      }
     }
   }).readOnly(),
 });

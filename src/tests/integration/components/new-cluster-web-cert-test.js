@@ -23,71 +23,48 @@ const PROVIDER_DETAILS = {
   geoLongitude: 21.898093,
 };
 
-const ProviderManager = Service.extend({
-  modifyProvider() {
-    return Promise.resolve({});
+const ClusterManager = Service.extend({
+  getConfiguration() {
+    return Promise.resolve({
+      data: {
+        onezone: {
+          domainName: 'example.com',
+        },
+      },
+    });
   },
 });
 
+const WebCertManager = Service.extend({
+  getWebCert() {
+    return Promise.resolve({
+      letsEncrypt: false,
+    });
+  },
+  modifyWebCert() {
+    return Promise.resolve();
+  },
+});
+
+const OnepanelServer = Service.extend({
+  serviceType: 'zone',
+});
+
 describe('Integration | Component | new cluster provider cert', function () {
-  setupComponentTest('new-cluster-provider-cert', {
+  setupComponentTest('new-cluster-web-cert', {
     integration: true,
   });
 
   beforeEach(function () {
     registerService(this, 'i18n', I18nStub);
-    registerService(this, 'provider-manager', ProviderManager);
+    registerService(this, 'web-cert-manager', WebCertManager);
+    registerService(this, 'cluster-manager', ClusterManager);
+    registerService(this, 'onepanel-server', OnepanelServer);
     this.set('_location', {});
   });
 
-  it('renders information about disabled cert generation', function () {
-    const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
-      subdomainDelegation: false,
-    });
-    this.set('providerDetailsProxy', PromiseObject.create({
-      promise: Promise.resolve(providerDetails),
-    }));
-
-    this.render(hbs `{{new-cluster-provider-cert
-      providerDetailsProxy=providerDetailsProxy
-      _location=_location
-    }}`);
-
-    return wait().then(() => {
-      expect(this.$('.text-subdomain'), 'subdomain text').to.not.exist;
-      expect(this.$('.text-no-subdomain'), 'no-subdomain text').to.exist;
-    });
-  });
-
-  it('does not change the domain on next step if subdomainDelegation is diabled',
-    function () {
-      const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
-        subdomainDelegation: false,
-      });
-      this.set('providerDetailsProxy', PromiseObject.create({
-        promise: Promise.resolve(providerDetails),
-      }));
-      const changeDomain = sinon.spy();
-      this.on('changeDomain', changeDomain);
-      const nextStep = sinon.spy();
-      this.on('nextStep', nextStep);
-
-      this.render(hbs `{{new-cluster-provider-cert
-        providerDetailsProxy=providerDetailsProxy
-        _changeDomain=(action "changeDomain")
-        _location=_location
-        nextStep=(action "nextStep")
-      }}`);
-
-      return click('.btn-cert-next').then(() => {
-        expect(changeDomain).to.be.not.called;
-        expect(nextStep).to.be.called;
-      });
-    }
-  );
-
   it(
-    'changes the domain on next step if subdomainDelegation and LetsEncrypt are enabled',
+    'changes the domain on next step if LetsEncrypt are enabled',
     function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
@@ -101,8 +78,7 @@ describe('Integration | Component | new cluster provider cert', function () {
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
 
-      this.render(hbs `{{new-cluster-provider-cert
-        providerDetailsProxy=providerDetailsProxy
+      this.render(hbs `{{new-cluster-web-cert
         _changeDomain=(action "changeDomain")
         _location=_location
         nextStep=(action "nextStep")
@@ -131,15 +107,14 @@ describe('Integration | Component | new cluster provider cert', function () {
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
 
-      this.render(hbs `{{new-cluster-provider-cert
-        providerDetailsProxy=providerDetailsProxy
+      this.render(hbs `{{new-cluster-web-cert
         _changeDomain=(action "changeDomain")
         _location=_location
         nextStep=(action "nextStep")
       }}`);
 
       return wait().then(() => {
-        return click('.toggle-field-letsEncryptEnabled').then(() => {
+        return click('.toggle-field-letsEncrypt').then(() => {
           return click('.btn-cert-next').then(() => {
             expect(changeDomain, 'changeDomain').to.be.not.called;
             expect(nextStep, 'nextStep').to.be.called;

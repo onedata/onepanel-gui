@@ -28,6 +28,7 @@ import SpaceCleaningReportsMock from 'ember-onedata-onepanel-server/mixins/space
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
+import moment from 'moment';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
@@ -47,6 +48,24 @@ const MOCK_SERVICE_TYPE = 'provider';
  * @type {number}
  */
 const RESPONSE_DELAY = 100;
+
+const defaultWebCert = {
+  status: 'near_expiration',
+  letsEncrypt: true,
+  expirationTime: moment().subtract(2, 'months').add(4, 'years').toISOString(),
+  creationTime: moment().subtract(2, 'months').toISOString(),
+  paths: {
+    cert: '/tmp/cert.pem',
+    key: '/tmp/key.pem',
+    chain: '/tmp/chain.ca',
+  },
+  domain: 'example.com',
+  issuer: 'Example Inc.',
+  lastRenewalSuccess: moment().subtract(1, 'week').toISOString(),
+  lastRenewalFailure: null,
+};
+
+const defaultLetsEncryptDeployed = true;
 
 /**
  * Used when generating providers support data
@@ -96,14 +115,14 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    // NOTE: for testing purposes set eg. STEP.PROVIDER_CERT_GENERATE,
+    // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
     // see STEP import for more info
-    // mockStep: Number(STEP.PROVIDER_IPS),
+    // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
-    mockInitializedCluster: computed.equal(
+    mockInitializedCluster: computed.gte(
       'mockStep',
       MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
     ),
@@ -282,8 +301,10 @@ export default OnepanelServerBase.extend(
             geoLongitude: 21.898093,
           }));
         }
-        if (mockStep > STEP.PROVIDER_CERT_GENERATE) {
-          this.set('__provider.letsEncryptEnabled', true);
+        if (mockStep > STEP.PROVIDER_WEB_CERT) {
+          // TODO: deprecated __provider.letsEncryptEnabled
+          this.set('__provider.letsEncryptEnabled', defaultLetsEncryptDeployed);
+          this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
         if (mockStep > STEP.PROVIDER_STORAGE_ADD) {
           let storage1 = {
@@ -359,7 +380,12 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
+      } else if (MOCK_SERVICE_TYPE === 'zone') {
+        if (mockStep > STEP.ZONE_WEB_CERT) {
+          this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
+        }
       }
+
     },
 
     progressMock: computed('serviceType', function () {
@@ -368,6 +394,36 @@ export default OnepanelServerBase.extend(
     }),
 
     /// mocked request handlers - override to change server behaviour
+
+    _req_onepanel_getWebCert() {
+      const __webCert = this.get('__webCert');
+      return {
+        success() {
+          return __webCert;
+        },
+        statusCode() {
+          return __webCert ? 200 : 404;
+        },
+      };
+    },
+
+    _req_onepanel_modifyWebCert() {
+      const __webCert = this.get('__webCert');
+      return {
+        success({ letsEncrypt }) {
+          if (__webCert) {
+            set(__webCert, 'letsEncrypt', letsEncrypt);
+          } else {
+            this.set(
+              '__webCert',
+              _.assign({ letsEncrypt }, defaultWebCert)
+            );
+          }
+          return null;
+        },
+        statusCode: () => 204,
+      };
+    },
 
     _req_onepanel_getClusterHosts: computed(function () {
       return {
@@ -512,20 +568,17 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getProviderConfiguration: computed(
-      'mockStep',
-      '__configuration',
-      function () {
-        if (this.get('mockStep') > STEP.PROVIDER_DEPLOY) {
-          return {
-            success: () => this.get('__configuration').plainCopy(),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getProviderConfiguration() {
+      if (this.get('mockStep') > STEP.PROVIDER_DEPLOY) {
+        return {
+          success: () => this.get('__configuration').plainCopy(),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
     _req_oneprovider_getProvider() {
       if (this.get('__provider')) {
@@ -658,19 +711,17 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getZoneConfiguration: computed('mockInitializedCluster',
-      '__configuration',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          return {
-            success: () => this.get('__configuration').plainCopy(),
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_onezone_getZoneConfiguration() {
+      if (this.get('mockStep') >= STEP.ZONE_DEPLOY + 1) {
+        return {
+          success: () => this.get('__configuration').plainCopy(),
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
     _req_oneprovider_getProviderSpaceAutoCleaningReports: computed(function () {
       return {
@@ -748,6 +799,8 @@ export default OnepanelServerBase.extend(
 
     __provider: undefined,
 
+    __webCert: defaultWebCert,
+
     __configuration: PlainableObject.create({
       cluster: {
         databases: {
@@ -764,6 +817,7 @@ export default OnepanelServerBase.extend(
       // TODO add this only in zone mode
       onezone: {
         name: null,
+        domainName: window.location.hostname,
       },
       // TODO add this only in provider mode
       oneprovider: {

@@ -1,0 +1,107 @@
+<div class="row content-row header-row hidden-xs">
+  <h1 class="with-menu">
+    <span class="one-label">{{tt this "header"}}</span>
+    {{actions-toolbar actionsArray=globalActions}}
+  </h1>
+</div>
+
+{{#if (not (eq status "valid"))}}
+  <div class="row">
+    <div class="col-xs-12">
+      {{#if (eq status "domain_mismatch")}}
+        <div class="alert alert-warning">
+          <div class="row">
+            {{tt this "wrongDomainCommon"}}
+            {{#if letsEncrypt}}
+              {{tt this "autoRenewalLetsEncrypt"}}
+            {{else}}
+              {{tt this "toRenewIt"}}
+              <ul>
+                <li>
+                  {{tt this "toRenewLi1"}}
+                  <a href={{one-doc-url "administering_onedata/ssl_certificate_management.html"}}>
+                    {{tt this "certDocsLink"}}
+                  </a>)
+                </li>
+                <li>{{tt this "toRenewLi2"}}</li>
+              </ul>
+            {{/if}}
+          </div>
+          {{#if letsEncrypt}}
+            <div class="row">
+              <div class="col-xs-12 text-right">
+                {{#one-spin-button
+                  type="submit"
+                  class="btn btn-default btn-sm"
+                  action=(action "refreshCert")
+                }}
+                  {{tt this "renewCertBtn"}}
+                {{/one-spin-button}}
+              </div>
+            </div>
+          {{/if}}
+        </div>
+      {{else if (or (eq status "expired") (eq status "near_expiration"))}}
+        <div class="alert alert-{{if (eq status "expired") "warning" "info"}}">
+          <div class="row">
+            {{tt this (if (eq status "expired") "expiredCommon" "nearExpirationCommon")}}
+            {{date-format expirationTime "cert"}}.
+            {{#if letsEncrypt}}
+              {{tt this "autoRenewalLetsEncrypt"}}
+            {{else}}
+              {{tt this "toRenewIt"}}
+              <ul>
+                <li>
+                  {{tt this "toRenewLi1"}}
+                  <a href={{one-doc-url "administering_onedata/ssl_certificate_management.html"}}>
+                    {{tt this "certDocsLink"}}
+                  </a>)
+                </li>
+                <li>{{tt this "toRenewLi2"}}</li>
+              </ul>
+            {{/if}}
+          </div>
+          {{#if letsEncrypt}}
+            <div class="row">
+              <div class="col-xs-12 text-right">
+                {{#one-spin-button
+                  type="submit"
+                  class="btn btn-default btn-sm"
+                  action=(action "refreshCert")
+                }}
+                  {{tt this "renewCertBtn"}}
+                {{/one-spin-button}}
+              </div>
+            </div>
+          {{/if}}
+        </div>
+      {{else if (eq status "regenerating")}}
+        <div class="alert alert-info">
+          {{tt this "regenerating"}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+{{/if}}
+
+<div class="row">
+  {{#if shouldPollWebCert}}
+    <div class="loadable-row lg">
+      {{spin-spinner-block sizeClass="md" class="absolute-middle-centered"}}
+    </div>
+  {{else}}
+    <div class="row content-row row-small">
+      <h1 class="form-title">{{_formTitle}}</h1>
+      {{#promise-proxy-container proxy=webCertProxy}}
+        {{web-cert-form
+          isEditing=_editing
+          webCert=webCert
+          changeDomain=(action "changeDomain")
+          submit=(action "submitModify")
+        }}
+      {{/promise-proxy-container}}
+    </div>
+  {{/if}}
+</div>
+
+{{modal-redirect open=showRedirectPage}}

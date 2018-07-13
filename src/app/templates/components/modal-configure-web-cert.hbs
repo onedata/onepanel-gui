@@ -1,0 +1,33 @@
+{{#bs-modal
+  id="configure-web-cert"
+  open=open
+  keyboard=false
+  backdropClose=false
+  as |modal|
+}}
+  {{#modal.body}}
+    <div class="modal-info-content">
+      <div class="modal-info-icon">
+        {{one-icon icon="sign-warning"}}
+      </div>
+      <div class="modal-info-text">
+        {{tt this "text"}}
+      </div>
+    </div>
+  {{/modal.body}}
+  {{#modal.footer}}
+    {{#link-to
+      "onedata.sidebar.content.aspect"
+      "certificate"
+      class="btn btn-primary"
+    }}
+      {{tt this "btnGoToCert"}}
+    {{/link-to}}
+    {{#bs-button
+      type="default"
+      onClick=(action modal.close)
+    }}
+      {{tt this "btnDiscard"}}
+    {{/bs-button}}
+  {{/modal.footer}}
+{{/bs-modal}}

@@ -7,7 +7,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { readOnly } from '@ember/object/computed';
+import { readOnly, reads } from '@ember/object/computed';
 
 import { next } from '@ember/runloop';
 import EmberObject, {
@@ -23,6 +23,7 @@ import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
@@ -55,13 +56,6 @@ const HOSTNAME_FIELD = {
   name: 'domain',
   type: 'text',
   regex: DOMAIN_REGEX,
-  tip: true,
-};
-
-const LETSENCRYPT_ENABLED_FIELD = {
-  name: 'letsEncryptEnabled',
-  type: 'checkbox',
-  defaultValue: false,
   tip: true,
 };
 
@@ -143,12 +137,10 @@ const ALL_PREFIXES = [
   'editTop',
   'editBottom',
   'editDomain',
-  'editLetsEncryptEnabled',
   'editSubdomain',
   'showTop',
   'showBottom',
   'showDomain',
-  'showLetsEncryptEnabled',
   'showSubdomain',
 ];
 
@@ -156,6 +148,7 @@ export default OneForm.extend(Validations, I18n, {
   classNames: ['provider-registration-form'],
 
   i18n: service(),
+  webCertManager: service(),
 
   i18nPrefix: 'components.providerRegistrationForm',
 
@@ -199,6 +192,13 @@ export default OneForm.extend(Validations, I18n, {
    */
   submit: () => {},
 
+  letsEncrypt: reads('webCertProxy.letsEncrypt'),
+
+  webCertProxy: computed(function webCertProxy() {
+    const promise = this.get('webCertManager').getWebCert();
+    return PromiseObject.create({ promise });
+  }),
+
   currentFieldsPrefix: computed('mode', '_subdomainDelegation', function () {
     let {
       mode,
@@ -207,17 +207,13 @@ export default OneForm.extend(Validations, I18n, {
     switch (mode) {
       case 'show':
         if (_subdomainDelegation) {
-          return ['showTop', 'showSubdomain', 'showLetsEncryptEnabled',
-            'showBottom',
-          ];
+          return ['showTop', 'showSubdomain', 'showBottom'];
         } else {
           return ['showTop', 'showDomain', 'showBottom'];
         }
       case 'edit':
         if (_subdomainDelegation) {
-          return ['editTop', 'editSubdomain', 'editLetsEncryptEnabled',
-            'editBottom',
-          ];
+          return ['editTop', 'editSubdomain', 'editBottom'];
         } else {
           return ['editTop', 'editDomain', 'editBottom'];
         }
@@ -245,7 +241,6 @@ export default OneForm.extend(Validations, I18n, {
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
-      letsEncryptEnabledField: prepareField(LETSENCRYPT_ENABLED_FIELD),
       subdomainField: prepareField(SUBDOMAIN_FIELD),
     });
     return fields;
@@ -291,20 +286,6 @@ export default OneForm.extend(Validations, I18n, {
       return this._preprocessField(
         this.get('_fieldsSource.domainField'),
         'editDomain'
-      );
-    }
-  ),
-
-  /**
-   * Let's Encrypt toggle field
-   * @type {computed.Ember.Object}
-   */
-  _letsEncryptEnabledEditField: computed('_fieldsSource.letsEncryptEnabledField',
-    'provider',
-    function () {
-      return this._preprocessField(
-        this.get('_fieldsSource.letsEncryptEnabledField'),
-        'editLetsEncryptEnabled'
       );
     }
   ),
@@ -359,21 +340,6 @@ export default OneForm.extend(Validations, I18n, {
   ),
 
   /**
-   * Domain static field
-   * @type {computed.Ember.Object}
-   */
-  _letsEncryptEnabledStaticField: computed('_fieldsSource.letsEncryptEnabledField',
-    'provider',
-    function () {
-      return this._preprocessField(
-        this.get('_fieldsSource.letsEncryptEnabledField'),
-        'showLetsEncryptEnabled',
-        true
-      );
-    }
-  ),
-
-  /**
    * Subdomain static field
    * @type {computed.Ember.Object}
    */
@@ -391,24 +357,20 @@ export default OneForm.extend(Validations, I18n, {
     '_editTopFields',
     '_editBottomFields',
     '_domainEditField',
-    '_letsEncryptEnabledEditField',
     '_subdomainEditField',
     '_staticTopFields',
     '_staticBottomFields',
     '_domainStaticField',
-    '_letsEncryptEnabledStaticField',
     '_subdomainStaticField',
     function () {
       let properties = [
         '_editTopFields',
         '_editBottomFields',
         '_domainEditField',
-        '_letsEncryptEnabledEditField',
         '_subdomainEditField',
         '_staticTopFields',
         '_staticBottomFields',
         '_domainStaticField',
-        '_letsEncryptEnabledStaticField',
         '_subdomainStaticField',
       ];
       let fields = [];
@@ -468,22 +430,19 @@ export default OneForm.extend(Validations, I18n, {
   _willChangeDomainAfterSubmit: computed(
     'mode',
     'currentFields.@each.changed',
-    'allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled',
     function getWillChangeDomainAfterSubmit() {
       if (this.get('mode') === 'edit') {
         const currentFields = this.get('currentFields');
         const domainField = _.find(currentFields, { name: 'editDomain.domain' });
         const subdomainField = _.find(currentFields, { name: 'editSubdomain.subdomain' });
-        const letsEncryptField = _.find(currentFields, { name: 'editLetsEncryptEnabled.letsEncryptEnabled' });
         return domainField && get(domainField, 'changed') ||
-          subdomainField && get(subdomainField, 'changed') ||
-          letsEncryptField && get(letsEncryptField, 'changed') &&
-          this.get('allFieldsValues.editLetsEncryptEnabled.letsEncryptEnabled');
+          subdomainField && get(subdomainField, 'changed');
       } else {
         return false;
       }
     }
   ),
+
   _modeObserver: observer('mode', function () {
     this.resetFormValues(ALL_PREFIXES);
   }),
