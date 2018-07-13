@@ -52,6 +52,7 @@ const storagePathTypeDefaults = {
   glusterfs: 'canonical',
   nulldevice: 'canonical',
   ceph: 'flat',
+  cephrados: 'flat',
   s3: 'flat',
   swift: 'flat',
 };
