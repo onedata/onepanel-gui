@@ -1,5 +1,5 @@
 /**
- * Modal that show information about changed domain 
+ * Modal that shows information about changed domain 
  *
  * @module components/modal-configure-web-cert
  * @author Jakub Liput
@@ -14,10 +14,4 @@ export default Component.extend(I18n, {
   classNames: ['modal-configure-web-cert'],
 
   i18nPrefix: 'components.modalConfigureWebCert',
-
-  actions: {
-    goToWebCert() {
-
-    },
-  },
 });

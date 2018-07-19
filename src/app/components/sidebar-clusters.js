@@ -35,24 +35,40 @@ export default TwoLevelSidebar.extend(I18n, {
    */
   sidebarType: 'clusters',
 
+  certificateItem: computed(function certificateItem() {
+    return {
+      id: 'certificate',
+      label: this.t('menuItems.certificate'),
+      icon: 'certificate',
+    };
+  }),
+
+  nodesItem: computed(function nodesItem() {
+    return {
+      id: 'nodes',
+      label: this.t('menuItems.nodes'),
+      icon: 'node',
+    };
+  }),
+
   secondLevelItems: computed('onepanelServiceType', 'cluster.isInitialized', function () {
     let {
       onepanelServiceType,
       cluster,
-    } = this.getProperties('onepanelServiceType', 'cluster');
+      certificateItem,
+      nodesItem,
+    } = this.getProperties(
+      'onepanelServiceType',
+      'cluster',
+      'certificateItem',
+      'nodesItem'
+    );
     if (cluster.get('isInitialized')) {
       switch (onepanelServiceType) {
         case 'provider':
-          return [{
-              id: 'nodes',
-              label: this.t('menuItems.nodes'),
-              icon: 'node',
-            },
-            {
-              id: 'certificate',
-              label: this.t('menuItems.certificate'),
-              icon: 'certificate',
-            },
+          return [
+            nodesItem,
+            certificateItem,
             {
               id: 'provider',
               label: this.t('menuItems.provider'),
@@ -70,16 +86,9 @@ export default TwoLevelSidebar.extend(I18n, {
             },
           ];
         case 'zone':
-          return [{
-              id: 'nodes',
-              label: this.t('menuItems.nodes'),
-              icon: 'node',
-            },
-            {
-              id: 'certificate',
-              label: this.t('menuItems.certificate'),
-              icon: 'certificate',
-            },
+          return [
+            nodesItem,
+            certificateItem,
           ];
         default:
           return [];

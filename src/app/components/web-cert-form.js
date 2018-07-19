@@ -18,6 +18,7 @@ import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { buildValidations } from 'ember-cp-validations';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const Validations = buildValidations({});
 
@@ -84,6 +85,7 @@ export default OneForm.extend(I18n, Validations, {
   classNames: ['web-cert-form'],
 
   i18n: service(),
+  globalNotify: service(),
 
   i18nPrefix: 'components.webCertForm',
 
@@ -151,8 +153,8 @@ export default OneForm.extend(I18n, Validations, {
     'staticFields',
     'letsEncryptInfoFields',
     function () {
-      return [].concat(
-        ..._.values(
+      return _.flatten(
+        _.values(
           this.getProperties(
             'letsEncryptEditField',
             'letsEncryptStaticField',
@@ -334,8 +336,12 @@ export default OneForm.extend(I18n, Validations, {
             this.get('changeDomain')(domain);
           }
         })
+        .catch(error => {
+          this.get('globalNotify').backendError(this.t('modifyingWebCert'), error,
+            '');
+        })
         .finally(() => {
-          this.set('disabled', false);
+          safeExec(this, 'set', 'disabled', false);
         });
     },
   },

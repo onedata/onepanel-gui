@@ -57,7 +57,7 @@ const defaultWebCert = {
   paths: {
     cert: '/tmp/cert.pem',
     key: '/tmp/key.pem',
-    chain: '/tmp/chain.ca',
+    chain: '/tmp/very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain.ca',
   },
   domain: 'example.com',
   issuer: 'Example Inc.',

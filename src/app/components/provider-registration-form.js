@@ -7,7 +7,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { readOnly, reads } from '@ember/object/computed';
+import { readOnly } from '@ember/object/computed';
 
 import { next } from '@ember/runloop';
 import EmberObject, {
@@ -191,8 +191,6 @@ export default OneForm.extend(Validations, I18n, {
    * * formData {Object} data from form
    */
   submit: () => {},
-
-  letsEncrypt: reads('webCertProxy.letsEncrypt'),
 
   webCertProxy: computed(function webCertProxy() {
     const promise = this.get('webCertManager').getWebCert();

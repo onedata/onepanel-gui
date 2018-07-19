@@ -1,5 +1,6 @@
 export default {
   submit: 'Modify certificate settings',
+  modifyingWebCert: 'modifying web certificate',
   fields: {
     letsEncrypt: {
       label: 'Use Let\'s Encrypt',
@@ -35,11 +36,11 @@ export default {
     },
     lastRenewalSuccess: {
       label: 'Last renewal success',
-      tip: 'Date and time in ISO 8601 format. Represents last successful attempt to obtain certificate from Let\'s Encrypt. If there are no successful attempts its value is null. This property is omitted if Let\'s Encrypt is off.',
+      tip: 'Date and time of last successful attempt to obtain certificate from Let\'s Encrypt (may be "never").',
     },
     lastRenewalFailure: {
       label: 'Last renewal failure',
-      tip: 'Date and time in ISO 8601 format. Represents last unsucesfful attempt to obtain certificate from Let\'s Encrypt. If there are no successful attempts its value is null. This property is omitted if Let\'s Encrypt is off.',
+      tip: 'Date and time of last unsucessful attempt to obtain certificate from Let\'s Encrypt (may be "never").',
     },
   },
 };

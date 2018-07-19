@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { reads } from '@ember/object/computed';
 
 import { inject as service } from '@ember/service';
-import { default as EmberObject, computed, setProperties, observer } from '@ember/object';
+import EmberObject, { computed, setProperties, observer } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -19,6 +19,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import Looper from 'onedata-gui-common/utils/looper';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
+import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
 
 const {
   time: {
@@ -80,10 +81,10 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   shouldPollWebCert: computed(
-    'webCert.status',
+    'status',
     'regeneratePending',
     function shouldPollWebCert() {
-      return this.get('webCert.status') === 'regenerating' ||
+      return this.get('status') === 'regenerating' ||
         this.get('regeneratePending');
     }
   ),
@@ -102,9 +103,7 @@ export default Component.extend(I18n, GlobalActions, {
   /**
    * @type {EmberObject<Onepanel.WebCert>}
    */
-  webCert: computed('webCertProxy.content', function webCert() {
-    return EmberObject.create(this.get('webCertProxy.content'));
-  }),
+  webCert: computedPipe('webCertProxy.content', EmberObject.create.bind(EmberObject)),
 
   _formTitle: computed(function _formTitle() {
     return this.t('formTitleStatic');
@@ -143,6 +142,11 @@ export default Component.extend(I18n, GlobalActions, {
     };
   }),
 
+  init() {
+    this._super(...arguments);
+    this.updateWebCertProxy();
+  },
+
   /**
    * Alias for testing puproses
    * Using the same parameters as `util:changeDomain`
@@ -161,11 +165,6 @@ export default Component.extend(I18n, GlobalActions, {
         .getWebCert(),
     });
     safeExec(this, 'set', 'webCertProxy', proxy);
-  },
-
-  init() {
-    this._super(...arguments);
-    this.updateWebCertProxy();
   },
 
   actions: {
