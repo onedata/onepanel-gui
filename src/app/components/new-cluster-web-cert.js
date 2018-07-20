@@ -30,6 +30,7 @@ export default Component.extend(I18n, {
   onepanelServer: service(),
   clusterManager: service(),
   webCertManager: service(),
+  providerManager: service(),
   globalNotify: service(),
   i18n: service(),
 

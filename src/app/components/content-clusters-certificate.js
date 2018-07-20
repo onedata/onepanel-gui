@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { reads } from '@ember/object/computed';
 
 import { inject as service } from '@ember/service';
-import EmberObject, { computed, setProperties, observer } from '@ember/object';
+import EmberObject, { get, computed, setProperties, observer } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -34,6 +34,9 @@ const webCertPollInterval = 2000;
 
 export default Component.extend(I18n, GlobalActions, {
   webCertManager: service(),
+  onepanelServer: service(),
+  clusterManager: service(),
+  providerManager: service(),
 
   i18nPrefix: 'components.contentClustersCertificate',
 
@@ -64,6 +67,8 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {boolean}
    */
   showRedirectPage: false,
+
+  onepanelServiceType: reads('onepanelServer.serviceType'),
 
   /**
    * True, if regenerate action is pending
@@ -107,6 +112,27 @@ export default Component.extend(I18n, GlobalActions, {
 
   _formTitle: computed(function _formTitle() {
     return this.t('formTitleStatic');
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<string|undefined>>}
+   */
+  redirectDomain: computed('onepanelServiceType', function redirectDomain() {
+    const onepanelServiceType = this.get('onepanelServiceType');
+    let promise;
+    switch (onepanelServiceType) {
+      case 'provider':
+        promise = this.get('providerManager').getProviderDetails()
+          .then(provider => provider && get(provider, 'domain'));
+        break;
+      case 'zone':
+        promise = this.get('clusterManager').getConfiguration()
+          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
+        break;
+      default:
+        throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
+    }
+    return PromiseObject.create({ promise });
   }),
 
   configureWebCertPoll: observer('shouldPollWebCert', function configureWebCertPoll() {
@@ -183,7 +209,7 @@ export default Component.extend(I18n, GlobalActions, {
             );
           });
         })
-        .then(this.updateWebCertProxy.bind(this))
+        .finally(this.updateWebCertProxy.bind(this))
         .then(() => safeExec(this, 'set', '_editing', false));
     },
 
@@ -202,11 +228,15 @@ export default Component.extend(I18n, GlobalActions, {
       return regeneratePromise;
     },
 
-    changeDomain(domain) {
+    changeDomain() {
       this.set('showRedirectPage', true);
-      return changeDomain(domain, {
-        delay: redirectDomainDelay,
-      }).catch(() => safeExec(this, 'set', 'showRedirectPage', false));
+      this.get('redirectDomain')
+        .then(domain => changeDomain(
+          domain, {
+            delay: redirectDomainDelay,
+          }
+        ))
+        .catch(() => safeExec(this, 'set', 'showRedirectPage', false));
     },
   },
 });

@@ -6,7 +6,7 @@ export default {
   letsEncryptToggle: 'Use Let\'s Encrypt',
   certificateGeneration: 'certificate setup',
   generationSuccess: 'The certificate has been obtained and installed successfully',
-  redirectInfo: 'When the new certificate has been installed, the page will be reloaded with the new Oneprovider domain.',
+  redirectInfo: 'When the new certificate has been installed, the page will be reloaded with the new domain.',
   manualWarning: 'You will have to manually obtain and set up proper TLS certificates, instructions can be found here:',
   certDocsLink,
   text: {

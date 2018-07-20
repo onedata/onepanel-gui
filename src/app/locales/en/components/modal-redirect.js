@@ -1,3 +1,3 @@
 export default {
-  redirectingProgress: 'Redirecting to the new Oneprovider domain...',
+  redirectingProgress: 'Redirecting to the new domain...',
 };

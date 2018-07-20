@@ -332,13 +332,15 @@ export default OneForm.extend(I18n, Validations, {
       return this.get('submit')(webCertChange)
         .then(() => {
           if (willChangeDomainAfterSubmit) {
-            const domain = this.get('provider.domain');
-            this.get('changeDomain')(domain);
+            this.get('changeDomain')();
           }
         })
         .catch(error => {
-          this.get('globalNotify').backendError(this.t('modifyingWebCert'), error,
-            '');
+          this.get('globalNotify').backendError(
+            this.t('modifyingWebCert'),
+            error,
+            ''
+          );
         })
         .finally(() => {
           safeExec(this, 'set', 'disabled', false);
