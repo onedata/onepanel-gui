@@ -47,17 +47,19 @@
     </div>
   {{/modal.body}}
   {{#modal.footer}}
-    {{#one-spin-button
-      action=(action "submit")
-      class="btn btn-primary"
-    }}
-      {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
-    {{/one-spin-button}}
-    {{#bs-button
-      type="default"
-      onClick=modal.close
-    }}
-      {{tt this "changedModal.cancel"}}
-    {{/bs-button}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        type="default"
+        onClick=modal.close
+      }}
+        {{tt this "changedModal.cancel"}}
+      {{/bs-button}}
+      {{#one-spin-button
+        action=(action "submit")
+        class="btn btn-primary"
+      }}
+        {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
+      {{/one-spin-button}}
+    </div>
   {{/modal.footer}}
 {{/bs-modal}}

@@ -16,18 +16,20 @@
     </div>
   {{/modal.body}}
   {{#modal.footer}}
-    {{#link-to
-      "onedata.sidebar.content.aspect"
-      "certificate"
-      class="btn btn-primary"
-    }}
-      {{tt this "btnGoToCert"}}
-    {{/link-to}}
-    {{#bs-button
-      type="default"
-      onClick=(action modal.close)
-    }}
-      {{tt this "btnDiscard"}}
-    {{/bs-button}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        type="default"
+        onClick=(action modal.close)
+      }}
+        {{tt this "btnDiscard"}}
+      {{/bs-button}}
+      {{#link-to
+        "onedata.sidebar.content.aspect"
+        "certificate"
+        class="btn btn-primary"
+      }}
+        {{tt this "btnGoToCert"}}
+      {{/link-to}}
+    </div>
   {{/modal.footer}}
 {{/bs-modal}}
