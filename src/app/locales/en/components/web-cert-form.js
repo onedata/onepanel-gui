@@ -43,4 +43,17 @@ export default {
       tip: 'Date and time of last unsucessful attempt to obtain certificate from Let\'s Encrypt (may be "never").',
     },
   },
+  changedModal: {
+    submitBtn: {
+      enable: 'Enable Let\'s Encrypt',
+      disable: 'Disable Let\'s Encrypt',
+    },
+    text: {
+      enableP1: 'After enabling Let\'s Encrypt, web certificate will be obtained and renewed automatically as necessary.',
+      enableP2: 'By using the Let\'s Encrypt service you agree to the current Let\'s Encrypt Subscriber Agreement:',
+      enableP3: 'When the new certificate has been installed, the page will be reloaded.',
+      disable: 'After disabling Let\'s Encrypt, you will have to manually obtain and set up proper web certificate.',
+    },
+    cancel: 'Cancel',
+  },
 };

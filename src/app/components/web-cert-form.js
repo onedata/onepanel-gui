@@ -7,17 +7,14 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, {
-  computed,
-  get,
-} from '@ember/object';
-import { reads } from '@ember/object/computed';
+import EmberObject, { computed, get, observer } from '@ember/object';
+import { reads, alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import OneForm from 'onedata-gui-common/components/one-form';
+import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
+import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
-import { buildValidations } from 'ember-cp-validations';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const Validations = buildValidations({});
@@ -26,31 +23,38 @@ const staticFields = [{
     name: 'expirationTime',
     type: 'static',
     format: 'date',
+    tip: true,
   },
   {
     name: 'creationTime',
     type: 'static',
     format: 'date',
+    tip: true,
   },
   {
     name: 'domain',
     type: 'static',
+    tip: true,
   },
   {
     name: 'issuer',
     type: 'static',
+    tip: true,
   },
   {
     name: 'certPath',
     type: 'static',
+    tip: true,
   },
   {
     name: 'keyPath',
     type: 'static',
+    tip: true,
   },
   {
     name: 'chainPath',
     type: 'static',
+    tip: true,
   },
 ];
 
@@ -58,17 +62,20 @@ const letsEncryptInfoFields = [{
     name: 'lastRenewalSuccess',
     type: 'static',
     format: 'date',
+    tip: true,
   },
   {
     name: 'lastRenewalFailure',
     type: 'static',
     format: 'date',
+    tip: true,
   },
 ];
 
 const letsEncryptField = {
   name: 'letsEncrypt',
   type: 'checkbox',
+  tip: true,
 };
 
 /**
@@ -98,12 +105,6 @@ export default OneForm.extend(I18n, Validations, {
 
   /**
    * @virtual
-   * @type {boolean}
-   */
-  isEditing: false,
-
-  /**
-   * @virtual
    * @type {Function}
    */
   changeDomain: notImplementedReject,
@@ -120,21 +121,30 @@ export default OneForm.extend(I18n, Validations, {
    */
   submit: notImplementedReject,
 
+  showLetsEncryptChangeModal: false,
+
+  /**
+   * Currently displayed value of Let's Encrypt toggle
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  formLetsEncryptValue: alias('allFieldsValues.editLetsEncrypt.letsEncrypt'),
+
+  /**
+   * State of letsEncrypt configuration from backend.
+   * This is not current state of form! It should be updated externally.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   letsEncrypt: reads('webCert.letsEncrypt'),
 
   /**
    * @override
    */
   currentFieldsPrefix: computed(
-    'isEditing',
     'letsEncrypt',
     function currentFieldsPrefix() {
-      const {
-        isEditing,
-        letsEncrypt,
-      } = this.getProperties('isEditing', 'letsEncrypt');
+      const letsEncrypt = this.get('letsEncrypt');
       const prefixes = [
-        isEditing ? 'editLetsEncrypt' : 'showLetsEncrypt',
+        'editLetsEncrypt',
       ];
       if (letsEncrypt) {
         prefixes.push('letsEncryptInfoFields');
@@ -149,15 +159,13 @@ export default OneForm.extend(I18n, Validations, {
    */
   allFields: computed(
     'letsEncryptEditField',
-    'letsEncryptStaticField',
     'staticFields',
     'letsEncryptInfoFields',
-    function () {
+    function allFields() {
       return _.flatten(
         _.values(
           this.getProperties(
             'letsEncryptEditField',
-            'letsEncryptStaticField',
             'letsEncryptInfoFields',
             'staticFields',
           )
@@ -172,7 +180,6 @@ export default OneForm.extend(I18n, Validations, {
   allFieldsValues: computed(
     'webCert',
     'allFields',
-    'isEditing',
     function allFieldsValues() {
       const webCert = this.get('webCert');
       const values = EmberObject.create({});
@@ -234,33 +241,21 @@ export default OneForm.extend(I18n, Validations, {
    * Static fields
    * @type {Ember.ComputedProperty<Array<Ember.Object>>}
    */
-  staticFields: computed('fieldsSource.staticFields', 'webCert', function () {
-    return this.get('fieldsSource.staticFields')
-      .map(field => this.preprocessField(field, 'staticFields', true));
-  }),
+  staticFields: computed(
+    'fieldsSource.staticFields',
+    'webCert',
+    function staticFields() {
+      return this.get('fieldsSource.staticFields')
+        .map(field => this.preprocessField(field, 'staticFields', true));
+    }
+  ),
 
   letsEncryptInfoFields: computed(
     'fieldsSource.letsEncryptInfoFields',
     'webCert',
-    function letsEncryptStaticFields() {
+    function letsEncryptInfoFields() {
       return this.get('fieldsSource.letsEncryptInfoFields')
         .map(field => this.preprocessField(field, 'letsEncryptInfoFields', true));
-    }
-  ),
-
-  /**
-   * LE static field
-   * @type {computed.Ember.Object}
-   */
-  letsEncryptStaticField: computed(
-    'fieldsSource.letsEncryptField',
-    'webCert',
-    function letsEncryptStaticField() {
-      return this.preprocessField(
-        this.get('fieldsSource.letsEncryptField'),
-        'showLetsEncrypt',
-        true
-      );
     }
   ),
 
@@ -277,6 +272,13 @@ export default OneForm.extend(I18n, Validations, {
         'editLetsEncrypt',
         false
       );
+    }
+  ),
+
+  letsEncryptChanged: observer(
+    'allFieldsValues.editLetsEncrypt.letsEncrypt',
+    function letsEncryptChanged() {
+      this.set('showLetsEncryptChangeModal', true);
     }
   ),
 
@@ -345,6 +347,11 @@ export default OneForm.extend(I18n, Validations, {
         .finally(() => {
           safeExec(this, 'set', 'disabled', false);
         });
+    },
+
+    changedModalCanceled() {
+      this.toggleProperty('formLetsEncryptValue');
+      this.set('showLetsEncryptChangeModal', false);
     },
   },
 });

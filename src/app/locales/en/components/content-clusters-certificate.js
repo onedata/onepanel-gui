@@ -3,8 +3,6 @@ import { certDocsLink } from './-certificates';
 export default {
   header: 'Web certificate',
   formTitleStatic: 'Web certificate details',
-  modifyWebCertDetails: 'Modify web certificate',
-  cancelModifying: 'Cancel modifying',
   forceRenewCertBtn: 'Force renewal now',
   renewCertBtn: 'Renew certificate',
   toRenewIt: 'To renew it, you can:',

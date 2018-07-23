@@ -95,17 +95,6 @@ export default Component.extend(I18n, GlobalActions, {
   ),
 
   /**
-   * @override 
-   * @type {Ember.ComputedProperty<Array<Action>>}
-   */
-  globalActions: computed(
-    '_toggleModifyWebCertAction',
-    function getGlobalActions() {
-      return [this.get('_toggleModifyWebCertAction')];
-    }
-  ),
-
-  /**
    * @type {EmberObject<Onepanel.WebCert>}
    */
   webCert: computedPipe('webCertProxy.content', EmberObject.create.bind(EmberObject)),
@@ -153,19 +142,6 @@ export default Component.extend(I18n, GlobalActions, {
         webCertPollLooper.destroy();
       }
     }
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<Action>}
-   */
-  _toggleModifyWebCertAction: computed('_editing', function _toggleModifyWebCertAction() {
-    const _editing = this.get('_editing');
-    return {
-      action: () => this.send('toggleModifyWebCert'),
-      title: this.t(_editing ? 'cancelModifying' : 'modifyWebCertDetails'),
-      class: 'btn-modify-web-cert',
-      buttonStyle: _editing ? 'default' : 'primary',
-    };
   }),
 
   init() {

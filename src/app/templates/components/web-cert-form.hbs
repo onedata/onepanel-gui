@@ -1,4 +1,8 @@
-{{#bs-form submitOnEnter=false class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal" as |form|}}
+{{#bs-form
+  submitOnEnter=false
+  class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal form-horizontal-condensed"
+  as |form|
+}}
   {{one-form-fields
     bsForm=form
     fields=currentFields
@@ -7,13 +11,53 @@
     onFocusOut=(action "focusOut")
     disabled=disabled
   }}
-  {{#if isEditing}}
-    <div class="row">
-      <div class={{layoutConfig.formSubmitColumns}}>
-        {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-          {{tt this "submit"}}
-        {{/one-spin-button}}
+{{/bs-form}}
+
+{{#bs-modal
+  id="lets-encrypt-changed"
+  open=showLetsEncryptChangeModal
+  keyboard=true
+  backdropClose=true
+  onHide=(action "changedModalCanceled")
+  as |modal|
+}}
+  {{#modal.body}}
+    <div class="modal-info-content">
+      <div class="modal-info-icon">
+        {{one-icon icon="sign-info"}}
+      </div>
+      <div class="modal-info-text {{if (not formLetsEncryptValue) "short-text"}}">
+        {{#if formLetsEncryptValue}}
+        <p>
+          {{tt this "changedModal.text.enableP1"}}
+        </p>
+        <p>
+          {{tt this "changedModal.text.enableP2"}}
+          <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
+        </p>
+        <p>
+          {{tt this "changedModal.text.enableP3"}}
+        </p>
+        {{else}}
+        <p>
+          {{tt this "changedModal.text.disable"}}
+        </p>
+        {{/if}}
       </div>
     </div>
-  {{/if}}
-{{/bs-form}}
+  {{/modal.body}}
+  {{#modal.footer}}
+    {{#one-spin-button
+      action=(action "submit")
+      class="btn btn-primary"
+    }}
+      {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
+    {{/one-spin-button}}
+    {{#bs-button
+      type="default"
+      onClick=modal.close
+    }}
+      {{tt this "changedModal.cancel"}}
+    {{/bs-button}}
+  {{/modal.footer}}
+{{/bs-modal}}
