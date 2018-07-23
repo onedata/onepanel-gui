@@ -121,6 +121,10 @@ export default OneForm.extend(I18n, Validations, {
    */
   submit: notImplementedReject,
 
+  /**
+   * If true, lets encrypt change modal is visible
+   * @type {boolean}
+   */
   showLetsEncryptChangeModal: false,
 
   /**

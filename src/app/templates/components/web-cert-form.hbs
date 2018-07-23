@@ -28,20 +28,20 @@
       </div>
       <div class="modal-info-text {{if (not formLetsEncryptValue) "short-text"}}">
         {{#if formLetsEncryptValue}}
-        <p>
-          {{tt this "changedModal.text.enableP1"}}
-        </p>
-        <p>
-          {{tt this "changedModal.text.enableP2"}}
-          <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
-        </p>
-        <p>
-          {{tt this "changedModal.text.enableP3"}}
-        </p>
+          <p>
+            {{tt this "changedModal.text.enableCertWillBeObtained"}}
+          </p>
+          <p>
+            {{tt this "changedModal.text.enableAgreement"}}
+            <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
+          </p>
+          <p>
+            {{tt this "changedModal.text.enableReloadInfo"}}
+          </p>
         {{else}}
-        <p>
-          {{tt this "changedModal.text.disable"}}
-        </p>
+          <p>
+            {{tt this "changedModal.text.disable"}}
+          </p>
         {{/if}}
       </div>
     </div>
