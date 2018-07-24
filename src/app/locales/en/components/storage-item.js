@@ -1,5 +1,6 @@
 import posix from './storage-item/posix';
 import ceph from './storage-item/ceph';
+import cephrados from './storage-item/cephrados';
 import s3 from './storage-item/s3';
 import swift from './storage-item/swift';
 import glusterfs from './storage-item/glusterfs';
@@ -19,6 +20,7 @@ export default {
   },
   posix,
   ceph,
+  cephrados,
   s3,
   swift,
   glusterfs,

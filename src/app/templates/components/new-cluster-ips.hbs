@@ -20,7 +20,7 @@
 
 <div class="row content-row">
   <p>
-    {{t "mixins.components.clusterIpsConfigurator.infoExplain" serviceName=serviceName}}
+    {{t (concat "mixins.components.clusterIpsConfigurator.infoExplain." serviceType)}}
   </p>
   {{#if subdomainDelegation}}
     <p>

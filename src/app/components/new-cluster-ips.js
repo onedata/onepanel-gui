@@ -15,7 +15,7 @@ import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-c
 export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-dns', 'container-fluid'],
 
-  guiUtils: service(),
+  onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
   cookies: service(),

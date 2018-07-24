@@ -39,20 +39,6 @@ const {
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
-function getClusterHostname(hostnames) {
-  return hostnames.objectAt(0);
-}
-
-function getDomain(hostname) {
-  const segments = hostname.split('.');
-  return segments[segments.length - 1];
-}
-
-function getHostname(hostname) {
-  const segments = hostname.split('.');
-  return segments.splice(0, segments.length - 1).join('.');
-}
-
 function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
 }
@@ -268,10 +254,8 @@ export default Component.extend(I18n, {
     let hosts = this.get('hosts');
     let hostnames = hosts.map(h => get(h, 'hostname'));
     let nodes = {};
-    hostnames.forEach(hn => {
-      nodes[hn] = {
-        hostname: getHostname(hn),
-      };
+    hostnames.forEach(hostname => {
+      nodes[hostname] = { hostname };
     });
     return nodes;
   },
@@ -302,12 +286,11 @@ export default Component.extend(I18n, {
       throw new Error(
         'Cannot create cluster configuration if no hosts are selected');
     }
-    let domainName = getDomain(getClusterHostname(hostnames));
 
     let configProto = {
       cluster: {
         autoDeploy: true,
-        domainName,
+        domainName: '',
         nodes,
         managers: {
           mainNode: primaryClusterManager,
