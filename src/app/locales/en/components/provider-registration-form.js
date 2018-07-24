@@ -4,8 +4,7 @@ export default {
   register: 'Register',
   modifyProviderDetails: 'Modify provider details',
   subdomainReserved: 'This subdomain is reserved.',
-  redirectInfo: 'Upon successful modification of domain, subdomain or enabling ' +
-    'Let\'s Encrypt, the page will be reloaded with the new Oneprovider domain.',
+  redirectInfo: 'Upon successful modification of domain or subdomain, you will be asked to update your certificate.',
   fields: {
     id: {
       label: 'ID',

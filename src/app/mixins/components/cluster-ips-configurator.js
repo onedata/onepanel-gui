@@ -1,6 +1,6 @@
 /**
  * Common logic used in components that implement configuration of cluster
- * IP adresses. Needs guiUtils service.
+ * IP adresses. Needs onepanelServer service.
  * 
  * @module mixins/components/cluster-ips-configurator
  * @author Jakub Liput
@@ -23,6 +23,12 @@ export default Mixin.create({
    * @virtual
    * @type {Ember.Service}
    */
+  onepanelServer: undefined,
+
+  /**
+   * @virtual
+   * @type {Ember.Service}
+   */
   clusterManager: undefined,
 
   /**
@@ -34,7 +40,7 @@ export default Mixin.create({
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  serviceName: reads('guiUtils.fullServiceName'),
+  serviceType: reads('onepanelServer.serviceType'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}

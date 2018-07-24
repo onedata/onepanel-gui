@@ -19,7 +19,6 @@ import deregisterProviderConfirm from './components/deregister-provider-confirm'
 import contentClustersSpaces from './components/content-clusters-spaces';
 import contentClustersNodes from './components/content-clusters-nodes';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
-import newClusterProviderCert from './components/new-cluster-provider-cert';
 import newClusterInstallation from './components/new-cluster-installation';
 import newClusterIps from './components/new-cluster-ips';
 import contentClustersProvider from './components/content-clusters-provider';
@@ -27,6 +26,11 @@ import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
 import manageClusterStorages from './components/manage-cluster-storages';
+import sidebarClusters from './components/sidebar-clusters';
+import contentClustersCertificate from './components/content-clusters-certificate';
+import webCertForm from './components/web-cert-form';
+import newClusterWebCert from './components/new-cluster-web-cert';
+import modalConfigureWebCert from './components/modal-configure-web-cert';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -58,7 +62,6 @@ let translations = {
     deregisterProviderConfirm,
     contentClustersSpaces,
     newClusterDeployProgress,
-    newClusterProviderCert,
     newClusterInstallation,
     newClusterIps,
     contentClustersProvider,
@@ -67,6 +70,11 @@ let translations = {
     clusterHostIpForm,
     contentClustersNodes,
     manageClusterStorages,
+    sidebarClusters,
+    contentClustersCertificate,
+    webCertForm,
+    newClusterWebCert,
+    modalConfigureWebCert,
   },
   mixins: {
     components: {

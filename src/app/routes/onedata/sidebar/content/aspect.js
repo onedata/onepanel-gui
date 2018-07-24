@@ -12,6 +12,8 @@ import { get } from '@ember/object';
 import { inject } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
+const zoneAspects = new Set(['nodes', 'certificate']);
+
 export default AspectRoute.extend({
   onepanelServer: inject(),
   onepanelServiceType: reads('onepanelServer.serviceType'),
@@ -41,7 +43,7 @@ export default AspectRoute.extend({
         const cluster = get(this.modelFor('onedata.sidebar.content'), 'resource');
         if (
           get(cluster, 'isInitialized') === false ||
-          (onepanelServiceType === 'zone' && aspectId !== 'nodes')
+          (onepanelServiceType === 'zone' && !zoneAspects.has(aspectId))
         ) {
           this.transitionTo('onedata');
         }
