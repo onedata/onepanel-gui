@@ -1,3 +1,3 @@
 export default {
-  redirectingProgress: 'Redirecting to the new domain...',
+  redirectingProgress: 'Reloading the page to use the new web certificate...',
 };

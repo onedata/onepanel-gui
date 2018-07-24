@@ -20,6 +20,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
+  onepanelServer: service(),
   clusterManager: service(),
   providerManager: service(),
   globalNotify: service(),

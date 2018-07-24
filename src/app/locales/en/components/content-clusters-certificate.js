@@ -26,4 +26,5 @@ export default {
       chain: 'Certificate chain path',
     },
   },
+  renewingWebCert: 'renewing web certificate',
 };

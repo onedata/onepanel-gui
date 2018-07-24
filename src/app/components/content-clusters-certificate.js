@@ -37,6 +37,7 @@ export default Component.extend(I18n, GlobalActions, {
   onepanelServer: service(),
   clusterManager: service(),
   providerManager: service(),
+  globalNotify: service(),
 
   i18nPrefix: 'components.contentClustersCertificate',
 
@@ -199,6 +200,13 @@ export default Component.extend(I18n, GlobalActions, {
     refreshCert() {
       const regeneratePromise = this.actions.submitModify.bind(this)({
         letsEncrypt: true,
+      });
+      regeneratePromise.then(this.actions.changeDomain.bind(this));
+      regeneratePromise.catch(error => {
+        this.get('globalNotify').backendError(
+          this.t('renewingWebCert'),
+          error
+        );
       });
       this.set('regenerateProxy', PromiseObject.create({ promise: regeneratePromise }));
       return regeneratePromise;
