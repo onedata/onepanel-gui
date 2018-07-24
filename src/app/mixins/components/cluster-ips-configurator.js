@@ -1,6 +1,6 @@
 /**
  * Common logic used in components that implement configuration of cluster
- * IP adresses
+ * IP adresses. Needs guiUtils service.
  * 
  * @module mixins/components/cluster-ips-configurator
  * @author Jakub Liput
@@ -30,6 +30,11 @@ export default Mixin.create({
    * @type {PromiseObject<ProviderDetails>}
    */
   providerDetailsProxy: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  serviceName: reads('guiUtils.fullServiceName'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}

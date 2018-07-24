@@ -1,25 +1,12 @@
 {{!-- TODO i18n --}}
   
 <div class="row content-row header-row hidden-xs">
-  <h1>
-    <span class="one-label">Provider</span>
-    {{#one-collapsible-toolbar isGlobal=true as |dropdown|}}
-      {{#dropdown.item buttonStyle="danger" triggerClasses="btn-deregister-provider" itemAction=(action "openDeregisterModal")}}
-        Deregister provider
-      {{/dropdown.item}}
-      {{#if _editButtonEnabled}}
-        {{#dropdown.item
-          buttonStyle=_editProviderButtonType
-          triggerClasses="btn-modify-provider"
-          itemAction=(action "toggleModifyProvider")
-        }}
-          {{_editProviderButtonLabel}}
-        {{/dropdown.item}}
-      {{/if}}
-    {{/one-collapsible-toolbar}}
+  <h1 class="with-menu">
+    <span class="one-label">{{tt this "provider"}}</span>
+    {{actions-toolbar actionsArray=globalActions}}
   </h1>
   {{#one-switchable-popover-modal
-    triggersConfiguration=".btn-deregister-provider.btn;a.btn-deregister-provider:modal"
+    triggersConfiguration=_deregisterPopoverSelector
     popoverClass="popover-deregister-provider"
     submit=(action "deregister")
     as |ospm|}}

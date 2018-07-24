@@ -6,6 +6,11 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4463 Showing storage ID on storages view
+* VFS-4233 Using submodules for own libs on separate repos
+* VFS-4629 Fixed translations
+* VFS-4559 Fixed global actions display in mobile view
+* VFS-4587 Fixing lack of space occupancy bar by updating onepanel client
 * VFS-4594 UX improvements of deployment process
 * VFS-4435 New feature: adding hosts in cluster deployment table
 * VFS-4436 Added view for registering first admin user

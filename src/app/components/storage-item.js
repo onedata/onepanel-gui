@@ -11,6 +11,7 @@
 import { isEmpty } from '@ember/utils';
 import Component from '@ember/component';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 import _includes from 'lodash/includes';
 import _find from 'lodash/find';
@@ -62,6 +63,11 @@ export default Component.extend({
    * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
   spaces: Object.freeze([]),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  storageId: reads('storage.id'),
 
   showSpacesSupport: computed('spaces.[]', function () {
     return isEmpty(this.get('spaces')) === false;
