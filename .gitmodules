@@ -1,3 +1,6 @@
 [submodule "bamboos"]
 	path = bamboos
 	url = ../bamboos.git
+[submodule "src/lib/onedata-gui-common"]
+	path = src/lib/onedata-gui-common
+	url = ../onedata-gui-common.git
