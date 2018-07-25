@@ -1,0 +1,65 @@
+{{#bs-form
+  submitOnEnter=false
+  class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal form-horizontal-condensed"
+  as |form|
+}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+    disabled=disabled
+  }}
+{{/bs-form}}
+
+{{#bs-modal
+  id="lets-encrypt-changed"
+  open=showLetsEncryptChangeModal
+  keyboard=true
+  backdropClose=true
+  onHide=(action "changedModalCanceled")
+  as |modal|
+}}
+  {{#modal.body}}
+    <div class="modal-info-content">
+      <div class="modal-info-icon">
+        {{one-icon icon="sign-info"}}
+      </div>
+      <div class="modal-info-text {{if (not formLetsEncryptValue) "short-text"}}">
+        {{#if formLetsEncryptValue}}
+          <p>
+            {{tt this "changedModal.text.enableCertWillBeObtained"}}
+          </p>
+          <p>
+            {{tt this "changedModal.text.enableAgreement"}}
+            <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
+          </p>
+          <p>
+            {{tt this "changedModal.text.enableReloadInfo"}}
+          </p>
+        {{else}}
+          <p>
+            {{tt this "changedModal.text.disable"}}
+          </p>
+        {{/if}}
+      </div>
+    </div>
+  {{/modal.body}}
+  {{#modal.footer}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        type="default"
+        onClick=modal.close
+      }}
+        {{tt this "changedModal.cancel"}}
+      {{/bs-button}}
+      {{#one-spin-button
+        action=(action "submit")
+        class="btn btn-primary"
+      }}
+        {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
+      {{/one-spin-button}}
+    </div>
+  {{/modal.footer}}
+{{/bs-modal}}

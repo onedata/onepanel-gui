@@ -35,7 +35,7 @@ const STEPS_PROVIDER = [
   'installation',
   'providerRegistration',
   'ips',
-  'providerCert',
+  'webCert',
   'providerStorage',
   'summary',
 ];
@@ -47,6 +47,7 @@ const STEPS_PROVIDER = [
 const STEPS_ZONE = [
   'installation',
   'ips',
+  'webCert',
   'summary',
 ];
 

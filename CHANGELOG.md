@@ -6,6 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4663 Web certificate management
+* VFS-4677 Added Ceph RADOS storage support
 * VFS-4463 Showing storage ID on storages view
 * VFS-4233 Using submodules for own libs on separate repos
 * VFS-4629 Fixed translations

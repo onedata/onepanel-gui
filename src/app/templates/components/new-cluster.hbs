@@ -23,10 +23,9 @@
           nextStep=(action "next")
           changeClusterName=(action "changeClusterName")
         }}
-      {{else if (eq w.step.id "providerCert")}}
-        {{new-cluster-provider-cert
+      {{else if (eq w.step.id "webCert")}}
+        {{new-cluster-web-cert
           nextStep=(action "next")
-          providerDetailsProxy=providerDetailsProxy
         }}
       {{else if (eq w.step.id "providerStorage")}}
         {{manage-cluster-storages nextStep=(action "next")}}

@@ -15,16 +15,8 @@ import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reser
 import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import { camelize } from '@ember/string';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import changeDomain from 'onepanel-gui/utils/change-domain';
-import config from 'ember-get-config';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
-
-const {
-  time: {
-    redirectDomainDelay,
-  },
-} = config;
 
 export default Component.extend(I18n, GlobalActions, {
   providerManager: service(),
@@ -59,12 +51,6 @@ export default Component.extend(I18n, GlobalActions, {
   _submitting: false,
 
   /**
-   * If true, show blocking message about redirection pending
-   * @type {boolean}
-   */
-  _redirectPage: false,
-
-  /**
    * @type {boolean}
    */
   _deregisterModalOpen: false,
@@ -73,6 +59,11 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {string}
    */
   _deregisterPopoverSelector: '',
+
+  /**
+   * If true, show blocking modal with link to configure web cert
+   */
+  showConfigureWebCertModal: false,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -166,14 +157,7 @@ export default Component.extend(I18n, GlobalActions, {
 
   actions: {
     toggleModifyProvider() {
-      let _editing = this.get('_editing');
-      if (_editing) {
-        // cancelling
-        this.set('_editing', false);
-      } else {
-
-        this.set('_editing', true);
-      }
+      this.toggleProperty('_editing');
     },
 
     openDeregisterModal(fromFullToolbar) {
@@ -210,7 +194,6 @@ export default Component.extend(I18n, GlobalActions, {
      * @param {string} data.name
      * @param {boolean} data.subdomainDelegation
      * @param {string} data.domain
-     * @param {string} data.letsEncryptEnabled
      * @param {string} data.subdomain
      * @param {number} data.geoLongitude
      * @param {number} data.getLatitude
@@ -231,7 +214,6 @@ export default Component.extend(I18n, GlobalActions, {
         'subdomainDelegation',
         'subdomain',
         'domain',
-        'letsEncryptEnabled',
         'adminEmail',
         'geoLongitude',
         'geoLatitude'
@@ -266,11 +248,9 @@ export default Component.extend(I18n, GlobalActions, {
           this.set('_submitting', false);
         });
     },
-    changeDomain(domain) {
-      this.set('_redirectPage', true);
-      changeDomain(domain, {
-        delay: redirectDomainDelay,
-      }).catch(() => safeExec(this, 'set', '_redirectPage', false));
+
+    changeDomain() {
+      this.set('showConfigureWebCertModal', true);
     },
   },
 });
