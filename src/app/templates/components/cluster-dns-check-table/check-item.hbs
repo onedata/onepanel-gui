@@ -1,0 +1,67 @@
+<table class="check-item-container">
+  <tbody>
+    <tr>
+      <td class="check-state">
+        {{check-state-icon success=success}}
+      </td>
+      <td class="check-description">
+        <div class="text description">
+          {{#if isUsingPartial}}
+            {{partial (concat "components/cluster-dns-check-table/messages/" summaryPathPartial)}}
+          {{else}}
+            {{descriptionText}}
+          {{/if}}
+        </div>
+        <div class="row row-toggle-details">
+          <a role="button" class="link-toggle-details" {{action "toggleShowDetails"}}>
+            {{tt this (if showDetails "hideDetails" "showDetails")}}
+          </a>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td class="check-description">
+        <div class="row row-check-details {{if showDetails "active"}}">
+          <div class="text got-ips">
+            <strong>{{tt this "gotIps"}}:</strong>
+            <div class="ip-list">
+              {{#unless gotIps.length}}
+                &ndash;
+              {{/unless}}
+              {{#each gotIps as |ip|}}
+                <span class="ip-token {{if (contains ip expectedIps) "bg-success"}}">
+                  {{ip}}
+                </span>
+              {{/each}}
+            </div>
+          </div>
+          <div class="text expected-ips">
+            <strong>{{tt this "expectedIps"}}:</strong>
+            <div class="ip-list">
+              {{#each expectedIps as |ip|}}
+                <span class="ip-token {{if (contains ip gotIps) "bg-success" "bg-danger"}}">{{ip}}</span>
+              {{/each}}
+              {{#unless expectedIps.length}}
+                &ndash;
+              {{/unless}}
+            </div>
+          </div>
+          <div class="row row-recommended-dns-records">
+            <div class="row recommended-dns-records-label">
+              <strong>{{tt this "recommendedDnsRecords"}}:</strong>
+            </div>
+            <div class="row row-recommended-dns-records-textarea">
+              {{!-- TODO: autoresize https://amaury.carrade.eu/projects/jquery/autoResize --}}
+              <textarea
+                spellcheck="false"
+                class="recommended-dns-records form-control"
+                rows={{recommendedDnsRecords.length}}
+                readonly="true">{{recommendedDnsRecordsText}}</textarea>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,59 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "header"}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        class=(concat "btn btn-sm btn-default btn-dns-next")
+        onClick=(action "back")
+      }}
+        {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
+      {{/bs-button}}
+      {{#one-spin-button
+        class=(concat "btn btn-sm btn-primary btn-dns-proceed " (unless performCheckDone "disabled"))
+        action=(action "proceed")
+      }}
+        <span>{{tt this "proceed"}}</span>{{one-icon icon="arrow-right"}}
+      {{/one-spin-button}}
+      {{#unless performCheckDone}}
+        {{one-tooltip
+          triggerEvents="hover"
+          placement="bottom"
+          triggerElement=".btn-dns-proceed"
+          title=(tt this "checkBeforeProceed")
+        }}
+      {{/unless}}
+    </div>
+  </h1>
+</div>
+
+{{cluster-dns
+  getDnsCheckProxyOnStart=false
+  isWorking=workProxy.isPending
+  performCheckCalled=(action (mut lastCheckStatus))
+}}
+
+{{#proceed-process-modal
+  opened=confirmProceedModalOpened
+  close=(action "confirmProceedModal" false)
+  proceed=(action "confirmProceedModal" true)
+  modalClass="new-cluster-dns-proceed-modal"
+  headerText=(tt this "proceedModalHeader")
+  proceedButtonClass="btn btn-warning proceed"
+  proceedButtonText=(tt this "proceedAnyway")
+  cancelButtonText=(tt this "proceedCancel")
+  textCenter=false
+}}
+  <div class="modal-info-content">
+    <div class="modal-info-icon">
+      {{one-icon icon="sign-warning"}}
+    </div>
+    <div class="modal-info-text">
+      <p>
+        {{tt this "proceedModalWarningTextP1" onepanelServiceType=onepanelServiceType}}
+      </p>
+      <p>
+        {{tt this "proceedModalWarningTextP2"}}
+      </p>
+    </div>
+  </div>
+{{/proceed-process-modal}}
+  

@@ -23,6 +23,11 @@
           nextStep=(action "next")
           changeClusterName=(action "changeClusterName")
         }}
+      {{else if (eq w.step.id "dns")}}
+        {{new-cluster-dns
+          nextStep=(action "next")
+          prevStep=(action "prev")
+        }}
       {{else if (eq w.step.id "webCert")}}
         {{new-cluster-web-cert
           nextStep=(action "next")
