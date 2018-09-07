@@ -58,6 +58,15 @@
                 class="recommended-dns-records form-control"
                 rows={{recommendedDnsRecords.length}}
                 readonly="true">{{recommendedDnsRecordsText}}</textarea>
+              <div class="btn-container text-right">
+                <div class="btn-row">
+                  {{one-copy-button
+                    class="btn btn-default btn-sm"
+                    parentElementId=elementId
+                    localTarget=".recommended-dns-records"
+                  }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
