@@ -50,5 +50,17 @@
 			"  $1",
 			"} = Ember;"
 		]
+	},
+	"Onedata: generic import style (overrides ES snippets)": {
+		"prefix": "imp",
+		"body": [
+			"import $1 from '$2';"
+		]
+	},
+	"Onedata: import from common": {
+		"prefix": "one-imp-com",
+		"body": [
+			"import $1 from 'onedata-gui-common/$2';"
+		]
 	}
 }

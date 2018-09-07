@@ -264,10 +264,6 @@ export default Component.extend(
       return checkResultItems.every(i => get(i, 'summary') === 'ok');
     }),
 
-    validateIpAddress(ipAddress) {
-      return !ipAddress || validIpRegexp.test(ipAddress);
-    },
-
     init() {
       this._super(...arguments);
       if (!this.get('formValues')) {
@@ -304,6 +300,10 @@ export default Component.extend(
       } finally {
         this._super(...arguments);
       }
+    },
+
+    validateIpAddress(ipAddress) {
+      return !ipAddress || validIpRegexp.test(ipAddress);
     },
 
     fetchZonePolicies() {
@@ -426,8 +426,10 @@ export default Component.extend(
         return promise;
       },
       dnsServersChanged(dnsServersUpdate) {
-        const newIpAddress = this.get('newIpAddress');
-        const dnsServers = this.get('dnsServers');
+        const {
+          newIpAddress,
+          dnsServers,
+        } = this.getProperties('newIpAddress', 'dnsServers');
         const isAddingNew =
           _.includes(_.difference(dnsServersUpdate, dnsServers), newIpAddress);
         if (!isAddingNew || this.get('newIpAddressValid')) {

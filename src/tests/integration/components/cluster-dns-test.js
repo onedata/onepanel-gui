@@ -9,10 +9,6 @@ import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
 
-const ClusterManager = Service.extend({
-
-});
-
 const ProviderManager = Service.extend({
   getProviderDetails() {},
 });
@@ -28,7 +24,7 @@ describe('Integration | Component | cluster dns', function () {
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
-    registerService(this, 'clusterManager', ClusterManager);
+    registerService(this, 'clusterManager', Service);
     registerService(this, 'onepanelServer', OnepanelServer);
   });
 

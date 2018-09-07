@@ -26,13 +26,12 @@
           <div class="text got-ips">
             <strong>{{tt this "gotIps"}}:</strong>
             <div class="ip-list">
-              {{#unless gotIps.length}}
-                &ndash;
-              {{/unless}}
               {{#each gotIps as |ip|}}
                 <span class="ip-token {{if (contains ip expectedIps) "bg-success"}}">
                   {{ip}}
                 </span>
+              {{else}}
+                &ndash;
               {{/each}}
             </div>
           </div>
@@ -41,10 +40,9 @@
             <div class="ip-list">
               {{#each expectedIps as |ip|}}
                 <span class="ip-token {{if (contains ip gotIps) "bg-success" "bg-danger"}}">{{ip}}</span>
-              {{/each}}
-              {{#unless expectedIps.length}}
+              {{else}}
                 &ndash;
-              {{/unless}}
+              {{/each}}
             </div>
           </div>
           <div class="row row-recommended-dns-records">
@@ -52,7 +50,6 @@
               <strong>{{tt this "recommendedDnsRecords"}}:</strong>
             </div>
             <div class="row row-recommended-dns-records-textarea">
-              {{!-- TODO: autoresize https://amaury.carrade.eu/projects/jquery/autoResize --}}
               <textarea
                 spellcheck="false"
                 class="recommended-dns-records form-control"
