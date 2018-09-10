@@ -364,7 +364,9 @@ export default Component.extend(
     setLastCheckAsObsolete() {
       if (!this.get('newCheckIsNeededNotify')) {
         const newCheckIsNeededNotify = this.get('globalNotify').info({
-          html: `<strong>${this.t('dnsCheck.resultsObsoleteHead')}</strong><br>${this.t('dnsCheck.resultsObsoleteText')}`,
+          html: this.t('dnsCheck.resultsObsoleteText'),
+          oneTitle: this.t('dnsCheck.resultsObsoleteHead'),
+          oneIcon: 'sign-warning',
           closeAfter: null,
         });
         this.set('newCheckIsNeededNotify', newCheckIsNeededNotify);
