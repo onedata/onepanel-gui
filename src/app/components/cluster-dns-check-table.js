@@ -1,3 +1,12 @@
+/**
+ * List of DNS check descriptions
+ * 
+ * @module components/cluster-dns-check-table
+ * @author Jakub Liput
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import assertProperty from 'onedata-gui-common/utils/assert-property';
@@ -15,6 +24,7 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
+   * @type {Array<object>}
    */
   checkResultItems: undefined,
 

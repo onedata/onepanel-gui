@@ -8,7 +8,7 @@
         {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
       {{/bs-button}}
       {{#one-spin-button
-        class=(concat "btn btn-sm btn-primary btn-dns-proceed " (unless performCheckDone "disabled"))
+        class=(concat "btn btn-sm btn-primary btn-dns-proceed " (unless proceedEnabled "disabled"))
         action=(action "proceed")
       }}
         <span>{{tt this "proceed"}}</span>{{one-icon icon="arrow-right"}}
@@ -29,6 +29,7 @@
   getDnsCheckProxyOnStart=false
   isWorking=workProxy.isPending
   performCheckCalled=(action (mut lastCheckStatus))
+  settingsChanged=(action (mut lastCheckStatus) null)
 }}
 
 {{#proceed-process-modal

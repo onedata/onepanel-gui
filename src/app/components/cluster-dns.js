@@ -21,6 +21,7 @@ import { scheduleOnce } from '@ember/runloop';
 import $ from 'jquery';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import moment from 'moment';
+import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
 
 const validIpRegexp =
   /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
@@ -64,23 +65,44 @@ export default Component.extend(
     performCheckCalled: notImplementedIgnore,
 
     /**
+     * @virtual optional
+     * Invoked withoud params when settings changes (check is not current anymore)
+     */
+    settingsChanged: notImplementedIgnore,
+
+    /**
      * @type {EmberObject}
      * Initialized on init
      */
     formValues: undefined,
 
-    onepanelServiceType: reads('guiUtils.serviceType'),
-
+    /**
+     * @type {moment}
+     */
     lastCheckMoment: undefined,
 
-    lastCheckIsCurrent: undefined,
-
+    /**
+     * Instance of ember-notify single message
+     * @type {EmberObject}
+     */
     newCheckIsNeededNotify: undefined,
 
+    /**
+     * Value of dnsServers new entry input
+     * @type {string}
+     */
     newIpAddress: '',
 
+    /**
+     * If true, dnsServers tokens input should be displayed as working
+     * @type {boolean}
+     */
     dnsServersBusy: false,
 
+    /**
+     * If true, build in DNS server toggle should be displayed as working
+     * @type {boolean}
+     */
     builtInDnsServerBusy: false,
 
     /**
@@ -90,27 +112,23 @@ export default Component.extend(
      */
     subdomainDelegationPrev: undefined,
 
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    onepanelServiceType: reads('guiUtils.serviceType'),
+
+    /**
+     * If true, built in DNS server toggle is in enabled state
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     builtInDnsServer: reads('dnsCheckConfiguration.builtInDnsServer'),
 
+    /**
+     * In Oneprovider service, contains domain name of Onezone where
+     * the provider is registered
+     * @type {Ember.ComputedProperty<string>}
+     */
     providerOnezoneDomain: reads('provider.onezoneDomainName'),
-
-    setLastCheckAsCurrent() {
-      const newCheckIsNeededNotify = this.get('newCheckIsNeededNotify');
-      if (newCheckIsNeededNotify) {
-        newCheckIsNeededNotify.set('visible', false);
-        safeExec(this, 'set', 'newCheckIsNeededNotify', undefined);
-      }
-    },
-
-    setLastCheckAsObsolete() {
-      if (!this.get('newCheckIsNeededNotify')) {
-        const newCheckIsNeededNotify = this.get('globalNotify').info({
-          html: `<strong>${this.t('dnsCheck.resultsObsoleteHead')}</strong><br>${this.t('dnsCheck.resultsObsoleteText')}`,
-          closeAfter: null,
-        });
-        safeExec(this, 'set', 'newCheckIsNeededNotify', newCheckIsNeededNotify);
-      }
-    },
 
     /**
      * For Onezone: is Onezone subdomain delegation enabled (toggle),
@@ -130,8 +148,31 @@ export default Component.extend(
       }
     ),
 
+    /**
+     * If true, the perform check button should be enabled
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     performCheckEnabled: reads('dnsServersInputValid'),
 
+    /**
+     * If true, the edited DNS server IP address is considered valid IP address,
+     * so it can be added to the list
+     * @type {Ember.ComputedProperty<boolean>}
+     */
+    newIpAddressValid: computedPipe('newIpAddress', 'validateIpAddress'),
+
+    /**
+     * If true, the service domain (Onezone or Oneprovider) is an IP address,
+     * so the check function should be disabled
+     * @type {Ember.ComputedProperty<boolean>}
+     */
+    isIpDomain: computedPipe('domain', RegExp.prototype.test.bind(ipDomainRegexp)),
+
+    /**
+     * The reason why the built-in DNS server cannot be set to enabled.
+     * Currently only: `wrongDomain`
+     * @type {Ember.ComputedProperty<string|undefined>}
+     */
     cannotUseBuiltInDnsServerReason: computed(
       'domain',
       function cannotUseBuiltInDnsServerReason() {
@@ -140,6 +181,11 @@ export default Component.extend(
       }
     ),
 
+    /**
+     * The reason why the Subdomain Delegation feature cannot be set to enabled.
+     * Values: `wrongDomain`, `noBuiltInDnsServer`
+     * @type {Ember.ComputedProperty<string|undefined>}
+     */
     cannotUseSubdomainDelegationReason: computed(
       'domain',
       'builtInDnsServer',
@@ -161,10 +207,10 @@ export default Component.extend(
       }
     ),
 
-    isIpDomain: computed('domain', function isIpDomain() {
-      return ipDomainRegexp.test(this.get('domain'));
-    }),
-
+    /**
+     * Key of text in DNS check section.
+     * @type {Ember.ComputedProperty<string>}
+     */
     stateInfo: computed(
       'onepanelServiceType',
       'isIpDomain',
@@ -199,15 +245,18 @@ export default Component.extend(
       }
     ),
 
+    /**
+     * @type {Ember.ComputedProperty<Array<string>>}
+     */
     dnsServers: computed('dnsCheckConfiguration.dnsServers', function dnsServers() {
       const dnsServersConfig = this.get('dnsCheckConfiguration.dnsServers');
       return dnsServersConfig ? [...dnsServersConfig] : [];
     }),
 
-    newIpAddressValid: computed('newIpAddress', function newIpAddressValid() {
-      return this.validateIpAddress(this.get('newIpAddress'));
-    }),
-
+    /**
+     * True if the list in tokenized input of DNS servers is valid.
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     dnsServersInputValid: computed('dnsServers.[]', function dnsServersInputValid() {
       return !_.isEmpty(this.get('dnsServers'));
     }),
@@ -227,13 +276,13 @@ export default Component.extend(
         const domain = get(dnsCheck, 'domain') ?
           Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
           undefined;
-        const dnsZone = get(dnsCheck, 'dnsZone') ?
-          Object.assign({ type: 'dnsZone' }, _.cloneDeep(get(dnsCheck, 'dnsZone'))) :
-          undefined;
-        const bothChecks = [dnsZone, domain].filter(c => c);
         if (onepanelServiceType === 'provider') {
           return [domain];
         } else {
+          const dnsZone = get(dnsCheck, 'dnsZone') ?
+            Object.assign({ type: 'dnsZone' }, _.cloneDeep(get(dnsCheck, 'dnsZone'))) :
+            undefined;
+          const bothChecks = [dnsZone, domain].filter(c => c);
           const builtInDnsServer = this.get('builtInDnsServer');
           const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
           const domainValid = (get(dnsCheck, 'domain.summary') === 'ok');
@@ -249,16 +298,20 @@ export default Component.extend(
             dnsZoneValid
           ) {
             return [dnsZone];
-          } else if (hasInvalidRecords) {
-            set(domain, 'summary', 'delegation_invalid_records');
-            return bothChecks;
           } else {
+            if (hasInvalidRecords) {
+              set(domain, 'summary', 'delegation_invalid_records');
+            }
             return bothChecks;
           }
         }
       }
     }),
 
+    /**
+     * True if all essential DNS checks for user are valid
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     allValid: computed('checkResultItems', function allValid() {
       const checkResultItems = this.get('checkResultItems');
       return checkResultItems.every(i => get(i, 'summary') === 'ok');
@@ -290,15 +343,32 @@ export default Component.extend(
       } else {
         this.updateProviderProxy();
       }
-      // enable observers
-      this.get('lastCheckIsCurrent');
     },
 
     willDestroyElement() {
       try {
-        safeExec(this, 'setLastCheckAsCurrent');
+        this.setLastCheckAsCurrent();
       } finally {
         this._super(...arguments);
+      }
+    },
+
+    setLastCheckAsCurrent() {
+      const newCheckIsNeededNotify = this.get('newCheckIsNeededNotify');
+      if (newCheckIsNeededNotify) {
+        newCheckIsNeededNotify.set('visible', false);
+        this.set('newCheckIsNeededNotify', undefined);
+      }
+    },
+
+    setLastCheckAsObsolete() {
+      if (!this.get('newCheckIsNeededNotify')) {
+        const newCheckIsNeededNotify = this.get('globalNotify').info({
+          html: `<strong>${this.t('dnsCheck.resultsObsoleteHead')}</strong><br>${this.t('dnsCheck.resultsObsoleteText')}`,
+          closeAfter: null,
+        });
+        this.set('newCheckIsNeededNotify', newCheckIsNeededNotify);
+        this.get('settingsChanged')();
       }
     },
 

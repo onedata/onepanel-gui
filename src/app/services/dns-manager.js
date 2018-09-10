@@ -17,15 +17,6 @@ const dnsCheckKeys = ['domain', 'dnsZone'];
 export default Service.extend(createDataProxyMixin('dnsCheck'), {
   onepanelServer: service(),
 
-  /**
-   * @override
-   */
-  fetchDnsCheck({ forceCheck } = {}) {
-    return this.get('onepanelServer')
-      .request('onepanel', 'checkDns', { forceCheck })
-      .then(({ data }) => data);
-  },
-
   dnsValid: computed('dnsCheck', function dnsValid() {
     const dnsCheck = this.get('dnsCheck');
     if (dnsCheck) {
@@ -34,4 +25,13 @@ export default Service.extend(createDataProxyMixin('dnsCheck'), {
       );
     }
   }),
+
+  /**
+   * @override
+   */
+  fetchDnsCheck({ forceCheck } = {}) {
+    return this.get('onepanelServer')
+      .request('onepanel', 'checkDns', { forceCheck })
+      .then(({ data }) => data);
+  },
 });

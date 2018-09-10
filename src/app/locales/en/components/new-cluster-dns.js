@@ -9,5 +9,5 @@ export default {
   proceedCancel: 'No, review setup',
   proceedAnyway: 'Yes, proceed',
   acknowledgingDnsCheck: 'acknowledging DNS check',
-  checkBeforeProceed: 'Please check your DNS setup first using the "Perform check" button',
+  checkBeforeProceed: 'To proceed, please perform a DNS setup check.',
 };

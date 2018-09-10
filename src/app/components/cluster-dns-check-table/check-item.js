@@ -1,3 +1,12 @@
+/**
+ * Information about single DNS check
+ * 
+ * @module components/cluster-dns-check-table/check-item
+ * @author Jakub Liput
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
@@ -59,6 +68,10 @@ export default Component.extend(I18n, {
    */
   subdomainDelegation: undefined,
 
+  /**
+   * If true, details od check should be displayed (ia. IP addresses)
+   * @type {boolean}
+   */
   showDetails: false,
 
   /**
@@ -87,6 +100,15 @@ export default Component.extend(I18n, {
    */
   recommendedDnsRecords: reads('dnsCheckResult.recommended'),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  success: equal('summary', 'ok'),
+
+  /**
+   * Text to display in recommended DNS records textarea
+   * @type {Ember.ComputedProperty<string>}
+   */
   recommendedDnsRecordsText: computed(
     'recommendedDnsRecords.[]',
     function recommendedDnsRecordsText() {
@@ -95,14 +117,15 @@ export default Component.extend(I18n, {
     }
   ),
 
-  success: equal('summary', 'ok'),
-
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
   checkPropertyClass: computed('checkProperty', function checkPropertyClass() {
     return `check-${dasherize(this.get('checkProperty'))}`;
   }),
 
   /**
-   * The array contains IPs that was not expected
+   * The array contains IPs that were not expected
    * @type {Ember.ComputedProperty<Array<string>>}
    */
   additionalIps: computed(
@@ -133,23 +156,9 @@ export default Component.extend(I18n, {
     }
   ),
 
-  additionalIpsString: computed(
-    'additionalIps.[]',
-    function additionalIpsString() {
-      return this.get('additionalIps').join(', ');
-    }
-  ),
-
-  missingIpsString: computed(
-    'missingIps.[]',
-    function missingIpsString() {
-      return this.get('missingIps').join(', ');
-    }
-  ),
-
   /**
-   * @type {Ember.ComputedProperty<string>}
    * One of: subdomain, ownDomain
+   * @type {Ember.ComputedProperty<string>}
    */
   descriptionType: computed(
     'onepanelServiceType',
@@ -167,6 +176,11 @@ export default Component.extend(I18n, {
     }
   ),
 
+  /**
+   * A base to build translation path or partial path for describing DNS
+   * check summary
+   * @type {Ember.ComputedProperty<Array<string>>}
+   */
   summaryPath: computed(
     'descriptionType',
     'checkProperty',
@@ -181,14 +195,27 @@ export default Component.extend(I18n, {
     }
   ),
 
+  /**
+   * A locale path to describe DNS check summary
+   * @type {Ember.ComputedProperty<string>}
+   */
   summaryPathLocale: computed('summaryPath', function summaryPathLocale() {
     return this.get('summaryPath').map(s => camelize(s || '')).join('.');
   }),
 
+  /**
+   * A path to partial which describes DNS check summary
+   * @type {Ember.ComputedProperty<string>}
+   */
   summaryPathPartial: computed('summaryPath', function summaryPartialPath() {
     return this.get('summaryPath').map(s => dasherize(s || '')).join('/');
   }),
 
+  /**
+   * True if a partial should be used instead of bare translation for describing
+   * DNS check summary
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isUsingPartial: computed('summaryPathPartial', function isUsingPartial() {
     return knownPartials.has(this.get('summaryPathPartial'));
   }),

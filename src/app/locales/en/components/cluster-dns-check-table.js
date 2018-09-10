@@ -20,7 +20,7 @@ export default {
           delegationInvalidRecords: 'Although the DNS Zone delegation seems to be working, the cluster IPs (A records) are not resolved correctly. Please make sure that DNS queries are properly routed to the Onezone’s built-in server.',
         },
         dnsZone: {
-          unresolvable: 'No nameservers could be resolved for the Onezone domain ({{domain}}). DNS Zone delegation is not configured properly. Please check the configuration of the DNS server responsible for your domain',
+          unresolvable: 'No nameservers could be resolved for the Onezone domain ({{domain}}). DNS Zone delegation is not configured properly. Please check the configuration of the DNS server responsible for your domain.',
           badRecords1: 'Resolved nameserver IPs are different than expected. Please ensure that the SOA and NS records configured in the DNS server responsible for your domain',
           badRecords2: 'point to cluster IPs. If you believe that expected cluster IPs are not correct, please go back to the previous step and adjust them accordingly.',
           ok: 'DNS Zone delegation is properly configured for your domain - it will be managed by Onezone’s built-it DNS server.',

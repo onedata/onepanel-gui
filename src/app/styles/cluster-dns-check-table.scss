@@ -1,36 +1,29 @@
-@mixin token-bg-color($color) {
-  background-color: lighten(desaturate($color, 30%), 35%)
-}
 
-.cluster-dns-check-table {  
-  .check-item-container {
-    width: 100%;
-    margin-top: $padding-large-vertical;
-    margin-bottom: $padding-large-vertical;
-  }
+.cluster-dns-check-table {
+  $-dns-check-description-padding-base: $padding-large-horizontal / 2;
+  $-dns-check-description-padding-small: $-dns-check-description-padding-base / 2;
+  $-dns-check-item-padding-vertical: $padding-small-vertical;
+  
   .check-item {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: $padding-large-vertical;
+    padding-bottom: $padding-large-vertical;
+    
     background-color: $table-bg;
     &:nth-of-type(odd) {
       background-color: $table-bg-accent;
     }
   }
+  .check-item-container {
+    width: 100%;
+  }
   .check-state {
-    width: 64px;
+    width: 72px;
     text-align: center;
   }
   .check-description {
-    padding-left: 10px;
-    padding-right: 10px;
-    .text {
-      margin-bottom: 0;
-      & + .text {
-        padding-top: 10px;
-      }
-    }
+    padding-right: $padding-small-horizontal;
     .row-toggle-details {
-      margin-top: 10px;
+      margin-top: $padding-large-vertical;
     }
     .row-check-details {
       max-height: 0;
@@ -41,7 +34,7 @@
       color: $main-text-color;
       &.active {
         max-height: 20em;
-        margin-top: 10px;
+        margin-top: $padding-small-vertical;
         opacity: 1;
         overflow: auto;
       }
@@ -51,28 +44,14 @@
     display: inline-block;
     @media (max-width: $screen-xs-max) {
       display: block;
-      padding-top: 4px;
+      padding-top: $padding-small-vertical;
     }
   }
-  .ip-token {
-    display: inline-block;
-    padding: 2px 4px;
-    margin: 0 2px;
-    border-radius: $token-border-radius;
-    border: $token-border;
-    background-color: $color-token-bg;
-    box-sizing: border-box;
-    &.bg-success {
-      @include token-bg-color($brand-success);
-    }
-    &.bg-danger {
-      @include token-bg-color($brand-danger);
-    }
+  
+  .row-recommended-dns-records {
+    padding-top: $padding-small-vertical;
   }
-  .recommended-dns-records-label {
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
+  
   .recommended-dns-records {
     display: block;
     width: 100%;

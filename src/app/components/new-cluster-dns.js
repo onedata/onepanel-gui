@@ -9,8 +9,7 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import { reads, notEmpty } from '@ember/object/computed';
+import { reads, notEmpty, or } from '@ember/object/computed';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve, defer, reject } from 'rsvp';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -50,14 +49,11 @@ export default Component.extend(I18n, {
 
   performCheckDone: notEmpty('lastCheckStatus'),
 
+  proceedEnabled: or('isIpDomain', 'performCheckDone'),
+
   onepanelServiceType: reads('onepanelServer.serviceType'),
 
-  confirmProceedModalOpened: computed(
-    'confirmProceedDefer',
-    function confirmProceedModalOpened() {
-      return this.get('confirmProceedDefer') != null;
-    }
-  ),
+  confirmProceedModalOpened: notEmpty('confirmProceedDefer'),
 
   confirmProceed() {
     if (this.get('lastCheckStatus') === true) {
@@ -86,7 +82,7 @@ export default Component.extend(I18n, {
 
   actions: {
     proceed() {
-      if (this.get('performCheckDone')) {
+      if (this.get('proceedEnabled')) {
         return this.confirmProceed()
           .then(confirmed => {
             this.set('confirmProceedDefer', null);
