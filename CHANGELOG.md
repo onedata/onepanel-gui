@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4385 Fixed not updating storage sync charts after import finish and enabling update
 * VFS-4663 Web certificate management
 * VFS-4677 Added Ceph RADOS storage support
 * VFS-4463 Showing storage ID on storages view
