@@ -16,6 +16,7 @@ import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-s
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 /**
  * Space's `storageImport` properties that shouldn't be listed as generic
@@ -263,9 +264,17 @@ export default Component.extend(
       endImportConfiguration() {
         this.set('importConfigurationOpen', false);
       },
-      submitModifySpace() {
-        return this.get('submitModifySpace')(...arguments)
-          .then(() => this.set('importConfigurationOpen', false));
+      submitModifySpace(modifySpaceData) {
+        return this.get('submitModifySpace')(modifySpaceData)
+          .then(() => {
+            safeExec(this, 'set', 'importConfigurationOpen', false);
+            const updateStrategy = get(modifySpaceData, 'storageUpdate.strategy');
+            const importStrategy = get(modifySpaceData, 'storageImport.strategy');
+            if ((updateStrategy && updateStrategy !== 'no_update') ||
+              (importStrategy && importStrategy !== 'no_import')) {
+              safeExec(this, 'set', 'statsFrozen', false);
+            }
+          });
       },
       updateFilesPopularity(filesPopularity) {
         return this.get('submitModifySpace')({ filesPopularity });
