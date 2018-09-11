@@ -14,7 +14,6 @@ import { readOnly, equal, not } from '@ember/object/computed';
 import { isEmpty } from '@ember/utils';
 import _ from 'lodash';
 import moment from 'moment';
-
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
 
@@ -252,7 +251,7 @@ export default Mixin.create({
         this.get('space.importEnabled') &&
         get(newSyncStats, 'importStatus') === 'done') {
 
-        this.set('statsFrozen', true);
+        safeMethodExecution(this, 'set', 'statsFrozen', true);
       }
 
       this.setProperties({
