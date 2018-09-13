@@ -8,30 +8,27 @@
  */
 
 import Mixin from '@ember/object/mixin';
-import { computed, get } from '@ember/object';
-import { reads } from '@ember/object/computed';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { get } from '@ember/object';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default Mixin.create({
-  domain: reads('domainProxy.content'),
-
+export default Mixin.create(createDataProxyMixin('domain'), {
   /**
-   * @type {PromiseObject<string>}
    * Resolves with domain name of the service
+   * @returns {Promise<string>}
    */
-  domainProxy: computed('onepanelServiceType', function domainProxy() {
+  fetchDomain() {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     if (onepanelServiceType === 'provider') {
-      promise = this.get('providerManager').getProviderDetails()
+      promise = this.get('providerManager').getProviderDetails(true)
         .then(provider => get(provider, 'domain'));
     } else if (onepanelServiceType === 'zone') {
-      promise = this.get('clusterManager').getDefaultRecord()
+      promise = this.get('clusterManager').getDefaultRecord(true)
         .then(cluster => get(
           cluster,
           `clusterInfo.one${onepanelServiceType}.domainName`
         ));
     }
-    return promise && PromiseObject.create({ promise });
-  }),
+    return promise;
+  },
 });
