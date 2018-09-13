@@ -1,0 +1,10 @@
+{{#each checkResultItems as |checkResultItem|}}
+  {{cluster-dns-check-table/check-item
+    dnsCheckResult=checkResultItem
+    onepanelServiceType=onepanelServiceType
+    builtInDnsServer=builtInDnsServer
+    subdomainDelegation=subdomainDelegation
+    domain=domain
+    providerOnezoneDomain=providerOnezoneDomain
+  }}
+{{/each}}

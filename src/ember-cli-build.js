@@ -47,14 +47,6 @@ module.exports = function (defaults) {
     'ember-cli-chartist': {
       useCustomCSS: true,
     },
-    'nodeAssets': {
-      'chartist-plugin-legend': {
-        vendor: {
-          include: ['chartist-plugin-legend.js'],
-        },
-        public: {},
-      },
-    },
   });
 
   defineSassColors(app, colors);
@@ -80,9 +72,14 @@ module.exports = function (defaults) {
     'webui-popover/dist/jquery.webui-popover.js',
   ];
 
-  BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
+  const NODE_ASSETS = [
+    'chartist-plugin-legend/chartist-plugin-legend.js',
+    'jquery.scrollto/jquery.scrollTo.min.js',
+    'input-tokenizer/tokenizer.min.js',
+  ];
 
-  app.import('vendor/chartist-plugin-legend/chartist-plugin-legend.js');
+  BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
+  NODE_ASSETS.forEach(path => app.import(`node_modules/${path}`));
 
   return app.toTree();
 };

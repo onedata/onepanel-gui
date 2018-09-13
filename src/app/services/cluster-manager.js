@@ -89,23 +89,24 @@ export default Service.extend({
 
           let gettingConfiguration = this.getConfiguration();
 
-          return new Promise(resolveName => {
+          return new Promise(resolveConfiguration => {
             gettingConfiguration.then(({ data: configuration }) => {
-              let name = configuration['one' + onepanelServiceType].name;
-              resolveName(name);
+              resolveConfiguration(configuration);
             });
 
             gettingConfiguration.catch(() => {
-              resolveName(null);
+              resolveConfiguration(null);
             });
           });
 
-        }).then((name) => {
-          let thisCluster = ClusterInfo.create({
+        }).then(configuration => {
+          const name = (configuration || null) &&
+            configuration['one' + onepanelServiceType].name;
+          const thisCluster = ClusterInfo.create({
             id: THIS_CLUSTER_ID,
-          });
+          }, configuration);
 
-          let clusterDetails = ClusterDetails.create({
+          const clusterDetails = ClusterDetails.create({
             name,
             onepanelServiceType: onepanelServiceType,
             clusterInfo: thisCluster,
@@ -296,6 +297,13 @@ export default Service.extend({
       .then(({ isConfigured }) => isConfigured);
   },
 
+  _checkIsDnsCheckAcknowledged() {
+    const onepanelServer = this.get('onepanelServer');
+
+    return onepanelServer.request('onepanel', 'getDnsCheckConfiguration')
+      .then(({ data }) => data.dnsCheckAcknowledged);
+  },
+
   /**
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
@@ -317,8 +325,19 @@ export default Service.extend({
           if (onepanelServiceType === 'zone') {
             const checkIps = this._checkIsIpsConfigured();
             checkIps.then(isIpsConfigured => {
-              // NOTE: we don't have web cert configured flag, so skipping detection
-              resolve(isIpsConfigured ? STEP.ZONE_DONE : STEP.ZONE_IPS);
+              if (isIpsConfigured) {
+                const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
+                checkDnsCheck.then(dnsCheckAck => {
+                  if (dnsCheckAck) {
+                    resolve(STEP.ZONE_DONE);
+                  } else {
+                    resolve(STEP.ZONE_DNS);
+                  }
+                });
+                checkDnsCheck.catch(reject);
+              } else {
+                resolve(STEP.ZONE_IPS);
+              }
             });
             checkIps.catch(reject);
           } else {
@@ -335,22 +354,28 @@ export default Service.extend({
                     const checkStorage = this._checkIsAnyStorage(
                       onepanelServer
                     );
-                    checkStorage.then(isAnyStorage => {
-                      if (isAnyStorage) {
-                        resolve(
-                          STEP.PROVIDER_STORAGE_ADD + 1
-                        );
+                    const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
+                    checkDnsCheck.then(dnsCheckAck => {
+                      if (dnsCheckAck) {
+                        checkStorage.then(isAnyStorage => {
+                          if (isAnyStorage) {
+                            resolve(STEP.PROVIDER_DONE);
+                          } else {
+                            resolve(STEP.PROVIDER_STORAGE_ADD);
+                          }
+                        });
+                        checkStorage.catch(reject);
                       } else {
-                        resolve(STEP.PROVIDER_STORAGE_ADD);
+                        resolve(STEP.PROVIDER_DNS);
                       }
                     });
-                    checkStorage.catch(reject);
+                    checkDnsCheck.catch(reject);
                   } else {
-                    // NOTE: we don't have web cert configured flag, so skipping detection
-                    resolve(STEP.PROVIDER_STORAGE_ADD);
+                    resolve(STEP.PROVIDER_IPS);
                   }
                 });
                 checkIps.catch(reject);
+
               } else {
                 resolve(STEP.PROVIDER_REGISTER);
               }

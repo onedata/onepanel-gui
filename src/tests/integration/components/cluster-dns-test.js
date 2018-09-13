@@ -1,0 +1,71 @@
+import { expect } from 'chai';
+import { describe, it, beforeEach } from 'mocha';
+import { setupComponentTest } from 'ember-mocha';
+import hbs from 'htmlbars-inline-precompile';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { resolve, reject } from 'rsvp';
+import wait from 'ember-test-helpers/wait';
+import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
+import Service from '@ember/service';
+
+const ProviderManager = Service.extend({
+  getProviderDetails() {},
+});
+
+const OnepanelServer = Service.extend({
+  request() {},
+});
+
+describe('Integration | Component | cluster dns', function () {
+  setupComponentTest('cluster-dns', {
+    integration: true,
+  });
+
+  beforeEach(function () {
+    registerService(this, 'providerManager', ProviderManager);
+    registerService(this, 'clusterManager', Service);
+    registerService(this, 'onepanelServer', OnepanelServer);
+  });
+
+  it('renders DNS server IPs fetched from server', function () {
+    const dnsCheck = {
+      domain: {
+        summary: 'ok',
+        expected: ['149.156.11.33'],
+        got: ['149.156.11.33'],
+      },
+    };
+    this.set('dnsCheckProxy', PromiseObject.create({ promise: resolve(dnsCheck) }));
+    this.set('zonePoliciesProxy', PromiseObject.create({
+      promise: reject(),
+    }));
+    sinon.stub(lookupService(this, 'providerManager'), 'getProviderDetails')
+      .resolves({
+        domain: 'hello.domain',
+        subdomainDelegation: false,
+      });
+
+    sinon.stub(lookupService(this, 'onepanelServer'), 'request')
+      .withArgs('onepanel', 'getDnsCheckConfiguration')
+      .resolves({
+        data: {
+          dnsServers: ['8.8.8.8', '192.168.0.1'],
+          builtInDnsServer: true,
+        },
+      });
+
+    this.render(hbs `{{cluster-dns
+      onepanelServiceType="provider"
+      dnsCheckProxy=dnsCheckProxy
+      zonePoliciesProxy=zonePoliciesProxy
+    }}`);
+
+    const $clusterDns = this.$('.cluster-dns');
+    return wait().then(() => {
+      expect($clusterDns).to.exist;
+      expect($clusterDns).to.contain('8.8.8.8');
+      expect($clusterDns).to.contain('192.168.0.1');
+    });
+  });
+});
