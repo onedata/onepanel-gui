@@ -11,7 +11,7 @@
 
 import { A } from '@ember/array';
 
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { set, get, setProperties, computed } from '@ember/object';
@@ -105,6 +105,7 @@ export default OnepanelServerBase.extend(
   SpaceCleaningMock,
   SpaceCleaningReportsMock, {
     cookies: service(),
+    navigationState: service(),
 
     isLoading: readOnly('sessionValidator.isPending'),
 
@@ -249,7 +250,11 @@ export default OnepanelServerBase.extend(
 
     getServiceType() {
       let serviceType = this.get('serviceType');
-      return new Promise(resolve => resolve(serviceType));
+      return resolve(serviceType);
+    },
+
+    getOnezoneLogin() {
+      return resolve({ url: 'http://localhost:4201/#/login?auth_for=localhost:4200' });
     },
 
     watchTaskStatus(taskId) {

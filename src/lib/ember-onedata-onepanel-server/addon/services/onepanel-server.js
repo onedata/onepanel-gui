@@ -246,6 +246,29 @@ export default OnepanelServerBase.extend({
     });
   },
 
+  // FIXME: refactor to use static request common method or callbacl
+  /**
+   * @returns {string}
+   */
+  getOnezoneLogin() {
+    let client = this.createClient();
+    let api = new Onepanel.OnepanelApi(client);
+
+    return new Promise((resolve, reject) => {
+      let callback = function (error, data, response) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({
+            data,
+            response,
+          });
+        }
+      };
+      api.getOnezoneLogin(callback);
+    });
+  },
+
   /**
    * Makes a request to backend to create session using basic auth.
    *

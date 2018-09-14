@@ -1,4 +1,5 @@
 .login-box {
+  $-login-form-width: 400px;
   .login-main-title {
     &.zone {
       background-image: url($root-url + 'assets/images/onezone-logo.svg');
@@ -12,7 +13,12 @@
     background-image: url($root-url + 'assets/images/control-panel.svg');
   }
   .basicauth-login-form {
-    max-width: 400px;
+    max-width: $-login-form-width;
     margin: 0 auto;
+  }
+  .login-separator {
+    width: $-login-form-width;
+    margin-top: $form-group-margin-bottom * 1.5;
+    margin-bottom: $form-group-margin-bottom * 1.5;
   }
 }
