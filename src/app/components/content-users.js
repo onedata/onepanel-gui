@@ -79,14 +79,14 @@ export default ContentUsers.extend(I18n, createDataProxyMixin('onezoneAccount'),
   // FIXME: this should handle server rejection
   fetchOnezoneAccount() {
     // if (false) {
-    return resolve({
-      zoneName: 'Cyfronet AGH',
-      hostname: 'localhost:4201',
-      username: 'Stub User',
-      alias: 'stub_user',
-    });
+    // return resolve({
+    //   zoneName: 'Cyfronet AGH',
+    //   hostname: 'localhost:4201',
+    //   username: 'Stub User',
+    //   alias: 'stub_user',
+    // });
     // } else {
-    //   return resolve(null);
+    return resolve(null);
     // }
   },
 
