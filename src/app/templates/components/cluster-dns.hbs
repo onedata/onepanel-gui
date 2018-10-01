@@ -1,0 +1,171 @@
+<div class="row content-row no-border row-dns-intro">
+  <div class="inner-row-content">
+    {{tt this "intro"}}
+    <a href={{one-doc-url "administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"}}>{{tt this "documentation"}}</a>.
+  </div>
+</div>
+
+{{#if (eq onepanelServiceType "zone")}}
+  <div class="row content-row no-border row-onezone-built-in-server">
+    <h1>{{tt this "onezoneBuiltInServer.header"}}</h1>
+      {{#promise-proxy-container
+        absoluteCentered=false
+        spinnerBlockClass="loadable-row lg"
+        proxy=dnsCheckConfigurationProxy
+      }}
+        <div class="inner-row-content">
+          <div class="subheader-text">
+            {{tt this "onezoneBuiltInServer.text"}}
+          </div>
+          {{#if cannotUseBuiltInDnsServerReason}}
+            <div class="alert alert-warning alert-cannot-use-built-in-dns-server">
+              {{tt this (concat "onezoneBuiltInServer." cannotUseBuiltInDnsServerReason)}}
+            </div>
+          {{/if}}
+          <div class="form-group form-group-onezone-built-in-server">
+            <div class="row toggle-form-row">
+              <label
+                for={{concat parentView.elementId (concat "-dns-built-in-server")}}
+                class="control-label align-left"
+              >
+                {{tt this "onezoneBuiltInServer.useToggleLabel"}}:
+              </label>
+              {{one-way-toggle
+                class=(concat "form-control toggle-field-dns-built-in-server")
+                inputId=(concat parentView.elementId (concat "-dns-built-in-server"))
+                checked=builtInDnsServer
+                update=(action "changeBuiltInDnsServer")
+                isReadOnly=cannotUseBuiltInDnsServerReason
+              }}
+            </div>
+          </div>
+        </div>
+      {{/promise-proxy-container}}
+  </div>
+  
+  <div class="row content-row no-border row-zone-subdomain-delegation">
+    <h1>{{tt this "subdomainDelegation.header"}}</h1>
+    {{!-- NOTE: subdomainDelegation property is updated async right after
+          zonePoliciesProxy resolves --}}
+    {{#promise-proxy-container
+      absoluteCentered=false
+      spinnerBlockClass="loadable-row lg"
+      proxy=zonePoliciesProxy
+    }}
+      <div class="inner-row-content">
+        <div class="subheader-text">
+          {{tt
+            this
+            "subdomainDelegation.text"
+            onezoneDomain=domainProxy.content
+          }}
+          <a href={{one-doc-url "administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"}}>{{tt this "documentation"}}</a>.
+        </div>
+        <div class="form-group">
+          <div class="row toggle-form-row">
+            <label
+              for={{concat parentView.elementId (concat "-subdomain-delegation")}}
+              class="control-label align-left"
+            >
+              {{tt this "subdomainDelegation.useToggleLabel"}}:
+            </label>
+            {{one-way-toggle
+              class=(concat "form-control toggle-field-dns-built-in-server")
+              inputId=(concat parentView.elementId (concat "-subdomain-delegation"))
+              checked=subdomainDelegation
+              update=(action "changeSubdomainDelegation")
+              isReadOnly=cannotUseSubdomainDelegationReason
+              lockHint=(tt this (concat "subdomainDelegation." cannotUseSubdomainDelegationReason))
+            }}
+          </div>
+        </div>
+      </div>
+    {{/promise-proxy-container}}
+  </div>
+{{/if}}
+
+<div class="row content-row no-border row-dns-check">
+  <h1>{{tt this "dnsCheck.header"}}</h1>
+  {{#promise-proxy-container
+    absoluteCentered=false
+    spinnerBlockClass="loadable-row lg"
+    proxy=domainProxy
+  }}
+    <div class="inner-row-content">
+      <div class="subheader-text dns-check-state-info">
+        {{#if (eq stateInfo "providerIp")}}
+          {{tt this "dnsCheck.stateInfo.providerIp"}}
+        {{else if (eq stateInfo "providerSubdomainDelegation")}}
+          {{tt this "dnsCheck.stateInfo.providerSubdomainDelegation" providerOnezoneDomain=providerOnezoneDomain}}
+        {{else if (eq stateInfo "providerNoSubdomainDelegation")}}
+          {{tt this "dnsCheck.stateInfo.providerNoSubdomainDelegationPreHint" domain=domain}}
+          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
+          <span class="space"></span>
+          {{tt this "dnsCheck.stateInfo.providerNoSubdomainDelegationPostHint"}}
+        {{else if (eq stateInfo "zoneSubdomainDelegation")}}
+          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPreHint" domain=domain}}
+          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
+          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPostHint"}}  
+        {{else if (eq stateInfo "zoneNoSubdomainDelegation")}}
+          {{tt this "dnsCheck.stateInfo.zoneNoSubdomainDelegationPreHint" domain=domain}}
+          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
+          <span class="space"></span>
+          {{tt this "dnsCheck.stateInfo.zoneNoSubdomainDelegationPostHint" domain=domain}}
+        {{else if (eq stateInfo "zoneIp")}}
+          {{tt this "dnsCheck.stateInfo.zoneIp"}}
+        {{/if}}
+      </div>
+      {{#unless isIpDomain}}
+        <p class="dns-servers-input-intro">
+          {{tt this "dnsCheck.inputIntro" domain=domain serviceName=guiUtils.fullServiceName}}
+        </p>
+        <div class="row row-ip-addresses-input-tokenizer">
+          {{one-input-tokenizer
+            inputValue=newIpAddress
+            tokens=dnsServers
+            tokensChanged=(action "dnsServersChanged")
+            inputValueChanged=(action (mut newIpAddress))
+            placeholder=(tt this "dnsCheck.ipInputPlaceholder")
+            isBusy=clusterDnsInputBusy
+          }}
+        </div>
+        <div class="btn-container">
+          <div class="row row-btn">
+            {{#one-spin-button
+              class=(concat "btn btn-default btn-perform-dns-check")
+              action=(action "performDnsCheck")
+              disabled=(not performCheckEnabled)
+            }}
+              <span>{{tt this "dnsCheck.performCheck"}}</span>
+            {{/one-spin-button}}
+          </div>
+        </div>
+      {{/unless}}
+    </div>
+  {{/promise-proxy-container}}
+</div>
+
+{{#if (not (eq dnsCheckProxy undefined))}}
+  <div class="row content-row no-border row-dns-check-results">
+    {{#promise-proxy-container
+      absoluteCentered=false
+      spinnerBlockClass="loadable-row lg"
+      proxy=dnsCheckProxy
+    }}
+      <h1>{{tt this "dnsCheck.result.header"}}
+        <span class="header-addon">
+          ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
+        </span>
+      </h1>
+      {{cluster-dns-check-table
+        checkResultItems=checkResultItems
+        onepanelServiceType=onepanelServiceType
+        builtInDnsServer=builtInDnsServer
+        subdomainDelegation=subdomainDelegation
+        domain=domain
+        providerOnezoneDomain=providerOnezoneDomain
+      }}
+    {{/promise-proxy-container}}
+  </div>
+{{/if}}
+

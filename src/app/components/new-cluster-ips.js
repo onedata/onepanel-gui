@@ -13,7 +13,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
-  classNames: ['new-cluster-dns', 'container-fluid'],
+  classNames: ['new-cluster-ips', 'container-fluid'],
 
   onepanelServer: service(),
   clusterManager: service(),

@@ -1,0 +1,9 @@
+.check-state-icon {
+  font-size: 40px;
+  &.success {
+    color: $color-one-success;
+  }
+  &.warning {
+    color: $color-one-danger;
+  }
+}
