@@ -1,18 +1,26 @@
+const installation = 'cluster installation';
+const webCert = 'certificate setup';
+const dns = 'DNS setup';
+const ips = 'cluster IP adresses';
+const summary = 'summary';
+
 export default {
   steps: {
     provider: {
-      installation: 'cluster installation',
-      ips: 'cluster IP adresses',
+      installation,
+      ips,
       providerRegistration: 'provider registration',
-      webCert: 'certificate setup',
+      webCert,
+      dns,
       providerStorage: 'storage configuration',
-      summary: 'summary',
+      summary,
     },
     zone: {
-      installation: 'cluster installation',
-      webCert: 'certificate setup',
-      ips: 'cluster IP adresses',
-      summary: 'summary',
+      installation,
+      webCert,
+      dns,
+      ips,
+      summary,
     },
   },
 };

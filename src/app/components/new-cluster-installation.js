@@ -303,6 +303,10 @@ export default Component.extend(I18n, {
           nodes: getHostnamesOfType(hostsUsed, 'database'),
         },
       },
+      onepanel: {
+        interactiveDeployment: true,
+        users: [],
+      },
     };
 
     // in zone mode, add zone name    

@@ -23,6 +23,12 @@ export default GuiUtils.extend({
   serviceType: reads('onepanelServer.serviceType'),
 
   /**
+   * Just an alias - this name was used in the past
+   * @type {Ember.ComputedProperty<string>}
+   */
+  onepanelServiceType: reads('serviceType'),
+
+  /**
    * Full panel type name: Oneprovider or Onezone.
    * @type {Ember.ComputedProperty<string>}
    */

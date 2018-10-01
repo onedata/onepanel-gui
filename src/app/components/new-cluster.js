@@ -35,6 +35,7 @@ const STEPS_PROVIDER = [
   'installation',
   'providerRegistration',
   'ips',
+  'dns',
   'webCert',
   'providerStorage',
   'summary',
@@ -47,6 +48,7 @@ const STEPS_PROVIDER = [
 const STEPS_ZONE = [
   'installation',
   'ips',
+  'dns',
   'webCert',
   'summary',
 ];
@@ -176,10 +178,20 @@ export default Component.extend(I18n, {
     this.set('currentStepIndex', nextStep);
   },
 
+  _prev() {
+    const nextStep = prevInt(this.get('currentStepIndex'));
+    this.set('cluster.initStep', nextStep);
+    this.set('currentStepIndex', nextStep);
+  },
+
   actions: {
     next() {
       $('.col-content').scrollTop(0);
       this._next();
+    },
+    prev() {
+      $('.col-content').scrollTop(0);
+      this._prev();
     },
     changeClusterName(name) {
       if (!name) {
@@ -203,4 +215,13 @@ export default Component.extend(I18n, {
  */
 function nextInt(i) {
   return Math.floor(i + 1);
+}
+
+/**
+ * Returns prev integer for given number (e.g. 2 => 1; 3.3 => 2; 4.6 => 3)
+ * @param {number} i
+ * @returns {number} an integer
+ */
+function prevInt(i) {
+  return Math.floor(i - 1);
 }

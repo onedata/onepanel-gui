@@ -35,6 +35,10 @@ import contentClustersCertificate from './components/content-clusters-certificat
 import webCertForm from './components/web-cert-form';
 import newClusterWebCert from './components/new-cluster-web-cert';
 import modalConfigureWebCert from './components/modal-configure-web-cert';
+import newClusterDns from './components/new-cluster-dns';
+import clusterDnsCheckTable from './components/cluster-dns-check-table';
+import contentClustersDns from './components/content-clusters-dns';
+import clusterDns from './components/cluster-dns';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -83,6 +87,10 @@ let translations = {
     webCertForm,
     newClusterWebCert,
     modalConfigureWebCert,
+    newClusterDns,
+    clusterDnsCheckTable,
+    contentClustersDns,
+    clusterDns,
   },
   mixins: {
     components: {

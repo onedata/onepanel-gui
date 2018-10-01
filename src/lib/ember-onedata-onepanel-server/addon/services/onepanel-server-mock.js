@@ -14,7 +14,7 @@ import { A } from '@ember/array';
 import { Promise } from 'rsvp';
 import { readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import EmberObject, { set, get, computed } from '@ember/object';
+import EmberObject, { set, get, setProperties, computed } from '@ember/object';
 import { run } from '@ember/runloop';
 
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
@@ -126,6 +126,7 @@ export default OnepanelServerBase.extend(
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
     mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
@@ -313,6 +314,25 @@ export default OnepanelServerBase.extend(
       this._super(...arguments);
       const mockStep = this.get('mockStep');
       if (MOCK_SERVICE_TYPE === 'provider') {
+        this.set('__dnsCheck', {
+          domain: {
+            summary: 'bad_records',
+            got: ['192.168.0.1', '1.1.1.2'],
+            expected: ['176.96.148.233', '192.168.0.1'],
+            recommended: [
+              'dev-onezone.default.svc.cluster.local. IN NS ns1.dev-onezone.default.svc.cluster.local',
+              'dev-onezone.default.svc.cluster.local. IN NS ns2.dev-onezone.default.svc.cluster.local',
+              'ns1.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+              'ns2.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+            ],
+          },
+        });
+        this.set('__dnsCheckConfiguration', {
+          dnsServers: ['8.8.8.8', '192.168.1.10'],
+          builtInDnsServer: true,
+          dnsCheckAcknowledged: mockStep > STEP.PROVIDER_DNS,
+        });
+
         if (mockStep > STEP.PROVIDER_REGISTER) {
           this.set('__provider', PlainableObject.create({
             id: PROVIDER_ID,
@@ -407,8 +427,45 @@ export default OnepanelServerBase.extend(
           this.set('__storages', []);
         }
       } else if (MOCK_SERVICE_TYPE === 'zone') {
+        this.set('__dnsCheck', {
+          domain: {
+            summary: 'missing_records',
+            got: [],
+            expected: ['176.96.148.233'],
+            recommended: [
+              'dev-onezone.default.svc.cluster.local. IN NS ns1.dev-onezone.default.svc.cluster.local',
+              'dev-onezone.default.svc.cluster.local. IN NS ns2.dev-onezone.default.svc.cluster.local',
+              'ns1.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+              'ns2.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+            ],
+          },
+          dnsZone: {
+            summary: 'unresolvable',
+            got: ['192.168.0.1', '192.168.0.2'],
+            expected: ['192.168.0.1'],
+            recommended: [
+              'dev-onezone.default.svc.cluster.local. IN NS ns1.dev-onezone.default.svc.cluster.local',
+            ],
+          },
+        });
+        this.set('__dnsCheckConfiguration', {
+          dnsServers: ['8.8.8.8', '192.168.1.10'],
+          builtInDnsServer: false,
+          dnsCheckAcknowledged: mockStep > STEP.ZONE_DNS,
+        });
+
         if (mockStep > STEP.ZONE_WEB_CERT) {
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
+        }
+
+        if (mockStep > STEP.ZONE_DNS) {
+          this.set('__zonePolicies', {
+            subdomainDelegation: false,
+          });
+        } else {
+          this.set('__zonePolicies', {
+            subdomainDelegation: false,
+          });
         }
       }
 
@@ -865,6 +922,58 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_checkDns() {
+      const __dnsCheck = this.get('__dnsCheck');
+      const builtInDnsServer = this.get('__dnsCheckConfiguration.builtInDnsServer');
+      const check = builtInDnsServer ? { domain: __dnsCheck.domain } : __dnsCheck;
+      return {
+        success: ({ forceCheck }) => {
+          if (forceCheck) {
+            this.set('__dnsCheckTimestamp', moment().toISOString());
+          }
+          return Object.assign({ timestamp: this.get('__dnsCheckTimestamp') },
+            check);
+        },
+      };
+    },
+
+    _req_onepanel_getDnsCheckConfiguration() {
+      const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
+      return {
+        success() {
+          return __dnsCheckConfiguration;
+        },
+      };
+    },
+
+    _req_onepanel_modifyDnsCheckConfiguration() {
+      const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
+      return {
+        success(data) {
+          setProperties(__dnsCheckConfiguration, data);
+          return undefined;
+        },
+      };
+    },
+
+    _req_onezone_getZonePolicies() {
+      const __zonePolicies = this.get('__zonePolicies');
+      return {
+        success() {
+          return __zonePolicies;
+        },
+      };
+    },
+
+    _req_onezone_modifyZonePolicies() {
+      const __zonePolicies = this.get('__zonePolicies');
+      return {
+        success(data) {
+          return setProperties(__zonePolicies, data);
+        },
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
 
     __clusterHosts: computed(function () {
@@ -880,6 +989,14 @@ export default OnepanelServerBase.extend(
         },
       };
     }),
+
+    __dnsCheck: undefined,
+
+    __dnsCheckTimestamp: moment(1530000000000).toISOString(),
+
+    __dnsCheckConfiguration: undefined,
+
+    __zonePolicies: undefined,
 
     __provider: undefined,
 

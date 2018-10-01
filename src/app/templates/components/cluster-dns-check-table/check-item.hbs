@@ -1,0 +1,73 @@
+<table class="check-item-container">
+  <tbody>
+    <tr>
+      <td class="check-state">
+        {{check-state-icon success=success}}
+      </td>
+      <td class="check-description">
+        <p class="text description">
+          {{#if isUsingPartial}}
+            {{partial (concat "components/cluster-dns-check-table/messages/" summaryPathPartial)}}
+          {{else}}
+            {{descriptionText}}
+          {{/if}}
+        </p>
+        <p class="row-toggle-details">
+          <a role="button" class="link-toggle-details disable-user-select" {{action "toggleShowDetails"}}>
+            {{tt this (if showDetails "hideDetails" "showDetails")}}
+          </a>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td class="check-description">
+        <div class="row row-check-details {{if showDetails "active"}}">
+          <p class="got-ips">
+            <strong>{{tt this "gotIps"}}:</strong>
+            <div class="ip-list">
+              {{#each gotIps as |ip|}}
+                <span class="tag ip-token {{if (contains ip expectedIps) "bg-success"}}">
+                  {{ip}}
+                </span>
+              {{else}}
+                &ndash;
+              {{/each}}
+            </div>
+          </p>
+          <p class="expected-ips">
+            <strong>{{tt this "expectedIps"}}:</strong>
+            <div class="ip-list">
+              {{#each expectedIps as |ip|}}
+                <span class="tag ip-token {{if (contains ip gotIps) "bg-success" "bg-danger"}}">{{ip}}</span>
+              {{else}}
+                &ndash;
+              {{/each}}
+            </div>
+          </p>
+          <div class="row row-recommended-dns-records">
+            <p class="recommended-dns-records-label">
+              <strong>{{tt this "recommendedDnsRecords"}}:</strong>
+            </p>
+            <div class="row row-recommended-dns-records-textarea">
+              <textarea
+                spellcheck="false"
+                class="recommended-dns-records form-control"
+                rows={{recommendedDnsRecords.length}}
+                readonly="true">{{recommendedDnsRecordsText}}</textarea>
+              <div class="btn-container text-right">
+                <div class="btn-row">
+                  {{one-copy-button
+                    class="btn btn-default btn-sm"
+                    parentElementId=elementId
+                    localTarget=".recommended-dns-records"
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -3,7 +3,7 @@
  *
  * @module routes/onedata/sidebar/content/aspect
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -12,7 +12,7 @@ import { get } from '@ember/object';
 import { inject } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
-const zoneAspects = new Set(['nodes', 'certificate']);
+const zoneAspects = new Set(['nodes', 'dns', 'certificate']);
 
 export default AspectRoute.extend({
   onepanelServer: inject(),
