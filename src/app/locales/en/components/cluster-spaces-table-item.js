@@ -20,6 +20,10 @@ export default {
   spaceUsageOnThisProvider: 'Space usage on this provider',
   spaceUsageOnThisProviderTip: 'The bar shows current provider storage usage ' +
     'for this space.',
+  revokeSupportTitle: 'Revoke space support',
+  revokeSupportMsg: 'When the support will be revoked, data from the "{{spaceName}}" space that is not replicated among other providers will be lost.',
+  revokeSupportCancel: 'No, keep the support',
+  revokeSupportProceed: 'Yes, revoke',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',

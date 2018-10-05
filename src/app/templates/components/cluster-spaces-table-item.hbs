@@ -197,20 +197,28 @@
   {{#bs-modal
     open=_openRevokeModal
     onHide=(action "hideRevoke")
+    as |modal|
   }}
-    <h1>Revoke space support?</h1>
-      <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
-      <div class="btn-toolbar">
-        {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
-          No, keep the support
-        {{/bs-button}}
-        {{#one-spin-button
-          class="btn btn-sm btn-danger"
-          action=(action "revokeSpace")
-        }}
-          {{one-icon icon="remove"}} <span>Yes, revoke</span>
-        {{/one-spin-button}}
-      </div>
+    {{#modal.header}}
+      <h1>
+        {{one-icon icon="sign-warning-rounded"}}
+        <span class="one-lable">{{tt this "revokeSupportTitle"}}</span>
+      </h1>
+    {{/modal.header}}
+    {{#modal.body}}
+      <p>{{tt this "revokeSupportMsg" spaceName=space.name}}</p>
+    {{/modal.body}}
+    {{#modal.footer class="btn-toolbar"}}
+      {{#bs-button class="btn" type="info" onClick=(action "hideRevoke")}}
+        {{tt this "revokeSupportCancel"}}
+      {{/bs-button}}
+      {{#one-spin-button
+        class="btn btn-danger"
+        action=(action "revokeSpace")
+      }}
+        {{one-icon icon="remove"}} <span>{{tt this "revokeSupportProceed"}}</span>
+      {{/one-spin-button}}
+    {{/modal.footer}}
   {{/bs-modal}}
 {{/if}}
 

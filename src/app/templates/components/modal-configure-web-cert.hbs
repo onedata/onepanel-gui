@@ -5,31 +5,28 @@
   backdropClose=false
   as |modal|
 }}
+  {{#modal.header}}
+    <h1>
+      {{one-icon icon="sign-warning-rounded"}}
+      <span class="one-lable">{{tt this "title"}}</span>
+    </h1>
+  {{/modal.header}}
   {{#modal.body}}
-    <div class="modal-info-content">
-      <div class="modal-info-icon">
-        {{one-icon icon="sign-warning"}}
-      </div>
-      <div class="modal-info-text">
-        {{tt this "text"}}
-      </div>
-    </div>
+    <p>{{tt this "text"}}</p>
   {{/modal.body}}
-  {{#modal.footer}}
-    <div class="btn-toolbar">
-      {{#bs-button
-        type="default"
-        onClick=(action modal.close)
-      }}
-        {{tt this "btnDiscard"}}
-      {{/bs-button}}
-      {{#link-to
-        "onedata.sidebar.content.aspect"
-        "certificate"
-        class="btn btn-primary"
-      }}
-        {{tt this "btnGoToCert"}}
-      {{/link-to}}
-    </div>
+  {{#modal.footer class="btn-toolbar"}}
+    {{#bs-button
+      type="default"
+      onClick=(action modal.close)
+    }}
+      {{tt this "btnDiscard"}}
+    {{/bs-button}}
+    {{#link-to
+      "onedata.sidebar.content.aspect"
+      "certificate"
+      class="btn btn-primary"
+    }}
+      {{tt this "btnGoToCert"}}
+    {{/link-to}}
   {{/modal.footer}}
 {{/bs-modal}}
