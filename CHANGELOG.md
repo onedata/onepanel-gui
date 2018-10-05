@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-4865 Added space support size change feature
 * VFS-4700 Added DNS check and Onezone DNS configuration views
 * VFS-4385 Fixed not updating storage sync charts after import finish and enabling update
 * VFS-4663 Web certificate management

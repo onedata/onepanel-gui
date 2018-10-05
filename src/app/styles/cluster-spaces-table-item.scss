@@ -67,4 +67,19 @@
   .one-space-indicator {
     margin-top: $padding-base-vertical;
   }
+  
+  .support-size-this {
+    .row-modify-support-size {
+      position: relative;
+      margin-top: $padding-large-vertical;
+      .label-size {
+        position: absolute;
+        top: 0.5em;
+      }
+      .one-size-edit {
+        margin-left: 40px;
+        margin-bottom: 0;
+      }
+    }
+  }
 }
