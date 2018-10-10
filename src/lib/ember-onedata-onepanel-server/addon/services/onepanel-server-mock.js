@@ -390,9 +390,7 @@ export default OnepanelServerBase.extend(
               },
               supportingProviders: _genSupportingProviders(),
             });
-            // additional spaces to test issue VFS-3673
-            // FIXME: revert to 8
-            _.times(0, i => {
+            _.times(2, i => {
               spaces.push({
                 id: i + '-space',
                 name: 'Test Space',

@@ -10,8 +10,10 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
+import { next } from '@ember/runloop';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(I18n, {
   classNames: ['support-size-this'],
@@ -76,12 +78,17 @@ export default Component.extend(I18n, {
     saveSpaceSize() {
       const {
         globalNotify,
-        editedSupportSize,
+        newTotalSize,
       } = this.getProperties(
         'globalNotify',
-        'editedSupportSize'
+        'newTotalSize'
       );
-      return this.submitSpaceSize(editedSupportSize)
+      return this.submitSpaceSize(Math.floor(newTotalSize))
+        .then(() => {
+          next(() => {
+            safeExec(this, 'set', 'newTotalSize', undefined);
+          });
+        })
         .catch(error => {
           globalNotify.backendError(
             this.t('modifyingSpaceSupportSize'),

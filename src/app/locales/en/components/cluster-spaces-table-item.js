@@ -52,7 +52,7 @@ export default {
   supportSizeThis: {
     spaceSupportOnThisProvider: 'Space support on this provider',
     modifyingSpaceSupportSize: 'modifying space support size',
-    spaceSupportOnThisProviderTip: 'The bar shows provider storage usage for this space. If you are currenlty modifying the size, it will show expected storage state after resize.',
+    spaceSupportOnThisProviderTip: 'The bar shows provider storage usage for this space. If you are currently modifying the size, it will show expected storage state after resize.',
     editSupportSizeValidation: {
       empty: 'New support size should be a positive number',
     },
