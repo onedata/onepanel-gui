@@ -3,7 +3,7 @@
  *
  * @module components/cluster-spaces-table-item.js
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -267,7 +267,9 @@ export default Component.extend(
       submitModifySpace(modifySpaceData) {
         return this.get('submitModifySpace')(modifySpaceData)
           .then(() => {
-            safeExec(this, 'set', 'importConfigurationOpen', false);
+            if (this.get('importConfigurationOpen')) {
+              safeExec(this, 'set', 'importConfigurationOpen', false);
+            }
             const updateStrategy = get(modifySpaceData, 'storageUpdate.strategy');
             const importStrategy = get(modifySpaceData, 'storageImport.strategy');
             if ((updateStrategy && updateStrategy !== 'no_update') ||

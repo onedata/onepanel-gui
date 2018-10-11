@@ -11,9 +11,10 @@ export default [{
     type: 'radio-group',
     nolabel: true,
     options: [
-      { value: 'mib', label: 'MiB', _multiplicator: 1048576 },
-      { value: 'gib', label: 'GiB', _multiplicator: 1073741824 },
-      { value: 'tib', label: 'TiB', _multiplicator: 1099511627776 },
+      { value: 'mib', label: 'MiB', _multiplicator: Math.pow(1024, 2) },
+      { value: 'gib', label: 'GiB', _multiplicator: Math.pow(1024, 3) },
+      { value: 'tib', label: 'TiB', _multiplicator: Math.pow(1024, 4) },
+      { value: 'pib', label: 'PiB', _multiplicator: Math.pow(1024, 5) },
     ],
   },
   {

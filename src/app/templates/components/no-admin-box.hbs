@@ -64,7 +64,7 @@
           </p>
           <div class="hostname-row {{unless hostnameProxy.isSettled "loadable-row"}}">            
             {{#promise-proxy-container proxy=hostnameProxy}}
-              {{clipboard-line value=hostnameProxy.content}}
+              {{clipboard-line value=hostnameProxy.content btnType="primary"}}
             {{/promise-proxy-container}}
           </div>
           <div class="row text-center">
