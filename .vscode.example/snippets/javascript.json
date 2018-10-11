@@ -62,5 +62,21 @@
 		"body": [
 			"import $1 from 'onedata-gui-common/$2';"
 		]
+	},
+	"JSDoc: type": {
+		"prefix": "jt",
+		"body": [
+			"/**",
+			" * @type {$1}",
+			" */"
+		]
+	},
+	"JSDoc: type computed property": {
+		"prefix": "jtcp",
+		"body": [
+			"/**",
+			" * @type {ComputedProperty<$1>}",
+			" */"
+		]
 	}
 }

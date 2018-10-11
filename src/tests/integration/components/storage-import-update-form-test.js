@@ -5,7 +5,7 @@ import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 
 import FormHelper from '../../helpers/form';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select';
+import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import StorageImportFormLocales from 'onepanel-gui/locales/en/components/storage-import-update-form';
 
 class StorageImportUpdateFormHelper extends FormHelper {

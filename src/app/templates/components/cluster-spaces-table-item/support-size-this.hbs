@@ -1,0 +1,22 @@
+<div>
+  <strong class="property-label">{{tt this "spaceSupportOnThisProvider"}}</strong>
+  {{one-label-tip title=(tt this "spaceSupportOnThisProviderTip")
+    placement="top"
+  }}
+</div>
+<div class="row-modify-support-size">
+  <label class="label-size">{{tt this "size"}}:</label>
+  {{one-size-edit
+    value=providerSupportSize
+    size="small"
+    onSave=(action "saveSpaceSize")
+    onInputValueChanged=(action (mut newTotalSize))
+    onEdit=(action "editorStateChanged")
+    externalValidator=newTotalSizeValidator
+  }}
+</div>
+{{one-space-indicator
+  currentTotalSize=providerSupportSize
+  newTotalSize=newTotalSize
+  occupiedSize=spaceOccupancy
+}}
