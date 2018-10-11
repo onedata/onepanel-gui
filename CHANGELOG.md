@@ -7,6 +7,8 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4870 New style for modals
+* VFS-4798 Fixed redirect modal not shown after provider domain change and provider data refresh after cluster aspect change
+* VFS-4865 Added space support size change feature
 * VFS-4700 Added DNS check and Onezone DNS configuration views
 * VFS-4385 Fixed not updating storage sync charts after import finish and enabling update
 * VFS-4663 Web certificate management

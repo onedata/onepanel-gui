@@ -17,9 +17,6 @@ export default {
   syncConfig: 'Configure data synchronization',
   syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
-  spaceUsageOnThisProvider: 'Space usage on this provider',
-  spaceUsageOnThisProviderTip: 'The bar shows current provider storage usage ' +
-    'for this space.',
   revokeSupportTitle: 'Revoke space support',
   revokeSupportMsg: 'When the support will be revoked, data from the "{{spaceName}}" space that is not replicated among other providers will be lost.',
   revokeSupportCancel: 'No, keep the support',
@@ -55,5 +52,15 @@ export default {
         disabled: 'Auto cleaning can be configured only if files popularity feature is enabled',
       },
     },
+  },
+  supportSizeThis: {
+    spaceSupportOnThisProvider: 'Space support on this provider',
+    modifyingSpaceSupportSize: 'modifying space support size',
+    spaceSupportOnThisProviderTip: 'The bar shows provider storage usage for this space. If you are currently modifying the size, it will show expected storage state after resize.',
+    editSupportSizeValidation: {
+      empty: 'New support size should be a positive number',
+    },
+    size: 'Size',
+    errorSizeLesserThanOccupancy: 'New support size must be greater than space occupied',
   },
 };
