@@ -216,9 +216,13 @@ export default OnepanelServerBase.extend(
             };
             let taskId = getTaskId(response);
             run.later(() => {
+              const data = handler.success(...params);
+              console.debug(
+                `service:onepanel-server-mock: response: ${JSON.stringify(data)}, API ${api}, method ${method}, params: ${JSON.stringify(params)}`
+              );
               resolve({
                 __request_method: method,
-                data: handler.success(...params),
+                data,
                 response: response,
                 task: taskId && this.watchTaskStatus(taskId),
                 toString: responseToString,
@@ -386,8 +390,7 @@ export default OnepanelServerBase.extend(
               },
               supportingProviders: _genSupportingProviders(),
             });
-            // additional spaces to test issue VFS-3673
-            _.times(8, i => {
+            _.times(2, i => {
               spaces.push({
                 id: i + '-space',
                 name: 'Test Space',
@@ -682,23 +685,20 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getSpaceDetails: computed(
-      'mockInitializedCluster',
-      '__spaces',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          let spaces = this.get('__spaces');
-          let findSpace = (id) => _.find(spaces, s => s.id === id);
-          return {
-            success: (id) => findSpace(id),
-            statusCode: (id) => findSpace(id) ? 200 : 404,
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getSpaceDetails() {
+      if (this.get('mockInitializedCluster')) {
+        let spaces = this.get('__spaces');
+        let findSpace = (id) => _.find(spaces, s => s.id === id);
+        return {
+          success: (id) => findSpace(id),
+          statusCode: (id) => findSpace(id) ? 200 : 404,
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
     _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
       return {
@@ -720,7 +720,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_modifySpace: computed(function () {
+    _req_oneprovider_modifySpace() {
       return {
         success: (id, data) => {
           let spaces = this.get('__spaces');
@@ -733,6 +733,9 @@ export default OnepanelServerBase.extend(
               set(data, 'autoCleaning', { enabled: false });
             }
             emberObjectMerge(space, data);
+            if (data && data.size) {
+              set(space, `supportingProviders.${PROVIDER_ID}`, data.size);
+            }
             return null;
           } else {
             return null;
@@ -744,7 +747,7 @@ export default OnepanelServerBase.extend(
           return space ? 204 : 404;
         },
       };
-    }),
+    },
 
     _req_oneprovider_supportSpace: computed(function () {
       return {

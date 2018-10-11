@@ -52,5 +52,29 @@ module.exports = {
         requireReturn: false,
       },
     ],
+    // TODO: currently experimental for manual use
+    'ember/order-in-components': [0, {
+      order: [
+        ['service', 'property'],
+        'empty-method',
+        'single-line-function',
+        'multi-line-function',
+        'observer',
+        'init',
+        'didReceiveAttrs',
+        'willRender',
+        'willInsertElement',
+        'didInsertElement',
+        'didRender',
+        'didUpdateAttrs',
+        'willUpdate',
+        'didUpdate',
+        'willDestroyElement',
+        'willClearRender',
+        'didDestroyElement',
+        'method',
+        'actions',
+      ]
+    }]
   },
 };

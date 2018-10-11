@@ -56,7 +56,7 @@
         
         <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
           <div class="row content-row">
-            <strong class="property-label">{{t "components.clusterSpacesTableItem.name"}}:</strong> 
+            <strong class="property-label">{{t "components.clusterSpacesTableItem.name"}}:</strong>
             {{name-conflict item=space tagName="span" class="one-label space-name"}}
           </div>
           <div class="row content-row">
@@ -68,8 +68,7 @@
           </div>
           <div class="row content-row">
             <strong class="property-label">{{t "components.clusterSpacesTableItem.mountInRoot"}}:</strong>
-            {{one-way-toggle
-              checked=space.mountInRoot
+            {{one-way-toggle checked=space.mountInRoot
               isReadOnly=true
               class="space-mountInRoot"
             }}
@@ -109,18 +108,19 @@
             {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
           {{/promise-proxy-container}}
           <div class="row content-row">
-            <strong class="property-label">{{tt this "spaceUsageOnThisProvider"}}</strong>
-            {{one-label-tip
-              title=(tt this "spaceUsageOnThisProviderTip")
-              placement="top"}}
-            {{one-space-indicator totalSize=_thisProviderSupportSize occupiedSize=_spaceOccupancy}}
+            {{#promise-proxy-container proxy=spaceSupportersProxy}}
+              {{cluster-spaces-table-item/support-size-this 
+                providerSupportSize=_thisProviderSupportSize
+                spaceOccupancy=_spaceOccupancy
+                submitModifySpace=(action "submitModifySpace")
+              }}
+            {{/promise-proxy-container}}
           </div>
         </div>
-        
+
         <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
           <div class="row content-row">
-            {{#bs-tab 
-              fade=false
+            {{#bs-tab fade=false
               customTabs=true
               activeId=initActiveTabId
               onChange=(action (mut activeTabId))
@@ -136,17 +136,13 @@
                   {{one-tooltip triggerEvents="hover" title=tabSyncHint}}
                 {{/nav.item}}
                 {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
-                  <a href= {{concat "#" tabPopularId}}
-                    class="nav-link"
-                    role="tab" {{action tab.select tabPopularId}}>
+                  <a href={{concat "#" tabPopularId}} class="nav-link" role="tab" {{action tab.select tabPopularId}}>
                     {{t "components.clusterSpacesTableItem.tabs.popular.title"}}
                   </a>
                   {{one-tooltip triggerEvents="hover" title=tabPopularHint}}
                 {{/nav.item}}
                 {{#nav.item class=tabCleanClass active=(eq tab.activeId tabCleanId)}}
-                  <a href= {{concat "#" tabCleanId}}
-                    class="nav-link"
-                    role="tab" {{action tab.select tabCleanId}}>
+                  <a href={{concat "#" tabCleanId}} class="nav-link" role="tab" {{action tab.select tabCleanId}}>
                     {{t "components.clusterSpacesTableItem.tabs.clean.title"}}
                   </a>
                   {{one-tooltip triggerEvents="hover" title=tabCleanHint}}
@@ -168,49 +164,46 @@
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabPopularId}}
                   {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
-                    {{space-files-popularity
-                      filesPopularity=space.filesPopularity
+                    {{space-files-popularity filesPopularity=space.filesPopularity
                       updateFilesPopularity=(action "updateFilesPopularity")
                     }}
                   {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabCleanId}}
                   {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
-                    {{space-auto-cleaning
-                      autoCleaning=space.autoCleaning
+                    {{space-auto-cleaning autoCleaning=space.autoCleaning
                       spaceSize=spaceSizeForProvider
                       spaceId=space.id
                       updateAutoCleaning=(action "updateAutoCleaning")
                       spaceOccupancyChanged=(action "spaceOccupancyChanged")
                     }}
                   {{/if}}
-                {{/tab.pane}}                
+                {{/tab.pane}}
               </div>
             {{/bs-tab}}
           </div>
         </div>
-        
+
       </div>
     </div>
   {{/listItem.content}}
 
-  {{#bs-modal
-    open=_openRevokeModal
+  {{#bs-modal open=_openRevokeModal
     onHide=(action "hideRevoke")
   }}
     <h1>Revoke space support?</h1>
-      <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other providers will be lost.</p>
-      <div class="btn-toolbar">
-        {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
-          No, keep the support
-        {{/bs-button}}
-        {{#one-spin-button
-          class="btn btn-sm btn-danger"
+    <p>When the support will be revoked, data from the "{{space.name}}" space that is not replicated among other
+      providers will be lost.</p>
+    <div class="btn-toolbar">
+      {{#bs-button class="btn btn-sm" type="info" onClick=(action "hideRevoke")}}
+        No, keep the support
+      {{/bs-button}}
+      {{#one-spin-button class="btn btn-sm btn-danger"
           action=(action "revokeSpace")
         }}
-          {{one-icon icon="remove"}} <span>Yes, revoke</span>
-        {{/one-spin-button}}
-      </div>
+        {{one-icon icon="remove"}} <span>Yes, revoke</span>
+      {{/one-spin-button}}
+    </div>
   {{/bs-modal}}
 {{/if}}
 
