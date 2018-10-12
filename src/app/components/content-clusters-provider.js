@@ -142,7 +142,7 @@ export default Component.extend(I18n, GlobalActions, {
 
   init() {
     this._super(...arguments);
-    this._initProviderProxy();
+    this._initProviderProxy(true);
     next(() => safeExec(
       this,
       'set',
