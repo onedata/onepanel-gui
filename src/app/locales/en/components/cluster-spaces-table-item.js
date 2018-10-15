@@ -17,6 +17,10 @@ export default {
   syncConfig: 'Configure data synchronization',
   syncFormHeader: 'Data synchronization configuration',
   revokeSpaceSupport: 'Revoke space support',
+  revokeSupportTitle: 'Revoke space support',
+  revokeSupportMsg: 'When the support will be revoked, data from the "{{spaceName}}" space that is not replicated among other providers will be lost.',
+  revokeSupportCancel: 'No, keep the support',
+  revokeSupportProceed: 'Yes, revoke',
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',

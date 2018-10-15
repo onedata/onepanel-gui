@@ -44,6 +44,7 @@ export default {
     },
   },
   changedModal: {
+    title: 'Important notice',
     submitBtn: {
       enable: 'Enable Let\'s Encrypt',
       disable: 'Disable Let\'s Encrypt',
