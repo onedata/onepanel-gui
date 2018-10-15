@@ -21,45 +21,42 @@
   onHide=(action "changedModalCanceled")
   as |modal|
 }}
+  {{#modal.header}}
+    <h1>
+      {{one-icon icon="sign-warning-rounded"}}
+      <span class="one-lable">{{tt this "changedModal.title"}}</span>
+    </h1>
+  {{/modal.header}}
   {{#modal.body}}
-    <div class="modal-info-content">
-      <div class="modal-info-icon">
-        {{one-icon icon="sign-info"}}
-      </div>
-      <div class="modal-info-text {{if (not formLetsEncryptValue) "short-text"}}">
-        {{#if formLetsEncryptValue}}
-          <p>
-            {{tt this "changedModal.text.enableCertWillBeObtained"}}
-          </p>
-          <p>
-            {{tt this "changedModal.text.enableAgreement"}}
-            <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
-          </p>
-          <p>
-            {{tt this "changedModal.text.enableReloadInfo"}}
-          </p>
-        {{else}}
-          <p>
-            {{tt this "changedModal.text.disable"}}
-          </p>
-        {{/if}}
-      </div>
-    </div>
+    {{#if formLetsEncryptValue}}
+      <p>
+        {{tt this "changedModal.text.enableCertWillBeObtained"}}
+      </p>
+      <p>
+        {{tt this "changedModal.text.enableAgreement"}}
+        <a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>.
+      </p>
+      <p>
+        {{tt this "changedModal.text.enableReloadInfo"}}
+      </p>
+    {{else}}
+      <p>
+        {{tt this "changedModal.text.disable"}}
+      </p>
+    {{/if}}
   {{/modal.body}}
-  {{#modal.footer}}
-    <div class="btn-toolbar">
-      {{#bs-button
-        type="default"
-        onClick=modal.close
-      }}
-        {{tt this "changedModal.cancel"}}
-      {{/bs-button}}
-      {{#one-spin-button
-        action=(action "submit")
-        class="btn btn-primary"
-      }}
-        {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
-      {{/one-spin-button}}
-    </div>
+  {{#modal.footer class="btn-toolbar"}}
+    {{#bs-button
+      type="default"
+      onClick=modal.close
+    }}
+      {{tt this "changedModal.cancel"}}
+    {{/bs-button}}
+    {{#one-spin-button
+      action=(action "submit")
+      class="btn btn-primary"
+    }}
+      {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
+    {{/one-spin-button}}
   {{/modal.footer}}
 {{/bs-modal}}
