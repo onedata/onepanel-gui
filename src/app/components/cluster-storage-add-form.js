@@ -55,6 +55,7 @@ const storagePathTypeDefaults = {
   cephrados: 'flat',
   s3: 'flat',
   swift: 'flat',
+  webdav: 'canonical',
 };
 
 export default OneForm.extend(Validations, {
