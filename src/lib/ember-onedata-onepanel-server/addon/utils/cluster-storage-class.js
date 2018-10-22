@@ -7,6 +7,7 @@ const {
   Cephrados,
   Swift,
   Glusterfs,
+  Webdav,
   Nulldevice,
 } = Onepanel;
 
@@ -24,6 +25,8 @@ function clusterStorageClass(storageType) {
       return Swift;
     case 'glusterfs':
       return Glusterfs;
+    case 'webdav':
+      return Webdav;
     case 'nulldevice':
       return Nulldevice;
     default:
