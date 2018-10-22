@@ -1,7 +1,7 @@
 export default {
   endpoint: {
     name: 'Endpoint',
-    tip: 'Full URL of the WebDAV server, including scheme (http or https) and path. ',
+    tip: 'Full URL of the WebDAV server, e.g. https://example.com:8080/webdav',
   },
   verifyServerCertificate: {
     name: 'Verify server certificate',

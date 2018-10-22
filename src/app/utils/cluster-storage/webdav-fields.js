@@ -28,7 +28,6 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-    example: 'username:password (for basic credentials type)',
   },
   {
     name: 'authorizationHeader',
@@ -78,5 +77,4 @@ export default [{
     defaultValue: false,
     tip: true,
   },
-  // FIXME: check storage path type radio
 ];
