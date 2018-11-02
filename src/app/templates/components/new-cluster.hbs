@@ -12,6 +12,7 @@
           nextStep=(action "next")
           changeClusterName=(action "changeClusterName")
           deploymentTaskId=deploymentTaskId
+          cephChanged=(action (mut showCephStep))
         }}
       {{else if (eq w.step.id "ips")}}
         {{new-cluster-ips

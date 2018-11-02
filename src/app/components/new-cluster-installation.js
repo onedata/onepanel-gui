@@ -2,7 +2,6 @@
  * Cluster init step: installation a.k.a. deployment
  *
  * Invokes passed actions:
- * - clusterConfigurationSuccess()
  * - nextStep() - a next step of cluster init should be presented
  *
  * @module components/new-cluster-installation
@@ -17,34 +16,20 @@ import { A } from '@ember/array';
 import { assert } from '@ember/debug';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
-import { readOnly, reads, sort } from '@ember/object/computed';
-import { camelize } from '@ember/string';
+import { readOnly, sort } from '@ember/object/computed';
 import { scheduleOnce, later } from '@ember/runloop';
 import { observer, computed, get, set } from '@ember/object';
-import Onepanel from 'npm:onepanel';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
-
-const {
-  ProviderConfiguration,
-  ZoneConfiguration,
-  TaskStatus: {
-    StatusEnum,
-  },
-} = Onepanel;
-
-const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
+import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
+import NewClusterDeployProcess from 'onepanel-gui/utils/new-cluster-deploy-process';
+import { getOwner } from '@ember/application';
 
 function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
-}
-
-function configurationClass(serviceType) {
-  return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
 export default Component.extend(I18n, {
@@ -53,10 +38,17 @@ export default Component.extend(I18n, {
   onepanelServer: service(),
   clusterManager: service(),
   globalNotify: service(),
-  cookies: service(),
   i18n: service(),
 
   i18nPrefix: 'components.newClusterInstallation',
+
+  /**
+   * Notifies about ceph selection change
+   * @type {function}
+   * @param {boolean} cephEnabled
+   * @returns {undefined}
+   */
+  cephChanged: notImplementedIgnore,
 
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
@@ -76,6 +68,15 @@ export default Component.extend(I18n, {
    */
   hostsProxy: null,
 
+  /**
+   * @type {Utils/NewClusterDeployProcess}
+   */
+  clusterDeployProcess: computed(function clusterDeployProcess() {
+    return NewClusterDeployProcess.create(getOwner(this).ownerInjection(), {
+      onFinish: () => this.configureFinished(),
+    });
+  }),
+
   hosts: readOnly('hostsProxy.content'),
 
   /**
@@ -93,15 +94,6 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   canDeploy: false,
-
-  /**
-   * The promise resolves when we know if we have unfinished deployment.
-   * Initiliazed in `init`.
-   * @type {PromiseObject}
-   */
-  deploymentStatusProxy: undefined,
-
-  deploymentStatusLoading: reads('deploymentStatusProxy.isPending'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
@@ -191,63 +183,81 @@ export default Component.extend(I18n, {
       )) : null;
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  cephEnabled: computed('hosts.@each.ceph', function cephEnabled() {
+    const hosts = this.get('hosts');
+    return hosts ? hosts.isAny('ceph') : false;
+  }),
+
   addingNewHostChanged: observer('addingNewHost', function () {
     if (!this.get('addingNewHost')) {
       this.set('_newHostname', '');
     }
   }),
 
+  cephEnabledObserver: observer('cephEnabled', function cephEnabledObserver() {
+    this.get('cephChanged')(this.get('cephEnabled'));
+  }),
+
   init() {
     this._super(...arguments);
-
     this.observeResetNewHostname();
     this.changeCanDeploy();
-    this.set(
-      'hostsProxy',
-      PromiseObject.create({
-        promise: this.get('clusterManager').getHosts()
-          .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
-      })
-    );
-    this.set('newHosts', A());
 
     const {
       deploymentTaskId,
       onepanelServiceType,
-      onepanelServer,
-    } = this.getProperties('deploymentTaskId', 'onepanelServer', 'onepanelServiceType');
+      clusterManager,
+    } = this.getProperties(
+      'cephEnabled',
+      'deploymentTaskId',
+      'onepanelServiceType',
+      'clusterManager',
+    );
+
+    this.setProperties({
+      hostsProxy: PromiseObject.create({
+        promise: clusterManager.getHosts()
+          .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
+      }),
+      newHosts: A(),
+    });
 
     if (onepanelServiceType === 'provider') {
       this.set('_zoneOptionsValid', true);
     }
 
     if (deploymentTaskId) {
-      const task = watchTaskStatus(onepanelServer, deploymentTaskId);
-      this.showDeployProgress(task);
-      this.watchDeployStatus(task);
+      this.get('clusterDeployProcess').watchExistingDeploy(deploymentTaskId);
+    }
+  },
+
+  willDestroyElement() {
+    try {
+      this.set('clusterDeployProcess.onFinish', notImplementedIgnore);
+    } finally {
+      this._super(...arguments);
     }
   },
 
   configureFinished() {
-    let {
-      globalNotify,
+    const {
       onepanelServiceType,
       _zoneName,
+      changeClusterName,
+      nextStep,
     } = this.getProperties(
-      'globalNotify',
       'onepanelServiceType',
-      '_zoneName'
+      '_zoneName',
+      'changeClusterName',
+      'nextStep'
     );
-    // TODO i18n
-    globalNotify.info('Cluster deployed successfully');
     if (onepanelServiceType === 'zone') {
-      this.get('changeClusterName')(_zoneName);
+      changeClusterName(_zoneName);
     }
-    this.get('nextStep')();
-  },
-
-  configureFailed({ taskStatus }) {
-    this.get('globalNotify').backendError('cluster deployment', taskStatus.error);
+    nextStep();
   },
 
   getNodes() {
@@ -265,20 +275,20 @@ export default Component.extend(I18n, {
    * @param {string} serviceType one of: provider, zone
    * @return {Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration}
    */
-  createConfiguration(serviceType) {
+  createConfiguration() {
     let {
       hostsUsed,
       primaryClusterManager,
       _zoneName,
       _zoneDomainName,
+      onepanelServiceType,
     } = this.getProperties(
       'hostsUsed',
       'primaryClusterManager',
       '_zoneName',
-      '_zoneDomainName'
+      '_zoneDomainName',
+      'onepanelServiceType'
     );
-
-    const ConfigurationClass = configurationClass(serviceType);
 
     let nodes = this.getNodes();
     let hostnames = hostsUsed.map(h => h.hostname);
@@ -310,88 +320,14 @@ export default Component.extend(I18n, {
     };
 
     // in zone mode, add zone name    
-    if (serviceType === 'zone') {
+    if (onepanelServiceType === 'zone') {
       configProto.onezone = {
         name: _zoneName,
         domainName: _zoneDomainName,
       };
     }
 
-    let configuration = ConfigurationClass.constructFromObject(configProto);
-
-    return configuration;
-  },
-
-  /**
-   * Save deployment server task ID in case if page will be refreshed
-   * @param {string} taskId
-   */
-  storeDeploymentTask(taskId) {
-    assert(
-      'component:new-cluster-installation: tried to store empty taskId',
-      taskId
-    );
-    this.get('cookies').write(COOKIE_DEPLOYMENT_TASK_ID, taskId);
-  },
-
-  /**
-   * Clear stored last deployment task ID (deployment task has finished)
-   */
-  clearDeploymentTask() {
-    this.get('cookies').clear(COOKIE_DEPLOYMENT_TASK_ID);
-  },
-
-  /**
-   * Makes a backend call to start cluster deployment and watches deployment process.
-   * Returned promise resolves when deployment started (NOTE: not when it finishes).
-   * The promise resolves with a onepanelServer.request resolve result
-   * (contains task property with jq.Promise of deployment task).
-   * @return {Promise}
-   */
-  _startDeploy() {
-    return new Promise((resolve, reject) => {
-      let {
-        onepanelServer,
-        onepanelServiceType,
-      } = this.getProperties('onepanelServer', 'onepanelServiceType');
-      let providerConfiguration = this.createConfiguration(onepanelServiceType);
-      onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`configure-${onepanelServiceType}`),
-        providerConfiguration
-      ).then(resolve, reject);
-    });
-  },
-
-  /**
-   * Show progress of deployment using deployment task promise.
-   * @param {jQuery.Promise} deployment
-   * @returns {undefined}
-   */
-  showDeployProgress(deployment) {
-    this.set('deploymentPromise', deployment);
-  },
-
-  hideDeployProgress() {
-    this.set('deploymentPromise', null);
-  },
-
-  /**
-   * Bind on events of deployment task. 
-   * @param {jQuery.Promise} task
-   * @returns {undefined}
-   */
-  watchDeployStatus(task) {
-    task.done(taskStatus => {
-      this.clearDeploymentTask();
-      if (taskStatus.status === StatusEnum.ok) {
-        this.configureFinished(taskStatus);
-      } else {
-        this.configureFailed({ taskStatus });
-      }
-    });
-    task.fail(error => this.configureFailed({ error }));
-    task.always(() => this.hideDeployProgress());
+    return configProto;
   },
 
   changeCanDeploy: observer('_hostTableValid', '_zoneOptionsValid',
@@ -467,31 +403,16 @@ export default Component.extend(I18n, {
       this.set('_zoneOptionsValid', isValid);
     },
 
-    /**
-     * Start deployment process.
-     *
-     * When process starts successfully, a deployment promise
-     * is bound to success/failure handlers and a deploy process is shown.
-     * 
-     * Returned promise resolves when backend started deployment.
-     * 
-     * @return {Promise}
-     */
     startDeploy() {
-      if (this.get('canDeploy') !== true) {
+      const {
+        canDeploy,
+        clusterDeployProcess,
+      } = this.getProperties('canDeploy', 'clusterDeployProcess');
+      if (canDeploy !== true) {
         return new Promise((_, reject) => reject());
       }
-
-      let start = this._startDeploy();
-      start.then(({ task }) => {
-        this.storeDeploymentTask(task.taskId);
-        this.showDeployProgress(task);
-        this.watchDeployStatus(task);
-      });
-      start.catch(error => {
-        this.get('globalNotify').backendError('deployment start', error);
-      });
-      return start;
+      clusterDeployProcess.set('configuration', this.createConfiguration());
+      return clusterDeployProcess.startDeploy();
     },
 
     submitNewHost() {

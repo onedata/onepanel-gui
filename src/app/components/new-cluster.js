@@ -33,6 +33,7 @@ const {
  */
 const STEPS_PROVIDER = [
   'installation',
+  'ceph',
   'providerRegistration',
   'ips',
   'dns',
@@ -74,7 +75,29 @@ export default Component.extend(I18n, {
    */
   isLoading: false,
 
-  steps: Object.freeze([]),
+  /**
+   * If true, ceph step will be visible (only oneprovider)
+   * @type {boolean}
+   */
+  showCephStep: false,
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
+  steps: computed('onepanelServiceType', 'showCephStep', function steps() {
+    const {
+      onepanelServiceType,
+      showCephStep,
+    } = this.getProperties('onepanelServiceType', 'showCephStep');
+    let stepsIds = onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE;
+    if (!showCephStep) {
+      stepsIds = stepsIds.filter(step => step !== 'ceph');
+    }
+    return stepsIds.map(id => ({
+      id,
+      title: this.t(`steps.${onepanelServiceType}.${id}`),
+    }));
+  }),
 
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));
@@ -98,16 +121,10 @@ export default Component.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    let onepanelServiceType = this.get('onepanelServiceType');
     let clusterInitStep = this.get('cluster.initStep');
     this.setProperties({
       currentStepIndex: clusterInitStep,
       _isInProcess: clusterInitStep > STEP.DEPLOY,
-      steps: (onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE).map(
-        id => ({
-          id,
-          title: this.t(`steps.${onepanelServiceType}.${id}`),
-        })),
     });
     if (clusterInitStep === STEP.DEPLOY) {
       this.set('isLoading', true);

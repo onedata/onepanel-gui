@@ -8,6 +8,7 @@ export default {
   steps: {
     provider: {
       installation,
+      ceph: 'ceph configuration',
       ips,
       providerRegistration: 'provider registration',
       webCert,

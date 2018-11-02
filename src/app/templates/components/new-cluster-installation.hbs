@@ -108,16 +108,6 @@
 </div>
 
 {{!-- TODO maybe keep the modal opened short after promise resolve --}}
-{{#if deploymentPromise}}
-  {{#bs-modal
-    id="cluster-deploy-progress"
-    open=deploymentPromise
-    keyboard=false
-    backdropClose=false
-    as |modal|
-  }}
-    {{#modal.body}}
-      {{new-cluster-deploy-progress deploymentPromise=deploymentPromise}}
-    {{/modal.body}}
-  {{/bs-modal}}
+{{#if clusterDeployProcess.deploymentPromise}}
+  {{new-cluster-deploy-progress deploymentPromise=clusterDeployProcess.deploymentPromise}}
 {{/if}}

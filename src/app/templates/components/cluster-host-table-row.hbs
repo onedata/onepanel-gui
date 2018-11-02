@@ -50,6 +50,16 @@
     isReadOnly=isReadOnly
   }}
 </td>
+<td class="text-center column toggle-column" data-option="ceph">
+  {{one-way-toggle
+    checked=host.ceph
+    update=(action "checkboxChanged")
+    hostHostname=host.hostname
+    hostOption="ceph"
+    dataOption="ceph"
+    isReadOnly=isReadOnly
+  }}
+</td>
 {{#if removeAvailable}}
   <td class="text-center column btn-column">
     <div
