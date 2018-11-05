@@ -44,6 +44,14 @@ export default EmberObject.extend({
   configuration: undefined,
 
   /**
+   * Array of hostnames where ceph will be placed. Can be used as an additional
+   * property to list ceph nodes without deep understanding of ceph config structure.
+   * Should be updated every time list of ceph nodes changes.
+   * @type {Array<string>}
+   */
+  cephNodes: Object.freeze([]),
+
+  /**
    * Called when deployment has finished successfully.
    * @virtual optional
    * @type {function}

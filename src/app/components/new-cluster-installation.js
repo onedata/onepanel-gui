@@ -16,9 +16,9 @@ import { A } from '@ember/array';
 import { assert } from '@ember/debug';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
-import { readOnly, sort } from '@ember/object/computed';
+import { readOnly, sort, and } from '@ember/object/computed';
 import { scheduleOnce, later } from '@ember/runloop';
-import { observer, computed, get, set } from '@ember/object';
+import { observer, computed, get, set, getProperties, setProperties } from '@ember/object';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -50,6 +50,11 @@ export default Component.extend(I18n, {
    */
   cephChanged: notImplementedIgnore,
 
+  /**
+   * @type {Utils/NewClusterDeployProcess}
+   */
+  stepData: undefined,
+
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
@@ -71,11 +76,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Utils/NewClusterDeployProcess}
    */
-  clusterDeployProcess: computed(function clusterDeployProcess() {
-    return NewClusterDeployProcess.create(getOwner(this).ownerInjection(), {
-      onFinish: () => this.configureFinished(),
-    });
-  }),
+  clusterDeployProcess: undefined,
 
   hosts: readOnly('hostsProxy.content'),
 
@@ -93,7 +94,7 @@ export default Component.extend(I18n, {
    * If true, the deploy action can be invoked
    * @type {boolean}
    */
-  canDeploy: false,
+  canDeploy: and('_hostTableValid', '_zoneOptionsValid'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
     let hosts = this.get('hosts');
@@ -204,24 +205,27 @@ export default Component.extend(I18n, {
   init() {
     this._super(...arguments);
     this.observeResetNewHostname();
-    this.changeCanDeploy();
 
     const {
       deploymentTaskId,
       onepanelServiceType,
       clusterManager,
+      stepData,
     } = this.getProperties(
       'cephEnabled',
       'deploymentTaskId',
       'onepanelServiceType',
       'clusterManager',
+      'stepData'
     );
 
+    const hostsProxy = PromiseObject.create({
+      promise: clusterManager.getHosts()
+        .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
+    });
+
     this.setProperties({
-      hostsProxy: PromiseObject.create({
-        promise: clusterManager.getHosts()
-          .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
-      }),
+      hostsProxy,
       newHosts: A(),
     });
 
@@ -229,8 +233,25 @@ export default Component.extend(I18n, {
       this.set('_zoneOptionsValid', true);
     }
 
-    if (deploymentTaskId) {
-      this.get('clusterDeployProcess').watchExistingDeploy(deploymentTaskId);
+    if (stepData) {
+      set(stepData, 'onFinish', () => this.configureFinished());
+      this.set('clusterDeployProcess', stepData);
+      hostsProxy.then(() => {
+        this.extractConfiguration(
+          get(stepData, 'configuration'),
+          get(stepData, 'cephNodes')
+        );
+      });
+    } else {
+      const clusterDeployProcess = NewClusterDeployProcess.create(
+        getOwner(this).ownerInjection(), {
+          onFinish: () => this.configureFinished(),
+        }
+      );
+      this.set('clusterDeployProcess', clusterDeployProcess);
+      if (deploymentTaskId) {
+        clusterDeployProcess.watchExistingDeploy(deploymentTaskId);
+      }
     }
   },
 
@@ -330,11 +351,36 @@ export default Component.extend(I18n, {
     return configProto;
   },
 
-  changeCanDeploy: observer('_hostTableValid', '_zoneOptionsValid',
-    function () {
-      let canDeploy = this.get('_hostTableValid') && this.get('_zoneOptionsValid');
-      scheduleOnce('afterRender', this, () => this.set('canDeploy', canDeploy));
-    }),
+  extractConfiguration(configProto, cephNodes=[]) {
+    const hosts = this.get('hosts');
+    const {
+      cluster,
+      onezone,
+    } = getProperties(configProto, 'cluster', 'onezone');
+    const {
+      managers,
+      workers,
+      databases,
+    } = getProperties(cluster, 'managers', 'workers', 'databases');
+    [
+      ['clusterManager', managers],
+      ['clusterWorker', workers],
+      ['database', databases],
+      ['ceph', { nodes: cephNodes }],
+    ].forEach(([type, { nodes }]) => nodes.forEach(hostname => hosts
+      .filterBy('hostname', hostname)
+      .forEach(host => set(host, type, true))
+    ));
+
+    this.set('primaryClusterManager', get(managers, 'mainNode'));
+
+    if (onezone) {
+      this.setProperties({
+        _zoneName: get(onezone, 'name'),
+        _zoneDomainName: get(onezone, 'domainName'),
+      });
+    }
+  },
 
   observeResetNewHostname: observer('addingNewHost', function () {
     if (this.get('addingNewHost')) {
@@ -359,6 +405,18 @@ export default Component.extend(I18n, {
       () => safeExec(newHosts, 'removeObject', host),
       newHostExpirationTimeout
     );
+  },
+
+  updateClusterDeployProcess() {
+    const {
+      clusterDeployProcess,
+      hosts,
+    } = this.getProperties('clusterDeployProcess', 'hosts');
+    // TODO merge ceph
+    setProperties(clusterDeployProcess, {
+      configuration: this.createConfiguration(),
+      cephNodes: getHostnamesOfType(hosts, 'ceph'),
+    });
   },
 
   actions: {
@@ -396,11 +454,24 @@ export default Component.extend(I18n, {
      * @returns {undefined}
      */
     hostTableValidChanged(isValid) {
-      this.set('_hostTableValid', isValid);
+      if (this.get('_hostTableValid') !== isValid) {
+        scheduleOnce('afterRender', this, () => this.set('_hostTableValid', isValid));
+      }
     },
 
     zoneOptionsValidChanged(isValid) {
-      this.set('_zoneOptionsValid', isValid);
+      if (this.get('_zoneOptionsValid') !== isValid) {
+        scheduleOnce('afterRender', this, this.set('_zoneOptionsValid', isValid));
+      }
+    },
+
+    nextStep() {
+      const {
+        clusterDeployProcess,
+        nextStep,
+      } = this.getProperties('clusterDeployProcess', 'nextStep');
+      this.updateClusterDeployProcess();
+      nextStep(clusterDeployProcess);
     },
 
     startDeploy() {
@@ -411,7 +482,7 @@ export default Component.extend(I18n, {
       if (canDeploy !== true) {
         return new Promise((_, reject) => reject());
       }
-      clusterDeployProcess.set('configuration', this.createConfiguration());
+      this.updateClusterDeployProcess();
       return clusterDeployProcess.startDeploy();
     },
 

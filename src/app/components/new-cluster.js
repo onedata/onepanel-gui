@@ -82,6 +82,12 @@ export default Component.extend(I18n, {
   showCephStep: false,
 
   /**
+   * Data passed to initialize step component. Used to persist step state
+   * @type {any}
+   */
+  stepData: undefined,
+
+  /**
    * @type {Ember.ComputedProperty<Array<Object>>}
    */
   steps: computed('onepanelServiceType', 'showCephStep', function steps() {
@@ -188,27 +194,35 @@ export default Component.extend(I18n, {
 
   /**
    * Go to next deployment step
+   * @param {any} stepData data that will be passed to the next step
+   * @returns {undefined}
    */
-  _next() {
+  _next(stepData) {
     const nextStep = nextInt(this.get('currentStepIndex'));
     this.set('cluster.initStep', nextStep);
-    this.set('currentStepIndex', nextStep);
+    this.setProperties({
+      stepData,
+      currentStepIndex: nextStep,
+    });
   },
 
-  _prev() {
+  _prev(stepData) {
     const nextStep = prevInt(this.get('currentStepIndex'));
     this.set('cluster.initStep', nextStep);
-    this.set('currentStepIndex', nextStep);
+    this.setProperties({
+      stepData,
+      currentStepIndex: nextStep,
+    });
   },
 
   actions: {
-    next() {
+    next(stepData) {
       $('.col-content').scrollTop(0);
-      this._next();
+      this._next(stepData);
     },
-    prev() {
+    prev(stepData) {
       $('.col-content').scrollTop(0);
-      this._prev();
+      this._prev(stepData);
     },
     changeClusterName(name) {
       if (!name) {

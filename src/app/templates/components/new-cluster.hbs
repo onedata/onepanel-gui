@@ -10,9 +10,16 @@
       {{#if (eq w.step.id "installation")}}
         {{new-cluster-installation
           nextStep=(action "next")
+          stepData=stepData
           changeClusterName=(action "changeClusterName")
           deploymentTaskId=deploymentTaskId
           cephChanged=(action (mut showCephStep))
+        }}
+      {{else if (eq w.step.id "ceph")}}
+        {{new-cluster-ceph
+          nextStep=(action "next")
+          prevStep=(action "prev")
+          stepData=stepData
         }}
       {{else if (eq w.step.id "ips")}}
         {{new-cluster-ips

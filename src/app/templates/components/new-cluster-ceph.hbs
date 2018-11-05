@@ -1,0 +1,21 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "cephConfiguration"}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        class=(concat "btn btn-sm btn-default btn-ceph-back")
+        onClick=(action "prevStep")
+      }}
+        {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
+      {{/bs-button}}
+      {{!-- {{#one-spin-button
+        class=(concat "btn btn-sm btn-primary btn-deploy-cluster btn-ceph-proceed " (unless canDeploy "disabled"))
+        action=(action (if cephEnabled "nextStep" "startDeploy"))
+      }}
+        <span>{{tt this (if cephEnabled "proceed" "deploy")}}</span>{{one-icon icon="arrow-right"}}
+        {{#unless canDeploy}}
+          {{one-tooltip title="Configuration is invalid!" placement="left"}}
+        {{/unless}}
+      {{/one-spin-button}} --}}
+    </div>
+  </h1>
+</div>
