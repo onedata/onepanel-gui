@@ -39,10 +39,12 @@ const COMMON_FIELDS_TOP = [{
   {
     name: 'name',
     type: 'text',
+    example: 'My provider',
   },
   {
     name: 'onezoneDomainName',
     type: 'text',
+    example: 'my-onezone.com',
   },
   {
     name: 'subdomainDelegation',
@@ -56,6 +58,7 @@ const TOKEN_FIELD = {
   name: 'token',
   type: 'text',
   tip: true,
+  example: 'EDDSA9q89dq8q93t326895639ete0eyd7ft67rt789y4q78f90muy8qf9yq478r',
 };
 
 const HOSTNAME_FIELD = {
@@ -63,6 +66,7 @@ const HOSTNAME_FIELD = {
   type: 'text',
   regex: DOMAIN_REGEX,
   tip: true,
+  example: 'my-provider.com',
 };
 
 const SUBDOMAIN_FIELD = {
@@ -70,6 +74,7 @@ const SUBDOMAIN_FIELD = {
   type: 'text',
   regex: SUBDOMAIN_REGEX,
   tip: true,
+  example: 'my-provider',
 };
 
 const COMMON_FIELDS_BOTTOM = [{
@@ -77,6 +82,7 @@ const COMMON_FIELDS_BOTTOM = [{
     type: 'text',
     regex: EMAIL_REGEX,
     tip: true,
+    example: 'admin@example.com',
   }, {
     name: 'geoLatitude',
     type: 'number',
@@ -84,6 +90,7 @@ const COMMON_FIELDS_BOTTOM = [{
     lte: 90,
     gte: -90,
     optional: true,
+    example: '50.068940',
   },
   {
     name: 'geoLongitude',
@@ -93,6 +100,7 @@ const COMMON_FIELDS_BOTTOM = [{
     lte: 180,
     gte: -180,
     optional: true,
+    example: '19.909213',
   },
 ];
 
@@ -243,6 +251,7 @@ export default OneForm.extend(Validations, I18n, {
     let prepareField = (field) => _.assign({}, field, {
       label: i18n.t(tPrefix + field.name + '.label'),
       tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
+      example: field.example,
     });
     let fields = EmberObject.create({
       tokenField: prepareField(TOKEN_FIELD),

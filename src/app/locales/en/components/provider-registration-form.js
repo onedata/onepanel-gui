@@ -8,7 +8,6 @@ export default {
   fields: {
     token: {
       label: 'Registration token',
-      // FIXME: text
       tip: 'Provide registration token to register in Onezone of your choice. It can be obtained in Onezone Web GUI by admin.',
     },
     id: {
