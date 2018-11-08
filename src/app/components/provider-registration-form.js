@@ -52,6 +52,12 @@ const COMMON_FIELDS_TOP = [{
   },
 ];
 
+const TOKEN_FIELD = {
+  name: 'token',
+  type: 'text',
+  tip: true,
+};
+
 const HOSTNAME_FIELD = {
   name: 'domain',
   type: 'text',
@@ -92,6 +98,7 @@ const COMMON_FIELDS_BOTTOM = [{
 
 const VALIDATIONS_PROTO = {};
 const FIELDS_PREFIXES = [
+  { fields: [TOKEN_FIELD], prefix: 'newToken' },
   { fields: COMMON_FIELDS_TOP, prefix: 'editTop' },
   { fields: [HOSTNAME_FIELD], prefix: 'editDomain' },
   { fields: [SUBDOMAIN_FIELD], prefix: 'editSubdomain' },
@@ -134,6 +141,7 @@ VALIDATIONS_PROTO['allFieldsValues.editTop.onezoneDomainName'] = [
 
 const Validations = buildValidations(VALIDATIONS_PROTO);
 const ALL_PREFIXES = [
+  'newToken',
   'editTop',
   'editBottom',
   'editDomain',
@@ -215,11 +223,12 @@ export default OneForm.extend(Validations, I18n, {
         } else {
           return ['editTop', 'editDomain', 'editBottom'];
         }
+      case 'new':
       default:
         if (_subdomainDelegation) {
-          return ['editTop', 'editSubdomain', 'editBottom'];
+          return ['newToken', 'editTop', 'editSubdomain', 'editBottom'];
         } else {
-          return ['editTop', 'editDomain', 'editBottom'];
+          return ['newToken', 'editTop', 'editDomain', 'editBottom'];
         }
     }
   }),
@@ -236,6 +245,7 @@ export default OneForm.extend(Validations, I18n, {
       tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
     });
     let fields = EmberObject.create({
+      tokenField: prepareField(TOKEN_FIELD),
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
@@ -243,6 +253,19 @@ export default OneForm.extend(Validations, I18n, {
     });
     return fields;
   }),
+
+  /**
+   * Domain edition field
+   * @type {computed.Ember.Object}
+   */
+  _tokenField: computed('_fieldsSource.tokenField', 'provider',
+    function _tokenField() {
+      return this._preprocessField(
+        this.get('_fieldsSource.tokenField'),
+        'newToken'
+      );
+    }
+  ),
 
   /**
    * Fields for edition from the top part of the form
@@ -352,6 +375,7 @@ export default OneForm.extend(Validations, I18n, {
   ),
 
   allFields: computed(
+    '_tokenField',
     '_editTopFields',
     '_editBottomFields',
     '_domainEditField',
@@ -362,6 +386,7 @@ export default OneForm.extend(Validations, I18n, {
     '_subdomainStaticField',
     function () {
       let properties = [
+        '_tokenField',
         '_editTopFields',
         '_editBottomFields',
         '_domainEditField',

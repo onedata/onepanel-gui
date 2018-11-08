@@ -6,6 +6,11 @@ export default {
   subdomainReserved: 'This subdomain is reserved.',
   redirectInfo: 'Upon successful modification of domain or subdomain, you will be asked to update your certificate.',
   fields: {
+    token: {
+      label: 'Registration token',
+      // FIXME: text
+      tip: 'Provide registration token to register in Onezone of your choice. It can be obtained in Onezone Web GUI by admin.',
+    },
     id: {
       label: 'ID',
     },

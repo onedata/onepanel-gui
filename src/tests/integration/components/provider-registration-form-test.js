@@ -18,7 +18,7 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders name, zone domain, Subdomain Delegation, latitude and logitude fields in new mode',
+    'renders token, name, zone domain, Subdomain Delegation, latitude and logitude fields in new mode',
     function (done) {
       this.on('submit', function () {});
 
@@ -26,8 +26,13 @@ describe('Integration | Component | provider registration form', function () {
 
       let helper = new ProviderRegistrationHelper(this.$());
       wait().then(() => {
-        ['editTop-name', 'editTop-onezoneDomainName', 'editSubdomain-subdomain',
-          'editBottom-geoLatitude', 'editBottom-geoLongitude',
+        [
+          'newToken-token',
+          'editTop-name',
+          'editTop-onezoneDomainName',
+          'editSubdomain-subdomain',
+          'editBottom-geoLatitude',
+          'editBottom-geoLongitude',
         ]
         .forEach(fname => {
           expect(helper.getInput(fname), `${fname} field`).to.exist;

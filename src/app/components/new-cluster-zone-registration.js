@@ -39,6 +39,7 @@ export default Component.extend({
    */
   createProviderRegisterRequest(providerData) {
     let {
+      token,
       name,
       onezoneDomainName,
       subdomainDelegation,
@@ -48,6 +49,7 @@ export default Component.extend({
       geoLatitude,
       adminEmail,
     } = providerData.getProperties(
+      'token',
       'name',
       'onezoneDomainName',
       'subdomainDelegation',
@@ -59,6 +61,7 @@ export default Component.extend({
     );
 
     let reqProto = stripObject({
+      token,
       name,
       onezoneDomainName,
       subdomainDelegation,
