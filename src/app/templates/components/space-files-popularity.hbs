@@ -10,18 +10,18 @@
       placement="top"
     }}
     {{one-way-toggle inputId="files-popularity-enabled"
-      checked=filesPopularity.enabled
+      checked=filesPopularityConfiguration.enabled
       class="pull-right right"
       spinnerSide="left"
       update=(action "toggleFilesPopularity")}}
   </h1>
 </div>
 
-{{#if filesPopularity.enabled}}
+{{#if filesPopularityConfiguration.enabled}}
   <div class="row content-row no-border no-padding-top extra-padding-bottom">
     <h1>{{t "components.spaceFilesPopularity.restApi"}}</h1>
     {{!-- TODO: a description of input, maybe one-form-field --}}
-    {{one-way-input class="form-control files-popularity-rest-url" value=filesPopularity.restUrl}}
+    {{one-way-input class="form-control files-popularity-rest-url" value=filesPopularityConfiguration.restUrl}}
     {{!-- TODO: input with copy button component --}}
   </div>
 {{/if}}

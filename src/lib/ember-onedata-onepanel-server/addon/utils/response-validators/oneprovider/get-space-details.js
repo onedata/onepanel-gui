@@ -14,12 +14,7 @@ export default function (data) {
     return !!(
       data.id &&
       data.name &&
-      typeof data.supportingProviders === 'object' &&
-      (
-        data.autoCleaning == null ||
-        data.autoCleaning.enabled === false ||
-        typeof data.autoCleaning.settings === 'object'
-      )
+      typeof data.supportingProviders === 'object'
     );
   } catch (error) {
     if (error instanceof TypeError) {

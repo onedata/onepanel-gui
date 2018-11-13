@@ -232,7 +232,7 @@ export default Service.extend({
   startCleaning(spaceId) {
     return this.get('onepanelServer').request(
       'oneprovider',
-      'providerSpaceStartCleaning',
+      'triggerAutoCleaning',
       spaceId,
     ).then(({ data }) => data);
   },

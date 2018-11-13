@@ -164,19 +164,27 @@
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabPopularId}}
                   {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
-                    {{space-files-popularity filesPopularity=space.filesPopularity
-                      updateFilesPopularity=(action "updateFilesPopularity")
-                    }}
+                    <div class="loadable-row lg">
+                      {{#promise-proxy-container proxy=filesPopularityConfigurationProxy}}
+                        {{space-files-popularity
+                          filesPopularityConfiguration=filesPopularityConfiguration
+                          configureFilesPopularity=(action "configureFilesPopularity")
+                        }}
+                      {{/promise-proxy-container}}
+                    </div>
                   {{/if}}
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabCleanId}}
                   {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
-                    {{space-auto-cleaning autoCleaning=space.autoCleaning
-                      spaceSize=spaceSizeForProvider
-                      spaceId=space.id
-                      updateAutoCleaning=(action "updateAutoCleaning")
-                      spaceOccupancyChanged=(action "spaceOccupancyChanged")
-                    }}
+                    {{#promise-proxy-container proxy=autoCleaningConfigurationProxy}}
+                      {{space-auto-cleaning
+                        autoCleaningConfiguration=autoCleaningConfiguration
+                        spaceSize=spaceSizeForProvider
+                        spaceId=space.id
+                        configureSpaceAutoCleaning=(action "configureSpaceAutoCleaning")
+                        spaceOccupancyChanged=(action "spaceOccupancyChanged")
+                      }}
+                    {{/promise-proxy-container}}
                   {{/if}}
                 {{/tab.pane}}
               </div>

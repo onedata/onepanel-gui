@@ -9,6 +9,7 @@
 
 import Component from '@ember/component';
 
+import { reads } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
 import { cancel, debounce, run } from '@ember/runloop';
 import { inject as service } from '@ember/service';
@@ -19,44 +20,22 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 import {
   MIN_LOWER_FILE_SIZE_LIMIT,
   MIN_UPPER_FILE_SIZE_LIMIT,
+  MIN_OPEN_COUNT,
   MAX_FILE_SIZE,
-  MIN_MAX_FILE_NOT_OPENED_HOURS,
-  MAX_MAX_FILE_NOT_OPENED_HOURS,
-  DISABLE_LOWER_FILE_SIZE_LIMIT,
-  DISABLE_UPPER_FILE_SIZE_LIMIT,
-  DISABLE_MAX_FILE_NOT_OPENED_HOURS,
-  valid_lowerFileSizeLimit,
-  valid_upperFileSizeLimit,
-  valid_maxFileNotOpenedHours,
+  MIN_MIN_HOURS_SINCE_LAST_OPEN,
+  MAX_MIN_HOURS_SINCE_LAST_OPEN,
+  MAX_OPEN_COUNT,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
-
-function isFieldEnabled(fieldName, value) {
-  const fun = {
-    lowerFileSizeLimit: valid_lowerFileSizeLimit,
-    upperFileSizeLimit: valid_upperFileSizeLimit,
-    maxFileNotOpenedHours: valid_maxFileNotOpenedHours,
-  }[fieldName];
-  if (fun) {
-    return fun(value);
-  }
-}
-
-function disableFieldValue(fieldName) {
-  return {
-    lowerFileSizeLimit: DISABLE_LOWER_FILE_SIZE_LIMIT,
-    upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
-    maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
-  }[fieldName];
-}
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const FORM_SEND_DEBOUNCE_TIME = 4000;
 
-const SIZE_LT_FIELD = {
+const FILE_SIZE_LT_FIELD = {
   type: 'number',
   gte: MIN_UPPER_FILE_SIZE_LIMIT,
   lte: MAX_FILE_SIZE,
 };
-const SIZE_GT_FIELD = {
+const FILE_SIZE_GT_FIELD = {
   type: 'number',
   gte: MIN_LOWER_FILE_SIZE_LIMIT,
   lte: MAX_FILE_SIZE,
@@ -64,8 +43,14 @@ const SIZE_GT_FIELD = {
 const TIME_FIELD = {
   type: 'number',
   integer: true,
-  gte: MIN_MAX_FILE_NOT_OPENED_HOURS,
-  lte: MAX_MAX_FILE_NOT_OPENED_HOURS,
+  gte: MIN_MIN_HOURS_SINCE_LAST_OPEN,
+  lte: MAX_MIN_HOURS_SINCE_LAST_OPEN,
+};
+const COUNT_FIELD = {
+  type: 'number',
+  integer: true,
+  gte: MIN_OPEN_COUNT,
+  lte: MAX_OPEN_COUNT,
 };
 
 const TIME_NUMBER_FIELD = {
@@ -74,16 +59,24 @@ const TIME_NUMBER_FIELD = {
 };
 
 const VALIDATORS = {
-  '_formData.lowerFileSizeLimit': createFieldValidator(SIZE_GT_FIELD),
-  '_formData.upperFileSizeLimit': createFieldValidator(SIZE_LT_FIELD),
-  '_formData.maxFileNotOpenedHours': createFieldValidator(TIME_FIELD),
-  '_formData.maxFileNotOpenedHoursNumber': createFieldValidator(TIME_NUMBER_FIELD),
+  '_formData.lowerFileSizeLimit': createFieldValidator(FILE_SIZE_GT_FIELD),
+  '_formData.upperFileSizeLimit': createFieldValidator(FILE_SIZE_LT_FIELD),
+  '_formData.minHoursSinceLastOpen': createFieldValidator(TIME_FIELD),
+  '_formData.minHoursSinceLastOpenNumber': createFieldValidator(TIME_NUMBER_FIELD),
+  '_formData.maxOpenCount': createFieldValidator(COUNT_FIELD),
+  '_formData.maxHourlyMovingAverage': createFieldValidator(COUNT_FIELD),
+  '_formData.maxDailyMovingAverage': createFieldValidator(COUNT_FIELD),
+  '_formData.maxMonthlyMovingAverage': createFieldValidator(COUNT_FIELD),
 };
 
-export default Component.extend(buildValidations(VALIDATORS), {
+export default Component.extend(buildValidations(VALIDATORS), I18n, {
   classNames: ['space-cleaning-conditions-form'],
 
   i18n: service(),
+  onepanelServer: service(),
+  globalNotify: service(),
+
+  i18nPrefix: 'components.spaceCleaningConditionsForm',
 
   /**
    * Initial data for form.
@@ -100,6 +93,8 @@ export default Component.extend(buildValidations(VALIDATORS), {
    * @returns {Promise<undefined|any>} resolved value will be ignored
    */
   onSave: () => Promise.resolve(),
+
+  isEnabled: reads('data.enabled'),
 
   /**
    * Form send debounce time.
@@ -143,15 +138,33 @@ export default Component.extend(buildValidations(VALIDATORS), {
    */
   _window: window,
 
-  /**
-   * Array of field names.
-   * @type {Array.string}
-   */
-  _sourceFieldNames: Object.freeze([
+  _sourceFieldWithUnitNames: Object.freeze([
     'lowerFileSizeLimit',
     'upperFileSizeLimit',
-    'maxFileNotOpenedHours',
+    'minHoursSinceLastOpen',
   ]),
+
+  _sourceFieldCountNames: Object.freeze([
+    'maxOpenCount',
+    'maxHourlyMovingAverage',
+    'maxDailyMovingAverage',
+    'maxMonthlyMovingAverage',
+  ]),
+
+  /**
+   * Array of field names.
+   * @type {ComputedProperty<Array<string>>}
+   */
+  _sourceFieldNames: computed(
+    '_sourceFieldWithUnitNames',
+    '_sourceFieldCountNames',
+    function _sourceFieldNames() {
+      return [
+        ...this.get('_sourceFieldWithUnitNames'),
+        ...this.get('_sourceFieldCountNames'),
+      ];
+    }
+  ),
 
   /**
    * Units used in 'file size' condition.
@@ -255,8 +268,15 @@ export default Component.extend(buildValidations(VALIDATORS), {
       data,
       _sizeUnits,
       _timeUnits,
-      _sourceFieldNames,
-    } = this.getProperties('data', '_sizeUnits', '_timeUnits', '_sourceFieldNames');
+      _sourceFieldWithUnitNames,
+      _sourceFieldCountNames,
+    } = this.getProperties(
+      'data',
+      '_sizeUnits',
+      '_timeUnits',
+      '_sourceFieldWithUnitNames',
+      '_sourceFieldCountNames',
+    );
     this._cleanModificationState();
     if (!data) {
       data = {};
@@ -266,8 +286,8 @@ export default Component.extend(buildValidations(VALIDATORS), {
       'lowerFileSizeLimit',
       'upperFileSizeLimit',
     ].forEach((fieldName) => {
-      let value = get(data, fieldName);
-      if (typeof value === 'number' && isFieldEnabled(fieldName, value)) {
+      let { enabled, value } = get(data, fieldName);
+      if (typeof value === 'number' && enabled) {
         value = bytesToString(value, { iecFormat: true, separated: true });
         _formData.setProperties({
           [fieldName + 'Enabled']: true,
@@ -282,36 +302,66 @@ export default Component.extend(buildValidations(VALIDATORS), {
         });
       }
     });
-    let maxFileNotOpenedHours = get(data, 'maxFileNotOpenedHours');
-    if (typeof maxFileNotOpenedHours === 'number' &&
-      isFieldEnabled('maxFileNotOpenedHours', maxFileNotOpenedHours)) {
+    const minHoursSinceLastOpen = get(data, 'minHoursSinceLastOpen');
+    if (typeof get(minHoursSinceLastOpen, 'value') === 'number' &&
+      get(minHoursSinceLastOpen, 'enabled')) {
       let unit = _timeUnits[0];
       _timeUnits.forEach((u) => {
-        if (maxFileNotOpenedHours / u.multiplicator >= 1) {
+        if (minHoursSinceLastOpen / u.multiplicator >= 1) {
           unit = u;
         }
       });
       _formData.setProperties({
-        maxFileNotOpenedHoursEnabled: true,
-        maxFileNotOpenedHoursNumber: String(maxFileNotOpenedHours / unit.multiplicator),
-        maxFileNotOpenedHoursUnit: unit,
+        minHoursSinceLastOpenEnabled: true,
+        minHoursSinceLastOpenNumber: String(
+          get(minHoursSinceLastOpen, 'value') / unit.multiplicator
+        ),
+        minHoursSinceLastOpenUnit: unit,
       });
     } else {
       _formData.setProperties({
-        maxFileNotOpenedHoursEnabled: false,
-        maxFileNotOpenedHoursNumber: '',
-        maxFileNotOpenedHoursUnit: _timeUnits[0],
+        minHoursSinceLastOpenEnabled: false,
+        minHoursSinceLastOpenNumber: '',
+        minHoursSinceLastOpenUnit: _timeUnits[0],
       });
     }
-    _sourceFieldNames.forEach(fieldName => {
+    [
+      'maxOpenCount',
+      'maxHourlyMovingAverage',
+      'maxDailyMovingAverage',
+      'maxMonthlyMovingAverage',
+    ].forEach((fieldName) => {
+      let { enabled, value } = get(data, fieldName);
+      if (typeof value === 'number' && enabled) {
+        _formData.setProperties({
+          [fieldName + 'Enabled']: true,
+          [fieldName + 'Number']: String(value),
+        });
+      } else {
+        _formData.setProperties({
+          [fieldName + 'Enabled']: false,
+          [fieldName + 'Number']: '',
+        });
+      }
+    });
+    _sourceFieldWithUnitNames.forEach(fieldName => {
       _formData.set(fieldName, computed(
         `${fieldName}Number`,
         `${fieldName}Unit`,
         function () {
-          const number = Math.floor(parseFloat(this.get(
-            `${fieldName}Number`)));
+          const number = Math.floor(
+            parseFloat(this.get(`${fieldName}Number`))
+          );
           const unit = this.get(`${fieldName}Unit`);
           return number > 0 && unit ? number * unit.multiplicator : '';
+        }));
+    });
+    _sourceFieldCountNames.forEach(fieldName => {
+      _formData.set(fieldName, computed(
+        `${fieldName}Number`,
+        function () {
+          const number = Math.floor(parseFloat(this.get(`${fieldName}Number`)));
+          return number > 0 ? number : '';
         }));
     });
     return _formData;
@@ -357,13 +407,18 @@ export default Component.extend(buildValidations(VALIDATORS), {
     );
     const data = {};
     _sourceFieldNames.forEach((fieldName) => {
-      const isModified = modified.get(fieldName + 'Number') ||
+      const isValueModified = modified.get(fieldName + 'Number') ||
         modified.get(fieldName + 'Unit');
-      if (_formData.get(fieldName + 'Enabled') && isModified) {
-        data[fieldName] = _formData.get(fieldName);
-      } else if (modified.get(fieldName + 'Enabled') &&
-        !_formData.get(fieldName + 'Enabled')) {
-        data[fieldName] = disableFieldValue(fieldName);
+      const isEnabledModified = modified.get(fieldName + 'Enabled');
+      if (isValueModified || isEnabledModified) {
+        data[fieldName] = data[fieldName] || {};
+        const field = data[fieldName];
+        if (_formData.get(fieldName + 'Enabled')) {
+          field.enabled = true;
+          field.value = _formData.get(fieldName);
+        } else if (!_formData.get(fieldName + 'Enabled')) {
+          field.enabled = false;
+        }
       }
     });
     return data;
@@ -467,6 +522,14 @@ export default Component.extend(buildValidations(VALIDATORS), {
           }
         });
       }
+    },
+    configureEnabled(enabled) {
+      return this.get('onSave')({ enabled }).catch(error => {
+        this.get('globalNotify').backendError(
+          this.t('togglingSelectiveCleaning'),
+          error
+        );
+      });
     },
     lostFocus() {
       this.set('_lostInputFocus', true);

@@ -19,9 +19,9 @@ export default Component.extend({
   /**
    * A function invoked with 
    * @virtual
-   * @type {Onepanel.FilesPopularity}
+   * @type {Onepanel.FilesPopularityConfiguration}
    */
-  filesPopularity: undefined,
+  filesPopularityConfiguration: undefined,
 
   /**
    * Invoked when changing files popularity options (currently on enable/disable)
@@ -29,7 +29,7 @@ export default Component.extend({
    * @virtual
    * @type {function}
    */
-  updateFilesPopularity: notImplementedReject,
+  configureFilesPopularity: notImplementedReject,
 
   actions: {
     /**
@@ -37,9 +37,9 @@ export default Component.extend({
      * @returns {Promise<any>} response of onepanel server
      */
     toggleFilesPopularity(enabled) {
-      const updateFilesPopularity = this.get('updateFilesPopularity');
+      const configureFilesPopularity = this.get('configureFilesPopularity');
 
-      return updateFilesPopularity({ enabled })
+      return configureFilesPopularity({ enabled })
         .catch(error => {
           const errorDesc = (enabled ? 'enabling' : 'disabling') +
             ' files popularity feature';
