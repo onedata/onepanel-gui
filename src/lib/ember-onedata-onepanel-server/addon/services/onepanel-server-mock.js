@@ -120,10 +120,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -255,7 +255,7 @@ export default OnepanelServerBase.extend(
     },
 
     getOnezoneLogin() {
-      return resolve({ url: 'http://localhost:4201/#/login?auth_for=localhost:4200' });
+      return resolve({ url: 'http://localhost:4201/#/login?auth_for=Hello Provider (Onepanel);localhost:4200' });
     },
 
     watchTaskStatus(taskId) {
