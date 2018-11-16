@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import EmberObject, { get } from '@ember/object';
+import EmberObject from '@ember/object';
 import DomainNameProxyMixin from 'onepanel-gui/mixins/domain-name-proxy';
 import sinon from 'sinon';
 
@@ -27,7 +27,7 @@ describe('Unit | Mixin | domain name proxy', function () {
       clusterManager,
     });
 
-    return get(subject, 'domainProxy').then(domain => {
+    return subject.getDomainProxy().then(domain => {
       expect(domain).to.equal(domainName);
     });
   });
@@ -49,7 +49,7 @@ describe('Unit | Mixin | domain name proxy', function () {
       providerManager,
     });
 
-    return get(subject, 'domainProxy').then(domain => {
+    return subject.getDomainProxy().then(domain => {
       expect(domain).to.equal(domainName);
     });
   });

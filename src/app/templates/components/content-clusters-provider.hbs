@@ -30,4 +30,7 @@
   </div>
 </div>
 
-{{modal-configure-web-cert open=showConfigureWebCertModal}}
+{{modal-configure-web-cert
+  open=showConfigureWebCertModal
+  onHide=(action (mut showConfigureWebCertModal) false)
+}}

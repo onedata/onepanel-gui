@@ -21,4 +21,7 @@
     margin-top: $form-group-margin-bottom * 1.5;
     margin-bottom: $form-group-margin-bottom * 1.5;
   }
+  .resource-load-error {
+    background-color: $color-one-semiwhite;
+  }
 }

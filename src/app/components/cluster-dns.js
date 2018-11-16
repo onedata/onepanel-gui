@@ -325,6 +325,7 @@ export default Component.extend(
         }));
       }
       this.updateDnsCheckConfigurationProxy();
+      this.updateDomainProxy();
       if (this.get('getDnsCheckProxyOnStart')) {
         (
           this.set('dnsCheckProxy', this.get('dnsManager.dnsCheckProxy')) ||

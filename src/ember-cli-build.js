@@ -66,8 +66,6 @@ module.exports = function (defaults) {
   // along with the exports of each module as its value.
 
   const BOWER_ASSETS = [
-    'basictable/jquery.basictable.min.js',
-    'basictable/basictable.css',
     'webui-popover/dist/jquery.webui-popover.css',
     'webui-popover/dist/jquery.webui-popover.js',
   ];
@@ -76,6 +74,7 @@ module.exports = function (defaults) {
     'chartist-plugin-legend/chartist-plugin-legend.js',
     'jquery.scrollto/jquery.scrollTo.min.js',
     'input-tokenizer/tokenizer.min.js',
+    'basictable/basictable.css',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));

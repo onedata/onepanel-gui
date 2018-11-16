@@ -16,7 +16,7 @@ import { Promise } from 'rsvp';
 
 import storageManagerStub from '../../helpers/storage-manager-stub';
 import FormHelper from '../../helpers/form';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select';
+import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { registerService, lookupService } from '../../helpers/stub-service';
 
 const UNITS = {

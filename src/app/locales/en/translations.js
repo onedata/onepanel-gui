@@ -25,6 +25,10 @@ import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
+import noAdminBox from './components/no-admin-box';
+import createAdminForm from './components/create-admin-form';
+import clusterHostTable from './components/cluster-host-table';
+import clusterHostTableRow from './components/cluster-host-table-row';
 import manageClusterStorages from './components/manage-cluster-storages';
 import sidebarClusters from './components/sidebar-clusters';
 import contentClustersCertificate from './components/content-clusters-certificate';
@@ -74,6 +78,10 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
+    noAdminBox,
+    createAdminForm,
+    clusterHostTable,
+    clusterHostTableRow,
     manageClusterStorages,
     sidebarClusters,
     contentClustersCertificate,

@@ -114,6 +114,12 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
+    /**
+     * Set to false if want to see create cluster init options (add admin, etc.)
+     * @type {boolean}
+     */
+    adminUserPresent: true,
+
     username: MOCK_USERNAME,
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
@@ -166,6 +172,10 @@ export default OnepanelServerBase.extend(
 
     /// APIs provided by onepanel client library
 
+    staticRequest(api, method, params = []) {
+      return this._request(true, api, method, ...params);
+    },
+
     /**
      * Mocks an onepanel API call.
      *
@@ -177,6 +187,10 @@ export default OnepanelServerBase.extend(
      *                    reject(error: string)
      */
     request(api, method, ...params) {
+      return this._request(false, api, method, ...params);
+    },
+
+    _request(staticReq, api, method, ...params) {
       let cookies = this.get('cookies');
 
       // TODO protect property read
@@ -185,7 +199,7 @@ export default OnepanelServerBase.extend(
           `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
         );
 
-        if (!cookies.read('fakeLoginFlag')) {
+        if (!staticReq && !cookies.read('fakeLoginFlag')) {
           run.later(() => {
             reject({
               __request_method: method,
@@ -218,9 +232,13 @@ export default OnepanelServerBase.extend(
             };
             let taskId = getTaskId(response);
             run.later(() => {
+              const data = handler.success(...params);
+              console.debug(
+                `service:onepanel-server-mock: response: ${JSON.stringify(data)}, API ${api}, method ${method}, params: ${JSON.stringify(params)}`
+              );
               resolve({
                 __request_method: method,
-                data: handler.success(...params),
+                data,
                 response: response,
                 task: taskId && this.watchTaskStatus(taskId),
                 toString: responseToString,
@@ -249,6 +267,15 @@ export default OnepanelServerBase.extend(
       return promise;
     },
 
+    nodeProxy: computed(function () {
+      return PromiseObject.create({
+        promise: Promise.resolve({
+          hostname: 'example.com',
+          componentType: 'one' + MOCK_SERVICE_TYPE,
+        }),
+      });
+    }),
+
     getServiceType() {
       let serviceType = this.get('serviceType');
       return resolve(serviceType);
@@ -256,6 +283,10 @@ export default OnepanelServerBase.extend(
 
     getOnezoneLogin() {
       return resolve({ url: 'http://localhost:4201/#/login?auth_for=Hello Provider (Onepanel);localhost:4200' });
+    },
+
+    getHostname() {
+      return Promise.resolve('example.com');
     },
 
     watchTaskStatus(taskId) {
@@ -392,8 +423,7 @@ export default OnepanelServerBase.extend(
               },
               supportingProviders: _genSupportingProviders(),
             });
-            // additional spaces to test issue VFS-3673
-            _.times(8, i => {
+            _.times(2, i => {
               spaces.push({
                 id: i + '-space',
                 name: 'Test Space',
@@ -489,13 +519,10 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onepanel_getClusterHosts: computed(function () {
+      const __clusterHosts = _.clone(this.get('__clusterHosts'));
       return {
-        success({ discovered }) {
-          if (discovered) {
-            return ['node1.example.com', 'node2.example.com'];
-          } else {
-            return ['node1.example.com'];
-          }
+        success() {
+          return __clusterHosts;
         },
       };
     }),
@@ -688,23 +715,20 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getSpaceDetails: computed(
-      'mockInitializedCluster',
-      '__spaces',
-      function () {
-        if (this.get('mockInitializedCluster')) {
-          let spaces = this.get('__spaces');
-          let findSpace = (id) => _.find(spaces, s => s.id === id);
-          return {
-            success: (id) => findSpace(id),
-            statusCode: (id) => findSpace(id) ? 200 : 404,
-          };
-        } else {
-          return {
-            statusCode: () => 404,
-          };
-        }
-      }),
+    _req_oneprovider_getSpaceDetails() {
+      if (this.get('mockInitializedCluster')) {
+        let spaces = this.get('__spaces');
+        let findSpace = (id) => _.find(spaces, s => s.id === id);
+        return {
+          success: (id) => findSpace(id),
+          statusCode: (id) => findSpace(id) ? 200 : 404,
+        };
+      } else {
+        return {
+          statusCode: () => 404,
+        };
+      }
+    },
 
     _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
       return {
@@ -726,7 +750,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_modifySpace: computed(function () {
+    _req_oneprovider_modifySpace() {
       return {
         success: (id, data) => {
           let spaces = this.get('__spaces');
@@ -739,6 +763,9 @@ export default OnepanelServerBase.extend(
               set(data, 'autoCleaning', { enabled: false });
             }
             emberObjectMerge(space, data);
+            if (data && data.size) {
+              set(space, `supportingProviders.${PROVIDER_ID}`, data.size);
+            }
             return null;
           } else {
             return null;
@@ -750,7 +777,7 @@ export default OnepanelServerBase.extend(
           return space ? 204 : 404;
         },
       };
-    }),
+    },
 
     _req_oneprovider_supportSpace: computed(function () {
       return {
@@ -848,6 +875,63 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_addUser() {
+      return {
+        success: () => undefined,
+        statusCode: () => 204,
+      };
+    },
+
+    _req_onepanel_addClusterHost() {
+      const __clusterHosts = this.get('__clusterHosts');
+      return {
+        success: ({ address: hostname }) => {
+          __clusterHosts.push(hostname);
+          return {
+            hostname,
+          };
+        },
+        statusCode: () => 204,
+      };
+    },
+
+    _req_onepanel_removeClusterHost() {
+      const __clusterHosts = this.get('__clusterHosts');
+      return {
+        success: (hostname) => {
+          _.remove(__clusterHosts, hostname);
+        },
+        statusCode: () => 204,
+      };
+    },
+
+    /**
+     * Currently only unauthenticated response
+     * @returns {object}
+     */
+    _req_onepanel_getUsers() {
+      if (this.get('adminUserPresent')) {
+        return {
+          statusCode: () => 403,
+        };
+      } else {
+        return {
+          success: () => ({ usernames: [] }),
+          statusCode: () => 200,
+        };
+      }
+    },
+
+    _req_onepanel_getNode() {
+      return {
+        success: () => ({
+          hostname: 'example.com',
+          componentType: `one${MOCK_SERVICE_TYPE}`,
+        }),
+        statusCode: () => 200,
+      };
+    },
+
     _req_onepanel_checkDns() {
       const __dnsCheck = this.get('__dnsCheck');
       const builtInDnsServer = this.get('__dnsCheckConfiguration.builtInDnsServer');
@@ -857,7 +941,8 @@ export default OnepanelServerBase.extend(
           if (forceCheck) {
             this.set('__dnsCheckTimestamp', moment().toISOString());
           }
-          return Object.assign({ timestamp: this.get('__dnsCheckTimestamp') }, check);
+          return Object.assign({ timestamp: this.get('__dnsCheckTimestamp') },
+            check);
         },
       };
     },
@@ -900,6 +985,10 @@ export default OnepanelServerBase.extend(
     },
 
     // -- MOCKED RESOURCE STORE --
+
+    __clusterHosts: computed(function () {
+      return ['example.com'];
+    }),
 
     // space id -> AutCleaningStatus
     __spaceAutoCleaningStates: computed(function () {

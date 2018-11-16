@@ -7,6 +7,10 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4596 Added support for logging in with Onezone
+* VFS-4919 Addes support for WebDAV storage
+* VFS-4870 New style for modals
+* VFS-4798 Fixed redirect modal not shown after provider domain change and provider data refresh after cluster aspect change
+* VFS-4865 Added space support size change feature
 * VFS-4700 Added DNS check and Onezone DNS configuration views
 * VFS-4385 Fixed not updating storage sync charts after import finish and enabling update
 * VFS-4663 Web certificate management
@@ -16,6 +20,9 @@ CHANGELOG
 * VFS-4629 Fixed translations
 * VFS-4559 Fixed global actions display in mobile view
 * VFS-4587 Fixing lack of space occupancy bar by updating onepanel client
+* VFS-4594 UX improvements of deployment process
+* VFS-4435 New feature: adding hosts in cluster deployment table
+* VFS-4436 Added view for registering first admin user
 * VFS-4424 Improved sidebar content presentation and animation 
 * VFS-4381 Removed signature version option from S3 storage form, because we support only V4
 * VFS-4380 Added new parameters in null device form: simulated filesystem paramers and grow speed

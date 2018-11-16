@@ -391,12 +391,12 @@ export default Service.extend({
   },
 
   /**
-   * @param {boolean} [discovered=false] see discovered option in REST API
+   * @param {string} type
    * @return {Promise} resolves with Array.{ hostname: string }
    */
-  getHosts(discovered = false) {
+  getHosts(type = 'known') {
     return new Promise((resolve, reject) => {
-      let gettingHostNames = this.getHostNames(discovered);
+      let gettingHostNames = this.getHostNames(type);
 
       gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
@@ -414,14 +414,26 @@ export default Service.extend({
     });
   },
 
-  getHostNames(discovered = false) {
+  /**
+   * @param {string} type one of: known, cluster
+   * @returns {Promise}
+   */
+  getHostNames() {
     let onepanelServer = this.get('onepanelServer');
-    return new Promise((resolve, reject) => {
-      let gettingClusterHosts = onepanelServer.requestValidData(
-        'onepanel',
-        'getClusterHosts', { discovered }
-      );
-      gettingClusterHosts.then(resolve, reject);
-    });
+    return onepanelServer.requestValidData(
+      'onepanel',
+      'getClusterHosts',
+    );
+  },
+
+  /**
+   * @param {string} address hostname or IP address
+   * @returns {Promise<Onepanel.KnownHost>}
+   */
+  addKnownHost(address) {
+    return this.get('onepanelServer').request(
+      'onepanel',
+      'addClusterHost', { address }
+    ).then(({ data }) => data);
   },
 });
