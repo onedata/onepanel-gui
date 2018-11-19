@@ -100,7 +100,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @virtual
    * @type {string}
    */
-  mode: 'edit',
+  mode: 'show',
+
+  /**
+   * @type {boolean}
+   */
+  isStandalone: true,
+
+  /**
+   * @virtual optional
+   * @type {boolean}
+   */
+  allowsEdition: false,
 
   /**
    * @virtual
@@ -266,6 +277,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   init() {
     this._super(...arguments);
     this.prepareFields();
+
+    if (!this.get('isStandalone')) {
+      this.set('mode', 'create');
+    }
+    
     this.osdObserver();
     if (this.get('mode') === 'create') {
       const device = this.get('allFieldsValues.editBluestore.device');

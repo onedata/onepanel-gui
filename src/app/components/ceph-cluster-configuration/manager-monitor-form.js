@@ -30,7 +30,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @virtual
    * @type {string}
    */
-  mode: 'edit',
+  mode: 'show',
+
+  /**
+   * @type {boolean}
+   */
+  isStandalone: true,
+
+  /**
+   * @virtual optional
+   * @type {boolean}
+   */
+  allowsEdition: false,
 
   /**
    * @virtual
@@ -61,7 +72,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   staticFields: computed('fieldsSource', function editFields() {
     return this.get('fieldsSource').map(field => EmberObject.create(
-      Object.assign({}, field, { name: 'static.' + get(field, 'name')})
+      Object.assign({}, field, {
+        name: 'static.' + get(field, 'name'),
+        type: 'static',
+      })
     ));
   }),
 
@@ -90,7 +104,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   currentFieldsPrefix: computed('mode', function currentFieldsPrefix() {
     const mode = this.get('mode');
-    return mode === 'edit' ? ['edit'] : ['static'];
+    return ['edit', 'create'].includes(mode) ? ['edit'] : ['static'];
   }),
 
   managerMonitorObserver: observer(
@@ -124,6 +138,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
 
   init() {
     this._super(...arguments);
+
+    if (!this.get('isStandalone')) {
+      this.set('mode', 'create');
+    }
+
     this.managerMonitorObserver();
   },
 

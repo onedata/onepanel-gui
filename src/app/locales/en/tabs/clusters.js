@@ -5,6 +5,7 @@ export default {
     dns: 'DNS setup',
     certificate: 'Web certificate',
     provider: 'Provider',
+    ceph: 'Ceph',
     storages: 'Storages',
     spaces: 'Spaces',
     notFound: 'Cluster not found',

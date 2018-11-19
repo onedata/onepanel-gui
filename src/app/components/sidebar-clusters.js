@@ -104,6 +104,11 @@ export default TwoLevelSidebar.extend(I18n, {
                 icon: 'provider',
               },
               {
+                id: 'ceph',
+                label: this.t('menuItems.ceph'),
+                icon: 'ceph',
+              },
+              {
                 id: 'storages',
                 label: this.t('menuItems.storages'),
                 icon: 'support',

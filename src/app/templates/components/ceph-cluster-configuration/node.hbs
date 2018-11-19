@@ -25,9 +25,13 @@
             inputId=(concat elementId  "-manager-and-monitor")
             checked=node.managerMonitor.isEnabled
             update=(action "toggleManagerMonitor")
+            isReadOnly=(not allowsEdition)
           }}
           {{#if node.managerMonitor.isEnabled}}
-            {{ceph-cluster-configuration/manager-monitor-form managerMonitor=node.managerMonitor}}
+            {{ceph-cluster-configuration/manager-monitor-form
+              managerMonitor=node.managerMonitor
+              isStandalone=isStandalone
+              allowsEdition=allowsEdition}}
           {{/if}}
         </div>
         {{#promise-proxy-container proxy=node.devices}}
@@ -36,15 +40,18 @@
               osd=osd
               devices=node.devices
               usedDevices=node.usedDevices
-              mode="create"
+              isStandalone=isStandalone
+              allowsEdition=allowsEdition
               removeOsd=(action "removeOsd" osd.id)}}
           {{/each}}
         {{/promise-proxy-container}}
-        <div class="row content-row add-osd-section">
-          {{#bs-button class="btn" size="sm" type="info" onClick=(action "addOsd")}}
-            {{one-icon icon="add-filled"}} {{tt this "addOsd"}}
-          {{/bs-button}}
-        </div>
+        {{#if (or allowsEdit (not isStandalone))}}
+          <div class="row content-row add-osd-section">
+            {{#bs-button class="btn" size="sm" type="info" onClick=(action "addOsd")}}
+              {{one-icon icon="add-filled"}} {{tt this "addOsd"}}
+            {{/bs-button}}
+          </div>
+        {{/if}}
       </div>
     </div>
   {{/listItem.content}}

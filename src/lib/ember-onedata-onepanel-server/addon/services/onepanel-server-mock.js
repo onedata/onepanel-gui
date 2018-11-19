@@ -829,6 +829,36 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_getCephManagers: computed(function () {
+      return {
+        success: () => this.get('__cephManagers').toArray(),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getCephMonitors: computed(function () {
+      return {
+        success: () => this.get('__cephMonitors').toArray(),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getCephOsds: computed(function () {
+      return {
+        success: () => this.get('__cephOsds').toArray(),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getCephParams: computed(function () {
+      return {
+        success: () => ({
+          name: 'ceph',
+        }),
+        statusCode: () => 200,
+      };
+    }),
+
     _req_oneprovider_getBlockDevices: computed(function () {
       return {
         success: () => this.get('__blockDevices').toArray(),
@@ -1051,6 +1081,21 @@ export default OnepanelServerBase.extend(
       name: 'c',
       size: 1073741312,
       false: true,
+    }]),
+
+    __cephManagers: A([{
+      host: 'node1.example.com',
+    }]),
+
+    __cephMonitors: A([{
+      host: 'node1.example.com',
+    }]),
+
+    __cephOsds: A([{
+      id: 1,
+      host: 'node1.example.com',
+      type: 'bluestore',
+      device: 'c',
     }]),
   });
 

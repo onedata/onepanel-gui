@@ -163,6 +163,7 @@ export default EmberObject.extend({
     const osds = this.get('osds');
     const osdToRemove = osds.findBy('id', id);
     if (osdToRemove) {
+      set(osdToRemove, 'node', undefined);
       osds.removeObject(osdToRemove);
     }
   },

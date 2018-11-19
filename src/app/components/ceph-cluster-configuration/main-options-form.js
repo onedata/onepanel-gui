@@ -22,11 +22,14 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   i18nPrefix: 'components.cephClusterConfiguration.mainOptionsForm',
 
+  isStandalone: true,
+
   /**
-   * @virtual
-   * @type {string}
+   * @type {Ember.ComputedProperty<string>}
    */
-  mode: 'edit',
+  mode: computed('isStandalone', function mode() {
+    return this.get('isStandalone') ? 'show' : 'edit';
+  }),
 
   /**
    * @virtual
@@ -57,7 +60,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   staticFields: computed('fieldsSource', function editFields() {
     return this.get('fieldsSource').map(field => EmberObject.create(
-      Object.assign({}, field, { name: 'static.' + get(field, 'name')})
+      Object.assign({}, field, {
+        name: 'static.' + get(field, 'name'),
+        type: 'static',
+      })
     ));
   }),
 

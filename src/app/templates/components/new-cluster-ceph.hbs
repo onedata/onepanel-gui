@@ -22,7 +22,8 @@
 </div>
 <div class="row content-row">
   {{ceph-cluster-configuration
-    config=cephConfig}}
+    config=cephConfig
+    mode="create"}}
 </div>
 {{#if clusterDeployProcess.deploymentPromise}}
   {{new-cluster-deploy-progress deploymentPromise=clusterDeployProcess.deploymentPromise}}

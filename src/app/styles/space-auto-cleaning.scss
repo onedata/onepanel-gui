@@ -78,5 +78,14 @@
       padding: $padding-large-horizontal $padding-large-vertical;
     }
   }
+  .content-row {
+    @media (min-width: $screen-sm-min) {
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
+    h1 {
+      padding: 0;
+    }
+  }
 }
 

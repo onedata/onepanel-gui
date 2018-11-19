@@ -1,5 +1,7 @@
 <strong>{{tt this "objectStorageDaemon"}}</strong>
-{{#one-icon icon="checkbox-filled-x" class="remove-osd" click=(action removeOsd)}}{{/one-icon}}
+{{#if allowsEdition}}
+  {{#one-icon icon="checkbox-filled-x" class="remove-osd" click=(action removeOsd)}}{{/one-icon}}
+{{/if}}
 {{#bs-form submitOnEnter=false class="form-horizontal clearfix" as |form|}}
   {{one-form-fields
     bsForm=form

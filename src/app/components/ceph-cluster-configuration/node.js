@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { observer } from '@ember/object';
 
 export default Component.extend(I18n, {
   tagName: '',
@@ -20,6 +21,25 @@ export default Component.extend(I18n, {
    * @type {Utils/Ceph/CephNodeConfiguration}
    */
   node: undefined,
+
+  isStandalone: true,
+
+  /**
+   * @type {boolean}
+   */
+  allowsEdition: false,
+
+  isStandaloneObserver: observer('isStandalone', function isStandaloneObserver() {
+    const isStandalone = this.get('isStandalone');
+    if (!isStandalone) {
+      this.set('allowsEdition', true);
+    }
+  }),
+
+  init() {
+    this._super(...arguments);
+    this.isStandaloneObserver();
+  },
 
   actions: {
     addOsd() {

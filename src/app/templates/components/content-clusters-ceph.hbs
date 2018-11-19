@@ -1,0 +1,10 @@
+<div class="row content-row header-row hidden-xs">
+  <h1>{{tt this "header"}}</h1>
+</div>
+{{#bs-tab class="row content-row" as |tab|}}
+  {{#tab.pane title=(tt this "configuration")}}
+    {{#promise-proxy-container proxy=configurationProxy}}
+      {{ceph-cluster-configuration config=configurationProxy}}
+    {{/promise-proxy-container}}
+  {{/tab.pane}}
+{{/bs-tab}}
