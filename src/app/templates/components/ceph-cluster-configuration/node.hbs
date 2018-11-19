@@ -1,0 +1,51 @@
+{{#listComponent.item class="ceph-node" as |listItem|}}
+  {{#listItem.header}}
+    <span class="item-icon-container">
+      {{one-icon class="item-icon" icon="node"}}
+      {{one-tooltip
+        title=node
+        placement="top"
+        arrowPlacement="left"
+        triggerEvents="hover"
+      }}
+    </span>
+    <span class="one-label node-name">
+      {{node.host}}
+    </span>
+  {{/listItem.header}}
+  {{#listItem.content}}
+    <div class="item-table">
+      <div class="item-table-content-cell">
+        <div class="row content-row manager-monitor-section">
+          <label for={{concat elementId  "-manager-and-monitor"}} class="inline-label">
+            <strong>{{tt this "managerAndMonitor"}}</strong>
+          </label>
+          {{one-way-toggle
+            class=(concat "form-control manager-and-monitor")
+            inputId=(concat elementId  "-manager-and-monitor")
+            checked=node.managerMonitor.isEnabled
+            update=(action "toggleManagerMonitor")
+          }}
+          {{#if node.managerMonitor.isEnabled}}
+            {{ceph-cluster-configuration/manager-monitor-form managerMonitor=node.managerMonitor}}
+          {{/if}}
+        </div>
+        {{#promise-proxy-container proxy=node.devices}}
+          {{#each node.osds key="id" as |osd|}}
+            {{ceph-cluster-configuration/osd-form
+              osd=osd
+              devices=node.devices
+              usedDevices=node.usedDevices
+              mode="create"
+              removeOsd=(action "removeOsd" osd.id)}}
+          {{/each}}
+        {{/promise-proxy-container}}
+        <div class="row content-row add-osd-section">
+          {{#bs-button class="btn" size="sm" type="info" onClick=(action "addOsd")}}
+            {{one-icon icon="add-filled"}} {{tt this "addOsd"}}
+          {{/bs-button}}
+        </div>
+      </div>
+    </div>
+  {{/listItem.content}}
+{{/listComponent.item}}

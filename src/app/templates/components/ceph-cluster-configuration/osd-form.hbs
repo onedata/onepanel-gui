@@ -1,0 +1,12 @@
+<strong>{{tt this "objectStorageDaemon"}}</strong>
+{{#one-icon icon="checkbox-filled-x" class="remove-osd" click=(action removeOsd)}}{{/one-icon}}
+{{#bs-form submitOnEnter=false class="form-horizontal clearfix" as |form|}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+    disabled=disabled
+  }}
+{{/bs-form}}

@@ -79,13 +79,17 @@ export default Component.extend(I18n, {
    * If true, ceph step will be visible (only oneprovider)
    * @type {boolean}
    */
-  showCephStep: false,
+  showCephStep: true,
 
   /**
    * Data passed to initialize step component. Used to persist step state
    * @type {any}
    */
   stepData: undefined,
+  // TODO remove
+  // stepData: Object.freeze({
+  //   cephNodes: ['example.com'],
+  // }),
 
   /**
    * @type {Ember.ComputedProperty<Array<Object>>}

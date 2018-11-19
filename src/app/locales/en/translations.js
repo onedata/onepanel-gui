@@ -40,6 +40,7 @@ import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
 import newClusterCeph from './components/new-cluster-ceph';
+import cephClusterConfiguration from './components/ceph-cluster-configuration';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -93,6 +94,7 @@ let translations = {
     contentClustersDns,
     clusterDns,
     newClusterCeph,
+    cephClusterConfiguration,
   },
   mixins: {
     components: {

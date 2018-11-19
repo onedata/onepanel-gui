@@ -1,0 +1,22 @@
+.ceph-cluster-configuration {
+  .ceph-main-options-form {
+    margin-bottom: 0;
+  }
+  .ceph-node {
+    .form {
+      max-width: 400px;
+      margin-top: $content-row-vertical-padding;
+      margin-bottom: 0;
+    }
+  }
+  .remove-osd {
+    position: relative;
+    top: 6px;
+    margin-left: $padding-xs-horizontal;
+    font-size: 1.7em;
+    color: $color-one-light-gray;
+    &:hover {
+      color: darken($color-one-light-gray, 15%);
+    }
+  }
+}

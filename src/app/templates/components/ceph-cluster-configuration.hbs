@@ -1,0 +1,21 @@
+{{#unless config.hasManagerMonitor}}
+  <div class="alert alert-warning" role="alert">
+    {{tt this "atLeastManagerMonitor"}}
+  </div>
+{{/unless}}
+
+{{#unless config.hasOsd}}
+  <div class="alert alert-warning" role="alert">
+    {{tt this "atLeastOsd"}}
+  </div>
+{{/unless}}
+
+{{ceph-cluster-configuration/main-options-form mainConfiguration=config.mainConfiguration}}
+
+{{#one-collapsible-list as |list|}}
+  {{#each config.nodes key="host" as |node|}}
+    {{ceph-cluster-configuration/node
+      listComponent=list
+      node=node}}
+  {{/each}}
+{{/one-collapsible-list}}

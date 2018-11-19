@@ -125,9 +125,9 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -829,6 +829,13 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_getBlockDevices: computed(function () {
+      return {
+        success: () => this.get('__blockDevices').toArray(),
+        statusCode: () => 200,
+      };
+    }),
+
     // TODO: maybe implement real 
     _req_oneprovider_modifyProviderClusterIps() {
       return {
@@ -1031,6 +1038,20 @@ export default OnepanelServerBase.extend(
     __storages: undefined,
 
     __spaces: A([]),
+
+    __blockDevices: A([{
+      name: 'a',
+      size: 10000000000,
+      mounted: false,
+    }, {
+      name: 'b',
+      size: 20000000000,
+      mounted: true,
+    }, {
+      name: 'c',
+      size: 1073741312,
+      false: true,
+    }]),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

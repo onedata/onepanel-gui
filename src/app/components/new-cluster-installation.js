@@ -211,12 +211,14 @@ export default Component.extend(I18n, {
       onepanelServiceType,
       clusterManager,
       stepData,
+      changeClusterName,
     } = this.getProperties(
       'cephEnabled',
       'deploymentTaskId',
       'onepanelServiceType',
       'clusterManager',
-      'stepData'
+      'stepData',
+      'changeClusterName',
     );
 
     const hostsProxy = PromiseObject.create({
@@ -246,6 +248,7 @@ export default Component.extend(I18n, {
       const clusterDeployProcess = NewClusterDeployProcess.create(
         getOwner(this).ownerInjection(), {
           onFinish: () => this.configureFinished(),
+          changeClusterName,
         }
       );
       this.set('clusterDeployProcess', clusterDeployProcess);
@@ -264,21 +267,7 @@ export default Component.extend(I18n, {
   },
 
   configureFinished() {
-    const {
-      onepanelServiceType,
-      _zoneName,
-      changeClusterName,
-      nextStep,
-    } = this.getProperties(
-      'onepanelServiceType',
-      '_zoneName',
-      'changeClusterName',
-      'nextStep'
-    );
-    if (onepanelServiceType === 'zone') {
-      changeClusterName(_zoneName);
-    }
-    nextStep();
+    this.get('nextStep')();
   },
 
   getNodes() {
@@ -412,9 +401,16 @@ export default Component.extend(I18n, {
       clusterDeployProcess,
       hosts,
     } = this.getProperties('clusterDeployProcess', 'hosts');
-    // TODO merge ceph
+    const configuration = this.createConfiguration();
+
+    const existingCephConfiguration =
+      get(clusterDeployProcess, 'configuration.ceph');
+    if (existingCephConfiguration) {
+      set(configuration, 'ceph', existingCephConfiguration);
+    }
+
     setProperties(clusterDeployProcess, {
-      configuration: this.createConfiguration(),
+      configuration,
       cephNodes: getHostnamesOfType(hosts, 'ceph'),
     });
   },
