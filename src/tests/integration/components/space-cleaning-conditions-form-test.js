@@ -3,8 +3,20 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-import { fillIn, blur } from 'ember-native-dom-helpers';
+import { fillIn, blur, click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
+import _ from 'lodash';
+
+const globalData = Object.freeze({
+  enabled: true,
+  lowerFileSizeLimit: { enabled: true, value: 1048576 },
+  upperFileSizeLimit: { enabled: true, value: 2097152 },
+  minHoursSinceLastOpen: { enabled: true, value: 2 },
+  maxOpenCount: { enabled: true, value: 13 },
+  maxHourlyMovingAverage: { enabled: true, value: 14 },
+  maxDailyMovingAverage: { enabled: true, value: 15 },
+  maxMonthlyMovingAverage: { enabled: true, value: 16 },
+});
 
 describe('Integration | Component | space cleaning conditions form', function () {
   setupComponentTest('space-cleaning-conditions-form', {
@@ -12,16 +24,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   beforeEach(function () {
-    this.set('data', {
-      enabled: true,
-      lowerFileSizeLimit: { enabled: true, value: 1048576 },
-      upperFileSizeLimit: { enabled: true, value: 2097152 },
-      minHoursSinceLastOpen: { enabled: true, value: 2 },
-      maxOpenCount: { enabled: true, value: 13 },
-      maxHourlyMovingAverage: { enabled: true, value: 14 },
-      maxDailyMovingAverage: { enabled: true, value: 15 },
-      maxMonthlyMovingAverage: { enabled: true, value: 16 },
-    });
+    this.set('data', globalData);
   });
 
   it('is filled in with injected data', function () {
@@ -180,6 +183,41 @@ describe('Integration | Component | space cleaning conditions form', function ()
           expect(saveSpy).to.be.calledWith(saveArg);
           done();
         });
+      });
+    });
+  });
+
+  it('does not clear number value when disabling and enabling field', function () {
+    const localData = _.cloneDeep(globalData);
+    const saveSpy = sinon.spy(data => {
+      _.merge(localData, data);
+      return Promise.resolve();
+    });
+    this.on('onSave', saveSpy);
+
+    this.set('localData', localData);
+    this.render(hbs `
+              {{space-cleaning-conditions-form
+                formSendDebounceTime=0
+                formSavedInfoHideTimeout=0
+                data=localData
+                onSave=(action "onSave")}}`);
+
+    const greaterInputSelector =
+      '.lowerFileSizeLimitGroup input.condition-number-input';
+
+    const greaterCheckboxSelector =
+      '.lowerFileSizeLimitGroup .one-checkbox';
+
+    expect(this.$(greaterInputSelector), 'before disable').to.have.value('1');
+    return click(greaterCheckboxSelector).then(() => {
+      expect(this.$(greaterInputSelector)).to.be.disabled;
+      expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: false } });
+      return click(greaterCheckboxSelector).then(() => {
+        expect(this.$(greaterInputSelector)).to.not.be.disabled;
+        expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: true } });
+        expect(this.$(greaterInputSelector), 'after enable')
+          .to.have.value('1');
       });
     });
   });

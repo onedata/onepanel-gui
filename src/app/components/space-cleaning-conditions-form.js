@@ -9,7 +9,7 @@
 
 import Component from '@ember/component';
 
-import { reads } from '@ember/object/computed';
+import { reads, union } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
 import { cancel, debounce, run } from '@ember/runloop';
 import { inject as service } from '@ember/service';
@@ -63,10 +63,10 @@ const VALIDATORS = {
   '_formData.upperFileSizeLimit': createFieldValidator(FILE_SIZE_LT_FIELD),
   '_formData.minHoursSinceLastOpen': createFieldValidator(TIME_FIELD),
   '_formData.minHoursSinceLastOpenNumber': createFieldValidator(TIME_NUMBER_FIELD),
-  '_formData.maxOpenCount': createFieldValidator(COUNT_FIELD),
-  '_formData.maxHourlyMovingAverage': createFieldValidator(COUNT_FIELD),
-  '_formData.maxDailyMovingAverage': createFieldValidator(COUNT_FIELD),
-  '_formData.maxMonthlyMovingAverage': createFieldValidator(COUNT_FIELD),
+  '_formData.maxOpenCountNumber': createFieldValidator(COUNT_FIELD),
+  '_formData.maxHourlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
+  '_formData.maxDailyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
+  '_formData.maxMonthlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
 };
 
 export default Component.extend(buildValidations(VALIDATORS), I18n, {
@@ -155,16 +155,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    * Array of field names.
    * @type {ComputedProperty<Array<string>>}
    */
-  _sourceFieldNames: computed(
-    '_sourceFieldWithUnitNames',
-    '_sourceFieldCountNames',
-    function _sourceFieldNames() {
-      return [
-        ...this.get('_sourceFieldWithUnitNames'),
-        ...this.get('_sourceFieldCountNames'),
-      ];
-    }
-  ),
+  _sourceFieldNames: union('_sourceFieldWithUnitNames', '_sourceFieldCountNames'),
 
   /**
    * Units used in 'file size' condition.
@@ -286,63 +277,43 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       'lowerFileSizeLimit',
       'upperFileSizeLimit',
     ].forEach((fieldName) => {
-      let { enabled, value } = get(data, fieldName);
-      if (typeof value === 'number' && enabled) {
-        value = bytesToString(value, { iecFormat: true, separated: true });
-        _formData.setProperties({
-          [fieldName + 'Enabled']: true,
-          [fieldName + 'Number']: String(value.number),
-          [fieldName + 'Unit']: _.find(_sizeUnits, { name: value.unit }),
-        });
-      } else {
-        _formData.setProperties({
-          [fieldName + 'Enabled']: false,
-          [fieldName + 'Number']: '',
-          [fieldName + 'Unit']: _.find(_sizeUnits, { name: 'MiB' }),
-        });
+      const field = get(data, fieldName);
+      const enabled = field.enabled;
+      let value = field.value;
+      value = bytesToString(value, { iecFormat: true, separated: true });
+      _formData.setProperties({
+        [fieldName + 'Enabled']: enabled,
+        [fieldName + 'Number']: String(value.number),
+        [fieldName + 'Unit']: _.find(_sizeUnits, { name: value.unit }),
+      });
+    });
+
+    const minHoursSinceLastOpen = get(data, 'minHoursSinceLastOpen');
+    let unit = _timeUnits[0];
+    _timeUnits.forEach((u) => {
+      if (minHoursSinceLastOpen / u.multiplicator >= 1) {
+        unit = u;
       }
     });
-    const minHoursSinceLastOpen = get(data, 'minHoursSinceLastOpen');
-    if (typeof get(minHoursSinceLastOpen, 'value') === 'number' &&
-      get(minHoursSinceLastOpen, 'enabled')) {
-      let unit = _timeUnits[0];
-      _timeUnits.forEach((u) => {
-        if (minHoursSinceLastOpen / u.multiplicator >= 1) {
-          unit = u;
-        }
-      });
-      _formData.setProperties({
-        minHoursSinceLastOpenEnabled: true,
-        minHoursSinceLastOpenNumber: String(
-          get(minHoursSinceLastOpen, 'value') / unit.multiplicator
-        ),
-        minHoursSinceLastOpenUnit: unit,
-      });
-    } else {
-      _formData.setProperties({
-        minHoursSinceLastOpenEnabled: false,
-        minHoursSinceLastOpenNumber: '',
-        minHoursSinceLastOpenUnit: _timeUnits[0],
-      });
-    }
+    _formData.setProperties({
+      minHoursSinceLastOpenEnabled: get(minHoursSinceLastOpen, 'enabled'),
+      minHoursSinceLastOpenNumber: String(
+        get(minHoursSinceLastOpen, 'value') / unit.multiplicator
+      ),
+      minHoursSinceLastOpenUnit: unit,
+    });
+
     [
       'maxOpenCount',
       'maxHourlyMovingAverage',
       'maxDailyMovingAverage',
       'maxMonthlyMovingAverage',
     ].forEach((fieldName) => {
-      let { enabled, value } = get(data, fieldName);
-      if (typeof value === 'number' && enabled) {
-        _formData.setProperties({
-          [fieldName + 'Enabled']: true,
-          [fieldName + 'Number']: String(value),
-        });
-      } else {
-        _formData.setProperties({
-          [fieldName + 'Enabled']: false,
-          [fieldName + 'Number']: '',
-        });
-      }
+      const { enabled, value } = get(data, fieldName);
+      _formData.setProperties({
+        [fieldName + 'Enabled']: enabled,
+        [fieldName + 'Number']: String(value),
+      });
     });
     _sourceFieldWithUnitNames.forEach(fieldName => {
       _formData.set(fieldName, computed(
@@ -413,11 +384,11 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       if (isValueModified || isEnabledModified) {
         data[fieldName] = data[fieldName] || {};
         const field = data[fieldName];
-        if (_formData.get(fieldName + 'Enabled')) {
-          field.enabled = true;
+        if (isEnabledModified) {
+          field.enabled = _formData.get(fieldName + 'Enabled');
+        }
+        if (isValueModified && _formData.get(fieldName + 'Enabled')) {
           field.value = _formData.get(fieldName);
-        } else if (!_formData.get(fieldName + 'Enabled')) {
-          field.enabled = false;
         }
       }
     });
