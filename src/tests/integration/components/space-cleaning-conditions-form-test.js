@@ -129,9 +129,9 @@ describe('Integration | Component | space cleaning conditions form', function ()
       const saveArg = {};
 
       if (fieldName.endsWith('FileSizeLimit')) {
-        saveArg[fieldName] = { enabled: true, value: 3145728 };
+        saveArg[fieldName] = { value: 3145728 };
       } else {
-        saveArg[fieldName] = { enabled: true, value: 3 };
+        saveArg[fieldName] = { value: 3 };
       }
       const inputSelector = `.${fieldName}Group input.condition-number-input`;
       fillIn(inputSelector, '3').then(() => {
@@ -169,8 +169,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
                 onSave=(action "onSave")}}`);
 
     const saveArg = {
-      lowerFileSizeLimit: { enabled: true, value: 2097152 },
-      upperFileSizeLimit: { enabled: true, value: 3145728 },
+      lowerFileSizeLimit: { value: 2097152 },
+      upperFileSizeLimit: { value: 3145728 },
     };
     const greaterInputSelector =
       '.lowerFileSizeLimitGroup input.condition-number-input';
