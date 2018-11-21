@@ -14,6 +14,7 @@
 
 import { Promise } from 'rsvp';
 
+import { run } from '@ember/runloop';
 import { computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
@@ -138,22 +139,20 @@ export default OnepanelServerBase.extend({
   },
 
   /**
-   * Checks if cookies-based session is valid by trying to get session.
+   * Checks if cookies-based session is valid by trying to get REST token.
    * 
    * If the session is valid, it automatically (re)initializes the main client.
    * 
    * @returns {Promise} an `initClient` promise if `getSession` succeeds
    */
   validateSession() {
-    return new Promise((resolve, reject) => {
-      let testingAuth = this.getSession();
-      testingAuth
-        .then(({ data: { username } }) => {
-          this.set('username', username);
-          return this.initClient();
-        })
-        .then(resolve, reject);
-      testingAuth.catch(reject);
+    return $.ajax('/rest-credentials', {
+      method: 'GET',
+    }).then(({ token, username }) => {
+      return run(() => {
+        this.set('username', username);
+        return this.initClient({ token });
+      });
     });
   },
 
@@ -166,8 +165,11 @@ export default OnepanelServerBase.extend({
    * @param {string} [origin]
    * @returns {Onepanel.ApiClient}
    */
-  createClient(origin = null) {
+  createClient({ token, origin }) {
     let client = new Onepanel.ApiClient();
+    if (token) {
+      client.defaultHeaders['X-Auth-Token'] = token;
+    }
     client.basePath = replaceUrlOrigin(client.basePath, origin || window.location.origin);
     return client;
   },
@@ -175,14 +177,15 @@ export default OnepanelServerBase.extend({
   /**
    * Creates and sets main client used by this service.
    * 
-   * Must be invoked before using ``request`` method!
+   * Must be invoked before using `request` method!
    * 
+   * @param {string} [token]
    * @param {string} [origin]
    * @returns {Promise} resolves with { serviceType: string }
    */
-  initClient(origin = null) {
+  initClient({ token, origin }) {
     return new Promise((resolve) => {
-      let client = this.createClient(origin);
+      let client = this.createClient({ token, origin });
       this.set('client', client);
       resolve();
     });
@@ -230,33 +233,6 @@ export default OnepanelServerBase.extend({
       .then(({ hostname }) => hostname);
   },
 
-  /**
-   * Tries to get a session to check if session stored in cookies are valid
-   *
-   * This method should work both on provider and zone service types in both
-   * unauthenticated or authenticated mode.
-   * 
-   * @returns {Promise} resolves with { data: { username: string } }
-   */
-  getSession() {
-    let client = this.createClient();
-    let api = new Onepanel.OnepanelApi(client);
-
-    return new Promise((resolve, reject) => {
-      let callback = function (error, data, response) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve({
-            data,
-            response,
-          });
-        }
-      };
-      api.getSession(callback);
-    });
-  },
-
   // FIXME: refactor to use static request common method or callbacl
   /**
    * @returns {string}
@@ -291,22 +267,12 @@ export default OnepanelServerBase.extend({
     let client = this.createClient();
     client.defaultHeaders['Authorization'] =
       'Basic ' + btoa(username + ':' + password);
-    let api = new Onepanel.OnepanelApi(client);
 
-    let loginCall = new Promise((resolve, reject) => {
-      let callback = function (error, data, response) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve({
-            response,
-          });
-        }
-      };
-      api.createSession(callback);
-    });
-
-    return loginCall.then(() => this.validateSession());
+    return $.ajax('/login', {
+      method: 'POST',
+      username,
+      password,
+    }).then(() => this.validateSession());
   },
 
   staticRequest(apiName, method, callArgs = [], username, password) {

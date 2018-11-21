@@ -1,5 +1,6 @@
 /**
- * FIXME: docs
+ * Special version of login form container for Onepanel,
+ * with "Login with Onezone" button.
  * 
  * @module components/login-box/login-form-container
  * @author Jakub Liput
@@ -31,8 +32,8 @@ export default LoginFormContainer.extend(I18n, {
           this.redirectToOnezoneLogin(url);
         })
         .catch(error => {
-          this.get('globalNotify').backendError(this.t('gettingOnezoneLogin'),
-            error);
+          this.get('globalNotify')
+            .backendError(this.t('gettingOnezoneLogin'), error);
           throw error;
         });
     },

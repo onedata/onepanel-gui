@@ -304,7 +304,7 @@ export default OnepanelServerBase.extend(
           run.next(reject);
         }
       });
-      return validating.then(() => this.initClient());
+      return validating.then(() => this.initClient({ token: 'mock-token' }));
     },
 
     login(username, password) {
