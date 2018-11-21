@@ -15,6 +15,7 @@ import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   ProviderRegisterRequest,
@@ -22,16 +23,24 @@ const {
 
 const I18N_PREFIX = 'components.newClusterZoneRegistration.';
 
-export default Component.extend({
+export default Component.extend(I18n, {
   globalNotify: service(),
   onepanelServer: service(),
   i18n: service(),
+
+  i18nPrefix: 'components.newClusterZoneRegistration',
 
   /**
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
   _excludedSubdomains: Object.freeze([]),
+
+  /**
+   * One of: token, form, notCompatible, offline
+   * @type {string}
+   */
+  mode: 'form',
 
   /**
    * @param {Ember.Object} providerData data from provider registration form

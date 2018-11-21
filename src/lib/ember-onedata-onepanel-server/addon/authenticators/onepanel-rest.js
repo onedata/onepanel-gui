@@ -10,7 +10,7 @@
 
 import { inject as service } from '@ember/service';
 
-import { Promise } from 'rsvp';
+import { Promise, resolve, reject } from 'rsvp';
 
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 
@@ -32,17 +32,15 @@ export default BaseAuthenticator.extend({
 
   invalidate() {
     return new Promise((resolve, reject) => {
-      let removingSession = this.get('onepanelServer').request('onepanel',
-        'removeSession');
-      removingSession.then(resolve);
-      removingSession.catch(error => {
-        if (error && error.response && error.response.statusCode === 401) {
-          resolve();
-        } else {
-          reject(error);
-        }
-      });
+      $.ajax('/logout', {
+        method: 'POST',
+      }).then(resolve, reject);
+    }).catch(error => {
+      if (error && error.response && error.response.statusCode === 401) {
+        resolve();
+      } else {
+        reject(error);
+      }
     });
-
   },
 });

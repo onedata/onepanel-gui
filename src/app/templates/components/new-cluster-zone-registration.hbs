@@ -1,16 +1,30 @@
 {{!-- TODO i18n --}}
 
 <div class="row content-row header-row no-border">
-  <h1 class="">Registration</h1>
+  <h1>{{tt this "header"}}</h1>
 </div>
-<div class="row content-row no-border">
-  <p>Your software configuration has been successfully verified. 
-    Please enter your onedata provider name and optional approximate geographical location.</p>
-</div>
-<div class="content-row row">
-  {{provider-registration-form
-    mode="new"
-    excludedSubdomains=_excludedSubdomains
-    submit=(action "submit")
-  }}
-</div>
+{{#if (eq mode "token")}}
+  <div class="content-row row row-mode-token">
+    
+  </div>
+{{else if (eq mode "form")}}
+  <div class="row content-row no-border">
+    <p>{{tt this "providerFormIntro"}}</p>
+  </div>
+  <div class="content-row row row-mode-form">
+    {{provider-registration-form
+      mode="new"
+      excludedSubdomains=_excludedSubdomains
+      submit=(action "submit")
+      token=remoteOnezone.token
+      subdomainDelegation=remoteOnezone.subdomainDelegation
+      onezoneDomain=remoteOnezone.domain
+    }}
+  </div>
+{{else if (eq mode "notCompatible")}}
+  {{!-- FIXME: --}}
+  <div class="content-row row row-mode-not-compatible"></div>
+{{else if (eq mode "offline")}}
+{{!-- FIXME: --}}
+  <div class="content-row row row-mode-offline"></div>
+{{/if}}
