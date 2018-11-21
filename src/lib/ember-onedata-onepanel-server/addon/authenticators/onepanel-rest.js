@@ -17,8 +17,13 @@ import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 export default BaseAuthenticator.extend({
   onepanelServer: service('onepanelServer'),
 
-  restore() {
-    return this.get('onepanelServer').validateSession();
+  /**
+   * Just pass authenticated data from session-store
+   * @param {object} data a handshake data
+   * @returns {Promise<object>} resolves with passed data
+   */
+  restore(data) {
+    return Promise.resolve(data);
   },
 
   authenticate(username, password) {

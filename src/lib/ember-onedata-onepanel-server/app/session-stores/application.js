@@ -1,7 +1,3 @@
-// import CookieStore from 'ember-simple-auth/session-stores/cookie';
-
-// export default CookieStore.extend();
-
 /**
  * Base for development and production, "fake" store for session: it does not
  * use local session data, but on each restore, try to use browser session
@@ -12,7 +8,7 @@
  *
  * @module session-stores/-base
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -23,22 +19,6 @@ import _ from 'lodash';
 
 export default BaseSessionStore.extend({
   onepanelServer: service(),
-
-  /**
-   * @virtual
-   * @returns {Promise<undefined>}
-   */
-  forceCloseConnection() {
-    throw new Error('not implemented');
-  },
-
-  /**
-   * @virtual
-   * @returns {Promise<undefined>}
-   */
-  tryHandshake() {
-    throw new Error('not implemented');
-  },
 
   persist( /* data */ ) {
     // complete ignore of persist - the "store" is remote server

@@ -265,14 +265,11 @@ export default OnepanelServerBase.extend({
    * @returns {Promise}
    */
   login(username, password) {
-    let client = this.createClient();
-    client.defaultHeaders['Authorization'] =
-      'Basic ' + btoa(username + ':' + password);
-
-    return $.ajax('/login', {
-      method: 'POST',
-      username,
-      password,
+    return new Promise((resolve, reject) => {
+      $.ajax('/login', {
+        method: 'POST',
+        headers: { Authorization: 'Basic ' + btoa(username + ':' + password) },
+      }).then(resolve, reject);
     }).then(() => this.validateSession());
   },
 
