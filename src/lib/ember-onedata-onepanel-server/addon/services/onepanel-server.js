@@ -151,7 +151,8 @@ export default OnepanelServerBase.extend({
     }).then(({ token, username }) => {
       return run(() => {
         this.set('username', username);
-        return this.initClient({ token });
+        return this.initClient({ token })
+          .then(() => ({ token, username }));
       });
     });
   },
@@ -165,7 +166,7 @@ export default OnepanelServerBase.extend({
    * @param {string} [origin]
    * @returns {Onepanel.ApiClient}
    */
-  createClient({ token, origin }) {
+  createClient({ token, origin } = {}) {
     let client = new Onepanel.ApiClient();
     if (token) {
       client.defaultHeaders['X-Auth-Token'] = token;
@@ -183,7 +184,7 @@ export default OnepanelServerBase.extend({
    * @param {string} [origin]
    * @returns {Promise} resolves with { serviceType: string }
    */
-  initClient({ token, origin }) {
+  initClient({ token, origin } = {}) {
     return new Promise((resolve) => {
       let client = this.createClient({ token, origin });
       this.set('client', client);
