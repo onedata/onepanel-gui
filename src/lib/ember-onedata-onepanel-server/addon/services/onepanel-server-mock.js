@@ -829,6 +829,28 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_getCephStatus: computed(function () {
+      return {
+        success: () => ({
+          summary: 'Ceph cluster has some maintenance issues.',
+          level: 'warning',
+          messages: [
+            'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',
+          ],
+        }),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getCephUsage: computed(function () {
+      return {
+        success: () => ({
+          osds: this.get('__cephOsdUsage'),
+        }),
+        statusCode: () => 200,
+      };
+    }),
+
     _req_oneprovider_getCephManagers: computed(function () {
       return {
         success: () => this.get('__cephManagers').toArray(),
@@ -1076,11 +1098,15 @@ export default OnepanelServerBase.extend(
     }, {
       name: 'b',
       size: 20000000000,
-      mounted: true,
+      mounted: false,
     }, {
       name: 'c',
       size: 1073741312,
-      false: true,
+      mounted: false,
+    }, {
+      name: 'd',
+      size: 1073741312,
+      mounted: true,
     }]),
 
     __cephManagers: A([{
@@ -1096,7 +1122,25 @@ export default OnepanelServerBase.extend(
       host: 'node1.example.com',
       type: 'bluestore',
       device: 'c',
+    }, {
+      id: 2,
+      host: 'node1.example.com',
+      type: 'bluestore',
+      device: 'b',
     }]),
+
+    __cephOsdUsage: Object.freeze({
+      1: {
+        total: 1000000,
+        used: 500000,
+        available: 500000,
+      },
+      2: {
+        total: 100000000,
+        used: 75000000,
+        available: 25000000,
+      },
+    }),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

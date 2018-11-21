@@ -1,0 +1,25 @@
+.cluster-ceph-status {
+  .ceph-status {
+    padding-left: 45px;
+    .oneicon {
+      position: absolute;
+      top: 22px;
+      left: 6px;
+      font-size: 34px;
+      line-height: 0;
+    }
+  }
+  .osds-usage {
+    .one-collapsible-list-item-content {
+      margin: 0 $padding-large-horizontal;
+      @media (min-width: $screen-sm-min) {
+        margin: 0 $padding-large-horizontal - $padding-xs-horizontal;
+      }
+    }
+  }
+  .osd-usage {
+    @media (min-width: $screen-sm-min) {
+      padding: 0 $padding-xs-horizontal;
+    }
+  }
+}
