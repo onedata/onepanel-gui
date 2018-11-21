@@ -74,4 +74,10 @@ export default Service.extend({
     return this.get('onepanelServer')
       .staticRequest('onepanel', 'addUser', [userCreateRequest]);
   },
+
+  getUserLink() {
+    return this.get('onepanelServer')
+      .request('onepanel', 'getUserLink')
+      .then(({ data }) => data);
+  },
 });

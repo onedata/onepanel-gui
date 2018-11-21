@@ -8,24 +8,21 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-// FIXME: this should not be common file
-
 import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import Onepanel from 'npm:onepanel';
-import ContentUsers from 'onedata-gui-common/components/content-users';
-import layout from 'onedata-gui-common/templates/components/content-users';
+import Component from '@ember/component';
+import layout from 'onepanel-gui/templates/components/content-users';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { resolve } from 'rsvp';
 import { CLUSTER_INIT_STEPS } from 'onepanel-gui/models/cluster-details';
 
 const {
   UserModifyRequest,
 } = Onepanel;
 
-export default ContentUsers.extend(I18n, createDataProxyMixin('onezoneAccount'), {
+export default Component.extend(I18n, createDataProxyMixin('onezoneAccount'), {
   layout,
 
   classNames: 'content-users',
@@ -33,11 +30,25 @@ export default ContentUsers.extend(I18n, createDataProxyMixin('onezoneAccount'),
   onepanelServer: service(),
   guiUtils: service(),
   clusterManager: service(),
+  userManager: service(),
+  i18n: service(),
+  globalNotify: service(),
 
   /**
    * @override
    */
   i18nPrefix: 'components.contentUsers',
+
+  /**
+   * If true, set credentials form to changingPassword mode
+   * @type {boolean}
+   */
+  _changingPassword: false,
+
+  _changePasswordButtonClass: computed('_changingPassword', function () {
+    return this.get('_changingPassword') ?
+      'btn-change-password-cancel' : 'btn-change-password-start';
+  }),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -99,22 +110,45 @@ export default ContentUsers.extend(I18n, createDataProxyMixin('onezoneAccount'),
     this.updateOnezoneAccountProxy();
   },
 
-  // FIXME: real onezoneAccount proxy
-  // FIXME: use get_current_user
-  // FIXME: this should handle server rejection
   fetchOnezoneAccount() {
-    return resolve({
-      zoneName: 'Cyfronet AGH',
-      hostname: 'localhost:4201',
-      username: 'Stub User',
-      alias: 'stub_user',
-    });
+    return this.get('userManager').getUserLink();
   },
 
   actions: {
-    // FIXME: mock
-    linkOnezoneAccount() {
-      window.location = 'http://localhost:4209';
+    /**
+     * Make an API call to change password of current user
+     * and handles promise resolve, reject
+     * 
+     * @param {string} currentPassword
+     * @param {string} newPassword
+     * @returns {Promise} an API call promise, resolves on change password success
+     */
+    submitChangePassword(currentPassword, newPassword) {
+      let {
+        i18n,
+        globalNotify,
+      } = this.getProperties(
+        'i18n',
+        'globalNotify'
+      );
+
+      let changingPassword = this._changePassword({ currentPassword, newPassword });
+
+      changingPassword.catch(error => {
+        globalNotify.backendError(
+          i18n.t('components.contentUsers.passwordChangedSuccess'),
+          error
+        );
+      });
+
+      changingPassword.then(() => {
+        globalNotify.info(
+          i18n.t('components.contentUsers.passwordChangedSuccess')
+        );
+        this.set('_changingPassword', false);
+      });
+
+      return changingPassword;
     },
   },
 

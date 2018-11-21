@@ -985,6 +985,45 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_getUserLink() {
+      const mockStep = this.get('mockStep');
+      return {
+        success() {
+          if (MOCK_SERVICE_TYPE === 'provider') {
+            if (mockStep > STEP.PROVIDER_REGISTER) {
+              return {
+                zoneName: 'Cyfronet AGH',
+                hostname: 'localhost:4201',
+                username: 'Stub User',
+                alias: 'stub_user',
+              };
+            } else {
+              return null;
+            }
+          } else {
+            if (mockStep >= STEP.ZONE_DONE) {
+              return {
+                zoneName: 'Cyfronet AGH',
+                hostname: 'localhost:4201',
+                username: 'Stub User',
+                alias: 'stub_user',
+              };
+            } else {
+              return null;
+            }
+          }
+        },
+        statusCode() {
+          if (MOCK_SERVICE_TYPE === 'provider') {
+            return mockStep > STEP.PROVIDER_REGISTER ? 200 : 404;
+          } else {
+            return mockStep >= STEP.ZONE_DONE ? 200 : 404;
+          }
+        },
+      };
+
+    },
+
     // -- MOCKED RESOURCE STORE --
 
     __clusterHosts: computed(function () {
