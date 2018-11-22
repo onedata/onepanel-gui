@@ -1,4 +1,15 @@
 {{#promise-proxy-container proxy=poolsWithUsageProxy}}
+  <p class="text-right">
+    {{#link-to
+      "onedata.sidebar.content.aspect" 
+      "storages"
+      (query-params create_storage_form=true create_storage_form_type="localceph")
+      class="btn btn-default btn-sm create-pool"
+    }}
+      {{one-icon icon="add-filled"}}
+      {{tt this "createPool"}}
+    {{/link-to}}
+  </p>
   {{#one-collapsible-list as |list|}}
     {{#each pools as |pool|}}
       {{#list.item as |listItem|}}

@@ -20,6 +20,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 export default Component.extend(I18n, GlobalActions, {
+  navigationState: service(),
   storageManager: service(),
   cephManager: service(),
   spaceManager: service(),
@@ -139,6 +140,10 @@ export default Component.extend(I18n, GlobalActions, {
     this._super(...arguments);
     this._updateStoragesProxy();
     this._updateSpacesProxy(true);
+    const queryParams = this.get('navigationState.queryParams');
+    if (get(queryParams, 'create_storage_form')) {
+      this.set('addStorageOpened', true);
+    }
   },
 
   /**

@@ -11,7 +11,7 @@
       submit=(action "submitAddStorage")
       isFormOpened=addStorageOpened}}
 </div>
-<div class="row">
+<div class="row relative {{if storagesLoading "min-height-100"}}">
   {{#loading-container isLoading=storagesLoading errorReason=storagesError}}
     {{#unless noStorages}}
       {{cluster-storage-table 

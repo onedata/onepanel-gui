@@ -90,6 +90,7 @@ export default OneForm.extend(Validations, {
   classNames: ['cluster-storage-add-form'],
 
   i18n: service(),
+  navigationState: service(),
   cephManager: service(),
 
   /**
@@ -179,11 +180,26 @@ export default OneForm.extend(Validations, {
         field.set('name', type.id + '.' + field.get('name')))
     );
 
+    this.selectPreferredStorageType();
     this.prepareFields();
     this._addFieldsLabels();
     this.resetFormValues();
     this.get('cephMonitorsProxy')
       .then(() => safeExec(this, 'introduceCephMonitors'));
+  },
+
+  selectPreferredStorageType() {
+    const prefferedTypeId =
+      this.get('navigationState.queryParams.create_storage_form_type');
+    if (prefferedTypeId) {
+      const storageTypes = this.get('storageTypes');
+      const preferredType = storageTypes.findBy('id', prefferedTypeId);
+      this.set('selectedStorageType', preferredType);
+      // const genericFields = this.get('genericFields');
+      // debugger;
+      // const typeField = genericFields.findBy('name', 'generic.type');
+      // set(typeField, 'defaultValue', prefferedType);
+    }
   },
 
   introduceCephMonitors() {

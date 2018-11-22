@@ -5,4 +5,5 @@ export default {
     minSize: 'Minimum size',
   },
   poolUsage: 'Pool usage',
+  createPool: 'Create pool (as storage)',
 };
