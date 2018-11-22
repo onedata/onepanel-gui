@@ -213,7 +213,7 @@ export default Component.extend({
         configureSpaceAutoCleaning,
         autoCleaningConfiguration,
       } = this.getProperties('configureSpaceAutoCleaning', 'autoCleaningConfiguration');
-      if (get(autoCleaningConfiguration, 'enabled')) {
+      if (autoCleaningConfiguration && get(autoCleaningConfiguration, 'enabled')) {
         return configureSpaceAutoCleaning({ rules: values });
       } else {
         return Promise.reject();

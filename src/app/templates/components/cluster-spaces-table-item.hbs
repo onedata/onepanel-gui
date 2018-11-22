@@ -176,15 +176,17 @@
                 {{/tab.pane}}
                 {{#tab.pane elementId=tabCleanId}}
                   {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
-                    {{#promise-proxy-container proxy=autoCleaningConfigurationProxy}}
-                      {{space-auto-cleaning
-                        autoCleaningConfiguration=autoCleaningConfiguration
-                        spaceSize=spaceSizeForProvider
-                        spaceId=space.id
-                        configureSpaceAutoCleaning=(action "configureSpaceAutoCleaning")
-                        spaceOccupancyChanged=(action "spaceOccupancyChanged")
-                      }}
-                    {{/promise-proxy-container}}
+                    <div class="loadable-row lg">
+                      {{#promise-proxy-container proxy=autoCleaningConfigurationProxy}}
+                        {{space-auto-cleaning
+                          autoCleaningConfiguration=autoCleaningConfiguration
+                          spaceSize=spaceSizeForProvider
+                          spaceId=space.id
+                          configureSpaceAutoCleaning=(action "configureSpaceAutoCleaning")
+                          spaceOccupancyChanged=(action "spaceOccupancyChanged")
+                        }}
+                      {{/promise-proxy-container}}
+                    </div>
                   {{/if}}
                 {{/tab.pane}}
               </div>

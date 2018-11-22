@@ -322,7 +322,7 @@ export default Component.extend(
             configuration
           )
           .then(() => {
-            if (get(configuration, 'enabled') === false) {
+            if (configuration && get(configuration, 'enabled') === false) {
               // failure of this will not cause fail of configureFilesPopularity
               this.updateAutoCleaningConfigurationProxy({ replace: true });
             }

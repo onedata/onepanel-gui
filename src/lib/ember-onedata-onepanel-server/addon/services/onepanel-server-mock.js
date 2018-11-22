@@ -778,8 +778,10 @@ export default OnepanelServerBase.extend(
         success: (id, data) => {
           const spacesFilesPopularity = this.get('__spacesFilesPopularity');
           let configuration = spacesFilesPopularity.find(s => s.id === id);
-          configuration = configuration || {};
-
+          if (!configuration) {
+            configuration = { id };
+            spacesFilesPopularity.push(configuration);
+          }
           const popEnabled = get(data, 'enabled');
           if (popEnabled === true) {
             set(data, 'restUrl', 'https://example.com/api/2');
@@ -822,7 +824,10 @@ export default OnepanelServerBase.extend(
         success: (id, data) => {
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
           let configuration = spacesAutoCleaning.find(s => s.id === id);
-          configuration = configuration || {};
+          if (!configuration) {
+            configuration = { id };
+            spacesAutoCleaning.push(configuration);
+          }
           emberObjectMerge(configuration, data);
         },
         statusCode: (id) => {

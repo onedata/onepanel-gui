@@ -161,7 +161,11 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    * Units used in 'file size' condition.
    * @type {Array.Object}
    */
-  _sizeUnits: iecUnits,
+  _sizeUnits: computed(function sizeUnits() {
+    return ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'].map(name =>
+      iecUnits.find(u => u.name === name)
+    );
+  }),
 
   /**
    * Units used in 'not active for' condition.
@@ -277,28 +281,29 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       'lowerFileSizeLimit',
       'upperFileSizeLimit',
     ].forEach((fieldName) => {
-      const field = get(data, fieldName);
+      const field = get(data, fieldName) || { enabled: false, value: 0 };
       const enabled = field.enabled;
-      let value = field.value;
-      value = bytesToString(value, { iecFormat: true, separated: true });
+      const bytesValue = bytesToString(field.value, { iecFormat: true, separated: true });
       _formData.setProperties({
         [fieldName + 'Enabled']: enabled,
-        [fieldName + 'Number']: String(value.number),
-        [fieldName + 'Unit']: _.find(_sizeUnits, { name: value.unit }),
+        [fieldName + 'Number']: String(bytesValue.number),
+        [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) ||
+          { multiplicator: 1, name: 'B' },
       });
     });
 
-    const minHoursSinceLastOpen = get(data, 'minHoursSinceLastOpen');
+    let minHoursSinceLastOpenField = get(data, 'minHoursSinceLastOpen');
+    minHoursSinceLastOpenField = minHoursSinceLastOpenField || { enabled: false, value: 0 };
     let unit = _timeUnits[0];
     _timeUnits.forEach((u) => {
-      if (minHoursSinceLastOpen / u.multiplicator >= 1) {
+      if (minHoursSinceLastOpenField / u.multiplicator >= 1) {
         unit = u;
       }
     });
     _formData.setProperties({
-      minHoursSinceLastOpenEnabled: get(minHoursSinceLastOpen, 'enabled'),
+      minHoursSinceLastOpenEnabled: get(minHoursSinceLastOpenField, 'enabled'),
       minHoursSinceLastOpenNumber: String(
-        get(minHoursSinceLastOpen, 'value') / unit.multiplicator
+        get(minHoursSinceLastOpenField, 'value') / unit.multiplicator
       ),
       minHoursSinceLastOpenUnit: unit,
     });
@@ -309,12 +314,16 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       'maxDailyMovingAverage',
       'maxMonthlyMovingAverage',
     ].forEach((fieldName) => {
-      const { enabled, value } = get(data, fieldName);
+      let field = get(data, fieldName);
+      field = field || { enabled: false, value: 0 };
+      const { enabled, value } = field;
       _formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(value),
       });
     });
+
+    // Computing display number and units in form
     _sourceFieldWithUnitNames.forEach(fieldName => {
       _formData.set(fieldName, computed(
         `${fieldName}Number`,
@@ -357,6 +366,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
     let isValid = true;
     _sourceFieldNames.forEach((fieldName) => {
       const isModified = modified.get(fieldName + 'Number') ||
+        modified.get(fieldName + 'Enabled') ||
         modified.get(fieldName + 'Unit');
       if (_formData.get(fieldName + 'Enabled') && isModified &&
         _formFieldsErrors[fieldName]) {
@@ -453,12 +463,9 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    * @param {boolean} schedule If false, scheduled save will be canceled.
    */
   _scheduleSendChanges(schedule = true) {
-    let {
-      _saveDebounceTimer,
-      formSendDebounceTime,
-    } = this.getProperties('_saveDebounceTimer', 'formSendDebounceTime');
+    const formSendDebounceTime = this.get('formSendDebounceTime');
     if (schedule === false) {
-      cancel(_saveDebounceTimer);
+      this._cancelDebounceTimer();
     } else {
       const data = this._modifiedData();
       if (Object.keys(data).length > 0 && this._isValid()) {
@@ -467,13 +474,22 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
           '_saveDebounceTimer',
           debounce(this, '_sendChanges', formSendDebounceTime)
         );
+        run.next(() => {
+          if (!this._isValid()) {
+            this._cancelDebounceTimer();
+          }
+        });
       } else {
-        if (this.get('_formStatus') === 'modified') {
-          this.set('_formStatus', '');
-        }
-        cancel(_saveDebounceTimer);
+        this._cancelDebounceTimer();
       }
     }
+  },
+
+  _cancelDebounceTimer() {
+    if (this.get('_formStatus') === 'modified') {
+      this.set('_formStatus', '');
+    }
+    cancel(this.get('_saveDebounceTimer'));
   },
 
   actions: {
