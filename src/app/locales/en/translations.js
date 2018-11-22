@@ -41,6 +41,8 @@ import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
 import newClusterCeph from './components/new-cluster-ceph';
 import cephClusterConfiguration from './components/ceph-cluster-configuration';
+import clusterCephStatus from './components/cluster-ceph-status';
+import clusterCephPools from './components/cluster-ceph-pools';
 import contentClustersCeph from './components/content-clusters-ceph';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
@@ -96,6 +98,8 @@ let translations = {
     clusterDns,
     newClusterCeph,
     cephClusterConfiguration,
+    clusterCephStatus,
+    clusterCephPools,
     contentClustersCeph,
   },
   mixins: {

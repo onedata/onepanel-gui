@@ -5,6 +5,7 @@ const {
   S3,
   Ceph,
   Cephrados,
+  Localceph,
   Swift,
   Glusterfs,
   Webdav,
@@ -19,6 +20,8 @@ function clusterStorageClass(storageType) {
       return Ceph;
     case 'cephrados':
       return Cephrados;
+    case 'localceph':
+      return Localceph;
     case 'posix':
       return Posix;
     case 'swift':

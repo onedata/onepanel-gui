@@ -12,8 +12,8 @@
   </div>
 {{/promise-proxy-container}}
 
-<div class="row content-row no-border osds-usage">
-  <h1>OSDs usage</h1>
+<div class="osds-usage">
+  <h1>{{tt this "osdsUsage"}}</h1>
   {{#promise-proxy-container proxy=osdsUsageProxy}}
     {{#one-collapsible-list as |list|}}
       {{#each osdsUsage as |hostOsds|}}
@@ -31,10 +31,11 @@
             <span class="osds-host">{{hostOsds.host}}</span>
           {{/listItem.header}}
           {{#listItem.content}}
-            <div class="row content-row clearfix">
+            <div class="row content-row no-border clearfix">
               {{#each hostOsds.osds as |osd|}}
                 <div class="osd-usage col-md-4 col-sm-6 col-xs-12">
-                  {{#truncated-string class="osd-name"}}{{osd.type}} {{or osd.device osd.path}}{{/truncated-string}}
+                  {{#truncated-string class="osd-name"}}
+                    <strong>{{tt this osd.type}}</strong> {{or osd.device osd.path}}{{/truncated-string}}
                   {{one-space-indicator
                     currentTotalSize=osd.usage.total
                     occupiedSize=osd.usage.used}}

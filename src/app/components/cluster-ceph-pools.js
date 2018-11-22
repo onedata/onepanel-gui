@@ -1,0 +1,40 @@
+import Component from '@ember/component';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { computed, getProperties, get, set } from '@ember/object';
+import { inject as service } from '@ember/service';
+import _ from 'lodash';
+
+export default Component.extend(I18n, {
+  classNames: ['cluster-ceph-pools'],
+
+  cephManager: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.clusterCephPools',
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject>}
+   */
+  poolsWithUsageProxy: computed(function poolsWithUsageProxy() {
+    return this.get('cephManager').getPoolsWithUsage();
+  }),
+
+  pools: computed('poolsWithUsageProxy.content.{pools.[],usage}', function pools() {
+    const {
+      pools: poolsList,
+      usage,
+    } = getProperties(this.get('poolsWithUsageProxy'), 'pools', 'usage');
+    if (poolsList && get(poolsList, 'length')) {
+      return poolsList.map(pool => {
+        const preparedPool = _.cloneDeep(pool);
+        const poolUsage = _.cloneDeep(usage[get(pool, 'name')]);
+        set(preparedPool, 'usage', poolUsage);
+        return preparedPool;
+      });
+    } else {
+      return [];
+    }
+  }),
+});

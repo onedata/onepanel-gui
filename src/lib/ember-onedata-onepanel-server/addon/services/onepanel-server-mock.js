@@ -846,6 +846,7 @@ export default OnepanelServerBase.extend(
       return {
         success: () => ({
           osds: this.get('__cephOsdUsage'),
+          pools: this.get('__cephPoolsUsage'),
         }),
         statusCode: () => 200,
       };
@@ -877,6 +878,13 @@ export default OnepanelServerBase.extend(
         success: () => ({
           name: 'ceph',
         }),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getCephPools: computed(function () {
+      return {
+        success: () => this.get('__cephPools').toArray(),
         statusCode: () => 200,
       };
     }),
@@ -1139,6 +1147,27 @@ export default OnepanelServerBase.extend(
         total: 100000000,
         used: 75000000,
         available: 25000000,
+      },
+    }),
+
+    __cephPools: A([{
+      name: 'pool1',
+      size: 1,
+      minSize: 1,
+    }, {
+      name: 'pool2',
+      size: 2,
+      minSize: 1,
+    }]),
+
+    __cephPoolsUsage: Object.freeze({
+      pool1: {
+        used: 500000,
+        maxAvailable: 5000000,
+      },
+      pool2: {
+        used: 75000000,
+        maxAvailable: 250000000,
       },
     }),
   });

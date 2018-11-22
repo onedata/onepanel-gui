@@ -11,9 +11,9 @@
   }
   .osds-usage {
     .one-collapsible-list-item-content {
-      margin: 0 $padding-large-horizontal;
+      padding: 0 $padding-large-horizontal;
       @media (min-width: $screen-sm-min) {
-        margin: 0 $padding-large-horizontal - $padding-xs-horizontal;
+        padding: 0 $padding-large-horizontal - $padding-xs-horizontal;
       }
     }
   }

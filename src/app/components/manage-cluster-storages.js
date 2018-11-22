@@ -21,6 +21,7 @@ import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/creat
 
 export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
+  cephManager: service(),
   spaceManager: service(),
   globalNotify: service(),
   i18n: service(),
@@ -168,11 +169,13 @@ export default Component.extend(I18n, GlobalActions, {
   _submitAddStorage(storageFormData) {
     let {
       storageManager,
-    } = this.getProperties('storageManager');
+      cephManager,
+    } = this.getProperties('storageManager', 'cephManager');
+    const storageType = get(storageFormData, 'type');
 
     let cs = createClusterStorageModel(storageFormData);
-
-    let addingStorage = storageManager.createStorage(cs);
+    let addingStorage = storageType === 'localceph' ?
+      cephManager.createPool(cs) : storageManager.createStorage(cs);
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {

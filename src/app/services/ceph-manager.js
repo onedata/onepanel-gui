@@ -10,13 +10,25 @@ export default Service.extend({
   onepanelServer: service(),
 
   /**
-   * Returns all osds in the ceph cluster
-   * @return {PromiseArray<CephOsd>}
+   * Returns all osds in the ceph cluster.
+   * @return {PromiseArray<Onepanel.CephOsd>}
    */
   getOsds() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseArray.create({
       promise: onepanelServer.request('oneprovider', 'getCephOsds')
+        .then(({ data }) => data),
+    });
+  },
+
+  /**
+   * Returns all monitors in the ceph cluster.
+   * @return {PromiseArray<Onepanel.CephMonitor>}
+   */
+  getMonitors() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseArray.create({
+      promise: onepanelServer.request('oneprovider', 'getCephMonitors')
         .then(({ data }) => data),
     });
   },
@@ -31,12 +43,12 @@ export default Service.extend({
     return PromiseObject.create({
       promise: Promise.all([
         onepanelServer.request('oneprovider', 'getCephManagers'),
-        onepanelServer.request('oneprovider', 'getCephMonitors'),
+        get(this.getMonitors(), 'promise'),
         get(this.getOsds(), 'promise'),
         onepanelServer.request('oneprovider', 'getCephParams'),
       ]).then(([
         { data: managers },
-        { data: monitors },
+        monitors,
         osds,
         { data: general },
       ]) => {
@@ -83,5 +95,38 @@ export default Service.extend({
         usage,
       })),
     });
+  },
+
+  getPools() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseArray.create({
+      promise: onepanelServer.request('oneprovider', 'getCephPools')
+        .then(({ data }) => data),
+    });
+  },
+
+  getPoolsUsage() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseObject.create({
+      promise: onepanelServer.request('oneprovider', 'getCephUsage')
+        .then(({ data: { pools } }) => pools),
+    });
+  },
+
+  getPoolsWithUsage() {
+    return PromiseObject.create({
+      promise: Promise.all([
+        get(this.getPools(), 'promise'),
+        get(this.getPoolsUsage(), 'promise'),
+      ]).then(([pools, usage]) => ({
+        pools,
+        usage,
+      })),
+    });
+  },
+
+  createPool(poolData) {
+    return this.get('onepanelServer')
+      .request('oneprovider', 'addCephPool', poolData);
   },
 });

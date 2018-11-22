@@ -9,11 +9,12 @@
 
 import { next } from '@ember/runloop';
 
-import EmberObject, { observer, computed } from '@ember/object';
+import EmberObject, { observer, computed, get, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -53,6 +54,7 @@ const storagePathTypeDefaults = {
   nulldevice: 'canonical',
   ceph: 'flat',
   cephrados: 'flat',
+  localceph: 'flat',
   s3: 'flat',
   swift: 'flat',
   webdav: 'canonical',
@@ -88,6 +90,7 @@ export default OneForm.extend(Validations, {
   classNames: ['cluster-storage-add-form'],
 
   i18n: service(),
+  cephManager: service(),
 
   /**
    * If true, form is visible to user
@@ -123,6 +126,13 @@ export default OneForm.extend(Validations, {
       fields.set(field.get('name'), null)
     );
     return fields;
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephMonitor>>}
+   */
+  cephMonitorsProxy: computed(function cephMonitorsProxy() {
+    return this.get('cephManager').getMonitors();
   }),
 
   /**
@@ -172,6 +182,28 @@ export default OneForm.extend(Validations, {
     this.prepareFields();
     this._addFieldsLabels();
     this.resetFormValues();
+    this.get('cephMonitorsProxy')
+      .then(() => safeExec(this, 'introduceCephMonitors'));
+  },
+
+  introduceCephMonitors() {
+    const {
+      cephMonitorsProxy,
+      allFields,
+      allFieldsValues,
+    } = this.getProperties('cephMonitorsProxy', 'allFields', 'allFieldsValues');
+    const monitors = cephMonitorsProxy.mapBy('host');
+    const dropdownOptions = monitors.map(host => ({
+      value: host,
+      label: host,
+    }));
+    const dropdownField = allFields.findBy('name', 'localceph.monitorHostname');
+    set(dropdownField, 'options', dropdownOptions);
+    if (get(monitors, 'length')) {
+      const defaultMonitor = monitors.objectAt(0);
+      set(dropdownField, 'defaultValue', defaultMonitor);
+      set(allFieldsValues, 'localceph.monitorHostname', defaultMonitor);
+    }
   },
 
   /**

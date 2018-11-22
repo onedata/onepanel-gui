@@ -4,6 +4,7 @@ import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const levelToAlertLevel = {
   ok: 'success',
@@ -17,10 +18,15 @@ const levelToIcon = {
   error: 'checkbox-filled-x',
 };
 
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['cluster-ceph-status'],
 
   cephManager: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.clusterCephStatus',
 
   statusProxy: computed(function status() {
     return this.get('cephManager').getStatus();

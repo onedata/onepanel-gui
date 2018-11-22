@@ -1,32 +1,34 @@
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
-  {{#form.group}}
-    <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
-    <div class={{layoutConfig.formInputColumns}}>
-      {{#power-select
-        options=storageTypes
-        selected=selectedStorageType
-        onchange=(action "storageTypeChanged")
-        searchEnabled=false
-        renderInPlace=true
-        as |storageType|
-      }}
-        {{storageType.name}}
-      {{/power-select}}
+{{#promise-proxy-container proxy=cephMonitorsProxy}}
+  {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+    {{#form.group}}
+      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
+      <div class={{layoutConfig.formInputColumns}}>
+        {{#power-select
+          options=storageTypes
+          selected=selectedStorageType
+          onchange=(action "storageTypeChanged")
+          searchEnabled=false
+          renderInPlace=true
+          as |storageType|
+        }}
+          {{storageType.name}}
+        {{/power-select}}
+      </div>
+    {{/form.group}}
+    
+    {{one-form-fields
+      bsForm=form
+      fields=currentFields
+      formValues=formValues
+      inputChanged=(action "inputChanged")
+      onFocusOut=(action "focusOut")
+    }}
+    <div class="row">
+      <div class={{layoutConfig.formSubmitColumns}}>
+        {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+          Add
+        {{/one-spin-button}}
+      </div>
     </div>
-  {{/form.group}}
-  
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-  }}
-  <div class="row">
-    <div class={{layoutConfig.formSubmitColumns}}>
-      {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-        Add
-      {{/one-spin-button}}
-    </div>
-  </div>
-{{/bs-form}}
+  {{/bs-form}}
+{{/promise-proxy-container}}

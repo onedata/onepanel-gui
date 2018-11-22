@@ -10,4 +10,7 @@
       {{ceph-cluster-configuration config=configurationProxy}}
     {{/promise-proxy-container}}
   {{/tab.pane}}
+  {{#tab.pane title=(tt this "pools")}}
+    {{cluster-ceph-pools}}
+  {{/tab.pane}}
 {{/bs-tab}}

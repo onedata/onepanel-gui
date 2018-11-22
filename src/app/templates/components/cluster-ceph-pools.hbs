@@ -1,0 +1,57 @@
+{{#promise-proxy-container proxy=poolsWithUsageProxy}}
+  {{#one-collapsible-list as |list|}}
+    {{#each pools as |pool|}}
+      {{#list.item as |listItem|}}
+        {{#listItem.header}}
+          <span class="item-icon-container">
+            {{one-icon class="item-icon" icon="provider"}}
+            {{one-tooltip
+              title=pool.name
+              placement="top"
+              arrowPlacement="left"
+              triggerEvents="hover"
+            }}
+          </span>
+          <span class="one-label pool-name">
+            {{pool.name}}
+          </span>
+        {{/listItem.header}}
+        {{#listItem.content}}
+          <div class="item-table row">
+            <div class="row">
+              <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row pool-info">        
+                <div class="row content-row">
+                  {{clipboard-line
+                    value=pool.name
+                    size="sm"
+                    label=(concat (tt this "pool.name") ":")
+                  }}
+                </div>
+                <div class="row content-row">
+                  <strong class="property-label">
+                    {{tt this "pool.size"}}:
+                  </strong>
+                  <span class="one-label">{{pool.size}}</span>
+                </div>
+                <div class="row content-row">
+                  <strong class="property-label">
+                    {{tt this "pool.minSize"}}:
+                  </strong>
+                  <span class="one-label">{{pool.minSize}}</span>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row pool-usage">
+                <div class="row content-row no-border"><strong>{{tt this "poolUsage"}}</strong></div>
+                <div class="row content-row no-padding-top">
+                  {{one-space-indicator
+                    currentTotalSize=pool.usage.maxAvailable
+                    occupiedSize=pool.usage.used}}
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/listItem.content}}
+      {{/list.item}}
+    {{/each}}
+  {{/one-collapsible-list}}
+{{/promise-proxy-container}}
