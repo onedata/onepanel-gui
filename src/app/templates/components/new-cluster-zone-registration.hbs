@@ -4,22 +4,75 @@
   <h1>{{tt this "header"}}</h1>
 </div>
 {{#if (eq mode "token")}}
-  <div class="content-row row row-mode-token">
+  <div class="row row-mode-token">
+    <div class="row content-row no-border">
+      <p>
+        {{tt this "zoneTokenIntro"}}{{#unless showTokenHelp}} - <a {{action (mut showTokenHelp) true}}>{{tt this "zoneTokenDocsLink"}}</a>{{/unless}}.
+      </p>
+      {{#if showTokenHelp}}
+      <div class="row content-row no-border">
+        <p class="token-help">
+          <ol class="info">
+            <li>
+              Go to Onezone
+            </li>
+            <li>
+              Click on Clusters tab
+            </li>
+            <li>
+              Click on Add new provider and copy token
+            </li>
+          </ol>  
+        </p>
+      </div>
+    {{/if}}
+    </div>
+      
+    <div class="row content-row no-border">
+      <div class="col-xs-12">
+        <label for="zone-token-textarea">
+          {{tt this "zoneTokenTextareaLabel"}}:
+        </label>
+        <textarea
+          id="zone-token-textarea"
+          rows=5
+          value={{token}}
+          oninput={{action (mut token) value="target.value"}}
+          onkeydown={{invoke-on-enter (action "proceedToken")}}
+          placeholder={{concat (tt this "example") ": " "MDAzM2xvY2F00aW9uIGRldi1vbmV6b25lLmRlZmF1bHQuc3ZjLmNsdXN00ZXIubG9jYWwKMDAzMGlkZW500aWZpZXIgYzBhYzU4YmFmZGZiMDY1MTI4OGJiYjI00Y2JhOWExMWEKMDAzMGNpZCB00b2tlblR5cGUgPSBwcm92aWRlcl9yZWdpc3RyYXRpb25fdG9rZW4KMDAyZnNpZ25hdHVyZSD75vdFM00n6301uvyFtVH42bYiqt8iaog02ivu02fx473hmwo"}}
+          disabled={{contentInfo.actionInProgress}}
+          class="form-control zone-token-textarea"
+        />
+      </div>
+    </div>
     
+    <div class="row content-row no-border">
+      <div class="col-xs-12 text-center">
+        {{#one-spin-button
+          class="btn btn-primary"
+          action=(action "proceedToken")
+          disabled=proceedTokenDisabled
+        }}
+          {{tt this "proceedToken"}}
+        {{/one-spin-button}}
+      </div>
+    </div>
   </div>
 {{else if (eq mode "form")}}
-  <div class="row content-row no-border">
-    <p>{{tt this "providerFormIntro"}}</p>
-  </div>
-  <div class="content-row row row-mode-form">
-    {{provider-registration-form
-      mode="new"
-      excludedSubdomains=_excludedSubdomains
-      submit=(action "submit")
-      token=remoteOnezone.token
-      subdomainDelegation=remoteOnezone.subdomainDelegation
-      onezoneDomain=remoteOnezone.domain
-    }}
+  <div class="row row-mode-form">
+    <div class="row content-row no-border">
+      <p>{{tt this "providerFormIntro"}}</p>
+    </div>
+    <div class="row content-row no-border">
+      {{provider-registration-form
+        mode="new"
+        excludedSubdomains=_excludedSubdomains
+        submit=(action "submit")
+        token=remoteOnezone.token
+        subdomainDelegation=remoteOnezone.subdomainDelegation
+        onezoneDomain=remoteOnezone.domain
+      }}
+    </div>
   </div>
 {{else if (eq mode "notCompatible")}}
   {{!-- FIXME: --}}

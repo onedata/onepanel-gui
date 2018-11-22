@@ -8,8 +8,8 @@
  */
 
 import { inject as service } from '@ember/service';
-
-import { Promise } from 'rsvp';
+import { not } from '@ember/object/computed';
+import { Promise, reject } from 'rsvp';
 import Component from '@ember/component';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
@@ -41,6 +41,12 @@ export default Component.extend(I18n, {
    * @type {string}
    */
   mode: 'form',
+
+  showTokenHelp: false,
+
+  token: '',
+
+  proceedTokenDisabled: not('token'),
 
   /**
    * @param {Ember.Object} providerData data from provider registration form
@@ -105,6 +111,14 @@ export default Component.extend(I18n, {
     return submitting;
   },
 
+  handleProceedToken() {
+    return this.get('onepanelServer').request('provider', 'checkOnezone', {
+      token: this.get('token'),
+    }).catch(error => {
+      this.get('globalNotify').backendError(error, this.t('gettingOnezoneInfo'));
+    });
+  },
+
   actions: {
     /**
      * Start registering provider
@@ -136,6 +150,15 @@ export default Component.extend(I18n, {
         );
       });
       return submitting;
+    },
+
+    // FIXME: checkOnezone -> getOnezoneInfo
+    proceedToken() {
+      if (!this.get('proceedTokenDisabled')) {
+        return this.handleProceedToken();
+      } else {
+        return reject();
+      }
     },
   },
 });
