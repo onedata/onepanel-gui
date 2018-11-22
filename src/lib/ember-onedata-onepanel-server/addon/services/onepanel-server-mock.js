@@ -896,6 +896,13 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_getNextOsdId: computed(function () {
+      return {
+        success: () => _.max(this.get('__cephOsds').mapBy('id')) + 1,
+        statusCode: () => 200,
+      };
+    }),
+
     // TODO: maybe implement real 
     _req_oneprovider_modifyProviderClusterIps() {
       return {

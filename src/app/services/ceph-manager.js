@@ -129,4 +129,12 @@ export default Service.extend({
     return this.get('onepanelServer')
       .request('oneprovider', 'addCephPool', poolData);
   },
+
+  getNextOsdId() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseObject.create({
+      promise: onepanelServer.request('oneprovider', 'getNextOsdId')
+        .then(({ data }) => data),
+    });
+  },
 });

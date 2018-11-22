@@ -1,24 +1,26 @@
-{{#unless config.hasManagerMonitor}}
-  <div class="alert alert-warning" role="alert">
-    {{tt this "atLeastManagerMonitor"}}
-  </div>
-{{/unless}}
+{{#promise-proxy-container proxy=config.osdIdGenerator.nextIdProxy}}
+  {{#unless config.hasManagerMonitor}}
+    <div class="alert alert-warning" role="alert">
+      {{tt this "atLeastManagerMonitor"}}
+    </div>
+  {{/unless}}
 
-{{#unless config.hasOsd}}
-  <div class="alert alert-warning" role="alert">
-    {{tt this "atLeastOsd"}}
-  </div>
-{{/unless}}
+  {{#unless config.hasOsd}}
+    <div class="alert alert-warning" role="alert">
+      {{tt this "atLeastOsd"}}
+    </div>
+  {{/unless}}
 
-{{ceph-cluster-configuration/main-options-form
-  mainConfiguration=config.mainConfiguration
-  isStandalone=isStandalone}}
+  {{ceph-cluster-configuration/main-options-form
+    mainConfiguration=config.mainConfiguration
+    isStandalone=isStandalone}}
 
-{{#one-collapsible-list as |list|}}
-  {{#each config.nodes key="host" as |node|}}
-    {{ceph-cluster-configuration/node
-      listComponent=list
-      node=node
-      isStandalone=isStandalone}}
-  {{/each}}
-{{/one-collapsible-list}}
+  {{#one-collapsible-list as |list|}}
+    {{#each config.nodes key="host" as |node|}}
+      {{ceph-cluster-configuration/node
+        listComponent=list
+        node=node
+        isStandalone=isStandalone}}
+    {{/each}}
+  {{/one-collapsible-list}}
+{{/promise-proxy-container}}
