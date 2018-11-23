@@ -138,4 +138,23 @@ describe('Integration | Component | provider registration form', function () {
       });
     });
   });
+
+  it('disables and fills token field when token is provided', function () {
+    this.on('submit', function () {});
+
+    this.render(hbs `{{provider-registration-form
+      mode="new"
+      submit=(action "submit")}}
+      token="hello-token"
+      subdomainDelegation=false
+      onezoneDomain="example.com"
+    }}`);
+
+    let helper = new ProviderRegistrationHelper(this.$());
+    return wait().then(() => {
+      const $tokenInput = helper.getInput('newToken-token');
+      expect($tokenInput, 'newToken field').to.exist;
+      expect($tokenInput).to.have.value('hello-token');
+    });
+  });
 });

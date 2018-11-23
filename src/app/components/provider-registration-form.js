@@ -9,8 +9,9 @@
 
 import { readOnly } from '@ember/object/computed';
 
-import { next } from '@ember/runloop';
+import { next, scheduleOnce } from '@ember/runloop';
 import EmberObject, {
+  set,
   get,
   observer,
   computed,
@@ -169,6 +170,24 @@ export default OneForm.extend(Validations, I18n, {
   i18nPrefix: 'components.providerRegistrationForm',
 
   /**
+   * @virtual optional
+   * @type {string}
+   */
+  token: undefined,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
+  subdomainDelegation: undefined,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
+  onezoneDomain: undefined,
+
+  /**
    * To inject. One of: show, edit, new
    *
    * Use to set form to work in various contexts
@@ -243,7 +262,7 @@ export default OneForm.extend(Validations, I18n, {
 
   /**
    * Preprocessed fields objects
-   * @type {computed.Array.FieldType}
+   * @type {computed.EmberObject}
    */
   _fieldsSource: computed(function () {
     let i18n = this.get('i18n');
@@ -504,6 +523,14 @@ export default OneForm.extend(Validations, I18n, {
     this._super(...arguments);
     this.prepareFields();
     this._subdomainSuffixObserver();
+    if (this.get('token')) {
+      const _fieldsSource = this.get('_fieldsSource');
+      set(_fieldsSource, 'tokenField.disabled', true);
+
+      scheduleOnce('afterRender', this, () => {
+
+      });
+    }
     next(() => this._modeObserver());
   },
 
@@ -534,6 +561,38 @@ export default OneForm.extend(Validations, I18n, {
       if (name === 'domain' && subdomainDelegation) {
         field.set('defaultValue', null);
       }
+    } else if (this.get('mode') === 'new') {
+      switch (get(field, 'name')) {
+        case 'token':
+          if (this.get('token')) {
+            field.set('defaultValue', this.get('token'));
+            field.set('disabled', true);
+          }
+          break;
+        case 'subdomainDelegation':
+          {
+            const subdomainDelegationSupported =
+              this.get('subdomainDelegation');
+            if (subdomainDelegationSupported === false) {
+              field.set('defaultValue', false);
+              field.set('disabled', true);
+            }
+          }
+          break;
+        case 'onezoneDomainName':
+          {
+            const onezoneDomainName = this.get('onezoneDomainName');
+            if (onezoneDomainName) {
+              field.set('defaultValue', onezoneDomainName);
+              field.set('disabled', true);
+            }
+            break;
+          }
+        default:
+          break;
+      }
+      // FIXME: subdomainDelegation
+      // FIXME: onezoneDomain
     }
     field.set('name', `${prefix}.${field.get('name')}`);
     if (isStatic) {

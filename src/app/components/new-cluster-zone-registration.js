@@ -16,6 +16,8 @@ import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { resolve } from 'rsvp';
 
 const {
   ProviderRegisterRequest,
@@ -40,13 +42,15 @@ export default Component.extend(I18n, {
    * One of: token, form, notCompatible, offline
    * @type {string}
    */
-  mode: 'form',
+  mode: 'token',
 
   showTokenHelp: false,
 
   token: '',
 
   proceedTokenDisabled: not('token'),
+
+  onezoneInfo: undefined,
 
   /**
    * @param {Ember.Object} providerData data from provider registration form
@@ -112,10 +116,27 @@ export default Component.extend(I18n, {
   },
 
   handleProceedToken() {
-    return this.get('onepanelServer').request('provider', 'checkOnezone', {
-      token: this.get('token'),
+    // FIXME: uncomment after adding getOnezoneInfo to backend
+    // return this.get('onepanelServer').request('provider', 'getOnezoneInfo', {
+    //   token: this.get('token'),
+    // })
+    return resolve({
+      data: {
+        domain: 'example.com',
+        name: 'Hello Onezone',
+        online: true,
+        subdomainDelegationSupported: false,
+        compatible: true,
+        version: '18.02.0',
+      },
     }).catch(error => {
-      this.get('globalNotify').backendError(error, this.t('gettingOnezoneInfo'));
+      this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
+      throw error;
+    }).then(({ data: onezoneInfo }) => {
+      safeExec(this, 'setProperties', {
+        onezoneInfo,
+        mode: 'form',
+      });
     });
   },
 
@@ -141,7 +162,8 @@ export default Component.extend(I18n, {
       submitting.catch(error => {
         const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
         if (subdomainReservedMsg) {
-          this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(
+            providerData.subdomain));
           error = { error: error.error, message: subdomainReservedMsg };
         }
         this.get('globalNotify').backendError(
@@ -152,7 +174,6 @@ export default Component.extend(I18n, {
       return submitting;
     },
 
-    // FIXME: checkOnezone -> getOnezoneInfo
     proceedToken() {
       if (!this.get('proceedTokenDisabled')) {
         return this.handleProceedToken();

@@ -127,9 +127,9 @@ export default OnepanelServerBase.extend(
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -1021,7 +1021,20 @@ export default OnepanelServerBase.extend(
           }
         },
       };
+    },
 
+    _req_onepanel_getOnezoneInfo() {
+      return {
+        success: ( /* token */ ) => ({
+          domain: 'example.com',
+          name: 'Hello Onezone',
+          online: true,
+          subdomainDelegationSupported: false,
+          compatible: true,
+          version: '18.02.0',
+        }),
+        statusCode: () => 200,
+      };
     },
 
     // -- MOCKED RESOURCE STORE --
