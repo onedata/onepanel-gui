@@ -260,8 +260,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
         const staticField =
           allFields.findBy('name', `static${prefix}.${osdFieldName}`);
         set(staticField, 'defaultValue', value);
-        this.set(`allFieldsValues.static${prefix}.${osdFieldName}`, value);
-         
+        this.set(
+          `allFieldsValues.static${prefix}.${osdFieldName}`,
+          this.translateStaticValue(prefix, osdFieldName, value)
+        );
+        
         if (value !== undefined || mode !== 'create') {
           const field = allFields.findBy('name', `edit${prefix}.${osdFieldName}`);
           set(field, 'defaultValue', value); 
@@ -314,6 +317,19 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       }));
     }
     return EmberObject.create(field);
+  },
+
+  translateStaticValue(prefix, fieldName, value) {
+    if (value) {
+      switch(fieldName) {
+        case 'type':
+          return this.t(`fields.type.options.${value}`);
+        default:
+          return value;
+      }
+    } else {
+      return value;
+    }
   },
 
   constructConfig() {

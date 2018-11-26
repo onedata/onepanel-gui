@@ -35,6 +35,14 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
+  statusMessage: computed('statusProxy.level', function statusMessage() {
+    const level = this.get('statusProxy.level');
+    return this.t(`statusMessages.${level}`);
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
   statusIcon: computed('statusProxy.level', function statusIcon() {
     return levelToIcon[this.get('statusProxy.level')] || 'ceph';
   }),

@@ -832,7 +832,6 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_getCephStatus: computed(function () {
       return {
         success: () => ({
-          summary: 'Ceph cluster has some maintenance issues.',
           level: 'warning',
           messages: [
             'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',

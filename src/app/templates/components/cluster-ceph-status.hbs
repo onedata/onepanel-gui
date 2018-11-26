@@ -1,7 +1,7 @@
 {{#promise-proxy-container proxy=statusProxy}}
   <div class="alert alert-{{alertLevel}} ceph-status">
     {{one-icon icon=statusIcon}}
-    <strong class="ceph-status-message">{{statusProxy.summary}}</strong>
+    <strong class="ceph-status-message">{{statusMessage}}</strong>
     {{#if statusProxy.messages.length}}
       <ul>
         {{#each statusProxy.messages as |message|}}
