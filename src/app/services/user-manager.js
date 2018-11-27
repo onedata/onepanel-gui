@@ -25,7 +25,7 @@ export default Service.extend({
 
   getUserDetails(username) {
     let user = this.get('onepanelServer')
-      .request('onepanel', 'getUser', username)
+      .request('onepanel', 'getCurrentUser')
       .then(({ data }) => UserDetails.create({
         username: username,
         userId: data.userId,

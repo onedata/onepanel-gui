@@ -29,6 +29,7 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
@@ -103,7 +104,8 @@ const PlainableObject = EmberObject.extend(Plainable);
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
   SpaceCleaningMock,
-  SpaceCleaningReportsMock, {
+  SpaceCleaningReportsMock,
+  createDataProxyMixin('serviceType'), {
     cookies: service(),
     navigationState: service(),
 
@@ -163,7 +165,7 @@ export default OnepanelServerBase.extend(
       });
     },
 
-    fetchAndSetServiceType() {
+    fetchServiceType() {
       return new Promise(resolve => {
         this.set('serviceType', MOCK_SERVICE_TYPE);
         resolve(MOCK_SERVICE_TYPE);
@@ -275,11 +277,6 @@ export default OnepanelServerBase.extend(
         }),
       });
     }),
-
-    getServiceType() {
-      let serviceType = this.get('serviceType');
-      return resolve(serviceType);
-    },
 
     getOnezoneLogin() {
       return resolve({ url: 'http://localhost:4201/#/login?auth_for=Hello Provider (Onepanel);localhost:4200' });

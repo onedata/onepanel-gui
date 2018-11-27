@@ -23,6 +23,6 @@ export default OnedataApplicationRoute.extend({
     } else {
       basePromise = resolve();
     }
-    return basePromise.then(() => this.get('onepanelServer').fetchAndSetServiceType());
+    return basePromise.then(() => this.get('onepanelServer.serviceTypeProxy.promise'));
   },
 });

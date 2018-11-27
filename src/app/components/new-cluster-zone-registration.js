@@ -122,10 +122,10 @@ export default Component.extend(I18n, {
     // })
     return resolve({
       data: {
-        domain: 'example.com',
+        domain: 'dev-onezone.default.svc.cluster.local',
         name: 'Hello Onezone',
         online: true,
-        subdomainDelegationSupported: false,
+        subdomainDelegationSupported: true,
         compatible: true,
         version: '18.02.0',
       },

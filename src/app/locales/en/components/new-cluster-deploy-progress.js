@@ -12,7 +12,7 @@ export default {
     action: {
       configure: 'configuring {{service}}',
       start: 'starting {{service}}',
-      wait_for_init: 'waiting for {{service}} initalization',
+      wait_for_init: 'waiting for {{service}} initialization',
       init_cluster: 'initializing {{service}} cluster',
       rebalance_cluster: 'rebalacing {{service}} cluster',
       save: 'saving {{service}}',
