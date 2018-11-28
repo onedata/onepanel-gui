@@ -11,7 +11,6 @@ import Component from '@ember/component';
 
 import { Promise } from 'rsvp';
 import { scheduleOnce } from '@ember/runloop';
-import { invokeAction } from 'ember-invoke-action';
 
 export default Component.extend({
   initProcess: false,
@@ -23,7 +22,7 @@ export default Component.extend({
     if (!this.get('cluster.isInitialized')) {
       this.set('initProcess', true);
     } else {
-      scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
+      scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
     }
   },
 
@@ -31,7 +30,7 @@ export default Component.extend({
     finishInitProcess() {
       return new Promise(resolve => {
         this.set('initProcess', false);
-        scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
+        scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
         resolve();
       });
     },

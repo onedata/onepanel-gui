@@ -1,71 +1,77 @@
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-import FormHelper from '../../helpers/form';
-
 import UserDetails from 'onepanel-gui/models/user-details';
-
-class UserCredentialsFormHelper extends FormHelper {
-  constructor($template) {
-    super($template, '.user-credentials-form');
-  }
-}
 
 describe('Integration | Component | content users', function () {
   setupComponentTest('content-users', {
     integration: true,
   });
 
+  beforeEach(function () {
+    this.on('fetchOnezoneAccount', async function fetchOnezoneAccount() {
+      return {
+        zoneName: 'Mock Onezone',
+        hostname: 'mock.onezone.example.com',
+        username: 'Mock User',
+        alias: 'mock_user',
+      };
+    });
+    this.on('fetchClusterDetails', async function fetchClusterDetails() {
+      return {
+        initStep: 4,
+      };
+    });
+  });
+
   it('shows username and secret password field by default', function () {
-    const USERNAME = 'Johnny';
+    const username = 'Johnny';
     let user = UserDetails.create({
-      username: USERNAME,
+      username: username,
     });
     this.set('user', user);
 
-    this.render(hbs `{{content-users user=user}}`);
+    this.render(hbs `{{content-users
+      user=user
+      fetchOnezoneAccount=(action "fetchOnezoneAccount")
+      fetchClusterDetails = (action "fetchClusterDetails")
+    }}
+    `);
 
-    let form = new UserCredentialsFormHelper(this.$());
+    const $usernameValue = this.$('.credentials-row-login .row-value');
 
-    expect(form.getInput('generic-username'), 'username field')
+    expect($usernameValue, 'username value')
       .to.exist;
-    expect(form.getInput('static-secretPassword'), 'secretPassword field')
-      .to.exist;
-
-    expect(form.getInput('generic-username')).to.contain(USERNAME);
+    expect($usernameValue)
+      .to.contain(username);
   });
 
   it(
     'shows old password, new password and retype new password fields when clicked change password',
-    function (done) {
-      const USERNAME = 'Johnny';
+    function () {
+      const username = 'Johnny';
       let user = UserDetails.create({
-        username: USERNAME,
+        username: username,
       });
       this.set('user', user);
 
-      this.render(hbs `{{content-users user=user}}`);
+      this.render(hbs `{{content-users
+        user=user
+        fetchOnezoneAccount=(action "fetchOnezoneAccount")
+        fetchClusterDetails = (action "fetchClusterDetails")
+      }}`);
 
-      this.$('.btn-change-password').click();
+      this.$('.btn-change-password-start').click();
 
-      let form = new UserCredentialsFormHelper(this.$());
-
-      wait({ waitForTimers: false }).then(() => {
-        expect(form.getInput('generic-username'), 'field username')
+      return wait({ waitForTimers: false }).then(() => {
+        expect(this.$('.credentials-row-current-password input'), 'current pass')
           .to.exist;
-        expect(form.getInput('static-secretPassword'), 'field secretPassword')
-          .to.not.exist;
-        expect(form.getInput('change-currentPassword'), 'field currentPassword')
+        expect(this.$('.credentials-row-new-password input'), 'new pass')
           .to.exist;
-        expect(form.getInput('change-newPassword'), 'field newPassword')
+        expect(this.$('.credentials-row-retype-password input'), 'retype pass')
           .to.exist;
-        expect(form.getInput('change-newPasswordRetype'),
-            'field newPasswordRetype')
-          .to.exist;
-
-        done();
       });
     });
 });

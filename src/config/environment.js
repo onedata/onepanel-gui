@@ -25,7 +25,11 @@ module.exports = function (environment) {
       { id: 'spaces', icon: 'space' },
       { id: 'groups', icon: 'groups' },
       { id: 'tokens', icon: 'tokens' },
-      { id: 'clusters', icon: 'menu-clusters', isDefault: true },
+      {
+        id: 'clusters',
+        icon: 'menu-clusters',
+        isDefault: true,
+      },
     ],
     'layoutConfig': {
       formLabelColumns: 'col-xs-12 col-sm-5',

@@ -9,9 +9,8 @@
 
 import { readOnly } from '@ember/object/computed';
 
-import { next, scheduleOnce } from '@ember/runloop';
+import { next } from '@ember/runloop';
 import EmberObject, {
-  set,
   get,
   observer,
   computed,
@@ -523,14 +522,6 @@ export default OneForm.extend(Validations, I18n, {
     this._super(...arguments);
     this.prepareFields();
     this._subdomainSuffixObserver();
-    if (this.get('token')) {
-      const _fieldsSource = this.get('_fieldsSource');
-      set(_fieldsSource, 'tokenField.disabled', true);
-
-      scheduleOnce('afterRender', this, () => {
-
-      });
-    }
     next(() => this._modeObserver());
   },
 

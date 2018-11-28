@@ -22,134 +22,139 @@ const {
   UserModifyRequest,
 } = Onepanel;
 
-export default Component.extend(I18n, createDataProxyMixin('onezoneAccount'), {
-  layout,
+export default Component.extend(I18n,
+  createDataProxyMixin('onezoneAccount'),
+  createDataProxyMixin('clusterDetails'), {
+    layout,
 
-  classNames: 'content-users',
+    classNames: 'content-users',
 
-  onepanelServer: service(),
-  guiUtils: service(),
-  clusterManager: service(),
-  userManager: service(),
-  i18n: service(),
-  globalNotify: service(),
+    onepanelServer: service(),
+    guiUtils: service(),
+    clusterManager: service(),
+    userManager: service(),
+    i18n: service(),
+    globalNotify: service(),
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.contentUsers',
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.contentUsers',
 
-  /**
-   * If true, set credentials form to changingPassword mode
-   * @type {boolean}
-   */
-  _changingPassword: false,
+    /**
+     * If true, set credentials form to changingPassword mode
+     * @type {boolean}
+     */
+    _changingPassword: false,
 
-  _changePasswordButtonClass: computed('_changingPassword', function () {
-    return this.get('_changingPassword') ?
-      'btn-change-password-cancel' : 'btn-change-password-start';
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  onepanelServiceType: reads('guiUtils.serviceType'),
-
-  clusterDetailsProxy: computed(function clusterDetailsProxy() {
-    return this.get('clusterManager').getClusterDetails();
-  }),
-
-  /**
-   * To inject.
-   * @type {OnepanelGui.UserDetails}
-   */
-  user: null,
-
-  canBeLinked: computed(
-    'onepanelServiceType',
-    'clusterDetailsProxy.content.initStep',
-    function canBeLinked() {
-      const initStep = this.get('clusterDetailsProxy.content.initStep');
-      if (this.get('onepanelServiceType') === 'provider') {
-        return initStep >= CLUSTER_INIT_STEPS.PROVIDER_REGISTER + 1;
-      } else {
-        return initStep >= CLUSTER_INIT_STEPS.ZONE_DEPLOY + 1;
-      }
+    _changePasswordButtonClass: computed('_changingPassword', function () {
+      return this.get('_changingPassword') ?
+        'btn-change-password-cancel' : 'btn-change-password-start';
     }),
 
-  /**
-   * Make an API call to change password of current user
-   * @override
-   * @param {object} data
-   * @param {string} data.currentPassword
-   * @param {string} data.newPassword
-   * @returns {Promise} resolves on change password success
-   */
-  _changePassword({ currentPassword, newPassword }) {
-    let {
-      user,
-      onepanelServer,
-    } = this.getProperties(
-      'user',
-      'onepanelServer',
-    );
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    onepanelServiceType: reads('guiUtils.serviceType'),
 
-    return onepanelServer.request(
-      'onepanel',
-      'modifyUser',
-      get(user, 'id'),
-      UserModifyRequest.constructFromObject({
-        currentPassword,
-        newPassword,
-      })
-    );
-  },
+    /**
+     * @override
+     */
+    fetchClusterDetails() {
+      return this.get('clusterManager').getClusterDetails();
+    },
 
-  init() {
-    this._super(...arguments);
-    this.updateOnezoneAccountProxy();
-  },
+    /**
+     * To inject.
+     * @type {OnepanelGui.UserDetails}
+     */
+    user: null,
 
-  fetchOnezoneAccount() {
-    return this.get('userManager').getUserLink();
-  },
+    canBeLinked: computed(
+      'onepanelServiceType',
+      'clusterDetails.initStep',
+      function canBeLinked() {
+        const initStep = this.get('clusterDetailsProxy.content.initStep');
+        if (this.get('onepanelServiceType') === 'provider') {
+          return initStep >= CLUSTER_INIT_STEPS.PROVIDER_REGISTER + 1;
+        } else {
+          return initStep >= CLUSTER_INIT_STEPS.ZONE_DEPLOY + 1;
+        }
+      }),
 
-  actions: {
     /**
      * Make an API call to change password of current user
-     * and handles promise resolve, reject
-     * 
-     * @param {string} currentPassword
-     * @param {string} newPassword
-     * @returns {Promise} an API call promise, resolves on change password success
+     * @override
+     * @param {object} data
+     * @param {string} data.currentPassword
+     * @param {string} data.newPassword
+     * @returns {Promise} resolves on change password success
      */
-    submitChangePassword(currentPassword, newPassword) {
+    _changePassword({ currentPassword, newPassword }) {
       let {
-        i18n,
-        globalNotify,
+        user,
+        onepanelServer,
       } = this.getProperties(
-        'i18n',
-        'globalNotify'
+        'user',
+        'onepanelServer',
       );
 
-      let changingPassword = this._changePassword({ currentPassword, newPassword });
-
-      changingPassword.catch(error => {
-        globalNotify.backendError(
-          i18n.t('components.contentUsers.passwordChangedSuccess'),
-          error
-        );
-      });
-
-      changingPassword.then(() => {
-        globalNotify.info(
-          i18n.t('components.contentUsers.passwordChangedSuccess')
-        );
-        this.set('_changingPassword', false);
-      });
-
-      return changingPassword;
+      return onepanelServer.request(
+        'onepanel',
+        'modifyUser',
+        get(user, 'id'),
+        UserModifyRequest.constructFromObject({
+          currentPassword,
+          newPassword,
+        })
+      );
     },
-  },
 
-});
+    init() {
+      this._super(...arguments);
+      this.updateOnezoneAccountProxy();
+    },
+
+    fetchOnezoneAccount() {
+      return this.get('userManager').getUserLink();
+    },
+
+    actions: {
+      /**
+       * Make an API call to change password of current user
+       * and handles promise resolve, reject
+       * 
+       * @param {string} currentPassword
+       * @param {string} newPassword
+       * @returns {Promise} an API call promise, resolves on change password success
+       */
+      submitChangePassword(currentPassword, newPassword) {
+        let {
+          i18n,
+          globalNotify,
+        } = this.getProperties(
+          'i18n',
+          'globalNotify'
+        );
+
+        let changingPassword = this._changePassword({ currentPassword, newPassword });
+
+        changingPassword.catch(error => {
+          globalNotify.backendError(
+            i18n.t('components.contentUsers.passwordChangedSuccess'),
+            error
+          );
+        });
+
+        changingPassword.then(() => {
+          globalNotify.info(
+            i18n.t('components.contentUsers.passwordChangedSuccess')
+          );
+          this.set('_changingPassword', false);
+        });
+
+        return changingPassword;
+      },
+    },
+
+  });

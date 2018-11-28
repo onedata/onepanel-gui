@@ -42,7 +42,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'provider';
+const MOCK_SERVICE_TYPE = 'zone';
 
 /**
  * Response delay in milliseconds
@@ -109,6 +109,8 @@ export default OnepanelServerBase.extend(
     cookies: service(),
     navigationState: service(),
 
+    isMock: true,
+
     isLoading: readOnly('sessionValidator.isPending'),
 
     sessionValidator: computed(function () {
@@ -142,12 +144,6 @@ export default OnepanelServerBase.extend(
      * @type {computed<Boolean>}
      */
     isInitialized: false,
-
-    /**
-     * A onepanel typ: "provider" or "zone"
-     * @type {computed.string}
-     */
-    serviceType: null,
 
     /**
      * @returns {Promise}
@@ -322,6 +318,7 @@ export default OnepanelServerBase.extend(
     init() {
       this._super(...arguments);
       const mockStep = this.get('mockStep');
+      this.updateServiceTypeProxy();
       if (MOCK_SERVICE_TYPE === 'provider') {
         this.set('__dnsCheck', {
           domain: {
@@ -477,6 +474,10 @@ export default OnepanelServerBase.extend(
         }
       }
 
+    },
+
+    getClusterId() {
+      return 'the-cluster';
     },
 
     progressMock: computed('serviceType', function () {

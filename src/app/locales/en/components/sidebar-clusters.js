@@ -1,5 +1,6 @@
 export default {
   menuItems: {
+    overview: 'Overview',
     nodes: 'Nodes',
     dns: 'DNS setup',
     certificate: 'Web certificate',

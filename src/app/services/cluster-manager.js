@@ -11,7 +11,7 @@ import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
 import { A } from '@ember/array';
-import { readOnly, alias } from '@ember/object/computed';
+import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
@@ -29,7 +29,7 @@ const _ROLE_COLLECTIONS = {
 
 export default Service.extend({
   onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: reads('onepanelServer.serviceType'),
 
   /**
    * Contains latest fetched ClusterDetails

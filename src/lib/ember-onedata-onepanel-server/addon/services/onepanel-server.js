@@ -36,7 +36,7 @@ function replaceUrlOrigin(url, newOrigin) {
  */
 const CUSTOM_REQUESTS = {};
 
-const reOnepanelUrl = /.*\/(opp|ozp)\/(.*)\/.*/;
+const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
 
 export default OnepanelServerBase.extend(
   createDataProxyMixin('serviceType'),
@@ -78,7 +78,6 @@ export default OnepanelServerBase.extend(
 
     init() {
       this._super(...arguments);
-      this.updateNodeProxy();
       this.updateServiceTypeProxy();
     },
 
@@ -130,28 +129,48 @@ export default OnepanelServerBase.extend(
      * @override
      */
     fetchNode() {
-      return this.staticRequest('onepanel', 'getNode')
+      return this.staticRequest('onepanel', 'getNode', { token })
         .then(({ data: { hostname, componentType } }) => ({
           hostname,
           componentType,
         }));
     },
 
-    getClusterId() {
-      const m = location.toString().match(reOnepanelUrl);
+    getLocation() {
+      return location;
+    },
+
+    getClusterIdFromUrl() {
+      const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
       return m && m[2];
     },
 
-    getApiOrigin() {
-      const clusterId = this.getClusterId();
-      if (clusterId) {
+    // FIXME: move to cluster manager? - it needs refactoring
+    getClusterId() {
+      const idFromLocation = this.getClusterIdFromUrl();
+      if (idFromLocation) {
+        return resolve(idFromLocation);
+      } else {
+        return this.request('onepanel', 'getCurrentCluster')
+          .then(({ data: id }) => id);
+      }
+    },
+
+    getApiOrigin(token) {
+      // FIXME: clusterId will not be anymore only in URL mode
+      const clusterIdFromUrl = this.getClusterIdFromUrl();
+      const location = this.getLocation();
+      if (clusterIdFromUrl) {
         return this.getServiceTypeProxy().then(serviceType => {
           if (serviceType === 'provider') {
             // frontend is served from Onezone host
             return new Promise((resolve, reject) => {
                 $.ajax(
-                  '/api/v3/onezone/clusters/' +
-                  clusterId
+                  '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
+                    headers: {
+                      'X-Auth-Token': token,
+                    },
+                  }
                 ).then(resolve, reject);
               })
               .then(({ domain }) => `https://${domain}`);
@@ -177,7 +196,7 @@ export default OnepanelServerBase.extend(
      */
     validateSession() {
       return $.get('/rest-credentials')
-        .then(({ token }) => this.getApiOrigin().then(origin => ({ origin, token })))
+        .then(({ token }) => this.getApiOrigin(token).then(origin => ({ origin, token })))
         .then(({ origin, token }) => {
           return run(() => {
             // FIXME: username will not work - use getCurrentUser
@@ -198,11 +217,12 @@ export default OnepanelServerBase.extend(
      * @returns {Onepanel.ApiClient}
      */
     createClient({ token, origin } = {}) {
+      const location = this.getLocation();
       let client = new Onepanel.ApiClient();
       if (token) {
         client.defaultHeaders['X-Auth-Token'] = token;
       }
-      client.basePath = replaceUrlOrigin(client.basePath, origin || window.location.origin);
+      client.basePath = replaceUrlOrigin(client.basePath, origin || location.origin);
       return client;
     },
 
@@ -233,7 +253,8 @@ export default OnepanelServerBase.extend(
      * @override
      */
     fetchServiceType() {
-      const m = location.toString().match(reOnepanelUrl);
+      const location = this.getLocation();
+      const m = location.toString().match(reOnepanelInOnzoneUrl);
       if (m) {
         return resolve(m[1] === 'ozp' ? 'zone' : 'provider');
       } else {
@@ -252,7 +273,6 @@ export default OnepanelServerBase.extend(
         .then(({ hostname }) => hostname);
     },
 
-    // FIXME: refactor to use static request common method or callbacl
     /**
      * @returns {string}
      */
@@ -291,8 +311,8 @@ export default OnepanelServerBase.extend(
       }).then(() => this.validateSession());
     },
 
-    staticRequest(apiName, method, callArgs = [], username, password) {
-      return this.getApiOrigin().then(apiOrigin => {
+    staticRequest(apiName, method, callArgs = [], { username, password, token } = {}) {
+      return this.getApiOrigin(token).then(apiOrigin => {
         const client = this.createClient({ origin: apiOrigin });
         if (username && password) {
           client.defaultHeaders['Authorization'] =

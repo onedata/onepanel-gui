@@ -45,6 +45,15 @@ export default TwoLevelSidebar.extend(I18n, {
     }
   ),
 
+  // FIXME: go to onezone to this cluster view
+  overviewItem: computed(function overviewItem() {
+    return {
+      id: 'overview',
+      label: this.t('menuItems.overview'),
+      icon: 'overview',
+    };
+  }),
+
   dnsItem: computed('dnsValid', function dnsItem() {
     return {
       id: 'dns',
@@ -76,6 +85,7 @@ export default TwoLevelSidebar.extend(I18n, {
     'dnsItem',
     'certificateItem',
     'nodesItem',
+    'overviewItem',
     'cluster.isInitialized',
     function () {
       const {
@@ -84,17 +94,20 @@ export default TwoLevelSidebar.extend(I18n, {
         dnsItem,
         certificateItem,
         nodesItem,
+        overviewItem,
       } = this.getProperties(
         'onepanelServiceType',
         'cluster',
         'dnsItem',
         'certificateItem',
-        'nodesItem'
+        'nodesItem',
+        'overviewItem',
       );
       if (get(cluster, 'isInitialized')) {
         switch (onepanelServiceType) {
           case 'provider':
             return [
+              overviewItem,
               nodesItem,
               dnsItem,
               certificateItem,
@@ -116,6 +129,7 @@ export default TwoLevelSidebar.extend(I18n, {
             ];
           case 'zone':
             return [
+              overviewItem,
               nodesItem,
               dnsItem,
               certificateItem,
