@@ -1,5 +1,5 @@
 /**
- * A sidebar for clusters (extension of ``two-level-sidebar``)
+ * A sidebar for clusters (extension of `two-level-sidebar`)
  *
  * @module components/sidebar-clusters
  * @author Jakub Liput
@@ -45,7 +45,6 @@ export default TwoLevelSidebar.extend(I18n, {
     }
   ),
 
-  // FIXME: go to onezone to this cluster view
   overviewItem: computed(function overviewItem() {
     return {
       id: 'overview',

@@ -3,12 +3,12 @@ import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 
-describe('Integration | Component | content clusters overview', function() {
-  setupComponentTest('content-clusters-overview', {
-    integration: true
+describe('Integration | Component | content clusters onezone redirect', function () {
+  setupComponentTest('content-clusters-onezone-redirect', {
+    integration: true,
   });
 
-  it('renders', function() {
+  it('renders', function () {
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.on('myAction', function(val) { ... });
     // Template block usage:
@@ -18,7 +18,7 @@ describe('Integration | Component | content clusters overview', function() {
     //   {{/content-clusters-overview}}
     // `);
 
-    this.render(hbs`{{content-clusters-overview}}`);
+    this.render(hbs `{{content-clusters-onezone-redirect}}`);
     expect(this.$()).to.have.length(1);
   });
 });

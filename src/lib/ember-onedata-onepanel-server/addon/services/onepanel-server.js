@@ -22,6 +22,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import { classify } from '@ember/string';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -129,7 +130,7 @@ export default OnepanelServerBase.extend(
      * @override
      */
     fetchNode() {
-      return this.staticRequest('onepanel', 'getNode', { token })
+      return this.staticRequest('onepanel', 'getNode')
         .then(({ data: { hostname, componentType } }) => ({
           hostname,
           componentType,
@@ -156,8 +157,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    getApiOrigin(token) {
-      // FIXME: clusterId will not be anymore only in URL mode
+    getApiOrigin(onezoneToken) {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const location = this.getLocation();
       if (clusterIdFromUrl) {
@@ -168,7 +168,7 @@ export default OnepanelServerBase.extend(
                 $.ajax(
                   '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
                     headers: {
-                      'X-Auth-Token': token,
+                      'X-Auth-Token': onezoneToken,
                     },
                   }
                 ).then(resolve, reject);
@@ -196,7 +196,11 @@ export default OnepanelServerBase.extend(
      */
     validateSession() {
       return $.get('/rest-credentials')
-        .then(({ token }) => this.getApiOrigin(token).then(origin => ({ origin, token })))
+        .then(({ onezoneToken, allButOnezoneToken: token }) => {
+          // FIXME: need to set?
+          safeExec(this, 'set', 'onezoneToken', onezoneToken);
+          return this.getApiOrigin(onezoneToken).then(origin => ({ origin, token }));
+        })
         .then(({ origin, token }) => {
           return run(() => {
             // FIXME: username will not work - use getCurrentUser
@@ -311,9 +315,14 @@ export default OnepanelServerBase.extend(
       }).then(() => this.validateSession());
     },
 
-    staticRequest(apiName, method, callArgs = [], { username, password, token } = {}) {
-      return this.getApiOrigin(token).then(apiOrigin => {
-        const client = this.createClient({ origin: apiOrigin });
+    staticRequest(apiName, method, callArgs = [], {
+      username,
+      password,
+      token,
+      onezoneToken,
+    } = {}) {
+      return this.getApiOrigin(onezoneToken).then(apiOrigin => {
+        const client = this.createClient({ origin: apiOrigin, token });
         if (username && password) {
           client.defaultHeaders['Authorization'] =
             'Basic ' + btoa(username + ':' + password);
