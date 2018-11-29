@@ -53,6 +53,10 @@ export default ObjectProxy.extend({
    */
   name: null,
 
+  type: computed('content.onepanelServiceType', function type() {
+    return `one${this.get('content.onepanelServiceType')}`;
+  }),
+
   init() {
     this._super(...arguments);
     // TODO i18n or set default name in some view

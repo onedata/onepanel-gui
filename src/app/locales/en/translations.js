@@ -30,7 +30,6 @@ import createAdminForm from './components/create-admin-form';
 import clusterHostTable from './components/cluster-host-table';
 import clusterHostTableRow from './components/cluster-host-table-row';
 import manageClusterStorages from './components/manage-cluster-storages';
-import sidebarClusters from './components/sidebar-clusters';
 import contentClustersCertificate from './components/content-clusters-certificate';
 import webCertForm from './components/web-cert-form';
 import newClusterWebCert from './components/new-cluster-web-cert';
@@ -83,7 +82,6 @@ let translations = {
     clusterHostTable,
     clusterHostTableRow,
     manageClusterStorages,
-    sidebarClusters,
     contentClustersCertificate,
     webCertForm,
     newClusterWebCert,
