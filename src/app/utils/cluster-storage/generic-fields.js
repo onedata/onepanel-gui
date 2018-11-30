@@ -10,6 +10,7 @@ export default [
       { value: 'canonical', label: 'canonical' },
     ],
     tip: true,
+    notEditable: true,
   },
-  { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false },
+  { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false, notEditable: true },
 ];

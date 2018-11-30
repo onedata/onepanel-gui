@@ -1,19 +1,25 @@
 /**
- * A form for adding new storage with all storage types available
+ * A form for adding new and modifying existing storage with all storage types
+ * available.
  *
  * @module components/cluster-storage-add-form
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { next } from '@ember/runloop';
+import { run } from '@ember/runloop';
 
-import EmberObject, { observer, computed } from '@ember/object';
+import EmberObject, { observer, computed, set, get } from '@ember/object';
+import { reads, equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { invoke, invokeAction } from 'ember-invoke-action';
+import { invoke } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
+import config from 'ember-get-config';
+import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -22,22 +28,30 @@ import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
+const {
+  layoutConfig,
+} = config;
+
 function createValidations(storageTypes, genericFields, lumaFields) {
-  let validations = {};
+  const validations = {};
   storageTypes.forEach(type => {
     type.fields.forEach(field => {
-      let fieldName = 'allFieldsValues.' + type.id + '.' + field.name;
-      validations[fieldName] = createFieldValidator(field);
+      const validator = createFieldValidator(field);
+      validations['allFieldsValues.' + type.id + '.' + field.name] = validator;
+      validations['allFieldsValues.' + type.id + '_editor.' + field.name] =
+        validator;
     });
   });
   genericFields.forEach(field => {
-    validations['allFieldsValues.generic.' + field.name] =
-      createFieldValidator(field);
+    const validator = createFieldValidator(field);
+    validations['allFieldsValues.generic.' + field.name] = validator;
+    validations['allFieldsValues.generic_editor.' + field.name] = validator;
   });
 
   lumaFields.forEach(field => {
-    validations['allFieldsValues.luma.' + field.name] =
-      createFieldValidator(field);
+    const validator = createFieldValidator(field);
+    validations['allFieldsValues.luma.' + field.name] = validator;
+    validations['allFieldsValues.luma_editor.' + field.name] = validator;
   });
   return validations;
 }
@@ -58,26 +72,174 @@ const storagePathTypeDefaults = {
   webdav: 'canonical',
 };
 
-export default OneForm.extend(Validations, {
+export default OneForm.extend(I18n, Validations, {
+  classNames: ['cluster-storage-add-form'],
+  classNameBindings: ['inShowMode:form-static'],
+
+  i18n: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.clusterStorageAddForm',
+
+  /**
+   * @override
+   */
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
-  currentFieldsPrefix: computed('selectedStorageType.id', 'showLumaPrefix', function () {
-    let {
-      selectedStorageType,
-      showLumaPrefix,
-    } = this.getProperties('selectedStorageType', 'showLumaPrefix');
-    if (showLumaPrefix) {
-      return ['generic', 'luma', selectedStorageType.id];
-    } else {
-      return ['generic', selectedStorageType.id];
+
+  /**
+   * Storage to show/edit
+   * @virtual optional
+   * @type {Onepanel.StorageDetails}
+   */
+  storage: null,
+
+  /**
+   * Form mode. Available values: create, edit, show
+   * @virtual optional
+   * @type {string}
+   */
+  mode: 'create',
+
+  /**
+   * If true, form is visible to user
+   * @virtual optional
+   * @type {boolean}
+   */
+  isFormOpened: false,
+
+  /**
+   * Called when user clicks "Cancel" button in edit mode
+   * @virtual optional
+   * @type {function}
+   * @returns {any}
+   */
+  cancel: notImplementedThrow,
+
+  /**
+   * Set on init
+   * @type {Array<FieldType>}
+   */
+  genericFields: undefined,
+
+  /**
+   * Set on init
+   * @type {Array<FieldType>}
+   */
+  lumaFields: null,
+
+  /**
+   * Set on init
+   * @type {Array<FieldType>}
+   */
+  staticFields: undefined,
+
+  /**
+   * Set on init
+   * @type {Array<FieldType>}
+   */
+  editorFields: undefined,
+
+  /**
+   * @type {boolean}
+   */
+  showLumaPrefix: false,
+
+  /**
+   * @type {number}
+   */
+  showLumaPrefixTimeoutId: -1,
+
+  /**
+   * Form layout config
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  layoutConfig,
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  inEditionMode: equal('mode', 'edit'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  inShowMode: equal('mode', 'show'),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
+  storageTypes: computed(() => storageTypes.map(type => _.assign({}, type))),
+
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  selectedStorageType: reads('storageTypes.firstObject'),
+
+  /**
+   * @override
+   */
+  currentFieldsPrefix: computed(
+    'selectedStorageType.id',
+    'mode',
+    'lumaPrefixVisible',
+    function currentFieldsPrefix() {
+      const {
+        selectedStorageType,
+        mode,
+        lumaPrefixVisible,
+      } = this.getProperties('selectedStorageType', 'mode', 'lumaPrefixVisible');
+      if (mode === 'show') {
+        return ['type_static', 'generic_static']
+          .concat(lumaPrefixVisible ? ['luma_static'] : [])
+          .concat([selectedStorageType.id + '_static']);
+      } else if (mode === 'edit') {
+        return ['type_static', 'generic_editor']
+          .concat(lumaPrefixVisible ? ['luma_editor'] : [])
+          .concat([selectedStorageType.id + '_editor']);
+      } else {
+        return ['generic']
+          .concat(lumaPrefixVisible ? ['luma'] : [])
+          .concat([selectedStorageType.id]);
+      }
     }
+  ),
+
+  /**
+   * @override
+   */
+  allFields: union(
+    'createFields',
+    'staticFields',
+    'editorFields',
+    'storageTypeStaticField'
+  ),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
+  storageTypeStaticField: computed(function storageTypeStaticField() {
+    return [EmberObject.create({
+      name: 'type_static.type',
+      type: 'static',
+      label: this.t('storageType'),
+    })];
   }),
-  allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
-    function () {
-      let {
+
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
+  createFields: computed(
+    'storageTypes.@each.fields',
+    'genericFields',
+    'lumaFields',
+    function createFields() {
+      const {
         storageTypes,
-        genericFields,
         lumaFields,
-      } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
+        genericFields,
+      } = this.getProperties('storageTypes', 'lumaFields', 'genericFields');
       return storageTypes
         .concat([{ fields: genericFields }, { fields: lumaFields }])
         .map(type => type.fields)
@@ -85,61 +247,80 @@ export default OneForm.extend(Validations, {
     }
   ),
 
-  classNames: ['cluster-storage-add-form'],
+  /**
+   * @override
+   */
+  allFieldsValues: computed(
+    'genericFields',
+    'lumaFields',
+    'storageTypes',
+    function allFieldsValues() {
+      const {
+        storageTypes,
+        allFields,
+      } = this.getProperties('storageTypes', 'allFields');
+      const values = EmberObject.create();
+      [
+        'type_static',
+        'generic',
+        'generic_static',
+        'generic_editor',
+        'luma',
+        'luma_static',
+        'luma_editor',
+      ].forEach(prefix => set(values, prefix, EmberObject.create()));
 
-  i18n: service(),
+      storageTypes.forEach(type => {
+        values.set(type.id, EmberObject.create());
+        values.set(type.id + '_static', EmberObject.create());
+        values.set(type.id + '_editor', EmberObject.create());
+      });
+      allFields.forEach(field => values.set(get(field, 'name'), null));
+      return values;
+    }
+  ),
 
   /**
-   * If true, form is visible to user
-   * @type {boolean}
+   * @override
    */
-  isFormOpened: false,
+  isValid: computed('errors.[]', 'inEditionMode', function isValid() {
+    const {
+      errors,
+      inEditionMode,
+    } = this.getProperties('errors', 'inEditionMode');
 
-  showLumaPrefix: false,
-  showLumaPrefixTimeoutId: -1,
-
-  genericFields: null,
-  lumaFields: null,
-  storageTypes: computed(() =>
-    storageTypes.map(type => _.assign({}, type))).readOnly(),
-
-  selectedStorageType: null,
-
-  allFieldsValues: computed('genericFields', 'lumaFields', 'storageTypes', function () {
-    let fields = EmberObject.create({
-      generic: EmberObject.create({}),
-      luma: EmberObject.create({}),
-    });
-    let {
-      genericFields,
-      lumaFields,
-      storageTypes,
-    } = this.getProperties('genericFields', 'lumaFields', 'storageTypes');
-    storageTypes.forEach(type => {
-      fields.set(type.id, EmberObject.create({}));
-      type.fields.forEach(field => fields.set(field.get('name'), null));
-    });
-    genericFields.concat(lumaFields).forEach(field =>
-      fields.set(field.get('name'), null)
-    );
-    return fields;
+    if (inEditionMode) {
+      // If all errors are because of null values, then everything is alright
+      // - empty value means no modification
+      return errors.reduce((onlyEmpty, { attribute }) => {
+        const value = this.get(attribute);
+        return onlyEmpty && (value === undefined || value === null);
+      }, true);
+    } else {
+      return errors.length === 0;
+    }
   }),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
    */
-  isFormOpenedObserver: observer('isFormOpened', function () {
+  isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
     if (this.get('isFormOpened')) {
       this.resetFormValues();
-      this.set('showLumaPrefix', false);
+      this.set('lumaPrefixVisible', false);
     }
   }),
 
-  showLumaPrefixObserver: observer('showLumaPrefix', function () {
-    // make luma fields transparent (for animation purposes)
-    this.get('allFields').filter(f => f.get('name').startsWith('luma.'))
-      .forEach(f => f.set('cssClass', 'transparent'));
-    this.resetFormValues(['luma']);
+  selectedStorageTypeObserver: observer(
+    'selectedStorageType',
+    function selectedStorageTypeObserver() {
+      this.resetFormValues();
+      this._toggleLumaPrefix(false, false);
+    }
+  ),
+
+  modeObserver: observer('mode', function modeObserver() {
+    this._fillInForm();
   }),
 
   init() {
@@ -151,27 +332,35 @@ export default OneForm.extend(Validations, {
     this.set('genericFields', GENERIC_FIELDS.map(fields =>
       EmberObject.create(fields)));
     this.get('genericFields').forEach(field => {
-      let fieldName = field.get('name');
-      field.set('name', `generic.${fieldName}`);
+      field.set('name', 'generic.' + field.get('name'));
+      field.set('originPrefix', 'generic');
     });
     this.set('lumaFields', LUMA_FIELDS.map(fields =>
       EmberObject.create(fields)));
     this.get('lumaFields').forEach(field => {
-      let fieldName = field.get('name');
-      field.set('name', `luma.${fieldName}`);
+      field.set('name', 'luma.' + field.get('name'));
+      field.set('originPrefix', 'luma');
     });
     this.get('storageTypes').forEach(type =>
       type.fields = type.fields.map(field =>
         EmberObject.create(field))
     );
     this.get('storageTypes').forEach(type =>
-      type.fields.forEach(field =>
-        field.set('name', type.id + '.' + field.get('name')))
+      type.fields.forEach(field => {
+        field.set('name', type.id + '.' + field.get('name'));
+        field.set('originPrefix', type.id);
+      })
     );
 
-    this.prepareFields();
     this._addFieldsLabels();
-    this.resetFormValues();
+    this._generateStaticFields();
+    this._generateEditorFields();
+
+    if (this.get('storage')) {
+      this._fillInForm();
+    } else {
+      this.resetFormValues();
+    }
   },
 
   /**
@@ -185,71 +374,179 @@ export default OneForm.extend(Validations, {
     );
   },
 
-  // TODO move to some helper or something  
+  /**
+   * Sets fields labels and tips translations
+   * @returns {undefined}
+   */
   _addFieldsLabels() {
-    let i18n = this.get('i18n');
-    let {
+    const {
       storageTypes,
       genericFields,
       lumaFields,
     } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
     storageTypes.forEach(({ id: typeId, fields }) => {
       fields.forEach(field =>
-        this._addFieldLabelTranslation(typeId, field, i18n)
+        this._addFieldLabelTranslation(typeId, field)
       );
     });
     genericFields.forEach(field =>
-      this._addFieldLabelTranslation('generic', field, i18n)
+      this._addFieldLabelTranslation('generic', field)
     );
     lumaFields.forEach(field =>
-      this._addFieldLabelTranslation('luma', field, i18n)
+      this._addFieldLabelTranslation('luma', field)
     );
   },
 
-  _addFieldLabelTranslation(typeId, field, i18n) {
+  /**
+   * Sets field label and tip translations
+   * @param {string} typeId storage type
+   * @param {FieldType} field
+   * @returns {undefined}
+   */
+  _addFieldLabelTranslation(typeId, field) {
     if (!field.label) {
-      field.set('label', i18n.t(
-        `components.clusterStorageAddForm.${typeId}.${this.cutOffPrefix(field.name)}.name`
+      field.set('label', this.t(
+        `${typeId}.${this.cutOffPrefix(field.name)}.name`
       ));
     }
     if (field.tip === true) {
-      field.set('tip', i18n.t(
-        `components.clusterStorageAddForm.${typeId}.${this.cutOffPrefix(field.name)}.tip`
+      field.set('tip', this.t(
+        `${typeId}.${this.cutOffPrefix(field.name)}.tip`
       ));
     }
   },
 
-  _toggleLumaPrefixAnimation(show) {
-    let formGroup = this.$('[class*="field-luma-"]').parents('.form-group');
-    formGroup
-      .addClass('animated fast ' + (show ? 'fadeIn' : 'fadeOut'))
-      .removeClass(show ? 'fadeOut' : 'fadeIn');
+  /**
+   * Creates static fields
+   * @returns {undefined}
+   */
+  _generateStaticFields() {
+    const createFields = this.get('createFields');
+
+    const staticFields = createFields.map(f => EmberObject.create(f));
+    staticFields.forEach(field => {
+      field.setProperties({
+        type: 'static',
+        name: this._addToFieldPrefix(field, '_static'),
+      });
+    });
+
+    this.set('staticFields', staticFields);
+  },
+
+  /**
+   * Creates editor fields
+   * @returns {undefined}
+   */
+  _generateEditorFields() {
+    const {
+      createFields,
+      staticFields,
+    } = this.getProperties('createFields', 'staticFields');
+
+    this.set('editorFields', createFields.map((createField, index) => {
+      let field = EmberObject.create(
+        createField.get('notEditable') ? staticFields[index] : createField
+      );
+      field.set('name', this._addToFieldPrefix(field, '_editor'));
+      return field;
+    }));
+  },
+
+  /**
+   * Sets form default values to values gathered from storage
+   * @returns {undefined}
+   */
+  _fillInForm() {
+    const {
+      storageTypes,
+      storage,
+      allFieldsValues,
+    } = this.getProperties('storageTypes', 'storage', 'allFieldsValues');
+
+    this.prepareFields();
+
+    const storageType = storageTypes.findBy('id', get(storage, 'type'));
+    this.send('storageTypeChanged', storageType);
+
+    this._toggleLumaPrefix(!!storage['lumaEnabled'], false);
+
+    ['generic', 'luma', get(storageType, 'id')].forEach(prefix => {
+      _.keys(allFieldsValues[prefix]).forEach(fieldName => {
+        allFieldsValues.set(prefix + '_static.' + fieldName, storage[fieldName]);
+        allFieldsValues.set(prefix + '_editor.' + fieldName, storage[fieldName]);
+      });
+    });
+    allFieldsValues.set('type_static.type', get(storageType, 'name'));
+  },
+
+  /**
+   * Adds suffix to the field prefix so it changes from
+   * prefix.fieldName to prefixsuffix.fieldName.
+   * @param {FieldType} field 
+   * @param {string} suffix
+   * @returns {string} new field name
+   */
+  _addToFieldPrefix(field, suffix) {
+    return field.get('originPrefix') + suffix + '.' +
+      this.cutOffPrefix(field.get('name'));
+  },
+
+  /**
+   * Shows/hides luma fields
+   * @param {boolean} isVisible 
+   * @param {boolean} animate 
+   */
+  _toggleLumaPrefix(isVisible, animate = true) {
+    const {
+      allFields,
+      inEditionMode,
+      lumaPrefixVisibleTimeoutId,
+    } = this.getProperties(
+      'allFields',
+      'inEditionMode',
+      'lumaPrefixVisibleTimeoutId'
+    );
+
+    const lumaFields = allFields
+      .filter(f => f.get('name').startsWith('luma.') ||
+        f.get('name').startsWith('luma_editor.'));
+
+    clearTimeout(lumaPrefixVisibleTimeoutId);
+    if (animate) {
+      if (isVisible) {
+        lumaFields.forEach(field =>
+          set(field, 'cssClass', 'transparent animated fast fadeIn')
+        );
+        this.set('lumaPrefixVisible', true);
+      } else {
+        this.set('lumaPrefixVisibleTimeoutId', setTimeout(() => {
+          run(() => safeExec(this, 'set', 'lumaPrefixVisible', false));
+        }, VISIBILITY_ANIMATION_TIME));
+        lumaFields.forEach(field =>
+          set(field, 'cssClass', 'transparent animated fast fadeOut')
+        );
+      }
+    } else {
+      lumaFields.forEach(field => set(field, 'cssClass', ''));
+      this.set('lumaPrefixVisible', isVisible);
+    }
+    // load default values for luma fields in "create" mode
+    if (isVisible && !inEditionMode) {
+      this.resetFormValues(['luma']);
+    }
   },
 
   actions: {
     storageTypeChanged(type) {
       this.set('selectedStorageType', type);
-      this.resetFormValues();
-      this.set('showLumaPrefix', false);
     },
 
     inputChanged(fieldName, value) {
       this.changeFormValue(fieldName, value);
-      if (fieldName === 'generic.lumaEnabled') {
-        clearTimeout(this.get('showLumaPrefixTimeoutId'));
-        if (value) {
-          this.set('showLumaPrefix', value);
-          // remove transparent class to avoid visibility issues after rerender
-          setTimeout(() => this.get('allFields')
-            .filter(f => f.get('name').startsWith('luma.'))
-            .forEach(f => f.set('cssClass', '')), VISIBILITY_ANIMATION_TIME);
-        } else {
-          this.set('showLumaPrefixTimeoutId', setTimeout(
-            () => this.set('showLumaPrefix', value),
-            VISIBILITY_ANIMATION_TIME
-          ));
-        }
-        next(() => this._toggleLumaPrefixAnimation(value));
+      if (fieldName === 'generic.lumaEnabled' ||
+        fieldName === 'generic_editor.lumaEnabled') {
+        this._toggleLumaPrefix(value);
       }
     },
 
@@ -259,8 +556,14 @@ export default OneForm.extend(Validations, {
     },
 
     focusOut(field) {
-      field.set('changed', true);
-      this.recalculateErrors();
+      const inEditionMode = this.get('inEditionMode');
+      const formValue = this.get('formValues.' + get(field, 'name'));
+
+      // do not allow validation for not modified fields in edition mode
+      if (!inEditionMode || !(formValue === undefined || formValue === null)) {
+        set(field, 'changed', true);
+        this.recalculateErrors();
+      }
     },
 
     submit() {
@@ -268,22 +571,44 @@ export default OneForm.extend(Validations, {
         formValues,
         currentFields,
         selectedStorageType,
+        inEditionMode,
+        storage,
       } = this.getProperties(
         'formValues',
         'currentFields',
-        'selectedStorageType'
+        'selectedStorageType',
+        'inEditionMode',
+        'storage'
       );
 
-      let formData = {
-        type: selectedStorageType.id,
-      };
+      let formData = {};
 
       currentFields.forEach(({ name }) => {
-        formData[this.cutOffPrefix(name)] = formValues.get(name);
+        let prefixlessName = this.cutOffPrefix(name);
+        formData[prefixlessName] = formValues.get(name);
       });
+      formData = stripObject(formData, [undefined, null]);
+      if (!inEditionMode) {
+        formData = stripObject(formData, ['']);
+      } else {
+        _.keys(formData).forEach(key => {
+          // change cleared fields to null
+          if (formData[key] === '') {
+            formData[key] = null;
+          }
+          // remove not modified data
+          let storageValue = storage[key] === undefined || storage[key] === '' ?
+            null : storage[key];
+          if ((storageValue === null && formData[key] === null) ||
+            (String(storageValue) === String(formData[key]) &&
+              storageValue !== null && formData[key] !== null)) {
+            delete formData[key];
+          }
+        });
+      }
+      formData.type = selectedStorageType.id;
 
-      return invokeAction(this, 'submit',
-        stripObject(formData, [undefined, null, '']));
+      return this.get('submit')(formData);
     },
   },
 });

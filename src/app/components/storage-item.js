@@ -4,60 +4,66 @@
  * Please put it in ``cluster-storage-table``.
  *
  * @module components/storage-item
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 import { isEmpty } from '@ember/utils';
 import Component from '@ember/component';
-import { computed } from '@ember/object';
-import { reads } from '@ember/object/computed';
-
-import _includes from 'lodash/includes';
-import _find from 'lodash/find';
-import _flatten from 'lodash/flatten';
-
+import { computed, get } from '@ember/object';
+import { reads, collect } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { resolve } from 'rsvp';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import _ from 'lodash';
+import config from 'ember-get-config';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
-import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
-import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
 
-/**
- * Properties of Onepanel.StorageDetails that are common to all storage types
- */
-const GENERIC_STORAGE_PROPERTIES = ['id', 'type', ...GENERIC_FIELDS.map(f => f.name)];
+const {
+  layoutConfig,
+} = config;
 
-/**
- * Properties of Onepanel.StorageDetails that describe LUMA configuration
- */
-const LUMA_PROPERTIES = LUMA_FIELDS.map(f => f.name);
-
-/**
- * All fields of "password" type are not shown on storage details
- */
-const HIDDEN_STORAGE_PROPERTIES = _flatten(STORAGE_TYPES.map(s => s.fields))
-  .filter(f => f.type === 'password')
-  .map(f => f.name);
-
-const REJECTED_STORAGE_PROPERTIES = [
-  ...GENERIC_STORAGE_PROPERTIES,
-  ...LUMA_PROPERTIES,
-  ...HIDDEN_STORAGE_PROPERTIES,
-];
-
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['storage-item'],
 
+  storageManager: service(),
+  storageActionsService: service('storageActions'),
+  globalNotify: service(),
+  i18n: service(),
+
   /**
-   * To inject.
+   * @override
+   */
+  i18nPrefix: 'components.storageItem',
+
+  /**
+   * @virtual
    * @type {OneCollapsibleListItem}
    */
   listItem: null,
 
   /**
-   * To inject.
-   * @type {Ember.Object|ObjectProxy}
+   * @virtual
+   * @type {ObjectProxy<Onepanel.StorageDetails>}
    */
-  storage: null,
+  storageProxy: null,
+
+  /**
+   * Modify storage action callback
+   * @type {Function}
+   */
+  submitModifyStorage: null,
+
+  /**
+   * @type {Onepanel.StorageDetails|null}
+   */
+  storage: reads('storageProxy.content'),
+
+  /**
+   * If true, storage edit form is visible
+   */
+  whileEdition: false,
 
   /**
    * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
@@ -69,9 +75,17 @@ export default Component.extend({
    */
   storageId: reads('storage.id'),
 
-  showSpacesSupport: computed('spaces.[]', function () {
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  hasSupportedSpaces: computed('spaces.[]', function () {
     return isEmpty(this.get('spaces')) === false;
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  showSpacesSupport: reads('hasSupportedSpaces'),
 
   /**
    * Readable name of storage typee
@@ -80,31 +94,96 @@ export default Component.extend({
    */
   storageType: computed('storage.type', function () {
     let st = this.get('storage.type');
-    return st && _find(STORAGE_TYPES, s => s.id === st).name;
+    return st && _.find(STORAGE_TYPES, s => s.id === st).name;
   }),
 
   /**
-   * List of specific non-empty, type-specific storage properties
-   * @type {Array}
+   * @type {Ember.ComputedProperty<Action>}
    */
-  storageProperties: computed('storage.content', function () {
-    let storage = this.get('storage');
-    // support for ObjectProxy
-    if (storage != null && storage.content != null) {
-      storage = storage.get('content');
+  modifyStorageAction: computed('whileEdition', function modifyStorageAction() {
+    const whileEdition = this.get('whileEdition');
+    return {
+      action: () => this.toggleEdition(),
+      title: this.t(
+        whileEdition ? 'cancelStorageModification' : 'modifyStorageDetails'
+      ),
+      class: 'modify-storage-details',
+      icon: 'rename',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  removeStorageAction: computed('hasSupportedSpaces', function () {
+    const hasSupportedSpaces = this.get('hasSupportedSpaces');
+    return {
+      action: () => this.get('removeStorage')(),
+      title: this.t('removeStorage'),
+      class: 'remove-storage',
+      icon: 'close',
+      disabled: !hasSupportedSpaces,
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Action>>}
+   */
+  storageActions: collect('modifyStorageAction', 'removeStorageAction'),
+
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  formLayoutConfig: computed('whileEdition', function formLayoutConfig() {
+    const whileEdition = this.get('whileEdition');
+    const config = _.assign({}, layoutConfig);
+    if (whileEdition) {
+      _.assign(config, {
+        formLabelColumns: 'col-xs-12 col-sm-3 text-left',
+        formInputColumns: 'col-xs-12 col-sm-9',
+        formToggleLabelColumns: 'col-xs-9 col-sm-3 text-left',
+        formToggleInputColumns: 'col-xs-3 col-sm-9 text-xs-right',
+        formSubmitColumns: 'col-xs-12 col-sm-9 col-sm-offset-3 text-xs-center',
+      });
     }
-    return storage != null ? Object.keys(storage).filter(
-      p => storage[p] != null && !_includes(REJECTED_STORAGE_PROPERTIES, p)
-    ) : [];
+    return config;
   }),
 
   /**
-   * List of LUMA-related storage properties
-   * @type {Array.string}
+   * Starts/stops storage edition. Expands list item if necessary
+   * @returns {undefined} 
    */
-  lumaProperties: LUMA_PROPERTIES,
+  toggleEdition() {
+    this.toggleProperty('whileEdition');
+    if (this.get('whileEdition')) {
+      this.get('listItem.toggle')(true);
+    }
+  },
 
-  translationPrefix: computed('storage.type', function () {
-    return `components.storageItem.${this.get('storage.type')}.`;
-  }),
+  actions: {
+    saveEdition(storageFormData) {
+      // nothing to modify - close form
+      // <= 1 because "type" field is always sent by form
+      if (get(Object.keys(storageFormData), 'length') <= 1) {
+        this.set('whileEdition', false);
+        return resolve();
+      }
+
+      const {
+        submitModifyStorage,
+        storage,
+      } = this.getProperties(
+        'submitModifyStorage',
+        'storage'
+      );
+
+      return submitModifyStorage(storage, storageFormData)
+        .finally(() =>
+          safeExec(this, 'set', 'whileEdition', false)
+        );
+    },
+    cancelEdition() {
+      this.set('whileEdition', false);
+    },
+  },
 });

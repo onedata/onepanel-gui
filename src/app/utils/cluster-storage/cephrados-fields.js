@@ -12,6 +12,7 @@ const cephRadosSpecific = [{
   defaultValue: 4194304,
   example: '4194304',
   gt: 0,
+  notEditable: true,
 }];
 
 export default _.concat(cephTop, cephRadosSpecific, cephBottom);

@@ -1,19 +1,21 @@
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
-  {{#form.group}}
-    <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
-    <div class={{layoutConfig.formInputColumns}}>
-      {{#power-select
-        options=storageTypes
-        selected=selectedStorageType
-        onchange=(action "storageTypeChanged")
-        searchEnabled=false
-        renderInPlace=true
-        as |storageType|
-      }}
-        {{storageType.name}}
-      {{/power-select}}
-    </div>
-  {{/form.group}}
+{{#bs-form submitOnEnter=false class=(concat "form-horizontal " (if (eq mode "show") "form-static" "")) as |form|}}
+  {{#if (eq mode "create")}}
+    {{#form.group}}
+      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
+      <div class={{layoutConfig.formInputColumns}}>
+        {{#power-select
+          options=storageTypes
+          selected=selectedStorageType
+          onchange=(action "storageTypeChanged")
+          searchEnabled=false
+          renderInPlace=true
+          as |storageType|
+        }}
+          {{storageType.name}}
+        {{/power-select}}
+      </div>
+    {{/form.group}}
+  {{/if}}
   
   {{one-form-fields
     bsForm=form
@@ -21,12 +23,19 @@
     formValues=formValues
     inputChanged=(action "inputChanged")
     onFocusOut=(action "focusOut")
-  }}
-  <div class="row">
-    <div class={{layoutConfig.formSubmitColumns}}>
-      {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-        Add
-      {{/one-spin-button}}
+    layoutConfig=layoutConfig}}
+  {{#unless (eq mode "show")}}
+    <div class="form-group submit-group col-xs-12">
+      <div class="row">
+        <div class="{{layoutConfig.formSubmitColumns}}">
+          {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+            {{tt this (if inEditionMode "save" "add")}}
+          {{/one-spin-button}}
+          {{#if inEditionMode}}
+            <button class="btn btn-warning cancel-storage-form-btn" {{action cancel}}>{{tt this "cancel"}}</button>
+          {{/if}}
+        </div>
+      </div>
     </div>
-  </div>
+  {{/unless}}
 {{/bs-form}}
