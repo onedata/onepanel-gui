@@ -230,7 +230,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       } else {
         prefixes.push('staticType');
         const type = this.get('allFieldsValues.staticType.type');
-        prefixes.push(type === 'bluestore' ? 'staticBluestore' : 'staticFilestore');
+        prefixes.push(
+          type === get(this.t('fields.type.options.bluestore'), 'string') ?
+          'staticBluestore' : 'staticFilestore'
+        );
       }
       return prefixes;
     }
@@ -323,7 +326,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     if (value) {
       switch(fieldName) {
         case 'type':
-          return this.t(`fields.type.options.${value}`);
+          return get(this.t(`fields.type.options.${value}`), 'string');
         default:
           return value;
       }
