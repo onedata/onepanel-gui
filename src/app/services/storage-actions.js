@@ -37,7 +37,7 @@ export default Service.extend(I18n, {
       .then(result => {
         globalNotify.info(this.t('storageModifiedSuccessfully', { name }));
         const verificationResult = get(result, 'data.verificationResult');
-        if (!verificationResult) {
+        if (verificationResult === false) {
           globalNotify.error(this.t('storageCheckFailed', { name }));
         }
         return result;

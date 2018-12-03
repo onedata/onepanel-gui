@@ -178,7 +178,7 @@ export default Component.extend(I18n, {
       );
 
       return submitModifyStorage(storage, storageFormData)
-        .finally(() =>
+        .then(() =>
           safeExec(this, 'set', 'whileEdition', false)
         );
     },
