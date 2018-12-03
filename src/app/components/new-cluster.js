@@ -58,7 +58,7 @@ const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 export default Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
-  clusterManager: service(),
+  configurationManager: service(),
   providerManager: service(),
 
   i18nPrefix: 'components.newCluster',
@@ -195,7 +195,7 @@ export default Component.extend(I18n, {
     },
     changeClusterName(name) {
       if (!name) {
-        this.get('clusterManager')
+        this.get('configurationManager')
           .getClusterDetails(this.get('cluster.id'), true)
           .then(cluster => get(cluster, 'name'));
       } else {

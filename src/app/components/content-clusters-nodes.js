@@ -21,7 +21,7 @@ import _ from 'lodash';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
   onepanelServer: service(),
-  clusterManager: service(),
+  configurationManager: service(),
   providerManager: service(),
   globalNotify: service(),
   guiUtils: service(),
@@ -69,7 +69,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       rejectClusterHosts = reject;
     });
 
-    let gettingHostsInfo = this.get('clusterManager').getClusterHostsInfo();
+    let gettingHostsInfo = this.get('configurationManager').getClusterHostsInfo();
 
     gettingHostsInfo.then(({ mainManagerHostname, clusterHostsInfo }) => {
       resolveClusterHosts(clusterHostsInfo);

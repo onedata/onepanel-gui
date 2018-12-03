@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 // import { computed } from '@ember/object';
-// import { reads } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { resolve } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
@@ -13,22 +13,35 @@ export default Component.extend(
 
     cluster: undefined,
 
-    // FIXME: implement real
-    // clusterId: reads('cluster.id'),
+    serviceTypeProxy: reads('onepanelServer.serviceTypeProxy'),
 
     fetchClusterId() {
       return this.get('onepanelServer').getClusterId();
     },
 
     // FIXME: maybe make onezoneManager
+    /**
+     * @returns {Promise<string>}
+     */
     fetchOnezoneOrigin() {
       const onepanelServer = this.get('onepanelServer');
-
       if (onepanelServer.getClusterIdFromUrl()) {
         return resolve(location.origin.toString());
       } else {
-        return onepanelServer.request('onepanel', 'getOnezoneInfo')
-          .then(({ data: domain }) => `https://${domain}`);
+        return this.get('serviceTypeProxy').then(serviceType => {
+          if (serviceType === 'provider') {
+            // return onepanelServer.request('oneprovider', 'getOnezoneInfo')
+            //   .then(({ data: { domain } }) => `https://${domain}`);
+
+            // FIXME: temporary, use version above
+            return onepanelServer.request('oneprovider', 'getProvider')
+              .then(({ data }) => `https://${data.onezoneDomainName}`);
+          } else {
+            // FIXME: to refactor when configuration manager will be avail
+            return onepanelServer.request('onezone', 'getZoneConfiguration')
+              .then(({ data }) => `https://${data.onezone.domainName}`);
+          }
+        });
       }
     },
 

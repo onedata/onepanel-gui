@@ -27,7 +27,7 @@ module.exports = function (environment) {
       { id: 'tokens', icon: 'tokens' },
       {
         id: 'clusters',
-        icon: 'menu-clusters',
+        icon: 'cluster',
         isDefault: true,
       },
     ],

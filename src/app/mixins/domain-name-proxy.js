@@ -23,7 +23,7 @@ export default Mixin.create(createDataProxyMixin('domain'), {
       promise = this.get('providerManager').getProviderDetails(true)
         .then(provider => get(provider, 'domain'));
     } else if (onepanelServiceType === 'zone') {
-      promise = this.get('clusterManager').getDefaultRecord(true)
+      promise = this.get('configurationManager').getDefaultRecord(true)
         .then(cluster => get(
           cluster,
           `clusterInfo.one${onepanelServiceType}.domainName`

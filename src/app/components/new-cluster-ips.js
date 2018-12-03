@@ -16,9 +16,10 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-ips', 'container-fluid'],
 
   onepanelServer: service(),
-  clusterManager: service(),
+  configurationManager: service(),
   globalNotify: service(),
-  cookies: service(),
+  // FIXME: to remove?
+  // cookies: service(),
 
   i18nPrefix: 'components.newClusterIps',
 

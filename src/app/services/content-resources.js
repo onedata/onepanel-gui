@@ -12,7 +12,7 @@ import { Promise } from 'rsvp';
 import Service, { inject as service } from '@ember/service';
 
 export default Service.extend({
-  clusterManager: service(),
+  configurationManager: service(),
   userManager: service(),
 
   /**
@@ -23,7 +23,7 @@ export default Service.extend({
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
-        return this.get('clusterManager').getDefaultRecord(id).get('promise');
+        return this.get('configurationManager').getDefaultRecord(id).get('promise');
       case 'users':
         return this.get('userManager').getUserDetails(id).get('promise');
 

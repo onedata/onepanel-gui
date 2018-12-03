@@ -23,7 +23,7 @@ const PROVIDER_DETAILS = {
   geoLongitude: 21.898093,
 };
 
-const ClusterManager = Service.extend({
+const ConfigurationManager = Service.extend({
   getConfiguration() {
     return Promise.resolve({
       data: {
@@ -50,7 +50,7 @@ const OnepanelServer = Service.extend({
   serviceType: 'zone',
 });
 
-describe('Integration | Component | new cluster provider cert', function () {
+describe('Integration | Component | new cluster web cert', function () {
   setupComponentTest('new-cluster-web-cert', {
     integration: true,
   });
@@ -58,7 +58,7 @@ describe('Integration | Component | new cluster provider cert', function () {
   beforeEach(function () {
     registerService(this, 'i18n', I18nStub);
     registerService(this, 'web-cert-manager', WebCertManager);
-    registerService(this, 'cluster-manager', ClusterManager);
+    registerService(this, 'configuration-manager', ConfigurationManager);
     registerService(this, 'onepanel-server', OnepanelServer);
     this.set('_location', {});
   });

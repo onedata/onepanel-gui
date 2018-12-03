@@ -36,6 +36,7 @@ describe('Unit | Component | sidebar clusters', function () {
     registerService(this, 'i18n', I18n);
   });
 
+  // FIXME: reimplement test
   it('changes dns warning status after change of dnsValid', function () {
     const dnsManager = lookupService(this, 'dnsManager');
     set(dnsManager, 'dnsValid', undefined);

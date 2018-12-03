@@ -12,7 +12,7 @@ import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
-  clusterManager: service(),
+  configurationManager: service(),
   userManager: service(),
 
   /**
@@ -22,7 +22,7 @@ export default SidebarResources.extend({
   getCollectionFor(type) {
     switch (type) {
       case 'clusters':
-        return this.get('clusterManager').getClusters().get('promise');
+        return this.get('configurationManager').getClusters().get('promise');
       case 'users':
         return this.get('userManager').getUsers().get('promise').then(users => {
           return Promise.resolve({ list: users });
@@ -39,7 +39,8 @@ export default SidebarResources.extend({
    */
   getButtonsFor(type) {
     switch (type) {
-      default: return [];
+      default:
+        return [];
     }
   },
 });

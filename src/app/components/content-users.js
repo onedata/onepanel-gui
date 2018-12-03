@@ -31,7 +31,7 @@ export default Component.extend(I18n,
 
     onepanelServer: service(),
     guiUtils: service(),
-    clusterManager: service(),
+    configurationManager: service(),
     userManager: service(),
     i18n: service(),
     globalNotify: service(),
@@ -61,7 +61,7 @@ export default Component.extend(I18n,
      * @override
      */
     fetchClusterDetails() {
-      return this.get('clusterManager').getClusterDetails();
+      return this.get('configurationManager').getClusterDetails();
     },
 
     /**

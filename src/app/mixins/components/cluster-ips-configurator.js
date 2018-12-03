@@ -29,7 +29,7 @@ export default Mixin.create({
    * @virtual
    * @type {Ember.Service}
    */
-  clusterManager: undefined,
+  configurationManager: undefined,
 
   /**
    * @virtual 
@@ -80,7 +80,7 @@ export default Mixin.create({
   }),
 
   _startSetup() {
-    return this.get('clusterManager')
+    return this.get('configurationManager')
       .modifyClusterIps(this.get('_ipsFormData'))
       .catch(error => {
         this.get('globalNotify').backendError(
@@ -102,7 +102,7 @@ export default Mixin.create({
     this.set(
       'hostsIpsProxy',
       PromiseObject.create({
-        promise: this.get('clusterManager').getClusterIps()
+        promise: this.get('configurationManager').getClusterIps()
           .then(({ hosts }) => {
             this.prepareHosts(hosts);
             this.set('_ipsFormData', hosts);

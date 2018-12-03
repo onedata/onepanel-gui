@@ -1,11 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
+import { get } from '@ember/object';
 
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
 
-describe('Unit | Service | cluster manager', function () {
-  setupTest('service:cluster-manager', {
+describe('Unit | Service | configuration manager', function () {
+  setupTest('service:configuration-manager', {
     // Specify the other units that are required for this test.
     // needs: ['service:foo']
   });
@@ -36,23 +37,24 @@ describe('Unit | Service | cluster manager', function () {
       clusterHostsInfo,
     } = service._clusterConfigurationToHostsInfo(CLUSTER);
 
+    console.log(clusterHostsInfo);
     expect(clusterHostsInfo).to.have.length(2);
-    expect(clusterHostsInfo[0].get('hostname'))
+    expect(get(clusterHostsInfo[0], 'hostname'), '0 hostname')
       .to.be.equal('node1.example.com');
-    expect(clusterHostsInfo[0].get('database'))
+    expect(get(clusterHostsInfo[0], 'database'), '0 database')
       .to.be.equal(true);
-    expect(clusterHostsInfo[0].get('clusterManager'))
+    expect(get(clusterHostsInfo[0], 'clusterManager'), '0 clusterManager')
       .to.be.equal(true);
-    expect(clusterHostsInfo[0].get('clusterWorker'))
+    expect(get(clusterHostsInfo[0], 'clusterWorker'), '0 clusterWorker')
       .to.be.equal(false);
 
-    expect(clusterHostsInfo[1].get('hostname'))
+    expect(get(clusterHostsInfo[1], 'hostname'))
       .to.be.equal('node2.example.com');
-    expect(clusterHostsInfo[1].get('database'))
+    expect(get(clusterHostsInfo[1], 'database'))
       .to.be.equal(false);
-    expect(clusterHostsInfo[1].get('clusterManager'))
+    expect(get(clusterHostsInfo[1], 'clusterManager'))
       .to.be.equal(true);
-    expect(clusterHostsInfo[1].get('clusterWorker'))
+    expect(get(clusterHostsInfo[1], 'clusterWorker'))
       .to.be.equal(true);
 
     expect(mainManagerHostname).to.be.equal('node2.example.com');

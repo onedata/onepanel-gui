@@ -41,7 +41,8 @@ const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
 
 export default OnepanelServerBase.extend(
   createDataProxyMixin('serviceType'),
-  createDataProxyMixin('node'), {
+  createDataProxyMixin('node'),
+  createDataProxyMixin('apiOrigin'), {
     /**
      * An Onepanel API Client that is used for making requests.
      * 
@@ -153,17 +154,20 @@ export default OnepanelServerBase.extend(
         return resolve(idFromLocation);
       } else {
         return this.request('onepanel', 'getCurrentCluster')
-          .then(({ data: id }) => id);
+          .then(({ data }) => data.id);
       }
     },
 
-    getApiOrigin(onezoneToken) {
+    /**
+     * @override
+     */
+    fetchApiOrigin(onezoneToken) {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const location = this.getLocation();
       if (clusterIdFromUrl) {
         return this.getServiceTypeProxy().then(serviceType => {
           if (serviceType === 'provider') {
-            // frontend is served from Onezone host
+            // frontend is served from Onezone host - use external host
             return new Promise((resolve, reject) => {
                 $.ajax(
                   '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
@@ -173,7 +177,7 @@ export default OnepanelServerBase.extend(
                   }
                 ).then(resolve, reject);
               })
-              .then(({ domain }) => `https://${domain}`);
+              .then(({ domain }) => `https://${domain}:9443`);
           } else {
             // Onezone Panel served from Onezone host is on different port
             // TODO: probably unsafe if using other port for https
@@ -183,7 +187,6 @@ export default OnepanelServerBase.extend(
       } else {
         // frontend is served from Onepanel host
         return resolve(location.origin);
-
       }
     },
 
@@ -196,10 +199,16 @@ export default OnepanelServerBase.extend(
      */
     validateSession() {
       return $.get('/rest-credentials')
-        .then(({ onezoneToken, allButOnezoneToken: token }) => {
+        .then(tokenData => {
+          // FIXME: this name cannot be used in production version - backend
+          const token = tokenData.token || tokenData.allButOnezoneToken;
+          const onezoneToken = tokenData.onezoneToken;
           // FIXME: need to set?
           safeExec(this, 'set', 'onezoneToken', onezoneToken);
-          return this.getApiOrigin(onezoneToken).then(origin => ({ origin, token }));
+          return this.getApiOriginProxy({ fetchArgs: [onezoneToken] }).then(origin => ({
+            origin,
+            token,
+          }));
         })
         .then(({ origin, token }) => {
           return run(() => {
@@ -321,7 +330,7 @@ export default OnepanelServerBase.extend(
       token,
       onezoneToken,
     } = {}) {
-      return this.getApiOrigin(onezoneToken).then(apiOrigin => {
+      return this.getApiOriginProxy({ fetchArgs: [onezoneToken] }).then(apiOrigin => {
         const client = this.createClient({ origin: apiOrigin, token });
         if (username && password) {
           client.defaultHeaders['Authorization'] =

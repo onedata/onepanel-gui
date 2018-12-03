@@ -1,7 +1,7 @@
 /**
  * Provides data for routes and components assoctiated with clusters tab
  *
- * @module services/cluster-manager
+ * @module services/configuration-manager
  * @author Jakub Liput
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -407,7 +407,7 @@ export default Service.extend({
 
       gettingHostNames.catch(error => {
         console.error(
-          'service:cluster-manager: Getting hostnames failed'
+          'service:configuration-manager: Getting hostnames failed'
         );
         reject(error);
       });

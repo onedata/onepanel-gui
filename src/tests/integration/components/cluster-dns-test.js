@@ -24,7 +24,7 @@ describe('Integration | Component | cluster dns', function () {
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
-    registerService(this, 'clusterManager', Service);
+    registerService(this, 'configurationManager', Service);
     registerService(this, 'onepanelServer', OnepanelServer);
   });
 
