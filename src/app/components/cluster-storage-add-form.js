@@ -68,9 +68,9 @@ export default OneForm.extend(Validations, {
       showLumaPrefix,
     } = this.getProperties('selectedStorageType', 'showLumaPrefix');
     if (showLumaPrefix) {
-      return ['generic', 'luma', selectedStorageType.id];
+      return ['meta', 'generic', 'luma', selectedStorageType.id];
     } else {
-      return ['generic', selectedStorageType.id];
+      return ['meta', 'generic', selectedStorageType.id];
     }
   }),
   allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
@@ -113,6 +113,7 @@ export default OneForm.extend(Validations, {
     let fields = EmberObject.create({
       generic: EmberObject.create({}),
       luma: EmberObject.create({}),
+      meta: EmberObject.create(),
     });
     let {
       genericFields,
@@ -130,11 +131,24 @@ export default OneForm.extend(Validations, {
   }),
 
   /**
-   * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephMonitor>>}
+   * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
    */
-  cephMonitorsProxy: computed(function cephMonitorsProxy() {
-    return this.get('cephManager').getMonitors();
+  cephOsdsProxy: computed(function cephOsdsProxy() {
+    return this.get('cephManager').getOsds();
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<number>}
+   */
+  osdsNumberObserver: observer(
+    'cephOsdsProxy.length',
+    function osdsNumberObserver() {
+      return this.set(
+        'allFieldsValues.meta.osdsNumber',
+        this.get('cephOsdsProxy.length') || 1
+      );
+    }
+  ),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -184,8 +198,9 @@ export default OneForm.extend(Validations, {
     this.prepareFields();
     this._addFieldsLabels();
     this.resetFormValues();
-    this.get('cephMonitorsProxy')
-      .then(() => safeExec(this, 'introduceCephMonitors'));
+    this.osdsNumberObserver();
+    this.get('cephOsdsProxy')
+      .then(() => safeExec(this, 'introduceCephOsds'));
   },
 
   selectPreferredStorageType() {
@@ -202,26 +217,19 @@ export default OneForm.extend(Validations, {
     }
   },
 
-  introduceCephMonitors() {
+  introduceCephOsds() {
     const {
-      cephMonitorsProxy,
+      cephOsdsProxy,
       allFields,
       allFieldsValues,
-    } = this.getProperties('cephMonitorsProxy', 'allFields', 'allFieldsValues');
-    const monitors = cephMonitorsProxy.mapBy('host');
-    const dropdownOptions = monitors.map(host => ({
-      value: host,
-      label: host,
-    }));
-    const dropdownField = allFields.findBy('name', 'localceph.monitorHostname');
-    set(dropdownField, 'options', dropdownOptions);
-    if (get(monitors, 'length')) {
-      const defaultMonitor = monitors.objectAt(0);
-      set(dropdownField, 'defaultValue', defaultMonitor);
-      set(allFieldsValues, 'localceph.monitorHostname', defaultMonitor);
-    }
-  },
+    } = this.getProperties('cephOsdsProxy', 'allFields', 'allFieldsValues');
+    const osdsNumber = get(cephOsdsProxy, 'length') || 1;
+    const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
 
+    const poolSizeField = allFields.findBy('name', 'localceph.poolSize');
+    set(poolSizeField, 'defaultValue', defaultPoolSize);
+    set(allFieldsValues, 'localceph.poolSize', defaultPoolSize);
+  },
   /**
    * @override
    */

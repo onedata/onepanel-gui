@@ -31,7 +31,7 @@ export default [{
   },
   {
     id: 'localceph',
-    name: 'Local Ceph',
+    name: 'Embedded Ceph',
     fields: LOCALCEPH_FIELDS,
   },
   {

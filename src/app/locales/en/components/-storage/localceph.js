@@ -1,8 +1,6 @@
 export default {
-  poolName: { name: 'Pool name' },
-  poolSize: { name: 'Pool size' },
-  poolMinSize: { name: 'Pool min. size' },
-  monitorHostname: { name: 'Monitor hostname' },
+  poolSize: { name: 'Number of copies' },
+  poolMinSize: { name: 'Min. number of copies' },
   timeout: { name: 'Timeout [ms]' },
   insecure: { name: 'Insecure' },
   readonly: { name: 'Read only' },
