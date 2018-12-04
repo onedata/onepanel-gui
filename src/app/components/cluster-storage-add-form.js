@@ -15,6 +15,7 @@ import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -134,8 +135,39 @@ export default OneForm.extend(Validations, {
    * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
    */
   cephOsdsProxy: computed(function cephOsdsProxy() {
-    return this.get('cephManager').getOsds();
+    return PromiseArray.create({
+      promise: this.get('cephManager').getOsds()
+        .catch(error => {
+          // Suppress "ceph not deployed" error. It is a normal situation and
+          // is equal to "no osds".
+          if (get(error, 'response.statusCode') === 404) {
+            return [];
+          } else {
+            throw error;
+          }
+        }),
+    });
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
+  visibleStorageTypes: computed(
+    'storageTypes.[]',
+    'cephOsdsProxy.length',
+    function visibleStorageTypes() {
+      let visibleTypes = this.get('storageTypes');
+
+      // if no osds are present, remove embeddedceph storage type
+      if (!this.get('cephOsdsProxy.length')) {
+        visibleTypes = storageTypes.filter(
+          storageType => get(storageType, 'id') !== 'embeddedceph'
+        );
+      }
+
+      return visibleTypes;
+    }
+  ),
 
   /**
    * @type {Ember.ComputedProperty<number>}
@@ -143,7 +175,8 @@ export default OneForm.extend(Validations, {
   osdsNumberObserver: observer(
     'cephOsdsProxy.length',
     function osdsNumberObserver() {
-      return this.set(
+      
+      this.set(
         'allFieldsValues.meta.osdsNumber',
         this.get('cephOsdsProxy.length') || 1
       );
@@ -200,16 +233,21 @@ export default OneForm.extend(Validations, {
     this.resetFormValues();
     this.osdsNumberObserver();
     this.get('cephOsdsProxy')
-      .then(() => safeExec(this, 'introduceCephOsds'));
+      .then(() => safeExec(this, () => {
+        this.introduceCephOsds();
+        this.selectPreferredStorageType();
+      }));
   },
 
   selectPreferredStorageType() {
     const prefferedTypeId =
       this.get('navigationState.queryParams.create_storage_form_type');
     if (prefferedTypeId) {
-      const storageTypes = this.get('storageTypes');
-      const preferredType = storageTypes.findBy('id', prefferedTypeId);
-      this.set('selectedStorageType', preferredType);
+      const visibleStorageTypes = this.get('visibleStorageTypes');
+      const preferredType = visibleStorageTypes.findBy('id', prefferedTypeId);
+      if (preferredType) {
+        this.set('selectedStorageType', preferredType);
+      }
       // const genericFields = this.get('genericFields');
       // debugger;
       // const typeField = genericFields.findBy('name', 'generic.type');
