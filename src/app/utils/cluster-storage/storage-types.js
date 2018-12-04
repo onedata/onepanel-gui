@@ -17,7 +17,7 @@ import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-fields';
 import WEBDAV_FIELDS from 'onepanel-gui/utils/cluster-storage/webdav-fields';
 import NULLDEVICE_FIELDS from 'onepanel-gui/utils/cluster-storage/nulldevice-fields';
-import LOCALCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/localceph-fields';
+import EMBEDDEDCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/embeddedceph-fields';
 
 export default [{
     id: 'ceph',
@@ -30,9 +30,9 @@ export default [{
     fields: CEPHRADOS_FIELDS,
   },
   {
-    id: 'localceph',
+    id: 'embeddedceph',
     name: 'Embedded Ceph',
-    fields: LOCALCEPH_FIELDS,
+    fields: EMBEDDEDCEPH_FIELDS,
   },
   {
     id: 'posix',

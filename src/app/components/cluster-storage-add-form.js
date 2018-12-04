@@ -54,7 +54,7 @@ const storagePathTypeDefaults = {
   nulldevice: 'canonical',
   ceph: 'flat',
   cephrados: 'flat',
-  localceph: 'flat',
+  embeddedceph: 'flat',
   s3: 'flat',
   swift: 'flat',
   webdav: 'canonical',
@@ -226,9 +226,9 @@ export default OneForm.extend(Validations, {
     const osdsNumber = get(cephOsdsProxy, 'length') || 1;
     const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
 
-    const poolSizeField = allFields.findBy('name', 'localceph.poolSize');
+    const poolSizeField = allFields.findBy('name', 'embeddedceph.poolSize');
     set(poolSizeField, 'defaultValue', defaultPoolSize);
-    set(allFieldsValues, 'localceph.poolSize', defaultPoolSize);
+    set(allFieldsValues, 'embeddedceph.poolSize', defaultPoolSize);
   },
   /**
    * @override

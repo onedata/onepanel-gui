@@ -11,7 +11,7 @@ import Onepanel from 'npm:onepanel';
 function createClusterStorage(formData) {
   const type = get(formData, 'type');
   let csClass, csData;
-  if (type === 'localceph') {
+  if (type === 'embeddedceph') {
     /**
      * Change object `{ poolA, poolB, ... abc, def, ghi, ...}` to
      * `{ a, b, ... storageParams: { abc, def, ghi, ... } }`
