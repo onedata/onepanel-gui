@@ -8,7 +8,6 @@
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
-import { isEmpty } from '@ember/utils';
 import Component from '@ember/component';
 import { computed, get } from '@ember/object';
 import { reads, collect } from '@ember/object/computed';
@@ -78,9 +77,17 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  hasSupportedSpaces: computed('spaces.[]', function () {
-    return isEmpty(this.get('spaces')) === false;
-  }),
+  hasSupportedSpaces: computed(
+    'spaces.@each.isFulfilled',
+    'storageId',
+    function hasSupportedSpaces() {
+      const {
+        spaces,
+        storageId,
+      } = this.getProperties('spaces', 'storageId');
+      return !!spaces.findBy('storageId', storageId);
+    }
+  ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
