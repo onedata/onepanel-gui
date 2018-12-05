@@ -674,7 +674,7 @@ export default OnepanelServerBase.extend(
         statusCode: (id) => {
           const storages = this.get('__storages');
           const storage = _.find(storages, { id });
-          return storage ? 204 : 404;
+          return storage ? 200 : 404;
         },
       };
     },
