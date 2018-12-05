@@ -1,49 +1,48 @@
 {{#if _mobileMode}}
-  {{#if (eq _processedData.length 0)}}
+  <div class="first-row" style={{firstRowStyle}}></div>
+  <div class="table-start-row"></div>
+  {{#if noReportsAvailable}}
     <div class="row content-row">
-      <p>{{_tableCustomMessages.noDataToShow}}</p>
+      {{t "components.spaceCleaningReports.noReportsAvailable"}}
     </div>
   {{else}}
     {{#one-collapsible-list as |list|}}
-      {{#each _processedData as |report|}}
+      {{#each reportsArray as |item|}}
         {{#list.item as |listItem|}}
-          {{#listItem.header}}
-            <span class="item-icon-container">
-              {{space-cleaning-reports/status-cell data=_processedData record=report}}
-            </span>
-            <span class="one-label">{{report.startedAtReadable}}</span>
-          {{/listItem.header}}
-          {{#listItem.content}}
-            <div class="item-table">
-              <div class="item-table-content-cell">
-                {{#each _mobileColumns as |column|}}
-                  <div class="row content-row">
-                    {{!-- using data processing similar to the one used by ember-models-table --}}
-                    <strong>{{column.title}}:</strong>
-                    {{#if column.component}}
-                      {{component column.component data=_processedData record=report column=column}}
-                    {{else}}
-                      <span class="one-label">{{get report column.propertyName}}</span>
-                    {{/if}}
-                  </div>
-                {{/each}}
-              </div>
-            </div>
-          {{/listItem.content}}
+          {{space-cleaning-reports/data-mobile-item listItem=listItem item=item}}
         {{/list.item}}
       {{/each}}
     {{/one-collapsible-list}}
   {{/if}}
 {{else}}
-  {{models-table
-    data=_processedData
-    columns=_columns
-    customIcons=_tableCustomIcons
-    customClasses=_tableCustomClasses
-    customMessages=_tableCustomMessages
-    showColumnsDropdown=false
-    showGlobalFilter=false
-    useFilteringByColumns=false
-    showComponentFooter=false
-    multipleColumnsSorting=false}}
+  <table class="table one-table one-infinite-list">
+    <thead class="thead-space-cleaning-reports">
+      <th>{{tt this "start"}}</th>
+      <th>{{tt this "stop"}}</th>
+      <th>{{tt this "releasedBytes"}}</th>
+      <th>{{tt this "filesNumber"}}</th>
+      <th>{{tt this "status"}}</th>
+    </thead>
+    <tbody>
+    <tr class="first-row">
+      <td colspan="9999" style={{firstRowStyle}}></td>
+    </tr>
+    <div class="table-start-row"></div>
+    {{#if noReportsAvailable}}
+      <tr class="no-data-row">
+        <td colspan="9999" class="no-data-cell">
+          {{t "components.spaceCleaningReports.noReportsAvailable"}}
+        </td>
+      </tr>
+    {{else}}
+      {{#each reportsArray as |item|}}
+        {{space-cleaning-reports/data-row item=item}}
+      {{/each}}
+    {{/if}}
+    </tbody>
+  </table>
+{{/if}}
+
+{{#if bottomLoading}}
+  {{spin-spinner-block sizeClass="sm" class="horizontal-align-middle"}}
 {{/if}}

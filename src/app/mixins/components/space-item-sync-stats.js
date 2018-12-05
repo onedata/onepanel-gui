@@ -3,7 +3,7 @@
  *
  * @module mixins/space-item-sync-stats
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -16,6 +16,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import Looper from 'onedata-gui-common/utils/looper';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
+import assertProperty from 'onedata-gui-common/utils/assert-property';
 
 /**
  * How often watchers should sample for stats for given metrics [ms]
@@ -147,6 +148,8 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
+    assertProperty(this, 'spaceManager');
+
     // interval of this Looper will be set in reconfigureSyncWatchers observer
     let _syncChartStatsWatcher = Looper.create({ immediate: true });
     _syncChartStatsWatcher.on('tick', () =>
@@ -236,9 +239,9 @@ export default Mixin.create({
   },
 
   fetchAllSyncStats() {
-    let syncInterval = this.get('syncInterval');
+    const syncInterval = this.get('syncInterval');
 
-    let syncStatsPromise =
+    const syncStatsPromise =
       this.get('spaceManager').getSyncAllStats(
         this.get('space.id'),
         syncInterval
@@ -277,24 +280,22 @@ export default Mixin.create({
 
   /**
    * Is sync tab currently opened
-   * NOTE: activeTabId is provided by `space-tabs` mixin
+   * NOTE: selectedTab is provided by `space-tabs` mixin
    * @type {Ember.ComputedProperty<boolean>}
    */
-  syncTabActive: computed('activeTabId', function () {
-    const activeTabId = this.get('activeTabId');
-    return activeTabId && /^tab-sync-/.test(activeTabId);
+  syncTabActive: computed('selectedTab', function () {
+    const selectedTab = this.get('selectedTab');
+    return selectedTab && /^tab-sync-/.test(selectedTab);
   }),
 
   reconfigureSyncWatchers: observer(
-    '_isActive',
     '_importActive',
     'syncInterval',
     '_syncChartStatsWatcher',
     'statsFrozen',
     'syncTabActive',
     function () {
-      let {
-        _isActive,
+      const {
         _importActive,
         syncInterval,
         _syncChartStatsWatcher,
@@ -303,7 +304,6 @@ export default Mixin.create({
         syncStatusRefreshTime,
         syncTabActive,
       } = this.getProperties(
-        '_isActive',
         '_importActive',
         'syncInterval',
         '_syncChartStatsWatcher',
@@ -317,7 +317,7 @@ export default Mixin.create({
         _syncStatusWatcher.set('interval', syncStatusRefreshTime);
       }
 
-      if (syncTabActive && _importActive && _isActive && !statsFrozen) {
+      if (syncTabActive && _importActive && !statsFrozen) {
         _syncChartStatsWatcher.set('interval', WATCHER_INTERVAL[syncInterval]);
       } else {
         _syncChartStatsWatcher.stop();

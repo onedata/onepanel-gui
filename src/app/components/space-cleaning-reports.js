@@ -3,32 +3,50 @@
  * cleaning reports.
  *
  * @module components/space-cleaning-reports
- * @author Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Michal Borzecki, Jakub Liput
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+// TODO: this can be a prototype of infinite scroll list
+
 import Component from '@ember/component';
-
-import EmberObject, { computed } from '@ember/object';
+import { computed, get, observer } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { A } from '@ember/array';
-import moment from 'moment';
-import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import ListWatcher from 'onedata-gui-common/utils/list-watcher';
+import $ from 'jquery';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import ReplacingChunksArray from 'onedata-gui-common/utils/replacing-chunks-array';
+import { htmlSafe } from '@ember/string';
+import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-cleaning-reports-updater';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
+function compareIndex(a, b) {
+  const ai = get(a, 'index');
+  const bi = get(b, 'index');
+  if (ai < bi) {
+    return -1;
+  } else if (ai > bi) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['space-cleaning-reports'],
 
   i18n: service(),
+  spaceManager: service(),
+
+  i18nPrefix: 'components.spaceCleaningReports',
+
+  spaceId: undefined,
 
   /**
-   * Input data.
-   * To inject.
-   * @type {EmberArray.Object}
+   * @type {SpaceAutoCleaningReportsUpdater}
    */
-  data: A([]),
+  spaceAutoCleaningReportsUpdater: undefined,
 
   /**
    * If true, component is rendered in mobile mode.
@@ -43,107 +61,9 @@ export default Component.extend({
   _window: window,
 
   /**
-   * Data ready for display.
-   * @type {computed.Array.Object}
+   * @type {boolean}
    */
-  _processedData: computed('data.[]', function () {
-    let {
-      i18n,
-      data,
-    } = this.getProperties('i18n', 'data');
-    return data.map((report) => {
-      report = EmberObject.create(report);
-
-      let startedAt = moment(report.get('startedAt'));
-      report.setProperties({
-        startedAtReadable: startedAt.format(START_END_TIME_FORMAT),
-        startedAtSortable: startedAt.unix(),
-      });
-
-      let stoppedAt = report.get('stoppedAt');
-      if (stoppedAt) {
-        stoppedAt = moment(stoppedAt);
-        report.setProperties({
-          stoppedAtReadable: stoppedAt.format(START_END_TIME_FORMAT),
-          stoppedAtSortable: stoppedAt.unix(),
-        });
-      } else {
-        report.setProperties({
-          stoppedAtReadable: '-',
-          // bigger than any unix timestamp
-          stoppedAtSortable: 9999999999,
-        });
-      }
-
-      let released = bytesToString(report.get('releasedBytes'), { iecFormat: true });
-      let outOf = i18n.t('components.spaceCleaningReports.releasedBytesOutOf');
-      let planned = bytesToString(
-        report.get('bytesToRelease'), { iecFormat: true }
-      );
-      report.set('releasedBytesReadable', `${released} (${outOf} ${planned})`);
-      return report;
-    });
-  }),
-
-  /**
-   * Custom classes for ember-models-table addon.
-   * @type {Ember.Object}
-   */
-  _tableCustomClasses: computed(function () {
-    return EmberObject.create({
-      table: 'table',
-    });
-  }),
-
-  /**
-   * Custom messages for ember-models-table addon.
-   * @type {Ember.Object}
-   */
-  _tableCustomMessages: computed('noDataToShowMessage', function () {
-    return EmberObject.create({
-      noDataToShow: this.get('i18n').t(
-        'components.spaceCleaningReports.noReportsAvailable'),
-    });
-  }),
-
-  /**
-   * Columns definition for table.
-   * @type {computed.Array.Object}
-   */
-  _columns: computed(function () {
-    let i18n = this.get('i18n');
-    return [{
-      propertyName: 'startedAtReadable',
-      sortedBy: 'startedAtSortable',
-      sortPrecedence: 1,
-      sortDirection: 'desc',
-      title: i18n.t('components.spaceCleaningReports.start'),
-    }, {
-      propertyName: 'stoppedAtReadable',
-      sortedBy: 'stoppedAtSortable',
-      title: i18n.t('components.spaceCleaningReports.stop'),
-    }, {
-      propertyName: 'releasedBytesReadable',
-      sortedBy: 'releasedBytes',
-      title: i18n.t('components.spaceCleaningReports.releasedBytes'),
-    }, {
-      propertyName: 'filesNumber',
-      title: i18n.t('components.spaceCleaningReports.filesNumber'),
-    }, {
-      propertyName: 'status',
-      title: i18n.t('components.spaceCleaningReports.status'),
-      component: 'space-cleaning-reports/status-cell',
-    }];
-  }),
-
-  /**
-   * Columns definition for mobile view.
-   * @type {ComputedProperty<Array<Object>>}
-   */
-  _mobileColumns: computed('_columns', function () {
-    let _columns = this.get('_columns');
-    return _columns.slice(0, _columns.length - 1);
-  }),
+  headerVisible: undefined,
 
   /**
    * Window resize event handler.
@@ -155,16 +75,122 @@ export default Component.extend({
     };
   }),
 
+  rowHeight: computed('_mobileMode', function rowHeight() {
+    return this.get('_mobileMode') ? 64 : 44;
+  }),
+
+  firstRowHeight: computed('rowHeight', 'reportsArray._start', function firstRowHeight() {
+    const _start = this.get('reportsArray._start');
+    return _start ? _start * this.get('rowHeight') : 0;
+  }),
+
+  firstRowStyle: computed('firstRowHeight', function firstRowStyle() {
+    return htmlSafe(`height: ${this.get('firstRowHeight')}px;`);
+  }),
+
+  reportsArray: computed('spaceId', function reportsArray() {
+    const spaceId = this.get('spaceId');
+    return ReplacingChunksArray.create({
+      fetch: (...args) => this.fetchReports(spaceId, ...args),
+      sortFun: compareIndex,
+      startIndex: 0,
+      endIndex: 50,
+      indexMargin: 10,
+    });
+  }),
+
+  noReportsAvailable: computed(
+    'reportsArray.{length,isLoading,initialLoad.isPending}',
+    function noReportsAvailable() {
+      return !this.get('reportsArray.length') &&
+        !this.get('reportsArray.initialLoad.isPending') &&
+        !this.get('reportsArray.isLoading');
+    }
+  ),
+
+  bottomLoading: computed('reportsArray.{_fetchNextLock,initialLoad.isPending}',
+    function bottomLoading() {
+      return this.get('reportsArray._fetchNextLock') ||
+        this.get('reportsArray.initialLoad.isPending');
+    }
+  ),
+
+  toggleReportsUpdater: observer('isCleanEnabled', 'headerVisible', function toggleReportsUpdater() {
+    const enable = this.get('headerVisible') && this.get('isCleanEnabled');
+    if (this.get('spaceAutoCleaningReportsUpdater.isEnabled') !== enable) {
+      this.set('spaceAutoCleaningReportsUpdater.isEnabled', enable);
+    }
+  }),
+
   init() {
     this._super(...arguments);
 
-    let {
+    const {
       _resizeEventHandler,
       _window,
-    } = this.getProperties('_resizeEventHandler', '_window');
+      spaceManager,
+      spaceId,
+    } = this.getProperties('_resizeEventHandler', '_window', 'spaceManager', 'spaceId');
 
     _resizeEventHandler();
     _window.addEventListener('resize', _resizeEventHandler);
+
+    const spaceAutoCleaningReportsUpdater = SpaceAutoCleaningReportsUpdater.create({
+      isEnabled: false,
+      spaceManager,
+      spaceId,
+      replacingArray: this.get('reportsArray'),
+      sortFun: compareIndex,
+    });
+
+    this.set('spaceAutoCleaningReportsUpdater', spaceAutoCleaningReportsUpdater);
+    this.toggleReportsUpdater();
+  },
+
+  createListWatcher() {
+    return new ListWatcher(
+      $('.col-content'),
+      '.data-row',
+      (items, onTop) => safeExec(this, 'onTableScroll', items, onTop),
+      '.table-start-row',
+    );
+  },
+
+  fetchReports(spaceId, ...args) {
+    return this.get('spaceManager').getAutoCleaningReports(spaceId, ...args);
+  },
+
+  /**
+   * @param {Array<HTMLElement>} items 
+   * @param {boolean} headerVisible
+   */
+  onTableScroll(items, headerVisible) {
+    const reportsArray = this.get('reportsArray');
+    const sourceArray = get(reportsArray, 'sourceArray');
+    const reportsArrayIds = sourceArray
+      .map(r => get(r, 'id')).toArray();
+    const firstId = items[0] && items[0].getAttribute('data-row-id') || null;
+    const lastId = items[items.length - 1] &&
+      items[items.length - 1].getAttribute('data-row-id') || null;
+    let startIndex, endIndex;
+    if (firstId === null && get(sourceArray, 'length') !== 0) {
+      const rowHeight = this.get('rowHeight');
+      const $firstRow = $('.first-row');
+      const blankStart = $firstRow.offset().top * -1;
+      const blankEnd = blankStart + window.innerHeight;
+      startIndex = Math.floor(blankStart / rowHeight);
+      endIndex = Math.floor(blankEnd / rowHeight);
+    } else {
+      startIndex = reportsArrayIds.indexOf(firstId);
+      endIndex = reportsArrayIds.indexOf(lastId, startIndex);
+    }
+    reportsArray.setProperties({ startIndex, endIndex });
+    safeExec(this, 'set', 'headerVisible', headerVisible);
+  },
+
+  didInsertElement() {
+    const listWatcher = this.set('listWatcher', this.createListWatcher());
+    listWatcher.scrollHandler();
   },
 
   willDestroyElement() {
@@ -174,8 +200,11 @@ export default Component.extend({
         _window,
       } = this.getProperties('_resizeEventHandler', '_window');
       _window.removeEventListener('resize', _resizeEventHandler);
+      this.get('spaceAutoCleaningReportsUpdater').destroy();
+      this.get('listWatcher').destroy();
     } finally {
       this._super(...arguments);
     }
   },
+
 });
