@@ -462,7 +462,13 @@ export default OneForm.extend(I18n, Validations, {
       storageTypes,
       storage,
       allFieldsValues,
-    } = this.getProperties('storageTypes', 'storage', 'allFieldsValues');
+      allFields,
+    } = this.getProperties(
+      'storageTypes',
+      'storage',
+      'allFieldsValues',
+      'allFields'
+    );
 
     this.prepareFields();
 
@@ -473,8 +479,18 @@ export default OneForm.extend(I18n, Validations, {
 
     ['generic', 'luma', get(storageType, 'id')].forEach(prefix => {
       _.keys(allFieldsValues[prefix]).forEach(fieldName => {
-        allFieldsValues.set(prefix + '_static.' + fieldName, storage[fieldName]);
-        allFieldsValues.set(prefix + '_editor.' + fieldName, storage[fieldName]);
+        const editorFieldName = prefix + '_editor.' + fieldName;
+        const editorField = allFields.findBy('name', editorFieldName);
+        const fieldOptions = get(editorField, 'options');
+        let staticValue = storage[fieldName];
+        if (fieldOptions) {
+          const option = fieldOptions.findBy('value', staticValue);
+          if (option) {
+            staticValue = get(option, 'label');
+          }
+        }
+        allFieldsValues.set(prefix + '_static.' + fieldName, staticValue);
+        allFieldsValues.set(editorFieldName, storage[fieldName]);
       });
     });
     allFieldsValues.set('type_static.type', get(storageType, 'name'));

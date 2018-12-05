@@ -33,11 +33,11 @@ export default Service.extend(I18n, {
       id,
       name,
     } = getProperties(storage, 'id', 'name');
-    return storageManager.modifyStorage(id, newDetails)
+    return storageManager.modifyStorage(id, name, newDetails)
       .then(result => {
         globalNotify.info(this.t('storageModifiedSuccessfully', { name }));
-        const verificationResult = get(result, 'data.verificationResult');
-        if (verificationResult === false) {
+        const verificationPassed = get(result, 'data.verificationPassed');
+        if (verificationPassed === false) {
           globalNotify.error(this.t('storageCheckFailed', { name }));
         }
         return result;

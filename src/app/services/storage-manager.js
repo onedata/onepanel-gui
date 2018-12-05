@@ -13,7 +13,6 @@ import ObjectProxy from '@ember/object/proxy';
 import ArrayProxy from '@ember/array/proxy';
 import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
-import { get } from '@ember/object';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 
@@ -58,7 +57,7 @@ export default Service.extend({
 
         getStorages.then(({ data: { ids } }) => {
           this.set('collectionCache.content', A(ids.map(id =>
-            this.getStorageDetails(id))));
+            this.getStorageDetails(id, reload))));
           resolve(collectionCache);
         });
         getStorages.catch(error => {
@@ -120,15 +119,15 @@ export default Service.extend({
 
   /**
    * @param {string} id
+   * @param {string} oldName not-modified version of storage name
    * @param {Onepanel.StorageModifyRequest} storageData
    * @returns {Promise} resolves when storage has been successfully modified
    */
-  modifyStorage(id, storageData) {
+  modifyStorage(id, oldName, storageData) {
     const onepanelServer = this.get('onepanelServer');
-    const storageName = get(storageData, 'name');
 
     const modifyRequestProto = {
-      [storageName]: storageData,
+      [oldName]: storageData,
     };
     const modifyRequest =
       StorageModifyRequest.constructFromObject(modifyRequestProto);

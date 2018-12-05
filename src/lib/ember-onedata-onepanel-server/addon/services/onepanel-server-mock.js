@@ -669,7 +669,7 @@ export default OnepanelServerBase.extend(
               .filter(key => storage[key] === null)
               .forEach(key => delete storage[key]);
           }
-          return _.assign({ verificationResult: true }, storage);
+          return _.assign({ verificationPassed: true }, storage);
         },
         statusCode: (id) => {
           const storages = this.get('__storages');

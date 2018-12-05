@@ -41,8 +41,6 @@ const POSIX_STORAGE = {
 };
 
 describe('Integration | Component | cluster storage add form', function () {
-  this.timeout(4000);
-
   setupComponentTest('cluster-storage-add-form', {
     integration: true,
   });

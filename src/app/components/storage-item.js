@@ -122,7 +122,7 @@ export default Component.extend(I18n, {
       title: this.t('removeStorage'),
       class: 'remove-storage',
       icon: 'close',
-      disabled: !hasSupportedSpaces,
+      disabled: hasSupportedSpaces,
     };
   }),
 
