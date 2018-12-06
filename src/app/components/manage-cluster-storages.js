@@ -174,13 +174,11 @@ export default Component.extend(I18n, GlobalActions, {
   _submitAddStorage(storageFormData) {
     let {
       storageManager,
-      cephManager,
-    } = this.getProperties('storageManager', 'cephManager');
-    const storageType = get(storageFormData, 'type');
+    } = this.getProperties('storageManager');
 
     let cs = createClusterStorageModel(storageFormData);
-    let addingStorage = storageType === 'embeddedceph' ?
-      cephManager.createPool(cs) : storageManager.createStorage(cs);
+
+    let addingStorage = storageManager.createStorage(cs);
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {

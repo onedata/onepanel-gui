@@ -251,9 +251,9 @@ export default OneForm.extend(Validations, {
     const osdsNumber = get(cephOsdsProxy, 'length') || 1;
     const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
 
-    const poolSizeField = allFields.findBy('name', 'embeddedceph.poolSize');
-    set(poolSizeField, 'defaultValue', defaultPoolSize);
-    set(allFieldsValues, 'embeddedceph.poolSize', defaultPoolSize);
+    const copiesNumberField = allFields.findBy('name', 'embeddedceph.copiesNumber');
+    set(copiesNumberField, 'defaultValue', defaultPoolSize);
+    set(allFieldsValues, 'embeddedceph.copiesNumber', defaultPoolSize);
   },
   /**
    * @override

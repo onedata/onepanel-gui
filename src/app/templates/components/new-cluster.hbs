@@ -6,7 +6,7 @@
 
   {{else}}
 
-    {{#one-wizard steps=steps currentIndex=currentStepIndex as |w|}}
+    {{#one-wizard steps=steps currentIndex=wizardIndex as |w|}}
       {{#if (eq w.step.id "installation")}}
         {{new-cluster-installation
           nextStep=(action "next")
