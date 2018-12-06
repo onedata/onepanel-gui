@@ -2,7 +2,7 @@
  * Generate known step names of cluster deployment process
  *
  * @module utils/cluster-deploy-steps
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -30,15 +30,43 @@ const WORKER_STEPS = [
   'status',
 ];
 
+const CEPH_STEPS = [
+  'service_ceph:configure',
+  'service_ceph:setup_keyring',
+  'service_ceph:extend_cluster',
+  'service_ceph_mon:create_monmap',
+  'service_ceph_mon:setup_keyring',
+  'service_ceph_mon:mkfs',
+  'service_ceph_mon:start',
+  'service_ceph_mon:register',
+  'service_ceph_mgr:setup_keyring',
+  'service_ceph_mgr:start',
+  'service_ceph_osd:create',
+  'service_ceph_osd:format',
+  'service_ceph_osd:mkfs',
+  'service_ceph_osd:register',
+  'service_ceph_osd:start',
+  'service_ceph:create_pool',
+  'service_ceph:set_pool_replication',
+  'service_ceph:add_pool_as_storage',
+  'service_ceph:cleanup',
+];
+
 /**
  * Generate list of specific deployment steps for specific worker service
  * @param {string} type one of: "zone", "provider"
  * @returns {Array<string>} full worker step names
  */
 function workerSteps(type) {
-  // currently - just first letter
-  let typeCode = type[0];
-  return WORKER_STEPS.map(ws => `service_o${typeCode}_worker:${ws}`);
+  // `z` for zone and `p` for provider
+  const typeCode = type[0];
+  const steps = WORKER_STEPS.map(ws => `service_o${typeCode}_worker:${ws}`);
+
+  if (type === 'provider') {
+    steps.push(...CEPH_STEPS);
+  }
+
+  return steps;
 }
 
 /**
@@ -51,6 +79,6 @@ export default function clusterDeploySteps(type) {
 }
 
 export const KNOWN_STEPS = COMMON_DEPLOY_STEPS.concat(
-  workerSteps('p'),
-  workerSteps('z'),
+  workerSteps('provider'),
+  workerSteps('zone'),
 );
