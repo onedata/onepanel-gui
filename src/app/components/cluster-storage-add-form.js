@@ -15,7 +15,6 @@ import { invoke, invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -135,18 +134,7 @@ export default OneForm.extend(Validations, {
    * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
    */
   cephOsdsProxy: computed(function cephOsdsProxy() {
-    return PromiseArray.create({
-      promise: this.get('cephManager').getOsds()
-        .catch(error => {
-          // Suppress "ceph not deployed" error. It is a normal situation and
-          // is equal to "no osds".
-          if (get(error, 'response.statusCode') === 404) {
-            return [];
-          } else {
-            throw error;
-          }
-        }),
-    });
+    return this.get('cephManager').getOsds(true);
   }),
 
   /**
@@ -175,7 +163,6 @@ export default OneForm.extend(Validations, {
   osdsNumberObserver: observer(
     'cephOsdsProxy.length',
     function osdsNumberObserver() {
-      
       this.set(
         'allFieldsValues.meta.osdsNumber',
         this.get('cephOsdsProxy.length') || 1

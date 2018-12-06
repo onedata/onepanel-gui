@@ -1,50 +1,60 @@
-{{#promise-proxy-container proxy=statusProxy}}
-  <div class="alert alert-{{alertLevel}} ceph-status">
-    {{one-icon icon=statusIcon}}
-    <strong class="ceph-status-message">{{statusMessage}}</strong>
-    {{#if statusProxy.messages.length}}
-      <ul>
-        {{#each statusProxy.messages as |message|}}
-          <li>{{message}}</li>
-        {{/each}}
-      </ul>
-    {{/if}}
-  </div>
-{{/promise-proxy-container}}
+<div class="ceph-status-container min-height-100 relative">
+  {{#promise-proxy-container proxy=statusProxy sizeClass="sm"}}
+    <div class="alert alert-{{alertLevel}} ceph-status">
+      {{one-icon icon=statusIcon class="ceph-status-icon"}}
+      <strong class="ceph-status-message">{{statusMessage}}</strong>
+      {{#if statusProxy.messages.length}}
+        <ul>
+          {{#each statusProxy.messages as |message|}}
+            <li>{{message}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    </div>
+  {{/promise-proxy-container}}
+</div>
 
-<div class="osds-usage">
+<div class="osds-usage-container min-height-100 relative">
   <h1>{{tt this "osdsUsage"}}</h1>
-  {{#promise-proxy-container proxy=osdsUsageProxy}}
-    {{#one-collapsible-list as |list|}}
-      {{#each osdsUsage as |hostOsds|}}
-        {{#list.item as |listItem|}}
-          {{#listItem.header}}
-            <span class="item-icon-container">
-              {{one-icon class="item-icon" icon="node"}}
-              {{one-tooltip
-                title=hostOsds.host
-                placement="top"
-                arrowPlacement="left"
-                triggerEvents="hover"
-              }}
-            </span>
-            <span class="osds-host">{{hostOsds.host}}</span>
-          {{/listItem.header}}
-          {{#listItem.content}}
-            <div class="row content-row no-border clearfix">
-              {{#each hostOsds.osds as |osd|}}
-                <div class="osd-usage col-md-4 col-sm-6 col-xs-12">
-                  {{#truncated-string class="osd-name"}}
-                    <strong>{{tt this osd.type}}</strong> {{or osd.device osd.path}}{{/truncated-string}}
-                  {{one-space-indicator
-                    currentTotalSize=osd.usage.total
-                    occupiedSize=osd.usage.used}}
-                </div>
-              {{/each}}
-            </div>
-          {{/listItem.content}}
-        {{/list.item}}
-      {{/each}}
-    {{/one-collapsible-list}}
+  {{#promise-proxy-container proxy=osdsUsageProxy sizeClass="sm"}}
+    {{#if osdsUsage.length}}
+
+      {{#one-collapsible-list as |list|}}
+        {{#each osdsUsage as |hostOsds|}}
+          {{#list.item as |listItem|}}
+            {{#listItem.header}}
+              <span class="item-icon-container">
+                {{one-icon class="item-icon" icon="node"}}
+                {{one-tooltip
+                  title=hostOsds.host
+                  placement="top"
+                  arrowPlacement="left"
+                  triggerEvents="hover"
+                }}
+              </span>
+              <span class="osds-host">{{hostOsds.host}}</span>
+            {{/listItem.header}}
+            {{#listItem.content}}
+              <div class="row content-row no-border clearfix osds-usage-row">
+                {{#each hostOsds.osds as |osd|}}
+                  <div class="osd-usage col-md-4 col-sm-6 col-xs-12">
+                    {{#truncated-string class="osd-name"}}
+                      <strong>{{tt this osd.type}}</strong> {{or osd.device osd.path}}{{/truncated-string}}
+                    {{one-space-indicator
+                      currentTotalSize=osd.usage.total
+                      occupiedSize=osd.usage.used}}
+                  </div>
+                {{/each}}
+              </div>
+            {{/listItem.content}}
+          {{/list.item}}
+        {{/each}}
+      {{/one-collapsible-list}}
+
+    {{else}}
+
+      <p>{{tt this "noOsds"}}</p>
+
+    {{/if}}
   {{/promise-proxy-container}}
 </div>

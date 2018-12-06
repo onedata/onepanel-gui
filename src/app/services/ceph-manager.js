@@ -11,14 +11,18 @@ export default Service.extend({
 
   /**
    * Returns all osds in the ceph cluster.
+   * @param {boolean} suppressNotDeployed if true, "ceph not deployed" error
+   *   will be ignored
    * @return {PromiseArray<Onepanel.CephOsd>}
    */
-  getOsds() {
+  getOsds(suppressNotDeployed = false) {
     const onepanelServer = this.get('onepanelServer');
-    return PromiseArray.create({
-      promise: onepanelServer.request('oneprovider', 'getCephOsds')
-        .then(({ data }) => data),
-    });
+    let promise = onepanelServer.request('oneprovider', 'getCephOsds')
+      .then(({ data }) => data);
+    if (suppressNotDeployed) {
+      promise = this.suppressNotDeployed(promise, []);
+    }
+    return PromiseArray.create({ promise });
   },
 
   /**
@@ -135,6 +139,38 @@ export default Service.extend({
     return PromiseObject.create({
       promise: onepanelServer.request('oneprovider', 'getNextOsdId')
         .then(({ data }) => data),
+    });
+  },
+
+  /**
+   * Checks whether embedded ceph storage can be created or not
+   * @returns {PromiseObject<boolean>} resolves to true if ceph embedded storage
+   *   can be created
+   */
+  canCreateStorage() {
+    const promise = this.getOsds().then(osds => get(osds, 'length'));
+    return PromiseObject.create({
+      promise: this.suppressNotDeployed(promise, false),
+    });
+  },
+
+  /**
+   * Converts error "ceph not deployed" to positive promise with defaultValue
+   * as a value
+   * @param {Promise<any>} promise Promise which can result to
+   *   "ceph not deployed" error (statusCode == 404)
+   * @param {any} defaultValue value to which promise should resolve when
+   *   "ceph not deployed" error occurred
+   * @returns {Promise<any>} original promise with suppressed "ceph not deployed"
+   *   error
+   */
+  suppressNotDeployed(promise, defaultValue) {
+    return promise.catch(error => {
+      if (get(error, 'response.statusCode') === 404) {
+        return defaultValue;
+      } else {
+        throw error;
+      }
     });
   },
 });

@@ -3,6 +3,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { computed, getProperties, get, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, {
   classNames: ['cluster-ceph-pools'],
@@ -37,4 +38,32 @@ export default Component.extend(I18n, {
       return [];
     }
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<boolean>>}
+   */
+  canCreatePoolProxy: computed(function canCreatePoolProxy() {
+    return this.get('cephManager').canCreateStorage();
+  }),
+
+  /**
+   * Fullfills only when all nedded data is fetched successfully.
+   * @type {Ember.ComputedProperty<PromiseObject<any>>}
+   */
+  loadingProxy: computed(
+    'poolsWithUsageProxy',
+    'canCreatePoolProxy',
+    function loadingProxy() {
+      const {
+        poolsWithUsageProxy,
+        canCreatePoolProxy,
+      } = this.getProperties('poolsWithUsageProxy', 'canCreatePoolProxy');
+      return PromiseObject.create({
+        promise: Promise.all([
+          poolsWithUsageProxy,
+          canCreatePoolProxy,
+        ]),
+      });
+    }
+  ),
 });

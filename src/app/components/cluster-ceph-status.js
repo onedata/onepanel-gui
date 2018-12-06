@@ -28,6 +28,16 @@ export default Component.extend(I18n, {
    */
   i18nPrefix: 'components.clusterCephStatus',
 
+  /**
+   * When number of nodes is below this value, then all nodes will be expaned by
+   * default in OSDs usage section.
+   * @type {number}
+   */
+  autoexpandOsdsWhenNodesBelow: 4,
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<Onepanel.CephStatus>>}
+   */
   statusProxy: computed(function status() {
     return this.get('cephManager').getStatus();
   }),
@@ -54,10 +64,17 @@ export default Component.extend(I18n, {
     return levelToAlertLevel[this.get('statusProxy.level')] || 'info';
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<PromiseArray<Object>>}
+   */
   osdsUsageProxy: computed(function osdsUsage() {
     return this.get('cephManager').getOsdsWithUsage();
   }),
 
+  /**
+   * Array of objects used as a data source for items in OSDs usage section.
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
   osdsUsage: computed(
     'osdsUsageProxy.content.{osds.[],usage}',
     function osdsUsage() {
@@ -87,10 +104,20 @@ export default Component.extend(I18n, {
   init() {
     this._super(...arguments);
 
-    this.get('osdsUsageProxy').then(() => next(() => safeExec(this, 'expandAllOsds')));
+    this.get('osdsUsageProxy')
+      .then(() => next(() => safeExec(this, 'autoexpandOsds')));
   },
 
-  expandAllOsds() {
-    this.$('.osds-usage .one-collapsible-list-item-header').click();
+  /**
+   * Performs automatic expand of OSDs usage items
+   * @return {undefined}
+   */
+  autoexpandOsds() {
+    const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');
+    for (let i = 1; i < autoexpandOsdsWhenNodesBelow; i++) {
+      const ithItemSelector = `.one-collapsible-list-item:nth-child(${i})`;
+      this.$(`.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`)
+        .click();
+    }
   },
 });
