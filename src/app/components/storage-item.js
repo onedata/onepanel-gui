@@ -67,7 +67,9 @@ export default Component.extend(I18n, {
   /**
    * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
-  spaces: Object.freeze([]),
+  spaces: computed(function spaces() {
+    return [];
+  }),
 
   /**
    * @type {Ember.ComputedProperty<string>}

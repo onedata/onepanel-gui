@@ -9,6 +9,7 @@ import wait from 'ember-test-helpers/wait';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
 import SpaceDetails from 'onepanel-gui/models/space-details';
+import { resolve } from 'rsvp';
 
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
@@ -29,17 +30,19 @@ describe('Integration | Component | storage item', function () {
 
   it('renders storage name', function (done) {
     let name = 'Storage One';
-    this.set('storages', [{
-      id: 'storage1',
-      name,
-      type: 'posix',
-    }]);
+    this.set('storages', [PromiseObject.create({
+      promise: resolve({
+        id: 'storage1',
+        name,
+        type: 'posix',
+      }),
+    })]);
 
     this.render(hbs `
     {{#one-collapsible-list as |list|}}
       {{#each storages as |storage|}}
         {{#list.item as |listItem|}}
-          {{storage-item listItem=listItem storage=storage}}
+          {{storage-item listItem=listItem storageProxy=storage}}
         {{/list.item}}
       {{/each}}
     {{/one-collapsible-list}}`);
@@ -57,10 +60,12 @@ describe('Integration | Component | storage item', function () {
     let providerId = providerManager.get('__providerDetails.id');
     let storageId = 'storage1';
 
-    this.set('storages', [{
-      id: storageId,
-      type: 'posix',
-    }]);
+    this.set('storages', [PromiseObject.create({
+      promise: resolve({
+        id: storageId,
+        type: 'posix',
+      }),
+    })]);
 
     this.set('spaces', [
       PromiseObject.create({
@@ -93,7 +98,7 @@ describe('Integration | Component | storage item', function () {
     {{#one-collapsible-list as |list|}}
       {{#each storages as |storage|}}
         {{#list.item as |listItem|}}
-          {{storage-item listItem=listItem spaces=spaces storage=storage}}
+          {{storage-item listItem=listItem spaces=spaces storageProxy=storage}}
         {{/list.item}}
       {{/each}}
     {{/one-collapsible-list}}
