@@ -137,8 +137,10 @@ export default Component.extend(I18n, {
 
   /**
    * @type {Ember.ComputedProperty<Array<Action>>}
+   * TODO: uncomment 'removeStorageAction' when removing storage will be
+   * supported by backend
    */
-  storageActions: collect('modifyStorageAction', 'removeStorageAction'),
+  storageActions: collect('modifyStorageAction' /* , 'removeStorageAction' */),
 
   /**
    * @type {Ember.ComputedProperty<Object>}
