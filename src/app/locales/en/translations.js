@@ -48,6 +48,7 @@ import contentClustersCeph from './components/content-clusters-ceph';
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
 import guiUtils from './services/gui-utils';
+import storageActions from './services/storage-actions';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -109,6 +110,7 @@ let translations = {
   },
   services: {
     guiUtils,
+    storageActions,
   },
 };
 

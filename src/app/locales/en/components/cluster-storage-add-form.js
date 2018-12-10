@@ -22,4 +22,8 @@ export default {
   glusterfs,
   webdav,
   nulldevice,
+  storageType: 'Type',
+  save: 'Save',
+  add: 'Add',
+  cancel: 'Cancel',
 };

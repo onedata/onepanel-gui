@@ -2,36 +2,45 @@ import Onepanel from 'npm:onepanel';
 
 const {
   Posix,
+  PosixModify,
   S3,
+  S3Modify,
   Ceph,
+  CephModify,
   Cephrados,
+  CephradosModify,
   Embeddedceph,
+  EmbeddedcephModify,
   Swift,
+  SwiftModify,
   Glusterfs,
+  GlusterfsModify,
   Webdav,
+  WebdavModify,
   Nulldevice,
+  NulldeviceModify,
 } = Onepanel;
 
-function clusterStorageClass(storageType) {
+function clusterStorageClass(storageType, modify = false) {
   switch (storageType) {
     case 's3':
-      return S3;
+      return modify ? S3Modify : S3;
     case 'ceph':
-      return Ceph;
+      return modify ? CephModify : Ceph;
     case 'cephrados':
-      return Cephrados;
+      return modify ? CephradosModify : Cephrados;
     case 'embeddedceph':
-      return Embeddedceph;
+      return modify ? EmbeddedcephModify : Embeddedceph;
     case 'posix':
-      return Posix;
+      return modify ? PosixModify : Posix;
     case 'swift':
-      return Swift;
+      return modify ? SwiftModify : Swift;
     case 'glusterfs':
-      return Glusterfs;
+      return modify ? GlusterfsModify : Glusterfs;
     case 'webdav':
-      return Webdav;
+      return modify ? WebdavModify : Webdav;
     case 'nulldevice':
-      return Nulldevice;
+      return modify ? NulldeviceModify : Nulldevice;
     default:
       return undefined;
   }

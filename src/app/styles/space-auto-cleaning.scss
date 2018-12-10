@@ -1,5 +1,6 @@
+$space-auto-cleaning-mobile-breakpoint: 1100px;
+
 .space-auto-cleaning {
-  $mobile-breakpoint: 1100px;
   .cleaning-settings-row {
     .form {
       margin: 0;
@@ -11,7 +12,7 @@
       margin-left: $padding-large-horizontal;
       margin-right: $padding-large-horizontal;
     }
-    @media (min-width: $mobile-breakpoint + 1px) {
+    @media (min-width: $space-auto-cleaning-mobile-breakpoint + 1px) {
       display: table;
       width: 100%;
       .cell {
@@ -25,6 +26,9 @@
         .indicators {
           padding-top: 0;
         }
+        .cleaning-boundaries-header {
+          padding-left: $padding-large-horizontal;
+        }
       }
       .space-cleaning-conditions-form {
         form {
@@ -35,7 +39,7 @@
         padding-right: 0.2em;
       }
     }
-    @media (max-width: $mobile-breakpoint) {
+    @media (max-width: $space-auto-cleaning-mobile-breakpoint) {
       .bar-cell {
         padding-top: $padding-large-vertical;
         .indicators p {

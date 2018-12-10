@@ -24,10 +24,8 @@ export default {
   supportInfo: {
     supportingProvidersDataError: 'supportingProviders data is invalid',
     providersSupport: 'Providers support',
-    chartTip: 'The chart shows how many space particular providers ' +
-      'provide for this space',
-    tableTip: 'The table shows how many space particular providers ' +
-      'provide for this space',
+    chartTip: 'The chart shows how much storage space particular providers contribute to this space',
+    tableTip: 'The table shows how much storage space particular providers contribute to this space',
     provider: 'Provider',
   },
   tabs: {
@@ -46,10 +44,10 @@ export default {
       },
     },
     clean: {
-      title: 'Auto cleaning',
+      title: 'Auto-cleaning',
       hints: {
-        enabled: 'Configure, show status and reports of auto cleaning feature for this space',
-        disabled: 'Auto cleaning can be configured only if files popularity feature is enabled',
+        enabled: 'Configure, show status and reports of auto-cleaning feature for this space',
+        disabled: 'Auto-cleaning can be configured only if files popularity feature is enabled',
       },
     },
   },

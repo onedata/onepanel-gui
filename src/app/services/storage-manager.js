@@ -2,8 +2,8 @@
  * Provides backend model/operations for storages in onepanel
  *
  * @module services/storage-manager
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michal Borzecki
+ * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -18,6 +18,7 @@ import Onepanel from 'npm:onepanel';
 
 const {
   StorageCreateRequest,
+  StorageModifyRequest,
 } = Onepanel;
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -56,7 +57,7 @@ export default Service.extend({
 
         getStorages.then(({ data: { ids } }) => {
           this.set('collectionCache.content', A(ids.map(id =>
-            this.getStorageDetails(id))));
+            this.getStorageDetails(id, reload))));
           resolve(collectionCache);
         });
         getStorages.catch(error => {
@@ -114,5 +115,37 @@ export default Service.extend({
     let createReq = StorageCreateRequest.constructFromObject(createReqProto);
 
     return onepanelServer.request('oneprovider', 'addStorage', createReq);
+  },
+
+  /**
+   * @param {string} id
+   * @param {string} oldName not-modified version of storage name
+   * @param {Onepanel.StorageModifyRequest} storageData
+   * @returns {Promise} resolves when storage has been successfully modified
+   */
+  modifyStorage(id, oldName, storageData) {
+    const onepanelServer = this.get('onepanelServer');
+
+    const modifyRequestProto = {
+      [oldName]: storageData,
+    };
+    const modifyRequest =
+      StorageModifyRequest.constructFromObject(modifyRequestProto);
+
+    return onepanelServer.request(
+      'oneprovider',
+      'modifyStorage',
+      id,
+      modifyRequest
+    );
+  },
+
+  /**
+   * @param {string} id
+   * @returns {Promise} resolves when storage has been successfully removed
+   */
+  removeStorage(id) {
+    const onepanelServer = this.get('onepanelServer');
+    return onepanelServer.request('oneprovider', 'removeStorage', id);
   },
 });
