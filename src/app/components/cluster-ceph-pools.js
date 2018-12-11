@@ -22,6 +22,9 @@ export default Component.extend(I18n, {
     return this.get('cephManager').getPoolsWithUsage();
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
   pools: computed('poolsWithUsageProxy.content.{pools.[],usage}', function pools() {
     const {
       pools: poolsList,

@@ -1301,12 +1301,12 @@ export default OnepanelServerBase.extend(
 
     __cephPools: A([{
       name: 'pool1',
-      size: 1,
-      minSize: 1,
+      copiesNumber: 1,
+      minCopiesNumber: 1,
     }, {
       name: 'pool2',
-      size: 2,
-      minSize: 1,
+      copiesNumber: 2,
+      minCopiesNumber: 1,
     }]),
 
     __cephPoolsUsage: Object.freeze({

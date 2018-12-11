@@ -1,4 +1,6 @@
 export default {
+  globalParameters: 'Global parameters',
+  nodes: 'Nodes',
   mainOptionsForm: {
     fields: {
       name: {

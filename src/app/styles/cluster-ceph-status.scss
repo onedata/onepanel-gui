@@ -1,16 +1,4 @@
 .cluster-ceph-status {
-  .ceph-status {
-    padding-left: 45px;
-  }
-
-  .ceph-status-icon {
-    position: absolute;
-    top: 22px;
-    left: 8px;
-    font-size: 34px;
-    line-height: 0;
-  }
-
   .osds-usage-container {
     .one-collapsible-list-item-content {
       padding: 0 $padding-large-horizontal;

@@ -5,7 +5,23 @@
     }
   }
   .ceph-main-options-form {
+    $label-width: 110px;
     margin-bottom: 0;
+    
+    @media (min-width: $screen-sm-min) {
+      max-width: 600px;
+
+      .control-label, .form-control-static, .form-control-column {
+        float: left;
+      }
+      .form-control-static, .form-control-column {
+        width: calc(100% - #{$label-width});
+      }
+      .control-label {
+        width: $label-width;
+        text-align: left;
+      }
+    }    
   }
   .ceph-node {
     .form {

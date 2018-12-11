@@ -1,7 +1,7 @@
 <div class="ceph-status-container min-height-100 relative">
   {{#promise-proxy-container proxy=statusProxy sizeClass="sm"}}
-    <div class="alert alert-{{alertLevel}} ceph-status">
-      {{one-icon icon=statusIcon class="ceph-status-icon"}}
+    <div class="alert alert-{{alertLevel}} with-icon ceph-status">
+      {{one-icon icon=statusIcon class="alert-icon"}}
       <strong class="ceph-status-message">{{statusMessage}}</strong>
       {{#if statusProxy.messages.length}}
         <ul>

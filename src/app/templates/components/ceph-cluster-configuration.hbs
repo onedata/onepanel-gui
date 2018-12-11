@@ -1,19 +1,25 @@
 {{#promise-proxy-container proxy=config.osdIdGenerator.nextIdProxy}}
   {{#unless config.hasManagerMonitor}}
-    <div class="alert alert-warning" role="alert">
+    <div class="alert alert-warning with-icon" role="alert">
+      {{one-icon icon="checkbox-filled-warning" class="alert-icon"}}
       {{tt this "atLeastManagerMonitor"}}
     </div>
   {{/unless}}
 
   {{#unless config.hasOsd}}
-    <div class="alert alert-warning" role="alert">
+    <div class="alert alert-warning with-icon" role="alert">
+      {{one-icon icon="checkbox-filled-warning" class="alert-icon"}}
       {{tt this "atLeastOsd"}}
     </div>
   {{/unless}}
 
+  <h1>{{tt this "globalParameters"}}</h1>
+
   {{ceph-cluster-configuration/main-options-form
     mainConfiguration=config.mainConfiguration
     isStandalone=isStandalone}}
+
+  <h1>{{tt this "nodes"}}</h1>
 
   {{#one-collapsible-list as |list|}}
     {{#each config.nodes key="host" as |node|}}

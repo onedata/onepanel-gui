@@ -21,6 +21,9 @@ const validationsProto = editFieldDefinition.reduce((proto, field) => {
 }, {});
 
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
+  classNames: ['manager-monitor-form'],
+  classNameBindings: ['shouldBeHidden:hide'],
+
   /**
    * @override
    */
@@ -105,6 +108,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   currentFieldsPrefix: computed('mode', function currentFieldsPrefix() {
     const mode = this.get('mode');
     return ['edit', 'create'].includes(mode) ? ['edit'] : ['static'];
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  shouldBeHidden: computed('mode', 'managerMonitor.monitorIp', function shouldBeHidden() {
+    const {
+      mode,
+      managerMonitor,
+    } = this.getProperties('mode', 'managerMonitor');
+    // is in 'show' mode and all field are empty
+    return mode === 'show' && !get(managerMonitor, 'monitorIp');
   }),
 
   managerMonitorObserver: observer(

@@ -7,6 +7,7 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 const editFieldDefinition = [{
   name: 'name',
   type: 'text',
+  cssClass: 'form-group-sm',
 }];
 
 const allPrefixes = ['edit', 'static'];
@@ -22,7 +23,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   i18nPrefix: 'components.cephClusterConfiguration.mainOptionsForm',
 
+  /**
+   * @type {boolean}
+   */
   isStandalone: true,
+
+  /**
+   * @type {Object}
+   */
+  layoutConfig: Object.freeze({
+    formLabelColumns: '',
+    formInputColumns: '',
+  }),
 
   /**
    * @type {Ember.ComputedProperty<string>}
