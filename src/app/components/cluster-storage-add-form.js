@@ -20,6 +20,8 @@ import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
+import { resolve } from 'rsvp';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -75,7 +77,10 @@ const storagePathTypeDefaults = {
 
 export default OneForm.extend(I18n, Validations, {
   classNames: ['cluster-storage-add-form'],
-  classNameBindings: ['inShowMode:form-static'],
+  classNameBindings: [
+    'inShowMode:form-static',
+    'showLoadingSpinner:is-loading',
+  ],
 
   i18n: service(),
   navigationState: service(),
@@ -159,6 +164,12 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Ember.ComputedProperty<Object>}
    */
   layoutConfig,
+
+  /**
+   * If true, shows loading spinner on top of the form (overlay)
+   * @type {boolean}
+   */
+  showLoadingSpinner: false,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -309,7 +320,9 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
    */
   cephOsdsProxy: computed(function cephOsdsProxy() {
-    return this.get('cephManager').getOsds(true);
+    return PromiseArray.create({
+      promise: resolve([]),
+    });
   }),
 
   /**
@@ -367,6 +380,36 @@ export default OneForm.extend(I18n, Validations, {
     this._fillInForm();
   }),
 
+  cephOsdFetch: observer('mode', function cephOsdFetch() {
+    const {
+      mode,
+      cephManager,
+      element,
+    } = this.getProperties('mode', 'cephManager', 'element');
+    if (mode === 'show') {
+      this.set('showLoadingSpinner', false);
+    } else {
+      if (
+        mode === 'create' ||
+        (mode === 'edit' && this.get('storage.type') === 'embeddedceph')
+      ) {
+        const osdProxy = cephManager.getOsds(true);
+        if (!element) {
+          this.set('cephOsdsProxy', osdProxy);
+        } else {
+          this.set('showLoadingSpinner', true);
+          osdProxy
+            .finally(() =>
+              safeExec(this, () => this.setProperties({
+                cephOsdsProxy: osdProxy,
+                showLoadingSpinner: false,
+              }))
+            );
+        }
+      }
+    }
+  }),
+
   init() {
     this._super(...arguments);
 
@@ -407,6 +450,7 @@ export default OneForm.extend(I18n, Validations, {
     } else {
       this.resetFormValues();
     }
+    this.cephOsdFetch();
     this.osdsNumberObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
