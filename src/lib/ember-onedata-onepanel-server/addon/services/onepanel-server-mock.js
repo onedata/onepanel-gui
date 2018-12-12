@@ -992,21 +992,21 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getCephManagers: computed(function () {
       return {
-        success: () => this.get('__cephManagers').toArray(),
+        success: () => ({ managers: this.get('__cephManagers').toArray() }),
         statusCode: () => 200,
       };
     }),
 
     _req_oneprovider_getCephMonitors: computed(function () {
       return {
-        success: () => this.get('__cephMonitors').toArray(),
+        success: () => ({ monitors: this.get('__cephMonitors').toArray() }),
         statusCode: () => 200,
       };
     }),
 
     _req_oneprovider_getCephOsds: computed(function () {
       return {
-        success: () => this.get('__cephOsds').toArray(),
+        success: () => ({ osds: this.get('__cephOsds').toArray() }),
         statusCode: () => 200,
       };
     }),
@@ -1022,14 +1022,14 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getCephPools: computed(function () {
       return {
-        success: () => this.get('__cephPools').toArray(),
+        success: () => ({ pools: this.get('__cephPools').toArray() }),
         statusCode: () => 200,
       };
     }),
 
     _req_oneprovider_getBlockDevices: computed(function () {
       return {
-        success: () => this.get('__blockDevices').toArray(),
+        success: () => ({ block_devices: this.get('__blockDevices').toArray() }),
         statusCode: () => 200,
       };
     }),

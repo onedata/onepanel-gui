@@ -11,6 +11,7 @@ import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
 import { A } from '@ember/array';
+import { get } from '@ember/object';
 import { readOnly, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
@@ -65,9 +66,10 @@ export default Service.extend({
   /**
    * @param {string} clusterId
    * @param {boolean} [reload=false]
+   * @param {boolean} [useOldClusterStep=false]
    * @returns {PromiseObject}
    */
-  getClusterDetails(clusterId, reload = false) {
+  getClusterDetails(clusterId, reload = false, useOldClusterStep = false) {
     let {
       onepanelServiceType,
       defaultCache,
@@ -84,9 +86,15 @@ export default Service.extend({
       if (_defaultCache && !reload) {
         resolve(defaultCache);
       } else {
-        let clusterStep, hasCephDeployed;
+        let clusterStep, hasCephDeployed, gettingStep;
+        const oldClusterStep = _defaultCache ?
+          get(_defaultCache, 'initStep') : undefined;
 
-        let gettingStep = this._getThisClusterInitStep();
+        if (useOldClusterStep && oldClusterStep !== undefined) {
+          gettingStep = Promise.resolve(oldClusterStep);
+        } else {
+          gettingStep = this._getThisClusterInitStep();
+        }
 
         gettingStep.then(step => {
           clusterStep = step;
@@ -117,9 +125,10 @@ export default Service.extend({
             onepanelServiceType: onepanelServiceType,
             clusterInfo: thisCluster,
             initStep: clusterStep,
+            i: this.get('i'),
             hasCephDeployed,
           });
-
+          this.set('i', this.get('i') + 1);
           this.set('_defaultCache', clusterDetails);
           resolve(defaultCache);
         }).catch(reject);
@@ -129,6 +138,8 @@ export default Service.extend({
     });
     return PromiseObject.create({ promise });
   },
+
+  i: 0,
 
   /**
    * Fetch info about deployed cluster and create ClusterHostInfo objects

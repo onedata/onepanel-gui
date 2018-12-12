@@ -1,3 +1,12 @@
+/**
+ * Class that represents OSD service parameters.
+ * 
+ * @module utils/ceph/osd-configuration
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject, { set, get } from '@ember/object';
 
 const osdFields = [
@@ -45,11 +54,17 @@ export default EmberObject.extend({
   path: undefined,
 
   /**
-   * If true then manager & monitor config is valid
+   * If true then osd config is valid
    * @type {boolean}
    */
   isValid: true,
 
+  /**
+   * Fills in configuration with given data.
+   * @param {Object} newConfig 
+   * @param {boolean} isValid
+   * @returns {undefined}
+   */
   fillIn(newConfig, isValid) {
     const propsToChange = {};
     if (newConfig) {
@@ -68,6 +83,11 @@ export default EmberObject.extend({
     }
   },
 
+  /**
+   * Creates raw object with configuration data. It is compatible with format
+   * used by backend.
+   * @returns {Object}
+   */
   toRawConfig() {
     const {
       id,

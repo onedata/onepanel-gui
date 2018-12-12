@@ -1,3 +1,12 @@
+/**
+ * Provides data related to Ceph cluster configuration
+ *
+ * @module services/ceph-manager
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Service, { inject as service } from '@ember/service';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
@@ -12,17 +21,29 @@ export default Service.extend({
   /**
    * Returns all osds in the ceph cluster.
    * @param {boolean} suppressNotDeployed if true, "ceph not deployed" error
-   *   will be ignored
+   *   will be ignored and converted to [] value
    * @return {PromiseArray<Onepanel.CephOsd>}
    */
   getOsds(suppressNotDeployed = false) {
     const onepanelServer = this.get('onepanelServer');
     let promise = onepanelServer.request('oneprovider', 'getCephOsds')
-      .then(({ data }) => data);
+      .then(({ data: { osds } }) => osds);
     if (suppressNotDeployed) {
       promise = this.suppressNotDeployed(promise, []);
     }
     return PromiseArray.create({ promise });
+  },
+
+  /**
+   * Returns all managers in the ceph cluster.
+   * @return {PromiseArray<Onepanel.CephManager>}
+   */
+  getManagers() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseArray.create({
+      promise: onepanelServer.request('oneprovider', 'getCephManagers')
+        .then(({ data: { managers } }) => managers),
+    });
   },
 
   /**
@@ -33,7 +54,7 @@ export default Service.extend({
     const onepanelServer = this.get('onepanelServer');
     return PromiseArray.create({
       promise: onepanelServer.request('oneprovider', 'getCephMonitors')
-        .then(({ data }) => data),
+        .then(({ data: { monitors } }) => monitors),
     });
   },
 
@@ -55,15 +76,14 @@ export default Service.extend({
    * @return {PromiseObject<Utils/Ceph/ClusterConfiguration>}
    */
   getConfiguration() {
-    const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({
       promise: Promise.all([
-        onepanelServer.request('oneprovider', 'getCephManagers'),
-        get(this.getMonitors(), 'promise'),
-        get(this.getOsds(), 'promise'),
-        get(this.getParams(), 'promise'),
+        this.getManagers(),
+        this.getMonitors(),
+        this.getOsds(),
+        this.getParams(),
       ]).then(([
-        { data: managers },
+        managers,
         monitors,
         osds,
         params,
@@ -83,16 +103,21 @@ export default Service.extend({
   },
 
   /**
-   * @return {PromiseObject<CephStatus>}
+   * Returns Ceph cluster status
+   * @return {PromiseObject<Onepanel.CephStatus>}
    */
   getStatus() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({
-        promise: onepanelServer.request('oneprovider', 'getCephStatus')
-          .then(({ data }) => data),
+      promise: onepanelServer.request('oneprovider', 'getCephStatus')
+        .then(({ data }) => data),
     });
   },
 
+  /**
+   * Returns Ceph OSDs usage
+   * @return {PromiseObject<Object>} Object osdId -> Onepanel.DataUsage
+   */
   getOsdsUsage() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({
@@ -101,6 +126,10 @@ export default Service.extend({
     });
   },
 
+  /**
+   * Returns Ceph OSDs and OSDs usage
+   * @return {PromiseObject<Object>} Object with fields: osds, usage
+   */
   getOsdsWithUsage() {
     return PromiseObject.create({
       promise: Promise.all([
@@ -113,14 +142,22 @@ export default Service.extend({
     });
   },
 
+  /**
+   * Returns Ceph cluster pools
+   * @return {PromiseArray<Onepanel.CephPool>}
+   */
   getPools() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseArray.create({
       promise: onepanelServer.request('oneprovider', 'getCephPools')
-        .then(({ data }) => data),
+        .then(({ data: { pools } }) => pools),
     });
   },
 
+  /**
+   * Returns Ceph pools usage
+   * @return {PromiseObject<Object>} Object name -> Onepanel.PoolUsage
+   */
   getPoolsUsage() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({
@@ -129,6 +166,10 @@ export default Service.extend({
     });
   },
 
+  /**
+   * Returns Ceph pools and pools usage
+   * @return {PromiseObject<Object>} Object with fields: pools, usage
+   */
   getPoolsWithUsage() {
     return PromiseObject.create({
       promise: Promise.all([
@@ -141,6 +182,10 @@ export default Service.extend({
     });
   },
 
+  /**
+   * Returns next possible Osd Id
+   * @returns {PromiseObject<number>}
+   */
   getNextOsdId() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({

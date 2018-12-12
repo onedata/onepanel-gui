@@ -1,4 +1,13 @@
-import EmberObject, { computed, observer, set, get, getProperties } from '@ember/object';
+/**
+ * Class that represents Ceph node parameters.
+ * 
+ * @module utils/ceph/node-configuration
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
+import EmberObject, { computed, set, get, getProperties } from '@ember/object';
 import { gt, reads } from '@ember/object/computed';
 import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
@@ -18,21 +27,47 @@ export default EmberObject.extend({
    */
   host: undefined,
 
-  devices: computed(function devices() {
-    return PromiseArray.create({
-      // infinite loading
-      promise: new Promise(() => {}),
-    });
-  }),
-
+  /**
+   * @type {Utils/Ceph/OsdIdGenerator}
+   * @virtual
+   */
   osdIdGenerator: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseArray<Utils/Ceph/NodeDevice>>}
+   */
+  devices: computed('host', function devices() {
+    const {
+      host,
+      onepanelServer,
+    } = this.getProperties('host', 'onepanelServer');
+
+    if (host) {
+      return PromiseArray.create({
+        promise: onepanelServer
+          .request('oneprovider', 'getBlockDevices', host)
+          .then(({ data }) =>
+            data['block_devices']
+            // mounted devices should not be used as OSD device for safety reasons
+            // (to avoid unintentional data lost)
+            .filter(device => !get(device, 'mounted'))
+            .map(device => CephNodeDevice.create(device))
+          ),
+      });
+    } else {
+      return PromiseArray.create({
+        // infinite loading
+        promise: new Promise(() => {}),
+      });
+    }
+  }),
 
   /**
    * Mapping: deviceId -> number of usages in unique osds
    * @type {object}
    */
   usedDevices: computed(
-    'devices.[]',
+    'devices.{[],isFulfilled}',
     'osds.@each.{type,device,dbDevice}',
     function usedDevices() {
       const {
@@ -57,7 +92,7 @@ export default EmberObject.extend({
             osdDevicesNames
               // find device by name
               .map(name => devices.findBy('name', name))
-              // return not-found values (undefined)
+              // remove not-found values (undefined)
               .compact()
               // map to device id
               .mapBy('id')
@@ -84,16 +119,16 @@ export default EmberObject.extend({
         usedDevices,
       } = this.getProperties('managerMonitor', 'osds', 'usedDevices');
       const managerMonitorValid =
-        get(managerMonitor, 'isEnabled') && get(managerMonitor, 'isValid');
+        get(managerMonitor, 'isEnabled') ? get(managerMonitor, 'isValid') : true;
       const osdsValid = osds.isEvery('isValid');
-      const usedDevicesValid = 
+      const usedDevicesValid =
         get(_.values(usedDevices).filter(x => x > 1), 'length') === 0;
       return managerMonitorValid && osdsValid && usedDevicesValid;
     }
   ),
 
   /**
-   * @type {Ember.ComputedProperty<Utils/CephManagerMonitorConfig>}
+   * @type {Ember.ComputedProperty<Utils/Ceph/ManagerMonitorConfiguration>}
    */
   managerMonitor: computed(function managerMonitor() {
     return CephManagerMonitorConfiguration.create({
@@ -102,47 +137,26 @@ export default EmberObject.extend({
   }),
 
   /**
-   * @type {Ember.ComputedProperty<Ember.A<Utils/CephOsdrConfig>>}
+   * @type {Ember.ComputedProperty<Ember.A<Utils/Ceph/OsdConfiguration>>}
    */
   osds: computed(function osds() {
     return A();
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   hasOsd: gt('osds.length', 0),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   hasManagerMonitor: reads('managerMonitor.isEnabled'),
-  
-  hostObserver: observer('host', function hostObserver() {
-    const {
-      host,
-      onepanelServer,
-    } = this.getProperties('host', 'onepanelServer');
-    let promiseArray;
 
-    if (host) {
-      promiseArray = PromiseArray.create({
-        promise: onepanelServer
-          .request('oneprovider', 'getBlockDevices', host)
-          .then(response =>
-            response.data['block_devices']
-              .filter(device => !get(device, 'mounted'))
-              .map(device => CephNodeDevice.create(device))
-          ),
-      });
-    } else {
-      promiseArray = PromiseArray.create({
-        // infinite loading
-        promise: new Promise(() => {}),
-      });
-    }
-    this.set('devices', promiseArray);
-  }),
-
-  init() {
-    this._super(...arguments);
-    this.hostObserver();
-  },
-
+  /**
+   * Creates new OSD and adds it to this node.
+   * @returns {Utils/Ceph/OsdConfiguration}
+   */
   addOsd() {
     const {
       osdIdGenerator,
@@ -160,6 +174,10 @@ export default EmberObject.extend({
     return osd;
   },
 
+  /**
+   * Removes OSD by id.
+   * @param {number} id 
+   */
   removeOsd(id) {
     const osds = this.get('osds');
     const osdToRemove = osds.findBy('id', id);
@@ -169,6 +187,11 @@ export default EmberObject.extend({
     }
   },
 
+  /**
+   * Returns device that can be proposed for new OSD. If all devices are already
+   * used, undefined is returned.
+   * @returns {Object|undefined}
+   */
   getDeviceForNewOsd() {
     const {
       usedDevices,
@@ -182,6 +205,11 @@ export default EmberObject.extend({
     }
   },
 
+  /**
+   * Fills in configuration with given data.
+   * @param {Object} newConfig
+   * @returns {undefined}
+   */
   fillIn(newConfig) {
     const {
       managerMonitor,
@@ -217,6 +245,11 @@ export default EmberObject.extend({
     });
   },
 
+  /**
+   * Creates raw object with configuration data. It is compatible with format
+   * used by backend.
+   * @returns {Object}
+   */
   toRawConfig() {
     const {
       managerMonitor,

@@ -38,7 +38,7 @@ export default Component.extend(I18n, {
   isDeployedProxy: computed(function isDeployedProxy() {
     return this.get('cephManager').isDeployed();
   }),
-  
+
   /**
    * @type {Ember.ComputedProperty<PromiseObject<Utils/Ceph/ClusterConfiguration>>}
    */

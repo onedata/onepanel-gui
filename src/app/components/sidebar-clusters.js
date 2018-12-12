@@ -2,13 +2,13 @@
  * A sidebar for clusters (extension of ``two-level-sidebar``)
  *
  * @module components/sidebar-clusters
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { reads } from '@ember/object/computed';
-import { computed, get } from '@ember/object';
+import { computed, getProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
 import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
 import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
@@ -76,7 +76,7 @@ export default TwoLevelSidebar.extend(I18n, {
     'dnsItem',
     'certificateItem',
     'nodesItem',
-    'cluster.isInitialized',
+    'cluster.{isInitialized,hasCephDeployed}',
     function () {
       const {
         onepanelServiceType,
@@ -91,7 +91,10 @@ export default TwoLevelSidebar.extend(I18n, {
         'certificateItem',
         'nodesItem'
       );
-      const hasCephDeployed = get(cluster, 'hasCephDeployed');
+      const {
+        isInitialized,
+        hasCephDeployed,
+      } = getProperties(cluster, 'isInitialized', 'hasCephDeployed');
 
       const cephItemArray = [];
       if (hasCephDeployed) {
@@ -102,7 +105,7 @@ export default TwoLevelSidebar.extend(I18n, {
         });
       }
 
-      if (get(cluster, 'isInitialized')) {
+      if (isInitialized) {
         switch (onepanelServiceType) {
           case 'provider':
             return [

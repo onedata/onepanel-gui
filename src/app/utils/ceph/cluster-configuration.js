@@ -1,3 +1,12 @@
+/**
+ * Class that represents whole ceph cluster configuration.
+ * 
+ * @module utils/ceph/cluster-configuration
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject, { computed, get, getProperties } from '@ember/object';
 import { A } from '@ember/array';
 import { getOwner } from '@ember/application';
@@ -8,22 +17,40 @@ import CephClusterMainConfiguration from 'onepanel-gui/utils/ceph/cluster-main-c
 
 export default EmberObject.extend({
   /**
+   * Contains global params of the Ceph cluster.
    * @type {Utils/Ceph/ClusterMainConfiguration}
    */
   mainConfiguration: computed(function mainConfiguration() {
     return CephClusterMainConfiguration.create();
   }),
 
+  /**
+   * @type {Utils/Ceph/OsdIdGenerator}
+   */
   osdIdGenerator: undefined,
 
+  /**
+   * List of Ceph cluster nodes.
+   * @type {Ember.ComputedProperty<Array<Utils/Ceph/NodeConfiguration>>}
+   */
   nodes: computed(function nodes() {
     return A();
   }),
 
+  /**
+   * Is true if there is at least one OSD service available in
+   * cluster configuration.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   hasOsd: computed('nodes.@each.hasOsd', function hasOsd() {
     return this.get('nodes').isAny('hasOsd');
   }),
 
+  /**
+   * Is true if there is at least one manager & monitor services available in
+   * cluster configuration.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   hasManagerMonitor: computed(
     'nodes.@each.hasManagerMonitor',
     function hasManagerMonitor() {
@@ -31,6 +58,10 @@ export default EmberObject.extend({
     }
   ),
 
+  /**
+   * If true, whole Ceph cluster configuration has valid values.
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isValid: computed(
     'hasOsd',
     'hasManagerMonitor',
@@ -42,7 +73,12 @@ export default EmberObject.extend({
         hasOsd,
         hasManagerMonitor,
         mainConfiguration,
-      } = this.getProperties('nodes', 'hasOsd', 'hasManagerMonitor', 'mainConfiguration');
+      } = this.getProperties(
+        'nodes',
+        'hasOsd',
+        'hasManagerMonitor',
+        'mainConfiguration'
+      );
       return nodes.every(node => get(node, 'isValid')) && hasOsd && hasManagerMonitor &&
         get(mainConfiguration, 'isValid');
     }
@@ -56,6 +92,11 @@ export default EmberObject.extend({
     );
   },
 
+  /**
+   * Creates new cluster node and adds it to the configuration.
+   * @param {string} host 
+   * @returns {Utils/Ceph/NodeConfiguration}
+   */
   addNode(host) {
     const {
       nodes,
@@ -74,6 +115,11 @@ export default EmberObject.extend({
     }
   },
 
+  /**
+   * Removes node by host from the configuration.
+   * @param {string} host
+   * @returns {boolean} whether or not node with given host exists
+   */
   removeNodeByHost(host) {
     const nodes = this.get('nodes');
     const node = nodes.findBy('host', host);
@@ -83,6 +129,11 @@ export default EmberObject.extend({
     return !!node;
   },
 
+  /**
+   * Fills in configuration with given data.
+   * @param {Object} newConfig 
+   * @returns {undefined}
+   */
   fillIn(newConfig) {
     const {
       managers,
@@ -97,6 +148,11 @@ export default EmberObject.extend({
     });
   },
 
+  /**
+   * Creates raw object with configuration data. It is compatible with format
+   * used by backend.
+   * @returns {Object}
+   */
   toRawConfig() {
     const {
       nodes,

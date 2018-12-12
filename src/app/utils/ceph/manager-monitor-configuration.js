@@ -1,3 +1,12 @@
+/**
+ * Class that represents Ceph manager & monitor services parameters.
+ * 
+ * @module utils/ceph/manager-monitor-configuration
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject, { set, get } from '@ember/object';
 
 export default EmberObject.extend({
@@ -26,6 +35,12 @@ export default EmberObject.extend({
    */
   isValid: true,
 
+  /**
+   * Fills in configuration with given data.
+   * @param {Object} newConfig 
+   * @param {boolean} isValid
+   * @returns {undefined}
+   */
   fillIn(newConfig, isValid) {
     const propsToChange = {};
     const newMonitorIp = get(newConfig, 'monitorIp');
@@ -40,6 +55,11 @@ export default EmberObject.extend({
     }
   },
 
+  /**
+   * Creates raw object with configuration data. It is compatible with format
+   * used by backend.
+   * @returns {Object}
+   */
   toRawConfig() {
     const {
       isEnabled,

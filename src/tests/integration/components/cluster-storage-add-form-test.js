@@ -188,7 +188,8 @@ describe('Integration | Component | cluster storage add form', function () {
         return wait().then(() => {
           lumaFields = this.$(lumaSelector);
           expect(lumaFields).to.have.length(2);
-          expect(lumaFields.parents('.form-group')).to.have.class('fadeOut');
+          expect(lumaFields.parents('.form-group'))
+            .to.have.class('fadeOut');
         });
       });
     });
@@ -210,8 +211,10 @@ describe('Integration | Component | cluster storage add form', function () {
           return wait().then(() => {
             helper.getToggleInput('generic-lumaEnabled').click();
             return wait().then(() => {
-              expect(helper.getInput('generic-name').val()).to.be.empty;
-              expect(helper.getInput('luma-lumaUrl').val()).to.be.empty;
+              expect(helper.getInput('generic-name').val())
+                .to.be.empty;
+              expect(helper.getInput('luma-lumaUrl').val())
+                .to.be.empty;
             });
           });
         });
@@ -257,7 +260,8 @@ describe('Integration | Component | cluster storage add form', function () {
           this.set('isFormOpened', true);
           return wait().then(() => {
             expect(helper.getInput('generic-name').val()).to.be.empty;
-            expect(this.$('[class*="field-luma"]')).to.have.length(0);
+            expect(this.$('[class*="field-luma"]'))
+              .to.have.length(0);
           });
         });
       });

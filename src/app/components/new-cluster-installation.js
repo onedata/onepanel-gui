@@ -345,7 +345,7 @@ export default Component.extend(I18n, {
    * @param {Object} configProto 
    * @param {Array<string>} cephNodes 
    */
-  extractConfiguration(configProto, cephNodes=[]) {
+  extractConfiguration(configProto, cephNodes = []) {
     const hosts = this.get('hosts');
     const {
       cluster,

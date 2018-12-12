@@ -1,8 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
+import Service from '@ember/service';
+import { registerService } from '../../helpers/stub-service';
 
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
+
+const CephManagerStub = Service;
 
 describe('Unit | Service | cluster manager', function () {
   setupTest('service:cluster-manager', {
@@ -11,8 +15,8 @@ describe('Unit | Service | cluster manager', function () {
   });
 
   beforeEach(function () {
-    this.register('service:onepanel-server', onepanelServerStub);
-    this.inject.service('onepanel-server', { as: 'onepanelServer' });
+    registerService(this, 'onepanel-server', onepanelServerStub);
+    registerService(this, 'ceph-manager', CephManagerStub);
   });
 
   it('converts API cluster info to array of ClusterHostInfo', function () {

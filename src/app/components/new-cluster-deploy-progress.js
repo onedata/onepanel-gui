@@ -35,7 +35,7 @@ export default Component.extend(I18n, {
    * @type {jQuery.Promise}
    */
   deploymentPromise: null,
-  
+
   /**
    * Set by task status updates
    * @type {Array<string>}
@@ -146,7 +146,7 @@ export default Component.extend(I18n, {
     if (!totalStepsNumber) {
       totalStepsNumber = 1;
     }
-    
+
     this.setProperties({
       doneSteps,
       totalStepsNumber,

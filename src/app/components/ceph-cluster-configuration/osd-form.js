@@ -80,7 +80,6 @@ const usedDeviceValidator = validator(function (value, options, model) {
   'allFieldsValues.editBluestore.dbDevice',
 ].forEach(field => validationsProto[field].push(usedDeviceValidator));
 
-
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['row', 'content-row', 'osd-section'],
 
@@ -301,10 +300,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
           `allFieldsValues.static${prefix}.${osdFieldName}`,
           this.translateStaticValue(osdFieldName, value)
         );
-        
+
         if (value !== undefined || mode !== 'create') {
-          const field = allFields.findBy('name', `edit${prefix}.${osdFieldName}`);
-          set(field, 'defaultValue', value); 
+          const field = allFields.findBy(
+            'name',
+            `edit${prefix}.${osdFieldName}`
+          );
+          set(field, 'defaultValue', value);
           if (!get(field, 'changed')) {
             this.set(`allFieldsValues.edit${prefix}.${osdFieldName}`, value);
           }
@@ -321,7 +323,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   init() {
     this._super(...arguments);
     this.prepareFields();
-    
+
     this.osdObserver();
     if (this.get('mode') === 'create') {
       const device = this.get('allFieldsValues.editBluestore.device');
@@ -372,7 +374,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   translateStaticValue(fieldName, value) {
     if (value) {
-      switch(fieldName) {
+      switch (fieldName) {
         case 'type':
           return get(this.t(`fields.type.options.${value}`), 'string');
         default:

@@ -34,14 +34,43 @@ const {
   layoutConfig,
 } = config;
 
+/**
+ * Analyzes all field validators dependencies (dependent fields) and replaces
+ * prefixes in their names according to given values.
+ * @param {FieldType} field
+ * @param {string} prefix
+ * @param {string} newPrefix
+ * @returns {FieldType}
+ */
+function replaceDependencyPrefix(field, prefix, newPrefix) {
+  ['lt', 'lte', 'gt', 'gte'].forEach(validatorName => {
+    const validator = get(field, validatorName);
+    if (validator && typeof validator === 'object') {
+      const propertyName = get(validator, 'property');
+      if (_.startsWith(propertyName, prefix + '.')) {
+        const prefixlessPropertyName =
+          propertyName.substring(get(prefix, 'length') + 1);
+        set(validator, 'property', `${newPrefix}.${prefixlessPropertyName}`);
+      }
+    }
+  });
+  return field;
+}
+
 function createValidations(storageTypes, genericFields, lumaFields) {
   const validations = {};
   storageTypes.forEach(type => {
     type.fields.forEach(field => {
       const validator = createFieldValidator(field);
+      field = replaceDependencyPrefix(
+        _.cloneDeep(field),
+        type.id,
+        type.id + '_editor'
+      );
+      const editorValidator = createFieldValidator(field);
       validations['allFieldsValues.' + type.id + '.' + field.name] = validator;
       validations['allFieldsValues.' + type.id + '_editor.' + field.name] =
-        validator;
+        editorValidator;
     });
   });
   genericFields.forEach(field => {

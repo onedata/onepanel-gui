@@ -23,7 +23,7 @@ const {
  * How many steps should be done in one progress state fetch
  * @type {number}
  */
-const PROGRESS_SPEED = 4;
+const PROGRESS_SPEED = 8;
 
 export default EmberObject.extend({
   /**

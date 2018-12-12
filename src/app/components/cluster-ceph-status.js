@@ -95,7 +95,7 @@ export default Component.extend(I18n, {
 
         osds = _.cloneDeep(osds);
         usage = _.cloneDeep(usage);
-        
+
         osds.forEach(osd => set(osd, 'usage', usage[get(osd, 'id')]));
 
         const groupedOsds = _.groupBy(osds, osd => get(osd, 'host'));
@@ -125,8 +125,9 @@ export default Component.extend(I18n, {
     const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');
     for (let i = 1; i < autoexpandOsdsWhenNodesBelow; i++) {
       const ithItemSelector = `.one-collapsible-list-item:nth-child(${i})`;
-      this.$(`.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`)
-        .click();
+      this.$(
+        `.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`
+      ).click();
     }
   },
 });

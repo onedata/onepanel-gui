@@ -1,3 +1,12 @@
+/**
+ * Generates unique ids for new Ceph OSDs.
+ * 
+ * @module utils/ceph/osd-id-generator
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject, { observer, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 
@@ -17,8 +26,8 @@ export default EmberObject.extend({
     return this.get('cephManager').getNextOsdId();
   }),
 
-  nextIdObserver: observer('loadingProxy.content', function nextIdObserver() {
-    const fetchedNextId = this.get('loadingProxy.content');
+  nextIdObserver: observer('nextIdProxy.content', function nextIdObserver() {
+    const fetchedNextId = this.get('nextIdProxy.content');
     if (typeof fetchedNextId === 'number') {
       this.set('nextId', fetchedNextId);
     }

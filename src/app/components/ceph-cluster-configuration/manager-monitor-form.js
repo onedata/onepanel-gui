@@ -61,8 +61,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
   fieldsSource: computed(function fieldsSource() {
-    return editFieldDefinition.map(field => 
-      Object.assign({}, field, { label: this.t(`fields.${field.name}.label`)})
+    return editFieldDefinition.map(field =>
+      Object.assign({}, field, { label: this.t(`fields.${field.name}.label`) })
     );
   }),
 
@@ -71,7 +71,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   editFields: computed('fieldsSource', function editFields() {
     return this.get('fieldsSource').map(field => EmberObject.create(
-      Object.assign({}, field, { name: 'edit.' + get(field, 'name')})
+      Object.assign({}, field, { name: 'edit.' + get(field, 'name') })
     ));
   }),
 
@@ -132,11 +132,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     'mode',
     'allFields',
     function managerMonitorObserver() {
-    const {
-      managerMonitor,
-      mode,
-      allFields,
-    } = this.getProperties('managerMonitor', 'mode', 'allFields');
+      const {
+        managerMonitor,
+        mode,
+        allFields,
+      } = this.getProperties('managerMonitor', 'mode', 'allFields');
       // Working with array because there may be more fields in the future.
       ['monitorIp'].forEach(fieldName => {
         const value = get(managerMonitor, fieldName);
@@ -144,10 +144,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
           allFields.findBy('name', `static.${fieldName}`);
         set(staticField, 'defaultValue', value);
         this.set(`allFieldsValues.static.${fieldName}`, value);
-        
+
         if (value !== undefined || mode !== 'create') {
           const field = allFields.findBy('name', `edit.${fieldName}`);
-          set(field, 'defaultValue', value); 
+          set(field, 'defaultValue', value);
           if (!get(field, 'changed')) {
             this.set(`allFieldsValues.edit.${fieldName}`, value);
           }

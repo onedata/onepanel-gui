@@ -1,7 +1,17 @@
+/**
+ * Class that node block device used by Ceph OSD.
+ * 
+ * @module utils/ceph/node-device
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject, { computed } from '@ember/object';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
 let nextCephNodeDeviceId = 0;
+
 function getNextCephNodeDeviceId() {
   return String(nextCephNodeDeviceId++);
 }
