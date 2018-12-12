@@ -1,3 +1,12 @@
+/**
+ * Provides form for showing, creating and modifying global ceph parameters.
+ * 
+ * @module components/ceph-cluster-configuration/main-options-form
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import EmberObject, { computed, get, set, observer } from '@ember/object';
@@ -37,17 +46,19 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   }),
 
   /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  mode: computed('isStandalone', function mode() {
-    return this.get('isStandalone') ? 'show' : 'edit';
-  }),
-
-  /**
    * @virtual
    * @type {Utils/Ceph/ClusterMainConfiguration}
    */
   mainConfiguration: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  mode: computed('isStandalone', function mode() {
+    // For now form is readonly in standalone mode because global params cannot
+    // be changed after deployment. 
+    return this.get('isStandalone') ? 'show' : 'edit';
+  }),
 
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
@@ -117,6 +128,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       mode,
       allFields,
     } = this.getProperties('mainConfiguration', 'mode', 'allFields');
+      // Working with array because there may be more fields in the future.
       ['name'].forEach(fieldName => {
         const value = get(mainConfiguration, fieldName);
         const staticField =
@@ -141,6 +153,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     this.mainConfigurationObserver();
   },
 
+  /**
+   * Generates JSON config object with values from form.
+   * @returns {Object}
+   */
   constructConfig() {
     const name = this.get('allFieldsValues.edit.name');
     const config = {
@@ -149,6 +165,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     return config;
   },
 
+  /**
+   * Applies actual state of the form to the config object.
+   * @returns {undefined}
+   */
   applyChange() {
     this.get('mainConfiguration')
       .fillIn(this.constructConfig(), this.get('isValid'));

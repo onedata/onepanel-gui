@@ -38,6 +38,18 @@ export default Service.extend({
   },
 
   /**
+   * Returns global ceph parameters
+   * @return {PromiseArray<Onepanel.CephGlobalParams>}
+   */
+  getParams() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseObject.create({
+      promise: onepanelServer.request('oneprovider', 'getCephParams')
+        .then(({ data }) => data),
+    });
+  },
+
+  /**
    * Returns ceph cluster configuration - aggregates results from multiple
    * requests to form complex configuration object.
    * @return {PromiseObject<Utils/Ceph/ClusterConfiguration>}
@@ -49,14 +61,14 @@ export default Service.extend({
         onepanelServer.request('oneprovider', 'getCephManagers'),
         get(this.getMonitors(), 'promise'),
         get(this.getOsds(), 'promise'),
-        onepanelServer.request('oneprovider', 'getCephParams'),
+        get(this.getParams(), 'promise'),
       ]).then(([
         { data: managers },
         monitors,
         osds,
-        { data: general },
+        params,
       ]) => {
-        const rawConfig = _.assign({}, general, {
+        const rawConfig = _.assign({}, params, {
           managers,
           monitors,
           osds,
@@ -144,6 +156,17 @@ export default Service.extend({
    */
   canCreateStorage() {
     const promise = this.getOsds().then(osds => get(osds, 'length'));
+    return PromiseObject.create({
+      promise: this.suppressNotDeployed(promise, false),
+    });
+  },
+
+  /**
+   * Checks whether ceph has been deployed or not
+   * @returns {PromiseObject<boolean>}
+   */
+  isDeployed() {
+    const promise = get(this.getParams(), 'promise').then(() => true);
     return PromiseObject.create({
       promise: this.suppressNotDeployed(promise, false),
     });

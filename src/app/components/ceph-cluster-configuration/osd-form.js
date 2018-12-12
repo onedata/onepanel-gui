@@ -1,3 +1,12 @@
+/**
+ * Provides form for showing, creating and modifying osd settings.
+ * 
+ * @module components/ceph-cluster-configuration/osd-form
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
@@ -97,12 +106,6 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   usedDevices: undefined,
 
   /**
-   * @virtual
-   * @type {string}
-   */
-  mode: 'show',
-
-  /**
    * @type {boolean}
    */
   isStandalone: true,
@@ -120,10 +123,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   removeOsd: notImplementedThrow,
 
-  usedDevicesObserver: observer('usedDevices', function usedDevicesObserver() {
-    this.recalculateErrors();
+  /**
+   * @type {string}
+   */
+  mode: computed('isStandalone', function mode() {
+    // For now form is readonly in standalone mode. Edition will be implemented later.
+    return this.get('isStandalone') ? 'show' : 'create';
   }),
 
+  /**
+   * Bluestore edit fields with devices converted to device dropdown options.
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   filledEditBluestoreFieldsDefinition: computed(
     'devices.[]',
     function filledEditBluestoreFieldsDefinition() {
@@ -151,12 +162,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     }
   ),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   editTypeFields: computed(function editTypeFields() {
     return editTypeFieldDefinition.map(f =>
       this.prepareField(f, 'editType')
     );
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   editBluestoreFields: computed(
     'filledEditBluestoreFieldsDefinition',
     function editBluestoreFields() {
@@ -166,24 +183,36 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     }
   ),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   editFilestoreFields: computed(function editFilestoreFields() {
     return editFilestoreFieldsDefinition.map(f =>
       this.prepareField(f, 'editFilestore')
     );
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   staticTypeFields: computed(function editTypeFields() {
     return editTypeFieldDefinition.map(f =>
       this.prepareField(f, 'staticType', true)
     );
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   staticBluestoreFields: computed(function staticBluestoreFields() {
     return editBluestoreFieldsDefinition.map(f =>
       this.prepareField(f, 'staticBluestore', true)
     );
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
   staticFilestoreFields: computed(function staticFilestoreFields() {
     return editFilestoreFieldsDefinition.map(f =>
       this.prepareField(f, 'staticFilestore', true)
@@ -239,6 +268,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     }
   ),
 
+  /**
+   * True if form values are valid. device and dbDevice fields are not taken
+   * into account (are checked by internal config mechanisms).
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isFormValid: computed('errors', function isFormValid() {
     const errors = this.get('errors').filter(error => ![
       'allFieldsValues.editBluestore.device',
@@ -265,7 +299,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
         set(staticField, 'defaultValue', value);
         this.set(
           `allFieldsValues.static${prefix}.${osdFieldName}`,
-          this.translateStaticValue(prefix, osdFieldName, value)
+          this.translateStaticValue(osdFieldName, value)
         );
         
         if (value !== undefined || mode !== 'create') {
@@ -280,13 +314,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     this.recalculateErrors();
   }),
 
+  usedDevicesObserver: observer('usedDevices', function usedDevicesObserver() {
+    this.recalculateErrors();
+  }),
+
   init() {
     this._super(...arguments);
     this.prepareFields();
-
-    if (!this.get('isStandalone')) {
-      this.set('mode', 'create');
-    }
     
     this.osdObserver();
     if (this.get('mode') === 'create') {
@@ -298,6 +332,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     }
   },
 
+  /**
+   * Sets up classes, translations etc. for given field.
+   * @param {FieldType} field 
+   * @param {string} prefix 
+   * @param {boolean} isStatic
+   * @return {FieldType}
+   */
   prepareField(field, prefix, isStatic = false) {
     const {
       type,
@@ -322,7 +363,14 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     return EmberObject.create(field);
   },
 
-  translateStaticValue(prefix, fieldName, value) {
+  /**
+   * Returns translation of the static field value (static fields does not format
+   * value like edition fields).
+   * @param {string} fieldName 
+   * @param {string} value
+   * @returns {string} translation
+   */
+  translateStaticValue(fieldName, value) {
     if (value) {
       switch(fieldName) {
         case 'type':
@@ -335,6 +383,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     }
   },
 
+  /**
+   * Generates JSON config object with values from form.
+   * @returns {Object}
+   */
   constructConfig() {
     const {
       editType,
@@ -363,6 +415,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     return config;
   },
 
+  /**
+   * Applies actual state of the form to the config object.
+   * @returns {undefined}
+   */
   applyChange() {
     this.get('osd').fillIn(this.constructConfig(), this.get('isFormValid'));
   },

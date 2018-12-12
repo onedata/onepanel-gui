@@ -122,10 +122,11 @@ export default EmberObject.extend({
     if (host) {
       promiseArray = PromiseArray.create({
         promise: onepanelServer
-          .request('oneprovider', 'getBlockDevices', { host })
-          .then(({ data }) => data
-            .filter(device => !get(device, 'mounted'))
-            .map(device => CephNodeDevice.create(device))
+          .request('oneprovider', 'getBlockDevices', host)
+          .then(response =>
+            response.data['block_devices']
+              .filter(device => !get(device, 'mounted'))
+              .map(device => CephNodeDevice.create(device))
           ),
       });
     } else {

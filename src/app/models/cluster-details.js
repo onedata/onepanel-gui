@@ -53,6 +53,12 @@ export default ObjectProxy.extend({
    */
   name: null,
 
+  /**
+   * @type {boolean}
+   * @virtual
+   */
+  hasCephDeployed: false,
+
   init() {
     this._super(...arguments);
     // TODO i18n or set default name in some view

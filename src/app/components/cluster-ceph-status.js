@@ -1,3 +1,12 @@
+/**
+ * Shows information about ceph cluster status.
+ * 
+ * @module components/cluster-ceph-status
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { computed, get, set, getProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
@@ -38,7 +47,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<PromiseObject<Onepanel.CephStatus>>}
    */
-  statusProxy: computed(function status() {
+  statusProxy: computed(function statusProxy() {
     return this.get('cephManager').getStatus();
   }),
 

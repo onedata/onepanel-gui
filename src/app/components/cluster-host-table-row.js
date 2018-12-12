@@ -39,6 +39,12 @@ export default Component.extend({
    */
   isMobile: undefined,
 
+  /**
+   * @type {boolean}
+   * @virtual
+   */
+  showCeph: false,
+
   removeAvailable: computed('removeHost', function () {
     return this.get('removeHost') !== notImplementedReject;
   }),

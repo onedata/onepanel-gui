@@ -86,11 +86,7 @@ export default Component.extend(I18n, {
    * @type {any}
    */
   stepData: undefined,
-  // TODO remove
-  // stepData: Object.freeze({
-  //   cephNodes: ['example.com'],
-  // }),
-
+  
   /**
    * @type {Ember.ComputedProperty<Array<Object>>}
    */

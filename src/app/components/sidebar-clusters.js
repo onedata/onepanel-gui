@@ -91,6 +91,17 @@ export default TwoLevelSidebar.extend(I18n, {
         'certificateItem',
         'nodesItem'
       );
+      const hasCephDeployed = get(cluster, 'hasCephDeployed');
+
+      const cephItemArray = [];
+      if (hasCephDeployed) {
+        cephItemArray.push({
+          id: 'ceph',
+          label: this.t('menuItems.ceph'),
+          icon: 'ceph',
+        });
+      }
+
       if (get(cluster, 'isInitialized')) {
         switch (onepanelServiceType) {
           case 'provider':
@@ -103,11 +114,7 @@ export default TwoLevelSidebar.extend(I18n, {
                 label: this.t('menuItems.provider'),
                 icon: 'provider',
               },
-              {
-                id: 'ceph',
-                label: this.t('menuItems.ceph'),
-                icon: 'ceph',
-              },
+              ...cephItemArray,
               {
                 id: 'storages',
                 label: this.t('menuItems.storages'),

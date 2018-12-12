@@ -340,6 +340,11 @@ export default Component.extend(I18n, {
     return configProto;
   },
 
+  /**
+   * Extracts cluster configuration data from JSON config
+   * @param {Object} configProto 
+   * @param {Array<string>} cephNodes 
+   */
   extractConfiguration(configProto, cephNodes=[]) {
     const hosts = this.get('hosts');
     const {
@@ -396,6 +401,10 @@ export default Component.extend(I18n, {
     );
   },
 
+  /**
+   * Updates cluster configuration in clusterDeployProcess object
+   * @returns {undefined}
+   */
   updateClusterDeployProcess() {
     const {
       clusterDeployProcess,

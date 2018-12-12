@@ -31,9 +31,16 @@ export default Component.extend(I18n, {
     } = this.getProperties('elementId', 'activeTab');
     return `${elementId}-${activeTab}`;
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<boolean>>}
+   */
+  isDeployedProxy: computed(function isDeployedProxy() {
+    return this.get('cephManager').isDeployed();
+  }),
   
   /**
-   * @type {PromiseObject<Utils/Ceph/ClusterConfiguration>}
+   * @type {Ember.ComputedProperty<PromiseObject<Utils/Ceph/ClusterConfiguration>>}
    */
   configurationProxy: computed(function configurationProxy() {
     return this.get('cephManager').getConfiguration();

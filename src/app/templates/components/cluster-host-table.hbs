@@ -5,7 +5,9 @@
     <th class="text-center column toggle-column">{{tt this "headers.clusterWorker"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.clusterManager"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
-    <th class="text-center column toggle-column">{{tt this "headers.ceph"}} <span class="text-normal">{{tt this "headers.optional"}}</span></th>
+    {{#if showCeph}}
+      <th class="text-center column toggle-column">{{tt this "headers.ceph"}} <span class="text-normal">{{tt this "headers.optional"}}</span></th>
+    {{/if}}
     {{#if removeHostAvailable}}
       <th class="text-center column btn-column"></th>
     {{/if}}
@@ -25,6 +27,7 @@
       removeAvailable=removeHostAvailable
       isMobile=_isMobile
       blinking=(contains host blinkingHosts)
+      showCeph=showCeph
     }}
   {{/each}}
 </tbody>

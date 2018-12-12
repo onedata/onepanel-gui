@@ -1,3 +1,12 @@
+/**
+ * Provides form for showing, creating and modifying manager & monitor ceph settings.
+ * 
+ * @module components/ceph-cluster-configuration/manager-monitor-form
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import EmberObject, { computed, get, set, observer } from '@ember/object';
@@ -30,27 +39,23 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   i18nPrefix: 'components.cephClusterConfiguration.managerMonitorForm',
 
   /**
-   * @virtual
-   * @type {string}
-   */
-  mode: 'show',
-
-  /**
    * @type {boolean}
    */
   isStandalone: true,
-
-  /**
-   * @virtual optional
-   * @type {boolean}
-   */
-  allowsEdition: false,
 
   /**
    * @virtual
    * @type {Utils/Ceph/ManagerMonitorConfiguration}
    */
   managerMonitor: undefined,
+
+  /**
+   * @type {string}
+   */
+  mode: computed('isStandalone', function mode() {
+    // For now form is readonly in standalone mode. Edition will be implemented later.
+    return this.get('isStandalone') ? 'show' : 'create';
+  }),
 
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
@@ -132,6 +137,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       mode,
       allFields,
     } = this.getProperties('managerMonitor', 'mode', 'allFields');
+      // Working with array because there may be more fields in the future.
       ['monitorIp'].forEach(fieldName => {
         const value = get(managerMonitor, fieldName);
         const staticField =
@@ -153,14 +159,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
 
   init() {
     this._super(...arguments);
-
-    if (!this.get('isStandalone')) {
-      this.set('mode', 'create');
-    }
-
     this.managerMonitorObserver();
   },
 
+  /**
+   * Generates JSON config object with values from form.
+   * @returns {Object}
+   */
   constructConfig() {
     const monitorIp = this.get('allFieldsValues.edit.monitorIp') || undefined;
     const config = {
@@ -169,6 +174,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     return config;
   },
 
+  /**
+   * Applies actual state of the form to the config object.
+   * @returns {undefined}
+   */
   applyChange() {
     this.get('managerMonitor').fillIn(this.constructConfig(), this.get('isValid'));
   },

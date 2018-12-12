@@ -1,3 +1,12 @@
+/**
+ * Deployment step that allows ceph cluster configuration.
+ * 
+ * @module components/new-cluster-ceph
+ * @author Michal Borzecki
+ * @copyright (C) 2018 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { get, set, observer } from '@ember/object';
 import { alias } from '@ember/object/computed';
@@ -41,24 +50,21 @@ export default Component.extend(I18n, {
   cephConfigObserver: observer(
     'clusterDeployProcess.{cephNodes,configuration.ceph}',
     function cephConfigObserver() {
-      let {
-        clusterDeployProcess,
-        cephConfig,
-      } = this.getProperties('clusterDeployProcess', 'cephConfig');
+      const clusterDeployProcess = this.get('clusterDeployProcess');
       const rawConfig = get(clusterDeployProcess, 'configuration.ceph');
-      if (!cephConfig) {
-        cephConfig = CephClusterConfiguration.create(
-          getOwner(this).ownerInjection()
-        );
-        get(clusterDeployProcess, 'cephNodes').forEach(host => {
-          cephConfig.addNode(host);
-        });
-        this.set('cephConfig', cephConfig);
-      }
-      if (!_.isEqual(cephConfig.toRawConfig(), rawConfig) && rawConfig) {
+      const cephNodes = get(clusterDeployProcess, 'cephNodes');
+      const cephConfig = CephClusterConfiguration.create(
+        getOwner(this).ownerInjection()
+      );
+      if (rawConfig) {
         cephConfig.fillIn(rawConfig);
       }
-      return cephConfig;
+      const nodesInConfig = get(cephConfig, 'nodes').mapBy('host');
+      _.difference(nodesInConfig, cephNodes)
+        .forEach(node => cephConfig.removeNodeByHost(node));
+      _.difference(cephNodes, nodesInConfig)
+        .forEach(node => cephConfig.addNode(node));
+      this.set('cephConfig', cephConfig);
     }
   ),
 

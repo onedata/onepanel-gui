@@ -2,7 +2,7 @@
  * Provides data for routes and components assoctiated with clusters tab
  *
  * @module services/cluster-manager
- * @author Jakub Liput
+ * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -29,6 +29,8 @@ const _ROLE_COLLECTIONS = {
 
 export default Service.extend({
   onepanelServer: service(),
+  cephManager: service(),
+
   onepanelServiceType: readOnly('onepanelServer.serviceType'),
 
   /**
@@ -70,25 +72,29 @@ export default Service.extend({
       onepanelServiceType,
       defaultCache,
       _defaultCache,
+      cephManager,
     } = this.getProperties(
       'onepanelServiceType',
       'defaultCache',
-      '_defaultCache'
+      '_defaultCache',
+      'cephManager'
     );
 
     let promise = new Promise((resolve, reject) => {
       if (_defaultCache && !reload) {
         resolve(defaultCache);
       } else {
-        let clusterStep;
+        let clusterStep, hasCephDeployed;
 
         let gettingStep = this._getThisClusterInitStep();
 
         gettingStep.then(step => {
           clusterStep = step;
+          return cephManager.isDeployed();
+        }).then(hasCeph => {
+          hasCephDeployed = hasCeph;
 
-          let gettingConfiguration = this.getConfiguration();
-
+          const gettingConfiguration = this.getConfiguration();
           return new Promise(resolveConfiguration => {
             gettingConfiguration.then(({ data: configuration }) => {
               resolveConfiguration(configuration);
@@ -111,6 +117,7 @@ export default Service.extend({
             onepanelServiceType: onepanelServiceType,
             clusterInfo: thisCluster,
             initStep: clusterStep,
+            hasCephDeployed,
           });
 
           this.set('_defaultCache', clusterDetails);
