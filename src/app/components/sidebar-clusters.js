@@ -23,6 +23,7 @@ export default TwoLevelSidebar.extend(I18n, {
 
   onepanelServer: service(),
   dnsManager: service(),
+  cephManager: service(),
   i18n: service(),
 
   onepanelServiceType: reads('onepanelServer.serviceType'),
@@ -63,6 +64,20 @@ export default TwoLevelSidebar.extend(I18n, {
     };
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  cephItem: computed('cephManager.status.level', function cephItem() {
+    const cephStatusLevel = this.get('cephManager.status.level');
+    return {
+      id: 'ceph',
+      label: this.t('menuItems.ceph'),
+      icon: 'ceph',
+      warningMessage: (cephStatusLevel && cephStatusLevel !== 'ok') ?
+        this.t('cephWarning') : undefined,
+    };
+  }),
+
   nodesItem: computed(function nodesItem() {
     return {
       id: 'nodes',
@@ -75,6 +90,7 @@ export default TwoLevelSidebar.extend(I18n, {
     'onepanelServiceType',
     'dnsItem',
     'certificateItem',
+    'cephItem',
     'nodesItem',
     'cluster.{isInitialized,hasCephDeployed}',
     function () {
@@ -83,12 +99,14 @@ export default TwoLevelSidebar.extend(I18n, {
         cluster,
         dnsItem,
         certificateItem,
+        cephItem,
         nodesItem,
       } = this.getProperties(
         'onepanelServiceType',
         'cluster',
         'dnsItem',
         'certificateItem',
+        'cephItem',
         'nodesItem'
       );
       const {
@@ -96,14 +114,7 @@ export default TwoLevelSidebar.extend(I18n, {
         hasCephDeployed,
       } = getProperties(cluster, 'isInitialized', 'hasCephDeployed');
 
-      const cephItemArray = [];
-      if (hasCephDeployed) {
-        cephItemArray.push({
-          id: 'ceph',
-          label: this.t('menuItems.ceph'),
-          icon: 'ceph',
-        });
-      }
+      const cephItemArray = hasCephDeployed ? [cephItem] : [];
 
       if (isInitialized) {
         switch (onepanelServiceType) {

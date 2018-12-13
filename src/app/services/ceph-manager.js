@@ -13,10 +13,27 @@ import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
 import _ from 'lodash';
 import { getOwner } from '@ember/application';
-import { get } from '@ember/object';
+import { get, computed } from '@ember/object';
+import ObjectProxy from '@ember/object/proxy';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Service.extend({
   onepanelServer: service(),
+
+  /**
+   * Is filled with content on service init
+   * @type {ObjectProxy<Onepanel.CephStatus>}
+   */
+  status: computed(function status() {
+    return ObjectProxy.create();
+  }),
+
+  init() {
+    this._super(...arguments);
+    
+    // initialize status property with actual status
+    this.getStatus();
+  },
 
   /**
    * Returns all osds in the ceph cluster.
@@ -108,10 +125,15 @@ export default Service.extend({
    */
   getStatus() {
     const onepanelServer = this.get('onepanelServer');
-    return PromiseObject.create({
+    const proxy = PromiseObject.create({
       promise: onepanelServer.request('oneprovider', 'getCephStatus')
         .then(({ data }) => data),
     });
+
+    // update status property with new value
+    proxy.then(status => safeExec(this, () => this.set('status.content', status)));
+
+    return proxy;
   },
 
   /**

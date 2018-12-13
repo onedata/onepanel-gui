@@ -9,4 +9,5 @@ export default {
     spaces: 'Spaces',
   },
   dnsWarning: 'Some problems with your DNS configuration have been detected',
+  cephWarning: 'Some problems with your Ceph cluster have been detected',
 };
