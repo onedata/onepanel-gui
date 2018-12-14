@@ -1,0 +1,55 @@
+<div class="row content-row header-row hidden-xs">
+  <h1 class="normal-case">
+    {{#truncated-string class="one-label"}}{{cluster.name}}{{/truncated-string}}
+  </h1>
+</div>
+
+<div class="row content-row">
+  <div class="one-tile-container">
+    {{#one-tile
+      class="text-center"
+      title="Info"
+      isLink=false
+      class="resource-info-tile"
+    }}
+      <table class="table table-condensed">
+        <tbody>
+          <tr>
+            <td class="property-name">Name</td>
+            <td class="property-value">
+              {{cluster.name}}
+            </td>
+          </tr>
+          <tr>
+            <td class="property-name">Type</td>
+            <td class="property-value creation-time">{{cluster.type}}</td>
+          </tr>
+          {{yield}}
+          <tr>
+            <td class="property-name">Id</td>
+            <td class="property-value id">
+              {{one-clipboard-line
+                size="sm"
+                value=cluster.id
+                showText=false
+                btnType="success"}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    {{/one-tile}}
+    {{#if (eq cluster.type "oneprovider")}}
+      {{#one-tile
+        class="text-center"
+        title="Oneprovider"
+        customLink=(concat "/oz/onezone/i#/onedata/data/" cluster.serviceId)
+        moreText="Show on map"
+      }}
+        <figure class="main-figure">
+          <img class="main-image" src="http://www.geolympus.com/wp-content/uploads/2016/09/world-map-pin.png">
+          {{#truncated-string tagName="span" class="one-label"}}{{cluster.name}}{{/truncated-string}}
+        </figure>
+      {{/one-tile}}
+    {{/if}}
+  </div>
+</div>
