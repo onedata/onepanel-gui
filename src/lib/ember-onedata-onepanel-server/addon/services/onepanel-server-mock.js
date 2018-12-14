@@ -131,9 +131,9 @@ export default OnepanelServerBase.extend(
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -378,7 +378,7 @@ export default OnepanelServerBase.extend(
             let spaces = this.get('__spaces');
             spaces.push({
               id: 'space1_verylongid',
-              name: 'Space One',
+              name: 'Space One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One',
               storageId: storage1.id,
               mountInRoot: true,
               spaceOccupancy: 800000000,

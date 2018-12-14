@@ -7,12 +7,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
   configurationManager: service(),
+  clusterModelManager: service(),
   userManager: service(),
 
   /**
@@ -21,8 +22,14 @@ export default SidebarResources.extend({
    */
   getCollectionFor(type) {
     switch (type) {
+      case 'data':
+      case 'spaces':
+      case 'groups':
+      case 'tokens':
+        return resolve([]);
       case 'clusters':
-        return this.get('configurationManager').getClusters().get('promise');
+        // return this.get('configurationManager').getClusters().get('promise');
+        return this.get('clusterModelManager').getClustersProxy();
       case 'users':
         return this.get('userManager').getUsers().get('promise').then(users => {
           return Promise.resolve({ list: users });

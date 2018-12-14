@@ -13,6 +13,7 @@ import Service, { inject as service } from '@ember/service';
 
 export default Service.extend({
   configurationManager: service(),
+  clusterModelManager: service(),
   userManager: service(),
 
   /**
@@ -23,7 +24,7 @@ export default Service.extend({
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
-        return this.get('configurationManager').getDefaultRecord(id).get('promise');
+        return this.get('clusterModelManager').getCluster(id);
       case 'users':
         return this.get('userManager').getUserDetails(id).get('promise');
 

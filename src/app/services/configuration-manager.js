@@ -1,3 +1,4 @@
+// FIXME: outdated description
 /**
  * Provides data for routes and components assoctiated with clusters tab
  *
@@ -11,6 +12,7 @@ import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
 import { A } from '@ember/array';
+import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
@@ -19,8 +21,6 @@ import ClusterDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
-const THIS_CLUSTER_ID = 'the-cluster';
-
 const _ROLE_COLLECTIONS = {
   databases: 'database',
   managers: 'clusterManager',
@@ -28,6 +28,7 @@ const _ROLE_COLLECTIONS = {
 };
 
 export default Service.extend({
+  clusterModelManager: service(),
   onepanelServer: service(),
   onepanelServiceType: reads('onepanelServer.serviceType'),
 
@@ -100,21 +101,26 @@ export default Service.extend({
           });
 
         }).then(configuration => {
-          const name = (configuration || null) &&
-            configuration['one' + onepanelServiceType].name;
-          const thisCluster = ClusterInfo.create({
-            id: THIS_CLUSTER_ID,
-          }, configuration);
+          return this.get('clusterModelManager').getCurrentClusterProxy()
+            .then(
+              currentCluster => {
+                const currentClusterId = get(currentCluster, 'id');
+                const name = (configuration || null) &&
+                  configuration['one' + onepanelServiceType].name;
+                const thisCluster = ClusterInfo.create({
+                  id: currentClusterId,
+                }, configuration);
 
-          const clusterDetails = ClusterDetails.create({
-            name,
-            onepanelServiceType: onepanelServiceType,
-            clusterInfo: thisCluster,
-            initStep: clusterStep,
-          });
+                const clusterDetails = ClusterDetails.create({
+                  name,
+                  onepanelServiceType: onepanelServiceType,
+                  clusterInfo: thisCluster,
+                  initStep: clusterStep,
+                });
 
-          this.set('_defaultCache', clusterDetails);
-          resolve(defaultCache);
+                this.set('_defaultCache', clusterDetails);
+                resolve(defaultCache);
+              });
         }).catch(reject);
 
         gettingStep.catch(reject);

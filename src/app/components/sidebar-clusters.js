@@ -20,6 +20,12 @@ export default SidebarClusters.extend({
   onepanelServer: service(),
   dnsManager: service(),
 
+  /**
+   * @virtual
+   * @type {Array<ClusterDetails>}
+   */
+  model: undefined,
+
   // FIXME: to remove
   onepanelServiceType: reads('onepanelServer.serviceType'),
 

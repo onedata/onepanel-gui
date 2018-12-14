@@ -163,7 +163,7 @@ export default OnepanelServerBase.extend(
      */
     fetchApiOrigin(onezoneToken) {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
-      const location = this.getLocation();
+      const _location = this.getLocation();
       if (clusterIdFromUrl) {
         return this.getServiceTypeProxy().then(serviceType => {
           if (serviceType === 'provider') {
@@ -181,12 +181,12 @@ export default OnepanelServerBase.extend(
           } else {
             // Onezone Panel served from Onezone host is on different port
             // TODO: probably unsafe if using other port for https
-            return resolve(`${location.origin}:9443`);
+            return resolve(`${_location.origin}:9443`);
           }
         });
       } else {
         // frontend is served from Onepanel host
-        return resolve(location.origin);
+        return resolve(_location.origin);
       }
     },
 

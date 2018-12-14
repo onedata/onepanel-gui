@@ -1,4 +1,8 @@
-{{new-cluster
-  cluster=cluster
-  finishInitProcess=(action "finishInitProcess")
-}}
+{{#if (or configurationProxy.isPending currentClusterProxy.isPending cluster.isInitialized)}}
+  {{loading-container isLoading=true absoluteCentered=true}}
+{{else}}
+  {{new-cluster
+    cluster=cluster
+    finishInitProcess=(action "finishInitProcess")
+  }}
+{{/if}}
