@@ -1,5 +1,6 @@
 export default {
   aspects: {
+    overview: 'Overview',
     index: 'Cluster',
     nodes: 'Nodes',
     dns: 'DNS setup',
