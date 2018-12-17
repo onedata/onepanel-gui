@@ -1,5 +1,5 @@
 /**
- * A space auto cleaning tab with bar chart, file conditions form and 
+ * A space auto-cleaning tab with bar chart, file conditions form and 
  * cleaning reports table.
  *
  * @module components/space-auto-cleaning
@@ -8,21 +8,17 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { readOnly, reads } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 
 import Component from '@ember/component';
 import { computed, get, observer } from '@ember/object';
 import { inject } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
-import {
-  DISABLE_LOWER_FILE_SIZE_LIMIT,
-  DISABLE_UPPER_FILE_SIZE_LIMIT,
-  DISABLE_MAX_FILE_NOT_OPENED_HOURS,
-} from 'onepanel-gui/utils/space-auto-cleaning-conditions';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const {
-  SpaceAutoCleaningSettings,
+  SpaceAutoCleaningConfiguration,
 } = Onepanel;
 
 import SpaceAutoCleaningUpdater from 'onepanel-gui/utils/space-auto-cleaning-updater';
@@ -38,7 +34,7 @@ export default Component.extend({
   classNames: ['space-auto-cleaning'],
 
   /**
-   * ID of SpaceDetails for which auto cleaning view is rendered
+   * ID of SpaceDetails for which auto-cleaning view is rendered
    * @virtual
    * @type {string}
    */
@@ -53,9 +49,9 @@ export default Component.extend({
 
   /**
    * @virtual
-   * @type {Onepanel.AutoCleaning}
+   * @type {Onepanel.SpaceAutoCleaningConfiguration}
    */
-  autoCleaning: undefined,
+  autoCleaningConfiguration: undefined,
 
   /**
    * @type {SpaceAutoCleaningUpdater}
@@ -79,7 +75,7 @@ export default Component.extend({
    * @virtual
    * @type {Function}
    */
-  updateAutoCleaning: () => {},
+  configureSpaceAutoCleaning: notImplementedReject,
 
   /**
    * Action called on space occupancy change.
@@ -93,23 +89,13 @@ export default Component.extend({
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isCleanEnabled: readOnly('autoCleaning.enabled'),
+  isCleanEnabled: reads('autoCleaningConfiguration.enabled'),
 
   /**
    * Data for file conditions form.
    * @type {computed.Object}
    */
-  conditionsFormData: computed(
-    'autoCleaning.settings.{lowerFileSizeLimit,upperFileSizeLimit,maxFileNotOpenedHours}',
-    function () {
-      let settings = this.get('autoCleaning.settings');
-      return SpaceAutoCleaningSettings.constructFromObject({
-        lowerFileSizeLimit: get(settings, 'lowerFileSizeLimit'),
-        upperFileSizeLimit: get(settings, 'upperFileSizeLimit'),
-        maxFileNotOpenedHours: get(settings, 'maxFileNotOpenedHours'),
-      });
-    }
-  ),
+  conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   startNowEnabled: computed(
     'isCleanEnabled',
@@ -152,14 +138,14 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     const {
-      autoCleaning,
+      autoCleaningConfiguration,
       spaceManager,
       spaceId,
-    } = this.getProperties('autoCleaning', 'spaceManager', 'spaceId');
+    } = this.getProperties('autoCleaningConfiguration', 'spaceManager', 'spaceId');
 
-    // if the component is initialized with blank autoCleaning,
-    // we should provide an empty valid autoCleaning
-    if (autoCleaning == null) {
+    // if the component is initialized with blank autoCleaningConfiguration,
+    // we should provide an empty valid autoCleaningConfiguration
+    if (autoCleaningConfiguration == null) {
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
     }
 
@@ -181,39 +167,33 @@ export default Component.extend({
   },
 
   enabledSettings() {
-    let settings = this.get('autoCleaning.settings');
-    if (settings == null) {
+    let autoCleaningConfiguration = this.get('autoCleaningConfiguration');
+    if (autoCleaningConfiguration == null) {
       const spaceSize = this.get('spaceSize');
-      settings = SpaceAutoCleaningSettings.constructFromObject({
-        lowerFileSizeLimit: DISABLE_LOWER_FILE_SIZE_LIMIT,
-        upperFileSizeLimit: DISABLE_UPPER_FILE_SIZE_LIMIT,
-        maxFileNotOpenedHours: DISABLE_MAX_FILE_NOT_OPENED_HOURS,
+      autoCleaningConfiguration = SpaceAutoCleaningConfiguration.constructFromObject({
         target: spaceSize,
         threshold: spaceSize,
       });
     }
-    return settings;
+    return autoCleaningConfiguration;
   },
 
   actions: {
     toggleCleaning() {
       const {
-        updateAutoCleaning,
+        configureSpaceAutoCleaning,
         isCleanEnabled,
-      } = this.getProperties('updateAutoCleaning', 'isCleanEnabled');
+      } = this.getProperties('configureSpaceAutoCleaning', 'isCleanEnabled');
       const newCleanEnabled = !isCleanEnabled;
-      const spaceReq = {
-        enabled: newCleanEnabled,
-      };
-      if (newCleanEnabled) {
-        spaceReq.settings = this.enabledSettings();
-      }
-      return updateAutoCleaning(spaceReq);
+      const configureReq = Object.assign({},
+        this.enabledSettings(), { enabled: newCleanEnabled }
+      );
+      return configureSpaceAutoCleaning(configureReq);
     },
 
     barValuesChanged(values) {
-      let updateAutoCleaning = this.get('updateAutoCleaning');
-      let settings = this.get('autoCleaning.settings');
+      let configureSpaceAutoCleaning = this.get('configureSpaceAutoCleaning');
+      let settings = this.get('autoCleaningConfiguration');
       let changedValues = {};
       ['target', 'threshold'].forEach((fieldName) => {
         const value = values[fieldName];
@@ -225,16 +205,16 @@ export default Component.extend({
         }
       });
       return Object.keys(changedValues).length > 0 ?
-        updateAutoCleaning({ settings: changedValues }) : Promise.resolve();
+        configureSpaceAutoCleaning(changedValues) : Promise.resolve();
     },
 
     fileConditionsChanged(values) {
       let {
-        updateAutoCleaning,
-        autoCleaning,
-      } = this.getProperties('updateAutoCleaning', 'autoCleaning');
-      if (get(autoCleaning, 'enabled')) {
-        return updateAutoCleaning({ settings: values });
+        configureSpaceAutoCleaning,
+        autoCleaningConfiguration,
+      } = this.getProperties('configureSpaceAutoCleaning', 'autoCleaningConfiguration');
+      if (autoCleaningConfiguration && get(autoCleaningConfiguration, 'enabled')) {
+        return configureSpaceAutoCleaning({ rules: values });
       } else {
         return Promise.reject();
       }

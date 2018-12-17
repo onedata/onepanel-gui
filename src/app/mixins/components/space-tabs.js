@@ -34,8 +34,8 @@ export default Mixin.create({
   tabPopularId: computedTabId('popular'),
   tabPopularHint: computedTabHint('popular'),
 
-  tabCleanClass: computed('space.filesPopularity.enabled', function () {
-    return this.get('space.filesPopularity.enabled') ? ENABLED_CLASS :
+  tabCleanClass: computed('filesPopularityConfiguration.enabled', function () {
+    return this.get('filesPopularityConfiguration.enabled') ? ENABLED_CLASS :
       DISABLED_CLASS;
   }),
   tabCleanId: computedTabId('clean'),

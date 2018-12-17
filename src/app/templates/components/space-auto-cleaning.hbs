@@ -1,5 +1,3 @@
-{{!-- TODO: hints text --}}
-
 <div class="row content-row no-border">
   <h1>
     <label for="cleaning-enabled">
@@ -22,15 +20,15 @@
       {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
     </div>
     <div class="bar-cell cell">
-    <div class="row content-row no-border no-padding-top">
-      <h1>
-        <label>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</label>
-        {{one-label-tip
-          title=(t "components.spaceAutoCleaning.boundariesHint")
-          placement="top"
-        }}
-      </h1>
-    </div>
+      <div class="row content-row no-border no-padding-top">
+        <h1 class="cleaning-boundaries-header">
+          <label>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</label>
+          {{one-label-tip
+            title=(t "components.spaceAutoCleaning.boundariesHint")
+            placement="top"
+          }}
+        </h1>
+      </div>
       <div class="row loadable-row content-row no-padding-top no-padding-bottom">
         {{#loading-container
           isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
@@ -39,7 +37,7 @@
         }}
           <div class="row content-row no-border no-padding-bottom">
             {{space-cleaning-bar-chart
-              settings=autoCleaning.settings
+              settings=autoCleaningConfiguration
               spaceSize=spaceSize
               status=status
               onChange=(action "barValuesChanged")

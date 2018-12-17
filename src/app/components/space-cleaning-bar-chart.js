@@ -27,14 +27,14 @@ export default Component.extend({
   classNameBindings: ['_disabled:disabled'],
 
   /**
-   * Space auto cleaning settings.
+   * Space auto-cleaning settings.
    * @virtual
    * @type {Object}
    */
   settings: null,
 
   /**
-   * Space auto cleaning status.
+   * Space auto-cleaning status.
    * @virtual
    * @type {Object}
    */

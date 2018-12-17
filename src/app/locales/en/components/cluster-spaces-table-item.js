@@ -46,10 +46,10 @@ export default {
       },
     },
     clean: {
-      title: 'Auto cleaning',
+      title: 'Auto-cleaning',
       hints: {
-        enabled: 'Configure, show status and reports of auto cleaning feature for this space',
-        disabled: 'Auto cleaning can be configured only if files popularity feature is enabled',
+        enabled: 'Configure, show status and reports of auto-cleaning feature for this space',
+        disabled: 'Auto-cleaning can be configured only if files popularity feature is enabled',
       },
     },
   },
