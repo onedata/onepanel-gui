@@ -28,7 +28,7 @@
     <div class="form-group submit-group col-xs-12">
       <div class="row">
         <div class="{{layoutConfig.formSubmitColumns}}">
-          {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
+          {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
             {{tt this (if inEditionMode "save" "add")}}
           {{/one-spin-button}}
           {{#if inEditionMode}}
@@ -39,3 +39,15 @@
     </div>
   {{/unless}}
 {{/bs-form}}
+{{#if (eq mode "edit")}}
+  {{proceed-process-modal
+    opened=modifyModalVisible
+    processing=isSavingStorage
+    close=(action (mut modifyModalVisible) false)
+    proceed=(action "submit")
+    modalClass="modify-storage-modal"
+    modalIcon="sign-warning-rounded"
+    headerText=(tt this "modifyStorageModalHeader")
+    messageText=(tt this "modifyStorageModalMessage" name=storage.name)
+    proceedButtonClass="btn btn-warning proceed"}}
+{{/if}}

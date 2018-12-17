@@ -15,6 +15,7 @@ import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   StorageCreateRequest,
@@ -56,9 +57,14 @@ export default Service.extend({
         );
 
         getStorages.then(({ data: { ids } }) => {
-          this.set('collectionCache.content', A(ids.map(id =>
-            this.getStorageDetails(id, reload))));
-          resolve(collectionCache);
+          const storagesProxyArray = A(ids.map(id =>
+            this.getStorageDetails(id, reload)));
+          Promise.all(storagesProxyArray)
+            .finally(() => safeExec(this, () => {
+              this.set('collectionCache.content', storagesProxyArray);
+            }))
+            .then(() => resolve(collectionCache))
+            .catch(error => reject(error));
         });
         getStorages.catch(error => {
           if (error && error.response && error.response.statusCode === 404) {

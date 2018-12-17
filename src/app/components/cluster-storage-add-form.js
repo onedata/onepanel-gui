@@ -20,6 +20,7 @@ import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { resolve } from 'rsvp';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -153,9 +154,19 @@ export default OneForm.extend(I18n, Validations, {
 
   /**
    * Form layout config
-   * @type {Ember.ComputedProperty<Object>}
+   * @type {Object}
    */
   layoutConfig,
+
+  /**
+   * @type {boolean}
+   */
+  modifyModalVisible: false,
+
+  /**
+   * @type {boolean}
+   */
+  isSavingStorage: false,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -582,6 +593,11 @@ export default OneForm.extend(I18n, Validations, {
       }
     },
 
+    showModifyModal() {
+      this.set('modifyModalVisible', true);
+      return resolve();
+    },
+
     submit() {
       let {
         formValues,
@@ -596,6 +612,8 @@ export default OneForm.extend(I18n, Validations, {
         'inEditionMode',
         'storage'
       );
+
+      this.set('isSavingStorage', true);
 
       let formData = {};
 
@@ -624,7 +642,11 @@ export default OneForm.extend(I18n, Validations, {
       }
       formData.type = selectedStorageType.id;
 
-      return this.get('submit')(formData);
+      return this.get('submit')(formData)
+        .finally(() => safeExec(this, () => this.setProperties({
+          modifyModalVisible: false,
+          isSavingStorage: false,
+        })));
     },
   },
 });
