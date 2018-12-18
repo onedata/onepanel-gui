@@ -119,16 +119,28 @@
         <p class="dns-servers-input-intro">
           {{tt this "dnsCheck.inputIntro" domain=domain serviceName=guiUtils.fullServiceName}}
         </p>
-        <div class="row row-ip-addresses-input-tokenizer">
-          {{one-input-tokenizer
-            inputValue=newIpAddress
-            tokens=dnsServers
-            tokensChanged=(action "dnsServersChanged")
-            inputValueChanged=(action (mut newIpAddress))
-            placeholder=(tt this "dnsCheck.ipInputPlaceholder")
-            isBusy=clusterDnsInputBusy
+        <p>
+          {{one-way-radio-group
+            class="dns-check-mode"
+            value=dnsCheckMode
+            options=dnsCheckModes
+            update=(action "dnsCheckModeChanged")
+            isReadOnly=clusterDnsInputBusy
+            radioInline=false
           }}
-        </div>
+        </p>
+        {{#if (eq dnsCheckMode "manual")}}
+          <div class="row row-ip-addresses-input-tokenizer">
+            {{one-input-tokenizer
+              inputValue=newIpAddress
+              tokens=dnsServers
+              tokensChanged=(action "dnsServersChanged")
+              inputValueChanged=(action (mut newIpAddress))
+              placeholder=(tt this "dnsCheck.ipInputPlaceholder")
+              isBusy=clusterDnsInputBusy
+            }}
+          </div>
+        {{/if}}
         <div class="btn-container">
           <div class="row row-btn">
             {{#one-spin-button

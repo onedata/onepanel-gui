@@ -52,4 +52,6 @@ export default {
   },
   enablingSubdomainDelegation: 'enabling Subdomain Delegation',
   disablingSubdomainDelegation: 'disabling Subdomain Delegation',
+  dnsCheckAutodetect: 'Use system defaults',
+  dnsCheckManual: 'Specify servers manually',
 };

@@ -42,6 +42,7 @@ export default Component.extend(
     dnsManager: service(),
     guiUtils: service(),
     globalNotify: service(),
+    i18n: service(),
 
     i18nPrefix: 'components.clusterDns',
 
@@ -111,6 +112,11 @@ export default Component.extend(
      * @type {boolean}
      */
     subdomainDelegationPrev: undefined,
+    
+    /**
+     * @type {string}
+     */
+    dnsCheckMode: 'autodetect',
 
     /**
      * @type {Ember.ComputedProperty<string>}
@@ -257,9 +263,14 @@ export default Component.extend(
      * True if the list in tokenized input of DNS servers is valid.
      * @type {Ember.ComputedProperty<boolean>}
      */
-    dnsServersInputValid: computed('dnsServers.[]', function dnsServersInputValid() {
-      return !_.isEmpty(this.get('dnsServers'));
-    }),
+    dnsServersInputValid: computed(
+      'dnsServers.[]',
+      'dnsCheckMode',
+      function dnsServersInputValid() {
+      return !_.isEmpty(this.get('dnsServers')) ||
+        this.get('dnsCheckMode') === 'autodetect';
+      }
+    ),
 
     /**
      * Each object is a modified clone of Onepanel.DnsCheckResult with type added
@@ -317,6 +328,19 @@ export default Component.extend(
       return checkResultItems.every(i => get(i, 'summary') === 'ok');
     }),
 
+    /**
+     * @type {Ember.ComputedProperty<Array<Object>>}
+     */
+    dnsCheckModes: computed(function dnsCheckModes() {
+      return [{
+        label: this.t('dnsCheckAutodetect'),
+        value: 'autodetect',
+      }, {
+        label: this.t('dnsCheckManual'),
+        value: 'manual',
+      }];
+    }),
+
     init() {
       this._super(...arguments);
       if (!this.get('formValues')) {
@@ -324,7 +348,10 @@ export default Component.extend(
           letsEncrypt: true,
         }));
       }
-      this.updateDnsCheckConfigurationProxy();
+      this.updateDnsCheckConfigurationProxy()
+        .then(({ dnsServers }) => safeExec(this, () => {
+          this.set('dnsCheckMode', get(dnsServers, 'length') ? 'manual' : 'autodetect');
+        }));
       this.updateDomainProxy();
       if (this.get('getDnsCheckProxyOnStart')) {
         (
@@ -535,6 +562,12 @@ export default Component.extend(
             dnsServers: _.without(dnsServersUpdate, newIpAddress),
             newIpAddress,
           });
+        }
+      },
+      dnsCheckModeChanged(value) {
+        this.set('dnsCheckMode', value);
+        if (value === 'autodetect') {
+          this.send('dnsServersChanged', []);
         }
       },
     },
