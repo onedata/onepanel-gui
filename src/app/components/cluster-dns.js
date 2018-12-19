@@ -10,7 +10,7 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import EmberObject, { computed, get, set } from '@ember/object';
+import EmberObject, { computed, observer, get, set } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';
@@ -72,6 +72,14 @@ export default Component.extend(
     settingsChanged: notImplementedIgnore,
 
     /**
+     * @virtual optional
+     * Invoked with isIpDomain value when isIpDomain changed.
+     * @type {function}
+     * @param {boolean} isIpChanged
+     */
+    isIpDomainChanged: notImplementedIgnore,
+
+    /**
      * @type {EmberObject}
      * Initialized on init
      */
@@ -112,7 +120,7 @@ export default Component.extend(
      * @type {boolean}
      */
     subdomainDelegationPrev: undefined,
-    
+
     /**
      * @type {string}
      */
@@ -267,8 +275,8 @@ export default Component.extend(
       'dnsServers.[]',
       'dnsCheckMode',
       function dnsServersInputValid() {
-      return !_.isEmpty(this.get('dnsServers')) ||
-        this.get('dnsCheckMode') === 'autodetect';
+        return !_.isEmpty(this.get('dnsServers')) ||
+          this.get('dnsCheckMode') === 'autodetect';
       }
     ),
 
@@ -341,6 +349,14 @@ export default Component.extend(
       }];
     }),
 
+    isIpDomainObserver: observer('isIpDomain', function isIpDomainObserver() {
+      const {
+        isIpDomainChanged,
+        isIpDomain,
+      } = this.getProperties('isIpDomainChanged', 'isIpDomain');
+      isIpDomainChanged(isIpDomain);
+    }),
+
     init() {
       this._super(...arguments);
       if (!this.get('formValues')) {
@@ -350,7 +366,8 @@ export default Component.extend(
       }
       this.updateDnsCheckConfigurationProxy()
         .then(({ dnsServers }) => safeExec(this, () => {
-          this.set('dnsCheckMode', get(dnsServers, 'length') ? 'manual' : 'autodetect');
+          this.set('dnsCheckMode', get(dnsServers, 'length') ? 'manual' :
+            'autodetect');
         }));
       this.updateDomainProxy();
       if (this.get('getDnsCheckProxyOnStart')) {
@@ -371,6 +388,8 @@ export default Component.extend(
       } else {
         this.updateProviderProxy();
       }
+      // enable isIpDomainObserver 
+      this.get('isIpDomain');
     },
 
     willDestroyElement() {
