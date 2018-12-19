@@ -8,6 +8,7 @@ import wait from 'ember-test-helpers/wait';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const ProviderManager = Service.extend({
   getProviderDetails() {},
@@ -15,6 +16,10 @@ const ProviderManager = Service.extend({
 
 const OnepanelServer = Service.extend({
   request() {},
+});
+
+const GuiUtils = Service.extend({
+  fetchGuiVersion: notImplementedReject,
 });
 
 describe('Integration | Component | cluster dns', function () {
@@ -26,6 +31,9 @@ describe('Integration | Component | cluster dns', function () {
     registerService(this, 'providerManager', ProviderManager);
     registerService(this, 'configurationManager', Service);
     registerService(this, 'onepanelServer', OnepanelServer);
+    registerService(this, 'guiUtils', GuiUtils);
+
+    sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion').resolves('zone');
   });
 
   it('renders DNS server IPs fetched from server', function () {

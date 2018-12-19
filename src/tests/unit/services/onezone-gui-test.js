@@ -32,7 +32,7 @@ describe('Unit | Service | onezone gui', function () {
       const onepanelServer = lookupService(this, 'onepanelServer');
       onepanelServer.serviceTypeProxy = resolve('provider');
       sinon.stub(onepanelServer, 'getClusterIdFromUrl')
-        .returns('https://provider.com');
+        .returns(null);
       const providerManager = lookupService(this, 'providerManager');
       sinon.stub(providerManager, 'getProviderDetails').resolves({
         onezoneDomainName: 'onedata.org',
@@ -41,7 +41,7 @@ describe('Unit | Service | onezone gui', function () {
       const service = this.subject();
 
       return service.fetchOnezoneOrigin().then(result => {
-        expect(result).to.equal('https://provider.com');
+        expect(result).to.equal('https://onedata.org');
       });
     });
 
@@ -52,12 +52,13 @@ describe('Unit | Service | onezone gui', function () {
       onepanelServer.serviceTypeProxy = resolve('provider');
       sinon.stub(onepanelServer, 'getClusterIdFromUrl')
         .returns('3943u42389478');
-      sinon.stub(onepanelServer, 'getLocation')
-        .returns('https://onezone.org/opp/3943u42389478/i');
 
       const service = this.subject({
         _location: {
           origin: 'https://onezone.org',
+          toString() {
+            return 'https://onezone.org/opp/3943u42389478/i';
+          },
         },
       });
 

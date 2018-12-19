@@ -17,6 +17,7 @@ import layout from 'onepanel-gui/templates/components/content-users';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { CLUSTER_INIT_STEPS } from 'onepanel-gui/models/cluster-details';
+import { resolve } from 'rsvp';
 
 const {
   UserModifyRequest,
@@ -61,7 +62,8 @@ export default Component.extend(I18n,
      * @override
      */
     fetchClusterDetails() {
-      return this.get('configurationManager').getClusterDetails();
+      return resolve({ hello: 'world ' });
+      // return this.get('configurationManager').getClusterDetails();
     },
 
     /**

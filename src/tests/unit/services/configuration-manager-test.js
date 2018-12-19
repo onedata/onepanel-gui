@@ -2,8 +2,15 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import { get } from '@ember/object';
-
+import { lookupService, registerService } from '../../helpers/stub-service';
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
+import Service from '@ember/service';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import sinon from 'sinon';
+
+const ClusterModelManagerStub = Service.extend({
+  getCurrentClusterProxy: notImplementedReject,
+});
 
 describe('Unit | Service | configuration manager', function () {
   setupTest('service:configuration-manager', {
@@ -12,8 +19,13 @@ describe('Unit | Service | configuration manager', function () {
   });
 
   beforeEach(function () {
-    this.register('service:onepanel-server', onepanelServerStub);
-    this.inject.service('onepanel-server', { as: 'onepanelServer' });
+    registerService(this, 'onepanelServer', onepanelServerStub);
+    registerService(this, 'clusterModelManager', ClusterModelManagerStub);
+
+    sinon.stub(
+      lookupService(this, 'clusterModelManager'),
+      'getCurrentClusterProxy'
+    ).resolves({ id: 'current_cluster_id' });
   });
 
   it('converts API cluster info to array of ClusterHostInfo', function () {
@@ -37,7 +49,6 @@ describe('Unit | Service | configuration manager', function () {
       clusterHostsInfo,
     } = service._clusterConfigurationToHostsInfo(CLUSTER);
 
-    console.log(clusterHostsInfo);
     expect(clusterHostsInfo).to.have.length(2);
     expect(get(clusterHostsInfo[0], 'hostname'), '0 hostname')
       .to.be.equal('node1.example.com');

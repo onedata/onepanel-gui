@@ -17,7 +17,6 @@ import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import { resolve } from 'rsvp';
 
 const {
   ProviderRegisterRequest,

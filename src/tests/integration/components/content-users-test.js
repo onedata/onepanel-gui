@@ -4,6 +4,14 @@ import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import UserDetails from 'onepanel-gui/models/user-details';
+import Service from '@ember/service';
+import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+
+const GuiUtils = Service.extend({
+  fetchGuiVersion: notImplementedReject,
+});
 
 describe('Integration | Component | content users', function () {
   setupComponentTest('content-users', {
@@ -11,6 +19,11 @@ describe('Integration | Component | content users', function () {
   });
 
   beforeEach(function () {
+    registerService(this, 'guiUtils', GuiUtils);
+
+    sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion')
+      .resolves('18.01-mock');
+
     this.on('fetchOnezoneAccount', async function fetchOnezoneAccount() {
       return {
         zoneName: 'Mock Onezone',
@@ -36,7 +49,7 @@ describe('Integration | Component | content users', function () {
     this.render(hbs `{{content-users
       user=user
       fetchOnezoneAccount=(action "fetchOnezoneAccount")
-      fetchClusterDetails = (action "fetchClusterDetails")
+      fetchClusterDetails=(action "fetchClusterDetails")
     }}
     `);
 
@@ -60,7 +73,7 @@ describe('Integration | Component | content users', function () {
       this.render(hbs `{{content-users
         user=user
         fetchOnezoneAccount=(action "fetchOnezoneAccount")
-        fetchClusterDetails = (action "fetchClusterDetails")
+        fetchClusterDetails=(action "fetchClusterDetails")
       }}`);
 
       this.$('.btn-change-password-start').click();
