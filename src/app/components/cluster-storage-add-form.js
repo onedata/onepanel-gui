@@ -292,25 +292,58 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
+   * Is true if luma has been enabled by user interaction
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  lumaEnabledByEdition: computed(
+    'allFieldsValues.generic_editor.lumaEnabled',
+    function lumaEnabledByEdition() {
+      const lumaEnabledValue =
+        this.get('allFieldsValues.generic_editor.lumaEnabled');
+      const lumaEnabledField =
+        this.get('allFields').findBy('name', 'generic_editor.lumaEnabled');
+      return lumaEnabledValue && get(lumaEnabledField, 'changed');
+    }
+  ),
+
+  /**
    * @override
    */
-  isValid: computed('errors.[]', 'inEditionMode', function isValid() {
-    const {
-      errors,
-      inEditionMode,
-    } = this.getProperties('errors', 'inEditionMode');
+  isValid: computed(
+    'errors.[]',
+    'inEditionMode',
+    'lumaEnabledByEdition',
+    function isValid() {
+      const {
+        errors,
+        inEditionMode,
+        lumaEnabledByEdition,
+      } = this.getProperties('errors', 'inEditionMode', 'lumaEnabledByEdition');
 
-    if (inEditionMode) {
-      // If all errors are because of null values, then everything is alright
-      // - empty value means no modification
-      return errors.reduce((onlyEmpty, { attribute }) => {
-        const value = this.get(attribute);
-        return onlyEmpty && (value === undefined || value === null);
-      }, true);
-    } else {
-      return errors.length === 0;
+      if (inEditionMode) {
+        // If luma has been enabled but luma fields are invalid, then the whole
+        // form is invalid
+        if (lumaEnabledByEdition) {
+          const lumaErrors = errors.filter(error => _.startsWith(
+            get(error, 'attribute'),
+            'allFieldsValues.luma_editor.')
+          );
+          if (get(lumaErrors, 'length')) {
+            return false;
+          }
+        }
+
+        // If all errors are because of null values, then everything is alright
+        // - empty value means no modification
+        return errors.reduce((onlyEmpty, { attribute }) => {
+          const value = this.get(attribute);
+          return onlyEmpty && (value === undefined || value === null);
+        }, true);
+      } else {
+        return errors.length === 0;
+      }
     }
-  }),
+  ),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -583,11 +616,20 @@ export default OneForm.extend(I18n, Validations, {
     },
 
     focusOut(field) {
-      const inEditionMode = this.get('inEditionMode');
+      const {
+        inEditionMode,
+        lumaEnabledByEdition,
+      } = this.getProperties('inEditionMode', 'lumaEnabledByEdition');
       const formValue = this.get('formValues.' + get(field, 'name'));
+      
+      const isLumaEditorField =
+        _.startsWith(get(field, 'name'), 'luma_editor.') && lumaEnabledByEdition;
 
       // do not allow validation for not modified fields in edition mode
-      if (!inEditionMode || !(formValue === undefined || formValue === null)) {
+      if (
+        !inEditionMode ||
+        ((formValue !== undefined && formValue !== null) || isLumaEditorField)
+      ) {
         set(field, 'changed', true);
         this.recalculateErrors();
       }

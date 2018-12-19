@@ -669,6 +669,10 @@ export default OnepanelServerBase.extend(
               .filter(key => storage[key] === null)
               .forEach(key => delete storage[key]);
           }
+          if (!get(storage, 'lumaEnabled')) {
+            delete storage['lumaUrl'];
+            delete storage['lumaApiKey'];
+          }
           return _.assign({ verificationPassed: true }, storage);
         },
         statusCode: (id) => {
