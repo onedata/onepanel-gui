@@ -18,7 +18,7 @@ export default {
   },
   dnsCheck: {
     header: 'DNS check',
-    inputIntro: 'Onepanel performs a DNS configuration check querying public DNS servers. If the {{serviceName}} domain ({{domain}}) is not intended to be visible outside your local network, you can provide the IP address of your local DNS servers (if any) to query during the check.',
+    inputIntro: 'By default Onepanel performs the DNS configuration check by resolving the domain based on the host system settings. If you prefer to configure specific DNS servers to be queried instead, provide their IPs below.',
     ipInputPlaceholder: 'Enter IP addresses…',
     modifyingDnsServers: 'modifying DNS check addresses',
     performCheck: 'Perform check',
@@ -52,4 +52,6 @@ export default {
   },
   enablingSubdomainDelegation: 'enabling Subdomain Delegation',
   disablingSubdomainDelegation: 'disabling Subdomain Delegation',
+  dnsCheckAutodetect: 'Use system defaults',
+  dnsCheckManual: 'Specify servers manually',
 };
