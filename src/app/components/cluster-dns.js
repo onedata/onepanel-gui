@@ -122,6 +122,13 @@ export default Component.extend(
     subdomainDelegationPrev: undefined,
 
     /**
+     * Contains old value of dnsServers to preserve dns servers input state
+     * after change to autodetect mode.
+     * @type {Array<string>}
+     */
+    dnsServersPrev: Object.freeze([]),
+
+    /**
      * @type {string}
      */
     dnsCheckMode: 'autodetect',
@@ -586,7 +593,13 @@ export default Component.extend(
       dnsCheckModeChanged(value) {
         this.set('dnsCheckMode', value);
         if (value === 'autodetect') {
+          this.set('dnsServersPrev', this.get('dnsServers'));
           this.send('dnsServersChanged', []);
+        } else {
+          const dnsServersPrev = this.get('dnsServersPrev');
+          if (get(dnsServersPrev, 'length')) {
+            this.send('dnsServersChanged', this.get('dnsServersPrev'));
+          }
         }
       },
     },
