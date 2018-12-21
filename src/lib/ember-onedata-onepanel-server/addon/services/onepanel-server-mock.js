@@ -480,6 +480,33 @@ export default OnepanelServerBase.extend(
       return 'the-cluster';
     },
 
+    getClusterIdFromUrl() {
+      return this.getClusterId();
+    },
+
+    /**
+     * Returns url of configuration endpoint
+     * @returns {string}
+     */
+    getConfigurationEndpointUrl() {
+      return location.origin + '/configuration';
+    },
+
+    /**
+     * Fetches configuration
+     * @returns {Promise<Object>}
+     */
+    fetchConfiguration() {
+      const mockInitializedCluster = this.get('mockInitializedCluster');
+      return resolve({
+        version: '18.02.0-rc13',
+        deployed: mockInitializedCluster,
+        build: '81-g8ae3907',
+        onezoneDomain: 'localhost:4201',
+        clusterId: this.getClusterId(),
+      });
+    },
+
     progressMock: computed('serviceType', function () {
       let serviceType = this.get('serviceType');
       return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
