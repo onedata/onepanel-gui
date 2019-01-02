@@ -6,6 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-3335 Added storage edition and deletion
+* VFS-5153 Added DNS autodetect option
 * VFS-5070 Added new conditions and using refactored API for auto-cleaning
 * VFS-4919 Added support for WebDAV storage
 * VFS-4870 New style for modals
