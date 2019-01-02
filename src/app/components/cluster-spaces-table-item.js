@@ -10,13 +10,14 @@
 import Component from '@ember/component';
 import _ from 'lodash';
 import { readOnly, reads } from '@ember/object/computed';
-import { get, computed } from '@ember/object';
+import { get, computed, observer } from '@ember/object';
 import { inject as service } from '@ember/service';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 /**
  * Space's `storageImport` properties that shouldn't be listed as generic
@@ -38,12 +39,15 @@ export default Component.extend(
   SpaceItemSyncStats,
   SpaceItemSupports,
   SpaceTabs,
+  createDataProxyMixin('filesPopularityConfiguration'),
+  createDataProxyMixin('autoCleaningConfiguration'),
   I18n, {
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
 
     storageManager: service(),
+    onepanelServer: service(),
 
     /**
      * @override
@@ -234,6 +238,17 @@ export default Component.extend(
       return space;
     }),
 
+    isActiveChanged: observer('_isActive', function isActiveChanged() {
+      if (this.get('_isActive')) {
+        if (!this.get('filesPopularityConfiguration')) {
+          this.updateFilesPopularityConfigurationProxy();
+        }
+        if (!this.get('autoCleaningConfiguration')) {
+          this.updateAutoCleaningConfigurationProxy();
+        }
+      }
+    }),
+
     init() {
       this._super(...arguments);
       const provider = this.get('provider');
@@ -241,6 +256,26 @@ export default Component.extend(
         'spaceSizeForProvider',
         readOnly(`space.supportingProviders.${get(provider, 'id')}`)
       );
+    },
+
+    fetchFilesPopularityConfiguration() {
+      const spaceId = this.get('spaceProxy.id');
+      return this.get('onepanelServer').request(
+          'oneprovider',
+          'getFilesPopularityConfiguration',
+          spaceId
+        )
+        .then(({ data }) => data);
+    },
+
+    fetchAutoCleaningConfiguration() {
+      const spaceId = this.get('spaceProxy.id');
+      return this.get('onepanelServer').request(
+          'oneprovider',
+          'getSpaceAutoCleaningConfiguration',
+          spaceId
+        )
+        .then(({ data }) => data);
     },
 
     actions: {
@@ -278,11 +313,32 @@ export default Component.extend(
             }
           });
       },
-      updateFilesPopularity(filesPopularity) {
-        return this.get('submitModifySpace')({ filesPopularity });
+      configureFilesPopularity(configuration) {
+        const spaceId = this.get('spaceProxy.id');
+        return this.get('onepanelServer').request(
+            'oneprovider',
+            'configureFilesPopularity',
+            spaceId,
+            configuration
+          )
+          .then(() => {
+            if (configuration && get(configuration, 'enabled') === false) {
+              // failure of this will not cause fail of configureFilesPopularity
+              this.updateAutoCleaningConfigurationProxy({ replace: true });
+            }
+            return this.updateFilesPopularityConfigurationProxy({ replace: true });
+          });
       },
-      updateAutoCleaning(autoCleaning) {
-        return this.get('submitModifySpace')({ autoCleaning });
+      configureSpaceAutoCleaning(configuration) {
+        const spaceId = this.get('spaceProxy.id');
+        return this.get('onepanelServer').request(
+          'oneprovider',
+          'configureSpaceAutoCleaning',
+          spaceId,
+          configuration
+        ).then(() => {
+          return this.updateAutoCleaningConfigurationProxy({ replace: true });
+        });
       },
       spaceOccupancyChanged(spaceOccupancy) {
         this.set('_updatedSpaceOccupancy', spaceOccupancy);

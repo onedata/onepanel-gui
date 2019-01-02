@@ -80,13 +80,36 @@ function _genSupportingProviders() {
   return supportingProviders;
 }
 
-function _genAutoCleaningSettings() {
+function _genAutoCleaningConfiguration() {
   return {
-    lowerFileSizeLimit: 10000,
-    upperFileSizeLimit: 10000000,
-    maxFileNotOpenedHours: 12,
-    target: 100000000,
-    threshold: 500000000,
+    lowerFileSizeLimit: {
+      enabled: true,
+      value: 10000,
+    },
+    upperFileSizeLimit: {
+      enabled: true,
+      value: 10000000,
+    },
+    minHoursSinceLastOpen: {
+      enabled: true,
+      value: 12,
+    },
+    maxOpenCount: {
+      enabled: true,
+      value: 10,
+    },
+    maxHourlyMovingAverage: {
+      enabled: true,
+      value: 11,
+    },
+    maxDailyMovingAverage: {
+      enabled: true,
+      value: 12,
+    },
+    maxMonthlyMovingAverage: {
+      enabled: true,
+      value: 13,
+    },
   };
 }
 
@@ -373,7 +396,9 @@ export default OnepanelServerBase.extend(
           );
 
           if (mockStep >= STEP.PROVIDER_DONE) {
-            let spaces = this.get('__spaces');
+            const spaces = this.get('__spaces');
+            const spacesFilesPopularity = this.get('__spacesFilesPopularity');
+            const spacesAutoCleaning = this.get('__spacesAutoCleaning');
             spaces.push({
               id: 'space1_verylongid',
               name: 'Space One',
@@ -387,14 +412,18 @@ export default OnepanelServerBase.extend(
                 strategy: 'no_update',
               },
               supportingProviders: _genSupportingProviders(),
-              filesPopularity: {
-                enabled: true,
-                restUrl: 'https://example.com',
-              },
-              autoCleaning: {
-                enabled: true,
-                settings: _genAutoCleaningSettings(),
-              },
+            });
+            spacesFilesPopularity.push({
+              id: 'space1_verylongid',
+              enabled: true,
+              restUrl: 'https://example.com',
+            });
+            spacesAutoCleaning.push({
+              id: 'space1_verylongid',
+              enabled: true,
+              target: 100000000,
+              threshold: 500000000,
+              rules: _genAutoCleaningConfiguration(),
             });
             spaces.push({
               id: 'space2_verylongid',
@@ -747,14 +776,8 @@ export default OnepanelServerBase.extend(
       return {
         success: (id, data) => {
           let spaces = this.get('__spaces');
-          let space = _.find(spaces, s => s.id === id);
+          let space = spaces.find(s => s.id === id);
           if (space) {
-            const popEnabled = get(data, 'filesPopularity.enabled');
-            if (popEnabled === true) {
-              set(data, 'filesPopularity.restUrl', 'https://example.com/api/2');
-            } else if (popEnabled === false) {
-              set(data, 'autoCleaning', { enabled: false });
-            }
             emberObjectMerge(space, data);
             if (data && data.size) {
               set(space, `supportingProviders.${PROVIDER_ID}`, data.size);
@@ -766,8 +789,89 @@ export default OnepanelServerBase.extend(
         },
         statusCode: (id) => {
           let spaces = this.get('__spaces');
-          let space = _.find(spaces, s => s.id === id);
+          let space = spaces.find(s => s.id === id);
           return space ? 204 : 404;
+        },
+      };
+    },
+
+    _req_oneprovider_configureFilesPopularity() {
+      return {
+        // data: { enabled, threshold, target, rules }
+        success: (id, data) => {
+          const spacesFilesPopularity = this.get('__spacesFilesPopularity');
+          let configuration = spacesFilesPopularity.find(s => s.id === id);
+          if (!configuration) {
+            configuration = { id };
+            spacesFilesPopularity.push(configuration);
+          }
+          const popEnabled = get(data, 'enabled');
+          if (popEnabled === true) {
+            set(data, 'restUrl', 'https://example.com/api/2');
+          } else if (popEnabled === false) {
+            let autoCleaningConfiguration = this.get('__spacesAutoCleaning').find(s =>
+              s.id === id
+            );
+            autoCleaningConfiguration = autoCleaningConfiguration || {};
+            set(autoCleaningConfiguration, 'enabled', false);
+          }
+
+          emberObjectMerge(configuration, data);
+        },
+        statusCode: (id) => {
+          const spacesFilesPopularity = this.get('__spacesFilesPopularity');
+          let configuration = spacesFilesPopularity.find(s => s.id === id);
+          return configuration ? 204 : 404;
+        },
+      };
+    },
+
+    _req_oneprovider_getFilesPopularityConfiguration() {
+      return {
+        success: (id) => {
+          const __spacesFilesPopularity = this.get('__spacesFilesPopularity');
+          const configuration = __spacesFilesPopularity.find(s => s.id === id);
+          return _.cloneDeep(configuration);
+        },
+        statusCode: (id) => {
+          const __spacesFilesPopularity = this.get('__spacesFilesPopularity');
+          const configuration = __spacesFilesPopularity.find(s => s.id === id);
+          return configuration ? 204 : 404;
+        },
+      };
+    },
+
+    _req_oneprovider_configureSpaceAutoCleaning() {
+      return {
+        // data: { enabled, threshold, target, rules }
+        success: (id, data) => {
+          const spacesAutoCleaning = this.get('__spacesAutoCleaning');
+          let configuration = spacesAutoCleaning.find(s => s.id === id);
+          if (!configuration) {
+            configuration = { id };
+            spacesAutoCleaning.push(configuration);
+          }
+          emberObjectMerge(configuration, data);
+        },
+        statusCode: (id) => {
+          const spacesAutoCleaning = this.get('__spacesAutoCleaning');
+          let configuration = spacesAutoCleaning.find(s => s.id === id);
+          return configuration ? 204 : 404;
+        },
+      };
+    },
+
+    _req_oneprovider_getSpaceAutoCleaningConfiguration() {
+      return {
+        success: (id) => {
+          const spacesAutoCleaning = this.get('__spacesAutoCleaning');
+          const configuration = spacesAutoCleaning.find(s => s.id === id);
+          return _.cloneDeep(configuration);
+        },
+        statusCode: (id) => {
+          const spacesAutoCleaning = this.get('__spacesAutoCleaning');
+          const configuration = spacesAutoCleaning.find(s => s.id === id);
+          return configuration ? 204 : 404;
         },
       };
     },
@@ -820,7 +924,7 @@ export default OnepanelServerBase.extend(
       }
     ),
 
-    _req_oneprovider_providerSpaceStartCleaning: computed(function () {
+    _req_oneprovider_triggerAutoCleaning: computed(function () {
       return {
         success: (id) => {
           this._getAutoCleaningStatusMock(id).forceStart();
@@ -1032,6 +1136,10 @@ export default OnepanelServerBase.extend(
     __storages: undefined,
 
     __spaces: A([]),
+
+    __spacesFilesPopularity: A([]),
+
+    __spacesAutoCleaning: A([]),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

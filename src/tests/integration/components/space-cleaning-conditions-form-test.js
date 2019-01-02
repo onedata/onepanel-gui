@@ -3,8 +3,20 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-import { fillIn, blur } from 'ember-native-dom-helpers';
+import { fillIn, blur, click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
+import _ from 'lodash';
+
+const globalData = Object.freeze({
+  enabled: true,
+  lowerFileSizeLimit: { enabled: true, value: 1048576 },
+  upperFileSizeLimit: { enabled: true, value: 2097152 },
+  minHoursSinceLastOpen: { enabled: true, value: 2 },
+  maxOpenCount: { enabled: true, value: 13 },
+  maxHourlyMovingAverage: { enabled: true, value: 14 },
+  maxDailyMovingAverage: { enabled: true, value: 15 },
+  maxMonthlyMovingAverage: { enabled: true, value: 16 },
+});
 
 describe('Integration | Component | space cleaning conditions form', function () {
   setupComponentTest('space-cleaning-conditions-form', {
@@ -12,51 +24,65 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   beforeEach(function () {
-    this.set('data', {
-      lowerFileSizeLimit: 1048576,
-      upperFileSizeLimit: 2097152,
-      maxFileNotOpenedHours: 2,
-    });
+    this.set('data', globalData);
   });
 
-  it('is filled in with injected data', function (done) {
+  it('is filled in with injected data', function () {
     this.render(hbs `
       {{space-cleaning-conditions-form
         data=data
         formSendDebounceTime=0
         formSavedInfoHideTimeout=0}}`);
-
-    const greaterGroup = this.$('.lowerFileSizeLimitGroup');
-    const lesserGroup = this.$('.upperFileSizeLimitGroup');
-    const timeGroup = this.$('.maxFileNotOpenedHoursGroup');
-    expect(greaterGroup.find('input')).to.have.value('1');
-    expect(lesserGroup.find('input')).to.have.value('2');
-    expect(timeGroup.find('input')).to.have.value('2');
-    wait().then(() => {
-      expect(greaterGroup.find('.ember-power-select-selected-item'))
+    const lowerFileSizeLimitGroup = this.$('.lowerFileSizeLimitGroup');
+    const upperFileSizeLimitGroup = this.$('.upperFileSizeLimitGroup');
+    const timeGroup = this.$('.minHoursSinceLastOpenGroup');
+    const maxOpenCountGroup = this.$('.maxOpenCountGroup');
+    const maxHourlyMovingAverageGroup = this.$('.maxHourlyMovingAverageGroup');
+    const maxDailyMovingAverageGroup = this.$('.maxDailyMovingAverageGroup');
+    const maxMonthlyMovingAverageGroup = this.$('.maxMonthlyMovingAverageGroup');
+    expect(lowerFileSizeLimitGroup.find('input.condition-number-input'))
+      .to.have.value('1');
+    expect(upperFileSizeLimitGroup.find('input.condition-number-input'))
+      .to.have.value('2');
+    expect(timeGroup.find('input.condition-number-input'))
+      .to.have.value('2');
+    expect(maxOpenCountGroup.find('input.condition-number-input'))
+      .to.have.value('13');
+    expect(maxHourlyMovingAverageGroup.find('input.condition-number-input'))
+      .to.have.value('14');
+    expect(maxDailyMovingAverageGroup.find('input.condition-number-input'))
+      .to.have.value('15');
+    expect(maxMonthlyMovingAverageGroup.find('input.condition-number-input'))
+      .to.have.value('16');
+    return wait().then(() => {
+      expect(lowerFileSizeLimitGroup.find('.ember-power-select-selected-item'))
         .to.contain('MiB');
-      expect(lesserGroup.find('.ember-power-select-selected-item'))
+      expect(upperFileSizeLimitGroup.find('.ember-power-select-selected-item'))
         .to.contain('MiB');
       expect(timeGroup.find('.ember-power-select-selected-item'))
         .to.contain('Hours');
-      done();
     });
   });
 
   [
     'lowerFileSizeLimit',
     'upperFileSizeLimit',
-    'maxFileNotOpenedHours',
+    'minHoursSinceLastOpen',
+    'minHoursSinceLastOpen',
+    'maxOpenCount',
+    'maxHourlyMovingAverage',
+    'maxDailyMovingAverage',
+    'maxMonthlyMovingAverage',
   ].forEach((fieldName) => {
     it(`does not accept letters in ${fieldName} input`, function (done) {
       this.render(hbs `
-        {{space-cleaning-conditions-form
-          data=data
-          formSendDebounceTime=0
-          formSavedInfoHideTimeout=0}}`);
+          {{space-cleaning-conditions-form
+            data=data
+            formSendDebounceTime=0
+            formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
-      fillIn(group.find('input')[0], 'asdf').then(() => {
+      fillIn(group.find('input.condition-number-input')[0], 'asdf').then(() => {
         expect(group).to.have.class('has-error');
         done();
       });
@@ -64,13 +90,13 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
     it(`does not accept negative numbers in ${fieldName} input`, function (done) {
       this.render(hbs `
-        {{space-cleaning-conditions-form
-          data=data
-          formSendDebounceTime=0
-          formSavedInfoHideTimeout=0}}`);
+                {{space-cleaning-conditions-form
+                  data=data
+                  formSendDebounceTime=0
+                  formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
-      fillIn(group.find('input')[0], '-3').then(() => {
+      return fillIn(group.find('input.condition-number-input')[0], '-3').then(() => {
         expect(group).to.have.class('has-error');
         done();
       });
@@ -78,13 +104,13 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
     it(`accepts positive numbers in ${fieldName} input`, function (done) {
       this.render(hbs `
-        {{space-cleaning-conditions-form
-          data=data
-          formSendDebounceTime=0
-          formSavedInfoHideTimeout=0}}`);
+                {{space-cleaning-conditions-form
+                  data=data
+                  formSendDebounceTime=0
+                  formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
-      fillIn(group.find('input')[0], '10').then(() => {
+      fillIn(group.find('input.condition-number-input')[0], '10').then(() => {
         expect(group).not.to.have.class('has-error');
         done();
       });
@@ -94,19 +120,20 @@ describe('Integration | Component | space cleaning conditions form', function ()
       const saveSpy = sinon.spy(() => Promise.resolve());
       this.on('onSave', saveSpy);
       this.render(hbs `
-        {{space-cleaning-conditions-form
-          formSendDebounceTime=0
-          formSavedInfoHideTimeout=0
-          data=data
-          onSave=(action "onSave")}}`);
+                {{space-cleaning-conditions-form
+                  formSendDebounceTime=0
+                  formSavedInfoHideTimeout=0
+                  data=data
+                  onSave=(action "onSave")}}`);
 
       const saveArg = {};
-      if (fieldName === 'maxFileNotOpenedHours') {
-        saveArg.maxFileNotOpenedHours = 3;
+
+      if (fieldName.endsWith('FileSizeLimit')) {
+        saveArg[fieldName] = { value: 3145728 };
       } else {
-        saveArg[fieldName] = 3145728;
+        saveArg[fieldName] = { value: 3 };
       }
-      const inputSelector = `.${fieldName}Group input`;
+      const inputSelector = `.${fieldName}Group input.condition-number-input`;
       fillIn(inputSelector, '3').then(() => {
         blur(inputSelector).then(() => {
           expect(saveSpy).to.be.calledOnce;
@@ -117,15 +144,15 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not accept float numbers in maxFileNotOpenedHours input', function (done) {
+  it('does not accept float numbers in minHoursSinceLastOpen input', function (done) {
     this.render(hbs `
-      {{space-cleaning-conditions-form
-        data=data
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0}}`);
+              {{space-cleaning-conditions-form
+                data=data
+                formSendDebounceTime=0
+                formSavedInfoHideTimeout=0}}`);
 
-    const group = this.$('.maxFileNotOpenedHoursGroup');
-    fillIn(group.find('input')[0], '3.4').then(() => {
+    const group = this.$('.minHoursSinceLastOpenGroup');
+    fillIn(group.find('input.condition-number-input')[0], '3.4').then(() => {
       expect(group).to.have.class('has-error');
       done();
     });
@@ -135,18 +162,20 @@ describe('Integration | Component | space cleaning conditions form', function ()
     const saveSpy = sinon.spy(() => Promise.resolve());
     this.on('onSave', saveSpy);
     this.render(hbs `
-      {{space-cleaning-conditions-form
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-        data=data
-        onSave=(action "onSave")}}`);
+              {{space-cleaning-conditions-form
+                formSendDebounceTime=0
+                formSavedInfoHideTimeout=0
+                data=data
+                onSave=(action "onSave")}}`);
 
     const saveArg = {
-      lowerFileSizeLimit: 2097152,
-      upperFileSizeLimit: 3145728,
+      lowerFileSizeLimit: { value: 2097152 },
+      upperFileSizeLimit: { value: 3145728 },
     };
-    const greaterInputSelector = '.lowerFileSizeLimitGroup input';
-    const lesserInputSelector = '.upperFileSizeLimitGroup input';
+    const greaterInputSelector =
+      '.lowerFileSizeLimitGroup input.condition-number-input';
+    const lesserInputSelector =
+      '.upperFileSizeLimitGroup input.condition-number-input';
     fillIn(lesserInputSelector, '3').then(() => {
       fillIn(greaterInputSelector, '2').then(() => {
         blur(greaterInputSelector).then(() => {
@@ -154,6 +183,41 @@ describe('Integration | Component | space cleaning conditions form', function ()
           expect(saveSpy).to.be.calledWith(saveArg);
           done();
         });
+      });
+    });
+  });
+
+  it('does not clear number value when disabling and enabling field', function () {
+    const localData = _.cloneDeep(globalData);
+    const saveSpy = sinon.spy(data => {
+      _.merge(localData, data);
+      return Promise.resolve();
+    });
+    this.on('onSave', saveSpy);
+
+    this.set('localData', localData);
+    this.render(hbs `
+              {{space-cleaning-conditions-form
+                formSendDebounceTime=0
+                formSavedInfoHideTimeout=0
+                data=localData
+                onSave=(action "onSave")}}`);
+
+    const greaterInputSelector =
+      '.lowerFileSizeLimitGroup input.condition-number-input';
+
+    const greaterCheckboxSelector =
+      '.lowerFileSizeLimitGroup .one-checkbox';
+
+    expect(this.$(greaterInputSelector), 'before disable').to.have.value('1');
+    return click(greaterCheckboxSelector).then(() => {
+      expect(this.$(greaterInputSelector)).to.be.disabled;
+      expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: false } });
+      return click(greaterCheckboxSelector).then(() => {
+        expect(this.$(greaterInputSelector)).to.not.be.disabled;
+        expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: true } });
+        expect(this.$(greaterInputSelector), 'after enable')
+          .to.have.value('1');
       });
     });
   });
