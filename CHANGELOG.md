@@ -6,7 +6,9 @@ CHANGELOG
 
 ### Latest changes
 
-* VFS-4919 Addes support for WebDAV storage
+* VFS-5153 Added DNS autodetect option
+* VFS-5070 Added new conditions and using refactored API for auto-cleaning
+* VFS-4919 Added support for WebDAV storage
 * VFS-4870 New style for modals
 * VFS-4798 Fixed redirect modal not shown after provider domain change and provider data refresh after cluster aspect change
 * VFS-4865 Added space support size change feature

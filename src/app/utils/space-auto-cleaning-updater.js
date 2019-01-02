@@ -1,6 +1,6 @@
 /**
- * A class for creating object that polls for auto cleaning status and reports
- * To use in space auto cleaning components (`component:space-auto-cleaning`)
+ * A class for creating object that polls for auto-cleaning status and reports
+ * To use in space auto-cleaning components (`component:space-auto-cleaning`)
  *
  * @module utils/space-auto-cleaning-updater
  * @author Jakub Liput
