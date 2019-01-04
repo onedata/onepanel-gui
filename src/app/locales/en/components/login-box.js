@@ -3,8 +3,9 @@ export default {
     brandSubtitle: 'control panel',
   },
   loginFormContainer: {
-    onezoneLogin: 'Login with Onezone',
-    gettingOnezoneLogin: 'getting Onezone login endpoint',
+    visitViaOnezoneDescription: 'Visit Onepanel via Onezone',
+    visitViaOnezone: 'Visit via Onezone',
+    loginWithCredentialsDescription: 'Login using credentials',
     or: 'or',
   },
 };

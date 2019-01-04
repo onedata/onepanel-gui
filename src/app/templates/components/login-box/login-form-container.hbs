@@ -1,16 +1,19 @@
 <div class="basicauth-login-form-container">
-  <div class="col-xs-12 col-centered login-separator">
-    {{#one-spin-button
-      class="btn btn-primary with-addon full-width btn-login-onezone"
-      action=(action "loginWithOnezone")
-    }}
-      <img class="btn-img-addon" src="assets/images/auth-providers/onezone.svg">
-      <span class="text">{{tt this "onezoneLogin"}}</span>
-    {{/one-spin-button}}
-  </div>
-  <div class="col-xs-12 col-centered login-separator">
-    {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
-  </div>
+  {{#if visitViaOnezoneUrl}}
+    <div class="col-xs-12 col-centered login-separator">
+      <p class="login-section-description">{{tt this "visitViaOnezoneDescription"}}</p>
+    </div>
+    <div class="col-xs-12 col-centered login-separator">
+      <a href={{visitViaOnezoneUrl}} class="btn btn-primary with-addon full-width btn-login-onezone">
+        <img class="btn-img-addon" src="assets/images/auth-providers/onezone.svg">
+        <span class="text">{{tt this "visitViaOnezone"}}</span>
+      </a>
+    </div>
+    <div class="col-xs-12 col-centered login-separator">
+      {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
+      <p class="login-section-description">{{tt this "loginWithCredentialsDescription"}}</p>
+    </div>
+  {{/if}}
   {{basicauth-login-form
     authenticationSuccess=authenticationSuccess
     authenticationFailure=authenticationFailure

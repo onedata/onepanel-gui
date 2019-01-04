@@ -1,4 +1,4 @@
-{{#login-layout}}
+{{#login-layout class=(if model.isOnezoneAvailable "has-visit-via-onezone")}}
   {{#if model.adminUserExists}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}

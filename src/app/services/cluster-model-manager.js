@@ -18,7 +18,14 @@ export default Service.extend(
 
     fetchCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
-        .then(({ data }) => data);
+        .then(({ data }) => data)
+        .catch(error => {
+          if (error && error.response && error.response.statusCode === 404) {
+            return null;
+          } else {
+            throw error;
+          }
+        });
     },
 
     // FIXME: make mock
