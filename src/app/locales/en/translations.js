@@ -39,6 +39,7 @@ import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
 import contentUsers from './components/content-users';
+import clusterNodesTile from './components/cluster-nodes-tile';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -91,6 +92,7 @@ let translations = {
     contentClustersDns,
     clusterDns,
     contentUsers,
+    clusterNodesTile,
   },
   mixins: {
     components: {

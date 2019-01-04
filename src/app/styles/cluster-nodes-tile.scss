@@ -1,0 +1,33 @@
+.cluster-nodes-tile {
+  $row-height: 30px;
+  .service-row {
+    display: flex;
+    margin: $padding-large-vertical 0;
+  }
+  .service-name {
+    flex-shrink: 0;
+    width: 100px;
+    line-height: 1.7;
+  }
+  .service-visualisation {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+    border: 1px solid $color-one-gray-sand;
+    border-width: 1px 0;
+    background-color: $color-one-semiwhite;
+  }
+  .service-visualisation-box {
+    flex-basis: 22px;
+    margin-left: 2px;
+    &:first-child {
+      margin-left: 0;
+    }
+    &.ok {
+      background-color: $color-one-success;
+    }
+    &.empty {
+      background-color: transparent
+    }
+  }
+}
