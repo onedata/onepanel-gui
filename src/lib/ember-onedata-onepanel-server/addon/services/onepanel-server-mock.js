@@ -42,7 +42,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'provider';
+const MOCK_SERVICE_TYPE = 'zone';
 
 /**
  * Response delay in milliseconds
@@ -100,6 +100,25 @@ function responseToString() {
 }
 
 const PlainableObject = EmberObject.extend(Plainable);
+
+const zoneCluster = {
+  id: 'cluster-1',
+  name: 'Some Zone',
+  domainName: 'onedata.org',
+  type: 'onezone',
+};
+const providerCluster1 = {
+  id: 'cluster-2',
+  name: 'Some Provider',
+  domainName: 'pro1.onedata.org',
+  type: 'oneprovider',
+};
+const providerCluster2 = {
+  id: 'cluster-3',
+  name: 'Other Provider',
+  domainName: 'pro2.onedata.org',
+  type: 'oneprovider',
+};
 
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
@@ -541,6 +560,22 @@ export default OnepanelServerBase.extend(
           return null;
         },
         statusCode: () => 204,
+      };
+    },
+
+    _req_onepanel_getClusters() {
+      const __clusters = this.get('__clusters');
+      return {
+        success: () => ({ ids: __clusters.mapBy('id') }),
+      };
+    },
+
+    _req_onepanel_getCluster() {
+      const __clusters = this.get('__clusters');
+      const getCluster = id => __clusters.find(c => get(c, 'id') === id);
+      return {
+        success: id => getCluster(id),
+        statusCode: id => getCluster(id) ? 200 : 404,
       };
     },
 
@@ -1062,7 +1097,22 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_getCurrentCluster() {
+      return {
+        success: () => (MOCK_SERVICE_TYPE === 'provider' ?
+          providerCluster1 : zoneCluster),
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
+
+    __clusters: computed(function __clusters() {
+      return [
+        zoneCluster,
+        providerCluster1,
+        providerCluster2,
+      ];
+    }),
 
     __clusterHosts: computed(function () {
       return ['example.com'];

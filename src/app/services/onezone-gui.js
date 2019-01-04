@@ -24,8 +24,9 @@ export default Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    * @type {Ember.ComputedProperty<string|null>}
    */
   onezoneOrigin: computed('onezoneDomain', function onezoneOrigin() {
-    const onezoneDomain = this.get('onezoneDomain');
-    return onezoneDomain ? 'https://' + this.get('onezoneDomain') : null;
+    // const onezoneDomain = this.get('onezoneDomain');
+    // return onezoneDomain ? 'https://' + this.get('onezoneDomain') : null;
+    return 'http://localhost:4201';
   }),
 
   _location: location,

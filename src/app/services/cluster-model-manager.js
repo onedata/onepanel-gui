@@ -28,13 +28,11 @@ export default Service.extend(
         });
     },
 
-    // FIXME: make mock
     fetchClusterIds() {
       return this.get('onepanelServer').request('onepanel', 'getClusters')
         .then(({ data }) => data.ids);
     },
 
-    // FIXME: make mock
     fetchClusters() {
       return this.getClusterIdsProxy().then(ids =>
         Promise.all(ids.map(id => this.getCluster(id)))
