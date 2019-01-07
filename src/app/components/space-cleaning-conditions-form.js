@@ -9,7 +9,7 @@
 
 import Component from '@ember/component';
 
-import { reads, union, alias } from '@ember/object/computed';
+import { reads, union } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
 import { run } from '@ember/runloop';
 import { inject as service } from '@ember/service';

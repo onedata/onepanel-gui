@@ -16,7 +16,6 @@ import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
-import { A } from '@ember/array';
 import { getOwner } from '@ember/application';
 
 const {

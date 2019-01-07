@@ -86,7 +86,9 @@ export default Component.extend(I18n, {
   actions: {
     modifySpace(...args) {
       return this.get('modifySpace')(...args)
-        .then(() => this.get('eventsBus').trigger('synchronization-config:close'));
+        .then(() => this.get('eventsBus').trigger(
+          this.elementId + '-synchronization-config:close'
+        ));
     },
   },
 });

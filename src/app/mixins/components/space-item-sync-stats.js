@@ -9,7 +9,7 @@
 
 import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
-import { computed, observer, set, get } from '@ember/object';
+import { computed, observer, get } from '@ember/object';
 import { readOnly, equal, not } from '@ember/object/computed';
 import { isEmpty } from '@ember/utils';
 import _ from 'lodash';
