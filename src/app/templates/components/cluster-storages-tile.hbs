@@ -1,0 +1,10 @@
+{{#one-tile
+  title=(tt this "title")
+  class="cluster-storages-tile text-center"}}
+  {{#promise-proxy-container proxy=storagesProxy}}
+    <div class="circle">
+      {{one-icon icon="support"}}
+      <span class="storages-number">{{storagesProxy.length}}</span>
+    </div>
+  {{/promise-proxy-container}}
+{{/one-tile}}
