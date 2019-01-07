@@ -5,7 +5,15 @@ import { reads } from '@ember/object/computed';
 import $ from 'jquery';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
+import config from 'ember-get-config';
+
+const {
+  APP: {
+    MOCK_BACKEND,
+  },
+} = config;
+
+const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
   onepanelServer: service(),
   providerManager: service(),
   onepanelConfiguration: service(),
@@ -98,3 +106,21 @@ export default Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
     }
   },
 });
+
+const OnezoneGuiMock = OnezoneGui.extend({
+  /**
+   * @override
+   */
+  fetchIsOnezoneAvailable() {
+    return resolve(true);
+  },
+});
+
+let ExportServer;
+if (MOCK_BACKEND) {
+  ExportServer = OnezoneGuiMock;
+} else {
+  ExportServer = OnezoneGui;
+}
+
+export default ExportServer;
