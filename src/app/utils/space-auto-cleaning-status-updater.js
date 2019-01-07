@@ -10,14 +10,16 @@
 
 import { reads } from '@ember/object/computed';
 import { assert } from '@ember/debug';
-import DataWatcher from 'onepanel-gui/utils/data-watcher';
+import { inject as service } from '@ember/service';
+import DataWatcher from 'onedata-gui-common/utils/data-watcher';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default DataWatcher.extend({
   /**
    * @virtual
    * @type {Ember.Service} SpaceManager service
    */
-  spaceManager: undefined,
+  spaceManager: service(),
 
   /**
    * @virtual
@@ -45,7 +47,7 @@ export default DataWatcher.extend({
     } = this.getProperties('spaceManager', 'spaceId');
 
     assert(typeof spaceManager !== 'object',
-      'spaceManager service should be injected');
+      'spaceManager service should be injected or auto-injected');
     assert(typeof spaceId !== 'string', 'spaceId should be injected');
   },
 
@@ -60,10 +62,10 @@ export default DataWatcher.extend({
     this.set('isUpdating', true);
     return spaceManager.getAutoCleaningStatus(spaceId)
       .then(autoCleaningStatus => {
-        this.set('isUpdating', null);
-        return this.set('data', autoCleaningStatus);
+        safeExec(this, 'set', 'isUpdating', null);
+        return safeExec(this, 'set', 'data', autoCleaningStatus);
       })
-      .catch(error => this.set('error', error))
-      .finally(() => this.set('isUpdating', false));
+      .catch(error => safeExec(this, 'set', 'error', error))
+      .finally(() => safeExec(this, 'set', 'isUpdating', false));
   },
 });

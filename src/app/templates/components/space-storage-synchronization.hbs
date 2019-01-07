@@ -9,9 +9,9 @@
             <div class="item-icon-container">
               {{one-icon class="item-icon" icon="settings"}}
             </div>
-            <strong>Import strategy:</strong>
+            <strong>{{tt this "storageImport.importStrategy"}}</strong>
             {{tt this (concat "storageImport.strategies." space.storageImport.strategy)}},
-            <strong>update strategy:</strong>
+            <strong>{{tt this "storageUpdate.updateStrategy"}}</strong>:
             {{tt this (concat "storageUpdate.strategies." space.storageUpdate.strategy)}}
           {{/listItem.header}}
           {{#listItem.content}}

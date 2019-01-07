@@ -20,7 +20,7 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.spaceFilePopularity',
 
   /**
-   * A function invoked with 
+   * Configuration of file-popularity
    * @virtual
    * @type {Onepanel.FilePopularityConfiguration}
    */

@@ -14,7 +14,7 @@ import { inject as service } from '@ember/service';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-throw';
 
 const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 
@@ -44,7 +44,14 @@ export default Component.extend(
      */
     submitModifySpace: undefined,
 
-    startRevoke: notImplementedThrow,
+    /**
+     * @virtual
+     * Returns promise that resolves if either user confirms and succeeds to
+     * revoke space (true) or cancels revocation (false).
+     * The promise rejects when revocation operation fails.
+     * @type {function}
+     */
+    startRevokeSpace: notImplementedReject,
 
     /**
      * OneCollapsibleListItem that should be used to render this

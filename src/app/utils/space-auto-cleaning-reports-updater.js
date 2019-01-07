@@ -14,7 +14,7 @@ import { assert } from '@ember/debug';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import pushNewItems from 'onedata-gui-common/utils/push-new-items';
 import { alias } from '@ember/object/computed';
-import DataWatcher from 'onepanel-gui/utils/data-watcher';
+import DataWatcher from 'onedata-gui-common/utils/data-watcher';
 
 export default DataWatcher.extend({
   /**

@@ -30,7 +30,7 @@ function genReportIndex() {
 
 class ReportsCollection {
   constructor(initialReports = []) {
-    this.intervalId = setInterval(this.addReport.bind(this), 10000000);
+    this.intervalId = setInterval(this.addReport.bind(this), 10000);
     this.reports = [...initialReports];
   }
   addReport() {

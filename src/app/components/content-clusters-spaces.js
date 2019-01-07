@@ -71,9 +71,11 @@ export default Component.extend(
     },
 
     revokeSpace() {
+      const {
+        spaceToRevoke: space,
+        globalNotify,
+      } = this.getProperties('spaceToRevoke', 'globalNotify');
       try {
-        const space = this.get('spaceToRevoke');
-        const globalNotify = this.get('globalNotify');
         const spaceName = get(space, 'name');
         return this.get('spaceManager').revokeSpaceSupport(get(space, 'id'))
           .then(() => {

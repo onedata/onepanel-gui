@@ -11,7 +11,6 @@ import DataItemBase from './-data-item-base';
 
 export default DataItemBase.extend({
   tagName: '',
-  classNames: ['data-row'],
 
   listItem: undefined,
 });

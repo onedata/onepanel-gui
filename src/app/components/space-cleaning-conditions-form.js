@@ -110,9 +110,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
    * Array of field names.
    * @type {ComputedProperty<Array<string>>}
    */
-  _sourceFieldNames: union('_sourceFieldWithUnitNames', '_sourceFieldCountNames'),
-
-  sourceFieldNames: alias('_sourceFieldNames'),
+  sourceFieldNames: union('_sourceFieldWithUnitNames', '_sourceFieldCountNames'),
 
   /**
    * Units used in 'file size' condition.
@@ -159,11 +157,11 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
    * @type {computed.Object}
    * @override
    */
-  formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
-    let _sourceFieldNames = this.get('_sourceFieldNames');
+  formFieldsErrors: computed('validations.errors.[]', 'sourceFieldNames', function () {
+    let sourceFieldNames = this.get('sourceFieldNames');
     let errors = this.get('validations.errors');
     let fieldsErrors = {};
-    _sourceFieldNames
+    sourceFieldNames
       .forEach((fieldName) => {
         fieldsErrors[fieldName] =
           _.find(errors, { attribute: `formData.${fieldName}Number` }) ||
@@ -272,15 +270,15 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
   modifiedData() {
     const {
       formData,
-      _sourceFieldNames,
+      sourceFieldNames,
       formFieldsModified: modified,
     } = this.getProperties(
       'formFieldsModified',
       'formData',
-      '_sourceFieldNames',
+      'sourceFieldNames',
     );
     const data = {};
-    _sourceFieldNames.forEach((fieldName) => {
+    sourceFieldNames.forEach((fieldName) => {
       const isValueModified = modified.get(fieldName + 'Number') ||
         modified.get(fieldName + 'Unit');
       const isEnabledModified = modified.get(fieldName + 'Enabled');
@@ -296,6 +294,34 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
       }
     });
     return data;
+  },
+
+  /**
+   * @override
+   */
+  isValid() {
+    let {
+      formFieldsErrors,
+      formFieldsModified: modified,
+      formData,
+      sourceFieldNames,
+    } = this.getProperties(
+      'formFieldsErrors',
+      'formFieldsModified',
+      'formData',
+      'sourceFieldNames',
+    );
+    let isValid = true;
+    sourceFieldNames.forEach(fieldName => {
+      const isModified = modified.get(fieldName + 'Number') ||
+        modified.get(fieldName + 'Enabled') ||
+        modified.get(fieldName + 'Unit');
+      if (formData.get(fieldName + 'Enabled') && isModified &&
+        formFieldsErrors[fieldName]) {
+        isValid = false;
+      }
+    });
+    return isValid;
   },
 
   actions: {

@@ -17,6 +17,7 @@ import Onepanel from 'npm:onepanel';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { A } from '@ember/array';
+import { getOwner } from '@ember/application';
 
 const {
   SpaceAutoCleaningConfiguration,
@@ -52,10 +53,6 @@ export default Component.extend({
    * @type {Onepanel.SpaceAutoCleaningConfiguration}
    */
   autoCleaningConfiguration: undefined,
-
-  reportsSourceArray: computed(function reportsSourceArray() {
-    return A();
-  }),
 
   /**
    * @type {SpaceAutoCleaningStatusUpdater}
@@ -137,9 +134,8 @@ export default Component.extend({
     this._super(...arguments);
     const {
       autoCleaningConfiguration,
-      spaceManager,
       spaceId,
-    } = this.getProperties('autoCleaningConfiguration', 'spaceManager', 'spaceId');
+    } = this.getProperties('autoCleaningConfiguration', 'spaceId');
 
     // if the component is initialized with blank autoCleaningConfiguration,
     // we should provide an empty valid autoCleaningConfiguration
@@ -147,11 +143,13 @@ export default Component.extend({
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
     }
 
-    const spaceAutoCleaningStatusUpdater = SpaceAutoCleaningStatusUpdater.create({
-      isEnabled: false,
-      spaceManager,
-      spaceId,
-    });
+    const spaceAutoCleaningStatusUpdater =
+      SpaceAutoCleaningStatusUpdater.create(
+        getOwner(this).ownerInjection(), {
+          isEnabled: false,
+          spaceId,
+        }
+      );
 
     this.set('spaceAutoCleaningStatusUpdater', spaceAutoCleaningStatusUpdater);
     this.toggleStatusUpdater();

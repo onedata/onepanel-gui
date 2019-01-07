@@ -31,7 +31,7 @@
   </h1>
 </div>
 {{#bs-form class=(concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")) as |form|}}
-  {{#each _sourceFieldNames as |fieldName|}}
+  {{#each sourceFieldNames as |fieldName|}}
     {{#form.group 
       class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
     }}

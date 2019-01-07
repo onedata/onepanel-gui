@@ -91,7 +91,7 @@ export default Component.extend(I18n, {
   reportsArray: computed('spaceId', function reportsArray() {
     const spaceId = this.get('spaceId');
     return ReplacingChunksArray.create({
-      fetch: (...args) => this.fetchReports(spaceId, ...args),
+      fetch: (...fetchArgs) => this.fetchReports(spaceId, ...fetchArgs),
       sortFun: compareIndex,
       startIndex: 0,
       endIndex: 50,
@@ -130,7 +130,14 @@ export default Component.extend(I18n, {
       _window,
       spaceManager,
       spaceId,
-    } = this.getProperties('_resizeEventHandler', '_window', 'spaceManager', 'spaceId');
+      reportsArray,
+    } = this.getProperties(
+      '_resizeEventHandler',
+      '_window',
+      'spaceManager',
+      'spaceId',
+      'reportsArray'
+    );
 
     _resizeEventHandler();
     _window.addEventListener('resize', _resizeEventHandler);
@@ -139,7 +146,7 @@ export default Component.extend(I18n, {
       isEnabled: false,
       spaceManager,
       spaceId,
-      replacingArray: this.get('reportsArray'),
+      replacingArray: reportsArray,
       sortFun: compareIndex,
     });
 
@@ -156,8 +163,8 @@ export default Component.extend(I18n, {
     );
   },
 
-  fetchReports(spaceId, ...args) {
-    return this.get('spaceManager').getAutoCleaningReports(spaceId, ...args);
+  fetchReports(spaceId, ...fetchArgs) {
+    return this.get('spaceManager').getAutoCleaningReports(spaceId, ...fetchArgs);
   },
 
   /**
@@ -167,8 +174,7 @@ export default Component.extend(I18n, {
   onTableScroll(items, headerVisible) {
     const reportsArray = this.get('reportsArray');
     const sourceArray = get(reportsArray, 'sourceArray');
-    const reportsArrayIds = sourceArray
-      .map(r => get(r, 'id')).toArray();
+    const reportsArrayIds = sourceArray.mapBy('id');
     const firstId = items[0] && items[0].getAttribute('data-row-id') || null;
     const lastId = items[items.length - 1] &&
       items[items.length - 1].getAttribute('data-row-id') || null;
@@ -189,6 +195,7 @@ export default Component.extend(I18n, {
   },
 
   didInsertElement() {
+    this._super(...arguments);
     const listWatcher = this.set('listWatcher', this.createListWatcher());
     listWatcher.scrollHandler();
   },

@@ -12,7 +12,7 @@ import { observer, computed, get } from '@ember/object';
 import { isArray } from '@ember/array';
 import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
-import { reads, not } from '@ember/object/computed';
+import { reads, not, equal } from '@ember/object/computed';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -54,7 +54,6 @@ export default Component.extend(
     spacesProxy: undefined,
 
     supportSpaceOpened: false,
-    _currentToken: '',
 
     spaces: reads('spacesProxy.content'),
 
@@ -64,46 +63,19 @@ export default Component.extend(
     // to reload child components when changing single space (isLoading -> isSettled)
     // not removing it for now, because it is a base for creating additional
     // spinner on bottom
-    someSpaceSettled: computed('spaces.@each.isSettled', function () {
+    someSpaceSettled: computed('spaces.@each.isSettled', function someSpaceSettled() {
       const spaces = this.get('spaces');
-      if (spaces) {
-        return spaces.some(s => get(s, 'isSettled'));
-      } else {
-        return false;
-      }
+      return spaces ? spaces.some(s => get(s, 'isSettled')) : false;
     }),
 
-    allSpacesSettled: computed('spaces.@each.isSettled', function () {
+    allSpacesSettled: computed('spaces.@each.isSettled', function allSpacesSettled() {
       const spaces = this.get('spaces');
-      if (spaces) {
-        return spaces.every(s => get(s, 'isSettled'));
-      } else {
-        return false;
-      }
+      return spaces ? spaces.every(s => get(s, 'isSettled')) : false;
     }),
 
     someSpaceIsLoading: not('allSpacesSettled'),
 
-    /**
-     * Using observer, because when we use computed property for spaces,
-     * the whole spaces list will be generated every time name and isSettled
-     * are changed.
-     */
-    addConflictLabels: observer('spaces.@each.{content.name,isSettled}', function () {
-      const spaces = this.get('spaces');
-      if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
-        addConflictLabels(
-          spaces
-          .filter(s => get(s, 'isFulfilled'))
-          .map(s => get(s, 'content'))
-        );
-      }
-    }),
-
-    _hasNoSpaces: computed('spaces.length', function () {
-      let spaces = this.get('spaces');
-      return isArray(spaces) && get(spaces, 'length') === 0;
-    }),
+    _hasNoSpaces: equal('spaces.length', 0),
 
     /**
      * @type {Ember.ComputedProperty<Action>}
@@ -130,6 +102,29 @@ export default Component.extend(
       } = this.getProperties('_hasNoSpaces', '_supportSpaceAction');
       return _hasNoSpaces ? [] : [_supportSpaceAction];
     }),
+
+    /**
+     * Using observer, because when we use computed property for spaces,
+     * the whole spaces list will be generated every time name and isSettled
+     * are changed.
+     */
+    addConflictLabels: observer(
+      'spaces.@each.{content.name}',
+      'allSpacesSettled',
+      function () {
+        const {
+          spaces,
+          allSpacesSettled,
+        } = this.getProperties('spaces', 'allSpacesSettled');
+        if (isArray(spaces) && allSpacesSettled) {
+          addConflictLabels(
+            spaces
+            .filterBy('isFulfilled')
+            .mapBy('content')
+          );
+        }
+      }
+    ),
 
     _hasNoSpacesObserver: observer('_hasNoSpaces', function () {
       if (this.get('_hasNoSpaces')) {

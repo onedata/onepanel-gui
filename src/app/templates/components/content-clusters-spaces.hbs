@@ -21,7 +21,7 @@
 {{/if}}
 
 {{#proceed-process-modal
-  opened=(not (not spaceToRevoke))
+  opened=spaceToRevoke
   close=(action "confirmRevokeModal" false)
   proceed=(action "confirmRevokeModal" true)
   modalIcon="sign-warning-rounded"
