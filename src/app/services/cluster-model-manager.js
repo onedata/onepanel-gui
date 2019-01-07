@@ -8,13 +8,18 @@
  */
 
 import Service, { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import _ from 'lodash';
 
 export default Service.extend(
   createDataProxyMixin('currentCluster'),
   createDataProxyMixin('clusterIds'),
   createDataProxyMixin('clusters'), {
     onepanelServer: service(),
+    onepanelConfiguration: service(),
+    providerManager: service(),
+    configurationManager: service(),
 
     fetchCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
@@ -40,8 +45,26 @@ export default Service.extend(
     },
 
     getCluster(id) {
+      const configuration = this.get('onepanelConfiguration.configuration');
       return this.get('onepanelServer').request('onepanel', 'getCluster', id)
-        .then(({ data }) => data);
+        .then(({ data }) => {
+          const cluster = _.cloneDeep(data);
+          cluster.name = configuration.name;
+          if (cluster.type === 'onezone') {
+            // cluster.domain = configuration.zoneDomain;
+            return this.get('configurationManager').getClusterDetails()
+              .then(currentCluster => {
+                cluster.domain = get(currentCluster, 'onezone.domainName');
+                return cluster;
+              });
+          } else {
+            return this.get('providerManager').getAnyProvider(cluster.providerId)
+              .then(provider => {
+                cluster.domain = provider.domain;
+                return cluster;
+              });
+          }
+        });
     },
   }
 );
