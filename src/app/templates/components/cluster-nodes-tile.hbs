@@ -1,5 +1,6 @@
 {{#one-tile
   title=(concat (tt this "title") (if clusterConfiguration.isFulfilled (concat " (" allNodes.length ")") ""))
+  aspect="nodes"
   class="cluster-nodes-tile"}}
   {{#promise-proxy-container proxy=clusterConfiguration}}
     <div class="services-header">{{tt this "servicesHeader"}}:</div>

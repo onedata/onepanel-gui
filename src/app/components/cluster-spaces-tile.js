@@ -21,7 +21,7 @@ export default Component.extend(I18n, {
   /**
    * @type {PromiseObject<Provider>}
    */
-  providerId: undefined,
+  providerIdProxy: undefined,
 
   /**
    * @type {PromiseArray<Space>}
