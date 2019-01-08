@@ -22,9 +22,6 @@ export default Component.extend(
 
     initProcess: false,
 
-    // FIXME: use configuration/old cluster manager
-    cluster: null,
-
     configuration: null,
 
     currentClusterProxy: reads('clusterModelManager.currentClusterProxy'),
@@ -40,6 +37,7 @@ export default Component.extend(
             if (!get(configuration, 'isInitialized')) {
               // FIXME: safe exec
               this.set('initProcess', true);
+              this.set('configuration', configuration);
             } else {
               scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
             }

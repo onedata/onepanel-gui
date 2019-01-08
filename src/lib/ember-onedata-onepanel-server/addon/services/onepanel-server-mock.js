@@ -36,13 +36,15 @@ import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details'
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
+const PROVIDER1_ID = PROVIDER_ID;
+const PROVIDER2_ID = 'dsnu8ew3724t3643t62344e-fdfdj8h78d';
 const MOCKED_SUPPORT = {
   'lofrewu83yr78fghae78ft64aqry4-14uy48979fmur': 100000000,
   'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 315000000,
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'zone';
+const MOCK_SERVICE_TYPE = 'provider';
 
 /**
  * Response delay in milliseconds
@@ -103,21 +105,27 @@ const PlainableObject = EmberObject.extend(Plainable);
 
 const zoneCluster = {
   id: 'cluster-1',
-  name: 'Some Zone',
-  domainName: 'onedata.org',
   type: 'onezone',
+  serviceId: null,
+  version: '18.07.0',
+  build: '1900',
+  proxy: false,
 };
 const providerCluster1 = {
   id: 'cluster-2',
-  name: 'Some Provider',
-  domainName: 'pro1.onedata.org',
   type: 'oneprovider',
+  serviceId: PROVIDER1_ID,
+  version: '18.02.1',
+  build: '7000',
+  proxy: false,
 };
 const providerCluster2 = {
   id: 'cluster-3',
-  name: 'Other Provider',
-  domainName: 'pro2.onedata.org',
   type: 'oneprovider',
+  serviceId: PROVIDER2_ID,
+  version: '18.02.0',
+  build: '4000',
+  proxy: true,
 };
 
 export default OnepanelServerBase.extend(
@@ -149,10 +157,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -1083,7 +1091,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getOnezoneInfo() {
+    _req_oneprovider_getOnezoneInfo() {
       return {
         success: ( /* token */ ) => ({
           domain: 'example.com',
@@ -1104,7 +1112,34 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    // FIXME:
+    // _req_onepanel_getAnyProvider() {
+    //   const __provider = this.get('provider');
+    //   return {
+    //     success: id => (id === PROVIDER_ID ? )
+    //   }
+    // },
+
     // -- MOCKED RESOURCE STORE --
+
+    __anyProviders: computed('__provider', function __providers() {
+      const __provider = this.get('__provider');
+      return [
+        __provider,
+        {
+          id: PROVIDER2_ID,
+          name: 'Other provider',
+          onezoneDomainName: 'localhost',
+          subdomainDelegation: true,
+          letsEncryptEnabled: undefined,
+          subdomain: 'somedomain',
+          domain: 'somedomain.localhost',
+          adminEmail: 'some@example.com',
+          geoLatitude: 49.698284,
+          geoLongitude: 21.898093,
+        },
+      ];
+    }),
 
     __clusters: computed(function __clusters() {
       return [

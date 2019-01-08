@@ -45,11 +45,11 @@ export default Service.extend(
     },
 
     getCluster(id) {
-      const configuration = this.get('onepanelConfiguration.configuration');
       return this.get('onepanelServer').request('onepanel', 'getCluster', id)
         .then(({ data }) => {
           const cluster = _.cloneDeep(data);
-          cluster.name = configuration.name;
+          // FIXME:
+          cluster.name = `Hello ${id}`;
           if (cluster.type === 'onezone') {
             // cluster.domain = configuration.zoneDomain;
             return this.get('configurationManager').getClusterDetails()
@@ -58,11 +58,14 @@ export default Service.extend(
                 return cluster;
               });
           } else {
-            return this.get('providerManager').getAnyProvider(cluster.providerId)
-              .then(provider => {
-                cluster.domain = provider.domain;
-                return cluster;
-              });
+            cluster.domain = 'example.com';
+            return cluster;
+            // FIXME:
+            // return this.get('providerManager').getAnyProvider(cluster.providerId)
+            //   .then(provider => {
+            //     cluster.domain = provider.domain;
+            //     return cluster;
+            //   });
           }
         });
     },
