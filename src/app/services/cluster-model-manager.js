@@ -48,12 +48,11 @@ export default Service.extend(
       return this.get('onepanelServer').request('onepanel', 'getCluster', id)
         .then(({ data }) => {
           const cluster = _.cloneDeep(data);
-          // FIXME:
-          cluster.name = `Hello ${id}`;
           if (cluster.type === 'onezone') {
-            // cluster.domain = configuration.zoneDomain;
+            // FIXME: AND only if we are on oz-panel
             return this.get('configurationManager').getClusterDetails()
               .then(currentCluster => {
+                cluster.name = get(currentCluster, 'name');
                 cluster.domain = get(currentCluster, 'onezone.domainName');
                 return cluster;
               });
