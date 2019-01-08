@@ -17,11 +17,19 @@
     margin: 0 auto;
   }
   .login-separator {
-    width: $-login-form-width;
-    margin-top: $form-group-margin-bottom * 1.5;
-    margin-bottom: $form-group-margin-bottom * 1.5;
+    max-width: $-login-form-width;
+    margin-top: $form-group-margin-bottom;
+    margin-bottom: $form-group-margin-bottom;
+  }
+  .login-section-description {
+    text-align: center;
+    margin-top: $form-group-margin-bottom;
+    font-family: 'Open Sans Semibold';
   }
   .resource-load-error {
     background-color: $color-one-semiwhite;
+  }
+  .col-user-profile-icon {
+    margin-bottom: 20px;
   }
 }

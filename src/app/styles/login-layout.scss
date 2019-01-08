@@ -1,0 +1,9 @@
+.login-layout {
+  &.has-visit-via-onezone {
+    @media (min-height: 750px) {
+      .login-box-container {
+        margin-top: 70px;
+      }
+    }
+  }
+}

@@ -18,7 +18,7 @@ export default GuiUtils.extend(
   createDataProxyMixin('guiVersion'),
   createDataProxyMixin('guiName'), {
     onepanelServer: service(),
-    clusterModelManager: service(),
+    onepanelConfiguration: service(),
 
     /**
      * Panel type: provider or zone.
@@ -63,12 +63,12 @@ export default GuiUtils.extend(
 
     // FIXME: allow to ask without authentication?
     fetchGuiVersion() {
-      return this.get('clusterModelManager').getCurrentClusterProxy()
-        .then(cluster => get(cluster, 'version'));
+      return this.get('onepanelConfiguration').getConfigurationProxy()
+        .then(config => get(config, 'version'));
     },
 
     fetchGuiName() {
-      return this.get('clusterModelManager').getCurrentClusterProxy()
-        .then(cluster => get(cluster, 'name'));
+      return this.get('onepanelConfiguration').getConfigurationProxy()
+        .then(config => get(config, 'name'));
     },
   });

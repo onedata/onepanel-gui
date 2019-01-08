@@ -36,6 +36,8 @@ import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details'
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
+const PROVIDER1_ID = PROVIDER_ID;
+const PROVIDER2_ID = 'dsnu8ew3724t3643t62344e-fdfdj8h78d';
 const MOCKED_SUPPORT = {
   'lofrewu83yr78fghae78ft64aqry4-14uy48979fmur': 100000000,
   'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 315000000,
@@ -101,6 +103,31 @@ function responseToString() {
 
 const PlainableObject = EmberObject.extend(Plainable);
 
+const zoneCluster = {
+  id: 'cluster-1',
+  type: 'onezone',
+  serviceId: null,
+  version: '18.07.0',
+  build: '1900',
+  proxy: false,
+};
+const providerCluster1 = {
+  id: 'cluster-2',
+  type: 'oneprovider',
+  serviceId: PROVIDER1_ID,
+  version: '18.02.1',
+  build: '7000',
+  proxy: false,
+};
+const providerCluster2 = {
+  id: 'cluster-3',
+  type: 'oneprovider',
+  serviceId: PROVIDER2_ID,
+  version: '18.02.0',
+  build: '4000',
+  proxy: true,
+};
+
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
   SpaceCleaningMock,
@@ -130,10 +157,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -480,6 +507,33 @@ export default OnepanelServerBase.extend(
       return 'the-cluster';
     },
 
+    getClusterIdFromUrl() {
+      return this.getClusterId();
+    },
+
+    /**
+     * Returns url of configuration endpoint
+     * @returns {string}
+     */
+    getConfigurationEndpointUrl() {
+      return location.origin + '/configuration';
+    },
+
+    /**
+     * Fetches configuration
+     * @returns {Promise<Object>}
+     */
+    fetchConfiguration() {
+      const mockInitializedCluster = this.get('mockInitializedCluster');
+      return resolve({
+        version: '18.02.0-rc13',
+        deployed: mockInitializedCluster,
+        build: '81-g8ae3907',
+        onezoneDomain: 'localhost:4201',
+        clusterId: this.getClusterId(),
+      });
+    },
+
     progressMock: computed('serviceType', function () {
       let serviceType = this.get('serviceType');
       return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
@@ -514,6 +568,22 @@ export default OnepanelServerBase.extend(
           return null;
         },
         statusCode: () => 204,
+      };
+    },
+
+    _req_onepanel_getClusters() {
+      const __clusters = this.get('__clusters');
+      return {
+        success: () => ({ ids: __clusters.mapBy('id') }),
+      };
+    },
+
+    _req_onepanel_getCluster() {
+      const __clusters = this.get('__clusters');
+      const getCluster = id => __clusters.find(c => get(c, 'id') === id);
+      return {
+        success: id => getCluster(id),
+        statusCode: id => getCluster(id) ? 200 : 404,
       };
     },
 
@@ -1021,7 +1091,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getOnezoneInfo() {
+    _req_oneprovider_getOnezoneInfo() {
       return {
         success: ( /* token */ ) => ({
           domain: 'example.com',
@@ -1035,7 +1105,49 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_getCurrentCluster() {
+      return {
+        success: () => (MOCK_SERVICE_TYPE === 'provider' ?
+          providerCluster1 : zoneCluster),
+      };
+    },
+
+    // FIXME:
+    // _req_onepanel_getAnyProvider() {
+    //   const __provider = this.get('provider');
+    //   return {
+    //     success: id => (id === PROVIDER_ID ? )
+    //   }
+    // },
+
     // -- MOCKED RESOURCE STORE --
+
+    __anyProviders: computed('__provider', function __providers() {
+      const __provider = this.get('__provider');
+      return [
+        __provider,
+        {
+          id: PROVIDER2_ID,
+          name: 'Other provider',
+          onezoneDomainName: 'localhost',
+          subdomainDelegation: true,
+          letsEncryptEnabled: undefined,
+          subdomain: 'somedomain',
+          domain: 'somedomain.localhost',
+          adminEmail: 'some@example.com',
+          geoLatitude: 49.698284,
+          geoLongitude: 21.898093,
+        },
+      ];
+    }),
+
+    __clusters: computed(function __clusters() {
+      return [
+        zoneCluster,
+        providerCluster1,
+        providerCluster2,
+      ];
+    }),
 
     __clusterHosts: computed(function () {
       return ['example.com'];

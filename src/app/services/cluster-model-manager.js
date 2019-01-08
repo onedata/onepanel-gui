@@ -8,26 +8,36 @@
  */
 
 import Service, { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import _ from 'lodash';
 
 export default Service.extend(
   createDataProxyMixin('currentCluster'),
   createDataProxyMixin('clusterIds'),
   createDataProxyMixin('clusters'), {
     onepanelServer: service(),
+    onepanelConfiguration: service(),
+    providerManager: service(),
+    configurationManager: service(),
 
     fetchCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
-        .then(({ data }) => data);
+        .then(({ data }) => data)
+        .catch(error => {
+          if (error && error.response && error.response.statusCode === 404) {
+            return null;
+          } else {
+            throw error;
+          }
+        });
     },
 
-    // FIXME: make mock
     fetchClusterIds() {
       return this.get('onepanelServer').request('onepanel', 'getClusters')
         .then(({ data }) => data.ids);
     },
 
-    // FIXME: make mock
     fetchClusters() {
       return this.getClusterIdsProxy().then(ids =>
         Promise.all(ids.map(id => this.getCluster(id)))
@@ -36,7 +46,28 @@ export default Service.extend(
 
     getCluster(id) {
       return this.get('onepanelServer').request('onepanel', 'getCluster', id)
-        .then(({ data }) => data);
+        .then(({ data }) => {
+          const cluster = _.cloneDeep(data);
+          // FIXME:
+          cluster.name = `Hello ${id}`;
+          if (cluster.type === 'onezone') {
+            // cluster.domain = configuration.zoneDomain;
+            return this.get('configurationManager').getClusterDetails()
+              .then(currentCluster => {
+                cluster.domain = get(currentCluster, 'onezone.domainName');
+                return cluster;
+              });
+          } else {
+            cluster.domain = 'example.com';
+            return cluster;
+            // FIXME:
+            // return this.get('providerManager').getAnyProvider(cluster.providerId)
+            //   .then(provider => {
+            //     cluster.domain = provider.domain;
+            //     return cluster;
+            //   });
+          }
+        });
     },
   }
 );

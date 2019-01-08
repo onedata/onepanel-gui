@@ -91,4 +91,10 @@ export default Service.extend({
     deregistering.then(() => configurationManager.getDefaultRecord(true));
     return deregistering;
   },
+
+  // FIXME: cacheing?
+  getAnyProvider(id) {
+    this.get('onepanelServer').request('onepanel', 'getAnyProvider', id)
+      .then(({ data }) => data);
+  },
 });

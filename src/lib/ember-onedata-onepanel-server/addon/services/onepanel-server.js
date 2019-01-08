@@ -23,6 +23,7 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import { classify } from '@ember/string';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import $ from 'jquery';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -55,6 +56,11 @@ export default OnepanelServerBase.extend(
      * @type {string}
      */
     username: null,
+
+    /**
+     * @type {Window.Location}
+     */
+    _location: location,
 
     /**
      * @type {computed<Boolean>}
@@ -355,4 +361,23 @@ export default OnepanelServerBase.extend(
       });
     },
 
-  });
+    /**
+     * Returns url of configuration endpoint
+     * @returns {string}
+     */
+    getConfigurationEndpointUrl() {
+      const _location = this.get('_location');
+      return _location.origin + '/configuration';
+    },
+
+    /**
+     * Fetches configuration
+     * @returns {Promise<Object>}
+     */
+    fetchConfiguration() {
+      return new Promise((resolve, reject) => {
+        $.ajax(this.getConfigurationEndpointUrl()).then(resolve, reject);
+      });
+    },
+  }
+);

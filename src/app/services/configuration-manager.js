@@ -44,6 +44,7 @@ export default Service.extend({
    */
   _defaultCache: alias('defaultCache.content'),
 
+  // FIXME: needs refactor - the-cluster should be named that way
   /**
    * Promise proxy resolves with array of promise proxies for ClusterDetails
    * @returns {PromiseObject}
@@ -55,6 +56,7 @@ export default Service.extend({
     return PromiseObject.create({ promise });
   },
 
+  // FIXME: needs refactor - the-cluster should be named that way
   getDefaultRecord(reload = false) {
     return this.getClusterDetails(undefined, reload);
   },
