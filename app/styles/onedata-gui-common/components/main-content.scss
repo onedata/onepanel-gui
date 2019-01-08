@@ -110,6 +110,7 @@ $content-header-row-mobile-height: $content-header-row-height - 9px;
     .form-title {
       margin-top: $content-row-vertical-padding;
       text-align: center;
+      word-wrap: break-word;
     }
 
     .form-section-title {

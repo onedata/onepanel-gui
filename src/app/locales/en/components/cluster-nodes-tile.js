@@ -3,7 +3,7 @@ export default {
   servicesHeader: 'Services',
   services: {
     databases: 'Databases',
-    managers: 'Cl. managers',
+    managers: 'Cluster man.',
     workers: 'Workers',
   },
 };

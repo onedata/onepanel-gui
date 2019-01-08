@@ -1,0 +1,24 @@
+.new-cluster-zone-registration {
+  .onezone-info-box {
+    margin-bottom: 1.5 * $padding-large-vertical;
+    text-align: center;
+    font-size: 0.9em;
+
+    @media (max-width: $screen-xs-max) {
+      padding: 0 $mobile-horizontal-content-padding;
+    }
+
+    .box-title {
+      font-family: 'Open Sans Semibold';
+      font-size: 20px;
+      .one-icon {
+        position: relative;
+        top: 0.3em;
+        margin-right: $padding-xs-horizontal;
+        font-size: 1.7em;
+        line-height: 0;
+        color: $color-one-red;
+      }
+    }
+  }
+}

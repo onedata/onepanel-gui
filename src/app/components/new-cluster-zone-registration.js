@@ -25,6 +25,8 @@ const {
 const I18N_PREFIX = 'components.newClusterZoneRegistration.';
 
 export default Component.extend(I18n, {
+  classNames: ['new-cluster-zone-registration'],
+
   globalNotify: service(),
   onepanelServer: service(),
   i18n: service(),
@@ -187,6 +189,13 @@ export default Component.extend(I18n, {
       } else {
         return reject();
       }
+    },
+
+    back() {
+      this.setProperties({
+        mode: 'token',
+        onezoneInfo: undefined,
+      });
     },
   },
 });
