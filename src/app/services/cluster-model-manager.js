@@ -11,6 +11,7 @@ import Service, { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
+import { resolve } from 'rsvp';
 
 export default Service.extend(
   createDataProxyMixin('currentCluster'),
@@ -44,29 +45,52 @@ export default Service.extend(
       );
     },
 
+    getNotDeployedCluster() {
+      const type = 'one' + this.get('onepanelServer.serviceType');
+      return {
+        id: 'new',
+        name: 'New cluster',
+        domain: location.hostname,
+        type,
+      };
+    },
+
     getCluster(id) {
       return this.get('onepanelServer').request('onepanel', 'getCluster', id)
-        .then(({ data }) => {
-          const cluster = _.cloneDeep(data);
-          if (cluster.type === 'onezone') {
-            // FIXME: AND only if we are on oz-panel
-            return this.get('configurationManager').getClusterDetails()
-              .then(currentCluster => {
-                cluster.name = get(currentCluster, 'name');
-                cluster.domain = get(currentCluster, 'onezone.domainName');
-                return cluster;
-              });
-          } else {
-            cluster.domain = 'example.com';
+        .then(({ data }) => this.generateGuiCluster(data));
+    },
+
+    /**
+     * Adds missing name and domain fields to cluster records fetched from backend 
+     * @param {Onepanel.ClusterDetails} data cluster data from backend(REST)
+     * @param {string} data.id
+     * @param {string} data.type
+     * @param {string} data.serviceId
+     * @param {string} data.version
+     * @param {string} data.build
+     * @param {boolean} data.proxy
+     * @returns {Promise}
+     */
+    generateGuiCluster(data) {
+      const cluster = _.cloneDeep(data);
+      if (cluster.type === 'onezone') {
+        // FIXME: AND only if we are on oz-panel
+        return this.get('configurationManager').getInstallationDetails()
+          .then(currentCluster => {
+            cluster.name = get(currentCluster, 'name');
+            cluster.domain = get(currentCluster, 'onezone.domainName');
             return cluster;
-            // FIXME:
-            // return this.get('providerManager').getAnyProvider(cluster.providerId)
-            //   .then(provider => {
-            //     cluster.domain = provider.domain;
-            //     return cluster;
-            //   });
-          }
-        });
+          });
+      } else {
+        cluster.domain = 'example.com';
+        return resolve(cluster);
+        // FIXME:
+        // return this.get('providerManager').getAnyProvider(cluster.providerId)
+        //   .then(provider => {
+        //     cluster.domain = provider.domain;
+        //     return cluster;
+        //   });
+      }
     },
   }
 );

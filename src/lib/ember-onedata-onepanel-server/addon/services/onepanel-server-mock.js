@@ -504,7 +504,7 @@ export default OnepanelServerBase.extend(
     },
 
     getClusterId() {
-      return 'the-cluster';
+      return 'new';
     },
 
     getClusterIdFromUrl() {

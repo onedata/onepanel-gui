@@ -16,16 +16,13 @@ import Component from '@ember/component';
 import layout from 'onepanel-gui/templates/components/content-users';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { CLUSTER_INIT_STEPS } from 'onepanel-gui/models/cluster-details';
-import { resolve } from 'rsvp';
 
 const {
   UserModifyRequest,
 } = Onepanel;
 
 export default Component.extend(I18n,
-  createDataProxyMixin('onezoneAccount'),
-  createDataProxyMixin('clusterDetails'), {
+  createDataProxyMixin('onezoneAccount'), {
     layout,
 
     classNames: 'content-users',
@@ -59,30 +56,10 @@ export default Component.extend(I18n,
     onepanelServiceType: reads('guiUtils.serviceType'),
 
     /**
-     * @override
-     */
-    fetchClusterDetails() {
-      return resolve({ hello: 'world ' });
-      // return this.get('configurationManager').getClusterDetails();
-    },
-
-    /**
      * To inject.
      * @type {OnepanelGui.UserDetails}
      */
     user: null,
-
-    canBeLinked: computed(
-      'onepanelServiceType',
-      'clusterDetails.initStep',
-      function canBeLinked() {
-        const initStep = this.get('clusterDetailsProxy.content.initStep');
-        if (this.get('onepanelServiceType') === 'provider') {
-          return initStep >= CLUSTER_INIT_STEPS.PROVIDER_REGISTER + 1;
-        } else {
-          return initStep >= CLUSTER_INIT_STEPS.ZONE_DEPLOY + 1;
-        }
-      }),
 
     /**
      * Make an API call to change password of current user

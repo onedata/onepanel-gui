@@ -7,7 +7,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { Promise, resolve } from 'rsvp';
+import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
@@ -15,6 +15,7 @@ export default SidebarResources.extend({
   configurationManager: service(),
   clusterModelManager: service(),
   userManager: service(),
+  guiUtils: service(),
 
   /**
    * @param {string} type
@@ -28,14 +29,27 @@ export default SidebarResources.extend({
       case 'tokens':
         return resolve([]);
       case 'clusters':
-        // return this.get('configurationManager').getClusters().get('promise');
-        return this.get('clusterModelManager').getClustersProxy();
+        if (this.get('guiUtils.serviceType') === 'zone') {
+          return this.get('clusterModelManager').getClustersProxy();
+        } else {
+          return this.get('clusterModelManager').getCurrentClusterProxy()
+            .then(currentCluster => {
+              if (currentCluster) {
+                return { list: [currentCluster] };
+              } else {
+                // cluster is not deployed yet - only in op-panel standalone mode
+                return {
+                  list: [this.get('clusterModelManager').getNotDeployedCluster()],
+                };
+              }
+            });
+        }
       case 'users':
         return this.get('userManager').getUsers().get('promise').then(users => {
-          return Promise.resolve({ list: users });
+          return resolve({ list: users });
         });
       default:
-        return new Promise((resolve, reject) => reject('No such collection: ' + type));
+        return reject('No such collection: ' + type);
     }
   },
 
