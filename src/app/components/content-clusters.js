@@ -3,7 +3,7 @@
  *
  * @module component/content-clusters
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -14,6 +14,7 @@ import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
   createDataProxyMixin('configuration'), {
@@ -35,9 +36,10 @@ export default Component.extend(
         this.get('currentClusterProxy').then(currentCluster => {
           if (get(currentCluster, 'id') === clusterId) {
             if (!get(configuration, 'isInitialized')) {
-              // FIXME: safe exec
-              this.set('initProcess', true);
-              this.set('configuration', configuration);
+              safeExec(this, 'setProperties', {
+                initProcess: true,
+                configuration,
+              });
             } else {
               scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
             }

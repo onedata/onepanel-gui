@@ -193,10 +193,11 @@ export default Component.extend(I18n, {
       $('.col-content').scrollTop(0);
       this._prev();
     },
+    // FIXME: to complete refactor
     changeClusterName(name) {
       if (!name) {
         this.get('configurationManager')
-          .getClusterDetails(this.get('cluster.id'), true)
+          .getInstallationDetails(true)
           .then(cluster => get(cluster, 'name'));
       } else {
         this.set('cluster.name', name);

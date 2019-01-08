@@ -58,17 +58,16 @@ export default Service.extend({
 
   // FIXME: needs refactor - the-cluster should be named that way
   getDefaultRecord(reload = false) {
-    return this.getClusterDetails(undefined, reload);
+    return this.getInstallationDetails(reload);
   },
 
   // TODO: in future this should be able to get details of any cluster 
   // in system 
   /**
-   * @param {string} clusterId
    * @param {boolean} [reload=false]
    * @returns {PromiseObject}
    */
-  getClusterDetails(clusterId, reload = false) {
+  getInstallationDetails(reload = false) {
     let {
       onepanelServiceType,
       defaultCache,
@@ -106,7 +105,9 @@ export default Service.extend({
           return this.get('clusterModelManager').getCurrentClusterProxy()
             .then(
               currentCluster => {
-                const currentClusterId = get(currentCluster, 'id');
+                const currentClusterId = (
+                  currentCluster && get(currentCluster, 'id') || 'new'
+                );
                 const name = (configuration || null) &&
                   configuration['one' + onepanelServiceType].name;
                 const thisCluster = ClusterInfo.create({

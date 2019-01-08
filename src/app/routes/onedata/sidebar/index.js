@@ -9,6 +9,7 @@
 
 import SidebarIndexRoute from 'onedata-gui-common/routes/onedata/sidebar/index';
 import { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 
 export default SidebarIndexRoute.extend({
   clusterModelManager: service(),
@@ -18,8 +19,13 @@ export default SidebarIndexRoute.extend({
    */
   getDefaultResource(list, resourceType) {
     if (resourceType === 'clusters') {
-      // promise resolve is guaranteed by fetching currentCluster in application route
-      return this.get('clusterModelManager.currentCluster');
+      const first = list[0];
+      if (first && get(first, 'id') === 'new') {
+        return list[0];
+      } else {
+        // promise resolve is guaranteed by fetching currentCluster in application route
+        return this.get('clusterModelManager.currentCluster');
+      }
     } else {
       return this._super(...arguments);
     }

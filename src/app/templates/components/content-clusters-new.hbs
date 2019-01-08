@@ -1,0 +1,6 @@
+{{#promise-proxy-container proxy=configurationProxy}}
+  {{new-cluster
+    cluster=configuration
+    finishInitProcess=(action "finishInitProcess")
+  }}
+{{/promise-proxy-container}}
