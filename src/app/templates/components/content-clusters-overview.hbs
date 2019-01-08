@@ -38,6 +38,11 @@
         </tbody>
       </table>
     {{/one-tile}}
+    {{!-- FIXME uncomment, provide needed data and add "more" link implementation (is not implemented yet due to broken routing in mock) --}}
+    {{!-- {{cluster-nodes-tile}}
+    {{providers-map-tile providersProxy=...}}
+    {{cluster-spaces-tile providerId=... spacesProxy=...}}
+    {{cluster-storages-tile storagesProxy=...}} --}}
     {{#if (eq cluster.type "oneprovider")}}
       {{#one-tile
         class="text-center"
