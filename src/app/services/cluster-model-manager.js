@@ -73,23 +73,30 @@ export default Service.extend(
      */
     generateGuiCluster(data) {
       const cluster = _.cloneDeep(data);
+      const onepanelGuiType = this.get('onepanelServer.serviceType');
       if (cluster.type === 'onezone') {
-        // FIXME: AND only if we are on oz-panel
-        return this.get('configurationManager').getInstallationDetails()
-          .then(currentCluster => {
-            cluster.name = get(currentCluster, 'name');
-            cluster.domain = get(currentCluster, 'onezone.domainName');
+        if (onepanelGuiType === 'zone') {
+          return this.get('configurationManager').getInstallationDetails()
+            .then(currentCluster => {
+              cluster.name = get(currentCluster, 'name');
+              cluster.domain = get(currentCluster, 'onezone.domainName');
+              return cluster;
+            });
+        } else {
+          return this.get('providerManager').getOnezoneInfo()
+            .then(onezoneInfo => {
+              cluster.name = get(onezoneInfo, 'name');
+              cluster.domain = get(onezoneInfo, 'domain');
+              return cluster;
+            });
+        }
+      } else {
+        return this.get('providerManager').getAnyProvider(get(data, 'serviceId'))
+          .then(({ name, domain }) => {
+            cluster.name = name;
+            cluster.domain = domain;
             return cluster;
           });
-      } else {
-        cluster.domain = 'example.com';
-        return resolve(cluster);
-        // FIXME:
-        // return this.get('providerManager').getAnyProvider(cluster.providerId)
-        //   .then(provider => {
-        //     cluster.domain = provider.domain;
-        //     return cluster;
-        //   });
       }
     },
   }

@@ -124,7 +124,15 @@ export default OnepanelServerBase.extend(
         if (customHandler) {
           customHandler(...params, callback);
         } else {
-          this.get('_' + api + 'Api')[method](...params, callback);
+          const apiObject = this.get('_' + api + 'Api');
+          const methodFun = apiObject[method];
+          if (methodFun) {
+            methodFun.bind(apiObject)(...params, callback);
+          } else {
+            throw new Error(
+              `No such method in API client: ${api} ${method}, maybe the oneclient package is incompatible?`
+            );
+          }
         }
       });
 

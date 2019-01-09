@@ -24,6 +24,7 @@ export default Service.extend({
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
+
         return this.get('clusterModelManager').getCluster(id);
       case 'users':
         return this.get('userManager').getUserDetails(id).get('promise');
