@@ -1,5 +1,5 @@
 export default {
-  accountManagement: 'Account management',
+  title: 'Credentials',
   changePassword: 'Change password',
   cancelChangePassword: 'Cancel password change',
   passwordChangedSuccess: 'Password changed successfully',

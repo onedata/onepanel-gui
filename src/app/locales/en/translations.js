@@ -1,5 +1,4 @@
 import clusters from './tabs/clusters';
-import users from './tabs/users';
 
 import clusterStorageAddForm from './components/cluster-storage-add-form';
 import supportSpaceForm from './components/support-space-form';
@@ -38,7 +37,7 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
-import contentUsers from './components/content-users';
+import contentClustersCredentials from './components/content-clusters-credentials';
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
@@ -53,7 +52,6 @@ import onedataCommonTranslations from './onedata-gui-common';
 let translations = {
   tabs: {
     clusters,
-    users,
   },
   components: {
     clusterStorageAddForm,
@@ -93,7 +91,7 @@ let translations = {
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
-    contentUsers,
+    contentClustersCredentials,
     clusterNodesTile,
     clusterSpacesTile,
     clusterStoragesTile,

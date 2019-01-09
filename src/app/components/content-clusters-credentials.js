@@ -1,7 +1,7 @@
 /**
  * Implements operations on user for onepanel
  * 
- * @module components/content-users
+ * @module components/content-clusters-credentials
  * @author Jakub Liput, Michal Borzecki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -17,15 +17,20 @@ const {
 } = Onepanel;
 
 export default Component.extend({
+  classNames: ['content-cluster-credentials'],
+
   i18n: service(),
   globalNotify: service(),
+  userManager: service(),
   onepanelServer: service(),
 
   /**
    * To inject.
    * @type {OnepanelGui.UserDetails}
    */
-  user: null,
+  userProxy: computed(function userProxy() {
+    return this.get('userManager').getCurrentUser();
+  }),
 
   /**
    * If true, set credentials form to changingPassword mode
@@ -36,8 +41,8 @@ export default Component.extend({
   _changePasswordButtonLabel: computed('_changingPassword', function () {
     let i18n = this.get('i18n');
     return this.get('_changingPassword') ?
-      i18n.t('components.contentUsers.cancelChangePassword') :
-      i18n.t('components.contentUsers.changePassword');
+      i18n.t('components.contentClustersCredentials.cancelChangePassword') :
+      i18n.t('components.contentClustersCredentials.changePassword');
   }),
 
   _changePasswordButtonType: computed('_changingPassword', function () {
@@ -59,17 +64,17 @@ export default Component.extend({
    */
   _changePassword({ currentPassword, newPassword }) {
     let {
-      user,
+      userProxy,
       onepanelServer,
     } = this.getProperties(
-      'user',
+      'userProxy',
       'onepanelServer',
     );
 
     return onepanelServer.request(
       'onepanel',
       'modifyUser',
-      get(user, 'id'),
+      get(userProxy, 'id'),
       UserModifyRequest.constructFromObject({
         currentPassword,
         newPassword,
@@ -102,14 +107,14 @@ export default Component.extend({
 
       changingPassword.catch(error => {
         globalNotify.backendError(
-          i18n.t('components.contentUsers.passwordChangedSuccess'),
+          i18n.t('components.contentClustersCredentials.passwordChangedSuccess'),
           error
         );
       });
 
       changingPassword.then(() => {
         globalNotify.info(
-          i18n.t('components.contentUsers.passwordChangedSuccess')
+          i18n.t('components.contentClustersCredentials.passwordChangedSuccess')
         );
         this.set('_changingPassword', false);
       });
