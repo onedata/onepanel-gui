@@ -25,6 +25,8 @@ const {
 const I18N_PREFIX = 'components.newClusterZoneRegistration.';
 
 export default Component.extend(I18n, {
+  classNames: ['new-cluster-zone-registration'],
+
   globalNotify: service(),
   onepanelServer: service(),
   i18n: service(),
@@ -115,7 +117,6 @@ export default Component.extend(I18n, {
   },
 
   handleProceedToken() {
-    // FIXME: uncomment after adding getOnezoneInfo to backend
     return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
       token: this.get('token'),
     }).catch(error => {
@@ -127,24 +128,6 @@ export default Component.extend(I18n, {
         mode: 'form',
       });
     });
-    // return resolve({
-    //   data: {
-    //     domain: 'dev-onezone.default.svc.cluster.local',
-    //     name: 'Hello Onezone',
-    //     online: true,
-    //     subdomainDelegationSupported: true,
-    //     compatible: true,
-    //     version: '18.02.0',
-    //   },
-    // }).catch(error => {
-    //   this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
-    //   throw error;
-    // }).then(({ data: onezoneInfo }) => {
-    //   safeExec(this, 'setProperties', {
-    //     onezoneInfo,
-    //     mode: 'form',
-    //   });
-    // });
   },
 
   actions: {
@@ -187,6 +170,13 @@ export default Component.extend(I18n, {
       } else {
         return reject();
       }
+    },
+
+    back() {
+      this.setProperties({
+        mode: 'token',
+        onezoneInfo: undefined,
+      });
     },
   },
 });

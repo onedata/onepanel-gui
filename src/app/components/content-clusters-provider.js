@@ -17,9 +17,11 @@ import { camelize } from '@ember/string';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, GlobalActions, {
   providerManager: service(),
+  onepanelServer: service(),
   globalNotify: service(),
   i18n: service(),
 
@@ -69,6 +71,17 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   _editButtonEnabled: computed.not('_submitting'),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<Onepanel.OnezoneInfo>>}
+   */
+  onezoneInfoProxy: computed(function onezoneInfoProxy() {
+    const onepanelServer = this.get('onepanelServer');
+    return PromiseObject.create({
+      promise: onepanelServer.request('oneprovider', 'getOnezoneInfo')
+        .then(({ data }) => data),
+    });
+  }),
 
   _providerFormMode: computed('_editing', 'providerProxy.content', function () {
     let _editing = this.get('_editing');

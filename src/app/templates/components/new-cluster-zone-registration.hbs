@@ -1,7 +1,16 @@
 {{!-- TODO i18n --}}
 
-<div class="row content-row header-row no-border">
-  <h1>{{tt this "header"}}</h1>
+<div class="row content-row header-row">
+  <h1>
+    {{tt this "header"}}
+    {{#if (eq mode "form")}}
+      <div class="btn-toolbar">
+        {{#bs-button type="default" size="sm" class="zone-registration-back" onClick=(action "back")}}
+          {{one-icon icon="arrow-left"}}<span>{{tt this "back"}}</span>
+        {{/bs-button}}
+      </div>
+    {{/if}}
+  </h1>
 </div>
 {{#if (eq mode "token")}}
   <div class="row row-mode-token">
@@ -31,19 +40,23 @@
       
     <div class="row content-row no-border">
       <div class="col-xs-12">
-        <label for="zone-token-textarea">
-          {{tt this "zoneTokenTextareaLabel"}}:
-        </label>
-        <textarea
-          id="zone-token-textarea"
-          rows=5
-          value={{token}}
-          oninput={{action (mut token) value="target.value"}}
-          onkeydown={{invoke-on-enter (action "proceedToken")}}
-          placeholder={{concat (tt this "example") ": " "MDAzM2xvY2F00aW9uIGRldi1vbmV6b25lLmRlZmF1bHQuc3ZjLmNsdXN00ZXIubG9jYWwKMDAzMGlkZW500aWZpZXIgYzBhYzU4YmFmZGZiMDY1MTI4OGJiYjI00Y2JhOWExMWEKMDAzMGNpZCB00b2tlblR5cGUgPSBwcm92aWRlcl9yZWdpc3RyYXRpb25fdG9rZW4KMDAyZnNpZ25hdHVyZSD75vdFM00n6301uvyFtVH42bYiqt8iaog02ivu02fx473hmwo"}}
-          disabled={{contentInfo.actionInProgress}}
-          class="form-control zone-token-textarea"
-        />
+        <p>
+          <label for="zone-token-textarea">
+            {{tt this "zoneTokenTextareaLabel"}}:
+          </label>
+        </p>
+        <p>
+          <textarea
+            id="zone-token-textarea"
+            rows=5
+            value={{token}}
+            oninput={{action (mut token) value="target.value"}}
+            onkeydown={{invoke-on-enter (action "proceedToken")}}
+            placeholder={{concat (tt this "example") ": " "MDAzM2xvY2F00aW9uIGRldi1vbmV6b25lLmRlZmF1bHQuc3ZjLmNsdXN00ZXIubG9jYWwKMDAzMGlkZW500aWZpZXIgYzBhYzU4YmFmZGZiMDY1MTI4OGJiYjI00Y2JhOWExMWEKMDAzMGNpZCB00b2tlblR5cGUgPSBwcm92aWRlcl9yZWdpc3RyYXRpb25fdG9rZW4KMDAyZnNpZ25hdHVyZSD75vdFM00n6301uvyFtVH42bYiqt8iaog02ivu02fx473hmwo"}}
+            disabled={{contentInfo.actionInProgress}}
+            class="form-control zone-token-textarea"
+          />
+        </p>
       </div>
     </div>
     
@@ -62,19 +75,23 @@
 {{else if (eq mode "form")}}
   <div class="row row-mode-form">
     <div class="row content-row no-border">
-      {{!-- FIXME: styles --}}
-      <p class="text-center" style="font-size: 1.5em;">Registering to {{onezoneInfo.domain}}</p>
-      <p class="text-center">Current Onezone version: {{onezoneInfo.version}}</p>
+      <h1 class="text-center form-title">{{tt this "registeringTo"}}</h1>
+      <div class="onezone-info-box">
+        <div class="box-title">
+          {{one-icon icon="onezone"}}
+          <span class="onezone-name break-word">{{onezoneInfo.name}}</span>
+        </div>
+        <a href="https://{{onezoneInfo.domain}}" class="black onezone-domain break-word" target="_blank">https://{{onezoneInfo.domain}}</a><br>
+        {{tt this "onezoneVersion"}}: <span class="onezone-version">{{onezoneInfo.version}}</span>
+      </div>
       <p class="text-center">{{tt this "providerFormIntro"}}</p>
-    </div>
-    <div class="row content-row no-border">
       {{provider-registration-form
         mode="new"
         excludedSubdomains=_excludedSubdomains
         submit=(action "submit")
         token=token
-        subdomainDelegation=onezoneInfo.subdomainDelegationSupported
-        onezoneDomainName=onezoneInfo.domain
+        subdomainDelegationSupported=onezoneInfo.subdomainDelegationSupported
+        onezoneDomain=onezoneInfo.domain
       }}
     </div>
   </div>

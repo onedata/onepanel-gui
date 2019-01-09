@@ -18,14 +18,18 @@
   <div class="row content-row row-small">
     <h1 class="form-title">{{_formTitle}}</h1>
     <p class="form-description">{{_formDescription}}</p>
-    {{#promise-proxy-container proxy=providerProxy}}
-      {{provider-registration-form
-        excludedSubdomains=_excludedSubdomains
-        mode=_providerFormMode
-        provider=providerProxy.content
-        submit=(action "submitModify")
-        changeDomain=(action "changeDomain")
+    {{#promise-proxy-container proxy=onezoneInfoProxy}}
+      {{#promise-proxy-container proxy=providerProxy}}
+        {{provider-registration-form
+          onezoneDomain=onezoneInfoProxy.domain
+          subdomainDelegationSupported=onezoneInfoProxy.subdomainDelegationSupported
+          excludedSubdomains=_excludedSubdomains
+          mode=_providerFormMode
+          provider=providerProxy.content
+          submit=(action "submitModify")
+          changeDomain=(action "changeDomain")
       }}
+      {{/promise-proxy-container}}
     {{/promise-proxy-container}}
   </div>
 </div>
