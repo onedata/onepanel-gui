@@ -9,6 +9,5 @@ export default {
   proceedToken: 'Proceed',
   example: 'Example',
   registeringTo: 'Registering to',
-  onezoneDomain: 'Onezone domain: ',
   onezoneVersion: 'version',
 };

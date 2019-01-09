@@ -4,6 +4,8 @@
   </h1>
 </div>
 
+{{!-- FIXME: i18n --}}
+
 <div class="row content-row">
   <div class="one-tile-container">
     {{#one-tile
@@ -46,18 +48,6 @@
         title="Oneprovider"}}
       {{cluster-spaces-tile providerIdProxy=providerIdProxy spacesProxy=spacesProxy}}
       {{cluster-storages-tile storagesProxy=storagesProxy}}
-
-      {{!-- {{#one-tile
-        class="text-center"
-        title="Oneprovider"
-        customLink=(concat "/oz/onezone/i#/onedata/data/" cluster.serviceId)
-        moreText="Show on map"
-      }}
-        <figure class="main-figure">
-          <img class="main-image" src="http://www.geolympus.com/wp-content/uploads/2016/09/world-map-pin.png">
-          {{#truncated-string tagName="span" class="one-label"}}{{cluster.name}}{{/truncated-string}}
-        </figure>
-      {{/one-tile}} --}}
     {{/if}}
   </div>
 </div>

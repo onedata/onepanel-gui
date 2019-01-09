@@ -49,7 +49,7 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<PromiseObject<Object>>}
    */
   clusterConfiguration: computed(function clusterConfiguration() {
-    return this.get('configurationManager').getClusterDetails();
+    return this.get('configurationManager').getInstallationDetails();
   }),
 
   /**
@@ -74,7 +74,7 @@ export default Component.extend(I18n, {
     'serviceNames',
     'allNodes',
     'clusterConfiguration.cluster.{databases.hosts,managers.hosts,workers.hosts}',
-    function serviceRows () {
+    function serviceRows() {
       const {
         services,
         serviceNames,
@@ -94,7 +94,10 @@ export default Component.extend(I18n, {
           serviceName: get(serviceNames, service),
           boxes: allNodes.map(node => {
             const hasService =
-              get(clusterConfiguration, `cluster.${service}.hosts`).includes(node);
+              get(
+                clusterConfiguration,
+                `cluster.${service}.hosts`
+              ).includes(node);
             return {
               type: hasService ? 'ok' : 'empty',
             };
