@@ -1,15 +1,7 @@
 export default {
-  credentials: 'Credentials',
-  login: 'Login',
-  password: 'Password',
-  changePassword: 'Change password',
-  linkedAccounts: 'Linked accounts',
   accountManagement: 'Account management',
-  cancelChangePassword: 'Cancel',
+  changePassword: 'Change password',
+  cancelChangePassword: 'Cancel password change',
   passwordChangedSuccess: 'Password changed successfully',
   passwordChangeErrorType: 'password change',
-  submitPasswordChange: 'Submit',
-  currentPassword: 'Current password',
-  newPassword: 'New password',
-  retypePassword: 'Retype password',
 };

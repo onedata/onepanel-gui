@@ -1,104 +1,22 @@
-<div class="row content-row header-row hidden-xs">
+<div class="row content-row header-row">
   <h1>
-    <span class="one-label">{{tt this "accountManagement"}}</span>
+    {{t 'components.contentUsers.accountManagement'}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        type=_changePasswordButtonType
+        class="btn-sm btn-change-password"
+        onClick=(action "toggleChangePassword")
+      }}
+        {{_changePasswordButtonLabel}}
+      {{/bs-button}}
+    </div>
   </h1>
 </div>
-<div class="content-row">
-  {{!-- FIXME: implement mobile style --}}
-  <h1>{{tt this "credentials"}}</h1>
-  <div class="indented-row credentials-row credentials-row-login">
-    <div class="row-label">
-      {{tt this "login"}}
-    </div>
-    <div class="row-value">
-      {{user.name}}
-    </div>
-  </div>
-  {{#unless _changingPassword}}
-    <div class="indented-row credentials-row credentials-row-password">
-      <div class="row-label">
-        {{tt this "password"}}
-      </div>
-      <div class="row-value">
-        <input type="text" class="form-control" disabled=true value={{fake-password}}>
-      </div>
-    </div>
-  {{/unless}}
-  {{!-- FIXME: implement --}}
-  {{#if _changingPassword}}
-    <div class="indented-row credentials-row credentials-row-current-password">
-      <div class="row-label">
-        {{tt this "currentPassword"}}
-      </div>
-      <div class="row-value">
-        <input type="password" class="form-control" value={{editedCurrentPassword}}>
-      </div>
-    </div>
-    <div class="indented-row credentials-row credentials-row-new-password">
-      <div class="row-label">
-        {{tt this "newPassword"}}
-      </div>
-      <div class="row-value">
-        <input type="password" class="form-control" value={{editedNewPassword}}>
-      </div>
-    </div>
-    <div class="indented-row credentials-row credentials-row-retype-password">
-      <div class="row-label">
-        {{tt this "retypePassword"}}
-      </div>
-      <div class="row-value">
-        <input type="password" class="form-control" value={{editedRetypePassword}}>
-      </div>
-    </div>
-  {{/if}}
-  <div class="indented-row credentials-row credentials-row-password">
-    <div class="row-value">
-      <div class="btn-toolbar">
-        {{#if _changingPassword}}
-          {{#one-spin-button
-            class="btn btn-sm btn-primary"
-            action=(action "submitChangePassword" editedCurrentPassword editedNewPassword)
-            disabled=(not passwordInputValid)
-          }}
-            {{tt this "submitPasswordChange"}}
-          {{/one-spin-button}}
-        {{/if}}
-        {{#bs-button
-          type=(if _changingPassword "default" "primary")
-          class=(concat "btn-sm " _changePasswordButtonClass)
-          onClick=(action (mut _changingPassword) (not _changingPassword))
-        }}
-          {{tt this (if _changingPassword "cancelChangePassword" "changePassword")}}
-      {{/bs-button}}
-      </div>
-    </div>
-  </div>
+<div class="row content-row">
+  {{user-credentials-form
+    username=user.name
+    changingPassword=_changingPassword
+    submit=(action "submitChangePassword")
+    class=_changePasswordButtonClass
+  }}
 </div>
-
-{{#if canBeLinked}}
-  <div class="content-row">
-    <h1>{{tt this "linkedAccounts"}}</h1>
-    <ul class="indented-row linked-accounts-list">
-      {{#promise-proxy-container
-        proxy=onezoneAccountProxy
-      }}
-        <li class="linked-account full-social-icon content-row onezone-account">
-          {{social-box
-            authId="onezone"
-            iconPath="assets/images/auth-providers/onezone.svg"
-            iconBackgroundColor="#EC4145"
-            class="social-box-zone-account"
-          }}
-          <div class="account-description">
-            {{#truncated-string class="account-type"}}
-              {{onezoneAccount.zoneName}} ({{onezoneAccount.hostname}})
-            {{/truncated-string}}
-            {{#truncated-string class="account-email"}}
-              {{onezoneAccount.username}} ({{onezoneAccount.alias}})
-            {{/truncated-string}}
-          </div>
-        </li>
-      {{/promise-proxy-container}}
-    </ul>
-  </div>
-{{/if}}
