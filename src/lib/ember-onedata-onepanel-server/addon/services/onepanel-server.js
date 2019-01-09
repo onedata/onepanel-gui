@@ -183,6 +183,13 @@ export default OnepanelServerBase.extend(
                   }
                 ).then(resolve, reject);
               })
+              .then(({ serviceId }) => $.ajax(
+                '/api/v3/onezone/providers/' + serviceId, {
+                  headers: {
+                    'X-Auth-Token': onezoneToken,
+                  },
+                }
+              ))
               .then(({ domain }) => `https://${domain}:9443`);
           } else {
             // Onezone Panel served from Onezone host is on different port
