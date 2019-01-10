@@ -15,6 +15,7 @@ export default Service.extend({
   configurationManager: service(),
   clusterModelManager: service(),
   userManager: service(),
+  onepanelServer: service(),
 
   /**
    * @param {string} type
@@ -24,11 +25,16 @@ export default Service.extend({
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
-
-        return this.get('clusterModelManager').getCluster(id);
+        if (this.get('onepanelServer').getClusterIdFromUrl()) {
+          return this.get('clusterModelManager').getCluster(id);
+        } else {
+          return this.get('clusterModelManager').getCurrentClusterProxy()
+            .then(currentCluster =>
+              currentCluster || this.get('clusterModelManager').getNotDeployedCluster()
+            );
+        }
       case 'users':
         return this.get('userManager').getUserDetails(id).get('promise');
-
       default:
         return new Promise((resolve, reject) => reject('No such model type: ' + type));
     }

@@ -30,8 +30,7 @@ export default SidebarResources.extend({
       case 'tokens':
         return resolve([]);
       case 'clusters':
-        if (this.get('onepanelServer').getClusterIdFromUrl() ||
-          this.get('guiUtils.serviceType') === 'zone') {
+        if (this.get('onepanelServer').getClusterIdFromUrl()) {
           return this.get('clusterModelManager').getClustersProxy();
         } else {
           return this.get('clusterModelManager').getCurrentClusterProxy()
