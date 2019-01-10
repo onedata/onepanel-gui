@@ -20,6 +20,7 @@ export default GuiUtils.extend(
     onepanelServer: service(),
     onepanelConfiguration: service(),
     onezoneGui: service(),
+    providerManager: service(),
 
     /**
      * Panel type: provider or zone.
@@ -51,6 +52,8 @@ export default GuiUtils.extend(
       return this.t(`serviceType.${serviceType}`) + ' ' + this.t('panel');
     }),
 
+    guiVersion: reads('onepanelConfiguration.version'),
+
     /**
      * @override
      */
@@ -69,18 +72,16 @@ export default GuiUtils.extend(
 
     init() {
       this._super(...arguments);
-      this.updateGuiVersionProxy();
       this.updateGuiNameProxy();
     },
 
-    // FIXME: allow to ask without authentication?
-    fetchGuiVersion() {
-      return this.get('onepanelConfiguration').getConfigurationProxy()
-        .then(config => get(config, 'version'));
-    },
-
     fetchGuiName() {
-      return this.get('onepanelConfiguration').getConfigurationProxy()
-        .then(config => get(config, 'name'));
+      if (this.get('serviceType') === 'zone') {
+        return this.get('onepanelConfiguration').getConfigurationProxy()
+          .then(config => get(config, 'zoneName'));
+      } else {
+        return this.get('providerManager').getProviderDetails()
+          .then(provider => get(provider, 'name'));
+      }
     },
   });

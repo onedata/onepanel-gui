@@ -94,7 +94,12 @@ export default Service.extend({
 
   // FIXME: cacheing?
   getAnyProvider(id) {
-    this.get('onepanelServer').request('onepanel', 'getAnyProvider', id)
+    return this.get('onepanelServer').request('onepanel', 'getAnyProvider', id)
+      .then(({ data }) => data);
+  },
+
+  getOnezoneInfo() {
+    return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {})
       .then(({ data }) => data);
   },
 });

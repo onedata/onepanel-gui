@@ -78,7 +78,7 @@ export default Component.extend(I18n, GlobalActions, {
   onezoneInfoProxy: computed(function onezoneInfoProxy() {
     const onepanelServer = this.get('onepanelServer');
     return PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getOnezoneInfo')
+      promise: onepanelServer.request('oneprovider', 'getOnezoneInfo', {})
         .then(({ data }) => data),
     });
   }),

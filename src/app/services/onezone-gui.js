@@ -40,9 +40,8 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    * @type {Ember.ComputedProperty<string|null>}
    */
   onezoneOrigin: computed('onezoneDomain', function onezoneOrigin() {
-    // const onezoneDomain = this.get('onezoneDomain');
-    // return onezoneDomain ? 'https://' + this.get('onezoneDomain') : null;
-    return 'http://localhost:4201';
+    const onezoneDomain = this.get('onezoneDomain');
+    return onezoneDomain ? 'https://' + this.get('onezoneDomain') : null;
   }),
 
   _location: location,
@@ -122,6 +121,13 @@ const OnezoneGuiMock = OnezoneGui.extend({
   fetchIsOnezoneAvailable() {
     return resolve(true);
   },
+
+  /**
+   * @override 
+   */
+  onezoneOrigin: computed(function onezoneOrigin() {
+    return 'http://localhost:4201';
+  }),
 });
 
 let ExportServer;

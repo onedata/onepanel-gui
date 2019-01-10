@@ -12,6 +12,7 @@ import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
+  onepanelServer: service(),
   clusterModelManager: service(),
   guiUtils: service(),
 
@@ -28,7 +29,7 @@ export default SidebarResources.extend({
       case 'users':
         return resolve([]);
       case 'clusters':
-        if (this.get('guiUtils.serviceType') === 'zone') {
+        if (this.get('onepanelServer').getClusterIdFromUrl()) {
           return this.get('clusterModelManager').getClustersProxy();
         } else {
           return this.get('clusterModelManager').getCurrentClusterProxy()
