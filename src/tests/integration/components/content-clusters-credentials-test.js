@@ -14,7 +14,7 @@ const GuiUtils = Service.extend({
 });
 
 describe('Integration | Component | content users', function () {
-  setupComponentTest('content-users', {
+  setupComponentTest('content-clusters-credentials', {
     integration: true,
   });
 
@@ -46,7 +46,7 @@ describe('Integration | Component | content users', function () {
     });
     this.set('user', user);
 
-    this.render(hbs `{{content-users
+    this.render(hbs `{{content-clusters-credentials
       user=user
       fetchOnezoneAccount=(action "fetchOnezoneAccount")
       fetchClusterDetails=(action "fetchClusterDetails")
@@ -70,7 +70,7 @@ describe('Integration | Component | content users', function () {
       });
       this.set('user', user);
 
-      this.render(hbs `{{content-users
+      this.render(hbs `{{content-clusters-credentials
         user=user
         fetchOnezoneAccount=(action "fetchOnezoneAccount")
         fetchClusterDetails=(action "fetchClusterDetails")

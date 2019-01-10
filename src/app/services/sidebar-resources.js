@@ -13,9 +13,7 @@ import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
   onepanelServer: service(),
-  configurationManager: service(),
   clusterModelManager: service(),
-  userManager: service(),
   guiUtils: service(),
 
   /**
@@ -28,6 +26,7 @@ export default SidebarResources.extend({
       case 'spaces':
       case 'groups':
       case 'tokens':
+      case 'users':
         return resolve([]);
       case 'clusters':
         if (this.get('onepanelServer').getClusterIdFromUrl()) {
@@ -45,10 +44,6 @@ export default SidebarResources.extend({
               }
             });
         }
-      case 'users':
-        return this.get('userManager').getUsers().get('promise').then(users => {
-          return resolve({ list: users });
-        });
       default:
         return reject('No such collection: ' + type);
     }

@@ -648,6 +648,18 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_onepanel_getCurrentUser() {
+      return {
+        success() {
+          return {
+            userId: 'usrid123',
+            username: MOCK_USERNAME,
+            userRole: 'admin',
+          };
+        },
+      };
+    },
+
     _req_oneprovider_configureProvider() {
       this.incrementProperty('mockStep');
       return {

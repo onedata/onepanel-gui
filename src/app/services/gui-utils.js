@@ -19,6 +19,7 @@ export default GuiUtils.extend(
   createDataProxyMixin('guiName'), {
     onepanelServer: service(),
     onepanelConfiguration: service(),
+    onezoneGui: service(),
     providerManager: service(),
 
     /**
@@ -52,6 +53,17 @@ export default GuiUtils.extend(
     }),
 
     guiVersion: reads('onepanelConfiguration.version'),
+
+    /**
+     * @override
+     */
+    manageAccountExternalLink: computed(
+      'onezoneGui.onezoneGuiUrl',
+      function manageAccountExternalLink() {
+        const onezoneGuiUrl = this.get('onezoneGui.onezoneGuiUrl');
+        return `${onezoneGuiUrl}/onedata/users`;
+      }
+    ),
 
     /**
      * @override

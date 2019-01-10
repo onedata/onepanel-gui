@@ -29,6 +29,14 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
   onezoneDomain: reads('onepanelConfiguration.onezoneDomain'),
 
   /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  onezoneGuiUrl: computed('onezoneOrigin', function () {
+    const onezoneOrigin = this.get('onezoneOrigin');
+    return onezoneOrigin ? `${onezoneOrigin}/oz/onezone/i/#` : null;
+  }),
+
+  /**
    * @type {Ember.ComputedProperty<string|null>}
    */
   onezoneOrigin: computed('onezoneDomain', function onezoneOrigin() {

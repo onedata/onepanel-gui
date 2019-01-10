@@ -15,11 +15,11 @@ export default OnedataRoute.extend({
     const isHosted = Boolean(this.get('onepanelServer').getClusterIdFromUrl());
     return this._super(...arguments)
       .then(model => {
-        if (isHosted) {
+        if (!isHosted) {
           const items = get(model, 'mainMenuItems');
-          items.forEach(({ id }) => {
-            if (id !== 'clusters') {
-              set(items[id], 'disabled', true);
+          items.forEach(item => {
+            if (item.id !== 'clusters') {
+              set(item, 'disabled', true);
             }
           });
         }
