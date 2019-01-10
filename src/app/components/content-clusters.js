@@ -20,6 +20,7 @@ export default Component.extend(
   createDataProxyMixin('configuration'), {
     clusterModelManager: service(),
     configurationManager: service(),
+    router: service(),
 
     initProcess: false,
 
@@ -35,13 +36,10 @@ export default Component.extend(
       this.get('configurationProxy').then(configuration => {
         this.get('currentClusterProxy').then(currentCluster => {
           if (get(currentCluster, 'id') === clusterId) {
-            if (!get(configuration, 'isInitialized')) {
-              safeExec(this, 'setProperties', {
-                initProcess: true,
-                configuration,
-              });
+            if (get(configuration, 'isInitialized')) {
+              this.goToDefaultAspect();
             } else {
-              scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
+              this.goToNewAspect();
             }
           } else {
             // FIXME: standalone panel support - get zone domain
@@ -54,6 +52,26 @@ export default Component.extend(
       });
     },
 
+    goToDefaultAspect() {
+      return scheduleOnce(
+        'afterRender',
+        () => this.get('router').transitionTo(
+          'onedata.sidebar.content.aspect',
+          'overview'
+        )
+      );
+    },
+
+    goToNewAspect() {
+      return scheduleOnce(
+        'afterRender',
+        () => this.get('router').transitionTo(
+          'onedata.sidebar.content.aspect',
+          'new'
+        )
+      );
+    },
+
     fetchConfiguration() {
       return this.get('configurationManager').getDefaultRecord();
     },
@@ -62,7 +80,7 @@ export default Component.extend(
       finishInitProcess() {
         return new Promise(resolve => {
           this.set('initProcess', false);
-          scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
+          scheduleOnce('afterRender', () => this.goToDefaultAspect());
           resolve();
         });
       },

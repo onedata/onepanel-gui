@@ -102,7 +102,8 @@ export default Service.extend({
           });
 
         }).then(configuration => {
-          return this.get('clusterModelManager').getCurrentClusterProxy()
+
+          return this.get('clusterModelManager').getRawCurrentClusterProxy()
             .then(
               currentCluster => {
                 const currentClusterId = (

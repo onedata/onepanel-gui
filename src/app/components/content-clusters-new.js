@@ -18,6 +18,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 export default Component.extend(
   createDataProxyMixin('configuration'), {
     configurationManager: service(),
+    router: service(),
 
     initProcess: false,
 
@@ -29,9 +30,19 @@ export default Component.extend(
             initProcess: true,
           });
         } else {
-          scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
+          scheduleOnce('afterRender', () => this.goToDefaultAspect());
         }
       });
+    },
+
+    goToDefaultAspect() {
+      return scheduleOnce(
+        'afterRender',
+        () => this.get('router').transitionTo(
+          'onedata.sidebar.content.aspect',
+          'overview'
+        )
+      );
     },
 
     fetchConfiguration() {
@@ -42,7 +53,13 @@ export default Component.extend(
       finishInitProcess() {
         return new Promise(resolve => {
           this.set('initProcess', false);
-          scheduleOnce('afterRender', () => this.get('goToDefaultAspect')());
+          scheduleOnce(
+            'afterRender',
+            () => this.get('router').transitionTo(
+              'onedata.sidebar.content.aspect',
+              'overview'
+            )
+          );
           resolve();
         });
       },

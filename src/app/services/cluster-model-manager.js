@@ -11,9 +11,9 @@ import Service, { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
-import { resolve } from 'rsvp';
 
 export default Service.extend(
+  createDataProxyMixin('rawCurrentCluster'),
   createDataProxyMixin('currentCluster'),
   createDataProxyMixin('clusterIds'),
   createDataProxyMixin('clusters'), {
@@ -22,7 +22,7 @@ export default Service.extend(
     providerManager: service(),
     configurationManager: service(),
 
-    fetchCurrentCluster() {
+    fetchRawCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
         .then(({ data }) => data)
         .catch(error => {
@@ -32,6 +32,11 @@ export default Service.extend(
             throw error;
           }
         });
+    },
+
+    fetchCurrentCluster() {
+      return this.getRawCurrentClusterProxy()
+        .then(({ data }) => data && this.generateGuiCluster(data));
     },
 
     fetchClusterIds() {
@@ -76,10 +81,10 @@ export default Service.extend(
       const onepanelGuiType = this.get('onepanelServer.serviceType');
       if (cluster.type === 'onezone') {
         if (onepanelGuiType === 'zone') {
-          return this.get('configurationManager').getInstallationDetails()
-            .then(currentCluster => {
-              cluster.name = get(currentCluster, 'name');
-              cluster.domain = get(currentCluster, 'onezone.domainName');
+          return this.get('configurationManager').getInstallationDetails(false)
+            .then(installationDetails => {
+              cluster.name = get(installationDetails, 'name');
+              cluster.domain = get(installationDetails, 'onezone.domainName');
               return cluster;
             });
         } else {

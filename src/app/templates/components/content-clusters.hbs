@@ -1,8 +1,3 @@
-{{#if (or configurationProxy.isPending currentClusterProxy.isPending cluster.isInitialized)}}
-  {{loading-container isLoading=true absoluteCentered=true}}
-{{else}}
-  {{new-cluster
-    cluster=configuration
-    finishInitProcess=(action "finishInitProcess")
-  }}
-{{/if}}
+{{#promise-proxy-container proxy=configurationProxy}}
+  {{promise-proxy-container proxy=currentClusterProxy}}
+{{/promise-proxy-container}}
