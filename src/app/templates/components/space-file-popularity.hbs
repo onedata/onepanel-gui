@@ -1,0 +1,46 @@
+<div class="row content-row no-border">
+  <h1>
+    <label for="file-popularity-enabled">
+      {{tt this "enableFilePopularity"}}
+    </label>
+    {{one-label-tip
+      title=(tt this "headerHint")
+      placement="top"
+    }}
+    {{one-way-toggle
+      inputId="file-popularity-enabled"
+      checked=filePopularityConfiguration.enabled
+      class=(if media.isMobile "pull-right right" "toggle-right-side")
+      spinnerSide=(if media.isMobile "left" "right")
+      update=(action "configureFilePopularity")
+    }}
+  </h1>
+</div>
+
+{{#if filePopularityConfiguration.enabled}}
+  {{space-file-popularity-configuration
+    configuration=filePopularityConfiguration
+    onSave=(action "configureFilePopularity")
+  }}
+  <div class="row content-row no-border no-padding-top extra-padding-bottom">
+    <h1>
+      {{tt this "restApi"}} 
+      {{one-label-tip title=(tt this "restApiHint")}}
+    </h1>
+    <textarea
+      spellcheck="false"
+      class="file-popularity-example-query form-control code-textarea"
+      rows=2
+      readonly="true">{{filePopularityConfiguration.exampleQuery}}</textarea>
+    <div class="btn-container text-right">
+      <div class="btn-row">
+        {{one-copy-button
+          class="btn btn-default btn-sm"
+          parentElementId=elementId
+          localTarget=".file-popularity-example-query"
+        }}
+      </div>
+    </div>
+  </div>
+{{/if}}
+

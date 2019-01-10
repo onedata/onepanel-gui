@@ -25,7 +25,7 @@
  *
  * @module components/storage-import-update-form
  * @author Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -36,14 +36,15 @@ import EmberObject, {
   observer,
   computed,
 } from '@ember/object';
+
 import { invokeAction } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _object from 'lodash/object';
 import _find from 'lodash/find';
-
 import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import stripObject from 'onedata-gui-common/utils/strip-object';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const IMPORT_GENERIC_FIELDS = [{
     name: 'maxDepth',
@@ -136,8 +137,10 @@ function createValidations(importGenericFields, importStrategies,
 const Validations = buildValidations(createValidations(IMPORT_GENERIC_FIELDS,
   IMPORT_STRATEGIES, UPDATE_GENERIC_FIELDS, UPDATE_STRATEGIES));
 
-export default OneForm.extend(Validations, {
+export default OneForm.extend(I18n, Validations, {
   classNames: ['storage-import-update-form'],
+
+  i18nPrefix: 'components.storageImportUpdateForm',
 
   i18n: service(),
 

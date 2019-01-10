@@ -1,6 +1,6 @@
 {{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
   <div class="import-configuration-section">
-    <h2 class="form-section-title">Import configuration</h2>
+    <h2 class="form-section-title">{{tt this "importConfiguration"}}</h2>
     {{#form.group class="col-xs-12"}}
       <div class="row">
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
@@ -33,7 +33,7 @@
     }}
   </div>
   <div class="update-configuration-section">
-    <h2 class="form-section-title">Update configuration</h2>
+    <h2 class="form-section-title">{{tt this "updateConfiguration"}}</h2>
     {{#form.group class="col-xs-12"}}
       <div class="row">
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
@@ -65,7 +65,7 @@
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
         {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-          Save configuration
+          {{tt this (if (eq mode "new") "submitNew" "submitModify")}}
         {{/one-spin-button}}
       </div>
     </div>

@@ -3,45 +3,29 @@
  *
  * @module components/cluster-spaces-table-item.js
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
-import _ from 'lodash';
-import { readOnly, reads } from '@ember/object/computed';
-import { get, computed, observer } from '@ember/object';
+import { readOnly } from '@ember/object/computed';
+import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
-import SpaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
-import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-
-/**
- * Space's `storageImport` properties that shouldn't be listed as generic
- * properties (can be handled separately)
- * @type {Array.string}
- */
-const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
-
-/**
- * Space's `storageUpdate` properties that shouldn't be listed as generic
- * properties (can be handled separately)
- * @type {Array.string}
- */
-const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-throw';
 
 const I18N_PREFIX = 'components.clusterSpacesTableItem.';
 
 export default Component.extend(
   SpaceItemSyncStats,
-  SpaceItemSupports,
-  SpaceTabs,
-  createDataProxyMixin('filesPopularityConfiguration'),
+  createDataProxyMixin('filePopularityConfiguration'),
   createDataProxyMixin('autoCleaningConfiguration'),
   I18n, {
+    // needed for text ellipsis inside
+    tagName: 'span',
+
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
@@ -61,6 +45,15 @@ export default Component.extend(
     submitModifySpace: undefined,
 
     /**
+     * @virtual
+     * Returns promise that resolves if either user confirms and succeeds to
+     * revoke space (true) or cancels revocation (false).
+     * The promise rejects when revocation operation fails.
+     * @type {function}
+     */
+    startRevokeSpace: notImplementedReject,
+
+    /**
      * OneCollapsibleListItem that should be used to render this
      * To inject.
      * @type {Component.OneCollapsibleListItem}
@@ -68,76 +61,20 @@ export default Component.extend(
     listItem: null,
 
     /**
-     * @type {Ember.ObjectProxy<SpaceDetails>}
-     */
-    spaceProxy: null,
-
-    /**
-     * @type {ProvidetDetails}
-     */
-    provider: null,
-
-    // TODO: support for errors after update
-    /**
      * @type {OnepanelGui.SpaceDetails}
      */
-    space: reads('spaceProxy.content'),
+    space: null,
 
     /**
-     * The newest version of known space occupancy level
-     * @type {number}
+     * @type {ProviderDetails}
      */
-    _updatedSpaceOccupancy: undefined,
+    provider: null,
 
     /**
      * Last resolved SpaceDetails
      * @type {SpaceDetails}
      */
     _spaceCache: null,
-
-    /**
-     * @type {Ember.ComputedProperty<number>}
-     */
-    _thisProviderSupportSize: computed(
-      'spaceSupportersProxy.content',
-      function () {
-        const spaceSupporters = this.get('spaceSupportersProxy.content');
-        if (typeof spaceSupporters === 'object') {
-          const thisProviderSupport =
-            _.find(spaceSupporters, { isCurrentProvider: true }) || {};
-          return thisProviderSupport.size;
-        } else {
-          return undefined;
-        }
-      }
-    ),
-
-    /**
-     * Space occupancy used to prepare used-space chart.
-     * @type {Ember.ComputedProperty<number|undefined>}
-     */
-    _spaceOccupancy: computed(
-      'space.spaceOccupancy',
-      '_updatedSpaceOccupancy',
-      function () {
-        const preloadedSpaceOccupancy = this.get('space.spaceOccupancy');
-        const _updatedSpaceOccupancy = this.get('_updatedSpaceOccupancy');
-        return typeof _updatedSpaceOccupancy === 'number' ?
-          _updatedSpaceOccupancy : preloadedSpaceOccupancy;
-      }
-    ),
-
-    /**
-     * Storage that supports space on this panel's provider
-     * @type {PromiseObject}
-     */
-    _storage: computed('space.storageId', function () {
-      let space = this.get('space');
-      if (space) {
-        let storageManager = this.get('storageManager');
-        return storageManager.getStorageDetails(get(space, 'storageId'));
-      }
-    }),
 
     /**
      * If true, space revoke modal is opened
@@ -152,12 +89,6 @@ export default Component.extend(
      * @type {computed.boolean}
      */
     _importActive: readOnly('space.importEnabled'),
-
-    /**
-     * If true, the space item is expanded
-     * @type {computed.boolean}
-     */
-    _isActive: readOnly('listItem.isActive'),
 
     _importButtonActionName: computed('importConfigurationOpen', function () {
       return this.get('importConfigurationOpen') ?
@@ -178,98 +109,24 @@ export default Component.extend(
      */
     _detailsToShow: '',
 
-    importTranslationPrefix: I18N_PREFIX + 'storageImport.',
-    updateTranslationPrefix: I18N_PREFIX + 'storageUpdate.',
-
-    importStrategyLabel: computed('space.storageImport.strategy', function () {
-      let i18n = this.get('i18n');
-      let importTranslationPrefix = this.get('importTranslationPrefix');
-      let strategy = this.get('space.storageImport.strategy');
-      return i18n.t(`${importTranslationPrefix}strategies.${strategy}`);
-    }),
-
-    updateStrategyLabel: computed('space.storageUpdate.strategy', function () {
-      let i18n = this.get('i18n');
-      let updateTranslationPrefix = this.get('updateTranslationPrefix');
-      let strategy = this.get('space.storageUpdate.strategy');
-      return i18n.t(`${updateTranslationPrefix}strategies.${strategy}`);
-    }),
-
-    /**
-     * List of specific non-empty, type-specific storage import properties
-     * @type {Array}
-     */
-    importProperties: computed('space.{storageImport,content}', function () {
-      let space = this.get('space');
-      // support for ObjectProxy
-      if (space != null && space.content != null) {
-        space = space.get('content');
-      }
-      let storageImport = get(space, 'storageImport');
-      return storageImport != null ?
-        Object.keys(storageImport).filter(p =>
-          get(storageImport, p) != null && !_.includes(SKIPPED_IMPORT_PROPERTIES, p)
-        ) : [];
-    }),
-
-    /**
-     * List of specific non-empty, type-specific storage update properties
-     * @type {Array}
-     */
-    updateProperties: computed('space.{storageUpdate,content}', function () {
-      let space = this.get('space');
-      // support for ObjectProxy
-      if (space != null && space.content != null) {
-        space = space.get('content');
-      }
-      let storageUpdate = get(space, 'storageUpdate');
-      return storageUpdate != null ?
-        Object.keys(storageUpdate).filter(p =>
-          get(storageUpdate, p) != null && !_.includes(SKIPPED_UPDATE_PROPERTIES, p)
-        ) : [];
-    }),
-
-    importFormDefaultValue: computed('space', function () {
-      let space = this.get('space');
-      // support for ObjectProxy
-      if (space != null && space.content != null) {
-        space = space.content;
-      }
-      return space;
-    }),
-
-    isActiveChanged: observer('_isActive', function isActiveChanged() {
-      if (this.get('_isActive')) {
-        if (!this.get('filesPopularityConfiguration')) {
-          this.updateFilesPopularityConfigurationProxy();
-        }
-        if (!this.get('autoCleaningConfiguration')) {
-          this.updateAutoCleaningConfigurationProxy();
-        }
-      }
-    }),
-
     init() {
       this._super(...arguments);
-      const provider = this.get('provider');
-      this.set(
-        'spaceSizeForProvider',
-        readOnly(`space.supportingProviders.${get(provider, 'id')}`)
-      );
+      this.updateFilePopularityConfigurationProxy();
+      this.updateAutoCleaningConfigurationProxy();
     },
 
-    fetchFilesPopularityConfiguration() {
-      const spaceId = this.get('spaceProxy.id');
+    fetchFilePopularityConfiguration() {
+      const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
           'oneprovider',
-          'getFilesPopularityConfiguration',
+          'getFilePopularityConfiguration',
           spaceId
         )
         .then(({ data }) => data);
     },
 
     fetchAutoCleaningConfiguration() {
-      const spaceId = this.get('spaceProxy.id');
+      const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
           'oneprovider',
           'getSpaceAutoCleaningConfiguration',
@@ -279,11 +136,8 @@ export default Component.extend(
     },
 
     actions: {
-      startRevoke() {
-        this.set('_openRevokeModal', true);
-      },
-      hideRevoke() {
-        this.set('_openRevokeModal', false);
+      startRevokeSpace() {
+        return this.get('startRevokeSpace')(this.get('space'));
       },
       revokeSpace() {
         const {
@@ -291,57 +145,6 @@ export default Component.extend(
           space,
         } = this.getProperties('revokeSpace', 'space');
         return revokeSpace(space);
-      },
-      startImportConfiguration(toggleAction) {
-        this.set('importConfigurationOpen', true);
-        toggleAction.call(null, true);
-      },
-      endImportConfiguration() {
-        this.set('importConfigurationOpen', false);
-      },
-      submitModifySpace(modifySpaceData) {
-        return this.get('submitModifySpace')(modifySpaceData)
-          .then(() => {
-            if (this.get('importConfigurationOpen')) {
-              safeExec(this, 'set', 'importConfigurationOpen', false);
-            }
-            const updateStrategy = get(modifySpaceData, 'storageUpdate.strategy');
-            const importStrategy = get(modifySpaceData, 'storageImport.strategy');
-            if ((updateStrategy && updateStrategy !== 'no_update') ||
-              (importStrategy && importStrategy !== 'no_import')) {
-              safeExec(this, 'set', 'statsFrozen', false);
-            }
-          });
-      },
-      configureFilesPopularity(configuration) {
-        const spaceId = this.get('spaceProxy.id');
-        return this.get('onepanelServer').request(
-            'oneprovider',
-            'configureFilesPopularity',
-            spaceId,
-            configuration
-          )
-          .then(() => {
-            if (configuration && get(configuration, 'enabled') === false) {
-              // failure of this will not cause fail of configureFilesPopularity
-              this.updateAutoCleaningConfigurationProxy({ replace: true });
-            }
-            return this.updateFilesPopularityConfigurationProxy({ replace: true });
-          });
-      },
-      configureSpaceAutoCleaning(configuration) {
-        const spaceId = this.get('spaceProxy.id');
-        return this.get('onepanelServer').request(
-          'oneprovider',
-          'configureSpaceAutoCleaning',
-          spaceId,
-          configuration
-        ).then(() => {
-          return this.updateAutoCleaningConfigurationProxy({ replace: true });
-        });
-      },
-      spaceOccupancyChanged(spaceOccupancy) {
-        this.set('_updatedSpaceOccupancy', spaceOccupancy);
       },
     },
   });

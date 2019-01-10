@@ -1,22 +1,32 @@
 {{#if anySpaceRejected}}
   {{resource-load-error
     class="alert-some-spaces-rejected"
-    message="Some of space details cannot be loaded properly."
+    message=(tt this "components.clusterSpacesTable.someLoadError")
     onClose=(action "closeRejectedError")
   }}
 {{/if}}
 
 {{#one-collapsible-list as |list|}}
   {{#each spaces as |spaceProxy|}}
-    {{!-- TODO error handling, loading indicators inside item (because of reload) --}}
-    {{#list.item as |listItem|}}
-      {{cluster-spaces-table-item
-        listItem=listItem
-        spaceProxy=spaceProxy
-        provider=provider
-        revokeSpace=(action "revokeSpace")
-        submitModifySpace=(action "submitModifySpace" spaceProxy.content)
-      }}
-    {{/list.item}}
+    {{!-- TODO: change to links, because we want to open in separate tabs --}}
+    {{#unless spaceProxy.isRejected}}
+      {{#list.item toggle=(action "spaceClicked" listItem) as |listItem|}}
+        {{#listItem.header
+          isCollapsible=false
+          click=(action "spaceClicked" spaceProxy.content.id)
+          class="hoverable"
+        }}
+          {{#if spaceProxy.isPending}}
+            {{spin-spinner-block sizeClass="xs" class="absolute-middle-centered"}}
+          {{else if spaceProxy.isFulfilled}}
+            {{cluster-spaces-table-item
+              space=spaceProxy.content
+              provider=provider
+              startRevokeSpace=(action "startRevokeSpace")
+            }}
+          {{/if}}
+        {{/listItem.header}}
+      {{/list.item}}
+    {{/unless}}
   {{/each}}
 {{/one-collapsible-list}}

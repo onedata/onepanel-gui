@@ -1,54 +1,99 @@
-{{#bs-button-group
-  class="btn-group-floating btn-group-3-btns"
-  value=syncInterval
-  type="radio"
-  onChange=syncIntervalChanged as |bg|
-}}
-  {{#bg.button type="default" class="btn-sm btn-sync-interval-minute" value="minute"}}
-    {{t "components.clusterSpacesTableItem.minute"}}
-    {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
-  {{/bg.button}}
-  {{#bg.button type="default" class="btn-sm btn-sync-interval-hour" value="hour"}}
-    {{t "components.clusterSpacesTableItem.hour"}}
-    {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
-  {{/bg.button}}
-  {{#bg.button type="default" class="btn-sm btn-sync-interval-day" value="day"}}
-    {{t "components.clusterSpacesTableItem.day"}}
-    {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
-  {{/bg.button}}
-{{/bs-button-group}}
-{{#if statsFrozen}}
-  <div class="tab-info-floating one-info-label">
-    <span>
-      <label>{{t "components.clusterSpacesTableItem.syncDone"}}</label>
-      {{one-icon icon="checkbox-filled"}}
-    </span>
-    {{one-tooltip
-      title=(t "components.clusterSpacesTableItem.syncDoneHint")
-      placement="bottom"
+<div class="row no-border">
+  <div class="col-xs-12">
+    {{#if importEnabled}}
+      {{#one-collapsible-list as |list|}}
+        {{#list.item closeEventName=(concat elementId "-synchronization-config:close") as |listItem|}}
+          {{#listItem.header
+            class="hoverable"
+          }}
+            <div class="item-icon-container">
+              {{one-icon class="item-icon" icon="settings"}}
+            </div>
+            <strong>{{tt this "storageImport.importStrategy"}}</strong>
+            {{tt this (concat "storageImport.strategies." space.storageImport.strategy)}},
+            <strong>{{tt this "storageUpdate.updateStrategy"}}</strong>:
+            {{tt this (concat "storageUpdate.strategies." space.storageUpdate.strategy)}}
+          {{/listItem.header}}
+          {{#listItem.content}}
+            {{partial "components/space-storage-synchronization/configuration-form"}}
+          {{/listItem.content}}
+        {{/list.item}}
+      {{/one-collapsible-list}}
+    {{else}}
+      <div class="row content-row no-border">
+        {{#if importConfigurationEdition}}
+          {{partial "components/space-storage-synchronization/configuration-form"}}
+        {{else}}
+          <span class="no-import-info">
+            {{tt this "noImportIntro"}}
+          </span>
+          {{#bs-button
+            type="primary"
+            class="btn-sm btn-inline-after-text"
+            onClick=(action (mut importConfigurationEdition) true)
+          }}
+            {{tt this "noImportButton"}}
+          {{/bs-button}}
+        {{/if}}
+      </div>
+    {{/if}}
+    
+  </div>
+</div>
+
+{{#if importEnabled}}
+  <div class="row row-time-stats-charts">
+    {{#bs-button-group
+      class="btn-group-floating btn-group-3-btns"
+      value=syncInterval
+      type="radio"
+      onChange=syncIntervalChanged as |bg|
     }}
+      {{#bg.button type="default" class="btn-sm btn-sync-interval-minute" value="minute"}}
+        {{tt this "minute"}}
+        {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
+      {{/bg.button}}
+      {{#bg.button type="default" class="btn-sm btn-sync-interval-hour" value="hour"}}
+        {{tt this "hour"}}
+        {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
+      {{/bg.button}}
+      {{#bg.button type="default" class="btn-sm btn-sync-interval-day" value="day"}}
+        {{tt this "day"}}
+        {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
+      {{/bg.button}}
+    {{/bs-button-group}}
+    {{#if statsFrozen}}
+      <div class="tab-info-floating one-info-label">
+        <span>
+          <label>{{tt this "syncDone"}}</label>
+          {{one-icon icon="checkbox-filled"}}
+        </span>
+        {{one-tooltip
+          title=(tt this "syncDoneHint")
+          placement="bottom"
+        }}
+      </div>
+    {{/if}}
+    
+    {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{space-sync-chart-operations
+          timeStats=timeStats
+          timeUnit=syncInterval
+        }}
+      </div>
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{space-sync-chart-queue
+          timeStats=timeStats
+          timeUnit=syncInterval
+        }}
+      </div>
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{space-sync-chart-throughput
+          timeStats=timeStats
+          timeUnit=syncInterval
+        }}
+      </div>
+    {{/loading-container}}
   </div>
 {{/if}}
-
-<div class="row row-time-stats-charts">
-  {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
-    <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-operations
-        timeStats=timeStats
-        timeUnit=syncInterval
-      }}
-    </div>
-    <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-queue
-        timeStats=timeStats
-        timeUnit=syncInterval
-      }}
-    </div>
-    <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-throughput
-        timeStats=timeStats
-        timeUnit=syncInterval
-      }}
-    </div>
-  {{/loading-container}}
-</div>

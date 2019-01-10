@@ -12,6 +12,8 @@
   }
   .scrollable-row {
     overflow-x: auto;
+    // prevent vertical scroll on some layouts
+    padding-bottom: 4px;
   }
   .ct-square {
     position: initial;
