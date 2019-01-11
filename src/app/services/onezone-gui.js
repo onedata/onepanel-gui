@@ -30,7 +30,10 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
 
   // }),
 
-  zoneDomain: reads('onepanelConfiguration.zoneDomain'),
+  // FIXME: sorry...
+  zoneDomain: 'dev-onezone.default.svc.cluster.local',
+
+  // zoneDomain: reads('onepanelConfiguration.zoneDomain'),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -65,6 +68,11 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    */
   getOnepanelAbbrev(type) {
     return type === 'onezone' ? 'ozp' : 'opp';
+  },
+
+  getUrlInOnezone(path) {
+    const onezoneOrigin = this.get('onezoneOrigin');
+    return `${onezoneOrigin}/oz/onezone/i/#/${path}`;
   },
 
   /**

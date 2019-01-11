@@ -15,6 +15,7 @@ export default SidebarResources.extend({
   onepanelServer: service(),
   clusterModelManager: service(),
   guiUtils: service(),
+  clusterActions: service(),
 
   /**
    * @param {string} type
@@ -56,6 +57,8 @@ export default SidebarResources.extend({
    */
   getButtonsFor(type) {
     switch (type) {
+      case 'clusters':
+        return this.get('clusterActions.buttons');
       default:
         return [];
     }
