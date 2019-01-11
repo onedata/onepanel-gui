@@ -1,8 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { resolve } from 'rsvp';
-import { computed } from '@ember/object';
+import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
-import $ from 'jquery';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 import config from 'ember-get-config';
@@ -23,10 +22,15 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    */
   serviceTypeProxy: reads('onepanelServer.serviceTypeProxy'),
 
-  /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  onezoneDomain: reads('onepanelConfiguration.onezoneDomain'),
+  // FIXME: also in provider mode using providerManager.getZoneInfo
+  // /**
+  //  * @type {Ember.ComputedProperty<string>}
+  //  */
+  // zoneDomain: computed('onepanelConfiguration.{serviceType,zoneDomain}', function zoneDomain() {
+
+  // }),
+
+  zoneDomain: reads('onepanelConfiguration.zoneDomain'),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -39,40 +43,20 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
   /**
    * @type {Ember.ComputedProperty<string|null>}
    */
-  onezoneOrigin: computed('onezoneDomain', function onezoneOrigin() {
-    const onezoneDomain = this.get('onezoneDomain');
-    return onezoneDomain ? 'https://' + this.get('onezoneDomain') : null;
+  onezoneOrigin: computed('zoneDomain', function onezoneOrigin() {
+    const zoneDomain = this.get('zoneDomain');
+    return zoneDomain ? 'https://' + this.get('zoneDomain') : null;
   }),
 
-  _location: location,
-
-  /**
-   * @returns {Promise<string>}
-   */
-  fetchOnezoneOrigin() {
-    const onepanelServer = this.get('onepanelServer');
-    if (onepanelServer.getClusterIdFromUrl()) {
-      return resolve(this.get('_location').origin.toString());
-    } else {
-      return this.get('serviceTypeProxy').then(serviceType => {
-        // FIXME add fetching onezone origin using new (probably configuration)
-        // request, that doesn't need authorization. Needs backend.
-        // Should return null if provider is not registered in zone (because it
-        // is not an error)
-        if (serviceType === 'provider') {
-          return this.get('providerManager').getProviderDetails()
-            .then(data => `https://${data.onezoneDomainName}`);
-          // FIXME: old, deprecated code
-          // return onepanelServer.request('oneprovider', 'getProvider')
-          //   .then(({ data }) => `https://${data.onezoneDomainName}`);
-        } else {
-          // FIXME: to refactor when configuration manager will be avail
-          return onepanelServer.request('onezone', 'getZoneConfiguration')
-            .then(({ data }) => `https://${data.onezone.domainName}`);
-        }
-      });
+  clusterUrlInOnepanel: computed(
+    'onezoneOrigin',
+    'onepanelConfiguration.{serviceType,clusterId}',
+    function clusterUrlInOnepanel() {
+      return this.getOnepanelNavUrlInOnezone();
     }
-  },
+  ),
+
+  _location: location,
 
   /**
    * Returns abbreviation, that can be used to generate links to Onezone
@@ -92,8 +76,16 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    */
   getOnepanelNavUrlInOnezone(onepanelType, clusterId, internalRoute = '/') {
     const onezoneOrigin = this.get('onezoneOrigin');
+    if (!onepanelType) {
+      onepanelType = this.get('onepanelConfiguration.serviceType');
+    }
+    if (!clusterId) {
+      clusterId = this.get('onepanelConfiguration.clusterId');
+    }
+    // FIXME: not redirecting to onezone login screen (and not adding redirect url)
     const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
-    return `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+    return `${onezoneOrigin}/#?redirect=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+    // return onezoneOrigin;
   },
 
   /**
@@ -102,15 +94,26 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
    * @returns {Promise<boolean>}
    */
   fetchIsOnezoneAvailable() {
-    const onezoneOrigin = this.get('onezoneOrigin');
-    if (onezoneOrigin) {
-      return new Promise(resolve => {
-        $.ajax(`${onezoneOrigin}/configuration`)
-          .then(() => resolve(true), () => resolve(false));
-      });
+    const onepanelConfiguration = this.get('onepanelConfiguration');
+
+    let canEnterViaOnezone;
+    if (get(onepanelConfiguration, 'serviceType') === 'onezone') {
+      canEnterViaOnezone = get(onepanelConfiguration, 'deployed');
     } else {
-      return resolve(false);
+      canEnterViaOnezone = get(onepanelConfiguration, 'isRegistered');
     }
+
+    return resolve(canEnterViaOnezone);
+    // FIXME: it cannot work without CORS
+    // const onezoneOrigin = this.get('onezoneOrigin');
+    // if (onezoneOrigin) {
+    //   return new Promise(resolve => {
+    //     $.ajax(`${onezoneOrigin}/configuration`)
+    //       .then(() => resolve(true), () => resolve(false));
+    //   });
+    // } else {
+    //   return resolve(false);
+    // }
   },
 });
 

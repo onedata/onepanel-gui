@@ -41,7 +41,7 @@ export default GuiUtils.extend(
     fullServiceName: computed('serviceType', function () {
       const serviceType = this.get('serviceType');
       return serviceType ?
-        'One' + _.lowerCase(this.t(`serviceType.${serviceType}`)) : null;
+        this.t(`serviceType.${serviceType}`) : null;
     }),
 
     /**

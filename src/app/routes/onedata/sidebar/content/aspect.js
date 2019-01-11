@@ -12,7 +12,7 @@ import { get } from '@ember/object';
 import { inject } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
-const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate']);
+const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credentials']);
 
 export default AspectRoute.extend({
   onepanelServer: inject(),

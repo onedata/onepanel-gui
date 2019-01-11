@@ -462,7 +462,6 @@ export default OneForm.extend(Validations, I18n, {
       provider,
       subdomainDelegationSupported,
     } = this.getProperties('provider', 'subdomainDelegationSupported');
-    
 
     field = EmberObject.create(field);
     const name = field.get('name');
@@ -491,8 +490,7 @@ export default OneForm.extend(Validations, I18n, {
       if (name === 'domain' && subdomainDelegation) {
         field.set('defaultValue', null);
       }
-    }
-    else if (this.get('mode') === 'new') {
+    } else if (this.get('mode') === 'new') {
       if (name === 'subdomainDelegation') {
         field.setProperties({
           defaultValue: subdomainDelegationSupported,
@@ -549,6 +547,10 @@ export default OneForm.extend(Validations, I18n, {
         'token',
         '_willChangeDomainAfterSubmit'
       );
+
+      // FIXME: the ugliest hack in the world
+      window.onezoneDomain = this.get('onezoneDomain');
+
       let values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);

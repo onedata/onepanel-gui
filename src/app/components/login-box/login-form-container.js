@@ -29,24 +29,21 @@ export default LoginFormContainer.extend(I18n, {
    * @type {Ember.ComputedProperty<string|null>}
    */
   visitViaOnezoneUrl: computed(
-    'onezoneGui.isOnezoneAvailableProxy.content',
+    'onezoneGui.isOnezoneAvailable',
     'onepanelConfiguration.clusterId',
     'onepanelServer.serviceType',
     function visitViaOnezoneUrl() {
       const {
         onezoneGui,
         onepanelConfiguration,
-        onepanelServer,
       } = this.getProperties(
         'onezoneGui',
-        'onepanelConfiguration',
-        'onepanelServer'
+        'onepanelConfiguration'
       );
-      const isOnezoneAvailable =
-        get(onezoneGui, 'isOnezoneAvailableProxy.content');
-      
+      const isOnezoneAvailable = get(onezoneGui, 'isOnezoneAvailable');
+
       if (isOnezoneAvailable) {
-        const onepanelType = get(onepanelServer, 'serviceType');
+        const onepanelType = get(onepanelConfiguration, 'serviceType');
         const clusterId = get(onepanelConfiguration, 'clusterId');
         return onezoneGui.getOnepanelNavUrlInOnezone(onepanelType, clusterId);
       } else {
@@ -54,4 +51,9 @@ export default LoginFormContainer.extend(I18n, {
       }
     }
   ),
+
+  init() {
+    this._super(...arguments);
+    this.get('onezoneGui').updateIsOnezoneAvailableProxy();
+  },
 });

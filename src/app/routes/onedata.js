@@ -8,7 +8,11 @@ export default OnedataRoute.extend({
 
   beforeModel() {
     this._super(...arguments);
-    return this.get('clusterModelManager').getCurrentClusterProxy();
+    if (this.get('onepanelServer.isInitialized')) {
+      return this.get('clusterModelManager').getCurrentClusterProxy();
+    } else {
+      this.transitionTo('login');
+    }
   },
 
   model() {

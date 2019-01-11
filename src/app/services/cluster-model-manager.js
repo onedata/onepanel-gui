@@ -36,7 +36,7 @@ export default Service.extend(
 
     fetchCurrentCluster() {
       return this.getRawCurrentClusterProxy()
-        .then(({ data }) => data && this.generateGuiCluster(data));
+        .then(cluster => cluster && this.generateGuiCluster(cluster));
     },
 
     fetchClusterIds() {

@@ -19,6 +19,7 @@ export default Component.extend(
   createDataProxyMixin('configuration'), {
     configurationManager: service(),
     router: service(),
+    onezoneGui: service(),
 
     initProcess: false,
 
@@ -53,13 +54,19 @@ export default Component.extend(
       finishInitProcess() {
         return new Promise(resolve => {
           this.set('initProcess', false);
-          scheduleOnce(
-            'afterRender',
-            () => this.get('router').transitionTo(
-              'onedata.sidebar.content.aspect',
-              'overview'
-            )
+          // FIXME: the ugliest hack in the world, part 2
+          window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone(
+            undefined,
+            window.onezoneDomain
           );
+          // scheduleOnce(
+          //   'afterRender',
+          // FIXME: maybe we want to redirect user to Onezone
+          // () => this.get('router').transitionTo(
+          //   'onedata.sidebar.index',
+          //   'clusters'
+          // )
+          // );
           resolve();
         });
       },

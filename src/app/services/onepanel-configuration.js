@@ -7,9 +7,6 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-// FIXME this service should provide clusterId and onezoneDomain. It depends on
-// future backend.
-
 import Service, { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
@@ -23,29 +20,58 @@ export default Service.extend(createDataProxyMixin('configuration'), {
   _location: location,
 
   /**
+   * Common
+   * @type {Ember.ComputedProperty<string>}
+   */
+  clusterId: reads('configurationProxy.clusterId'),
+
+  /**
+   * Common
    * @type {Ember.ComputedProperty<string>}
    */
   version: reads('configurationProxy.version'),
 
   /**
+   * Common
    * @type {Ember.ComputedProperty<string>}
    */
   build: reads('configurationProxy.build'),
 
   /**
+   * Common
    * @type {Ember.ComputedProperty<boolean>}
    */
   deployed: reads('configurationProxy.deployed'),
 
   /**
+   * Common
    * @type {Ember.ComputedProperty<string>}
    */
-  onezoneDomain: reads('configurationProxy.onezoneDomain'),
+  serviceType: reads('configurationProxy.serviceType'),
 
   /**
+   * Common
    * @type {Ember.ComputedProperty<string>}
    */
-  clusterId: reads('configurationProxy.clusterId'),
+  zoneDomain: reads('configurationProxy.zoneDomain'),
+
+  /**
+   * Onezone
+   * @type {Ember.ComputedProperty<string>}
+   */
+  zoneName: reads('configurationProxy.zoneName'),
+
+  /**
+   * Oneprovider
+   * @type {Ember.ComputedProperty<string>}
+   */
+  providerId: reads('configurationProxy.providerId'),
+
+  /**
+   * Oneprovider
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isRegistered: reads('configurationProxy.isRegistered'),
 
   init() {
     this._super(...arguments);
