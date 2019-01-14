@@ -33,6 +33,12 @@ export default Component.extend(I18n, {
    */
   configureFilePopularity: notImplementedReject,
 
+  /**
+   * Should be changed by space-file-popularity-configuration component
+   * @type {string}
+   */
+  formStatus: undefined,
+
   actions: {
     /**
      * @param {object|boolean} data

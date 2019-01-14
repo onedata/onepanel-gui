@@ -8,7 +8,7 @@ export default {
   hour: 'Hour',
   day: 'Day',
   noImportIntro: 'Storage synchronization is currently disabled.',
-  noImportButton: 'Configure to enable',
+  noImportButton: 'Configure',
   syncFormHeader: 'Configure storage synchronization',
   syncDone: 'Import done',
   syncDoneHint: 'Synchronization is done, live statistics are disabled',

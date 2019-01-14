@@ -1,5 +1,4 @@
 export default {
-  configurationHeader: 'Configuration',
   configurationText: 'The file-popularity mechanism creates a view index which can be queried to fetch the least popular files. The following parameters are used to configure the popularity function, which is used to sort the view. Detailed information on the popularity function can be found in',
   configurationTextDoc: 'documentation',
   lastOpenHourWeight: 'Last open hour weight ',

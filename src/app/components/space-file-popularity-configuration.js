@@ -12,6 +12,9 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { buildValidations } from 'ember-cp-validations';
 import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';
+import { observer } from '@ember/object';
+import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
+import { scheduleOnce } from '@ember/runloop';
 
 const lastOpenHourWeightField = {
   type: 'number',
@@ -47,6 +50,8 @@ export default Component.extend(
      */
     configuration: undefined,
 
+    changeFormStatus: notImplementedIgnore,
+
     /**
      * Array of field names.
      * @type {ComputedProperty<Array<string>>}
@@ -56,4 +61,17 @@ export default Component.extend(
       'avgOpenCountPerDayWeight',
       'maxAvgOpenCountPerDay',
     ]),
+
+    notifyFormStatusChange: observer('formStatus', function notifyFormStatusChange() {
+      scheduleOnce('afterRender', () => {
+        this.get('changeFormStatus')(this.get('formStatus'));
+      });
+    }),
+
+    init() {
+      this._super(...arguments);
+      // force enable observer
+      this.get('formStatus');
+      this.notifyFormStatusChange();
+    },
   });

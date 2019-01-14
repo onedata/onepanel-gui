@@ -4,4 +4,5 @@ export default {
   configuringFilePopularity: 'configuring file popularity',
   restApi: 'Example query',
   restApiHint: 'Example curl command that can be executed to query the file-popularity view in the space.',
+  advancedSettings: 'Advanced settings',
 };
