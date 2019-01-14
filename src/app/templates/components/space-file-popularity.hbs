@@ -18,10 +18,39 @@
 </div>
 
 {{#if filePopularityConfiguration.enabled}}
-  {{space-file-popularity-configuration
-    configuration=filePopularityConfiguration
-    onSave=(action "configureFilePopularity")
-  }}
+  {{#one-collapsible-list as |list|}}
+    {{#list.item as |listItem|}}
+      {{#listItem.header
+        class="hoverable"
+      }}
+        <div class="item-icon-container">
+          {{one-icon class="item-icon" icon="settings"}}
+        </div>
+        <span class="header-text">
+          {{tt this "advancedSettings"}}
+        </span>
+        <span class="form-state">
+          {{#if (eq formStatus "saving")}}
+            <span class="animated infinite semi-hinge pulse-mint">{{t "mixins.components.autoSaveForm.saving"}}</span>
+          {{else if (eq formStatus "modified")}}
+            {{t "mixins.components.autoSaveForm.modified"}}
+          {{else if (eq formStatus "saved")}}
+            {{t "mixins.components.autoSaveForm.saved"}}
+          {{else if (eq formStatus "failed")}}
+            <span class="text-danger">{{t "mixins.components.autoSaveForm.updateFailed"}}</span>
+          {{/if}}
+        </span>
+      {{/listItem.header}}
+      {{#listItem.content class="internal-padding"}}
+        {{space-file-popularity-configuration
+          configuration=filePopularityConfiguration
+          onSave=(action "configureFilePopularity")
+          changeFormStatus=(action (mut formStatus))
+        }}
+      {{/listItem.content}}
+    {{/list.item}}
+  {{/one-collapsible-list}}
+  
   <div class="row content-row no-border no-padding-top extra-padding-bottom">
     <h1>
       {{tt this "restApi"}} 
@@ -30,7 +59,7 @@
     <textarea
       spellcheck="false"
       class="file-popularity-example-query form-control code-textarea"
-      rows=2
+      rows={{or (and media.isMobile 7) (and media.isTablet 6) 4}}
       readonly="true">{{filePopularityConfiguration.exampleQuery}}</textarea>
     <div class="btn-container text-right">
       <div class="btn-row">
