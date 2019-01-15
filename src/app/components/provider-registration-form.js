@@ -483,7 +483,8 @@ export default OneForm.extend(Validations, I18n, {
         if (!subdomainDelegation && subdomainDelegationSupported === false) {
           field.setProperties({
             defaultValue: false,
-            hidden: true,
+            disabled: true,
+            lockHint: this.t('fields.subdomainDelegation.lockHint'),
           });
         }
       }
@@ -494,7 +495,8 @@ export default OneForm.extend(Validations, I18n, {
       if (name === 'subdomainDelegation') {
         field.setProperties({
           defaultValue: subdomainDelegationSupported,
-          hidden: subdomainDelegationSupported === false,
+          disabled: !subdomainDelegationSupported,
+          lockHint: this.t('fields.subdomainDelegation.lockHint'),
         });
       }
     }

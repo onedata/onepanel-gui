@@ -34,6 +34,11 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.newClusterZoneRegistration',
 
   /**
+   * @type {ComputedProperty<boolean>}
+   */
+  proceedTokenDisabled: not('token'),
+
+  /**
    * Subdomains that are reserved and cannot be used
    * @type {Array<string>}
    */
@@ -45,12 +50,22 @@ export default Component.extend(I18n, {
    */
   mode: 'token',
 
+  /**
+   * If true, shows additional tutorial for getting the token
+   * @type {boolean}
+   */
   showTokenHelp: false,
 
+  /**
+   * Onezone token pasted by user
+   * @type {string}
+   */
   token: '',
 
-  proceedTokenDisabled: not('token'),
-
+  /**
+   * Is set by `handleProceedToken` after successful token submission
+   * @type {Onepanel.OnezoneInfo}
+   */
   onezoneInfo: undefined,
 
   /**
@@ -118,16 +133,18 @@ export default Component.extend(I18n, {
 
   handleProceedToken() {
     return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
-      token: this.get('token'),
-    }).catch(error => {
-      this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
-      throw error;
-    }).then(({ data: onezoneInfo }) => {
-      safeExec(this, 'setProperties', {
-        onezoneInfo,
-        mode: 'form',
+        token: this.get('token'),
+      })
+      .catch(error => {
+        this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
+        throw error;
+      })
+      .then(({ data: onezoneInfo }) => {
+        safeExec(this, 'setProperties', {
+          onezoneInfo,
+          mode: 'form',
+        });
       });
-    });
   },
 
   actions: {

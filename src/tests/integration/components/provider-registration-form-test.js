@@ -18,7 +18,7 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders name, Subdomain Delegation, latitude and logitude fields in new mode',
+    'renders name, domain, latitude and logitude fields in new mode',
     function () {
       this.on('submit', function () {});
 
@@ -28,7 +28,8 @@ describe('Integration | Component | provider registration form', function () {
       return wait().then(() => {
         [
           'editTop-name',
-          'editSubdomain-subdomain',
+          'editDomain-domain',
+          'editBottom-adminEmail',
           'editBottom-geoLatitude',
           'editBottom-geoLongitude',
         ]
@@ -42,14 +43,17 @@ describe('Integration | Component | provider registration form', function () {
   it('changes hostname/subdomain visibility with toggle', function () {
     this.render(hbs `
       {{provider-registration-form
-        mode="new"}}`);
+        mode="new"
+        subdomainDelegationSupported=true
+      }}`);
 
     const toggleSelector = '.toggle-field-editTop-subdomainDelegation';
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     const hostnameInputSelector = '.field-editDomain-domain';
 
     return wait().then(() => {
-      expect(this.$(toggleSelector)).to.have.class('checked');
+      expect(this.$(toggleSelector), 'subdomain toggle')
+        .to.have.class('checked');
       expect(this.$(subdomainInputSelector)).to.exist;
       expect(this.$(hostnameInputSelector)).not.to.exist;
       return click(toggleSelector).then(() => {
@@ -71,6 +75,7 @@ describe('Integration | Component | provider registration form', function () {
     this.render(hbs `
       {{provider-registration-form
         mode="new"
+        subdomainDelegationSupported=true
         excludedSubdomains=excludedSubdomains}}`);
 
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
@@ -85,38 +90,31 @@ describe('Integration | Component | provider registration form', function () {
     });
   });
 
-  it('accepts IP address in onezone domain and provider domain fields',
+  it('accepts IP address in provider domain fields',
     function () {
       this.render(hbs `
         {{provider-registration-form
+          subdomainDelegationSupported=true
           mode="new"}}`);
       return wait().then(() => {
         return click('.toggle-field-editTop-subdomainDelegation').then(() => {
-          return fillIn('.field-editTop-onezoneDomainName', '10.10.10.10').then(
+          return fillIn('.field-editDomain-domain', '12.12.12.12').then(
             () => {
-              return fillIn('.field-editDomain-domain', '12.12.12.12').then(
-                () => {
-                  expect(this.$('.has-error')).not.to.exist;
-                });
+              expect(this.$('.has-error')).not.to.exist;
             });
         });
       });
     }
   );
 
-  it('accepts domain name in onezone domain and provider domain fields',
+  it('accepts domain name in provider domain fields',
     function () {
       this.render(hbs `
         {{provider-registration-form
           mode="new"}}`);
       return wait().then(() => {
-        return click('.toggle-field-editTop-subdomainDelegation').then(() => {
-          return fillIn('.field-editTop-onezoneDomainName', 'abc.def.com').then(
-            () => {
-              return fillIn('.field-editDomain-domain', 'xyz.com').then(() => {
-                expect(this.$('.has-error')).not.to.exist;
-              });
-            });
+        return fillIn('.field-editDomain-domain', 'xyz.com').then(() => {
+          expect(this.$('.has-error')).not.to.exist;
         });
       });
     }
@@ -125,32 +123,13 @@ describe('Integration | Component | provider registration form', function () {
   it('accepts valid subdomain field value', function () {
     this.render(hbs `
       {{provider-registration-form
+        subdomainDelegationSupported=true
         mode="new"}}`);
 
     return wait().then(() => {
       return fillIn('.field-editSubdomain-subdomain', 'test').then(() => {
         expect(this.$('.has-error')).not.to.exist;
       });
-    });
-  });
-
-  it('disables and fills token field when token is provided', function () {
-    this.on('submit', function () {});
-
-    this.render(hbs `{{provider-registration-form
-      test2="jeden"
-      mode="new"
-      submit=(action "submit")
-      token="hello-token"
-      subdomainDelegation=false
-      onezoneDomain="example.com"
-    }}`);
-
-    const helper = new ProviderRegistrationHelper(this.$());
-    return wait().then(() => {
-      const $tokenInput = helper.getInput('newToken-token');
-      expect($tokenInput, 'newToken field').to.exist;
-      expect($tokenInput).to.have.value('hello-token');
     });
   });
 });
