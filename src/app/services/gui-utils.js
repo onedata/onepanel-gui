@@ -11,7 +11,6 @@ import GuiUtils from 'onedata-gui-common/services/gui-utils';
 import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import _ from 'lodash';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 export default GuiUtils.extend(

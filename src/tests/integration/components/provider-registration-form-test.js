@@ -18,7 +18,7 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders token, name, zone domain, Subdomain Delegation, latitude and logitude fields in new mode',
+    'renders name, Subdomain Delegation, latitude and logitude fields in new mode',
     function () {
       this.on('submit', function () {});
 
@@ -27,9 +27,7 @@ describe('Integration | Component | provider registration form', function () {
       let helper = new ProviderRegistrationHelper(this.$());
       return wait().then(() => {
         [
-          'newToken-token',
           'editTop-name',
-          'editTop-onezoneDomainName',
           'editSubdomain-subdomain',
           'editBottom-geoLatitude',
           'editBottom-geoLongitude',

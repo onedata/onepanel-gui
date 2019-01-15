@@ -14,7 +14,6 @@ import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
   createDataProxyMixin('configuration'), {

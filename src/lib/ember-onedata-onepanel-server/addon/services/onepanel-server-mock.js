@@ -44,7 +44,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'provider';
+const MOCK_SERVICE_TYPE = 'zone';
 
 /**
  * Response delay in milliseconds
@@ -127,6 +127,18 @@ const providerCluster2 = {
   build: '4000',
   proxy: true,
 };
+const provider1 = PlainableObject.create({
+  id: PROVIDER_ID,
+  name: 'Some provider 1',
+  onezoneDomainName: 'localhost',
+  subdomainDelegation: true,
+  letsEncryptEnabled: undefined,
+  subdomain: 'somedomain',
+  domain: 'somedomain.localhost',
+  adminEmail: 'some@example.com',
+  geoLatitude: 49.698284,
+  geoLongitude: 21.898093,
+});
 
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
@@ -367,18 +379,7 @@ export default OnepanelServerBase.extend(
         });
 
         if (mockStep > STEP.PROVIDER_REGISTER) {
-          this.set('__provider', PlainableObject.create({
-            id: PROVIDER_ID,
-            name: 'Some provider 1',
-            onezoneDomainName: 'localhost',
-            subdomainDelegation: true,
-            letsEncryptEnabled: undefined,
-            subdomain: 'somedomain',
-            domain: 'somedomain.localhost',
-            adminEmail: 'some@example.com',
-            geoLatitude: 49.698284,
-            geoLongitude: 21.898093,
-          }));
+          this.set('__provider', provider1);
         }
         if (mockStep > STEP.PROVIDER_WEB_CERT) {
           // TODO: deprecated __provider.letsEncryptEnabled
@@ -1124,20 +1125,19 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    // FIXME:
-    // _req_onepanel_getAnyProvider() {
-    //   const __provider = this.get('provider');
-    //   return {
-    //     success: id => (id === PROVIDER_ID ? )
-    //   }
-    // },
+    _req_onepanel_getAnyProvider() {
+      const __anyProviders = this.get('__anyProviders');
+      return {
+        success: id => __anyProviders.findBy('id', id),
+        statusCode: id => __anyProviders.findBy('id', id) ? 200 : 404,
+      };
+    },
 
     // -- MOCKED RESOURCE STORE --
 
-    __anyProviders: computed('__provider', function __providers() {
-      const __provider = this.get('__provider');
+    __anyProviders: computed('__provider', function __anyProviders() {
       return [
-        __provider,
+        provider1,
         {
           id: PROVIDER2_ID,
           name: 'Other provider',

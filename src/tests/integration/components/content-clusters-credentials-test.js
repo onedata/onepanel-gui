@@ -13,13 +13,18 @@ const GuiUtils = Service.extend({
   fetchGuiVersion: notImplementedReject,
 });
 
-describe('Integration | Component | content users', function () {
+const UserManager = Service.extend({
+  getCurrentUser: notImplementedReject,
+});
+
+describe('Integration | Component | content clusters credentials', function () {
   setupComponentTest('content-clusters-credentials', {
     integration: true,
   });
 
   beforeEach(function () {
     registerService(this, 'guiUtils', GuiUtils);
+    registerService(this, 'userManager', UserManager);
 
     sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion')
       .resolves('18.01-mock');
@@ -46,19 +51,30 @@ describe('Integration | Component | content users', function () {
     });
     this.set('user', user);
 
+    const userManager = lookupService(this, 'user-manager');
+    const getCurrentUser = sinon.stub(userManager, 'getCurrentUser');
+    getCurrentUser.returns({
+      isFulfilled: true,
+      isSettled: true,
+      isRejected: false,
+      content: user,
+      username,
+    });
+
     this.render(hbs `{{content-clusters-credentials
-      user=user
       fetchOnezoneAccount=(action "fetchOnezoneAccount")
       fetchClusterDetails=(action "fetchClusterDetails")
     }}
     `);
 
-    const $usernameValue = this.$('.credentials-row-login .row-value');
+    return wait().then(() => {
+      const $usernameValue = this.$('.field-generic-username');
 
-    expect($usernameValue, 'username value')
-      .to.exist;
-    expect($usernameValue)
-      .to.contain(username);
+      expect($usernameValue, 'username value')
+        .to.exist;
+      expect($usernameValue)
+        .to.contain(username);
+    });
   });
 
   it(
@@ -70,20 +86,29 @@ describe('Integration | Component | content users', function () {
       });
       this.set('user', user);
 
+      const userManager = lookupService(this, 'user-manager');
+      const getCurrentUser = sinon.stub(userManager, 'getCurrentUser');
+      getCurrentUser.returns({
+        isFulfilled: true,
+        isSettled: true,
+        isRejected: false,
+        content: user,
+        username,
+      });
+
       this.render(hbs `{{content-clusters-credentials
-        user=user
         fetchOnezoneAccount=(action "fetchOnezoneAccount")
         fetchClusterDetails=(action "fetchClusterDetails")
       }}`);
 
-      this.$('.btn-change-password-start').click();
+      this.$('.btn-change-password').click();
 
       return wait({ waitForTimers: false }).then(() => {
-        expect(this.$('.credentials-row-current-password input'), 'current pass')
+        expect(this.$('.field-change-currentPassword'), 'current pass')
           .to.exist;
-        expect(this.$('.credentials-row-new-password input'), 'new pass')
+        expect(this.$('.field-change-newPassword'), 'new pass')
           .to.exist;
-        expect(this.$('.credentials-row-retype-password input'), 'retype pass')
+        expect(this.$('.field-change-newPasswordRetype'), 'retype pass')
           .to.exist;
       });
     });
