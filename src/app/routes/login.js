@@ -9,18 +9,25 @@
  */
 
 import LoginRoute from 'onedata-gui-common/routes/login';
-import { setProperties } from '@ember/object';
+import { get, setProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default LoginRoute.extend({
   userManager: service(),
   onezoneGui: service(),
+  onepanelServer: service(),
 
   model() {
     const {
       onezoneGui,
       userManager,
-    } = this.getProperties('onezoneGui', 'userManager');
+      onepanelServer,
+    } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
+
+    const isNotStandalone = !!onepanelServer.getClusterIdFromUrl();
+    if (isNotStandalone) {
+      window.location = get(onezoneGui, 'onezoneGuiUrl');
+    }
 
     const baseModel = this._super(...arguments) || {};
 
