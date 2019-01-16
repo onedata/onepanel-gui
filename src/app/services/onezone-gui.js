@@ -91,6 +91,9 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
       clusterId = this.get('onepanelConfiguration.clusterId');
     }
     // FIXME: not redirecting to onezone login screen (and not adding redirect url)
+    // TODO: redirect directly to onepanel and that onepanel should redirect to
+    // onezone login if needed, It allows to skip unnecessary hop via onezone when
+    // user is logged in
     const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
     return `${onezoneOrigin}/#?redirect=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
     // return onezoneOrigin;

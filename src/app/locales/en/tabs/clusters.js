@@ -10,5 +10,6 @@ export default {
     storages: 'Storages',
     spaces: 'Spaces',
     notFound: 'Cluster not found',
+    installation: 'Installation',
   },
 };

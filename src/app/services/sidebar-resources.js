@@ -38,7 +38,7 @@ export default SidebarResources.extend({
               if (currentCluster) {
                 return { list: [currentCluster] };
               } else {
-                // cluster is not deployed yet - only in op-panel standalone mode
+                // cluster is not deployed yet - only in onepanel standalone mode
                 return {
                   list: [this.get('clusterModelManager').getNotDeployedCluster()],
                 };

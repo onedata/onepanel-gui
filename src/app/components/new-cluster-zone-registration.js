@@ -30,6 +30,7 @@ export default Component.extend(I18n, {
   globalNotify: service(),
   onepanelServer: service(),
   i18n: service(),
+  clusterModelManager: service(),
 
   i18nPrefix: 'components.newClusterZoneRegistration',
 
@@ -148,6 +149,7 @@ export default Component.extend(I18n, {
         globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
         invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
+        this.get('clusterModelManager').updateCurrentClusterProxy();
       });
       submitting.catch(error => {
         const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
