@@ -33,7 +33,7 @@ describe('Integration | Component | cluster dns', function () {
     registerService(this, 'onepanelServer', OnepanelServer);
     registerService(this, 'guiUtils', GuiUtils);
 
-    sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion').resolves('zone');
+    sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion').resolves('onezone');
   });
 
   it('renders DNS server IPs fetched from server', function () {

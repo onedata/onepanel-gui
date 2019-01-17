@@ -44,7 +44,7 @@ export default AspectRoute.extend({
       if (aspectId !== 'installation') {
         if (get(contentModel, 'resource.isNotDeployed')) {
           this.transitionTo('onedata.sidebar.content.aspect', 'installation');
-        } else if (onepanelServiceType === 'zone' && !zoneAspects.has(aspectId)) {
+        } else if (onepanelServiceType === 'onezone' && !zoneAspects.has(aspectId)) {
           this.transitionTo('onedata.sidebar.content.aspect', 'overview');
         }
       }

@@ -187,7 +187,7 @@ export default OnepanelServerBase.extend(
       const _location = this.getLocation();
       if (clusterIdFromUrl) {
         return this.getServiceTypeProxy().then(serviceType => {
-          if (serviceType === 'provider') {
+          if (serviceType === 'oneprovider') {
             // frontend is served from Onezone host - use external host
             return new Promise((resolve, reject) => {
                 $.ajax(
@@ -290,6 +290,9 @@ export default OnepanelServerBase.extend(
       });
     },
 
+    // FIXME: serviceType in onepanelServer is deprecated
+    // use onepanelConfiguration or guiUtils
+
     /**
      * @override
      */
@@ -297,11 +300,9 @@ export default OnepanelServerBase.extend(
       const location = this.getLocation();
       const m = location.toString().match(reOnepanelInOnzoneUrl);
       if (m) {
-        return resolve(m[1] === 'ozp' ? 'zone' : 'provider');
+        return resolve(m[1] === 'ozp' ? 'onezone' : 'oneprovider');
       } else {
-        return this.getNodeProxy().then(({ componentType }) =>
-          componentType.match(/one(.*)/)[1]
-        );
+        return this.getNodeProxy().then(({ componentType }) => componentType);
       }
     },
 

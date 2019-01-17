@@ -44,7 +44,7 @@ function getHostnamesOfType(hosts, type) {
 }
 
 function configurationClass(serviceType) {
-  return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
+  return serviceType === 'onezone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
 export default Component.extend(I18n, {
@@ -173,7 +173,7 @@ export default Component.extend(I18n, {
    */
   clusterPorts: computed('onepanelServiceType', function () {
     const onepanelServiceType = this.get('onepanelServiceType');
-    return (onepanelServiceType === 'zone' ? '52, ' : '') +
+    return (onepanelServiceType === 'onezone' ? '52, ' : '') +
       '80, 443, 4369, 9100 - 9139';
   }),
 
@@ -186,9 +186,9 @@ export default Component.extend(I18n, {
       onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
-      'One' + _.lowerCase(i18n.t(
+      i18n.t(
         `services.guiUtils.serviceType.${onepanelServiceType}`
-      )) : null;
+      ) : null;
   }),
 
   addingNewHostChanged: observer('addingNewHost', function () {
@@ -217,7 +217,7 @@ export default Component.extend(I18n, {
       onepanelServer,
     } = this.getProperties('deploymentTaskId', 'onepanelServer', 'onepanelServiceType');
 
-    if (onepanelServiceType === 'provider') {
+    if (onepanelServiceType === 'oneprovider') {
       this.set('_zoneOptionsValid', true);
     }
 
@@ -240,7 +240,7 @@ export default Component.extend(I18n, {
     );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
-    if (onepanelServiceType === 'zone') {
+    if (onepanelServiceType === 'onezone') {
       this.get('changeClusterName')(_zoneName);
     }
     this.get('nextStep')();
@@ -310,7 +310,7 @@ export default Component.extend(I18n, {
     };
 
     // in zone mode, add zone name    
-    if (serviceType === 'zone') {
+    if (serviceType === 'onezone') {
       configProto.onezone = {
         name: _zoneName,
         domainName: _zoneDomainName,
@@ -356,8 +356,8 @@ export default Component.extend(I18n, {
       } = this.getProperties('onepanelServer', 'onepanelServiceType');
       let providerConfiguration = this.createConfiguration(onepanelServiceType);
       onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`configure-${onepanelServiceType}`),
+        onepanelServiceType,
+        camelize(`configure-${onepanelServiceType.substring(3)}`),
         providerConfiguration
       ).then(resolve, reject);
     });

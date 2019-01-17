@@ -110,7 +110,7 @@ export default Service.extend({
                   currentCluster && get(currentCluster, 'id') || 'new'
                 );
                 const name = (configuration || null) &&
-                  configuration['one' + onepanelServiceType].name;
+                  configuration[onepanelServiceType].name;
                 const thisCluster = ClusterInfo.create({
                   id: currentClusterId,
                 }, configuration);
@@ -196,8 +196,8 @@ export default Service.extend({
       (validateData ? onepanelServer.requestValidData : onepanelServer.request)
       .bind(onepanelServer);
     return requestFun(
-      'one' + onepanelServiceType,
-      camelize(`get-${onepanelServiceType}-configuration`)
+      onepanelServiceType,
+      camelize(`get-${onepanelServiceType.substring(3)}-configuration`)
     );
   },
 
@@ -207,8 +207,8 @@ export default Service.extend({
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`get-${onepanelServiceType}-cluster-ips`)
+        onepanelServiceType,
+        camelize(`get-${onepanelServiceType.substring(3)}-cluster-ips`)
       )
       .then(({ data }) => data);
   },
@@ -223,8 +223,8 @@ export default Service.extend({
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`modify-${onepanelServiceType}-cluster-ips`), {
+        onepanelServiceType,
+        camelize(`modify-${onepanelServiceType.substring(3)}-cluster-ips`), {
           hosts: hostsData,
         },
       )
@@ -332,7 +332,7 @@ export default Service.extend({
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {
           // TODO VFS-3119
-          if (onepanelServiceType === 'zone') {
+          if (onepanelServiceType === 'onezone') {
             const checkIps = this._checkIsIpsConfigured();
             checkIps.then(isIpsConfigured => {
               if (isIpsConfigured) {

@@ -140,7 +140,7 @@ export default Component.extend(
       'zonePolicies.subdomainDelegation',
       'provider.subdomainDelegation',
       function subdomainDelegation() {
-        if (this.get('onepanelServiceType') === 'zone') {
+        if (this.get('onepanelServiceType') === 'onezone') {
           return this.get('zonePolicies.subdomainDelegation');
         } else {
           return this.get('provider.subdomainDelegation');
@@ -225,7 +225,7 @@ export default Component.extend(
           'isIpDomain',
           'subdomainDelegation',
         );
-        if (onepanelServiceType === 'provider') {
+        if (onepanelServiceType === 'oneprovider') {
           if (isIpDomain) {
             return 'providerIp';
           } else if (subdomainDelegation) {
@@ -276,7 +276,7 @@ export default Component.extend(
         const domain = get(dnsCheck, 'domain') ?
           Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
           undefined;
-        if (onepanelServiceType === 'provider') {
+        if (onepanelServiceType === 'oneprovider') {
           return [domain];
         } else {
           const dnsZone = get(dnsCheck, 'dnsZone') ?
@@ -292,7 +292,7 @@ export default Component.extend(
           );
 
           if (
-            onepanelServiceType === 'zone' &&
+            onepanelServiceType === 'onezone' &&
             builtInDnsServer &&
             domainValid &&
             dnsZoneValid
@@ -339,7 +339,7 @@ export default Component.extend(
           this.get('performCheckCalled')(this.get('allValid'));
         });
       }
-      if (this.get('onepanelServiceType') === 'zone') {
+      if (this.get('onepanelServiceType') === 'onezone') {
         this.updateZonePoliciesProxy();
       } else {
         this.updateProviderProxy();

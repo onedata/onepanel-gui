@@ -29,12 +29,12 @@ export default LoginFormContainer.extend(I18n, {
    * @type {Ember.ComputedProperty<string|null>}
    */
   visitViaOnezoneUrl: computed(
-    'onezoneGui.isOnezoneAvailable',
+    'onezoneGui.canEnterViaOnezone',
     function visitViaOnezoneUrl() {
       const onezoneGui = this.get('onezoneGui');
-      const isOnezoneAvailable = get(onezoneGui, 'isOnezoneAvailable');
+      const canEnterViaOnezone = get(onezoneGui, 'canEnterViaOnezone');
 
-      if (isOnezoneAvailable) {
+      if (canEnterViaOnezone) {
         return onezoneGui.getOnepanelNavUrlInOnezone();
       } else {
         return null;
@@ -44,6 +44,6 @@ export default LoginFormContainer.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    this.get('onezoneGui').updateIsOnezoneAvailableProxy();
+    this.get('onezoneGui').updateEnterViaOnezoneProxy();
   },
 });

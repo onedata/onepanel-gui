@@ -47,7 +47,7 @@ const WebCertManager = Service.extend({
 });
 
 const OnepanelServer = Service.extend({
-  serviceType: 'zone',
+  serviceType: 'onezone',
 });
 
 describe('Integration | Component | new cluster web cert', function () {

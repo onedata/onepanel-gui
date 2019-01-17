@@ -78,7 +78,7 @@ export default GuiUtils.extend(
     },
 
     fetchGuiName() {
-      if (this.get('serviceType') === 'zone') {
+      if (this.get('serviceType') === 'onezone') {
         return this.get('onepanelConfiguration').getConfigurationProxy()
           .then(config => get(config, 'zoneName'));
       } else {

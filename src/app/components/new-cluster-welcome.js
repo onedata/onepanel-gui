@@ -32,7 +32,7 @@ export default ContentInfo.extend({
 
   header: 'welcome',
   subheader: computed('onepanelServiceType', function () {
-    return `to one${this.get('onepanelServiceType')} panel`;
+    return `to ${this.get('onepanelServiceType')} panel`;
   }),
   buttonLabel: 'Create new cluster',
 

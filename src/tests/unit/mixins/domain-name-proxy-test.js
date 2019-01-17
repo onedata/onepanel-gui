@@ -23,7 +23,7 @@ describe('Unit | Mixin | domain name proxy', function () {
     getDefaultRecord.resolves(cluster);
 
     const subject = DomainNameProxyObject.create({
-      onepanelServiceType: 'zone',
+      onepanelServiceType: 'onezone',
       configurationManager,
     });
 
@@ -45,7 +45,7 @@ describe('Unit | Mixin | domain name proxy', function () {
     getProviderDetails.resolves(provider);
 
     const subject = DomainNameProxyObject.create({
-      onepanelServiceType: 'provider',
+      onepanelServiceType: 'oneprovider',
       providerManager,
     });
 

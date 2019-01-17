@@ -112,11 +112,11 @@ export default Component.extend(I18n, GlobalActions, {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     switch (onepanelServiceType) {
-      case 'provider':
+      case 'oneprovider':
         promise = this.get('providerManager').getProviderDetails()
           .then(provider => provider && get(provider, 'domain'));
         break;
-      case 'zone':
+      case 'onezone':
         // FIXME: change to configurationManager
         promise = this.get('configurationManager').getConfiguration()
           .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));

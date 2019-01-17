@@ -12,7 +12,7 @@
 
 import ObjectProxy from '@ember/object/proxy';
 import { computed } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import { alias, reads } from '@ember/object/computed';
 
 export const CLUSTER_INIT_STEPS = Object.freeze({
   DEPLOY: 0,
@@ -53,9 +53,7 @@ export default ObjectProxy.extend({
    */
   name: null,
 
-  type: computed('content.onepanelServiceType', function type() {
-    return `one${this.get('content.onepanelServiceType')}`;
-  }),
+  type: reads('content.onepanelServiceType'),
 
   init() {
     this._super(...arguments);
@@ -70,7 +68,7 @@ export default ObjectProxy.extend({
       initStep,
       onepanelServiceType,
     } = this.getProperties('initStep', 'onepanelServiceType');
-    return onepanelServiceType === 'provider' ?
+    return onepanelServiceType === 'oneprovider' ?
       initStep >= CLUSTER_INIT_STEPS.PROVIDER_DONE :
       initStep >= CLUSTER_INIT_STEPS.ZONE_DONE;
   }),

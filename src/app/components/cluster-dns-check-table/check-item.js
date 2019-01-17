@@ -171,7 +171,7 @@ export default Component.extend(I18n, {
         'onepanelServiceType',
         'subdomainDelegation',
       );
-      return onepanelServiceType === 'zone' || !subdomainDelegation ?
+      return onepanelServiceType === 'onezone' || !subdomainDelegation ?
         'ownDomain' : 'subdomain';
     }
   ),

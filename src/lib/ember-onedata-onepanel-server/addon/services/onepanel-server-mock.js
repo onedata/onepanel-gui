@@ -44,7 +44,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'provider';
+const MOCK_SERVICE_TYPE = 'oneprovider';
 
 /**
  * Response delay in milliseconds
@@ -169,14 +169,14 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
-      MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
+      MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
     ),
 
     /**
@@ -308,7 +308,7 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({
         promise: Promise.resolve({
           hostname: 'example.com',
-          componentType: 'one' + MOCK_SERVICE_TYPE,
+          componentType: MOCK_SERVICE_TYPE,
         }),
       });
     }),
@@ -358,7 +358,7 @@ export default OnepanelServerBase.extend(
       this._super(...arguments);
       const mockStep = this.get('mockStep');
       this.updateServiceTypeProxy();
-      if (MOCK_SERVICE_TYPE === 'provider') {
+      if (MOCK_SERVICE_TYPE === 'oneprovider') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'bad_records',
@@ -459,7 +459,7 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
-      } else if (MOCK_SERVICE_TYPE === 'zone') {
+      } else if (MOCK_SERVICE_TYPE === 'onezone') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'missing_records',
@@ -1070,7 +1070,7 @@ export default OnepanelServerBase.extend(
       const mockStep = this.get('mockStep');
       return {
         success() {
-          if (MOCK_SERVICE_TYPE === 'provider') {
+          if (MOCK_SERVICE_TYPE === 'oneprovider') {
             if (mockStep > STEP.PROVIDER_REGISTER) {
               return {
                 zoneName: 'Cyfronet AGH',
@@ -1095,7 +1095,7 @@ export default OnepanelServerBase.extend(
           }
         },
         statusCode() {
-          if (MOCK_SERVICE_TYPE === 'provider') {
+          if (MOCK_SERVICE_TYPE === 'oneprovider') {
             return mockStep > STEP.PROVIDER_REGISTER ? 200 : 404;
           } else {
             return mockStep >= STEP.ZONE_DONE ? 200 : 404;
@@ -1120,7 +1120,7 @@ export default OnepanelServerBase.extend(
 
     _req_onepanel_getCurrentCluster() {
       return {
-        success: () => (MOCK_SERVICE_TYPE === 'provider' ?
+        success: () => (MOCK_SERVICE_TYPE === 'oneprovider' ?
           providerCluster1 : zoneCluster),
       };
     },

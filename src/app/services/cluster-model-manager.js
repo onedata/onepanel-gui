@@ -52,7 +52,7 @@ export default Service.extend(
     },
 
     getNotDeployedCluster() {
-      const type = 'one' + this.get('onepanelServer.serviceType');
+      const type = this.get('onepanelServer.serviceType');
       return {
         id: 'new-cluster',
         name: 'New cluster',
@@ -110,7 +110,7 @@ export default Service.extend(
         })
         .then(() => {
           if (cluster.type === 'onezone') {
-            if (onepanelGuiType === 'zone') {
+            if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
                 configurationManager.getInstallationDetails(false);
               return installationDetailsProxy
