@@ -4,13 +4,14 @@
  *
  * @module routes/login
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import LoginRoute from 'onedata-gui-common/routes/login';
-import { get, setProperties } from '@ember/object';
+import { setProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
+import { Promise } from 'rsvp';
 
 export default LoginRoute.extend({
   userManager: service(),
@@ -26,20 +27,23 @@ export default LoginRoute.extend({
 
     const isNotStandalone = !!onepanelServer.getClusterIdFromUrl();
     if (isNotStandalone) {
-      window.location = get(onezoneGui, 'onezoneGuiUrl');
-    }
-
-    const baseModel = this._super(...arguments) || {};
-
-    return Promise.all([
-      userManager.checkAdminUserExists(),
-      onezoneGui.getIsOnezoneAvailableProxy(),
-    ]).then(([adminUserExists, isOnezoneAvailable]) => {
-      setProperties(baseModel, {
-        adminUserExists,
-        isOnezoneAvailable,
+      return new Promise(() => {
+        window.location =
+          onezoneGui.getOnepanelNavUrlInOnezone({ useRedirect: true });
       });
-      return baseModel;
-    });
+    } else {
+      const baseModel = this._super(...arguments) || {};
+
+      return Promise.all([
+        userManager.checkAdminUserExists(),
+        onezoneGui.getIsOnezoneAvailableProxy(),
+      ]).then(([adminUserExists, isOnezoneAvailable]) => {
+        setProperties(baseModel, {
+          adminUserExists,
+          isOnezoneAvailable,
+        });
+        return baseModel;
+      });
+    }
   },
 });

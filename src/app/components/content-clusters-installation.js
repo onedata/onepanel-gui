@@ -55,10 +55,9 @@ export default Component.extend(
         return new Promise(resolve => {
           this.set('initProcess', false);
           // FIXME: the ugliest hack in the world, part 2
-          window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone(
-            undefined,
-            window.onezoneDomain
-          );
+          window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
+            clusterId: window.onezoneDomain
+          });
           // scheduleOnce(
           //   'afterRender',
           // FIXME: maybe we want to redirect user to Onezone

@@ -27,11 +27,11 @@ export default Component.extend(
       this._super(...arguments);
       this.updateConfigurationProxy();
       this.get('configurationProxy').then(configuration => {
-            if (get(configuration, 'isInitialized')) {
-              this.goToDefaultAspect();
-            } else {
-              this.goToNewAspect();
-            }
+        if (get(configuration, 'isInitialized')) {
+          this.goToDefaultAspect();
+        } else {
+          this.goToNewAspect();
+        }
       });
     },
 

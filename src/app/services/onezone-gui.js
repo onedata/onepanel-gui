@@ -76,13 +76,19 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
   },
 
   /**
-   * Returns url to specified place in onepanel hosted by onezone
-   * @param {string} onepanelType one of: oneprovider, onezone
-   * @param {string} clusterId
-   * @param {string} [internalRoute='/'] onezone application internal route
+   * Returns url to specified place in Onepanel hosted by onezone
+   * @param {string} params.onepanelType one of: oneprovider, onezone
+   * @param {string} params.clusterId
+   * @param {string} [params.internalRoute='/'] Onezone application internal route
+   * @param {boolean} [params.useRedirect=false] should be used redirect or direct url
    * @returns {string}
    */
-  getOnepanelNavUrlInOnezone(onepanelType, clusterId, internalRoute = '/') {
+  getOnepanelNavUrlInOnezone({
+    onepanelType,
+    clusterId,
+    internalRoute = '/',
+    useRedirect = false,
+  }) {
     const onezoneOrigin = this.get('onezoneOrigin');
     if (!onepanelType) {
       onepanelType = this.get('onepanelConfiguration.serviceType');
@@ -90,13 +96,11 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
     if (!clusterId) {
       clusterId = this.get('onepanelConfiguration.clusterId');
     }
-    // FIXME: not redirecting to onezone login screen (and not adding redirect url)
-    // TODO: redirect directly to onepanel and that onepanel should redirect to
-    // onezone login if needed, It allows to skip unnecessary hop via onezone when
-    // user is logged in
+
     const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
-    return `${onezoneOrigin}/#?redirect=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
-    // return onezoneOrigin;
+    return useRedirect ?
+      `${onezoneOrigin}/#?redirect=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}` :
+      `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
   },
 
   /**

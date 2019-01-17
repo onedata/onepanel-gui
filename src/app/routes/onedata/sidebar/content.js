@@ -17,19 +17,18 @@ export default SidebarContentRoute.extend({
   navigationState: service(),
   onezoneGui: service(),
 
-  afterModel(model, transition) {
-    const result = this._super(model, transition);
-    const {
-      clusterModelManager,
-      navigationState,
-      onezoneGui,
-    } = this.getProperties(
-      'clusterModelManager',
-      'navigationState',
-      'onezoneGui'
-    );
+  afterModel(model) {
+    const result = this._super(...arguments);
 
-    if (get(navigationState, 'activeResourceType') === 'clusters') {
+    if (this.get('navigationState.activeResourceType') === 'clusters') {
+      const {
+        clusterModelManager,
+        onezoneGui,
+      } = this.getProperties(
+        'clusterModelManager',
+        'onezoneGui'
+      );
+
       const currentClusterId =
         get(clusterModelManager, 'currentClusterProxy.id') || 'new';
       const clusterId = get(model, 'resourceId');
@@ -37,11 +36,11 @@ export default SidebarContentRoute.extend({
       // If selected cluster is different than this cluster, redirect to
       // another Onepanel.
       if (clusterId !== currentClusterId) {
-        const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone(
-          get(model, 'resource.type'),
-          get(model, 'resourceId'),
-          `/onedata/clusters/${clusterId}`
-        );
+        const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
+          onepanelType: get(model, 'resource.type'),
+          clusterId,
+          internalRoute: `/onedata/clusters/${clusterId}`,
+        });
         window.location = redirectUrl;
       }
     }

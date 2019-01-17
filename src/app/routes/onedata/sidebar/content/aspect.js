@@ -20,8 +20,12 @@ export default AspectRoute.extend({
   onepanelServiceType: reads('onepanelServer.serviceType'),
 
   beforeModel(transition) {
-    this._super(...arguments);
-    this._redirectClusterAspect(transition);
+    const result = this._super(...arguments);
+    const resourceType = get(transition.params['onedata.sidebar'], 'type');
+    if (resourceType === 'clusters') {
+      this._redirectClusterAspect(transition);
+    }
+    return result;
   },
 
   /**
@@ -34,11 +38,7 @@ export default AspectRoute.extend({
       transition.params['onedata.sidebar.content.aspect'],
       'aspect_id'
     );
-    if (aspectId === 'not-found') {
-      return;
-    }
-    const resourceType = get(transition.params['onedata.sidebar'], 'type');
-    if (resourceType === 'clusters') {
+    if (aspectId !== 'not-found') {
       const onepanelServiceType = this.get('onepanelServiceType');
       const contentModel = this.modelFor('onedata.sidebar.content');
       if (aspectId !== 'installation') {
