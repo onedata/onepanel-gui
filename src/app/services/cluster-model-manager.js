@@ -8,9 +8,10 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { get } from '@ember/object';
+import { get, set } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
+import { resolve } from 'rsvp';
 
 export default Service.extend(
   createDataProxyMixin('rawCurrentCluster'),
@@ -36,7 +37,7 @@ export default Service.extend(
 
     fetchCurrentCluster() {
       return this.getRawCurrentClusterProxy()
-        .then(cluster => cluster && this.generateGuiCluster(cluster));
+        .then(cluster => cluster && this.generateGuiCluster(cluster, true));
     },
 
     fetchClusterIds() {
@@ -53,10 +54,12 @@ export default Service.extend(
     getNotDeployedCluster() {
       const type = 'one' + this.get('onepanelServer.serviceType');
       return {
-        id: 'new',
+        id: 'new-cluster',
         name: 'New cluster',
         domain: location.hostname,
         type,
+        isLocal: true,
+        isNotDeployed: true,
       };
     },
 
@@ -66,7 +69,8 @@ export default Service.extend(
     },
 
     /**
-     * Adds missing name and domain fields to cluster records fetched from backend 
+     * Adds missing name, domain, isLocal and isNotDeployed fields to cluster
+     * records fetched from backend 
      * @param {Onepanel.ClusterDetails} data cluster data from backend(REST)
      * @param {string} data.id
      * @param {string} data.type
@@ -74,35 +78,64 @@ export default Service.extend(
      * @param {string} data.version
      * @param {string} data.build
      * @param {boolean} data.proxy
+     * @param {boolean} [assumeItIsLocal=false]
      * @returns {Promise}
      */
-    generateGuiCluster(data) {
-      const cluster = _.cloneDeep(data);
+    generateGuiCluster(data, assumeItIsLocal = false) {
+      const {
+        configurationManager,
+        providerManager,
+      } = this.getProperties('configurationManager', 'providerManager');
       const onepanelGuiType = this.get('onepanelServer.serviceType');
-      if (cluster.type === 'onezone') {
-        if (onepanelGuiType === 'zone') {
-          return this.get('configurationManager').getInstallationDetails(false)
-            .then(installationDetails => {
-              cluster.name = get(installationDetails, 'name');
-              cluster.domain = get(installationDetails, 'onezone.domainName');
-              return cluster;
+
+      const cluster = _.cloneDeep(data);
+      let installationDetailsProxy;
+
+      return (assumeItIsLocal ? resolve(cluster) : this.getCurrentClusterProxy())
+        .then(currentCluster => {
+          if (get(currentCluster, 'id') === get(cluster, 'id')) {
+            set(cluster, 'isLocal', true);
+            installationDetailsProxy =
+              configurationManager.getInstallationDetails(false);
+            return installationDetailsProxy.then(installationDetails => {
+              set(
+                cluster,
+                'isNotDeployed',
+                !get(installationDetails, 'isInitialized')
+              );
             });
-        } else {
-          return this.get('providerManager').getOnezoneInfo()
-            .then(onezoneInfo => {
-              cluster.name = get(onezoneInfo, 'name');
-              cluster.domain = get(onezoneInfo, 'domain');
-              return cluster;
-            });
-        }
-      } else {
-        return this.get('providerManager').getAnyProvider(get(data, 'serviceId'))
-          .then(({ name, domain }) => {
-            cluster.name = name;
-            cluster.domain = domain;
-            return cluster;
-          });
-      }
+          } else {
+            set(cluster, 'isLocal', false);
+          }
+        })
+        .then(() => {
+          if (cluster.type === 'onezone') {
+            if (onepanelGuiType === 'zone') {
+              installationDetailsProxy = installationDetailsProxy ||
+                configurationManager.getInstallationDetails(false);
+              return installationDetailsProxy
+                .then(installationDetails => {
+                  cluster.name = get(installationDetails, 'name');
+                  cluster.domain = get(installationDetails, 'onezone.domainName');
+                  return cluster;
+                });
+            } else {
+              return providerManager.getOnezoneInfo()
+                .then(onezoneInfo => {
+                  cluster.name = get(onezoneInfo, 'name');
+                  cluster.domain = get(onezoneInfo, 'domain');
+                  return cluster;
+                });
+            }
+          } else {
+            return providerManager.getAnyProvider(get(data, 'serviceId'))
+              .then(({ name, domain }) => {
+                cluster.name = name;
+                cluster.domain = domain;
+                return cluster;
+              });
+          }
+        });
     },
   }
 );

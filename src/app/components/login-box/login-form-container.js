@@ -30,22 +30,12 @@ export default LoginFormContainer.extend(I18n, {
    */
   visitViaOnezoneUrl: computed(
     'onezoneGui.isOnezoneAvailable',
-    'onepanelConfiguration.clusterId',
-    'onepanelServer.serviceType',
     function visitViaOnezoneUrl() {
-      const {
-        onezoneGui,
-        onepanelConfiguration,
-      } = this.getProperties(
-        'onezoneGui',
-        'onepanelConfiguration'
-      );
+      const onezoneGui = this.get('onezoneGui');
       const isOnezoneAvailable = get(onezoneGui, 'isOnezoneAvailable');
 
       if (isOnezoneAvailable) {
-        const onepanelType = get(onepanelConfiguration, 'serviceType');
-        const clusterId = get(onepanelConfiguration, 'clusterId');
-        return onezoneGui.getOnepanelNavUrlInOnezone(onepanelType, clusterId);
+        return onezoneGui.getOnepanelNavUrlInOnezone();
       } else {
         return null;
       }

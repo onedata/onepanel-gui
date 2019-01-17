@@ -9,18 +9,23 @@
 
 import AspectRoute from 'onedata-gui-common/routes/onedata/sidebar/content/aspect';
 import { get } from '@ember/object';
-import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
 const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credentials']);
 
 export default AspectRoute.extend({
-  onepanelServer: inject(),
+  onepanelServer: service(),
+
   onepanelServiceType: reads('onepanelServer.serviceType'),
 
   beforeModel(transition) {
-    this._super(...arguments);
-    this._redirectClusterAspect(transition);
+    const result = this._super(...arguments);
+    const resourceType = get(transition.params['onedata.sidebar'], 'type');
+    if (resourceType === 'clusters') {
+      this._redirectClusterAspect(transition);
+    }
+    return result;
   },
 
   /**
@@ -33,19 +38,14 @@ export default AspectRoute.extend({
       transition.params['onedata.sidebar.content.aspect'],
       'aspect_id'
     );
-    if (aspectId === 'not-found') {
-      return;
-    }
-    const resourceType = get(transition.params['onedata.sidebar'], 'type');
-    if (resourceType === 'clusters') {
-      if (aspectId !== 'index') {
-        const onepanelServiceType = this.get('onepanelServiceType');
-        const cluster = get(this.modelFor('onedata.sidebar.content'), 'resource');
-        if (
-          get(cluster, 'isInitialized') === false ||
-          (onepanelServiceType === 'zone' && !zoneAspects.has(aspectId))
-        ) {
-          this.transitionTo('onedata');
+    if (aspectId !== 'not-found') {
+      const onepanelServiceType = this.get('onepanelServiceType');
+      const contentModel = this.modelFor('onedata.sidebar.content');
+      if (aspectId !== 'installation') {
+        if (get(contentModel, 'resource.isNotDeployed')) {
+          this.transitionTo('onedata.sidebar.content.aspect', 'installation');
+        } else if (onepanelServiceType === 'zone' && !zoneAspects.has(aspectId)) {
+          this.transitionTo('onedata.sidebar.content.aspect', 'overview');
         }
       }
     }
