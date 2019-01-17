@@ -21,6 +21,8 @@ export default GuiUtils.extend(
     onezoneGui: service(),
     providerManager: service(),
 
+    // FIXME: there is a problem with inconsistency between - to refactor
+    // onepanelConfiguration.serviceType (one preffix) and onepanelServer.serviceType
     /**
      * Panel type: provider or zone.
      * @type {Ember.ComputedProperty<string>}
@@ -45,6 +47,7 @@ export default GuiUtils.extend(
 
     /**
      * @override
+     * One of: Oneprovider Panel, Onezone Panel
      */
     guiType: computed('serviceType', function () {
       const serviceType = this.get('serviceType');

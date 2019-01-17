@@ -20,7 +20,7 @@ export default SidebarIndexRoute.extend({
   getDefaultResource(list, resourceType) {
     if (resourceType === 'clusters') {
       const first = list[0];
-      if (first && get(first, 'id') === 'new') {
+      if (first && get(first, 'id') === 'new-cluster') {
         return list[0];
       } else {
         // promise resolve is guaranteed by fetching currentCluster in application route

@@ -54,10 +54,12 @@ export default Service.extend(
     getNotDeployedCluster() {
       const type = 'one' + this.get('onepanelServer.serviceType');
       return {
-        id: 'new',
+        id: 'new-cluster',
         name: 'New cluster',
         domain: location.hostname,
         type,
+        isLocal: true,
+        isNotDeployed: true,
       };
     },
 
@@ -79,7 +81,7 @@ export default Service.extend(
      * @param {boolean} [assumeItIsLocal=false]
      * @returns {Promise}
      */
-    generateGuiCluster(data, assumeItIsLocal=false) {
+    generateGuiCluster(data, assumeItIsLocal = false) {
       const {
         configurationManager,
         providerManager,
@@ -133,7 +135,7 @@ export default Service.extend(
                 return cluster;
               });
           }
-        });      
+        });
     },
   }
 );

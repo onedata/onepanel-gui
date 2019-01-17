@@ -29,8 +29,8 @@ export default SidebarContentRoute.extend({
         'onezoneGui'
       );
 
-      const currentClusterId =
-        get(clusterModelManager, 'currentClusterProxy.id') || 'new';
+      const currentClusterId = get(clusterModelManager, 'currentClusterProxy.id') ||
+        'new-cluster';
       const clusterId = get(model, 'resourceId');
 
       // If selected cluster is different than this cluster, redirect to

@@ -30,7 +30,7 @@ export default Component.extend(
         if (get(configuration, 'isInitialized')) {
           this.goToDefaultAspect();
         } else {
-          this.goToNewAspect();
+          this.goToInstallation();
         }
       });
     },
@@ -45,12 +45,12 @@ export default Component.extend(
       );
     },
 
-    goToNewAspect() {
+    goToInstallation() {
       return scheduleOnce(
         'afterRender',
         () => this.get('router').transitionTo(
-          'onedata.sidebar.content.aspect',
-          'new'
+          'onedata.sidebar.content',
+          'installation'
         )
       );
     },

@@ -88,6 +88,9 @@ const OnezoneGui = Service.extend(createDataProxyMixin('isOnezoneAvailable'), {
     clusterId,
     internalRoute = '/',
     useRedirect = false,
+  } = {
+    internalRoute: '/',
+    useRedirect: false,
   }) {
     const onezoneOrigin = this.get('onezoneOrigin');
     if (!onepanelType) {

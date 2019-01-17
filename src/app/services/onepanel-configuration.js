@@ -45,6 +45,7 @@ export default Service.extend(createDataProxyMixin('configuration'), {
 
   /**
    * Common
+   * One of: oneprovider, onezone
    * @type {Ember.ComputedProperty<string>}
    */
   serviceType: reads('configurationProxy.serviceType'),
