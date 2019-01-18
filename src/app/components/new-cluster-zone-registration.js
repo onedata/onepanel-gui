@@ -134,7 +134,7 @@ export default Component.extend(I18n, {
 
   handleProceedToken() {
     return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
-        token: this.get('token'),
+        token: this.get('token').trim(),
       })
       .catch(error => {
         this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);

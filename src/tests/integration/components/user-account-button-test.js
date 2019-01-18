@@ -14,7 +14,6 @@ import wait from 'ember-test-helpers/wait';
 
 const OnepanelServer = OnepanelServerStub.extend({
   getClusterIdFromUrl: notImplementedThrow,
-  // requestValidData: notImplementedReject,
   requestValidData() {
     throw new Error('hello');
   },
@@ -24,6 +23,8 @@ const ProviderManager = Service.extend({
   getProviderDetails: notImplementedReject,
 });
 
+const GuiUtils = Service.extend({});
+
 describe('Integration | Component | user account button', function () {
   setupComponentTest('user-account-button', {
     integration: true,
@@ -32,6 +33,7 @@ describe('Integration | Component | user account button', function () {
   beforeEach(function () {
     registerService(this, 'onepanel-server', OnepanelServer);
     registerService(this, 'provider-manager', ProviderManager);
+    registerService(this, 'gui-utils', GuiUtils);
   });
 
   // FIXME: this test and valid username fetch should be implemented

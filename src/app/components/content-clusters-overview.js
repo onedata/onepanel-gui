@@ -3,12 +3,18 @@ import { computed, get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default Component.extend({
+export default Component.extend(I18n, {
   guiUtils: service(),
   providerManager: service(),
   spaceManager: service(),
   storageManager: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.contentClustersOverview',
 
   oneproviderRoute: computed(function oneproviderRoute() {
     return ['onedata.sidebar.content', 'data', this.get('cluster.serviceId')];

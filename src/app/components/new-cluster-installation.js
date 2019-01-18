@@ -27,7 +27,6 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import _ from 'lodash';
 
 const {
   ProviderConfiguration,
@@ -55,10 +54,11 @@ export default Component.extend(I18n, {
   globalNotify: service(),
   cookies: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterInstallation',
 
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   /**
    * @virtual optional

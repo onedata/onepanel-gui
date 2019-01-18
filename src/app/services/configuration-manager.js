@@ -30,7 +30,9 @@ const _ROLE_COLLECTIONS = {
 export default Service.extend({
   clusterModelManager: service(),
   onepanelServer: service(),
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  guiUtils: service(),
+
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * Contains latest fetched ClusterDetails

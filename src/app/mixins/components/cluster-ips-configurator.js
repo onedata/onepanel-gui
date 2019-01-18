@@ -15,8 +15,11 @@ import { Promise } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 
 export default Mixin.create({
+  guiUtils: service(),
+
   i18nPrefix: 'mixins.components.clusterIpsConfigurator',
 
   /**
@@ -40,7 +43,7 @@ export default Mixin.create({
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  serviceType: reads('onepanelServer.serviceType'),
+  serviceType: reads('guiUtils.serviceType'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}

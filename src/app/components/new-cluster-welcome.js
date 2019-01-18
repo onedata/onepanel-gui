@@ -19,8 +19,9 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 export default ContentInfo.extend({
   classNames: ['scroll-breakpoint-300'],
 
-  onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  guiUtils: service(),
+
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   layout,
 

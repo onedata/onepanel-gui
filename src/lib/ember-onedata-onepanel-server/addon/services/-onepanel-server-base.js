@@ -10,8 +10,12 @@
  */
 
 import Service from '@ember/service';
-
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 
-export default Service.extend(RequestErrorHandler, ResponseValidator, {});
+export default Service.extend(
+  RequestErrorHandler,
+  ResponseValidator,
+  createDataProxyMixin('configuration'), {}
+);

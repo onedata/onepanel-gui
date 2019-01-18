@@ -44,6 +44,6 @@ export default LoginFormContainer.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    this.get('onezoneGui').updateEnterViaOnezoneProxy();
+    this.get('onezoneGui').updateCanEnterViaOnezoneProxy();
   },
 });

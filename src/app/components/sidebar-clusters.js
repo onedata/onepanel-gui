@@ -7,7 +7,6 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import SidebarClusters from 'onedata-gui-common/components/sidebar-clusters';
 import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
@@ -17,7 +16,7 @@ export default SidebarClusters.extend({
 
   classNames: ['sidebar-clusters-onepanel'],
 
-  onepanelServer: service(),
+  guiUtils: service(),
   dnsManager: service(),
 
   /**
@@ -25,9 +24,6 @@ export default SidebarClusters.extend({
    * @type {Array<ClusterDetails>}
    */
   model: undefined,
-
-  // FIXME: to remove
-  onepanelServiceType: reads('onepanelServer.serviceType'),
 
   init() {
     this._super(...arguments);

@@ -35,10 +35,10 @@ const webCertPollInterval = 2000;
 export default Component.extend(I18n, GlobalActions, {
   webCertManager: service(),
   onepanelServer: service(),
-  // FIXME: change to configurationManager
   configurationManager: service(),
   providerManager: service(),
   globalNotify: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.contentClustersCertificate',
 
@@ -70,7 +70,7 @@ export default Component.extend(I18n, GlobalActions, {
    */
   showRedirectPage: false,
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * True, if regenerate action is pending

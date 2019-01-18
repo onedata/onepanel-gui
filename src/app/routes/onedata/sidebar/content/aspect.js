@@ -15,9 +15,9 @@ import { reads } from '@ember/object/computed';
 const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credentials']);
 
 export default AspectRoute.extend({
-  onepanelServer: service(),
+  guiUtils: service(),
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   beforeModel(transition) {
     const result = this._super(...arguments);

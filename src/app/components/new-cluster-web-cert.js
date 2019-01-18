@@ -33,10 +33,11 @@ export default Component.extend(I18n, {
   providerManager: service(),
   globalNotify: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterWebCert',
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * @virtual
