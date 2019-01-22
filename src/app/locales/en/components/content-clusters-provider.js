@@ -10,7 +10,7 @@ export default {
   modifySuccess: 'Provider data has been modified',
   deregisterSuccess: 'Provider has been deregistered',
   formTitles: {
-    show: 'Registered provider details',
+    show: 'Registered to',
     edit: 'Modify registered provider details',
     new: 'Provider registration',
   },
