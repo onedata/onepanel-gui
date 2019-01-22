@@ -7,23 +7,24 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-// FIXME add "More" link
-
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { inject as service } from '@ember/service';
 import { computed, get } from '@ember/object';
 import { union } from '@ember/object/computed';
 
 export default Component.extend(I18n, {
   tagName: '',
 
-  configurationManager: service(),
-
   /**
    * @override
    */
   i18nPrefix: 'components.clusterNodesTile',
+  
+  /**
+   * @virtual
+   * @type {PromiseObject<Object>}
+   */
+  clusterConfigurationProxy: undefined,
 
   /**
    * @type {Array<string>}
@@ -46,19 +47,12 @@ export default Component.extend(I18n, {
   }),
 
   /**
-   * @type {Ember.ComputedProperty<PromiseObject<Object>>}
-   */
-  clusterConfiguration: computed(function clusterConfiguration() {
-    return this.get('configurationManager').getInstallationDetails();
-  }),
-
-  /**
    * @type {Ember.ComputedProperty<Array<string>>}
    */
   allNodes: union(
-    'clusterConfiguration.cluster.databases.hosts',
-    'clusterConfiguration.cluster.managers.hosts',
-    'clusterConfiguration.cluster.workers.hosts'
+    'clusterConfigurationProxy.cluster.databases.hosts',
+    'clusterConfigurationProxy.cluster.managers.hosts',
+    'clusterConfigurationProxy.cluster.workers.hosts'
   ),
 
   /**
@@ -73,18 +67,18 @@ export default Component.extend(I18n, {
     'services',
     'serviceNames',
     'allNodes',
-    'clusterConfiguration.cluster.{databases.hosts,managers.hosts,workers.hosts}',
+    'clusterConfigurationProxy.cluster.{databases.hosts,managers.hosts,workers.hosts}',
     function serviceRows() {
       const {
         services,
         serviceNames,
         allNodes,
-        clusterConfiguration,
+        clusterConfigurationProxy,
       } = this.getProperties(
         'services',
         'serviceNames',
         'allNodes',
-        'clusterConfiguration'
+        'clusterConfigurationProxy'
       );
       if (!get(allNodes, 'length')) {
         return [];
@@ -95,7 +89,7 @@ export default Component.extend(I18n, {
           boxes: allNodes.map(node => {
             const hasService =
               get(
-                clusterConfiguration,
+                clusterConfigurationProxy,
                 `cluster.${service}.hosts`
               ).includes(node);
             return {

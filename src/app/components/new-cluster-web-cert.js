@@ -65,7 +65,7 @@ export default Component.extend(I18n, {
    * @type {PromiseObject<Onepanel.WebCert>}
    */
   webCertProxy: computed(function webCertProxy() {
-    const promise = this.get('webCertManager').getWebCert();
+    const promise = this.get('webCertManager').fetchWebCert();
     return PromiseObject.create({ promise });
   }),
 
