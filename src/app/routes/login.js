@@ -17,6 +17,7 @@ export default LoginRoute.extend({
   userManager: service(),
   onezoneGui: service(),
   onepanelServer: service(),
+  onepanelConfiguration: service(),
 
   model() {
     const {
@@ -25,11 +26,16 @@ export default LoginRoute.extend({
       onepanelServer,
     } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
 
-    const isNotStandalone = !!onepanelServer.getClusterIdFromUrl();
+    const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
+    const isNotStandalone = !!clusterIdFromUrl;
     if (isNotStandalone) {
+      // FIXME: does not work
       return new Promise(() => {
         window.location =
-          onezoneGui.getOnepanelNavUrlInOnezone({ useRedirect: true });
+          onezoneGui.getOnepanelNavUrlInOnezone({
+            internalRoute: `/clusters/${clusterIdFromUrl}`,
+            useRedirect: true,
+          });
       });
     } else {
       const baseModel = this._super(...arguments) || {};

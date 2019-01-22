@@ -160,6 +160,11 @@ export default OnepanelServerBase.extend(
       return location;
     },
 
+    getClusterTypeFromUrl() {
+      const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
+      return m && m[1] === 'ozp' ? 'onezone' : 'oneprovider';
+    },
+
     getClusterIdFromUrl() {
       const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
       return m && m[2];
@@ -183,7 +188,7 @@ export default OnepanelServerBase.extend(
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const _location = this.getLocation();
       if (clusterIdFromUrl) {
-        const serviceType = this.get('guiUtils.serviceType');
+        const serviceType = this.getClusterTypeFromUrl();
         if (serviceType === 'oneprovider') {
           // frontend is served from Onezone host - use external host
           return new Promise((resolve, reject) => {
@@ -369,22 +374,15 @@ export default OnepanelServerBase.extend(
     },
 
     /**
-     * Returns url of configuration endpoint
-     * @returns {string}
-     */
-    getConfigurationEndpointUrl() {
-      const _location = this.get('_location');
-      return _location.origin + '/configuration';
-    },
-
-    /**
      * @override
      * Fetches configuration
      * @returns {Promise<Object>}
      */
     fetchConfiguration() {
-      return new Promise((resolve, reject) => {
-        $.ajax(this.getConfigurationEndpointUrl()).then(resolve, reject);
+      return this.getApiOriginProxy().then(apiOrigin => {
+        return new Promise((resolve, reject) => {
+          $.ajax(apiOrigin).then(resolve, reject);
+        });
       });
     },
   }
