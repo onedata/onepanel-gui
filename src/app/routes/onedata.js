@@ -1,10 +1,17 @@
 import { inject as service } from '@ember/service';
-import { get, set } from '@ember/object';
+import { get, set, setProperties } from '@ember/object';
 import OnedataRoute from 'onedata-gui-common/routes/onedata';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default OnedataRoute.extend({
+export default OnedataRoute.extend(I18n, {
   clusterModelManager: service(),
   onepanelServer: service(),
+  configurationManager: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'routes.onedata',
 
   beforeModel() {
     this._super(...arguments);
@@ -17,18 +24,30 @@ export default OnedataRoute.extend({
 
   model() {
     const isHosted = Boolean(this.get('onepanelServer').getClusterIdFromUrl());
-    return this._super(...arguments)
-      .then(model => {
-        if (!isHosted) {
-          const items = get(model, 'mainMenuItems');
+    return Promise.all([
+      this._super(...arguments),
+      this.get('configurationManager').getInstallationDetails(),
+    ]).then(([model, installDetails]) => {
+      if (!isHosted) {
+        const items = get(model, 'mainMenuItems');
+        if (get(installDetails, 'isInitialized') === false) {
+          set(
+            model,
+            'mainMenuItems',
+            items.filter(item => get(item, 'id') === 'clusters')
+          );
+        } else {
           items.forEach(item => {
-            if (item.id !== 'clusters') {
-              set(item, 'disabled', true);
+            if (get(item, 'id') !== 'clusters') {
+              setProperties(item, {
+                disabled: true,
+                tip: this.t('useOnezoneToAccess'),
+              });
             }
           });
         }
-        return model;
-      });
+      }
+      return model;
+    });
   },
-
 });

@@ -48,6 +48,8 @@ import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator
 
 import guiUtils from './services/gui-utils';
 
+import onedata from './routes/onedata';
+
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
@@ -107,6 +109,9 @@ let translations = {
   },
   services: {
     guiUtils,
+  },
+  routes: {
+    onedata,
   },
 };
 
