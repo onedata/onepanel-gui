@@ -19,8 +19,9 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 export default ContentInfo.extend({
   classNames: ['scroll-breakpoint-300'],
 
-  onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  guiUtils: service(),
+
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   layout,
 
@@ -32,7 +33,7 @@ export default ContentInfo.extend({
 
   header: 'welcome',
   subheader: computed('onepanelServiceType', function () {
-    return `to one${this.get('onepanelServiceType')} panel`;
+    return `to ${this.get('onepanelServiceType')} panel`;
   }),
   buttonLabel: 'Create new cluster',
 

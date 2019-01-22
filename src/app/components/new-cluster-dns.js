@@ -20,6 +20,7 @@ export default Component.extend(I18n, {
 
   onepanelServer: service(),
   globalNotify: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterDns',
 
@@ -51,7 +52,7 @@ export default Component.extend(I18n, {
 
   proceedEnabled: or('isIpDomain', 'performCheckDone'),
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   confirmProceedModalOpened: notEmpty('confirmProceedDefer'),
 

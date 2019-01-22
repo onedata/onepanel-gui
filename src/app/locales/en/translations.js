@@ -41,7 +41,7 @@ import contentClustersCredentials from './components/content-clusters-credential
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
-import contentClustersOverview  from './components/content-clusters-overview';
+import contentClustersOverview from './components/content-clusters-overview';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 

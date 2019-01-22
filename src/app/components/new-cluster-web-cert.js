@@ -33,10 +33,11 @@ export default Component.extend(I18n, {
   providerManager: service(),
   globalNotify: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterWebCert',
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * @virtual
@@ -102,11 +103,11 @@ export default Component.extend(I18n, {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     switch (onepanelServiceType) {
-      case 'provider':
+      case 'oneprovider':
         promise = this.get('providerManager').getProviderDetails()
           .then(provider => provider && get(provider, 'domain'));
         break;
-      case 'zone':
+      case 'onezone':
         promise = this.get('configurationManager').getConfiguration()
           .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
         break;

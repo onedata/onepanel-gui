@@ -38,7 +38,7 @@ export default Component.extend(I18n, {
    * @type {PromiseArray<ProviderDetails>}
    */
   providersProxy: computed('providerProxy', function providersProxy() {
-    if (this.get('guiUtils.serviceType') === 'provider') {
+    if (this.get('guiUtils.serviceType') === 'oneprovider') {
       return PromiseArray.create({
         promise: this.get('providerProxy')
           .then(provider => [get(provider, 'content')]),
@@ -51,7 +51,8 @@ export default Component.extend(I18n, {
    */
   providerIdProxy: computed('providerProxy', function providerIdProxy() {
     return PromiseObject.create({
-      promise: this.get('providerProxy').then(provider => get(provider, 'content.id')),
+      promise: this.get('providerProxy').then(provider => get(provider,
+        'content.id')),
     });
   }),
 
@@ -69,7 +70,8 @@ export default Component.extend(I18n, {
    */
   storagesProxy: computed(function storagesProxy() {
     return PromiseArray.create({
-      promise: this.get('storageManager').getStorages().then(l => get(l, 'content')),
+      promise: this.get('storageManager').getStorages().then(l => get(l,
+        'content')),
     });
   }),
 

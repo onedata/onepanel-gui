@@ -15,9 +15,9 @@ import { reads } from '@ember/object/computed';
 const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credentials']);
 
 export default AspectRoute.extend({
-  onepanelServer: service(),
+  guiUtils: service(),
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   beforeModel(transition) {
     const result = this._super(...arguments);
@@ -44,7 +44,7 @@ export default AspectRoute.extend({
       if (aspectId !== 'installation') {
         if (get(contentModel, 'resource.isNotDeployed')) {
           this.transitionTo('onedata.sidebar.content.aspect', 'installation');
-        } else if (onepanelServiceType === 'zone' && !zoneAspects.has(aspectId)) {
+        } else if (onepanelServiceType === 'onezone' && !zoneAspects.has(aspectId)) {
           this.transitionTo('onedata.sidebar.content.aspect', 'overview');
         }
       }

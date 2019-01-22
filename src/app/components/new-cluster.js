@@ -60,10 +60,11 @@ export default Component.extend(I18n, {
   cookies: service(),
   configurationManager: service(),
   providerManager: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newCluster',
 
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   currentStepIndex: Number(STEP.DEPLOY),
 
@@ -90,7 +91,7 @@ export default Component.extend(I18n, {
   providerDetailsProxy: computed('isAfterDeploy', function getProviderDetailsProxy() {
     if (
       this.get('isAfterDeploy') &&
-      this.get('onepanelServer.serviceType') === 'provider'
+      this.get('onepanelServiceType') === 'oneprovider'
     ) {
       return this.get('providerManager').getProviderDetails();
     }
@@ -103,7 +104,7 @@ export default Component.extend(I18n, {
     this.setProperties({
       currentStepIndex: clusterInitStep,
       _isInProcess: clusterInitStep > STEP.DEPLOY,
-      steps: (onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE).map(
+      steps: (onepanelServiceType === 'oneprovider' ? STEPS_PROVIDER : STEPS_ZONE).map(
         id => ({
           id,
           title: this.t(`steps.${onepanelServiceType}.${id}`),

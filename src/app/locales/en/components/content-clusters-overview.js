@@ -1,12 +1,7 @@
 export default {
-  info: {
-    title: 'Info',
-    name: 'Name',
-    type: 'Type',
-    id: 'Id',
-  },
-  providersMap: {
-    title: 'Oneprovider',
-    more: 'Show on map',
-  },
+  name: 'Name',
+  type: 'Type',
+  clusterId: 'Cluster ID',
+  showOnMap: 'Show on map',
+  oneproviderTileTitle: 'Oneprovider',
 };

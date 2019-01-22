@@ -35,10 +35,10 @@ const webCertPollInterval = 2000;
 export default Component.extend(I18n, GlobalActions, {
   webCertManager: service(),
   onepanelServer: service(),
-  // FIXME: change to configurationManager
   configurationManager: service(),
   providerManager: service(),
   globalNotify: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.contentClustersCertificate',
 
@@ -70,7 +70,7 @@ export default Component.extend(I18n, GlobalActions, {
    */
   showRedirectPage: false,
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * True, if regenerate action is pending
@@ -112,11 +112,11 @@ export default Component.extend(I18n, GlobalActions, {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     switch (onepanelServiceType) {
-      case 'provider':
+      case 'oneprovider':
         promise = this.get('providerManager').getProviderDetails()
           .then(provider => provider && get(provider, 'domain'));
         break;
-      case 'zone':
+      case 'onezone':
         // FIXME: change to configurationManager
         promise = this.get('configurationManager').getConfiguration()
           .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
@@ -167,7 +167,7 @@ export default Component.extend(I18n, GlobalActions, {
   updateWebCertProxy() {
     const proxy = PromiseObject.create({
       promise: this.get('webCertManager')
-        .getWebCert(),
+        .fetchWebCert(),
     });
     safeExec(this, 'set', 'webCertProxy', proxy);
   },

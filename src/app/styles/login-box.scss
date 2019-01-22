@@ -1,10 +1,10 @@
 .login-box {
   $-login-form-width: 400px;
   .login-main-title {
-    &.zone {
+    &.onezone {
       background-image: url($root-url + 'images/onezone-logo.svg');
     }
-    &.provider {
+    &.oneprovider {
       background-image: url($root-url + 'images/oneprovider-logo.svg');
       background-size: 25px;
     }

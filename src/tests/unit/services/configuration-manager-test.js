@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
-import { get } from '@ember/object';
+import { get, set } from '@ember/object';
 import { lookupService, registerService } from '../../helpers/stub-service';
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
 import Service from '@ember/service';
@@ -12,6 +12,8 @@ const ClusterModelManagerStub = Service.extend({
   getCurrentClusterProxy: notImplementedReject,
 });
 
+const GuiUtils = Service.extend({});
+
 describe('Unit | Service | configuration manager', function () {
   setupTest('service:configuration-manager', {
     // Specify the other units that are required for this test.
@@ -21,11 +23,14 @@ describe('Unit | Service | configuration manager', function () {
   beforeEach(function () {
     registerService(this, 'onepanelServer', onepanelServerStub);
     registerService(this, 'clusterModelManager', ClusterModelManagerStub);
+    registerService(this, 'guiUtils', GuiUtils);
 
     sinon.stub(
       lookupService(this, 'clusterModelManager'),
       'getCurrentClusterProxy'
     ).resolves({ id: 'current_cluster_id' });
+
+    set(lookupService(this, 'guiUtils'), 'serviceType', 'onezone');
   });
 
   it('converts API cluster info to array of ClusterHostInfo', function () {

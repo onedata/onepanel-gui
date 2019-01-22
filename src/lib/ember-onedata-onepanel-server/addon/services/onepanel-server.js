@@ -24,6 +24,7 @@ import { classify } from '@ember/string';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import $ from 'jquery';
+import { inject as service } from '@ember/service';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -41,9 +42,10 @@ const CUSTOM_REQUESTS = {};
 const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
 
 export default OnepanelServerBase.extend(
-  createDataProxyMixin('serviceType'),
   createDataProxyMixin('node'),
   createDataProxyMixin('apiOrigin'), {
+    guiUtils: service(),
+
     /**
      * An Onepanel API Client that is used for making requests.
      * 
@@ -83,11 +85,6 @@ export default OnepanelServerBase.extend(
       let client = this.get('client');
       return client ? new Onepanel.OneproviderApi(client) : null;
     }).readOnly(),
-
-    init() {
-      this._super(...arguments);
-      this.updateServiceTypeProxy();
-    },
 
     /**
      * Make an API call using onepanel library (onepanel-javascript-client).
@@ -186,32 +183,31 @@ export default OnepanelServerBase.extend(
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const _location = this.getLocation();
       if (clusterIdFromUrl) {
-        return this.getServiceTypeProxy().then(serviceType => {
-          if (serviceType === 'provider') {
-            // frontend is served from Onezone host - use external host
-            return new Promise((resolve, reject) => {
-                $.ajax(
-                  '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
-                    headers: {
-                      'X-Auth-Token': onezoneToken,
-                    },
-                  }
-                ).then(resolve, reject);
-              })
-              .then(({ serviceId }) => $.ajax(
-                '/api/v3/onezone/providers/' + serviceId, {
+        const serviceType = this.get('guiUtils.serviceType');
+        if (serviceType === 'oneprovider') {
+          // frontend is served from Onezone host - use external host
+          return new Promise((resolve, reject) => {
+              $.ajax(
+                '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
                   headers: {
                     'X-Auth-Token': onezoneToken,
                   },
                 }
-              ))
-              .then(({ domain }) => `https://${domain}:9443`);
-          } else {
-            // Onezone Panel served from Onezone host is on different port
-            // TODO: probably unsafe if using other port for https
-            return resolve(`${_location.origin}:9443`);
-          }
-        });
+              ).then(resolve, reject);
+            })
+            .then(({ serviceId }) => $.ajax(
+              '/api/v3/onezone/providers/' + serviceId, {
+                headers: {
+                  'X-Auth-Token': onezoneToken,
+                },
+              }
+            ))
+            .then(({ domain }) => `https://${domain}:9443`);
+        } else {
+          // Onezone Panel served from Onezone host is on different port
+          // TODO: probably unsafe if using other port for https
+          return resolve(`${_location.origin}:9443`);
+        }
       } else {
         // frontend is served from Onepanel host
         return resolve(_location.origin);
@@ -274,7 +270,7 @@ export default OnepanelServerBase.extend(
      * 
      * @param {string} [token]
      * @param {string} [origin]
-     * @returns {Promise} resolves with { serviceType: string }
+     * @returns {Promise}
      */
     initClient({ token, origin } = {}) {
       return new Promise((resolve) => {
@@ -288,21 +284,6 @@ export default OnepanelServerBase.extend(
       this.setProperties({
         client: null,
       });
-    },
-
-    /**
-     * @override
-     */
-    fetchServiceType() {
-      const location = this.getLocation();
-      const m = location.toString().match(reOnepanelInOnzoneUrl);
-      if (m) {
-        return resolve(m[1] === 'ozp' ? 'zone' : 'provider');
-      } else {
-        return this.getNodeProxy().then(({ componentType }) =>
-          componentType.match(/one(.*)/)[1]
-        );
-      }
     },
 
     /**
@@ -393,6 +374,7 @@ export default OnepanelServerBase.extend(
     },
 
     /**
+     * @override
      * Fetches configuration
      * @returns {Promise<Object>}
      */

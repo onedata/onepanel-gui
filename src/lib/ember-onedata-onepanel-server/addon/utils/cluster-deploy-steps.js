@@ -32,18 +32,18 @@ const WORKER_STEPS = [
 
 /**
  * Generate list of specific deployment steps for specific worker service
- * @param {string} type one of: "zone", "provider"
+ * @param {string} type one of: "onezone", "oneprovider"
  * @returns {Array<string>} full worker step names
  */
 function workerSteps(type) {
   // currently - just first letter
-  let typeCode = type[0];
+  let typeCode = type[3];
   return WORKER_STEPS.map(ws => `service_o${typeCode}_worker:${ws}`);
 }
 
 /**
  * Generate list of all deployment steps for specific worker service
- * @param {string} type one of: "zone", "provider"
+ * @param {string} type one of: "onezone", "oneprovider"
  * @returns {Array<string>}
  */
 export default function clusterDeploySteps(type) {
@@ -51,6 +51,6 @@ export default function clusterDeploySteps(type) {
 }
 
 export const KNOWN_STEPS = COMMON_DEPLOY_STEPS.concat(
-  workerSteps('p'),
-  workerSteps('z'),
+  workerSteps('oneprovider'),
+  workerSteps('onezone'),
 );

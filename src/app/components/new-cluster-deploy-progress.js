@@ -24,10 +24,11 @@ const I18N_PREFIX_STEPS = 'components.newClusterDeployProgress.steps.';
 
 // TODO this can be made a generic taskStatus progress component
 export default Component.extend({
+  guiUtils: service(),
+
   classNames: ['new-cluster-deploy-progress'],
 
-  onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   /**
    * Promise for watching deployment process.

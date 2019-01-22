@@ -12,7 +12,7 @@ import { resolve } from 'rsvp';
 
 const OnezoneGui = Service.extend({
   isOnezoneAvailable: true,
-  updateIsOnezoneAvailableProxy: () => resolve(),
+  updateEnterViaOnezoneProxy: () => resolve(),
   getOnepanelNavUrlInOnezone: notImplementedThrow,
 });
 
@@ -44,6 +44,7 @@ describe('Integration | Component | login box/login form container', function ()
       clusterId: 'cluster_id',
     });
     const onezoneGui = lookupService(this, 'onezoneGui');
+    onezoneGui.canEnterViaOnezone = true;
     sinon.stub(onezoneGui, 'getOnepanelNavUrlInOnezone').returns(url);
 
     this.render(hbs `{{login-box/login-form-container
@@ -51,8 +52,9 @@ describe('Integration | Component | login box/login form container', function ()
     }}`);
 
     return wait().then(() => {
-      expect(this.$('.btn-login-onezone')).to.exist;
-      expect(this.$('.btn-login-onezone').attr('href')).to.equal(url);
+      const $btn = this.$('.btn-login-onezone');
+      expect($btn, 'login via onezone btn').to.exist;
+      expect($btn.attr('href')).to.equal(url);
     });
   });
 });

@@ -44,7 +44,7 @@ describe('Unit | Component | sidebar clusters', function () {
     const component = this.subject({
       onepanelServer: undefined,
       dnsManager,
-      onepanelServiceType: 'zone',
+      onepanelServiceType: 'onezone',
       cluster: { isInitialized: true },
     });
 

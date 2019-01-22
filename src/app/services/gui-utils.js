@@ -12,6 +12,7 @@ import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { resolve } from 'rsvp';
 
 export default GuiUtils.extend(
   createDataProxyMixin('guiVersion'),
@@ -21,13 +22,11 @@ export default GuiUtils.extend(
     onezoneGui: service(),
     providerManager: service(),
 
-    // FIXME: there is a problem with inconsistency between - to refactor
-    // onepanelConfiguration.serviceType (one preffix) and onepanelServer.serviceType
     /**
      * Panel type: provider or zone.
      * @type {Ember.ComputedProperty<string>}
      */
-    serviceType: reads('onepanelServer.serviceType'),
+    serviceType: reads('onepanelConfiguration.serviceType'),
 
     /**
      * Just an alias - this name was used in the past
@@ -78,12 +77,16 @@ export default GuiUtils.extend(
     },
 
     fetchGuiName() {
-      if (this.get('serviceType') === 'zone') {
+      if (this.get('serviceType') === 'onezone') {
         return this.get('onepanelConfiguration').getConfigurationProxy()
           .then(config => get(config, 'zoneName'));
       } else {
-        return this.get('providerManager').getProviderDetails()
-          .then(provider => get(provider, 'name'));
+        if (this.get('onepanelServer.isInitialized')) {
+          return this.get('providerManager').getProviderDetails()
+            .then(provider => provider && get(provider, 'name'));
+        } else {
+          return resolve(null);
+        }
       }
     },
   });

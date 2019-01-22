@@ -4,29 +4,31 @@
   </h1>
 </div>
 
+{{!-- FIXME: i18n --}}
+
 {{#promise-proxy-container proxy=clusterConfigurationProxy}}
   <div class="row content-row">
     <div class="one-tile-container">
       {{#one-tile
-        title=(tt this "info.title")
+        title="Info"
         isLink=false
         class="resource-info-tile"
       }}
         <table class="table table-condensed">
           <tbody>
             <tr>
-              <td class="property-name">{{tt this "info.name"}}</td>
+              <td class="property-name">{{tt this "name"}}</td>
               <td class="property-value">
                 {{cluster.name}}
               </td>
             </tr>
             <tr>
-              <td class="property-name">{{tt this "info.type"}}</td>
+              <td class="property-name">{{tt this "type"}}</td>
               <td class="property-value creation-time">{{cluster.type}}</td>
             </tr>
             {{yield}}
             <tr>
-              <td class="property-name">{{tt this "info.id"}}</td>
+              <td class="property-name">{{tt this "clusterId"}}</td>
               <td class="property-value id">
                 {{one-clipboard-line
                   size="sm"
@@ -45,8 +47,8 @@
         {{providers-map-tile
           providersProxy=providersProxy
           customLink=(concat "/oz/onezone/i#/onedata/data/" cluster.serviceId)
-          moreText=(tt this "providersMap.more")
-          title=(tt this "providersMap.title")}}
+          moreText=(tt this "showOnMap")
+          title=(tt this "oneproviderTileTitle")}}
         {{cluster-spaces-tile providerIdProxy=providerIdProxy spacesProxy=spacesProxy}}
         {{cluster-storages-tile storagesProxy=storagesProxy}}
       {{/if}}

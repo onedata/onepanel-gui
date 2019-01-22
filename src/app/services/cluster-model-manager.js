@@ -19,6 +19,7 @@ export default Service.extend(
   createDataProxyMixin('clusterIds'),
   createDataProxyMixin('clusters'), {
     onepanelServer: service(),
+    guiUtils: service(),
     onepanelConfiguration: service(),
     providerManager: service(),
     configurationManager: service(),
@@ -52,7 +53,7 @@ export default Service.extend(
     },
 
     getNotDeployedCluster() {
-      const type = 'one' + this.get('onepanelServer.serviceType');
+      const type = this.get('guiUtils.serviceType');
       return {
         id: 'new-cluster',
         name: 'New cluster',
@@ -86,7 +87,7 @@ export default Service.extend(
         configurationManager,
         providerManager,
       } = this.getProperties('configurationManager', 'providerManager');
-      const onepanelGuiType = this.get('onepanelServer.serviceType');
+      const onepanelGuiType = this.get('guiUtils.serviceType');
 
       const cluster = _.cloneDeep(data);
       let installationDetailsProxy;
@@ -110,7 +111,7 @@ export default Service.extend(
         })
         .then(() => {
           if (cluster.type === 'onezone') {
-            if (onepanelGuiType === 'zone') {
+            if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
                 configurationManager.getInstallationDetails(false);
               return installationDetailsProxy

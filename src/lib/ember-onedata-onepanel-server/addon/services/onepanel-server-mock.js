@@ -29,7 +29,6 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
-import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
@@ -44,7 +43,9 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'provider';
+// FIXME: this is not only place where the serviceType is specified!
+// consider making special mock configuration in environment
+const MOCK_SERVICE_TYPE = 'onezone';
 
 /**
  * Response delay in milliseconds
@@ -143,8 +144,7 @@ const provider1 = PlainableObject.create({
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
   SpaceCleaningMock,
-  SpaceCleaningReportsMock,
-  createDataProxyMixin('serviceType'), {
+  SpaceCleaningReportsMock, {
     cookies: service(),
     navigationState: service(),
 
@@ -169,14 +169,14 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
-      MOCK_SERVICE_TYPE === 'provider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
+      MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
     ),
 
     /**
@@ -197,13 +197,6 @@ export default OnepanelServerBase.extend(
     destroyClient() {
       this.setProperties({
         isInitialized: false,
-      });
-    },
-
-    fetchServiceType() {
-      return new Promise(resolve => {
-        this.set('serviceType', MOCK_SERVICE_TYPE);
-        resolve(MOCK_SERVICE_TYPE);
       });
     },
 
@@ -308,7 +301,7 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({
         promise: Promise.resolve({
           hostname: 'example.com',
-          componentType: 'one' + MOCK_SERVICE_TYPE,
+          componentType: MOCK_SERVICE_TYPE,
         }),
       });
     }),
@@ -357,8 +350,7 @@ export default OnepanelServerBase.extend(
     init() {
       this._super(...arguments);
       const mockStep = this.get('mockStep');
-      this.updateServiceTypeProxy();
-      if (MOCK_SERVICE_TYPE === 'provider') {
+      if (MOCK_SERVICE_TYPE === 'oneprovider') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'bad_records',
@@ -459,7 +451,7 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
-      } else if (MOCK_SERVICE_TYPE === 'zone') {
+      } else if (MOCK_SERVICE_TYPE === 'onezone') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'missing_records',
@@ -509,7 +501,7 @@ export default OnepanelServerBase.extend(
     },
 
     getClusterIdFromUrl() {
-      return this.getClusterId();
+      return null;
     },
 
     /**
@@ -521,23 +513,25 @@ export default OnepanelServerBase.extend(
     },
 
     /**
+     * @override
      * Fetches configuration
      * @returns {Promise<Object>}
      */
     fetchConfiguration() {
       const mockInitializedCluster = this.get('mockInitializedCluster');
       return resolve({
-        version: '18.02.0-rc13',
-        deployed: mockInitializedCluster,
-        build: '81-g8ae3907',
-        onezoneDomain: 'localhost:4201',
         clusterId: this.getClusterId(),
+        version: '18.02.0-rc13',
+        build: '81-g8ae3907',
+        deployed: mockInitializedCluster,
+        serviceType: MOCK_SERVICE_TYPE,
+        zoneDomain: MOCK_SERVICE_TYPE === 'onezone' ? 'localhost:4201' : undefined,
+
       });
     },
 
-    progressMock: computed('serviceType', function () {
-      let serviceType = this.get('serviceType');
-      return DeploymentProgressMock.create({ onepanelServiceType: serviceType });
+    progressMock: computed(function progressMock() {
+      return DeploymentProgressMock.create({ onepanelServiceType: MOCK_SERVICE_TYPE });
     }),
 
     /// mocked request handlers - override to change server behaviour
@@ -1070,7 +1064,7 @@ export default OnepanelServerBase.extend(
       const mockStep = this.get('mockStep');
       return {
         success() {
-          if (MOCK_SERVICE_TYPE === 'provider') {
+          if (MOCK_SERVICE_TYPE === 'oneprovider') {
             if (mockStep > STEP.PROVIDER_REGISTER) {
               return {
                 zoneName: 'Cyfronet AGH',
@@ -1095,7 +1089,7 @@ export default OnepanelServerBase.extend(
           }
         },
         statusCode() {
-          if (MOCK_SERVICE_TYPE === 'provider') {
+          if (MOCK_SERVICE_TYPE === 'oneprovider') {
             return mockStep > STEP.PROVIDER_REGISTER ? 200 : 404;
           } else {
             return mockStep >= STEP.ZONE_DONE ? 200 : 404;
@@ -1120,7 +1114,7 @@ export default OnepanelServerBase.extend(
 
     _req_onepanel_getCurrentCluster() {
       return {
-        success: () => (MOCK_SERVICE_TYPE === 'provider' ?
+        success: () => (MOCK_SERVICE_TYPE === 'oneprovider' ?
           providerCluster1 : zoneCluster),
       };
     },

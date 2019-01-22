@@ -9,7 +9,7 @@ export default UserAccountButton.extend({
   onezoneGui: service(),
   username: alias('onepanelServer.username'),
 
-  standaloneOnepanel: computed(function disableManageAccount() {
+  standaloneOnepanel: computed(function standaloneOnepanel() {
     return !this.get('onepanelServer').getClusterIdFromUrl();
   }),
 });
