@@ -117,6 +117,7 @@ const OnezoneGui = Service.extend(
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
         const img = document.body.appendChild(document.createElement('img'));
+        img.classList.add('hidden');
         return new Promise((resolve, reject) => {
           try {
             img.onload = () => resolve(true);
@@ -125,7 +126,7 @@ const OnezoneGui = Service.extend(
           } catch (error) {
             reject(error);
           }
-        });
+        }).finally(() => document.body.removeChild(img));
       } else {
         return resolve(false);
       }
@@ -140,7 +141,7 @@ const OnezoneGui = Service.extend(
         'deployed' : 'isRegistered'
       );
 
-      return isDeployed ? this.getIsOnezoneAvailable() : resolve(false);
+      return isDeployed ? this.getIsOnezoneAvailableProxy() : resolve(false);
     },
   });
 

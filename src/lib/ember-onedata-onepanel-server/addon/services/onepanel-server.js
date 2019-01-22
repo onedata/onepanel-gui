@@ -15,7 +15,7 @@
 import { Promise, resolve } from 'rsvp';
 
 import { run } from '@ember/runloop';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -236,10 +236,14 @@ export default OnepanelServerBase.extend(
         })
         .then(({ origin, token }) => {
           return run(() => {
-            // FIXME: username will not work - use getCurrentUser
-            this.set('username', 'hello_world');
             return this.initClient({ token, origin })
-              .then(() => ({ token, username: 'hello_world' }));
+              .then(() => 
+                this.request('onepanel', 'getCurrentUser').then(({ data }) => {
+                  const username = get(data, 'username');
+                  safeExec(this, 'set', 'username', username);
+                  return { token, username };
+                })
+              );
           });
         });
     },

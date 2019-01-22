@@ -12,7 +12,7 @@ import { resolve } from 'rsvp';
 
 const OnezoneGui = Service.extend({
   isOnezoneAvailable: true,
-  updateEnterViaOnezoneProxy: () => resolve(),
+  updateCanEnterViaOnezoneProxy: () => resolve(),
   getOnepanelNavUrlInOnezone: notImplementedThrow,
 });
 
