@@ -232,16 +232,17 @@ export default Component.extend(I18n, {
     let {
       globalNotify,
       onepanelServiceType,
-      _zoneName,
     } = this.getProperties(
       'globalNotify',
       'onepanelServiceType',
-      '_zoneName'
     );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
     if (onepanelServiceType === 'onezone') {
-      this.get('changeClusterName')(_zoneName);
+
+      window.location = `${location.href}#/clusters`;
+
+      // this.get('changeClusterName')(_zoneName);
     }
     this.get('nextStep')();
   },

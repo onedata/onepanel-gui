@@ -26,7 +26,10 @@ export default GuiUtils.extend(
      * Panel type: provider or zone.
      * @type {Ember.ComputedProperty<string>}
      */
-    serviceType: reads('onepanelConfiguration.serviceType'),
+    serviceType: computed('onepanelConfiguration.serviceType', function serviceType() {
+      return this.get('onepanelServer').getClusterTypeFromUrl() ||
+        this.get('onepanelConfiguration.serviceType');
+    }),
 
     /**
      * Just an alias - this name was used in the past

@@ -79,10 +79,10 @@ const OnezoneGui = Service.extend(
 
     /**
      * Returns url to specified place in Onepanel hosted by onezone
-     * @param {string} params.onepanelType one of: oneprovider, onezone
-     * @param {string} params.clusterId
-     * @param {string} [params.internalRoute='/'] Onezone application internal route
-     * @param {boolean} [params.useRedirect=false] should be used redirect or direct url
+     * @param {string} onepanelType one of: oneprovider, onezone
+     * @param {string} clusterId
+     * @param {string} [internalRoute='/'] Onezone application internal route
+     * @param {boolean} [useRedirect=false] should be used redirect or direct url
      * @returns {string}
      */
     getOnepanelNavUrlInOnezone({

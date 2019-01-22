@@ -18,6 +18,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 export default Component.extend(
   createDataProxyMixin('configuration'), {
     configurationManager: service(),
+    onepanelConfiguration: service(),
     router: service(),
     onezoneGui: service(),
 
@@ -52,21 +53,14 @@ export default Component.extend(
 
     actions: {
       finishInitProcess() {
-        return new Promise(resolve => {
+        return new Promise(() => {
+          const clusterId = this.get('onepanelConfiguration.clusterId');
           this.set('initProcess', false);
-          // FIXME: the ugliest hack in the world, part 2
           window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
-            clusterId: window.onezoneDomain
+            // FIXME: currently clusterId is "new-cluster", so this will not work
+            clusterId,
+            internalRoute: `/clusters/${clusterId}`,
           });
-          // scheduleOnce(
-          //   'afterRender',
-          // FIXME: maybe we want to redirect user to Onezone
-          // () => this.get('router').transitionTo(
-          //   'onedata.sidebar.index',
-          //   'clusters'
-          // )
-          // );
-          resolve();
         });
       },
     },
