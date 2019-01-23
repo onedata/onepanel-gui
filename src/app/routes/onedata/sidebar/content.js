@@ -17,9 +17,8 @@ export default SidebarContentRoute.extend({
   navigationState: service(),
   onezoneGui: service(),
 
-  afterModel(model) {
+  afterModel(model, transition) {
     const result = this._super(...arguments);
-
     if (this.get('navigationState.activeResourceType') === 'clusters') {
       const {
         clusterModelManager,
@@ -31,17 +30,24 @@ export default SidebarContentRoute.extend({
 
       const currentClusterId = get(clusterModelManager, 'currentClusterProxy.id') ||
         'new-cluster';
-      const clusterId = get(model, 'resourceId');
+      const urlClusterId =
+        get(transition, 'params')['onedata.sidebar.content']['resource_id'];
+      const clusterId = get(model, 'resourceId') ||
+        (urlClusterId === 'new-cluster' ? urlClusterId : null);
 
-      // If selected cluster is different than this cluster, redirect to
-      // another Onepanel.
       if (clusterId !== currentClusterId) {
-        const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
-          onepanelType: get(model, 'resource.type'),
-          clusterId,
-          internalRoute: `/onedata/clusters/${clusterId}`,
-        });
-        window.location = redirectUrl;
+        if (clusterId === 'new-cluster') {
+          this.transitionTo('onedata.sidebar.content', currentClusterId);
+        } else {
+          // If selected cluster is different than this cluster, redirect to
+          // another Onepanel.
+          const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
+            onepanelType: get(model, 'resource.type'),
+            clusterId,
+            internalRoute: `/onedata/clusters/${clusterId}`,
+          });
+          window.location = redirectUrl;
+        }
       }
     }
     return result;
