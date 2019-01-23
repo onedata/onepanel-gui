@@ -44,7 +44,7 @@ const ConfigurationManager = Service.extend({
 });
 
 const WebCertManager = Service.extend({
-  getWebCert() {
+  fetchWebCert() {
     return Promise.resolve({
       letsEncrypt: false,
     });

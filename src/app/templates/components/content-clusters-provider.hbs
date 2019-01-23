@@ -17,9 +17,10 @@
 <div class="row">
   <div class="row content-row row-small">
     <h1 class="form-title">{{_formTitle}}</h1>
-    <p class="form-description">{{_formDescription}}</p>
     {{#promise-proxy-container proxy=onezoneInfoProxy}}
       {{#promise-proxy-container proxy=providerProxy}}
+        {{onezone-info-box onezoneInfo=onezoneInfoProxy}}
+        <p class="form-description">{{_formDescription}}</p>
         {{provider-registration-form
           onezoneDomain=onezoneInfoProxy.domain
           subdomainDelegationSupported=onezoneInfoProxy.subdomainDelegationSupported

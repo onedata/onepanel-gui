@@ -167,7 +167,7 @@ export default Component.extend(I18n, GlobalActions, {
   updateWebCertProxy() {
     const proxy = PromiseObject.create({
       promise: this.get('webCertManager')
-        .getWebCert(),
+        .fetchWebCert(),
     });
     safeExec(this, 'set', 'webCertProxy', proxy);
   },

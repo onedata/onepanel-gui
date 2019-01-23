@@ -76,14 +76,7 @@
   <div class="row row-mode-form">
     <div class="row content-row no-border">
       <h1 class="text-center form-title">{{tt this "registeringTo"}}</h1>
-      <div class="onezone-info-box">
-        <div class="box-title">
-          {{one-icon icon="onezone"}}
-          <span class="onezone-name break-word">{{onezoneInfo.name}}</span>
-        </div>
-        <a href="https://{{onezoneInfo.domain}}" class="black onezone-domain break-word" target="_blank">https://{{onezoneInfo.domain}}</a><br>
-        {{tt this "onezoneVersion"}}: <span class="onezone-version">{{onezoneInfo.version}}</span>
-      </div>
+      {{onezone-info-box onezoneInfo=onezoneInfo}}
       <p class="text-center">{{tt this "providerFormIntro"}}</p>
       {{provider-registration-form
         mode="new"

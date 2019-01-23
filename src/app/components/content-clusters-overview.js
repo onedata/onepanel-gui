@@ -1,5 +1,15 @@
+/**
+ * A cluster overview page
+ *
+ * @module component/content-clusters-overview
+ * @author Michal Borzecki, Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { computed, get } from '@ember/object';
+import { union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -10,15 +20,12 @@ export default Component.extend(I18n, {
   providerManager: service(),
   spaceManager: service(),
   storageManager: service(),
+  configurationManager: service(),
 
   /**
    * @override
    */
   i18nPrefix: 'components.contentClustersOverview',
-
-  oneproviderRoute: computed(function oneproviderRoute() {
-    return ['onedata.sidebar.content', 'data', this.get('cluster.serviceId')];
-  }),
 
   /**
    * @type {PromiseObject<ProviderDetails>}
@@ -67,4 +74,20 @@ export default Component.extend(I18n, {
         'content')),
     });
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<PromiseObject<Object>>}
+   */
+  clusterConfigurationProxy: computed(function clusterConfiguration() {
+    return this.get('configurationManager').getInstallationDetails();
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<string>>}
+   */
+  allNodes: union(
+    'clusterConfigurationProxy.cluster.databases.hosts',
+    'clusterConfigurationProxy.cluster.managers.hosts',
+    'clusterConfigurationProxy.cluster.workers.hosts'
+  ),
 });

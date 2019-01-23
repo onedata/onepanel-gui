@@ -197,7 +197,7 @@ export default OneForm.extend(Validations, I18n, {
   submit: () => {},
 
   webCertProxy: computed(function webCertProxy() {
-    const promise = this.get('webCertManager').getWebCert();
+    const promise = this.get('webCertManager').fetchWebCert();
     return PromiseObject.create({ promise });
   }),
 

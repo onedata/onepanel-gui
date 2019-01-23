@@ -43,10 +43,13 @@ import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
 import contentClustersOverview from './components/content-clusters-overview';
+import onezoneInfoBox from './components/onezone-info-box';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
 import guiUtils from './services/gui-utils';
+
+import onedata from './routes/onedata';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -99,6 +102,7 @@ let translations = {
     clusterSpacesTile,
     clusterStoragesTile,
     contentClustersOverview,
+    onezoneInfoBox,
   },
   mixins: {
     components: {
@@ -107,6 +111,9 @@ let translations = {
   },
   services: {
     guiUtils,
+  },
+  routes: {
+    onedata,
   },
 };
 
