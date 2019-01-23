@@ -162,7 +162,7 @@ export default OnepanelServerBase.extend(
 
     getClusterTypeFromUrl() {
       const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
-      return m && m[1] === 'ozp' ? 'onezone' : 'oneprovider';
+      return m && (m[1] === 'ozp' ? 'onezone' : 'oneprovider');
     },
 
     getClusterIdFromUrl() {
@@ -377,7 +377,7 @@ export default OnepanelServerBase.extend(
     fetchConfiguration() {
       return this.getApiOriginProxy().then(apiOrigin => {
         return new Promise((resolve, reject) => {
-          $.ajax(apiOrigin).then(resolve, reject);
+          $.ajax(`${apiOrigin}/configuration`).then(resolve, reject);
         });
       });
     },
