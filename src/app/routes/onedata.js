@@ -7,6 +7,7 @@ export default OnedataRoute.extend(I18n, {
   clusterModelManager: service(),
   onepanelServer: service(),
   configurationManager: service(),
+  onepanelConfiguration: service(),
 
   /**
    * @override
@@ -16,7 +17,10 @@ export default OnedataRoute.extend(I18n, {
   beforeModel() {
     this._super(...arguments);
     if (this.get('onepanelServer.isInitialized')) {
-      return this.get('clusterModelManager').getCurrentClusterProxy();
+      return Promise.all([
+        this.get('clusterModelManager').getCurrentClusterProxy(),
+        this.get('onepanelConfiguration').updateConfigurationProxy(),
+      ]);
     } else {
       this.transitionTo('login');
     }

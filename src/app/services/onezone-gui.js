@@ -104,7 +104,7 @@ const OnezoneGui = Service.extend(
 
       const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
       return useRedirect ?
-        `${onezoneOrigin}/#?redirect=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}` :
+        `${onezoneOrigin}/#?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}` :
         `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
     },
 

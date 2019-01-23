@@ -11,13 +11,34 @@
 import LoginRoute from 'onedata-gui-common/routes/login';
 import { setProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 
 export default LoginRoute.extend({
   userManager: service(),
   onezoneGui: service(),
   onepanelServer: service(),
   onepanelConfiguration: service(),
+
+  beforeModel() {
+    const result = this._super(...arguments);
+
+    const {
+      onepanelServer,
+      onepanelConfiguration,
+    } = this.getProperties('onepanelServer', 'onepanelConfiguration');
+
+    // Only in standalone Onepanel we can fetch Onepanel config without beeing
+    // sure that we are authorized. Also it is essential for standalone Onepanel,
+    // because it needs Onezone domain (got from config) to know where to
+    // redirect on login page.
+    // Hosted Onepanel has information about Onezone domain from url.
+    if (!onepanelServer.getClusterIdFromUrl()) {
+      return resolve(result)
+        .then(() =>  onepanelConfiguration.updateConfigurationProxy());
+    } else {
+      return result;
+    }
+  },
 
   model() {
     const {

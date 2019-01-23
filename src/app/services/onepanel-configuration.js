@@ -78,8 +78,21 @@ export default Service.extend(
     init() {
       this._super(...arguments);
 
-      // Load configuration on first use
-      this.updateConfigurationProxy();
+      const {
+        onepanelServer,
+        _location,
+      } = this.getProperties('onepanelServer', '_location');
+
+      // Fill some already known data if Onepanel is hosted
+      const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
+      if (clusterIdFromUrl) {
+        this.setProperties({
+          zoneDomain: _location.host,
+          serviceType: onepanelServer.getClusterTypeFromUrl(),
+          clusterId: clusterIdFromUrl,
+          isRegistered: true,
+        });
+      }
 
       // FIXME: debug
       window.onepanelConfiguration = this;
