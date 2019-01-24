@@ -16,23 +16,43 @@
   <div class="row row-mode-token">
     <div class="row content-row no-border">
       <p>
-        {{tt this "zoneTokenIntro"}}{{#unless showTokenHelp}} &ndash; <a {{action (mut showTokenHelp) true}}>{{tt this "zoneTokenDocsLink"}}</a>{{/unless}}.
+        {{tt this "zoneTokenIntroStart"}}
+        {{#if showTokenHelp}}
+          {{tt this "zoneTokenIntroWithHelp"}}
+        {{else}}
+          {{tt this "zoneTokenIntroWithoutHelp"}}
+          &ndash; <a {{action (mut showTokenHelp) true}}>{{tt this "zoneTokenDocsLink"}}</a>.{{/if}}
       </p>
       {{#if showTokenHelp}}
       <div class="row content-row no-border">
         <p class="token-help">
-          {{!-- FIXME: real help --}}
           <ol class="info">
             <li>
-              Go to Onezone
+              {{tt this "stepGoToOnezone"}}
             </li>
             <li>
-              Click on Clusters tab
+              {{tt this "stepLogin"}}
             </li>
             <li>
-              Click on Add new provider and copy token
+              {{tt this "stepSelect1"}}
+              <div class="inline-icon-container">
+                {{one-icon icon="cluster"}}
+              </div>
+              <strong>{{tt this "stepSelectCluster"}}</strong>
+              {{tt this "stepSelect2"}}
             </li>
-          </ol>  
+            <li>
+              {{tt this "stepAddCluster1"}}
+              <div class="inline-icon-container">
+                {{one-icon icon="add-filled"}}
+              </div>
+              <strong>{{tt this "stepAddClusterAdd"}}</strong>
+              {{tt this "stepAddCluster2"}}
+            </li>
+            <li>
+              {{tt this "stepCopyToken"}}
+            </li>
+          </ol>
         </p>
       </div>
     {{/if}}
@@ -42,7 +62,7 @@
       <div class="col-xs-12">
         <p>
           <label for="zone-token-textarea">
-            {{tt this "zoneTokenTextareaLabel"}}:
+            {{tt this "zoneTokenPaste"}}:
           </label>
         </p>
         <p>
