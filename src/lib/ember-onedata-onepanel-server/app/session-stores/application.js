@@ -12,7 +12,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { Promise } from 'rsvp';
+import { resolve } from 'rsvp';
 import BaseSessionStore from 'ember-simple-auth/session-stores/base';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
@@ -22,18 +22,14 @@ export default BaseSessionStore.extend({
 
   persist( /* data */ ) {
     // complete ignore of persist - the "store" is remote server
-    return Promise.resolve();
+    return resolve();
   },
 
   restore() {
-    const gettingRestCredentials = this.get('onepanelServer').validateSession();
-    return new Promise(resolve => {
-      gettingRestCredentials.then(({ username, token }) =>
-        resolve({
-          authenticated: _.merge({ username, token }, { authenticator: 'authenticator:application' }),
-        })
-      );
-      gettingRestCredentials.catch(() => resolve({}));
-    });
+    return this.get('onepanelServer').validateSession()
+      .then(({ username, token }) => ({
+        authenticated: _.merge({ username, token }, { authenticator: 'authenticator:application' }),
+      }))
+      .catch(() => ({}));
   },
 });

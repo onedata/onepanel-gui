@@ -34,7 +34,7 @@ export default LoginRoute.extend({
     // Hosted Onepanel has information about Onezone domain from url.
     if (!onepanelServer.getClusterIdFromUrl()) {
       return resolve(result)
-        .then(() =>  onepanelConfiguration.updateConfigurationProxy());
+        .then(() => onepanelConfiguration.updateConfigurationProxy());
     } else {
       return result;
     }
@@ -48,8 +48,8 @@ export default LoginRoute.extend({
     } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
 
     const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
-    const isNotStandalone = !!clusterIdFromUrl;
-    if (isNotStandalone) {
+    const isHosted = !!clusterIdFromUrl;
+    if (isHosted) {
       // FIXME: does not work
       return new Promise(() => {
         window.location =

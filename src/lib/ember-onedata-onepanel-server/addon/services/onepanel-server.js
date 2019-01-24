@@ -190,6 +190,11 @@ export default OnepanelServerBase.extend(
       if (clusterIdFromUrl) {
         const serviceType = this.getClusterTypeFromUrl();
         if (serviceType === 'oneprovider') {
+          if (!onezoneToken) {
+            throw new Error(
+              'service:onepanel-server: Hosted op-panel needs Onezone token to resolve API origin'
+            );
+          }
           // frontend is served from Onezone host - use external host
           return new Promise((resolve, reject) => {
               $.ajax(
@@ -224,31 +229,99 @@ export default OnepanelServerBase.extend(
      * 
      * If the session is valid, it automatically (re)initializes the main client.
      * 
-     * @returns {Promise} an `initClient` promise if `getSession` succeeds
+     * Token fetching:
+     * - if standalone, then just POST /gui-token without payload
+     * - if hosted, then POST /gui-token with type and clusterId (both from URL)
+     * 
+     * @returns {Promise<object>} an `initClient` promise if `getSession` succeeds,
+     *    resolves object with: token (for Onepanel API), username
      */
     validateSession() {
-      return $.get('/rest-credentials')
+      const clusterIdFromUrl = this.getClusterIdFromUrl();
+      const clusterTypeFromUrl = this.getClusterTypeFromUrl();
+
+      /**
+       * True if the Onepanel is hosted by Onezone, so we will use 
+       * @type {boolean}
+       */
+      const isHosted = !!clusterIdFromUrl;
+
+      /** 
+       * Resolve token for authorizing Onepanel REST calls
+       * @type {string}
+       */
+      let onepanelTokenPromise;
+      if (isHosted) {
+        onepanelTokenPromise = new Promise((resolve, reject) => $.ajax(
+          '/gui-token', {
+            method: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify({
+              clusterId: clusterIdFromUrl,
+              clusterType: clusterTypeFromUrl,
+            }),
+          }
+        ).then(resolve, reject));
+      } else {
+        // FIXME: this will be POST in future
+        onepanelTokenPromise = new Promise((resolve, reject) => $.ajax(
+          '/gui-token', {
+            method: 'GET',
+          }
+        ).then(resolve, reject));
+      }
+
+      // FIXME: use ttl and get new token, so move above to other fun
+
+      return onepanelTokenPromise
         .then(tokenData => {
-          // FIXME: this name cannot be used in production version - backend
-          const token = tokenData.token || tokenData.allButOnezoneToken;
-          const onezoneToken = tokenData.onezoneToken;
-          // FIXME: need to set?
-          safeExec(this, 'set', 'onezoneToken', onezoneToken);
-          return this.getApiOriginProxy({ fetchArgs: [onezoneToken] }).then(origin => ({
-            origin,
-            token,
-          }));
-        })
-        .then(({ origin, token }) => {
-          return run(() => {
-            return this.initClient({ token, origin })
-              .then(() => 
-                this.request('onepanel', 'getCurrentUser').then(({ data }) => {
-                  const username = get(data, 'username');
-                  safeExec(this, 'set', 'username', username);
-                  return { token, username };
-                })
-              );
+          const onepanelToken = tokenData.token;
+          const username = tokenData.username;
+
+          let onezoneTokenPromise;
+          if (isHosted && clusterTypeFromUrl === 'oneprovider') {
+            // additional fetch of onezone token for hosted op-panel
+            onezoneTokenPromise = new Promise((resolve, reject) => $.ajax(
+                '/gui-token', {
+                  method: 'POST',
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
+                  data: JSON.stringify({
+                    clusterId: 'onezone',
+                    clusterType: 'onezone',
+                  }),
+                }
+              ).then(resolve, reject))
+              .then(({ token }) => token);
+          } else {
+            // on hosted oz-panel, the Onezone token is the same as Onepanel token
+            onezoneTokenPromise = resolve(onepanelToken);
+          }
+
+          return onezoneTokenPromise.then(onezoneToken => {
+            safeExec(this, 'set', 'onezoneToken', onezoneToken);
+            return this.getApiOriginProxy({ fetchArgs: [onezoneToken] })
+              .then(apiOrigin => {
+                return run(() => {
+                  return this.initClient({ token: onepanelToken, origin: apiOrigin })
+                    .then(() => {
+                      // the username is available when using token from Onepanel endpoint
+                      // otherwise we must request it
+                      if (username) {
+                        safeExec(this, 'set', 'username', username);
+                        return { token: onepanelToken, username };
+                      } else {
+                        return this.request('onepanel', 'getCurrentUser').then(
+                          ({ data }) => {
+                            const username = get(data, 'username');
+                            safeExec(this, 'set', 'username', username);
+                            return { token: onepanelToken, username };
+                          });
+                      }
+                    });
+                });
+              });
           });
         });
     },
