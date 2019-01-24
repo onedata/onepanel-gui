@@ -160,11 +160,9 @@ export default Component.extend(I18n, {
         _excludedSubdomains,
         i18n,
       } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n');
-      let name = providerData.get('name');
       let submitting = this._submit(providerData);
       submitting.then(() => {
         globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
-        invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
         this.get('clusterModelManager').updateCurrentClusterProxy();
       });
