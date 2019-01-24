@@ -134,11 +134,6 @@ export default Component.extend(I18n, {
   /**
    * @type {function}
    */
-  changeClusterName: undefined,
-
-  /**
-   * @type {function}
-   */
   nextStep: undefined,
 
   /**
@@ -229,22 +224,16 @@ export default Component.extend(I18n, {
   },
 
   configureFinished() {
-    let {
+    const {
       globalNotify,
-      onepanelServiceType,
+      nextStep,
     } = this.getProperties(
       'globalNotify',
-      'onepanelServiceType',
+      'nextStep',
     );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
-    if (onepanelServiceType === 'onezone') {
-
-      window.location = `${location.href}#/clusters`;
-
-      // this.get('changeClusterName')(_zoneName);
-    }
-    this.get('nextStep')();
+    nextStep();
   },
 
   configureFailed({ taskStatus }) {

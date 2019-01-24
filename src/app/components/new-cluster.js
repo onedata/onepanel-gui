@@ -77,6 +77,11 @@ export default Component.extend(I18n, {
 
   steps: Object.freeze([]),
 
+  /**
+   * @type {Window.Location}
+   */
+  _location: location,
+
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));
   }),
@@ -174,9 +179,26 @@ export default Component.extend(I18n, {
    * Go to next deployment step
    */
   _next() {
-    const nextStep = nextInt(this.get('currentStepIndex'));
-    this.set('cluster.initStep', nextStep);
-    this.set('currentStepIndex', nextStep);
+    const {
+      currentStepIndex,
+      guiUtils,
+      _location,
+    } = this.getProperties('currentStepIndex', 'guiUtils', '_location');
+
+    const serviceType = get(guiUtils, 'serviceType');
+    const isProviderAfterRegister = serviceType === 'oneprovider' &&
+      currentStepIndex === STEP.PROVIDER_REGISTER;
+    const isZoneAfterDeploy = serviceType === 'onezone' &&
+      [STEP.DEPLOYMENT_PROGRESS, STEP.ZONE_DEPLOY].includes(currentStepIndex);
+
+    if (isProviderAfterRegister || isZoneAfterDeploy) {
+      // Reload whole application to fetch info about newly deployed cluster
+      _location.reload();
+    } else {
+      const nextStep = nextInt(currentStepIndex);
+      this.set('cluster.initStep', nextStep);
+      this.set('currentStepIndex', nextStep);
+    }
   },
 
   _prev() {
@@ -193,16 +215,6 @@ export default Component.extend(I18n, {
     prev() {
       $('.col-content').scrollTop(0);
       this._prev();
-    },
-    // FIXME: to complete refactor
-    changeClusterName(name) {
-      if (!name) {
-        this.get('configurationManager')
-          .getInstallationDetails(true)
-          .then(cluster => get(cluster, 'name'));
-      } else {
-        this.set('cluster.name', name);
-      }
     },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');
