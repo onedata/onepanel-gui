@@ -1,9 +1,43 @@
-{{!-- TODO link ember hrefs should be parametrized not hardcoded --}}
-
-{{content-info
+{{#content-info
   class="scroll-breakpoint-500"
   header=(tt this "header")
-  text=(tt this "text")
   buttonLabel=(tt this "buttonLabel")
   buttonAction=(action "manageNewCluster")
 }}
+  {{!-- FIXME: fonts? --}}
+  <div class="text-center">{{tt this "textFullyOperational"}}</div>
+  <div class="text-center">{{tt this "textTwoWays"}}</div>
+  <ul class="info">
+    <li>
+      {{tt this "wayOnezoneInterface"}}
+      <strong>({{tt this "wayOnezoneRecommended"}})</strong>
+      {{tt this "wayOnezoneToAccess1"}}
+      (<a href={{onezoneUrl}}>{{onezoneUrl}}</a>)
+      {{tt this "wayOnezoneToAccess2"}}
+      {{tt this "wayOnezoneInterface1"}}
+      <div class="inline-icon-container">
+        {{one-icon icon="cluster"}}
+      </div>
+      <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
+      {{tt this "wayOnezoneInterface2"}}
+      {{tt this "wayOnezoneInterface3"}}
+      <a href="{{clusterInOnezoneUrl}}">
+        {{tt this "wayOnezoneTakeMe"}}
+        <div class="inline-icon-container sm">
+        {{one-icon icon="link-external"}}
+      </div>
+      </a>
+    </li>
+    <li>
+      {{tt this "wayOnepanelIntro"}}
+      {{tt this "wayOnepanelInterface1"}}
+      (<a href={{onepanelUrl}}>{{onepanelUrl}}</a>)
+      {{tt this "wayOnepanelInterface2"}}
+    </li>
+  </ul>
+  <div>
+    {{tt this "currentlyOn1"}}
+    {{tt this (concat "currentlyOn" (if isStandaloneOnepanel "Standalone" "Onezone"))}}
+    {{tt this "currentlyOn2"}}.
+  </div>
+{{/content-info}}

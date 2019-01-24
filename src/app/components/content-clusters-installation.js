@@ -57,7 +57,6 @@ export default Component.extend(
           const clusterId = this.get('onepanelConfiguration.clusterId');
           this.set('initProcess', false);
           window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
-            // FIXME: currently clusterId is "new-cluster", so this will not work
             clusterId,
             internalRoute: `/clusters/${clusterId}`,
           });
