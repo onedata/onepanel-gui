@@ -24,6 +24,7 @@ export default ClusterActions.extend({
       _window,
       onezoneGui,
     } = this.getProperties('_window', 'onezoneGui');
-    return () => _window.location = onezoneGui.getUrlInOnezone('clusters/add');
+    return () =>
+      _window.location = onezoneGui.getUrlInOnezone('onedata/clusters/add');
   }),
 });

@@ -183,35 +183,37 @@ export default OnepanelServerBase.extend(
 
     /**
      * @override
+     * @param {object} [oneproviderTokenData] data fetched from Onezone's
+     *   /gui-token for 'oneprovider' cluster - can be used to prevent from
+     *   making multiple requests
      */
-    fetchApiOrigin(onezoneToken) {
+    fetchApiOrigin(oneproviderTokenData) {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const _location = this.getLocation();
       if (clusterIdFromUrl) {
         const serviceType = this.getClusterTypeFromUrl();
         if (serviceType === 'oneprovider') {
-          if (!onezoneToken) {
-            throw new Error(
-              'service:onepanel-server: Hosted op-panel needs Onezone token to resolve API origin'
-            );
-          }
-          // frontend is served from Onezone host - use external host
-          return new Promise((resolve, reject) => {
+          // a small hack to not make oneprovider token call twice
+          let getOneproviderTokenPromise;
+          if (oneproviderTokenData) {
+            getOneproviderTokenPromise = resolve(oneproviderTokenData);
+          } else {
+            getOneproviderTokenPromise = new Promise((resolve, reject) =>
               $.ajax(
-                '/api/v3/onezone/clusters/' + clusterIdFromUrl, {
-                  headers: {
-                    'X-Auth-Token': onezoneToken,
-                  },
+                '/gui-token', {
+                  method: 'POST',
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
+                  data: JSON.stringify({
+                    clusterId: clusterIdFromUrl,
+                    clusterType: 'oneprovider',
+                  }),
                 }
-              ).then(resolve, reject);
-            })
-            .then(({ serviceId }) => $.ajax(
-              '/api/v3/onezone/providers/' + serviceId, {
-                headers: {
-                  'X-Auth-Token': onezoneToken,
-                },
-              }
-            ))
+              ).then(resolve, reject));
+          }
+
+          // we are hosted by Onezone, so make request to /gui-token
+          return getOneproviderTokenPromise
             .then(({ domain }) => `https://${domain}:9443`);
         } else {
           // Onezone Panel served from Onezone host is on different port
@@ -279,50 +281,27 @@ export default OnepanelServerBase.extend(
           const onepanelToken = tokenData.token;
           const username = tokenData.username;
 
-          let onezoneTokenPromise;
-          if (isHosted && clusterTypeFromUrl === 'oneprovider') {
-            // additional fetch of onezone token for hosted op-panel
-            onezoneTokenPromise = new Promise((resolve, reject) => $.ajax(
-                '/gui-token', {
-                  method: 'POST',
-                  contentType: 'application/json; charset=utf-8',
-                  dataType: 'json',
-                  data: JSON.stringify({
-                    clusterId: 'onezone',
-                    clusterType: 'onezone',
-                  }),
-                }
-              ).then(resolve, reject))
-              .then(({ token }) => token);
-          } else {
-            // on hosted oz-panel, the Onezone token is the same as Onepanel token
-            onezoneTokenPromise = resolve(onepanelToken);
-          }
-
-          return onezoneTokenPromise.then(onezoneToken => {
-            safeExec(this, 'set', 'onezoneToken', onezoneToken);
-            return this.getApiOriginProxy({ fetchArgs: [onezoneToken] })
-              .then(apiOrigin => {
-                return run(() => {
-                  return this.initClient({ token: onepanelToken, origin: apiOrigin })
-                    .then(() => {
-                      // the username is available when using token from Onepanel endpoint
-                      // otherwise we must request it
-                      if (username) {
-                        safeExec(this, 'set', 'username', username);
-                        return { token: onepanelToken, username };
-                      } else {
-                        return this.request('onepanel', 'getCurrentUser').then(
-                          ({ data }) => {
-                            const username = get(data, 'username');
-                            safeExec(this, 'set', 'username', username);
-                            return { token: onepanelToken, username };
-                          });
-                      }
-                    });
-                });
+          return this.getApiOriginProxy({ fetchArgs: [tokenData] })
+            .then(apiOrigin => {
+              return run(() => {
+                return this.initClient({ token: onepanelToken, origin: apiOrigin })
+                  .then(() => {
+                    // the username is available when using token from Onepanel endpoint
+                    // otherwise we must request it
+                    if (username) {
+                      safeExec(this, 'set', 'username', username);
+                      return { token: onepanelToken, username };
+                    } else {
+                      return this.request('onepanel', 'getCurrentUser').then(
+                        ({ data }) => {
+                          const username = get(data, 'username');
+                          safeExec(this, 'set', 'username', username);
+                          return { token: onepanelToken, username };
+                        });
+                    }
+                  });
               });
-          });
+            });
         });
     },
 
@@ -419,9 +398,8 @@ export default OnepanelServerBase.extend(
       username,
       password,
       token,
-      onezoneToken,
     } = {}) {
-      return this.getApiOriginProxy({ fetchArgs: [onezoneToken] }).then(apiOrigin => {
+      return this.getApiOriginProxy().then(apiOrigin => {
         const client = this.createClient({ origin: apiOrigin, token });
         if (username && password) {
           client.defaultHeaders['Authorization'] =
