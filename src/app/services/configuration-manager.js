@@ -343,7 +343,10 @@ export default Service.extend({
                   if (dnsCheckAck) {
                     resolve(STEP.ZONE_DONE);
                   } else {
-                    resolve(STEP.ZONE_DNS);
+                    // We have no exact indicator if earlier step -
+                    // IPs configuration - has been finished, because it 
+                    // has default values which are undistinguishable from user input
+                    resolve(STEP.ZONE_IPS);
                   }
                 });
                 checkDnsCheck.catch(reject);
@@ -378,7 +381,11 @@ export default Service.extend({
                         });
                         checkStorage.catch(reject);
                       } else {
-                        resolve(STEP.PROVIDER_DNS);
+                        // We have no exact indicator if earlier step -
+                        // IPs configuration - has been finished, because it 
+                        // has default values which are undistinguishable from
+                        // user input
+                        resolve(STEP.PROVIDER_IPS);
                       }
                     });
                     checkDnsCheck.catch(reject);
