@@ -21,6 +21,7 @@ import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterInstallation from './components/new-cluster-installation';
 import newClusterIps from './components/new-cluster-ips';
 import newClusterSummary from './components/new-cluster-summary';
+import newClusterWelcome from './components/new-cluster-welcome';
 import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
@@ -94,6 +95,7 @@ let translations = {
     modalConfigureWebCert,
     newClusterDns,
     newClusterSummary,
+    newClusterWelcome,
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,

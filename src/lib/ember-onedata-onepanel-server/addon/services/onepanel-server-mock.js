@@ -43,7 +43,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'onezone';
+const MOCK_SERVICE_TYPE = 'oneprovider';
 
 /**
  * Response delay in milliseconds
