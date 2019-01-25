@@ -44,6 +44,7 @@ import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
 import contentClustersOverview from './components/content-clusters-overview';
 import onezoneInfoBox from './components/onezone-info-box';
+import sidebarClusters from './components/sidebar-clusters';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
@@ -103,6 +104,7 @@ let translations = {
     clusterStoragesTile,
     contentClustersOverview,
     onezoneInfoBox,
+    sidebarClusters,
   },
   mixins: {
     components: {

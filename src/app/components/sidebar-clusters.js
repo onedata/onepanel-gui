@@ -25,6 +25,11 @@ export default SidebarClusters.extend({
    */
   model: undefined,
 
+  /**
+   * @override
+   */
+  secondLevelItemsComponent: 'sidebar-clusters/second-level-items',
+
   init() {
     this._super(...arguments);
     this.get('dnsManager').getDnsCheckProxy({
