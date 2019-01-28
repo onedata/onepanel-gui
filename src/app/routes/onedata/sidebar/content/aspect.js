@@ -16,9 +16,12 @@ const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credent
 
 export default AspectRoute.extend({
   guiUtils: service(),
-
+  
   onepanelServiceType: reads('guiUtils.serviceType'),
 
+  /**
+   * @override
+   */
   beforeModel(transition) {
     const result = this._super(...arguments);
     const resourceType = get(transition.params['onedata.sidebar'], 'type');
@@ -26,6 +29,19 @@ export default AspectRoute.extend({
       this._redirectClusterAspect(transition);
     }
     return result;
+  },
+
+  /**
+   * @override
+   */
+  model(params, transition) {
+    if (get(transition, 'params')['onedata.sidebar']['type'] === 'clusters') {
+      const clusterResource = this.modelFor('onedata.sidebar.content');
+      if (!get(clusterResource, 'resource.isLocal')) {
+        return new Promise(() => {});
+      }
+    }
+    return this._super(...arguments);
   },
 
   /**
