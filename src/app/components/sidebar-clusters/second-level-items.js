@@ -25,6 +25,11 @@ export default SecondLevelItems.extend(I18n, {
 
   isNotDeployedCluster: reads('item.isNotDeployed'),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isLocalCluster: reads('item.isLocal'),
+
   clusterType: reads('item.type'),
 
   /**
@@ -113,6 +118,7 @@ export default SecondLevelItems.extend(I18n, {
 
   clusterSecondLevelItems: computed(
     'isNotDeployedCluster',
+    'isLocalCluster',
     'clusterType',
     'dnsItem',
     'certificateItem',
@@ -123,7 +129,11 @@ export default SecondLevelItems.extend(I18n, {
     'storagesItem',
     'spacesItem',
     function () {
-      if (this.get('isNotDeployedCluster')) {
+      const {
+        isNotDeployedCluster,
+        isLocalCluster,
+      } = this.getProperties('isNotDeployedCluster', 'isLocalCluster');
+      if (isNotDeployedCluster || !isLocalCluster) {
         return [];
       } else {
         const {
