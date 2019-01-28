@@ -40,13 +40,18 @@ export default SidebarContentRoute.extend({
           this.transitionTo('onedata.sidebar.content', currentClusterId);
         } else {
           // If selected cluster is different than this cluster, redirect to
-          // another Onepanel.
-          const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
-            onepanelType: get(model, 'resource.type'),
-            clusterId,
-            internalRoute: `/onedata/clusters/${clusterId}`,
-          });
-          window.location = redirectUrl;
+          // another Onepanel if possible. If Onezone is not available, then
+          // redirect to main page.
+          if (get(onezoneGui, 'zoneDomain')) {
+            const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
+              onepanelType: get(model, 'resource.type'),
+              clusterId,
+              internalRoute: `/onedata/clusters/${clusterId}`,
+            });
+            window.location = redirectUrl;
+          } else {
+            this.transitionTo('onedata');
+          }
         }
       }
     }
