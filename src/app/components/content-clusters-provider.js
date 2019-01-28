@@ -3,11 +3,11 @@
  *
  * @module components/content-clusters-provider
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { next } from '@ember/runloop';
@@ -71,6 +71,13 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   _editButtonEnabled: computed.not('_submitting'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isOnepanelStandalone: computed(function isOnepanelStandalone() {
+    return !this.get('onepanelServer').getClusterIdFromUrl();
+  }),
 
   /**
    * @type {Ember.ComputedProperty<PromiseObject<Onepanel.OnezoneInfo>>}
@@ -190,16 +197,29 @@ export default Component.extend(I18n, GlobalActions, {
       let {
         globalNotify,
         providerManager,
-      } = this.getProperties('globalNotify', 'providerManager');
-      let deregistering = providerManager.deregisterProvider();
-      deregistering.catch(error => {
-        globalNotify.backendError(this.t('providerDeregistration'), error);
-      });
-      deregistering.then(() => {
-        globalNotify.info(this.t('deregisterSuccess'));
-        setTimeout(() => window.location.reload(), 1000);
-      });
-      return deregistering;
+        isOnepanelStandalone,
+        onepanelServer,
+      } = this.getProperties(
+        'globalNotify',
+        'providerManager',
+        'isOnepanelStandalone',
+        'onepanelServer'
+      );
+      if (!isOnepanelStandalone) {
+        return new Promise(() => {
+          window.location = get(onepanelServer, 'apiOrigin');
+        });
+      } else {
+        let deregistering = providerManager.deregisterProvider();
+        deregistering.catch(error => {
+          globalNotify.backendError(this.t('providerDeregistration'), error);
+        });
+        deregistering.then(() => {
+          globalNotify.info(this.t('deregisterSuccess'));
+          setTimeout(() => window.location.reload(), 1000);
+        });
+        return deregistering;
+      }
     },
 
     /**

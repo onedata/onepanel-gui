@@ -10,7 +10,10 @@
     popoverClass="popover-deregister-provider"
     submit=(action "deregister")
     as |ospm|}}
-    {{deregister-provider-confirm submitAction=ospm.submit closeAction=ospm.close}}
+    {{deregister-provider-confirm
+      isOnepanelStandalone=isOnepanelStandalone
+      submitAction=ospm.submit
+      closeAction=ospm.close}}
   {{/one-switchable-popover-modal}}
 </div>
 
