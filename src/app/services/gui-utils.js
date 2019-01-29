@@ -21,6 +21,7 @@ export default GuiUtils.extend(
     onepanelConfiguration: service(),
     onezoneGui: service(),
     providerManager: service(),
+    clusterModelManager: service(),
 
     /**
      * Panel type: provider or zone.
@@ -62,10 +63,54 @@ export default GuiUtils.extend(
      * @override
      */
     manageAccountExternalLink: computed(
-      'onezoneGui.onezoneGuiUrl',
+      'onezoneGui.{onezoneGuiUrl,clusterUrlInOnepanel}',
       function manageAccountExternalLink() {
-        const onezoneGuiUrl = this.get('onezoneGui.onezoneGuiUrl');
-        return `${onezoneGuiUrl}/onedata/users`;
+        const {
+          onepanelServer,
+          onezoneGui,
+        } = this.getProperties('onepanelServer', 'onezoneGui');
+        if (onepanelServer.getClusterIdFromUrl()) {
+          const onezoneGuiUrl = get(onezoneGui, 'onezoneGuiUrl');
+          return `${onezoneGuiUrl}/onedata/users`;
+        } else {
+          return get(onezoneGui, 'clusterUrlInOnepanel');
+        }
+      }
+    ),
+
+    /**
+     * @override
+     */
+    manageAccountText: computed(
+      'onezoneGui.zoneDomain',
+      'serviceType',
+      'clusterModelManager.currentCluster.isNotDeployed',
+      function manageAccountText() {
+        const {
+          onepanelServer,
+          serviceType,
+          i18n,
+          onezoneGui,
+          clusterModelManager,
+        } = this.getProperties(
+          'onepanelServer',
+          'i18n',
+          'onezoneGui',
+          'clusterModelManager',
+          'serviceType'
+        );
+        if (onepanelServer.getClusterIdFromUrl()) {
+          return i18n.t('components.userAccountButton.manageAccount');
+        } else {
+          const isDeployed =
+            get(clusterModelManager, 'currentCluster.isNotDeployed') === false;
+          if ((serviceType === 'oneprovider' && get(onezoneGui, 'zoneDomain')) ||
+            (serviceType === 'onezone' && isDeployed)) {
+            return i18n.t('components.userAccountButton.visitViaOnezone');
+          } else {
+            return null;
+          }
+        }
       }
     ),
 
