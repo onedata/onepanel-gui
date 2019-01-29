@@ -49,6 +49,7 @@ import sidebarClusters from './components/sidebar-clusters';
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 
 import guiUtils from './services/gui-utils';
+import clusterActions from './services/cluster-actions';
 
 import onedata from './routes/onedata';
 
@@ -113,6 +114,7 @@ let translations = {
   },
   services: {
     guiUtils,
+    clusterActions,
   },
   routes: {
     onedata,

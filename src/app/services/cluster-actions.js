@@ -2,7 +2,7 @@
  * Onepanel specific actions for clusters
  *
  * @module services/cluster-actions
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -10,11 +10,33 @@
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import ClusterActions from 'onedata-gui-common/services/cluster-actions';
+import { equal } from '@ember/object/computed';
 
 export default ClusterActions.extend({
   onezoneGui: service(),
+  clusterModelManager: service(),
+  onepanelServer: service(),
 
+  /**
+   * @type {Window}
+   */
   _window: window,
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isDeployed: equal('clusterModelManager.currentCluster.isNotDeployed', false),
+
+  /**
+   * @override
+   */
+  buttons: computed('btnAdd', 'isDeployed', function buttons() {
+    const {
+      isDeployed,
+      btnAdd,
+    } = this.getProperties('isDeployed', 'btnAdd');
+    return isDeployed ? [btnAdd] : [];
+  }),
 
   /**
    * @override
@@ -26,5 +48,20 @@ export default ClusterActions.extend({
     } = this.getProperties('_window', 'onezoneGui');
     return () =>
       _window.location = onezoneGui.getUrlInOnezone('onedata/clusters/add');
+  }),
+
+  /**
+   * @override
+   */
+  btnAdd: computed('addAction', function btnAdd() {
+    const isHosted = !!this.get('onepanelServer').getClusterIdFromUrl();
+    return {
+      icon: 'add-filled',
+      title: this.t('btnAdd.title'),
+      tip: isHosted ? this.t('btnAdd.hint') : this.t('btnAdd.viaOnezoneHint'),
+      class: 'add-cluster-btn',
+      action: this.get('addAction'),
+      disabled: !isHosted,
+    };
   }),
 });
