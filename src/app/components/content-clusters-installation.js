@@ -21,6 +21,7 @@ export default Component.extend(
     onepanelConfiguration: service(),
     router: service(),
     onezoneGui: service(),
+    onepanelServer: service(),
 
     initProcess: false,
 
@@ -60,6 +61,9 @@ export default Component.extend(
             clusterId,
             internalRoute: `/clusters/${clusterId}`,
           });
+          if (this.get('onepanelServer').getClusterIdFromUrl()) {
+            window.location.reload();
+          }
         });
       },
     },
