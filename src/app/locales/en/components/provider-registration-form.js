@@ -31,7 +31,7 @@ export default {
         'choice in Onezone\'s domain. Onezone will automatically handle DNS ' +
         'configuration for this provider. If disabled, you will need to ' +
         'manually configure hostname and DNS entries for this provider.',
-      lockHint: 'Not supported on chosen Onezone',
+      lockHint: 'Not supported by chosen Onezone',
     },
     domain: {
       label: 'Domain',

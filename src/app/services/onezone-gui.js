@@ -4,15 +4,7 @@ import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-import config from 'ember-get-config';
-
-const {
-  APP: {
-    MOCK_BACKEND,
-  },
-} = config;
-
-const OnezoneGui = Service.extend(
+export default Service.extend(
   createDataProxyMixin('isOnezoneAvailable'),
   createDataProxyMixin('canEnterViaOnezone'), {
     onepanelServer: service(),
@@ -144,28 +136,3 @@ const OnezoneGui = Service.extend(
       return isDeployed ? this.getIsOnezoneAvailableProxy() : resolve(false);
     },
   });
-
-const OnezoneGuiMock = OnezoneGui.extend({
-  /**
-   * @override
-   */
-  fetchCanLoginViaOnezone() {
-    return resolve(true);
-  },
-
-  /**
-   * @override 
-   */
-  onezoneOrigin: computed(function onezoneOrigin() {
-    return 'http://localhost:4201';
-  }),
-});
-
-let ExportServer;
-if (MOCK_BACKEND) {
-  ExportServer = OnezoneGuiMock;
-} else {
-  ExportServer = OnezoneGui;
-}
-
-export default ExportServer;
