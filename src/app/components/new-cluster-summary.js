@@ -17,6 +17,7 @@ export default Component.extend(I18n, {
   onezoneGui: service(),
   guiUtils: service(),
   onepanelConfiguration: service(),
+  onepanelServer: service(),
 
   i18nPrefix: 'components.newClusterSummary',
 
@@ -32,34 +33,16 @@ export default Component.extend(I18n, {
    */
   finish: notImplementedIgnore,
 
-  // FIXME: fake
-  isStandaloneOnepanel: true,
-
-  clusterInOnezoneUrl: computed(function () {
-    const clusterId = this.get('onepanelConfiguration.clusterId');
-    return this.get('onezoneGui').getOnepanelNavUrlInOnezone({
-      clusterId,
-      internalRoute: `/clusters/${clusterId}`,
-    });
-  }),
-
-  onezoneUrl: computed(function onezoneUrl() {
-    return 'https://dev-onezone.default.svc.cluster.local';
+  isStandaloneOnepanel: computed('onepanelServer', function isStandaloneOnepanel() {
+    return !this.get('onepanelServer').getClusterIdFromUrl();
   }),
 
   onepanelUrl: computed(function onepanelUrl() {
-    if (this.get('guiUtils.serviceType') === 'oneprovider') {
-      return 'https://dev-oneprovider-krakow.default.svc.cluster.local:9443';
+    if (this.get('isStandaloneOnepanel')) {
+      return location.origin;
     } else {
-      return 'https://dev-onezone.default.svc.cluster.local:9443';
+      return this.get('onepanelServer.standaloneOnepanelOrigin');
     }
-
-    // FIXME: to implement
-    // if (this.get('isStandaloneOnepanel')) {
-    //   return location.origin;
-    // } else {
-
-    // }
   }),
 
   actions: {

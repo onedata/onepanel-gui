@@ -43,7 +43,8 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'onezone';
+const MOCK_SERVICE_TYPE = 'oneprovider';
+const mockSubdomain = (MOCK_SERVICE_TYPE === 'oneprovider' ? 'oneprovider-1' : 'onezone');
 
 /**
  * Response delay in milliseconds
@@ -167,10 +168,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -304,8 +305,12 @@ export default OnepanelServerBase.extend(
       });
     }),
 
+    getStandaloneOnepanelOriginProxy() {
+      return resolve(`https://${mockSubdomain}.local-onedata.org:9443`);
+    },
+
     getOnezoneLogin() {
-      return resolve({ url: 'http://localhost:4201/#/login?auth_for=Hello Provider (Onepanel);localhost:4200' });
+      return resolve({ url: 'https://onezone.local-onedata.org/oz/onezone/#/login' });
     },
 
     getHostname() {
