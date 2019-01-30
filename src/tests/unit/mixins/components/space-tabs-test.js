@@ -49,10 +49,8 @@ describe('Unit | Mixin | components/space tabs', function () {
 
     expect(subject.get('tabCleanClass'), 'before change').to.equal('disabled');
 
-    subject.set('space', {
-      filesPopularity: {
-        enabled: true,
-      },
+    subject.set('filesPopularityConfiguration', {
+      enabled: true,
     });
 
     expect(subject.get('tabCleanClass'), 'after change').to.equal('enabled');
@@ -62,19 +60,15 @@ describe('Unit | Mixin | components/space tabs', function () {
     const ComponentsComponentsSpaceTabsObject =
       EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create({
-      space: {
-        filesPopularity: {
-          enabled: true,
-        },
+      filesPopularityConfiguration: {
+        enabled: true,
       },
     });
 
     expect(subject.get('tabCleanClass'), 'before change').to.equal('enabled');
 
-    subject.set('space', {
-      filesPopularity: {
-        enabled: false,
-      },
+    subject.set('filesPopularityConfiguration', {
+      enabled: false,
     });
 
     expect(subject.get('tabCleanClass'), 'after change').to.equal('disabled');
