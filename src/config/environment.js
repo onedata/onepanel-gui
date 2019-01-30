@@ -29,6 +29,7 @@ module.exports = function (environment) {
         id: 'clusters',
         icon: 'cluster',
         isDefault: true,
+        defaultAspect: 'overview',
       },
     ],
     'layoutConfig': {
