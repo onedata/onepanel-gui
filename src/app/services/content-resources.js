@@ -25,13 +25,13 @@ export default Service.extend({
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
-        if (this.get('onepanelServer').getClusterIdFromUrl()) {
-          return this.get('clusterModelManager').getCluster(id);
-        } else {
+        if (this.get('onepanelServer.isStandalone')) {
           return this.get('clusterModelManager').getCurrentClusterProxy()
             .then(currentCluster =>
               currentCluster || this.get('clusterModelManager').getNotDeployedCluster()
             );
+        } else {
+          return this.get('clusterModelManager').getCluster(id);
         }
       case 'users':
         return this.get('userManager').getUserDetails(id).get('promise');

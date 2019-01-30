@@ -61,7 +61,7 @@ export default Component.extend(
             clusterId,
             internalRoute: `/clusters/${clusterId}`,
           });
-          if (this.get('onepanelServer').getClusterIdFromUrl()) {
+          if (!this.get('onepanelServer.isStandalone')) {
             window.location.reload();
           }
         });

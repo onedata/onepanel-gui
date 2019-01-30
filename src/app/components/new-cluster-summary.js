@@ -11,6 +11,7 @@ import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {
@@ -33,9 +34,7 @@ export default Component.extend(I18n, {
    */
   finish: notImplementedIgnore,
 
-  isStandaloneOnepanel: computed('onepanelServer', function isStandaloneOnepanel() {
-    return !this.get('onepanelServer').getClusterIdFromUrl();
-  }),
+  isStandaloneOnepanel: reads('onepanelServer.isStandalone'),
 
   onepanelUrl: computed(function onepanelUrl() {
     if (this.get('isStandaloneOnepanel')) {

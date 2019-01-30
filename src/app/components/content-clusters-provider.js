@@ -18,6 +18,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { reads } from '@ember/object/computed';
 
 export default Component.extend(I18n, GlobalActions, {
   providerManager: service(),
@@ -75,9 +76,7 @@ export default Component.extend(I18n, GlobalActions, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isOnepanelStandalone: computed(function isOnepanelStandalone() {
-    return !this.get('onepanelServer').getClusterIdFromUrl();
-  }),
+  isOnepanelStandalone: reads('onepanelServer.isStandalone'),
 
   /**
    * @type {Ember.ComputedProperty<PromiseObject<Onepanel.OnezoneInfo>>}

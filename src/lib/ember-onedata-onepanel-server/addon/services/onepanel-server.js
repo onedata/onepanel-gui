@@ -12,19 +12,18 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { Promise, resolve } from 'rsvp';
-
-import { run } from '@ember/runloop';
 import { computed, get } from '@ember/object';
-import Onepanel from 'npm:onepanel';
-import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
-import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
-import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import { run } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 import { classify } from '@ember/string';
+import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
+import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
+import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
+import $ from 'jquery';
+import Onepanel from 'npm:onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import $ from 'jquery';
-import { inject as service } from '@ember/service';
+import { Promise, resolve } from 'rsvp';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
@@ -39,10 +38,7 @@ function replaceUrlOrigin(url, newOrigin) {
  */
 const CUSTOM_REQUESTS = {};
 
-const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
-
 export default OnepanelServerBase.extend(
-  createDataProxyMixin('node'),
   createDataProxyMixin('apiOrigin'),
   createDataProxyMixin('standaloneOnepanelOrigin'), {
     guiUtils: service(),
@@ -59,11 +55,6 @@ export default OnepanelServerBase.extend(
      * @type {string}
      */
     username: null,
-
-    /**
-     * @type {Window.Location}
-     */
-    _location: location,
 
     /**
      * @type {computed<Boolean>}
@@ -146,32 +137,6 @@ export default OnepanelServerBase.extend(
       return promise;
     },
 
-    /**
-     * @override
-     */
-    fetchNode() {
-      return this.staticRequest('onepanel', 'getNode')
-        .then(({ data: { hostname, componentType } }) => ({
-          hostname,
-          componentType,
-        }));
-    },
-
-    getLocation() {
-      return location;
-    },
-
-    getClusterTypeFromUrl() {
-      const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
-      return m && (m[1] === 'ozp' ? 'onezone' : 'oneprovider');
-    },
-
-    getClusterIdFromUrl() {
-      const m = this.getLocation().toString().match(reOnepanelInOnzoneUrl);
-      return m && m[2];
-    },
-
-    // FIXME: move to cluster manager? - it needs refactoring
     getClusterId() {
       const idFromLocation = this.getClusterIdFromUrl();
       if (idFromLocation) {
@@ -194,7 +159,7 @@ export default OnepanelServerBase.extend(
           'service:onepanel-server#fetchStandaloneOnepanelOrigin: cannot execute without all fetchArgs'
         );
       }
-      const _location = this.getLocation();
+      const _location = this.get('_location');
       if (serviceType === 'oneprovider') {
         // a small hack to not make oneprovider token call twice
         let getOneproviderTokenPromise;
@@ -233,7 +198,7 @@ export default OnepanelServerBase.extend(
      */
     fetchApiOrigin(oneproviderTokenData) {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
-      const _location = this.getLocation();
+      const _location = this.get('_location');
       if (clusterIdFromUrl) {
         const serviceType = this.getClusterTypeFromUrl();
         return this.getStandaloneOnepanelOriginProxy({
@@ -269,7 +234,7 @@ export default OnepanelServerBase.extend(
        * True if the Onepanel is hosted by Onezone, so we will use 
        * @type {boolean}
        */
-      const isHosted = !!clusterIdFromUrl;
+      const isHosted = Boolean(clusterIdFromUrl);
 
       /** 
        * Resolve token for authorizing Onepanel REST calls
@@ -338,7 +303,7 @@ export default OnepanelServerBase.extend(
      * @returns {Onepanel.ApiClient}
      */
     createClient({ token, origin } = {}) {
-      const location = this.getLocation();
+      const location = this.get('_location');
       let client = new Onepanel.ApiClient();
       if (token) {
         client.defaultHeaders['X-Auth-Token'] = token;
@@ -371,38 +336,8 @@ export default OnepanelServerBase.extend(
     },
 
     /**
-     * Get hostname of this panel
-     * @returns {Promise<string>}
-     */
-    getHostname() {
-      return this.getNodeProxy()
-        .then(({ hostname }) => hostname);
-    },
-
-    /**
-     * @returns {string}
-     */
-    getOnezoneLogin() {
-      let client = this.createClient();
-      let api = new Onepanel.OnepanelApi(client);
-
-      return new Promise((resolve, reject) => {
-        let callback = function (error, data, response) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve({
-              data,
-              response,
-            });
-          }
-        };
-        api.getOnezoneLogin(callback);
-      });
-    },
-
-    /**
      * Makes a request to backend to create session using basic auth.
+     * Only in standalone mode.
      *
      * @param {string} username 
      * @param {string} password
@@ -436,26 +371,20 @@ export default OnepanelServerBase.extend(
             if (error) {
               reject(error);
             } else {
+              // FIXME: hack for handling buggy swagger
+              let xdata;
+              if (data) {
+                xdata = data;
+              } else {
+                xdata = response.text && JSON.parse(response.text);
+              }
               resolve({
                 response,
-                data,
+                data: xdata,
               });
             }
           };
           api[method](...callArgs, callback);
-        });
-      });
-    },
-
-    /**
-     * @override
-     * Fetches configuration
-     * @returns {Promise<Object>}
-     */
-    fetchConfiguration() {
-      return this.getApiOriginProxy().then(apiOrigin => {
-        return new Promise((resolve, reject) => {
-          $.ajax(`${apiOrigin}/configuration`).then(resolve, reject);
         });
       });
     },

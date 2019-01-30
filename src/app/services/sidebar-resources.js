@@ -30,9 +30,7 @@ export default SidebarResources.extend({
       case 'users':
         return resolve([]);
       case 'clusters':
-        if (this.get('onepanelServer').getClusterIdFromUrl()) {
-          return this.get('clusterModelManager').getClustersProxy();
-        } else {
+        if (this.get('onepanelServer.isStandalone')) {
           return this.get('clusterModelManager').getCurrentClusterProxy()
             .then(currentCluster => {
               if (currentCluster) {
@@ -44,6 +42,8 @@ export default SidebarResources.extend({
                 };
               }
             });
+        } else {
+          return this.get('clusterModelManager').getClustersProxy();
         }
       default:
         return reject('No such collection: ' + type);

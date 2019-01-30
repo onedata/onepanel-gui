@@ -25,12 +25,12 @@ export default OnedataRoute.extend(I18n, {
   },
 
   model() {
-    const isHosted = Boolean(this.get('onepanelServer').getClusterIdFromUrl());
+    const isStandalone = this.get('onepanelServer.isStandalone');
     return Promise.all([
       this._super(...arguments),
       this.get('configurationManager').getInstallationDetails(),
     ]).then(([model, installDetails]) => {
-      if (!isHosted) {
+      if (isStandalone) {
         const items = get(model, 'mainMenuItems');
         if (get(installDetails, 'isInitialized') === false) {
           set(

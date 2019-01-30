@@ -69,11 +69,11 @@ export default GuiUtils.extend(
           onepanelServer,
           onezoneGui,
         } = this.getProperties('onepanelServer', 'onezoneGui');
-        if (onepanelServer.getClusterIdFromUrl()) {
+        if (get(onepanelServer, 'isStandalone')) {
+          return get(onezoneGui, 'clusterUrlInOnepanel');
+        } else {
           const onezoneGuiUrl = get(onezoneGui, 'onezoneGuiUrl');
           return `${onezoneGuiUrl}/onedata/users`;
-        } else {
-          return get(onezoneGui, 'clusterUrlInOnepanel');
         }
       }
     ),
@@ -99,9 +99,7 @@ export default GuiUtils.extend(
           'clusterModelManager',
           'serviceType'
         );
-        if (onepanelServer.getClusterIdFromUrl()) {
-          return i18n.t('components.userAccountButton.manageAccount');
-        } else {
+        if (get(onepanelServer, 'isStandalone')) {
           const isDeployed =
             get(clusterModelManager, 'currentCluster.isNotDeployed') === false;
           if ((serviceType === 'oneprovider' && get(onezoneGui, 'zoneDomain')) ||
@@ -110,6 +108,8 @@ export default GuiUtils.extend(
           } else {
             return null;
           }
+        } else {
+          return i18n.t('components.userAccountButton.manageAccount');
         }
       }
     ),

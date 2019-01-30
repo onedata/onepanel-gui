@@ -43,14 +43,33 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const MOCK_SERVICE_TYPE = 'oneprovider';
-const mockSubdomain = (MOCK_SERVICE_TYPE === 'oneprovider' ? 'oneprovider-1' : 'onezone');
+const fallbackMockServiceType = 'onezone';
+
+function getMockServiceType() {
+  const url = location.toString();
+  if (/https:\/\/onezone\..*9443/.test(url)) {
+    return 'onezone';
+  } else if (/https:\/\/oneprovider\..*9443/.test(url)) {
+    return 'oneprovider';
+  } else {
+    const letterMatch = url.match(/.*?#\/o(z|p)p.*/);
+    if (letterMatch) {
+      return letterMatch[1] === 'z' ? 'onezone' : 'oneprovider';
+    } else {
+      return fallbackMockServiceType;
+    }
+  }
+}
+
+const mockServiceType = getMockServiceType();
+
+const mockSubdomain = (mockServiceType === 'oneprovider' ? 'oneprovider-1' : 'onezone');
 
 /**
  * Response delay in milliseconds
  * @type {number}
  */
-const RESPONSE_DELAY = 100;
+const responseDelay = 100;
 
 const defaultWebCert = {
   status: 'near_expiration',
@@ -127,7 +146,7 @@ function responseToString() {
 const PlainableObject = EmberObject.extend(Plainable);
 
 const zoneCluster = {
-  id: 'cluster-1',
+  id: 'onezone',
   type: 'onezone',
   serviceId: null,
   version: '18.07.0',
@@ -135,7 +154,7 @@ const zoneCluster = {
   proxy: false,
 };
 const providerCluster1 = {
-  id: 'cluster-2',
+  id: 'oneprovider-1',
   type: 'oneprovider',
   serviceId: PROVIDER1_ID,
   version: '18.02.1',
@@ -143,7 +162,7 @@ const providerCluster1 = {
   proxy: false,
 };
 const providerCluster2 = {
-  id: 'cluster-3',
+  id: 'oneprovider-2',
   type: 'oneprovider',
   serviceId: PROVIDER2_ID,
   version: '18.02.0',
@@ -194,11 +213,11 @@ export default OnepanelServerBase.extend(
     // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
-      MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
+      mockServiceType === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
     ),
 
     /**
@@ -251,7 +270,7 @@ export default OnepanelServerBase.extend(
           `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
         );
 
-        if (!staticReq && !cookies.read('fakeLoginFlag')) {
+        if (!staticReq && !cookies.read('is-authenticated')) {
           run.later(() => {
             reject({
               __request_method: method,
@@ -264,7 +283,7 @@ export default OnepanelServerBase.extend(
               },
               toString: responseToString,
             });
-          }, RESPONSE_DELAY);
+          }, responseDelay);
         }
 
         const handlerName = `_req_${api}_${method}`;
@@ -295,14 +314,14 @@ export default OnepanelServerBase.extend(
                 task: taskId && this.watchTaskStatus(taskId),
                 toString: responseToString,
               });
-            }, RESPONSE_DELAY);
+            }, responseDelay);
           } else {
             let response = {
               statusCode: handler.statusCode && handler.statusCode(...params),
             };
             run.later(() => {
               reject({ __request_method: method, response, toString: responseToString });
-            }, RESPONSE_DELAY);
+            }, responseDelay);
           }
 
         } else {
@@ -310,7 +329,7 @@ export default OnepanelServerBase.extend(
             reject(
               `onepanel-server-mock: mock has no method for: ${api}_${method}`
             );
-          }, RESPONSE_DELAY);
+          }, responseDelay);
         }
       });
 
@@ -323,21 +342,13 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({
         promise: Promise.resolve({
           hostname: 'example.com',
-          componentType: MOCK_SERVICE_TYPE,
+          componentType: mockServiceType,
         }),
       });
     }),
 
     getStandaloneOnepanelOriginProxy() {
       return resolve(`https://${mockSubdomain}.local-onedata.org:9443`);
-    },
-
-    getOnezoneLogin() {
-      return resolve({ url: 'https://onezone.local-onedata.org/oz/onezone/#/login' });
-    },
-
-    getHostname() {
-      return Promise.resolve('example.com');
     },
 
     watchTaskStatus(taskId) {
@@ -347,7 +358,7 @@ export default OnepanelServerBase.extend(
     validateSession() {
       console.debug('service:onepanel-server-mock: validateSession');
       let cookies = this.get('cookies');
-      let fakeLoginFlag = cookies.read('fakeLoginFlag');
+      let fakeLoginFlag = cookies.read('is-authenticated');
       let validating = new Promise((resolve, reject) => {
         if (fakeLoginFlag) {
           run.next(resolve);
@@ -376,7 +387,7 @@ export default OnepanelServerBase.extend(
     init() {
       this._super(...arguments);
       const mockStep = this.get('mockStep');
-      if (MOCK_SERVICE_TYPE === 'oneprovider') {
+      if (mockServiceType === 'oneprovider') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'bad_records',
@@ -483,7 +494,7 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
-      } else if (MOCK_SERVICE_TYPE === 'onezone') {
+      } else if (mockServiceType === 'onezone') {
         this.set('__dnsCheck', {
           domain: {
             summary: 'missing_records',
@@ -528,18 +539,6 @@ export default OnepanelServerBase.extend(
 
     },
 
-    getClusterId() {
-      return 'new';
-    },
-
-    getClusterIdFromUrl() {
-      return null;
-    },
-
-    getClusterTypeFromUrl() {
-      return undefined;
-    },
-
     /**
      * Returns url of configuration endpoint
      * @returns {string}
@@ -548,26 +547,8 @@ export default OnepanelServerBase.extend(
       return location.origin + '/configuration';
     },
 
-    /**
-     * @override
-     * Fetches configuration
-     * @returns {Promise<Object>}
-     */
-    fetchConfiguration() {
-      const mockInitializedCluster = this.get('mockInitializedCluster');
-      return resolve({
-        clusterId: this.getClusterId(),
-        version: '18.02.0-rc13',
-        build: '81-g8ae3907',
-        deployed: mockInitializedCluster,
-        serviceType: MOCK_SERVICE_TYPE,
-        zoneDomain: MOCK_SERVICE_TYPE === 'onezone' ? 'localhost:4201' : undefined,
-
-      });
-    },
-
     progressMock: computed(function progressMock() {
-      return DeploymentProgressMock.create({ onepanelServiceType: MOCK_SERVICE_TYPE });
+      return DeploymentProgressMock.create({ onepanelServiceType: mockServiceType });
     }),
 
     /// mocked request handlers - override to change server behaviour
@@ -654,7 +635,7 @@ export default OnepanelServerBase.extend(
     _req_onepanel_removeSession: computed(function () {
       return {
         success() {
-          document.cookie = 'fakeLoginFlag=false; Max-Age=0';
+          document.cookie = 'is-authenticated=false; Max-Age=0';
           return null;
         },
       };
@@ -1112,8 +1093,8 @@ export default OnepanelServerBase.extend(
     _req_onepanel_getNode() {
       return {
         success: () => ({
-          hostname: 'example.com',
-          componentType: `one${MOCK_SERVICE_TYPE}`,
+          hostname: `${mockSubdomain}.local-onedata.org`,
+          componentType: `one${mockServiceType}`,
         }),
         statusCode: () => 200,
       };
@@ -1175,7 +1156,7 @@ export default OnepanelServerBase.extend(
       const mockStep = this.get('mockStep');
       return {
         success() {
-          if (MOCK_SERVICE_TYPE === 'oneprovider') {
+          if (mockServiceType === 'oneprovider') {
             if (mockStep > STEP.PROVIDER_REGISTER) {
               return {
                 zoneName: 'Cyfronet AGH',
@@ -1200,7 +1181,7 @@ export default OnepanelServerBase.extend(
           }
         },
         statusCode() {
-          if (MOCK_SERVICE_TYPE === 'oneprovider') {
+          if (mockServiceType === 'oneprovider') {
             return mockStep > STEP.PROVIDER_REGISTER ? 200 : 404;
           } else {
             return mockStep >= STEP.ZONE_DONE ? 200 : 404;
@@ -1225,7 +1206,7 @@ export default OnepanelServerBase.extend(
 
     _req_onepanel_getCurrentCluster() {
       return {
-        success: () => (MOCK_SERVICE_TYPE === 'oneprovider' ?
+        success: () => (mockServiceType === 'oneprovider' ?
           providerCluster1 : zoneCluster),
       };
     },
@@ -1235,6 +1216,25 @@ export default OnepanelServerBase.extend(
       return {
         success: id => __anyProviders.findBy('id', id),
         statusCode: id => __anyProviders.findBy('id', id) ? 200 : 404,
+      };
+    },
+
+    _req_onepanel_getConfiguration() {
+      const mockInitializedCluster = this.get('mockInitializedCluster');
+      return {
+        success: () => ({
+          clusterId: this.get('isStandalone') ?
+            (mockServiceType === 'oneprovider' ? providerCluster1.id : zoneCluster.id) :
+            this.getClusterIdFromUrl(),
+          version: '18.02.0-rc13',
+          build: '2100',
+          deployed: mockInitializedCluster,
+          serviceType: mockServiceType,
+          zoneDomain: mockServiceType === 'onezone' ?
+            'onezone.local-onedata.org' : undefined,
+
+        }),
+        statusCode: () => 200,
       };
     },
 

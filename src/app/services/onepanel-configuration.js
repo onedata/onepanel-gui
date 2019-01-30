@@ -93,9 +93,6 @@ export default Service.extend(
           isRegistered: true,
         });
       }
-
-      // FIXME: debug
-      window.onepanelConfiguration = this;
     },
 
     /**

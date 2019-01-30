@@ -54,14 +54,14 @@ export default ClusterActions.extend({
    * @override
    */
   btnAdd: computed('addAction', function btnAdd() {
-    const isHosted = !!this.get('onepanelServer').getClusterIdFromUrl();
+    const isStandalone = this.get('onepanelServer.isStandalone');
     return {
       icon: 'add-filled',
       title: this.t('btnAdd.title'),
-      tip: isHosted ? this.t('btnAdd.hint') : this.t('btnAdd.viaOnezoneHint'),
+      tip: isStandalone ? this.t('btnAdd.viaOnezoneHint') : this.t('btnAdd.hint'),
       class: 'add-cluster-btn',
       action: this.get('addAction'),
-      disabled: !isHosted,
+      disabled: isStandalone,
     };
   }),
 });
