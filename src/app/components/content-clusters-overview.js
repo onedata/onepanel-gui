@@ -34,17 +34,19 @@ export default Component.extend(I18n, {
     return this.get('providerManager').getProviderDetails();
   }),
 
-  /**
-   * @type {PromiseArray<ProviderDetails>}
-   */
-  providersProxy: computed('providerProxy', function providersProxy() {
-    if (this.get('guiUtils.serviceType') === 'oneprovider') {
-      return PromiseArray.create({
-        promise: this.get('providerProxy')
-          .then(provider => [get(provider, 'content')]),
-      });
-    }
-  }),
+  // TODO Uncomment when onezone map will render clusters, that can be accessed
+  // instead of only with our spaces
+  // /**
+  //  * @type {PromiseArray<ProviderDetails>}
+  //  */
+  // providersProxy: computed('providerProxy', function providersProxy() {
+  //   if (this.get('guiUtils.serviceType') === 'oneprovider') {
+  //     return PromiseArray.create({
+  //       promise: this.get('providerProxy')
+  //         .then(provider => [get(provider, 'content')]),
+  //     });
+  //   }
+  // }),
 
   /**
    * @type {Ember.ComputedProperty<PromiseObject<ProviderDetails>>}
