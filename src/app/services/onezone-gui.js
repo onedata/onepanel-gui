@@ -34,7 +34,7 @@ export default Service.extend(
      */
     onezoneGuiUrl: computed('onezoneOrigin', function () {
       const onezoneOrigin = this.get('onezoneOrigin');
-      return onezoneOrigin ? `${onezoneOrigin}/oz/onezone/i/#` : null;
+      return onezoneOrigin ? `${onezoneOrigin}/oz/onezone/i#` : null;
     }),
 
     /**
@@ -66,7 +66,7 @@ export default Service.extend(
 
     getUrlInOnezone(path) {
       const onezoneOrigin = this.get('onezoneOrigin');
-      return `${onezoneOrigin}/oz/onezone/i/#/${path}`;
+      return `${onezoneOrigin}/oz/onezone/i#/${path}`;
     },
 
     /**
