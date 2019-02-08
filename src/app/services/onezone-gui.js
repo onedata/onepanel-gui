@@ -3,6 +3,7 @@ import { resolve } from 'rsvp';
 import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import checkImg from 'onedata-gui-common/utils/check-img';
 
 export default Service.extend(
   createDataProxyMixin('isOnezoneAvailable'),
@@ -15,17 +16,6 @@ export default Service.extend(
      * @type {Ember.ComputedProperty<PromiseObject<string>>}
      */
     serviceTypeProxy: reads('onepanelServer.serviceTypeProxy'),
-
-    // FIXME: also in provider mode using providerManager.getZoneInfo
-    // /**
-    //  * @type {Ember.ComputedProperty<string>}
-    //  */
-    // zoneDomain: computed('onepanelConfiguration.{serviceType,zoneDomain}', function zoneDomain() {
-
-    // }),
-
-    // FIXME: sorry...
-    // zoneDomain: 'dev-onezone.default.svc.cluster.local',
 
     zoneDomain: reads('onepanelConfiguration.zoneDomain'),
 
@@ -101,24 +91,13 @@ export default Service.extend(
     },
 
     /**
-     * Returns promise that resolves to true if onezone is available.
-     * Check is performed by querying /configuration onezone endpoint.
+     * Returns promise that resolves to true if Onezone is available.
      * @returns {Promise<boolean>}
      */
     fetchIsOnezoneAvailable() {
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
-        const img = document.body.appendChild(document.createElement('img'));
-        img.classList.add('hidden');
-        return new Promise((resolve, reject) => {
-          try {
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = `${onezoneOrigin}/oz/onezone/favicon.ico`;
-          } catch (error) {
-            reject(error);
-          }
-        }).finally(() => document.body.removeChild(img));
+        return checkImg(`${onezoneOrigin}/oz/onezone/favicon.ico`);
       } else {
         return resolve(false);
       }

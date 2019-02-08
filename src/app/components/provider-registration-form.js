@@ -53,7 +53,7 @@ const HOSTNAME_FIELD = {
   type: 'text',
   regex: DOMAIN_REGEX,
   tip: true,
-  example: 'my-provider.com',
+  example: location.hostname,
 };
 
 const SUBDOMAIN_FIELD = {
@@ -105,7 +105,8 @@ FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
     if (field.name === 'subdomain') {
       validators.push(
         validator(
-          'exclusion', { in: readOnly('model.excludedSubdomains'),
+          'exclusion', {
+            in: readOnly('model.excludedSubdomains'),
             message: computed(function () {
               return this.get('model.i18n')
                 .t('components.providerRegistrationForm.subdomainReserved');
@@ -565,7 +566,6 @@ export default OneForm.extend(Validations, I18n, {
       }
 
       this.set('_disabled', true);
-      console.log(values);
       return this.get('submit')(values)
         .then(() => {
           if (_willChangeDomainAfterSubmit) {

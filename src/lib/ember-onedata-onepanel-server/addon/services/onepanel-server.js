@@ -267,26 +267,18 @@ export default OnepanelServerBase.extend(
       return onepanelTokenPromise
         .then(tokenData => {
           const onepanelToken = tokenData.token;
-          const username = tokenData.username;
 
           return this.getApiOriginProxy({ fetchArgs: [tokenData] })
             .then(apiOrigin => {
               return run(() => {
                 return this.initClient({ token: onepanelToken, origin: apiOrigin })
                   .then(() => {
-                    // the username is available when using token from Onepanel endpoint
-                    // otherwise we must request it
-                    if (username) {
-                      safeExec(this, 'set', 'username', username);
-                      return { token: onepanelToken, username };
-                    } else {
-                      return this.request('onepanel', 'getCurrentUser').then(
-                        ({ data }) => {
-                          const username = get(data, 'username');
-                          safeExec(this, 'set', 'username', username);
-                          return { token: onepanelToken, username };
-                        });
-                    }
+                    return this.request('onepanel', 'getCurrentUser').then(
+                      ({ data }) => {
+                        const username = get(data, 'username');
+                        safeExec(this, 'set', 'username', username);
+                        return { token: onepanelToken, username };
+                      });
                   });
               });
             });
