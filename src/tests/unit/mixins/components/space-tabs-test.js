@@ -4,36 +4,6 @@ import { describe, it } from 'mocha';
 import ComponentsComponentsSpaceTabsMixin from 'onepanel-gui/mixins/components/space-tabs';
 
 describe('Unit | Mixin | components/space tabs', function () {
-  it('enables tabSync', function () {
-    const ComponentsComponentsSpaceTabsObject =
-      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
-    const subject = ComponentsComponentsSpaceTabsObject.create({
-      space: {
-        importEnabled: false,
-      },
-    });
-
-    subject.set('space.importEnabled', true);
-
-    expect(subject.get('tabSyncClass')).to.equal('enabled');
-  });
-
-  it('disables tabSync', function () {
-    const ComponentsComponentsSpaceTabsObject =
-      EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
-    const subject = ComponentsComponentsSpaceTabsObject.create({
-      space: {
-        importEnabled: true,
-      },
-    });
-
-    expect(subject.get('tabSyncClass')).to.equal('enabled');
-
-    subject.set('space.importEnabled', false);
-
-    expect(subject.get('tabSyncClass')).to.equal('disabled');
-  });
-
   it('has tabPopular always enabled', function () {
     const ComponentsComponentsSpaceTabsObject =
       EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
@@ -49,7 +19,7 @@ describe('Unit | Mixin | components/space tabs', function () {
 
     expect(subject.get('tabCleanClass'), 'before change').to.equal('disabled');
 
-    subject.set('filesPopularityConfiguration', {
+    subject.set('filePopularityConfiguration', {
       enabled: true,
     });
 
@@ -60,14 +30,14 @@ describe('Unit | Mixin | components/space tabs', function () {
     const ComponentsComponentsSpaceTabsObject =
       EmberObject.extend(ComponentsComponentsSpaceTabsMixin);
     const subject = ComponentsComponentsSpaceTabsObject.create({
-      filesPopularityConfiguration: {
+      filePopularityConfiguration: {
         enabled: true,
       },
     });
 
     expect(subject.get('tabCleanClass'), 'before change').to.equal('enabled');
 
-    subject.set('filesPopularityConfiguration', {
+    subject.set('filePopularityConfiguration', {
       enabled: false,
     });
 

@@ -1,7 +1,7 @@
 <div class="row content-row no-border">
   <h1>
     <label for="cleaning-enabled">
-      {{t "components.spaceAutoCleaning.autoCleaning"}}
+      {{t "components.spaceAutoCleaning.enableAutoCleaning"}}
     </label>
     {{one-label-tip
       title=(t "components.spaceAutoCleaning.headerHint")
@@ -9,13 +9,13 @@
     }}
     {{one-way-toggle inputId="cleaning-enabled"
       checked=isCleanEnabled
-      class="pull-right right"
-      spinnerSide="left"
+      class=(if media.isMobile "pull-right right" "toggle-right-side")
+      spinnerSide=(if media.isMobile "left" "right")
       update=(action "toggleCleaning")}}
   </h1>
 </div>
 {{#if isCleanEnabled}}
-  <div class="space-cleaning-settings cleaning-settings-row">
+  <div class="space-cleaning-settings auto-save-settings-row cleaning-settings-row">
     <div class="form-cell cell">
       {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
     </div>
@@ -31,8 +31,8 @@
       </div>
       <div class="row loadable-row content-row no-padding-top no-padding-bottom">
         {{#loading-container
-          isLoading=spaceAutoCleaningUpdater.cleanStatusIsInitializing
-          errorReason=spaceAutoCleaningUpdater.cleanStatusError
+          isLoading=spaceAutoCleaningStatusUpdater.isInitializing
+          errorReason=spaceAutoCleaningStatusUpdater.error
           customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
         }}
           <div class="row content-row no-border no-padding-bottom">
@@ -74,12 +74,15 @@
     </div>
     <div class="loadable-row">
       {{#loading-container
-        isLoading=spaceAutoCleaningUpdater.cleanReportsIsInitializing
-        errorReason=spaceAutoCleaningUpdater.cleanReportsError
+        isLoading=spaceAutoCleaningReportsUpdater.isInitializing
+        errorReason=spaceAutoCleaningReportsUpdater.error
         customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
       }}
-        {{space-cleaning-reports data=reports}}
-      {{/loading-container}}  
+        {{space-cleaning-reports
+          spaceId=spaceId
+          isCleanEnabled=isCleanEnabled
+        }}
+      {{/loading-container}}
     </div>
   </div>
 {{/if}}

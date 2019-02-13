@@ -4,14 +4,23 @@
  *
  * @module components/space-storage-synchronization
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { computed } from '@ember/object';
+import { or } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 
-export default Component.extend({
+export default Component.extend(I18n, {
+  eventsBus: service(),
+
+  /** @override */
+  i18nPrefix: 'components.spaceStorageSynchronization',
+
   /**
    * Callback to notify change of `syncInterval`
    * Invoked with `syncInterval` arg (see `syncIterval` property)
@@ -54,4 +63,32 @@ export default Component.extend({
    * @type {Array<object>}
    */
   timeStats: undefined,
+
+  /**
+   * @virtual
+   * @type {Space}
+   */
+  space: undefined,
+
+  importConfigurationOpen: or('importEnabled', 'importConfigurationEdition'),
+
+  /**
+   * True if import is enabled in configuration
+   * @type {boolean}
+   */
+  importEnabled: computed('space.importConfiguration.strategy', function importEnabled() {
+    const strategy = this.get('space.importConfiguration.strategy');
+    return !!strategy && strategy !== 'no_import';
+  }),
+
+  importConfigurationEdition: false,
+
+  actions: {
+    modifySpace(...args) {
+      return this.get('modifySpace')(...args)
+        .then(() => this.get('eventsBus').trigger(
+          this.elementId + '-synchronization-config:close'
+        ));
+    },
+  },
 });

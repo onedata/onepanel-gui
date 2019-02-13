@@ -11,57 +11,57 @@
       <br>
       {{tt this "conditionsHintDisabled"}}
     {{/one-label-tip}}
-    <span class="form-state">
-      {{#if (eq _formStatus "saving")}}
-        <span class="animated infinite semi-hinge pulse-mint">{{t "components.spaceCleaningConditionsForm.saving"}}</span>
-      {{else if (eq _formStatus "modified")}}
-        {{t "components.spaceCleaningConditionsForm.modified"}}
-      {{else if (eq _formStatus "saved")}}
-        {{t "components.spaceCleaningConditionsForm.saved"}}
-      {{else if (eq _formStatus "failed")}}
-        <span class="text-danger">{{t "components.spaceCleaningConditionsForm.updateFailed"}}</span>
-      {{/if}}
-    </span>
     {{one-way-toggle
-      class="selective-cleaning-toggle"
       checked=isEnabled
       update=(action "configureEnabled")
-      spinnerSide="left"
+      class=(concat "selective-cleaning-toggle " (if media.isMobile "pull-right right" "toggle-right-side"))
+      spinnerSide=(if media.isMobile "left" "right")
     }}
+    <span class="form-state">
+      {{#if (eq formStatus "saving")}}
+        <span class="animated infinite semi-hinge pulse-mint">{{t "mixins.components.autoSaveForm.saving"}}</span>
+      {{else if (eq formStatus "modified")}}
+        {{t "mixins.components.autoSaveForm.modified"}}
+      {{else if (eq formStatus "saved")}}
+        {{t "mixins.components.autoSaveForm.saved"}}
+      {{else if (eq formStatus "failed")}}
+        <span class="text-danger">{{t "mixins.components.autoSaveForm.updateFailed"}}</span>
+      {{/if}}
+    </span>
   </h1>
 </div>
 {{#bs-form class=(concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")) as |form|}}
-  {{#each _sourceFieldNames as |fieldName|}}
+  {{#each sourceFieldNames as |fieldName|}}
     {{#form.group 
-      class=(concat-classes (concat fieldName "Group") (if (get _formFieldsErrors fieldName) "has-error"))
+      class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
     }}
       <div class="toggle-column">
         {{one-checkbox 
           class="item-checkbox"
-          isReadOnly=(eq _formStatus "saving")
-          checked=(get _formData (concat fieldName "Enabled"))
+          isReadOnly=(eq formStatus "saving")
+          checked=(get formData (concat fieldName "Enabled"))
           update=(action "dataChanged" (concat fieldName "Enabled"))
         }}
       </div>
-      <label for={{concat elementId fieldName}} class="label-column control-label {{if (not (get _formData (concat fieldName "Enabled"))) "disabled"}}">
+      <label for={{concat elementId fieldName}} class="label-column control-label {{if (not (get formData (concat fieldName "Enabled"))) "disabled"}}">
         {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
       </label>
       <div class="fields-column">
         {{one-way-input
-          value=(get _formData (concat fieldName "Number"))
-          disabled=(or (not (get _formData (concat fieldName "Enabled"))) (eq _formStatus "saving"))
+          value=(get formData (concat fieldName "Number"))
+          disabled=(or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving"))
           class="condition-number-input form-control input-sm"
           focusOut=(action "lostFocus")
           update=(action "dataChanged" (concat fieldName "Number"))
           onenter=(action "forceSave")
           id=(concat elementId fieldName)}}
-        {{#if (get _formData (concat fieldName "Unit"))}}
+        {{#if (get formData (concat fieldName "Unit"))}}
           {{#power-select
             triggerClass="small"
             dropdownClass="small"
-            disabled=(or (not (get _formData (concat fieldName "Enabled"))) (eq _formStatus "saving"))
+            disabled=(or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving"))
             options=(if (eq fieldName "minHoursSinceLastOpen") _timeUnits _sizeUnits)
-            selected=(get _formData (concat fieldName "Unit"))
+            selected=(get formData (concat fieldName "Unit"))
             onchange=(action "dataChanged" (concat fieldName "Unit"))
             searchEnabled=false
             renderInPlace=true
@@ -69,7 +69,7 @@
             {{unit.name}}
           {{/power-select}}
         {{else}}
-          <div class={{concat "static-condition-unit " (if (or (not (get _formData (concat fieldName "Enabled"))) (eq _formStatus "saving")) "disabled")}}>
+          <div class={{concat "static-condition-unit " (if (or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving")) "disabled")}}>
             {{t "components.spaceCleaningConditionsForm.times"}}
           </div>
         {{/if}}

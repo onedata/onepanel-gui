@@ -7,6 +7,8 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
+* VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update
+* VFS-5114 Infinite-scroll list of auto-cleaning reports, file-popularity options and major refactor of space support views
 * VFS-5153 Added DNS autodetect option
 * VFS-5070 Added new conditions and using refactored API for auto-cleaning
 * VFS-4919 Added support for WebDAV storage

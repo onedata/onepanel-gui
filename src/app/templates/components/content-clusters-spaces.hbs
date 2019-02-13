@@ -1,42 +1,34 @@
-  {{!-- TODO i18n --}}
-  
-<div class="row content-row header-row hidden-xs">
-  <h1 class="with-menu">
-    <span class="one-label">{{tt this "spaces"}}</span>
-    {{actions-toolbar actionsArray=globalActions}}
-    {{!-- Only for development --}}
-    {{!--{{#one-spin-button
-      action=(action "updateSpacesList")
-      class="btn btn-sm btn-default btn-update-spaces-list"
+{{#if selectedSpaceProxy}}
+  {{#promise-proxy-container
+    proxy=selectedSpaceProxy
+    spinnerBlockClass="absolute-middle-centered"
+  }}
+    {{content-clusters-spaces-show
+      space=selectedSpaceProxy.content
+      providerProxy=providerProxy
+      modifySpace=(action "modifySpace" selectedSpaceProxy.content)
+      startRevokeSpace=(action "startRevokeSpace")
+      selectedTab=selectedTab
     }}
-      Refresh list
-    {{/one-spin-button}}--}}
-  </h1>
-</div>
-
-<div class="row">
-  <div id="support-space" class="row content-row row-small {{unless _supportSpaceOpened 'row-hidden'}}">
-    {{#if _supportSpaceOpened}}
-      <h1 class="form-title">{{tt this "addSupportForSpace"}}</h1>
-      {{support-space-form
-        submitSupportSpace=(action "submitSupportSpace")
-        isFormOpened=_supportSpaceOpened
-      }}
-    {{/if}}
-  </div>
-  {{#promise-proxy-container proxy=providerProxy}}
-    {{#loading-container isLoading=spacesListLoading errorReason=spacesProxy.reason}}
-      {{cluster-spaces-table
-        spaces=spaces
-        provider=providerProxy.content
-        revokeSpace=(action "revokeSpace")
-        modifySpace=(action "modifySpace")
-      }}
-      {{#if someSpaceIsLoading}}
-        <div class="loading-more-row">
-          {{spin-spinner-block sizeClass="sm" class="fill-middle-centered"}}
-        </div>
-      {{/if}}
-    {{/loading-container}}
   {{/promise-proxy-container}}
-</div>
+{{else}}
+  {{content-clusters-spaces-list
+    providerProxy=providerProxy
+    spacesProxy=spacesProxy
+    startRevokeSpace=(action "startRevokeSpace")
+    updateSpacesProxy=(action "updateSpacesProxy")
+  }}
+{{/if}}
+
+{{#proceed-process-modal
+  opened=spaceToRevoke
+  close=(action "confirmRevokeModal" false)
+  proceed=(action "confirmRevokeModal" true)
+  modalIcon="sign-warning-rounded"
+  headerText=(tt this "revokeSupportTitle")
+  cancelButtonText=(tt this "revokeSupportCancel")
+  proceedButtonText=(tt this "revokeSupportProceed")
+}}
+  <p>{{tt this "revokeSupportMsg" spaceName=spaceToRevoke.name}}</p>
+  <p>{{tt this "revokeSupportQuestion"}}</p>
+{{/proceed-process-modal}}

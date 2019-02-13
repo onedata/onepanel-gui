@@ -4,18 +4,23 @@ import clusterStorageAddForm from './components/cluster-storage-add-form';
 import supportSpaceForm from './components/support-space-form';
 import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
+import clusterSpacesTable from './components/cluster-spaces-table';
 import storageImportUpdateForm from './components/storage-import-update-form';
 import spaceStatusIcons from './components/space-status-icons';
 import loginBox from './components/login-box';
 import providerRegistrationForm from './components/provider-registration-form';
-import spaceFilesPopularity from './components/space-files-popularity';
+import spaceFilePopularity from './components/space-file-popularity';
+import spaceFilePopularityConfiguration from './components/space-file-popularity-configuration';
 import spaceAutoCleaning from './components/space-auto-cleaning';
 import spaceCleaningReports from './components/space-cleaning-reports';
 import spaceCleaningBarChart from './components/space-cleaning-bar-chart';
 import spaceCleaningConditionsForm from './components/space-cleaning-conditions-form';
+import spaceOverview from './components/space-overview';
 import newClusterZoneRegistration from './components/new-cluster-zone-registration';
 import deregisterProviderConfirm from './components/deregister-provider-confirm';
 import contentClustersSpaces from './components/content-clusters-spaces';
+import contentClustersSpacesList from './components/content-clusters-spaces-list';
+import contentClustersSpacesShow from './components/content-clusters-spaces-show';
 import contentClustersNodes from './components/content-clusters-nodes';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterInstallation from './components/new-cluster-installation';
@@ -46,8 +51,11 @@ import clusterStoragesTile from './components/cluster-storages-tile';
 import contentClustersOverview from './components/content-clusters-overview';
 import onezoneInfoBox from './components/onezone-info-box';
 import sidebarClusters from './components/sidebar-clusters';
+import spaceStorageSynchronization from './components/space-storage-synchronization';
+import supportSizeInfo from './components/support-size-info';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
+import spaceTabs from './mixins/components/space-tabs';
 
 import guiUtils from './services/gui-utils';
 import clusterActions from './services/cluster-actions';
@@ -65,19 +73,24 @@ let translations = {
     clusterStorageAddForm,
     supportSpaceForm,
     storageItem,
+    clusterSpacesTable,
     clusterSpacesTableItem,
     storageImportUpdateForm,
     spaceStatusIcons,
     loginBox,
     providerRegistrationForm,
-    spaceFilesPopularity,
+    spaceFilePopularity,
+    spaceFilePopularityConfiguration,
     spaceAutoCleaning,
     spaceCleaningReports,
     spaceCleaningBarChart,
     spaceCleaningConditionsForm,
+    spaceOverview,
     newClusterZoneRegistration,
     deregisterProviderConfirm,
     contentClustersSpaces,
+    contentClustersSpacesList,
+    contentClustersSpacesShow,
     newClusterDeployProgress,
     newClusterInstallation,
     newClusterIps,
@@ -108,10 +121,13 @@ let translations = {
     contentClustersOverview,
     onezoneInfoBox,
     sidebarClusters,
+    spaceStorageSynchronization,
+    supportSizeInfo,
   },
   mixins: {
     components: {
       clusterIpsConfigurator,
+      spaceTabs,
     },
   },
   services: {
