@@ -92,49 +92,58 @@ export default OnepanelServerBase.extend(
      *                    reject(error: string)
      */
     request(api, method, ...params) {
-      let promise = new Promise((resolve, reject) => {
-        let callback = (error, data, response) => {
-          let taskId = getTaskId(response);
-          let task;
-          if (taskId) {
-            task = watchTaskStatus(this, taskId);
-          }
-          if (error) {
-            reject(error);
+      return new Promise((requestResolve, requestReject) => {
+          const callback = (error, data, response) => {
+            let taskId = getTaskId(response);
+            let task;
+            if (taskId) {
+              task = watchTaskStatus(this, taskId);
+            }
+            if (error) {
+              requestReject(error);
+            } else {
+              requestResolve({
+                data,
+                response,
+                task,
+              });
+            }
+          };
+          const customHandler = CUSTOM_REQUESTS[`${api}_${method}`];
+          if (customHandler) {
+            customHandler(...params, callback);
           } else {
-            resolve({
-              data,
-              response,
-              task,
-            });
-          }
-        };
-        let customHandler = CUSTOM_REQUESTS[`${api}_${method}`];
-        if (customHandler) {
-          customHandler(...params, callback);
-        } else {
-          if (this.get('isInitialized')) {
-            const apiObject = this.get('_' + api + 'Api');
-            const methodFun = apiObject[method];
-            if (methodFun) {
-              methodFun.bind(apiObject)(...params, callback);
+            if (this.get('isInitialized')) {
+              const apiObject = this.get('_' + api + 'Api');
+              const methodFun = apiObject[method];
+              if (methodFun) {
+                let ensureTokenPromise;
+                if (!this.isClientTokenUpToDate()) {
+                  ensureTokenPromise = this.renewClientToken();
+                } else {
+                  ensureTokenPromise = resolve();
+                }
+                ensureTokenPromise
+                  .then(() => {
+                    methodFun.bind(apiObject)(...params, callback);
+                  });
+              } else {
+                throw new Error(
+                  `No such method in API client: ${api} ${method}, maybe the oneclient package is incompatible?`
+                );
+              }
             } else {
               throw new Error(
-                `No such method in API client: ${api} ${method}, maybe the oneclient package is incompatible?`
+                'API client not inialized, maybe there was request before authentication'
               );
             }
-          } else {
-            throw new Error(
-              'API client not inialized, maybe there was request before authentication'
-            );
+
           }
-
-        }
-      });
-
-      promise.catch(error => this.handleRequestError(error));
-
-      return promise;
+        })
+        .catch(error => {
+          this.handleRequestError(error);
+          throw error;
+        });
     },
 
     getClusterId() {
@@ -242,24 +251,12 @@ export default OnepanelServerBase.extend(
        */
       let onepanelTokenPromise;
       if (isHosted) {
-        onepanelTokenPromise = new Promise((resolve, reject) => $.ajax(
-          '/gui-token', {
-            method: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify({
-              clusterId: clusterIdFromUrl,
-              clusterType: clusterTypeFromUrl,
-            }),
-          }
-        ).then(resolve, reject));
+        onepanelTokenPromise = getHostedOnepanelToken(
+          clusterIdFromUrl,
+          clusterTypeFromUrl
+        );
       } else {
-        // FIXME: this will be POST in future
-        onepanelTokenPromise = new Promise((resolve, reject) => $.ajax(
-          '/gui-token', {
-            method: 'GET',
-          }
-        ).then(resolve, reject));
+        onepanelTokenPromise = getStandaloneOnepanelToken();
       }
 
       // FIXME: use ttl and get new token, so move above to other fun
@@ -267,11 +264,16 @@ export default OnepanelServerBase.extend(
       return onepanelTokenPromise
         .then(tokenData => {
           const onepanelToken = tokenData.token;
+          const ttl = tokenData.ttl;
 
           return this.getApiOriginProxy({ fetchArgs: [tokenData] })
             .then(apiOrigin => {
               return run(() => {
-                return this.initClient({ token: onepanelToken, origin: apiOrigin })
+                return this.initClient({
+                    token: onepanelToken,
+                    origin: apiOrigin,
+                    ttl,
+                  })
                   .then(() => {
                     return this.request('onepanel', 'getCurrentUser').then(
                       ({ data }) => {
@@ -294,11 +296,11 @@ export default OnepanelServerBase.extend(
      * @param {string} [origin]
      * @returns {Onepanel.ApiClient}
      */
-    createClient({ token, origin } = {}) {
+    createClient({ token, origin, ttl } = {}) {
       const location = this.get('_location');
       let client = new Onepanel.ApiClient();
       if (token) {
-        client.defaultHeaders['X-Auth-Token'] = token;
+        setClientToken(client, token, ttl);
       }
       client.basePath = replaceUrlOrigin(client.basePath, origin || location.origin);
       return client;
@@ -313,9 +315,9 @@ export default OnepanelServerBase.extend(
      * @param {string} [origin]
      * @returns {Promise}
      */
-    initClient({ token, origin } = {}) {
+    initClient({ token, origin, ttl } = {}) {
       return new Promise((resolve) => {
-        let client = this.createClient({ token, origin });
+        let client = this.createClient({ token, origin, ttl });
         this.set('client', client);
         resolve();
       });
@@ -325,6 +327,42 @@ export default OnepanelServerBase.extend(
       this.setProperties({
         client: null,
       });
+    },
+
+    isClientTokenUpToDate() {
+      const client = this.get('client');
+      if (client) {
+        return get(client, 'tokenUpdateTime') + get(client, 'ttl') * 1000 >=
+          Date.now() + 1000;
+      } else {
+        throw new Error(
+          'service:onepanel-server#isClientTokenUpToDate: client not initialized'
+        );
+      }
+    },
+
+    renewClientToken() {
+      const client = this.get('client');
+      if (client) {
+        const isStandalone = this.get('isStandalone');
+        let tokenPromise;
+        if (isStandalone) {
+          tokenPromise = getStandaloneOnepanelToken();
+        } else {
+          tokenPromise = getHostedOnepanelToken(
+            this.getClusterIdFromUrl(),
+            this.getClusterTypeFromUrl()
+          );
+        }
+        return tokenPromise
+          .then(({ token, ttl }) => {
+            setClientToken(client, token, ttl);
+          });
+      } else {
+        throw new Error(
+          'service:onepanel-server: No client initialized to renew the token'
+        );
+      }
     },
 
     /**
@@ -382,3 +420,34 @@ export default OnepanelServerBase.extend(
     },
   }
 );
+
+function setClientToken(client, token, ttl) {
+  client.defaultHeaders['X-Auth-Token'] = token;
+  client.tokenUpdateTime = Date.now();
+  if (ttl != null) {
+    client.ttl = ttl;
+  }
+}
+
+function getHostedOnepanelToken(clusterId, clusterType) {
+  return new Promise((resolve, reject) => $.ajax(
+    '/gui-token', {
+      method: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      data: JSON.stringify({
+        clusterId: clusterId,
+        clusterType: clusterType,
+      }),
+    }
+  ).then(resolve, reject));
+}
+
+function getStandaloneOnepanelToken() {
+  // FIXME: this will be POST in future
+  return new Promise((resolve, reject) => $.ajax(
+    '/gui-token', {
+      method: 'GET',
+    }
+  ).then(resolve, reject));
+}

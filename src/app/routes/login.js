@@ -52,8 +52,8 @@ export default LoginRoute.extend({
     const isHosted = !!clusterIdFromUrl;
     if (isHosted) {
       return new Promise(() => {
-        if (sessionStorage.getItem('redirectFromOnezone')) {
-          sessionStorage.setItem('redirectFromOnezone', false);
+        if (sessionStorage.getItem('redirectFromOnezone') === 'true') {
+          sessionStorage.setItem('redirectFromOnezone', 'false');
           throw new Error(
             'Redirection loop detected, try to clear browser cookies, logout from Onezone or contact administrators.'
           );
