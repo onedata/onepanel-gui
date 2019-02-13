@@ -210,9 +210,9 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
-    // mockStep: Number(MOCK_SERVICE_TYPE === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
+    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
     mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(

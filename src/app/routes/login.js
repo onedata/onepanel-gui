@@ -51,13 +51,19 @@ export default LoginRoute.extend({
     const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
     const isHosted = !!clusterIdFromUrl;
     if (isHosted) {
-      // FIXME: test it
       return new Promise(() => {
-        window.location =
-          onezoneGui.getOnepanelNavUrlInOnezone({
-            internalRoute: `/clusters/${clusterIdFromUrl}`,
-            useRedirect: true,
-          });
+        if (sessionStorage.getItem('redirectFromOnezone')) {
+          sessionStorage.setItem('redirectFromOnezone', false);
+          throw new Error(
+            'Redirection loop detected, try to clear browser cookies, logout from Onezone or contact administrators.'
+          );
+        } else {
+          window.location =
+            onezoneGui.getOnepanelNavUrlInOnezone({
+              internalRoute: `/clusters/${clusterIdFromUrl}`,
+              useRedirect: true,
+            });
+        }
       });
     } else {
       const baseModel = this._super(...arguments) || {};
