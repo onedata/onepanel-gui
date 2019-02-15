@@ -1,23 +1,47 @@
-<div class="basicauth-login-form-container">
-  {{#if visitViaOnezoneUrl}}
-    <div class="col-xs-12 col-centered login-separator">
-      <p class="login-section-description">{{tt this "visitViaOnezoneDescription"}}</p>
-    </div>
+{{#promise-proxy-container
+  proxy=visitViaOnezoneUrlProxy
+  absoluteCentered=true
+}}
+  <div class="onezone-button-container fading-login-method-container animated fast {{unless visitViaOnezoneUrl "hide"}}">
+    <h2>
+      {{t "components.loginBox.loginFormContainer.visitViaOnezoneHeader"}}
+      <span class="subtitle-tip">
+        {{one-icon icon="sign-question"}}
+        {{one-tooltip title=(tt this "visitViaOnezoneHint")}}
+      </span>
+    </h2>
     <div class="col-xs-12 col-centered login-separator">
       <a href={{visitViaOnezoneUrl}} class="btn btn-primary with-addon full-width btn-login-onezone">
         <img class="btn-img-addon" src="assets/images/auth-providers/onezone.svg">
-        <span class="text">{{tt this "visitViaOnezone"}}</span>
+        <span class="text">{{tt this "visitViaOnezoneButton"}}</span>
       </a>
     </div>
     <div class="col-xs-12 col-centered login-separator">
       {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
-      <p class="login-section-description">{{tt this "loginWithCredentialsDescription"}}</p>
     </div>
-  {{/if}}
-  {{basicauth-login-form
-    authenticationSuccess=authenticationSuccess
-    authenticationFailure=authenticationFailure
-    authenticationStarted=authenticationStarted
-  }}
-</div>
+    <div class="col-xs-12 col-centered login-separator">
+      <p class="text-center">
+        <a {{action "usernameLoginToggle"}} class="text-link">
+          {{tt this "loginWithCredentialsLink"}}
+        </a>
+      </p>
+    </div>
+  </div>
+  <div class="basicauth-login-form-container fading-login-method-container animated fast {{if visitViaOnezoneUrl "hide" "always-visible"}}">
+    <h2>
+      {{t "components.loginBox.loginFormContainer.loginWithCredentialsHeader"}} 
+      <span class="subtitle-tip">
+        {{one-icon icon="sign-question"}}
+        {{one-tooltip title=(tt this "loginWithCredentialsHint")}}
+      </span>
+    </h2>
+    {{basicauth-login-form
+      authenticationSuccess=authenticationSuccess
+      authenticationFailure=authenticationFailure
+      authenticationStarted=authenticationStarted
+      backButtonAction=(if visitViaOnezoneUrl (action "usernameLoginToggle") undefined)
+    }}
+  </div>
+{{/promise-proxy-container}}
+
 {{yield}}
