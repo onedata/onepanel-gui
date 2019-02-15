@@ -23,7 +23,7 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
 
   providerCache: ObjectProxy.create({ content: null }),
   _providerCache: alias('providerCache.content'),
@@ -66,8 +66,8 @@ export default Service.extend({
   modifyProvider(providerData) {
     let {
       onepanelServer,
-      configurationManager,
-    } = this.getProperties('onepanelServer', 'configurationManager');
+      deploymentManager,
+    } = this.getProperties('onepanelServer', 'deploymentManager');
     let providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
     return onepanelServer.request(
         'oneprovider',
@@ -75,7 +75,7 @@ export default Service.extend({
         providerModifyRequest
       )
       .then(() => this.getProviderDetails(true))
-      .then(() => configurationManager.getDefaultRecord(true));
+      .then(() => deploymentManager.getInstallationDetails(true));
   },
 
   /**
@@ -85,10 +85,10 @@ export default Service.extend({
   deregisterProvider() {
     let {
       onepanelServer,
-      configurationManager,
-    } = this.getProperties('onepanelServer', 'configurationManager');
+      deploymentManager,
+    } = this.getProperties('onepanelServer', 'deploymentManager');
     let deregistering = onepanelServer.request('oneprovider', 'removeProvider');
-    deregistering.then(() => configurationManager.getDefaultRecord(true));
+    deregistering.then(() => deploymentManager.getInstallationDetails(true));
     return deregistering;
   },
 

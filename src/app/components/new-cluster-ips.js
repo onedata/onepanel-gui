@@ -1,5 +1,5 @@
 /**
- * Cluster init step: DNS setup for Zone cluster
+ * Cluster init step: DNS setup for Onezone cluster
  *
  * @module components/new-cluster-ips
  * @author Jakub Liput
@@ -16,10 +16,8 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-ips', 'container-fluid'],
 
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   globalNotify: service(),
-  // FIXME: to remove?
-  // cookies: service(),
 
   i18nPrefix: 'components.newClusterIps',
 

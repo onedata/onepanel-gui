@@ -551,9 +551,6 @@ export default OneForm.extend(Validations, I18n, {
         '_willChangeDomainAfterSubmit'
       );
 
-      // FIXME: the ugliest hack in the world
-      window.onezoneDomain = this.get('onezoneDomain');
-
       let values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);

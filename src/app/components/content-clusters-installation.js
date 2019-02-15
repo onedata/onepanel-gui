@@ -17,7 +17,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
   createDataProxyMixin('configuration'), {
-    configurationManager: service(),
+    deploymentManager: service(),
     onepanelConfiguration: service(),
     router: service(),
     onezoneGui: service(),
@@ -49,7 +49,7 @@ export default Component.extend(
     },
 
     fetchConfiguration() {
-      return this.get('configurationManager').getDefaultRecord();
+      return this.get('deploymentManager').getInstallationDetails();
     },
 
     actions: {

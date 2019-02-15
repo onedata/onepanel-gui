@@ -109,9 +109,35 @@
     </div>
   </div>
 {{else if (eq mode "notCompatible")}}
-  {{!-- FIXME: --}}
-  <div class="content-row row row-mode-not-compatible"></div>
+  {{!-- FIXME: special graphics, back button --}}
+  <div class="content-row row row-mode-not-compatible">
+    <div class="row">
+      This Oneprovider is not compatible with chosen Onezone.
+    </div>
+    <div class="row">
+      {{#bs-button
+        type="default"
+        size="sm"
+        onClick=(action "back")
+      }}
+        {{one-icon icon="arrow-left"}}<span>{{tt this "back"}}</span>
+      {{/bs-button}}
+    </div>
+  </div>
 {{else if (eq mode "offline")}}
-{{!-- FIXME: --}}
-  <div class="content-row row row-mode-offline"></div>
+  {{!-- FIXME: gfx, back button, try again button --}}
+  <div class="content-row row row-mode-offline">
+    <div class="row">
+      The chosen Onezone is currently offline.
+    </div>
+    <div class="row">
+      {{#bs-button
+        type="default"
+        size="sm"
+        onClick=(action "back")
+      }}
+        {{one-icon icon="arrow-left"}}<span>{{tt this "back"}}</span>
+      {{/bs-button}}
+    </div>
+  </div>
 {{/if}}

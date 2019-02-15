@@ -8,6 +8,8 @@ export default {
       cluster_manager: 'Cluster Manager',
       oz_worker: 'Onezone Worker',
       op_worker: 'Oneprovider Worker',
+      oneprovider: 'Oneprovider',
+      onezone: 'Onezone',
     },
     action: {
       configure: 'configuring {{service}}',
@@ -19,6 +21,7 @@ export default {
       stop: 'stopping {{service}}',
       setup_certs: 'setting up {{service}} certificates',
       status: 'checking {{status}} status',
+      set_up_service_in_onezone: 'setting up web GUI',
     },
   },
 };

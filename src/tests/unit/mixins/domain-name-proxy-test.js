@@ -6,10 +6,10 @@ import sinon from 'sinon';
 
 describe('Unit | Mixin | domain name proxy', function () {
 
-  it('uses configuration manager to resolve zone domain name', function () {
+  it('uses deployment manager to resolve onezone domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
-    const configurationManager = {
-      getDefaultRecord() {},
+    const deploymentManager = {
+      getInstallationDetails() {},
     };
     const domainName = 'zone.domain.name.com';
     const cluster = {
@@ -19,12 +19,15 @@ describe('Unit | Mixin | domain name proxy', function () {
         },
       },
     };
-    const getDefaultRecord = sinon.stub(configurationManager, 'getDefaultRecord');
-    getDefaultRecord.resolves(cluster);
+    const getInstallationDetails = sinon.stub(
+      deploymentManager,
+      'getInstallationDetails'
+    );
+    getInstallationDetails.resolves(cluster);
 
     const subject = DomainNameProxyObject.create({
       onepanelServiceType: 'onezone',
-      configurationManager,
+      deploymentManager,
     });
 
     return subject.getDomainProxy().then(domain => {

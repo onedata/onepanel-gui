@@ -259,8 +259,6 @@ export default OnepanelServerBase.extend(
         onepanelTokenPromise = getStandaloneOnepanelToken();
       }
 
-      // FIXME: use ttl and get new token, so move above to other fun
-
       return onepanelTokenPromise
         .then(tokenData => {
           const onepanelToken = tokenData.token;
@@ -401,7 +399,7 @@ export default OnepanelServerBase.extend(
             if (error) {
               reject(error);
             } else {
-              // FIXME: hack for handling buggy swagger
+              // TODO: hack for handling buggy swagger
               let xdata;
               if (data) {
                 xdata = data;
@@ -444,7 +442,6 @@ function getHostedOnepanelToken(clusterId, clusterType) {
 }
 
 function getStandaloneOnepanelToken() {
-  // FIXME: this will be POST in future
   return new Promise((resolve, reject) => $.ajax(
     '/gui-token', {
       method: 'GET',

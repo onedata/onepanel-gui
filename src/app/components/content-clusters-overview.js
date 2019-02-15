@@ -20,7 +20,7 @@ export default Component.extend(I18n, {
   providerManager: service(),
   spaceManager: service(),
   storageManager: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
 
   /**
    * @override
@@ -81,7 +81,7 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<PromiseObject<Object>>}
    */
   clusterConfigurationProxy: computed(function clusterConfiguration() {
-    return this.get('configurationManager').getInstallationDetails();
+    return this.get('deploymentManager').getInstallationDetails();
   }),
 
   /**

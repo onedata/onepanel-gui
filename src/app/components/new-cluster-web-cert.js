@@ -28,7 +28,7 @@ export default Component.extend(I18n, {
   classNames: ['new-cluster-web-cert'],
 
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   webCertManager: service(),
   providerManager: service(),
   globalNotify: service(),
@@ -108,7 +108,7 @@ export default Component.extend(I18n, {
           .then(provider => provider && get(provider, 'domain'));
         break;
       case 'onezone':
-        promise = this.get('configurationManager').getConfiguration()
+        promise = this.get('deploymentManager').getConfiguration()
           .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
         break;
       default:

@@ -30,7 +30,7 @@ const GuiUtils = Service.extend({
   updateGuiNameProxy: () => resolve(),
 });
 
-const ConfigurationManager = Service.extend({
+const DeploymentManager = Service.extend({
   getConfiguration() {
     return Promise.resolve({
       data: {
@@ -68,7 +68,7 @@ describe('Integration | Component | new cluster web cert', function () {
   beforeEach(function () {
     registerService(this, 'i18n', I18nStub);
     registerService(this, 'web-cert-manager', WebCertManager);
-    registerService(this, 'configuration-manager', ConfigurationManager);
+    registerService(this, 'deployment-manager', DeploymentManager);
     registerService(this, 'onepanel-server', OnepanelServer);
     registerService(this, 'gui-utils', GuiUtils);
     this.set('_location', {});

@@ -12,7 +12,7 @@ import { Promise } from 'rsvp';
 import Service, { inject as service } from '@ember/service';
 
 export default Service.extend({
-  configurationManager: service(),
+  deploymentManager: service(),
   clusterModelManager: service(),
   userManager: service(),
   onepanelServer: service(),

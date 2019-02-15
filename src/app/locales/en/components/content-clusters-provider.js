@@ -18,7 +18,7 @@ export default {
     show: 'This provider was registered with following data',
     edit: 'You can update registered provider details and submit the changes in ' +
       'form below',
-    new: 'The provider is currently not registered in any Zone. Please enter ' +
+    new: 'The provider is currently not registered in any Onezone. Please enter ' +
       'details of provider for registration.',
   },
   letsEncrypt,

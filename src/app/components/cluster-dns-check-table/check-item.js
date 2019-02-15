@@ -46,7 +46,7 @@ export default Component.extend(I18n, {
   /**
    * @virtual
    * @type {string}
-   * One of: zone, provider
+   * One of: onezone, oneprovider
    */
   onepanelServiceType: undefined,
 

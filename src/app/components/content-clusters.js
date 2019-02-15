@@ -16,7 +16,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 
 export default Component.extend(
   createDataProxyMixin('configuration'), {
-    configurationManager: service(),
+    deploymentManager: service(),
     router: service(),
 
     initProcess: false,
@@ -56,7 +56,7 @@ export default Component.extend(
     },
 
     fetchConfiguration() {
-      return this.get('configurationManager').getDefaultRecord();
+      return this.get('deploymentManager').getInstallationDetails();
     },
 
     actions: {

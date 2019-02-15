@@ -47,7 +47,7 @@
     "ember-cli-node-assets": "0.2.2",
     "ember-cli-nouislider": "0.14.1",
     "ember-cli-release": "1.0.0-beta.2",
-    "ember-cli-sass": "8.0.1",
+    "ember-cli-sass": "10.0.0",
     "ember-cli-shims": "1.2.0",
     "ember-cli-sri": "2.1.1",
     "ember-cli-test-loader": "2.2.0",
@@ -89,7 +89,7 @@
     "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#52366b986febed0a14a9cb9a63c39a2e8c16d7bc",
     "perfect-scrollbar": "0.8.1",
     "round10": "1.0.3",
-    "sass": "1.16.0",
+    "sass": "1.17.0",
     "sinon": "4.2.0",
     "sinon-chai": "2.14.0"
   },

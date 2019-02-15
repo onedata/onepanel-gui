@@ -22,7 +22,7 @@ export default Service.extend(
     guiUtils: service(),
     onepanelConfiguration: service(),
     providerManager: service(),
-    configurationManager: service(),
+    deploymentManager: service(),
 
     fetchRawCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
@@ -84,9 +84,9 @@ export default Service.extend(
      */
     generateGuiCluster(data, assumeItIsLocal = false) {
       const {
-        configurationManager,
+        deploymentManager,
         providerManager,
-      } = this.getProperties('configurationManager', 'providerManager');
+      } = this.getProperties('deploymentManager', 'providerManager');
       const onepanelGuiType = this.get('guiUtils.serviceType');
 
       const cluster = _.cloneDeep(data);
@@ -97,7 +97,7 @@ export default Service.extend(
           if (get(currentCluster, 'id') === get(cluster, 'id')) {
             set(cluster, 'isLocal', true);
             installationDetailsProxy =
-              configurationManager.getInstallationDetails(false);
+              deploymentManager.getInstallationDetails(false);
             return installationDetailsProxy.then(installationDetails => {
               set(
                 cluster,
@@ -113,7 +113,7 @@ export default Service.extend(
           if (cluster.type === 'onezone') {
             if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
-                configurationManager.getInstallationDetails(false);
+                deploymentManager.getInstallationDetails(false);
               return installationDetailsProxy
                 .then(installationDetails => {
                   cluster.name = get(installationDetails, 'name');

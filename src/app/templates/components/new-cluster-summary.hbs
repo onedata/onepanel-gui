@@ -4,13 +4,12 @@
   buttonLabel=(tt this "buttonLabel")
   buttonAction=(action "manageNewCluster")
 }}
-  {{!-- FIXME: fonts? --}}
-  <div class="text-center">{{tt this "textFullyOperational"}}</div>
-  <div class="text-center">{{tt this "textTwoWays"}}</div>
+  <p class="text-center">{{tt this "textFullyOperational"}}</p>
+  <p class="text-center">{{tt this "textTwoWays"}}</p>
   <ul class="info">
     <li>
       {{tt this "wayOnezoneInterface"}}
-      <strong>({{tt this "wayOnezoneRecommended"}})</strong>.
+      <strong>({{tt this "wayOnezoneRecommended"}})</strong> –
       {{tt this "wayOnezoneInterface1"}}
       {{tt this "wayOnezoneInterface2"}}
       <div class="inline-icon-container">
@@ -29,9 +28,9 @@
       {{tt this "wayOnepanelInterface2"}}
     </li>
   </ul>
-  <div>
+  <p>
     {{tt this "currentlyOn1"}}
     {{tt this (concat "currentlyOn" (if isStandaloneOnepanel "Standalone" "Onezone"))}}
     {{tt this "currentlyOn2"}}.
-  </div>
+  </p>
 {{/content-info}}

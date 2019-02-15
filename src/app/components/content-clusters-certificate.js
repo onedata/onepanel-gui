@@ -35,7 +35,7 @@ const webCertPollInterval = 2000;
 export default Component.extend(I18n, GlobalActions, {
   webCertManager: service(),
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   providerManager: service(),
   globalNotify: service(),
   guiUtils: service(),
@@ -117,8 +117,7 @@ export default Component.extend(I18n, GlobalActions, {
           .then(provider => provider && get(provider, 'domain'));
         break;
       case 'onezone':
-        // FIXME: change to configurationManager
-        promise = this.get('configurationManager').getConfiguration()
+        promise = this.get('deploymentManager').getConfiguration()
           .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
         break;
       default:

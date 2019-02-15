@@ -1,17 +1,15 @@
-// FIXME: outdated description
 /**
- * Provides data for routes and components assoctiated with clusters tab
+ * Provides data for routes and components assoctiated with deployment of cluster
  *
- * @module services/configuration-manager
+ * @module services/deployment-manager
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
-import { A } from '@ember/array';
 import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
@@ -45,23 +43,6 @@ export default Service.extend({
    * @type {ClusterDetails}
    */
   _defaultCache: alias('defaultCache.content'),
-
-  // FIXME: needs refactor - the-cluster should be named that way
-  /**
-   * Promise proxy resolves with array of promise proxies for ClusterDetails
-   * @returns {PromiseObject}
-   */
-  getClusters() {
-    let promise = new Promise((resolve) => {
-      resolve(A([this.getDefaultRecord()]));
-    });
-    return PromiseObject.create({ promise });
-  },
-
-  // FIXME: needs refactor - the-cluster should be named that way
-  getDefaultRecord(reload = false) {
-    return this.getInstallationDetails(reload);
-  },
 
   // TODO: in future this should be able to get details of any cluster 
   // in system 
@@ -185,7 +166,7 @@ export default Service.extend({
   },
 
   /**
-   * Get a cluster configuration for current service type
+   * Get cluster deployment configuration for current service type
    * @param {boolean} [validateData] if true, make validation of cluster configuration
    * @returns {Promise} result of GET configuration request
    */
@@ -257,7 +238,6 @@ export default Service.extend({
     });
   },
 
-  // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise} resolves with
@@ -426,7 +406,7 @@ export default Service.extend({
 
       gettingHostNames.catch(error => {
         console.error(
-          'service:configuration-manager: Getting hostnames failed'
+          'service:deployment-manager: Getting hostnames failed'
         );
         reject(error);
       });

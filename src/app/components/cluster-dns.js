@@ -37,7 +37,7 @@ export default Component.extend(
     classNames: ['cluster-dns'],
 
     onepanelServer: service(),
-    configurationManager: service(),
+    deploymentManager: service(),
     providerManager: service(),
     dnsManager: service(),
     guiUtils: service(),

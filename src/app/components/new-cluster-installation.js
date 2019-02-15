@@ -50,7 +50,7 @@ export default Component.extend(I18n, {
   classNames: ['new-cluster-installation', 'container-fluid'],
 
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   globalNotify: service(),
   cookies: service(),
   i18n: service(),
@@ -200,7 +200,7 @@ export default Component.extend(I18n, {
     this.set(
       'hostsProxy',
       PromiseObject.create({
-        promise: this.get('configurationManager').getHosts()
+        promise: this.get('deploymentManager').getHosts()
           .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
       })
     );
@@ -252,7 +252,7 @@ export default Component.extend(I18n, {
 
   /**
    * Create an object of cluster deployment configuration using onepanel lib
-   * @param {string} serviceType one of: provider, zone
+   * @param {string} serviceType one of: oneprovider, onezone
    * @return {Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration}
    */
   createConfiguration(serviceType) {
@@ -490,7 +490,7 @@ export default Component.extend(I18n, {
       } else {
         const _newHostname = this.get('_newHostname');
         this.set('_isSubmittingNewHost', true);
-        return this.get('configurationManager').addKnownHost(_newHostname)
+        return this.get('deploymentManager').addKnownHost(_newHostname)
           .then(knownHost => {
             const newHost = ClusterHostInfo.create(knownHost);
             this.get('hosts').pushObject(newHost);

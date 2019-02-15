@@ -5,7 +5,7 @@ export default {
   buttonLabel: 'Manage cluster via Onezone',
   wayOnezoneInterface: 'Onezone interface',
   wayOnezoneRecommended: 'recommended',
-  wayOnezoneInterface1: 'This interface integrates all functionalities offered by Onedata.',
+  wayOnezoneInterface1: 'this interface integrates all functionalities offered by Onedata.',
   wayOnezoneInterface2: 'You will find your cluster in the',
   wayOnezoneInterfaceClusters: 'Clusters',
   wayOnezoneInterface3: 'menu.',

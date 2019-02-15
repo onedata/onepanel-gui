@@ -58,7 +58,7 @@ const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 export default Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   providerManager: service(),
   guiUtils: service(),
 

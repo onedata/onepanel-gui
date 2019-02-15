@@ -14,8 +14,8 @@ const ClusterModelManagerStub = Service.extend({
 
 const GuiUtils = Service.extend({});
 
-describe('Unit | Service | configuration manager', function () {
-  setupTest('service:configuration-manager', {
+describe('Unit | Service | deployment manager', function () {
+  setupTest('service:deployment-manager', {
     // Specify the other units that are required for this test.
     // needs: ['service:foo']
   });

@@ -6,7 +6,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default OnedataRoute.extend(I18n, {
   clusterModelManager: service(),
   onepanelServer: service(),
-  configurationManager: service(),
+  deploymentManager: service(),
   onepanelConfiguration: service(),
 
   /**
@@ -29,7 +29,7 @@ export default OnedataRoute.extend(I18n, {
     const isStandalone = this.get('onepanelServer.isStandalone');
     return Promise.all([
       this._super(...arguments),
-      this.get('configurationManager').getInstallationDetails(),
+      this.get('deploymentManager').getInstallationDetails(),
     ]).then(([model, installDetails]) => {
       if (isStandalone) {
         const items = get(model, 'mainMenuItems');
