@@ -69,6 +69,7 @@ export default GuiUtils.extend(
           onepanelServer,
           onezoneGui,
         } = this.getProperties('onepanelServer', 'onezoneGui');
+        // FIXME: remove first option - go to onezone
         if (get(onepanelServer, 'isStandalone')) {
           return get(onezoneGui, 'clusterUrlInOnepanel');
         } else {
@@ -99,6 +100,7 @@ export default GuiUtils.extend(
           'clusterModelManager',
           'serviceType'
         );
+        // FIXME: do not show in standalone mode
         if (get(onepanelServer, 'isStandalone')) {
           const isDeployed =
             get(clusterModelManager, 'currentCluster.isNotDeployed') === false;

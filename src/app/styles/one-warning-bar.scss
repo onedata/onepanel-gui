@@ -1,0 +1,29 @@
+$one-warning-bar-height: 32px;
+$one-warning-bar-shadow-height: 10px;
+
+.one-warning-bar {
+  position: absolute;
+  height: $one-warning-bar-height;
+  background-color: $color-one-orange;
+  width: 100%;
+  bottom: 0;
+  line-height: $one-warning-bar-height;
+  color: $color-one-white;
+  z-index: 1002;
+  
+  &::before {
+    position: absolute;
+    top: -$one-warning-bar-shadow-height;
+    height: $one-warning-bar-shadow-height;
+    background: linear-gradient(to bottom, transparent, #00000033);
+    content: ' ';
+    width: 100%;
+  }
+}
+
+.one-warning-bar + .app-layout {
+  bottom: $one-warning-bar-height;
+  .brand-info {
+    bottom: $one-warning-bar-height;
+  }
+}

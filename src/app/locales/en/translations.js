@@ -53,6 +53,7 @@ import onezoneInfoBox from './components/onezone-info-box';
 import sidebarClusters from './components/sidebar-clusters';
 import spaceStorageSynchronization from './components/space-storage-synchronization';
 import supportSizeInfo from './components/support-size-info';
+import standaloneWarningBar from './components/standalone-warning-bar';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -123,6 +124,7 @@ let translations = {
     sidebarClusters,
     spaceStorageSynchronization,
     supportSizeInfo,
+    standaloneWarningBar,
   },
   mixins: {
     components: {

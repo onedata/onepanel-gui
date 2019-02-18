@@ -1,0 +1,18 @@
+<div class="text-center">
+  <span>{{text}}</span>
+  &nbsp;
+  <div class="inline-icon-container sm" {{action "toggleInfoModal" true}}>
+    {{one-icon icon="sign-info"}}
+  </div>
+</div>
+
+{{#bs-modal
+  id="one-warning-bar"
+  open=infoOpened
+  onHide=(action "toggleInfoModal" false)
+  keyboard=true
+  backdropClose=true
+  as |modal|
+}}
+  {{yield (hash modal=modal)}}
+{{/bs-modal}}

@@ -1,0 +1,27 @@
+{{#one-warning-bar
+  text=(tt this "text")
+  as |bar|
+}}
+  {{#bar.modal.header}}
+    <h1>
+      {{one-icon icon="sign-info"}}
+      <span class="one-label">{{tt this "modal.header"}}</span>
+    </h1>
+  {{/bar.modal.header}}
+  {{#bar.modal.body}}
+    <p>{{tt this "modal.text1"}}</p>
+    <p>{{tt this "modal.text2"}}</p>
+  {{/bar.modal.body}}
+  {{#bar.modal.footer class="btn-toolbar"}}
+    {{#bs-button
+      type="default"
+      onClick=(action bar.modal.close)
+    }}
+      {{tt this "modal.close"}}
+    {{/bs-button}}
+    <a href={{onezoneUrl}} class="btn btn-primary">
+      {{one-icon icon="onezone"}}
+      {{tt this "modal.openInOnezone"}}
+    </a>
+  {{/bar.modal.footer}}
+{{/one-warning-bar}}

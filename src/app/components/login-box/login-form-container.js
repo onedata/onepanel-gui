@@ -28,6 +28,7 @@ export default LoginFormContainer.extend(I18n, {
   onepanelServer: service(),
   onezoneGui: service(),
   onepanelConfiguration: service(),
+  eventsBus: service(),
 
   /**
    * Timeout id used to control login via Onezone visibility animation.
@@ -74,7 +75,12 @@ export default LoginFormContainer.extend(I18n, {
     this._super(...arguments);
     this.get('onezoneGui').getCanEnterViaOnezoneProxy()
       .then(canEnterViaOnezone => {
-        safeExec(this, 'set', 'isUsernameLoginActive', !canEnterViaOnezone);
+        const isUsernameLoginActive = !canEnterViaOnezone;
+        safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
+        this.get('eventsBus').trigger(
+          'login-controller:toggleStandaloneWarningBar',
+          isUsernameLoginActive
+        );
       });
   },
 
@@ -117,7 +123,14 @@ export default LoginFormContainer.extend(I18n, {
       clearTimeout(_formAnimationTimeoutId);
 
       this.toggleProperty('isUsernameLoginActive');
-      if (this.get('isUsernameLoginActive')) {
+      const isUsernameLoginActive = this.get('isUsernameLoginActive');
+
+      this.get('eventsBus').trigger(
+        'login-controller:toggleStandaloneWarningBar',
+        isUsernameLoginActive
+      );
+
+      if (isUsernameLoginActive) {
         this._animateHide($onezoneButton);
         this._animateShow($loginForm, true);
         this.$('.login-username').focus();

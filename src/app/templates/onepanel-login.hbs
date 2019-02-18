@@ -1,4 +1,6 @@
-{{#login-layout class=(if model.isOnezoneAvailable "has-visit-via-onezone")}}
+{{partial "standalone-bar"}}
+
+{{#login-layout}}
   {{#if model.adminUserExists}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}

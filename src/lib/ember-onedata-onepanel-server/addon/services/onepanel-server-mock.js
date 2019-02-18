@@ -270,7 +270,7 @@ export default OnepanelServerBase.extend(
           `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
         );
 
-        if (!staticReq && !cookies.read('is-authenticated')) {
+        if (!staticReq && !cookies.read('is-authenticated') === 'true') {
           run.later(() => {
             reject({
               __request_method: method,
@@ -375,7 +375,7 @@ export default OnepanelServerBase.extend(
       let cookies = this.get('cookies');
       let loginCall = new Promise((resolve, reject) => {
         if (username === 'admin' && password === 'password') {
-          cookies.write('fakeLoginFlag', true);
+          cookies.write('is-authenticated', 'true');
           run.next(resolve);
         } else {
           run.next(reject);
