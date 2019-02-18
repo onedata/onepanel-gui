@@ -358,7 +358,7 @@ export default OnepanelServerBase.extend(
     validateSession() {
       console.debug('service:onepanel-server-mock: validateSession');
       let cookies = this.get('cookies');
-      let fakeLoginFlag = cookies.read('is-authenticated');
+      let fakeLoginFlag = (cookies.read('is-authenticated') === 'true');
       let validating = new Promise((resolve, reject) => {
         if (fakeLoginFlag) {
           run.next(resolve);
@@ -630,16 +630,6 @@ export default OnepanelServerBase.extend(
               `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
             );
           }
-        },
-      };
-    }),
-
-    // currently mocked - waiting for real logout method
-    _req_onepanel_removeSession: computed(function () {
-      return {
-        success() {
-          document.cookie = 'is-authenticated=false; Max-Age=0';
-          return null;
         },
       };
     }),
