@@ -67,7 +67,7 @@ export default SidebarContentRoute.extend({
                     url: origin,
                     serverType: 'onepanel',
                   });
-                  throw new Error('endpoint error');
+                  throw { type: 'endpoint-error' };
                 }
               });
           } else {
