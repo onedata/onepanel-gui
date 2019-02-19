@@ -18,6 +18,8 @@ export default SidebarContentRoute.extend({
   navigationState: service(),
   onezoneGui: service(),
   globalNotify: service(),
+  i18n: service(),
+  alert: service(),
 
   afterModel(model, transition) {
     const result = this._super(...arguments);
@@ -45,8 +47,8 @@ export default SidebarContentRoute.extend({
           // another Onepanel if possible. If Onezone is not available, then
           // redirect to main page.
           if (get(onezoneGui, 'zoneDomain')) {
-
-            return checkImg(`https://${get(model, 'resource.domain')}:9443/favicon.ico`)
+            const origin = `https://${get(model, 'resource.domain')}:9443`;
+            return checkImg(`${origin}/favicon.ico`)
               .then(isAvailable => {
                 if (isAvailable) {
                   const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
@@ -56,11 +58,16 @@ export default SidebarContentRoute.extend({
                   });
                   window.location = redirectUrl;
                 } else {
-                  // FIXME: design of not available domain and text
-                  this.get('globalNotify').backendError('reading cluster endpoint');
-                  throw new Error(
-                    'Selected cluster domain is not available for your web browser.'
-                  );
+                  const i18n = this.get('i18n');
+                  this.get('alert').error(null, {
+                    componentName: 'alerts/endpoint-error',
+                    header: i18n.t('components.alerts.endpointError.headerPrefix') +
+                      ' ' +
+                      i18n.t('components.alerts.endpointError.onepanel'),
+                    url: origin,
+                    serverType: 'onepanel',
+                  });
+                  throw new Error('endpoint error');
                 }
               });
           } else {
