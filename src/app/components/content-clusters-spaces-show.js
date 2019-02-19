@@ -113,6 +113,7 @@ export default Component.extend(
             spaceId,
             configuration
           )
+          .then(({ task }) => task)
           .then(() => {
             if (configuration && get(configuration, 'enabled') === false) {
               // failure of this will not cause fail of configureFilePopularity
