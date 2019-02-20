@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
+    <div class="row content-row">
+      <strong class="property-label">{{tt this "name"}}:</strong>
+      {{name-conflict item=space tagName="span" class="one-label space-name"}}
+    </div>
+    <div class="row content-row">
+      {{clipboard-line
+        value=space.id
+        size="sm"
+        label=(concat (tt this "id") ":")
+      }}
+    </div>
+    <div class="row content-row">
+      <strong class="property-label">{{tt this "mountInRoot"}}:</strong>
+      {{one-way-toggle checked=space.mountInRoot
+        isReadOnly=true
+        class="space-mountInRoot"
+      }}
+    </div>
+    <div class="row content-row">
+      {{#promise-proxy-container proxy=_storage}}
+        <strong class="property-label">{{tt this "storage"}}:</strong>
+        <span class="one-label space-provider-storage">{{_storage.name}}</span>
+      {{/promise-proxy-container}}
+    </div>
+    {{#if space.importEnabled}}
+      <div class="row content-row space-import">
+        <strong class="property-label">{{tt this "storageImport.importStrategy"}}:</strong>
+        <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
+        {{#each importProperties as |property|}}
+          <div class="row content-row nested-row">
+            <strong class="property-label">{{t (concat i18nPrefix ".storageImport." property ".name")}}:</strong>
+            <span class="one-label space-import-{{property}}">{{get space.storageImport property}}</span>
+          </div>
+        {{/each}}
+      </div>
+      <div class="row content-row space-update">
+        <strong class="property-label">{{tt this "storageUpdate.updateStrategy"}}:</strong>
+        <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
+        {{#each updateProperties as |property|}}
+          <div class="row content-row nested-row">
+            <strong class="property-label">{{t (concat i18nPrefix ".storageUpdate." property ".name")}}:</strong>
+            <span class="one-label space-update-{{property}}">{{get space.storageUpdate property}}</span>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+  
+  <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-support">
+    {{#promise-proxy-container proxy=spaceSupportersProxy}}
+      {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
+    {{/promise-proxy-container}}
+    <div class="row content-row">
+      {{#promise-proxy-container proxy=spaceSupportersProxy}}
+        {{cluster-spaces-table-item/support-size-this 
+          providerSupportSize=_thisProviderSupportSize
+          spaceOccupancy=_spaceOccupancy
+          submitModifySpace=(action "submitModifySpace")
+        }}
+      {{/promise-proxy-container}}
+    </div>
+  </div>
+  
+</div>

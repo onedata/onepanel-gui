@@ -1,5 +1,5 @@
 export default {
-  autoCleaning: 'Auto-cleaning',
+  enableAutoCleaning: 'Enable auto-cleaning',
   cleanReplicatedFiles: 'Selective cleaning',
   cleaningBoundaries: 'Cleaning boundaries',
   statusLoadError: 'Could not load status of space auto-cleaning.',

@@ -2,7 +2,8 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import { registerService } from '../../helpers/stub-service';
+import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
 
 import spaceManagerStub from '../../helpers/space-manager-stub';
 
@@ -16,6 +17,9 @@ describe('Integration | Component | space auto cleaning', function () {
   });
 
   it('does not render cleaning settings row if is not enabled', function () {
+    const spaceManager = lookupService(this, 'space-manager');
+    sinon.stub(spaceManager, 'getAutoCleaningReports').resolves([]);
+
     const spaceId = 'a';
     const autoCleaning = {
       enabled: false,
@@ -24,10 +28,12 @@ describe('Integration | Component | space auto cleaning', function () {
       spaceId,
       autoCleaning,
     });
-    this.render(hbs `{{space-auto-cleaning
-      spaceId=spaceId
-      autoCleaning=autoCleaning
-    }}`);
+    this.render(hbs `<div class="col-content">
+      {{space-auto-cleaning
+        spaceId=spaceId
+        autoCleaning=autoCleaning
+      }}
+    </div>`);
 
     expect(this.$('.space-cleaning-settings')).to.not.exist;
   });
