@@ -1,3 +1,3 @@
 export default {
-  useOnezoneToAccess: 'Login via Onezone to access all features',
+  useOnezoneToAccess: 'Open in Onezone to access all features',
 };

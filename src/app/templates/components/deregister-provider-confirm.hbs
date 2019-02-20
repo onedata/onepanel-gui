@@ -8,6 +8,6 @@
     class=(concat-classes "btn btn-sm" (if isOnepanelStandalone "btn-danger" "btn-warning"))
     action=submitAction
   }}
-    {{one-icon icon="remove"}} <span>{{tt this (if isOnepanelStandalone "yesDeregister" "goToStandalone")}}</span>
+    {{one-icon icon=(if isOnepanelStandalone "remove" "onepanel")}} <span>{{tt this (if isOnepanelStandalone "yesDeregister" "goToStandalone")}}</span>
   {{/one-spin-button}}
 </div>
