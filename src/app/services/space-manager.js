@@ -3,28 +3,25 @@
  *
  * @module services/space-manager
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { A } from '@ember/array';
 
 import Service, { inject as service } from '@ember/service';
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { get } from '@ember/object';
 import Onepanel from 'npm:onepanel';
-
 import SpaceDetails from 'onepanel-gui/models/space-details';
-
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
+import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
 import _ from 'lodash';
 
 const {
   SpaceSupportRequest,
 } = Onepanel;
-
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
-import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
 
 const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
 const DEFAULT_SYNC_STATS_PERIOD = 'minute';
@@ -37,6 +34,13 @@ export default Service.extend({
    * @type {PromiseObject}
    */
   spacesCache: PromiseObject.create(),
+
+  reportsCache: Object.freeze({}),
+
+  init() {
+    this._super(...arguments);
+    this.set('reportsCache', {});
+  },
 
   /**
    * @param {boolean} reload if true, force request to server even if there is cache
@@ -84,7 +88,6 @@ export default Service.extend({
     return promise;
   },
 
-  // TODO: if space details are in spaces proxy, get them
   /**
    * Fetch details of space support with given ID
    * 
@@ -217,16 +220,63 @@ export default Service.extend({
 
   /**
    * @param {string} spaceId
-   * @param {string} startedAfter date in ISO format
+   * @param {number} startFromIndex
+   * @param {number} size
+   * @param {number} offset
+   * 
    * @returns {Promise<Onepanel.SpaceAutoCleaningReportCollection>}
    */
-  getAutoCleaningReports(spaceId, startedAfter) {
-    return this.get('onepanelServer').requestValidData(
+  getAutoCleaningReportIds(spaceId, startFromIndex, size, offset) {
+    return this.get('onepanelServer').request(
       'oneprovider',
       'getProviderSpaceAutoCleaningReports',
+      spaceId, {
+        index: startFromIndex,
+        limit: size,
+        offset,
+      }
+    ).then(({ data }) => data.ids);
+  },
+
+  getAutoCleaningReport(spaceId, reportId, reload = false) {
+    const reportsCache = this.get('reportsCache');
+    const spaceReportsCache = reportsCache[spaceId];
+    let isCurrentReportInCache = !reload && spaceReportsCache &&
+      spaceReportsCache.hasOwnProperty(reportId);
+    let cachedReport;
+    if (isCurrentReportInCache) {
+      cachedReport = spaceReportsCache[reportId];
+      // if stoppedAt is present, the report was finished, so the cache is current
+      isCurrentReportInCache = Boolean(cachedReport.stoppedAt);
+    }
+    if (isCurrentReportInCache) {
+      return resolve(cachedReport);
+    } else {
+      return this.get('onepanelServer').request(
+        'oneprovider',
+        'getProviderSpaceAutoCleaningReport',
+        spaceId,
+        reportId,
+      ).then(({ data }) => {
+        let spaceReportsCache = reportsCache[spaceId];
+        if (!spaceReportsCache) {
+          spaceReportsCache = reportsCache[spaceId] = {};
+        }
+        const report = spaceReportsCache[reportId] = data;
+        return resolve(report);
+      });
+    }
+  },
+
+  getAutoCleaningReports(spaceId, startFromIndex, size, offset) {
+    return this.getAutoCleaningReportIds(
       spaceId,
-      startedAfter,
-    ).then(({ data }) => data);
+      startFromIndex,
+      size,
+      offset
+    ).then(ids => Promise.all(ids.map(id =>
+      this.getAutoCleaningReport(spaceId, id)
+    )));
   },
 
   startCleaning(spaceId) {

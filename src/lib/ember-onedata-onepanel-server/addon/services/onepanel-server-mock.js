@@ -5,7 +5,7 @@
  *
  * @module services/onepanel-server-mock
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -29,9 +29,16 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
-
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import Onepanel from 'npm:onepanel';
+
+const {
+  TaskStatus,
+  TaskStatus: {
+    StatusEnum,
+  },
+} = Onepanel;
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -72,6 +79,26 @@ const defaultLetsEncryptDeployed = true;
  */
 let providerSupportCounter = 1;
 
+/**
+ * Used when generating file popularity tasks
+ */
+let popularityTaskCounter = 0;
+
+const popularityTasks = {};
+
+function getPopularityTask(taskId) {
+  if (!popularityTasks.hasOwnProperty(taskId)) {
+    popularityTasks[taskId] = TaskStatus.constructFromObject({
+      status: StatusEnum.running,
+    });
+  }
+  const task = popularityTasks[taskId];
+  setTimeout(() => {
+    task.status = StatusEnum.ok;
+  }, 10000);
+  return task;
+}
+
 function _genSupportingProviders() {
   let supportingProviders = {};
   supportingProviders[PROVIDER_ID] = 700000000 * providerSupportCounter;
@@ -82,11 +109,11 @@ function _genSupportingProviders() {
 
 function _genAutoCleaningConfiguration() {
   return {
-    lowerFileSizeLimit: {
+    minFileSize: {
       enabled: true,
       value: 10000,
     },
-    upperFileSizeLimit: {
+    maxFileSize: {
       enabled: true,
       value: 10000000,
     },
@@ -397,7 +424,7 @@ export default OnepanelServerBase.extend(
 
           if (mockStep >= STEP.PROVIDER_DONE) {
             const spaces = this.get('__spaces');
-            const spacesFilesPopularity = this.get('__spacesFilesPopularity');
+            const spacesFilePopularity = this.get('__spacesFilePopularity');
             const spacesAutoCleaning = this.get('__spacesAutoCleaning');
             spaces.push({
               id: 'space1_verylongid',
@@ -413,10 +440,13 @@ export default OnepanelServerBase.extend(
               },
               supportingProviders: _genSupportingProviders(),
             });
-            spacesFilesPopularity.push({
+            spacesFilePopularity.push({
               id: 'space1_verylongid',
               enabled: true,
-              restUrl: 'https://example.com',
+              exampleQuery: 'curl https://example.com',
+              lastOpenHourWeight: 2,
+              avgOpenCountPerDayWeight: 3,
+              maxAvgOpenCountPerDay: 4,
             });
             spacesAutoCleaning.push({
               id: 'space1_verylongid',
@@ -563,6 +593,8 @@ export default OnepanelServerBase.extend(
         success(taskId) {
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
+          } else if (taskId.startsWith('popularity')) {
+            return getPopularityTask(taskId);
           } else {
             throw new Error(
               `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
@@ -795,19 +827,27 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_configureFilesPopularity() {
+    _req_oneprovider_configureFilePopularity() {
+      const taskId = `popularity-${popularityTaskCounter++}`;
       return {
-        // data: { enabled, threshold, target, rules }
+        // data: enabled, [lastOpenHourWeight], [avgOpenCountPerDayWeight], [maxAvgOpenCountPerDay]
         success: (id, data) => {
-          const spacesFilesPopularity = this.get('__spacesFilesPopularity');
-          let configuration = spacesFilesPopularity.find(s => s.id === id);
+          const spacesFilePopularity = this.get('__spacesFilePopularity');
+          let configuration = spacesFilePopularity.find(s => s.id === id);
           if (!configuration) {
             configuration = { id };
-            spacesFilesPopularity.push(configuration);
+            spacesFilePopularity.push(configuration);
           }
           const popEnabled = get(data, 'enabled');
           if (popEnabled === true) {
-            set(data, 'restUrl', 'https://example.com/api/2');
+            setProperties(
+              configuration,
+              Object.assign({
+                  exampleQuery: 'curl https://example.com/api/2',
+                },
+                data
+              )
+            );
           } else if (popEnabled === false) {
             let autoCleaningConfiguration = this.get('__spacesAutoCleaning').find(s =>
               s.id === id
@@ -819,23 +859,24 @@ export default OnepanelServerBase.extend(
           emberObjectMerge(configuration, data);
         },
         statusCode: (id) => {
-          const spacesFilesPopularity = this.get('__spacesFilesPopularity');
-          let configuration = spacesFilesPopularity.find(s => s.id === id);
+          const spacesFilePopularity = this.get('__spacesFilePopularity');
+          let configuration = spacesFilePopularity.find(s => s.id === id);
           return configuration ? 204 : 404;
         },
+        taskId,
       };
     },
 
-    _req_oneprovider_getFilesPopularityConfiguration() {
+    _req_oneprovider_getFilePopularityConfiguration() {
       return {
         success: (id) => {
-          const __spacesFilesPopularity = this.get('__spacesFilesPopularity');
-          const configuration = __spacesFilesPopularity.find(s => s.id === id);
+          const __spacesFilePopularity = this.get('__spacesFilePopularity');
+          const configuration = __spacesFilePopularity.find(s => s.id === id);
           return _.cloneDeep(configuration);
         },
         statusCode: (id) => {
-          const __spacesFilesPopularity = this.get('__spacesFilesPopularity');
-          const configuration = __spacesFilesPopularity.find(s => s.id === id);
+          const __spacesFilePopularity = this.get('__spacesFilePopularity');
+          const configuration = __spacesFilePopularity.find(s => s.id === id);
           return configuration ? 204 : 404;
         },
       };
@@ -912,7 +953,15 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getProviderSpaceAutoCleaningReports: computed(function () {
       return {
-        success: (id, startedAt) => this._getReportsCollection(id, startedAt),
+        success: (spaceId, { index, limit, offset }) =>
+          this._getReportIds(spaceId, index, limit, offset),
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_oneprovider_getProviderSpaceAutoCleaningReport: computed(function () {
+      return {
+        success: (spaceId, reportId) => this._getReport(spaceId, reportId),
         statusCode: () => 200,
       };
     }),
@@ -1137,7 +1186,7 @@ export default OnepanelServerBase.extend(
 
     __spaces: A([]),
 
-    __spacesFilesPopularity: A([]),
+    __spacesFilePopularity: A([]),
 
     __spacesAutoCleaning: A([]),
   });

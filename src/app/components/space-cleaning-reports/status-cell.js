@@ -3,13 +3,13 @@
  *
  * @module components/space-cleaning-reports/status-cell
  * @author Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 
-import { computed } from '@ember/object';
+import { getProperties, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default Component.extend({
@@ -43,7 +43,8 @@ export default Component.extend({
         stoppedAt,
         releasedBytes,
         bytesToRelease,
-      } = this.get('record').getProperties(
+      } = getProperties(
+        this.get('record'),
         'stoppedAt',
         'releasedBytes',
         'bytesToRelease'
@@ -73,7 +74,8 @@ export default Component.extend({
         stoppedAt,
         releasedBytes,
         bytesToRelease,
-      } = record.getProperties(
+      } = getProperties(
+        record,
         'stoppedAt',
         'releasedBytes',
         'bytesToRelease'

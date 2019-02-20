@@ -1,0 +1,117 @@
+<div class="row content-row header-row hidden-xs">
+  <h1 class="with-menu with-back normal-case">
+    <span class="one-label">
+      {{#truncated-string}}
+        {{#link-to (query-params options="") class="content-back-link"}}
+          {{one-icon icon="space" class="content-back-resource-icon"}}
+          {{one-icon icon="arrow-left" class="content-back-arrow-icon"}}
+        {{/link-to}}
+        <span class="space-name resource-name">
+          {{name-conflict item=space tagName="span" class="one-label"}}
+        </span>
+      {{/truncated-string}}
+    </span>
+    {{actions-toolbar isMinimized=true actionsArray=globalActions}}
+  </h1>
+</div>
+  
+<div class="row">
+  
+  <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
+    <div class="row content-row">
+      {{#bs-tab fade=false
+        customTabs=true
+        activeId=selectedTab
+        onChange=(action "changeTab")
+        class="bs-tab-onedata bs-tab-modern"
+        as |tab|
+      }}
+        {{#bs-nav type="tabs" as |nav|}}
+          {{#nav.item class=tabOverviewClass active=(eq tab.activeId tabOverviewId)}}
+            <a href={{concat "#" tabOverviewId}}
+              class="nav-link"
+              role="tab" {{action tab.select tabOverviewId}}>
+              {{t "mixins.components.spaceTabs.tabs.overview.title"}}
+            </a>
+            {{one-tooltip triggerEvents="hover" title=tabOverviewHint}}
+          {{/nav.item}}
+          {{#nav.item class=tabSyncClass active=(eq tab.activeId tabSyncId)}}
+            <a href={{concat "#" tabSyncId}}
+              class="nav-link"
+              role="tab" {{action tab.select tabSyncId}}>
+              {{t "mixins.components.spaceTabs.tabs.sync.title"}}
+            </a>
+            {{one-tooltip triggerEvents="hover" title=tabSyncHint}}
+          {{/nav.item}}
+          {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
+            <a href={{concat "#" tabPopularId}} class="nav-link" role="tab" {{action tab.select tabPopularId}}>
+              {{t "mixins.components.spaceTabs.tabs.popular.title"}}
+            </a>
+            {{one-tooltip triggerEvents="hover" title=tabPopularHint}}
+          {{/nav.item}}
+          {{#nav.item class=tabCleanClass active=(eq tab.activeId tabCleanId)}}
+            <a href={{concat "#" tabCleanId}} class="nav-link" role="tab" {{action tab.select tabCleanId}}>
+              {{t "mixins.components.spaceTabs.tabs.clean.title"}}
+            </a>
+            {{one-tooltip triggerEvents="hover" title=tabCleanHint}}
+          {{/nav.item}}
+        {{/bs-nav}}
+
+        <div class="tab-content">
+          {{#tab.pane elementId=tabOverviewId class="no-padding"}}
+            {{#if (eq tab.activeId tabOverviewId)}}
+              {{space-overview
+                space=space
+                submitModifySpace=(action "modifySpace")
+              }}
+            {{/if}}
+          {{/tab.pane}}
+          {{#tab.pane elementId=tabSyncId}}
+            {{#if (and (eq tabSyncClass "enabled") (eq tab.activeId tabSyncId))}}
+              {{space-storage-synchronization
+                importEnabled=space.importEnabled
+                syncInterval=syncInterval
+                statsFrozen=statsFrozen
+                timeStats=timeStats
+                timeStatsError=timeStatsError
+                timeStatsLoading=timeStatsLoading
+                space=space
+                syncIntervalChanged=(action "onSyncIntervalChange")
+                modifySpace=(action "modifySpace")
+              }}
+            {{/if}}
+          {{/tab.pane}}
+          {{#tab.pane elementId=tabPopularId}}
+            {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
+              <div class="loadable-row lg">
+                {{#promise-proxy-container proxy=filePopularityConfigurationProxy}}
+                  {{space-file-popularity
+                    filePopularityConfiguration=filePopularityConfiguration
+                    configureFilePopularity=(action "configureFilePopularity")
+                  }}
+                {{/promise-proxy-container}}
+              </div>
+            {{/if}}
+          {{/tab.pane}}
+          {{#tab.pane elementId=tabCleanId}}
+            {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
+              <div class="loadable-row lg">
+                {{#promise-proxy-container proxy=providerProxy}}
+                  {{#promise-proxy-container proxy=autoCleaningConfigurationProxy}}
+                    {{space-auto-cleaning
+                      autoCleaningConfiguration=autoCleaningConfiguration
+                      spaceSize=spaceSizeForProvider
+                      spaceId=space.id
+                      configureSpaceAutoCleaning=(action "configureSpaceAutoCleaning")
+                      spaceOccupancyChanged=(action "spaceOccupancyChanged")
+                    }}
+                  {{/promise-proxy-container}}
+                {{/promise-proxy-container}}
+              </div>
+            {{/if}}
+          {{/tab.pane}}
+        </div>
+      {{/bs-tab}}
+    </div>
+  </div>
+</div>

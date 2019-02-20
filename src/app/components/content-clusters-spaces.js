@@ -3,212 +3,141 @@
  *
  * @module components/content-clusters-spaces.js
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
-import { not, reads } from '@ember/object/computed';
-import { observer, computed, get } from '@ember/object';
-import { isArray } from '@ember/array';
-import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
-import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import { get, computed } from '@ember/object';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { resolve, reject, defer } from 'rsvp';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
-export default Component.extend(I18n, GlobalActions, {
-  classNames: ['content-clusters-spaces'],
+export default Component.extend(
+  I18n,
+  createDataProxyMixin('provider'),
+  createDataProxyMixin('spaces'), {
 
-  spaceManager: service(),
-  providerManager: service(),
-  globalNotify: service(),
-  i18n: service(),
+    classNames: ['content-clusters-spaces'],
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.contentClustersSpaces',
+    spaceManager: service(),
+    providerManager: service(),
+    globalNotify: service(),
+    i18n: service(),
 
-  /**
-   * Set by `_updateSpacesList`
-   * @type {PromiseObject<Array>}
-   */
-  spacesProxy: null,
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.contentClustersSpaces',
 
-  /**
-   * @type {PromiseObject<ProviderDetails>}
-   */
-  providerProxy: null,
+    selectedSpaceId: undefined,
 
-  spaces: reads('spacesProxy.content'),
+    selectedTab: undefined,
 
-  spacesListLoading: reads('spacesProxy.isPending'),
+    spaceToRevoke: undefined,
 
-  // TODO: global list loader cannot base on someSpacesSettled because it causes
-  // to reload child components when changing single space (isLoading -> isSettled)
-  // not removing it for now, because it is a base for creating additional
-  // spinner on bottom
-  someSpaceSettled: computed('spaces.@each.isSettled', function () {
-    const spaces = this.get('spaces');
-    if (spaces) {
-      return spaces.some(s => get(s, 'isSettled'));
-    } else {
-      return false;
-    }
-  }),
+    /**
+     * Used to confirm proceeding with deployment if DNS setup is not valid
+     * @type {RSVP.Deferred}
+     */
+    confirmRevokeDefer: null,
 
-  allSpacesSettled: computed('spaces.@each.isSettled', function () {
-    const spaces = this.get('spaces');
-    if (spaces) {
-      return spaces.every(s => get(s, 'isSettled'));
-    } else {
-      return false;
-    }
-  }),
-
-  someSpaceIsLoading: not('allSpacesSettled'),
-
-  /**
-   * Using observer, because when we use computed property for spaces,
-   * the whole spaces list will be generated every time name and isSettled
-   * are changed.
-   */
-  addConflictLabels: observer('spaces.@each.{content.name,isSettled}', function () {
-    const spaces = this.get('spaces');
-    if (isArray(spaces) && spaces.every(s => get(s, 'isSettled'))) {
-      addConflictLabels(
-        spaces
-        .filter(s => get(s, 'isFulfilled'))
-        .map(s => get(s, 'content'))
-      );
-    }
-  }),
-
-  _supportSpaceOpened: false,
-  _currentToken: '',
-
-  _hasNoSpaces: computed('spaces.length', function () {
-    let spaces = this.get('spaces');
-    return isArray(spaces) && get(spaces, 'length') === 0;
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<Action>}
-   */
-  _supportSpaceAction: computed('_supportSpaceOpened', function () {
-    const _supportSpaceOpened = this.get('_supportSpaceOpened');
-    return {
-      action: () => this.send('toggleSupportSpaceForm'),
-      title: this.t(_supportSpaceOpened ? 'cancelSupporting' : 'supportSpace'),
-      class: 'btn-support-space',
-      buttonStyle: _supportSpaceOpened ? 'default' : 'primary',
-    };
-  }),
-
-  /**
-   * @override
-   */
-  globalActions: computed('_hasNoSpaces', '_supportSpaceAction', function () {
-    const {
-      _hasNoSpaces,
-      _supportSpaceAction,
-    } = this.getProperties('_hasNoSpaces', '_supportSpaceAction');
-    return _hasNoSpaces ? [] : [_supportSpaceAction];
-  }),
-
-  _hasNoSpacesObserver: observer('_hasNoSpaces', function () {
-    if (this.get('_hasNoSpaces')) {
-      this.set('_supportSpaceOpened', true);
-    }
-  }),
-
-  init() {
-    this._super(...arguments);
-    this._updateSpacesList();
-    this.set('providerProxy', this.get('providerManager').getProviderDetails());
-  },
-
-  _updateSpacesList() {
-    let spaceManager = this.get('spaceManager');
-    let spacesProxy = spaceManager.getSpaces();
-    this.set('spacesProxy', spacesProxy);
-    return spacesProxy.get('promise');
-  },
-
-  /**
-   * @param {Object} supportSpaceData
-   * @param {string} supportSpaceData.storageId
-   * @param {string} supportSpaceData.token
-   * @param {number} supportSpaceData.size
-   * @param {boolean} supportSpaceData.mountInRoot
-   * @returns {Promise.<any>} SpaceManager.supportSpace promise
-   */
-  _supportSpace(supportSpaceData) {
-    return this.get('spaceManager').supportSpace(supportSpaceData);
-  },
-
-  _revokeSpace(spaceId) {
-    return this.get('spaceManager').revokeSpaceSupport(spaceId);
-  },
-
-  _modifySpace(id, data) {
-    return this.get('spaceManager').modifySpaceDetails(id, data);
-  },
-
-  actions: {
-    updateSpacesList() {
-      return this._updateSpacesList();
-    },
-    toggleSupportSpaceForm() {
-      // TODO inform user about cancelling?
-      this.toggleProperty('_supportSpaceOpened');
-    },
-    onSupportSpaceHide() {
-      return this.set('_supportSpaceOpened', false);
-    },
-    submitSupportSpace(supportSpaceData) {
-      const globalNotify = this.get('globalNotify');
-      let supportingSpace = this._supportSpace(supportSpaceData);
-      supportingSpace.then(() => {
-        this._updateSpacesList();
-        this.set('_supportSpaceOpened', false);
-        globalNotify.info(
-          this.t('supportSuccess')
-        );
-      });
-      return supportingSpace;
-    },
-    // TODO currently space can be either object or ember object
-    revokeSpace(space) {
-      const globalNotify = this.get('globalNotify');
-      let revoking = this._revokeSpace(get(space, 'id'));
-      const spaceName = get(space, 'name');
-      revoking.then(() => {
-        this._updateSpacesList();
-        globalNotify.info(this.t('revokeSuccess', { spaceName }));
-      });
-      revoking.catch(error => {
-        globalNotify.backendError(this.t('revocationAction'), error);
-      });
-      return revoking;
-    },
-    modifySpace(space, data) {
-      const globalNotify = this.get('globalNotify');
-      let spaceName = get(space, 'name');
-      let spaceId = get(space, 'id');
-      return this._modifySpace(spaceId, data)
-        .then(() => {
-          globalNotify.info(this.t('configurationChanged', { spaceName }));
-        })
-        .catch(error => {
-          // TODO: handle error on higher levels to produce better message
-          globalNotify.backendError(
-            this.t('configurationAction', { spaceName }),
-            error
-          );
-          throw error;
+    // TODO: please forgive me for this code, it's because of lack of good cacheing
+    selectedSpaceProxy: computed('selectedSpaceId', function selectedSpaceProxy() {
+      const selectedSpaceId = this.get('selectedSpaceId');
+      if (selectedSpaceId) {
+        return PromiseObject.create({
+          promise: this.get('spacesProxy').then(spacesProxies =>
+            Promise.all(spacesProxies).then(spaces =>
+              spaces.findBy('id', selectedSpaceId)
+            )
+          ),
         });
+      }
+    }),
+
+    init() {
+      this._super(...arguments);
+      this.updateProviderProxy();
+      this.updateSpacesProxy();
     },
-  },
-});
+
+    _modifySpace(id, data) {
+      return this.get('spaceManager').modifySpaceDetails(id, data);
+    },
+
+    revokeSpace() {
+      const {
+        spaceToRevoke: space,
+        globalNotify,
+      } = this.getProperties('spaceToRevoke', 'globalNotify');
+      try {
+        const spaceName = get(space, 'name');
+        return this.get('spaceManager').revokeSpaceSupport(get(space, 'id'))
+          .then(() => {
+            globalNotify.info(this.t('revokeSuccess', { spaceName }));
+          })
+          .catch(error => {
+            globalNotify.backendError(this.t('revocationAction'), error);
+            throw error;
+          })
+          .finally(() => {
+            this.updateSpacesProxy();
+          });
+      } catch (error) {
+        return reject(error);
+      }
+    },
+
+    /**
+     * @override
+     */
+    fetchProvider() {
+      return this.get('providerManager').getProviderDetails();
+    },
+
+    /**
+     * @override
+     */
+    fetchSpaces() {
+      return this.get('spaceManager').getSpaces();
+    },
+
+    actions: {
+      startRevokeSpace(space) {
+        this.set('spaceToRevoke', space);
+        return this.set('confirmRevokeDefer', defer()).promise;
+      },
+      modifySpace(space, data) {
+        const globalNotify = this.get('globalNotify');
+        let spaceName = get(space, 'name');
+        let spaceId = get(space, 'id');
+        return this._modifySpace(spaceId, data)
+          .then(() => {
+            globalNotify.info(this.t('configurationChanged', { spaceName }));
+          })
+          .catch(error => {
+            // TODO: handle error on higher levels to produce better message
+            globalNotify.backendError(
+              this.t('configurationAction', { spaceName }),
+              error
+            );
+            throw error;
+          });
+      },
+      confirmRevokeModal(confirmed) {
+        const action = confirmed ? this.revokeSpace() : resolve();
+        return action.finally(() => {
+          safeExec(this, 'set', 'spaceToRevoke', null);
+          this.get('confirmRevokeDefer').resolve(confirmed);
+        });
+      },
+      updateSpacesProxy() {
+        return this.updateSpacesProxy();
+      },
+    },
+  });

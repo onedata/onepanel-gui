@@ -4,30 +4,30 @@
  *
  * @module components/space-auto-cleaning
  * @author Michal Borzecki, Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { reads } from '@ember/object/computed';
-
 import Component from '@ember/component';
 import { computed, get, observer } from '@ember/object';
 import { inject } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
+import { getOwner } from '@ember/application';
 
 const {
   SpaceAutoCleaningConfiguration,
 } = Onepanel;
-
-import SpaceAutoCleaningUpdater from 'onepanel-gui/utils/space-auto-cleaning-updater';
 
 const BLANK_AUTO_CLEANING = {
   enabled: false,
 };
 
 export default Component.extend({
+  media: inject(),
   spaceManager: inject(),
   globalNotify: inject(),
 
@@ -54,9 +54,9 @@ export default Component.extend({
   autoCleaningConfiguration: undefined,
 
   /**
-   * @type {SpaceAutoCleaningUpdater}
+   * @type {SpaceAutoCleaningStatusUpdater}
    */
-  spaceAutoCleaningUpdater: undefined,
+  spaceAutoCleaningStatusUpdater: undefined,
 
   /**
    * Cleaning target bytes (updated by event)
@@ -109,22 +109,16 @@ export default Component.extend({
 
   /**
    * Cleaning status
-   * Aliased and auto updated from SpaceAutoCleaningUpdater
+   * Aliased and auto updated from SpaceAutoCleaningStatusUpdater
    * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
    */
-  status: reads('spaceAutoCleaningUpdater.status'),
+  status: reads('spaceAutoCleaningStatusUpdater.status'),
 
-  /**
-   * Collection of cleaning reports
-   * Aliased and auto updated from SpaceAutoCleaningUpdater
-   * @type {Ember.ComputedProperty<EmberArray<Onepanel.SpaceAutoCleaningReport>>}
-   */
-  reports: reads('spaceAutoCleaningUpdater.reports'),
-
-  toggleUpdater: observer('isCleanEnabled', function () {
-    const isCleanEnabled = this.get('isCleanEnabled');
-    const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
-    spaceAutoCleaningUpdater.set('isEnabled', isCleanEnabled);
+  toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
+    const enable = this.get('isCleanEnabled');
+    if (this.get('spaceAutoCleaningStatusUpdater.isEnabled') !== enable) {
+      this.set('spaceAutoCleaningStatusUpdater.isEnabled', enable);
+    }
   }),
 
   cleaningStatusObserver: observer('status.spaceOccupancy', function () {
@@ -139,9 +133,8 @@ export default Component.extend({
     this._super(...arguments);
     const {
       autoCleaningConfiguration,
-      spaceManager,
       spaceId,
-    } = this.getProperties('autoCleaningConfiguration', 'spaceManager', 'spaceId');
+    } = this.getProperties('autoCleaningConfiguration', 'spaceId');
 
     // if the component is initialized with blank autoCleaningConfiguration,
     // we should provide an empty valid autoCleaningConfiguration
@@ -149,18 +142,21 @@ export default Component.extend({
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
     }
 
-    const spaceAutoCleaningUpdater = SpaceAutoCleaningUpdater.create({
-      isEnabled: false,
-      spaceManager,
-      spaceId,
-    });
-    this.set('spaceAutoCleaningUpdater', spaceAutoCleaningUpdater);
-    this.toggleUpdater();
+    const spaceAutoCleaningStatusUpdater =
+      SpaceAutoCleaningStatusUpdater.create(
+        getOwner(this).ownerInjection(), {
+          isEnabled: false,
+          spaceId,
+        }
+      );
+
+    this.set('spaceAutoCleaningStatusUpdater', spaceAutoCleaningStatusUpdater);
+    this.toggleStatusUpdater();
   },
 
   willDestroyElement() {
     try {
-      this.get('spaceAutoCleaningUpdater').destroy();
+      this.get('spaceAutoCleaningStatusUpdater').destroy();
     } finally {
       this._super(...arguments);
     }
@@ -233,9 +229,8 @@ export default Component.extend({
       } = this.getProperties('spaceManager', 'globalNotify', 'spaceId');
       return spaceManager.startCleaning(spaceId)
         .then(() => {
-          const spaceAutoCleaningUpdater = this.get('spaceAutoCleaningUpdater');
           // only a side effect
-          spaceAutoCleaningUpdater.fetchCleanStatus();
+          this.get('spaceAutoCleaningStatusUpdater').updateData();
         })
         .catch(error => {
           globalNotify.backendError(

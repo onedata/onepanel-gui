@@ -4,11 +4,15 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
 import providerManagerStub from '../../helpers/provider-manager-stub';
 import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
+
+const OnepanelServer = Service.extend({
+  request() {},
+});
 
 const SPACES = [{
     id: 'a1',
@@ -43,6 +47,24 @@ describe('Integration | Component | content clusters spaces', function () {
     registerService(this, 'i18n', i18nStub);
     registerService(this, 'storage-manager', storageManagerStub);
     registerService(this, 'provider-manager', providerManagerStub);
+    registerService(this, 'onepanel-server', OnepanelServer);
+
+    const onepanelServer = lookupService(this, 'onepanelServer');
+    const requestStub = sinon.stub(onepanelServer, 'request');
+
+    requestStub.rejects();
+
+    requestStub.withArgs(
+      'oneprovider',
+      'getFilePopularityConfiguration',
+      sinon.match.any
+    ).resolves({ data: {} });
+
+    requestStub.withArgs(
+      'oneprovider',
+      'getSpaceAutoCleaningConfiguration',
+      sinon.match.any
+    ).resolves({ data: {} });
 
     const spaceManager = lookupService(this, 'space-manager');
     spaceManager.set('__spaces', SPACES);

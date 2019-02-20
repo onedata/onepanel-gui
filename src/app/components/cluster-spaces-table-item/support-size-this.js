@@ -3,7 +3,7 @@
  * 
  * @module components/cluster-spaces-table-item/support-size-this
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,7 +21,7 @@ export default Component.extend(I18n, {
   spaceManager: service(),
   globalNotify: service(),
 
-  i18nPrefix: 'components.clusterSpacesTableItem.supportSizeThis',
+  i18nPrefix: 'components.spaceOverview.supportSizeThis',
 
   /**
    * @virtual
