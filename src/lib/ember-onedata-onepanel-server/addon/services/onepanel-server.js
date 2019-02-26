@@ -444,7 +444,7 @@ function getHostedOnepanelToken(clusterId, clusterType) {
 function getStandaloneOnepanelToken() {
   return new Promise((resolve, reject) => $.ajax(
     '/gui-token', {
-      method: 'GET',
+      method: 'POST',
     }
   ).then(resolve, reject));
 }
