@@ -7,6 +7,9 @@ const defineSassColors = require('./lib/onedata-gui-common/addon/utils/define-sa
 const defineSassBreakpoints = require(
   './lib/onedata-gui-common/addon/utils/define-sass-breakpoints'
 );
+const defineSassRootDir = require(
+  './lib/onedata-gui-common/addon/utils/define-sass-root-dir'
+);
 const colors = require('./lib/onedata-gui-common/addon/colors').default;
 const breakpointValues = require('./lib/onedata-gui-common/addon/breakpoint-values').default;
 
@@ -52,6 +55,7 @@ module.exports = function (defaults) {
 
   defineSassColors(app, colors);
   defineSassBreakpoints(app, breakpointValues);
+  defineSassRootDir(app);
 
   // Generate app-config.json for environment that is used.
   // Currently app-config.json is always overwritten on build.
