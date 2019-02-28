@@ -47,9 +47,9 @@ const fallbackMockServiceType = 'onezone';
 
 function getMockServiceType() {
   const url = location.toString();
-  if (/https:\/\/onezone\..*9443/.test(url)) {
+  if (/https:\/\/onezone.*9443/.test(url)) {
     return 'onezone';
-  } else if (/https:\/\/oneprovider\..*9443/.test(url)) {
+  } else if (/https:\/\/oneprovider.*9443/.test(url)) {
     return 'oneprovider';
   } else {
     const letterMatch = url.match(/.*?#\/o(z|p)p.*/);
@@ -1200,14 +1200,28 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getOnezoneInfo() {
       return {
-        success: ( /* token */ ) => ({
-          domain: 'example.com',
-          name: 'Hello Onezone',
-          online: true,
-          subdomainDelegationSupported: false,
-          compatible: true,
-          version: '18.02.0',
-        }),
+        success: ({ token }) => {
+          let online = true;
+          let compatible = true;
+          switch (token.trim()) {
+            case 'offline':
+              online = false;
+              break;
+            case 'not-compatible':
+              compatible = false;
+              break;
+            default:
+              break;
+          }
+          return {
+            domain: 'onezone.local-onedata.org',
+            name: 'Hello Onezone',
+            online,
+            subdomainDelegationSupported: false,
+            compatible,
+            version: '18.02.0',
+          };
+        },
         statusCode: () => 200,
       };
     },

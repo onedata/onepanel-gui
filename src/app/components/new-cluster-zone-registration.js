@@ -17,6 +17,7 @@ import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { get } from '@ember/object';
 
 const {
   ProviderRegisterRequest,
@@ -31,6 +32,7 @@ export default Component.extend(I18n, {
   onepanelServer: service(),
   i18n: service(),
   clusterModelManager: service(),
+  alert: service(),
 
   i18nPrefix: 'components.newClusterZoneRegistration',
 
@@ -141,10 +143,31 @@ export default Component.extend(I18n, {
         throw error;
       })
       .then(({ data: onezoneInfo }) => {
-        safeExec(this, 'setProperties', {
-          onezoneInfo,
-          mode: 'form',
-        });
+        const i18n = this.get('i18n');
+        const alertService = this.get('alert');
+        if (!get(onezoneInfo, 'compatible')) {
+          // FIXME: provide supportedVersions array
+          alertService.error(null, {
+            componentName: 'alerts/register-onezone-not-compatible',
+            header: i18n.t(
+              'components.alerts.registerOnezoneNotCompatible.header'
+            ),
+            domain: get(onezoneInfo, 'domain'),
+          });
+        } else if (!get(onezoneInfo, 'online')) {
+          alertService.error(null, {
+            componentName: 'alerts/register-onezone-offline',
+            header: i18n.t(
+              'components.alerts.registerOnezoneOffline.header'
+            ),
+            domain: get(onezoneInfo, 'domain'),
+          });
+        } else {
+          safeExec(this, 'setProperties', {
+            onezoneInfo,
+            mode: 'form',
+          });
+        }
       });
   },
 
