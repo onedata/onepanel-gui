@@ -85,29 +85,27 @@ export default Service.extend({
           });
 
         }).then(configuration => {
-
           return this.get('clusterModelManager').getRawCurrentClusterProxy()
-            .then(
-              currentCluster => {
-                const currentClusterId = (
-                  currentCluster && get(currentCluster, 'id') || 'new'
-                );
-                const name = (configuration || null) &&
-                  configuration[onepanelServiceType].name;
-                const thisCluster = ClusterInfo.create({
-                  id: currentClusterId,
-                }, configuration);
+            .then(currentCluster => {
+              const currentClusterId = (
+                currentCluster && get(currentCluster, 'id') || 'new'
+              );
+              const name = (configuration || null) &&
+                configuration[onepanelServiceType].name;
+              const thisCluster = ClusterInfo.create({
+                id: currentClusterId,
+              }, configuration);
 
-                const clusterDetails = ClusterDetails.create({
-                  name,
-                  onepanelServiceType: onepanelServiceType,
-                  clusterInfo: thisCluster,
-                  initStep: clusterStep,
-                });
-
-                this.set('_defaultCache', clusterDetails);
-                resolve(defaultCache);
+              const clusterDetails = ClusterDetails.create({
+                name,
+                onepanelServiceType: onepanelServiceType,
+                clusterInfo: thisCluster,
+                initStep: clusterStep,
               });
+
+              this.set('_defaultCache', clusterDetails);
+              resolve(defaultCache);
+            });
         }).catch(reject);
 
         gettingStep.catch(reject);

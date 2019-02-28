@@ -53,4 +53,19 @@ export default OnedataRoute.extend(I18n, {
       return model;
     });
   },
+
+  setupController(controller, model) {
+    this._super(...arguments);
+    const onepanelServer = this.get('onepanelServer');
+    return this.get('deploymentManager').getInstallationDetails()
+      .then(installationDetails => {
+        set(
+          controller,
+          'standaloneWarningBarVisible',
+          get(onepanelServer, 'isStandalone') &&
+          get(installationDetails, 'isInitialized')
+        );
+      })
+      .then(() => model);
+  },
 });
