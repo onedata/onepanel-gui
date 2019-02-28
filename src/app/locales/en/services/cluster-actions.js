@@ -1,5 +1,5 @@
 export default {
   btnAdd: {
-    viaOnezoneHint: 'Login via Onezone to access this feature',
+    viaOnezoneHint: 'Open in Onezone to access this feature',
   },
 };

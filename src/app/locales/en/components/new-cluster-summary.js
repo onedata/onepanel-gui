@@ -14,6 +14,6 @@ export default {
   wayOnepanelInterface2: 'and should be used for emergency situations, typically when the Onezone interface is not available.',
   currentlyOn1: 'You are currently on the',
   currentlyOnOnezone: 'Onezone',
-  currentlyOnStandalone: 'standalone',
+  currentlyOnStandalone: 'emergency',
   currentlyOn2: 'interface',
 };

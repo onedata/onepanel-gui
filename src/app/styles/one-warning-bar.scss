@@ -1,5 +1,4 @@
 $one-warning-bar-height: 32px;
-$one-warning-bar-shadow-height: 10px;
 
 .one-warning-bar {
   position: absolute;
@@ -11,14 +10,7 @@ $one-warning-bar-shadow-height: 10px;
   color: $color-one-white;
   z-index: 1002;
   
-  &::before {
-    position: absolute;
-    top: -$one-warning-bar-shadow-height;
-    height: $one-warning-bar-shadow-height;
-    background: linear-gradient(to bottom, transparent, #00000033);
-    content: ' ';
-    width: 100%;
-  }
+  @include before-top-shadow();
 }
 
 .one-warning-bar + .app-layout {
