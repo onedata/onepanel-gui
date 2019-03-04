@@ -22,6 +22,7 @@ export default GuiUtils.extend(
     onezoneGui: service(),
     providerManager: service(),
     clusterModelManager: service(),
+    session: service(),
 
     /**
      * Panel type: provider or zone.
@@ -124,6 +125,23 @@ export default GuiUtils.extend(
     init() {
       this._super(...arguments);
       this.updateGuiNameProxy();
+    },
+
+    logout() {
+      const session = this.get('session');
+      return session.invalidate()
+        .then(() => window.location.reload())
+        .catch(error => {
+          const {
+            globalNotify,
+            i18n,
+          } = this.getProperties('globalNotify', 'i18n');
+          globalNotify.backendError(
+            i18n.t('components.userAccountButton.loggingOut'),
+            error
+          );
+          throw error;
+        });
     },
 
     fetchGuiName() {

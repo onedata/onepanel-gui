@@ -1,4 +1,10 @@
+import data from './tabs/data';
 import clusters from './tabs/clusters';
+import tokens from './tabs/tokens';
+import spaces from './tabs/spaces';
+import groups from './tabs/groups';
+import harvesters from './tabs/harvesters';
+import users from './tabs/users';
 
 import clusterStorageAddForm from './components/cluster-storage-add-form';
 import supportSpaceForm from './components/support-space-form';
@@ -56,6 +62,7 @@ import supportSizeInfo from './components/support-size-info';
 import standaloneWarningBar from './components/standalone-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
+import brandInfo from './components/brand-info';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -70,7 +77,13 @@ import onedataCommonTranslations from './onedata-gui-common';
 
 let translations = {
   tabs: {
+    data,
+    tokens,
+    spaces,
+    groups,
+    users,
     clusters,
+    harvesters,
   },
   components: {
     clusterStorageAddForm,
@@ -127,6 +140,7 @@ let translations = {
     spaceStorageSynchronization,
     supportSizeInfo,
     standaloneWarningBar,
+    brandInfo,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,
