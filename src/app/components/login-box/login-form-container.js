@@ -77,10 +77,6 @@ export default LoginFormContainer.extend(I18n, {
       .then(canEnterViaOnezone => {
         const isUsernameLoginActive = !canEnterViaOnezone;
         safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
-        this.get('eventsBus').trigger(
-          'login-controller:toggleStandaloneWarningBar',
-          isUsernameLoginActive
-        );
       });
   },
 
