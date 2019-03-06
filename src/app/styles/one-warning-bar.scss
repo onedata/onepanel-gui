@@ -3,14 +3,14 @@ $one-warning-bar-height: 32px;
 .one-warning-bar {
   position: absolute;
   height: $one-warning-bar-height;
-  background-color: $color-one-orange;
+  background-color: $color-one-blue-gray;
   width: 100%;
   bottom: 0;
   line-height: $one-warning-bar-height;
   color: $color-one-white;
   z-index: 1002;
   
-  @include before-top-shadow();
+  @include before-top-shadow($shadow-alpha: 0.1);
 }
 
 .one-warning-bar + .app-layout {

@@ -145,8 +145,8 @@ export default Component.extend(I18n, {
       .then(({ data: onezoneInfo }) => {
         const i18n = this.get('i18n');
         const alertService = this.get('alert');
-        if (!get(onezoneInfo, 'compatible')) {
-          // FIXME: provide supportedVersions array
+        if (get(onezoneInfo, 'compatible') === false) {
+          // FIXME: page with compatibility
           alertService.error(null, {
             componentName: 'alerts/register-onezone-not-compatible',
             header: i18n.t(
@@ -154,7 +154,7 @@ export default Component.extend(I18n, {
             ),
             domain: get(onezoneInfo, 'domain'),
           });
-        } else if (!get(onezoneInfo, 'online')) {
+        } else if (get(onezoneInfo, 'online') === false) {
           alertService.error(null, {
             componentName: 'alerts/register-onezone-offline',
             header: i18n.t(
