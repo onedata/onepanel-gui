@@ -80,6 +80,7 @@ export default [{
   },
   {
     name: 'fileMode',
+    tip: true,
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
@@ -89,6 +90,7 @@ export default [{
   },
   {
     name: 'dirMode',
+    tip: true,
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
