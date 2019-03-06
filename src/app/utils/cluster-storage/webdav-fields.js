@@ -85,6 +85,7 @@ export default [{
     regexMessage: 'This field should be octal POSIX permissions',
     example: '0644',
     optional: true,
+    regexAllowBlank: true,
   },
   {
     name: 'dirMode',
@@ -93,6 +94,7 @@ export default [{
     regexMessage: 'This field should be octal POSIX permissions',
     example: '0775',
     optional: true,
+    regexAllowBlank: true,
   },
   {
     name: 'timeout',
