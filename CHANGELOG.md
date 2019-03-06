@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5301 Fixed disabled submit button in WebDAV storage on no POSIX mode
 * VFS-5301 Added new WebDAV configuration fields
 * VFS-5242 Using new async backend to show progress of saving file popularity settings
 * VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update

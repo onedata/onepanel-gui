@@ -80,19 +80,23 @@ export default [{
   },
   {
     name: 'fileMode',
+    tip: true,
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
     example: '0644',
     optional: true,
+    regexAllowBlank: true,
   },
   {
     name: 'dirMode',
+    tip: true,
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
     example: '0775',
     optional: true,
+    regexAllowBlank: true,
   },
   {
     name: 'timeout',
