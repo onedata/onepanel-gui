@@ -13,7 +13,15 @@ export default {
   },
   credentials: {
     name: 'Credentials',
-    tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "username:password", for "token" just the token. For "none" this field is ignored.',
+    tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "username:password", for "token" just the token. In case of "oauth2", this field should contain the username for the WebDAV, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
+  },
+  oauth2IdP: {
+    name: 'OAuth2 IdP',
+    tip: 'In case "oauth2" credential type is selected and Onezone is configured with support for multiple external IdP\'s, this field must contain the name of the IdP which authenticates requests to the WebDAV endpoint. If Onezone has only one external IdP, it will be selected automatically.',
+  },
+  onedataAccessToken: {
+    name: 'Onedata access token',
+    tip: 'When registering storage in "insecure" mode with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
   },
   authorizationHeader: {
     name: 'Authorization header',
@@ -30,6 +38,14 @@ export default {
   maximumUploadSize: {
     name: 'Maximum upload size [b]',
     tip: 'Defines the maximum upload size for a single PUT or PATCH request. If set to 0, assumes that the WebDAV server has no upload limit. Default: 0.',
+  },
+  fileMode: {
+    name: 'File mode',
+    tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0644". Default: 0644.',
+  },
+  dirMode: {
+    name: 'Directory mode',
+    tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".  Default: 0775.',
   },
   timeout: { name: 'Timeout [ms]' },
   insecure: {
