@@ -172,14 +172,17 @@ const providerCluster2 = {
 const provider1 = PlainableObject.create({
   id: PROVIDER_ID,
   name: 'Some provider 1',
+  domain: 'oneprovider-1.local-onedata.org',
+  geoLatitude: 49.698284,
+  geoLongitude: 21.898093,
+  online: true,
+  cluster: providerCluster1.id,
+  // non-remote properties
   onezoneDomainName: 'localhost',
   subdomainDelegation: true,
   letsEncryptEnabled: undefined,
   subdomain: 'somedomain',
-  domain: 'oneprovider-1.local-onedata.org',
   adminEmail: 'some@example.com',
-  geoLatitude: 49.698284,
-  geoLongitude: 21.898093,
 });
 
 export default OnepanelServerBase.extend(
@@ -1233,11 +1236,11 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getAnyProvider() {
-      const __anyProviders = this.get('__anyProviders');
+    _req_onepanel_getRemoteProvider() {
+      const __remoteProviders = this.get('__remoteProviders');
       return {
-        success: id => __anyProviders.findBy('id', id),
-        statusCode: id => __anyProviders.findBy('id', id) ? 200 : 404,
+        success: id => __remoteProviders.findBy('id', id),
+        statusCode: id => __remoteProviders.findBy('id', id) ? 200 : 404,
       };
     },
 
@@ -1262,20 +1265,17 @@ export default OnepanelServerBase.extend(
 
     // -- MOCKED RESOURCE STORE --
 
-    __anyProviders: computed('__provider', function __anyProviders() {
+    __remoteProviders: computed('__provider', function __remoteProviders() {
       return [
         provider1,
         {
           id: PROVIDER2_ID,
           name: 'Other provider',
-          onezoneDomainName: 'localhost',
-          subdomainDelegation: true,
-          letsEncryptEnabled: undefined,
-          subdomain: 'somedomain',
           domain: 'oneprovider-2.local-onedata.org',
-          adminEmail: 'some@example.com',
           geoLatitude: 49.698284,
           geoLongitude: 21.898093,
+          online: true,
+          cluster: providerCluster2.id,
         },
       ];
     }),

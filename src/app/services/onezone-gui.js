@@ -64,17 +64,17 @@ export default Service.extend(
      * @param {string} onepanelType one of: oneprovider, onezone
      * @param {string} clusterId
      * @param {string} [internalRoute='/'] Onezone application internal route
-     * @param {boolean} [useRedirect=false] should be used redirect or direct url
+     * @param {boolean} [redirectType='direct]
      * @returns {string}
      */
     getOnepanelNavUrlInOnezone({
       onepanelType,
       clusterId,
       internalRoute = '/',
-      useRedirect = false,
+      redirectType = 'direct',
     } = {
       internalRoute: '/',
-      useRedirect: false,
+      redirectType: 'onezone_route',
     }) {
       const onezoneOrigin = this.get('onezoneOrigin');
       if (!onepanelType) {
@@ -85,9 +85,17 @@ export default Service.extend(
       }
 
       const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
-      return useRedirect ?
-        `${onezoneOrigin}/#/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}` :
-        `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+      switch (redirectType) {
+        case 'direct':
+          return `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+        case 'redirect':
+          return `${onezoneOrigin}/#/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+        case 'onezone_route':
+          // TODO: internal route support in onezone_route redirection
+          return `${onezoneOrigin}/oz/onezone/i#/onedata/clusters/${clusterId}`;
+        default:
+          throw new Error(`service:onezone-gui Unsupported redirectType: ${redirectType}`);
+      }
     },
 
     /**

@@ -61,7 +61,7 @@ export default LoginRoute.extend({
           window.location =
             onezoneGui.getOnepanelNavUrlInOnezone({
               internalRoute: `/clusters/${clusterIdFromUrl}`,
-              useRedirect: true,
+              redirectType: 'redirect',
             });
         }
       });

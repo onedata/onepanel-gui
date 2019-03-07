@@ -129,7 +129,7 @@ export default Service.extend(
                 });
             }
           } else {
-            return providerManager.getAnyProvider(get(data, 'serviceId'))
+            return providerManager.getRemoteProvider(get(data, 'serviceId'))
               .then(({ name, domain }) => {
                 cluster.name = name;
                 cluster.domain = domain;

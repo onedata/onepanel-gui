@@ -92,9 +92,8 @@ export default Service.extend({
     return deregistering;
   },
 
-  // FIXME: cacheing?
-  getAnyProvider(id) {
-    return this.get('onepanelServer').request('onepanel', 'getAnyProvider', id)
+  getRemoteProvider(id) {
+    return this.get('onepanelServer').request('onepanel', 'getRemoteProvider', id)
       .then(({ data }) => data);
   },
 
