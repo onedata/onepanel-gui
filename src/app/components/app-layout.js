@@ -6,6 +6,7 @@ import { reads, not } from '@ember/object/computed';
 export default AppLayout.extend({
   media: service(),
   deploymentManager: service(),
+  onepanelServer: service(),
 
   isStandaloneOnepanel: reads('onepanelServer.isStandalone'),
 
