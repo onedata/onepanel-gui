@@ -29,7 +29,7 @@ export default OnedataRoute.extend(I18n, {
     const isStandalone = this.get('onepanelServer.isStandalone');
     return Promise.all([
       this._super(...arguments),
-      this.get('deploymentManager').getInstallationDetails(),
+      this.get('deploymentManager').getInstallationDetailsProxy(),
     ]).then(([model, installDetails]) => {
       if (isStandalone) {
         const items = get(model, 'mainMenuItems');
@@ -57,7 +57,7 @@ export default OnedataRoute.extend(I18n, {
   setupController(controller, model) {
     this._super(...arguments);
     const onepanelServer = this.get('onepanelServer');
-    return this.get('deploymentManager').getInstallationDetails()
+    return this.get('deploymentManager').getInstallationDetailsProxy()
       .then(installationDetails => {
         set(
           controller,

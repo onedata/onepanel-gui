@@ -97,7 +97,7 @@ export default Service.extend(
           if (get(currentCluster, 'id') === get(cluster, 'id')) {
             set(cluster, 'isLocal', true);
             installationDetailsProxy =
-              deploymentManager.getInstallationDetails(false);
+              deploymentManager.getInstallationDetailsProxy();
             return installationDetailsProxy.then(installationDetails => {
               set(
                 cluster,
@@ -113,7 +113,7 @@ export default Service.extend(
           if (cluster.type === 'onezone') {
             if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
-                deploymentManager.getInstallationDetails(false);
+                deploymentManager.getInstallationDetailsProxy();
               return installationDetailsProxy
                 .then(installationDetails => {
                   cluster.name = get(installationDetails, 'name');

@@ -9,7 +9,7 @@ describe('Unit | Mixin | domain name proxy', function () {
   it('uses deployment manager to resolve onezone domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
     const deploymentManager = {
-      getInstallationDetails() {},
+      getInstallationDetailsProxy() {},
     };
     const domainName = 'zone.domain.name.com';
     const cluster = {
@@ -19,11 +19,11 @@ describe('Unit | Mixin | domain name proxy', function () {
         },
       },
     };
-    const getInstallationDetails = sinon.stub(
+    const getInstallationDetailsProxy = sinon.stub(
       deploymentManager,
-      'getInstallationDetails'
+      'getInstallationDetailsProxy'
     );
-    getInstallationDetails.resolves(cluster);
+    getInstallationDetailsProxy.resolves(cluster);
 
     const subject = DomainNameProxyObject.create({
       onepanelServiceType: 'onezone',

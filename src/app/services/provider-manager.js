@@ -75,7 +75,7 @@ export default Service.extend({
         providerModifyRequest
       )
       .then(() => this.getProviderDetails(true))
-      .then(() => deploymentManager.getInstallationDetails(true));
+      .then(() => deploymentManager.getInstallationDetailsProxy({ reload: true }));
   },
 
   /**
@@ -88,7 +88,7 @@ export default Service.extend({
       deploymentManager,
     } = this.getProperties('onepanelServer', 'deploymentManager');
     let deregistering = onepanelServer.request('oneprovider', 'removeProvider');
-    deregistering.then(() => deploymentManager.getInstallationDetails(true));
+    deregistering.then(() => deploymentManager.getInstallationDetailsProxy({ reload: true }));
     return deregistering;
   },
 

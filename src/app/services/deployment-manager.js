@@ -17,7 +17,7 @@ import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import ClusterDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -25,7 +25,7 @@ const _ROLE_COLLECTIONS = {
   workers: 'clusterWorker',
 };
 
-export default Service.extend({
+export default Service.extend(createDataProxyMixin('installationDetails'), {
   clusterModelManager: service(),
   onepanelServer: service(),
   guiUtils: service(),
@@ -44,74 +44,48 @@ export default Service.extend({
    */
   _defaultCache: alias('defaultCache.content'),
 
-  // TODO: in future this should be able to get details of any cluster 
-  // in system 
   /**
-   * @param {boolean} [reload=false]
-   * @returns {PromiseObject}
+   * @override
    */
-  getInstallationDetails(reload = false) {
-    let {
-      onepanelServiceType,
-      defaultCache,
-      _defaultCache,
-    } = this.getProperties(
-      'onepanelServiceType',
-      'defaultCache',
-      '_defaultCache'
-    );
+  fetchInstallationDetails() {
+    const onepanelServiceType = this.get('onepanelServiceType');
 
-    let promise = new Promise((resolve, reject) => {
-      if (_defaultCache && !reload) {
-        resolve(defaultCache);
-      } else {
-        let clusterStep;
+    let clusterStep;
 
-        let gettingStep = this._getThisClusterInitStep();
+    return this._getThisClusterInitStep()
+      .then(step => {
+        clusterStep = step;
 
-        gettingStep.then(step => {
-          clusterStep = step;
-
-          let gettingConfiguration = this.getConfiguration();
-
-          return new Promise(resolveConfiguration => {
-            gettingConfiguration.then(({ data: configuration }) => {
-              resolveConfiguration(configuration);
-            });
-
-            gettingConfiguration.catch(() => {
-              resolveConfiguration(null);
-            });
+        return this.getConfiguration()
+          .then(({ data: configuration }) => {
+            return configuration;
+          })
+          .catch(() => {
+            return null;
           });
+      })
+      .then(configuration => {
+        return this.get('clusterModelManager').getRawCurrentClusterProxy()
+          .then(currentCluster => {
+            const currentClusterId = (
+              currentCluster && get(currentCluster, 'id') || 'new'
+            );
+            const name = (configuration || null) &&
+              configuration[onepanelServiceType].name;
+            const thisCluster = ClusterInfo.create({
+              id: currentClusterId,
+            }, configuration);
 
-        }).then(configuration => {
-          return this.get('clusterModelManager').getRawCurrentClusterProxy()
-            .then(currentCluster => {
-              const currentClusterId = (
-                currentCluster && get(currentCluster, 'id') || 'new'
-              );
-              const name = (configuration || null) &&
-                configuration[onepanelServiceType].name;
-              const thisCluster = ClusterInfo.create({
-                id: currentClusterId,
-              }, configuration);
-
-              const clusterDetails = ClusterDetails.create({
-                name,
-                onepanelServiceType: onepanelServiceType,
-                clusterInfo: thisCluster,
-                initStep: clusterStep,
-              });
-
-              this.set('_defaultCache', clusterDetails);
-              resolve(defaultCache);
+            const clusterDetails = ClusterDetails.create({
+              name,
+              onepanelServiceType: onepanelServiceType,
+              clusterInfo: thisCluster,
+              initStep: clusterStep,
             });
-        }).catch(reject);
 
-        gettingStep.catch(reject);
-      }
-    });
-    return PromiseObject.create({ promise });
+            return clusterDetails;
+          });
+      });
   },
 
   /**
@@ -160,7 +134,6 @@ export default Service.extend({
       mainManagerHostname: cluster.managers.mainHost,
       clusterHostsInfo: clusterHostsInfoArray,
     };
-
   },
 
   /**

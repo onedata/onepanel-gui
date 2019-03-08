@@ -1,7 +1,7 @@
 import AppLayout from 'onedata-gui-common/components/app-layout';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { reads, not } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 
 export default AppLayout.extend({
   media: service(),
@@ -14,7 +14,13 @@ export default AppLayout.extend({
    * Deployment manager's installationDetails should be available always
    * in `onedata` routes because it is blocking `onedata` model.
    */
-  isDeploying: not('deploymentManager.installationDetails.isInitialized'),
+  isDeploying: computed(
+    'deploymentManager.installationDetails.isInitialized',
+    function isDeploying() {
+      return this.get('deploymentManager.installationDetails.isInitialized') ===
+        false;
+    },
+  ),
 
   withBottomBar: computed(
     'isStandaloneOnepanel',

@@ -80,8 +80,8 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<PromiseObject<Object>>}
    */
-  clusterConfigurationProxy: computed(function clusterConfiguration() {
-    return this.get('deploymentManager').getInstallationDetails();
+  clusterConfigurationProxy: computed(function clusterConfigurationProxy() {
+    return this.get('deploymentManager').getInstallationDetailsProxy();
   }),
 
   /**

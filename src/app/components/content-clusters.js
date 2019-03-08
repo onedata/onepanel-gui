@@ -56,7 +56,7 @@ export default Component.extend(
     },
 
     fetchConfiguration() {
-      return this.get('deploymentManager').getInstallationDetails();
+      return this.get('deploymentManager').getInstallationDetailsProxy();
     },
 
     actions: {
