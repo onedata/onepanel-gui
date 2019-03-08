@@ -52,18 +52,12 @@ export default LoginRoute.extend({
     const isHosted = !!clusterIdFromUrl;
     if (isHosted) {
       return new Promise(() => {
-        if (sessionStorage.getItem('redirectFromOnezone') === 'true') {
-          sessionStorage.setItem('redirectFromOnezone', 'false');
-          throw new Error(
-            'Redirection loop detected, try to clear browser cookies, logout from Onezone or contact administrators.'
-          );
-        } else {
-          window.location =
-            onezoneGui.getOnepanelNavUrlInOnezone({
-              internalRoute: `/clusters/${clusterIdFromUrl}`,
-              redirectType: 'redirect',
-            });
-        }
+        sessionStorage.setItem('authRedirect', '1');
+        window.location =
+          onezoneGui.getOnepanelNavUrlInOnezone({
+            internalRoute: `/clusters/${clusterIdFromUrl}`,
+            redirectType: 'redirect',
+          });
       });
     } else {
       const baseModel = this._super(...arguments) || {};

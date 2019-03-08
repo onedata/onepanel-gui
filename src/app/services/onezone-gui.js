@@ -89,7 +89,11 @@ export default Service.extend(
         case 'direct':
           return `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
         case 'redirect':
-          return `${onezoneOrigin}/#/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+          sessionStorage.setItem(
+            'redirectUrl',
+            `/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`
+          );
+          return onezoneOrigin;
         case 'onezone_route':
           // TODO: internal route support in onezone_route redirection
           return `${onezoneOrigin}/oz/onezone/i#/onedata/clusters/${clusterId}`;

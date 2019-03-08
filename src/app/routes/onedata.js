@@ -25,7 +25,6 @@ export default OnedataRoute.extend(I18n, {
   },
 
   model() {
-    sessionStorage.setItem('redirectFromOnezone', 'false');
     const isStandalone = this.get('onepanelServer.isStandalone');
     return Promise.all([
       this._super(...arguments),
