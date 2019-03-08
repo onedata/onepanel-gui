@@ -9,7 +9,7 @@ export default {
   wayOnezoneInterfaceClusters: 'Clusters',
   wayOnezoneInterface3: 'menu.',
   wayOnezoneAccess: 'To access it, click the button below and log in to your Onedata user account.',
-  wayOnepanelIntro: 'Standalone Onepanel interface – this interface is limited to this cluster only and most of the functionalities are disabled. You can only log in using your Onepanel root password.',
+  wayOnepanelIntro: 'Emergency Onepanel interface – this interface is limited to this cluster only and most of the functionalities are disabled. You can only log in using your Onepanel root password.',
   wayOnepanelInterface1: 'The interface is available on port 9443',
   wayOnepanelInterface2: 'and should be used for emergency situations, typically when the Onezone interface is not available.',
   currentlyOn1: 'You are currently on the',

@@ -12,6 +12,7 @@ import { get, set } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
 import { resolve } from 'rsvp';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 export default Service.extend(
   createDataProxyMixin('rawCurrentCluster'),
@@ -49,7 +50,7 @@ export default Service.extend(
     fetchClusters() {
       return this.getClusterIdsProxy().then(ids =>
         Promise.all(ids.map(id => this.getCluster(id)))
-      );
+      ).then(clusters => addConflictLabels(clusters));
     },
 
     getNotDeployedCluster() {

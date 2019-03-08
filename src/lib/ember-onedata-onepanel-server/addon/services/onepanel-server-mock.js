@@ -52,7 +52,7 @@ function getMockServiceType() {
   } else if (/https:\/\/oneprovider.*9443/.test(url)) {
     return 'oneprovider';
   } else {
-    const letterMatch = url.match(/.*?#\/o(z|p)p.*/);
+    const letterMatch = url.match(new RegExp(`${location.origin}\\/o(z|p)p\\/.*`));
     if (letterMatch) {
       return letterMatch[1] === 'z' ? 'onezone' : 'oneprovider';
     } else {
@@ -1206,15 +1206,17 @@ export default OnepanelServerBase.extend(
         success: ({ token }) => {
           let online = true;
           let compatible = true;
-          switch (token.trim()) {
-            case 'offline':
-              online = false;
-              break;
-            case 'not-compatible':
-              compatible = false;
-              break;
-            default:
-              break;
+          if (token) {
+            switch (token.trim()) {
+              case 'offline':
+                online = false;
+                break;
+              case 'not-compatible':
+                compatible = false;
+                break;
+              default:
+                break;
+            }
           }
           return {
             domain: 'onezone.local-onedata.org',
@@ -1270,7 +1272,7 @@ export default OnepanelServerBase.extend(
         provider1,
         {
           id: PROVIDER2_ID,
-          name: 'Other provider',
+          name: 'Some provider 1',
           domain: 'oneprovider-2.local-onedata.org',
           geoLatitude: 49.698284,
           geoLongitude: 21.898093,
