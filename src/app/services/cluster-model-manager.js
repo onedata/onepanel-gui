@@ -48,7 +48,7 @@ export default Service.extend(
     },
 
     fetchClusters() {
-      return this.getClusterIdsProxy().then(ids =>
+      return this.getClusterIdsProxy({ reload: true }).then(ids =>
         Promise.all(ids.map(id => this.getCluster(id)))
       ).then(clusters => addConflictLabels(clusters));
     },
