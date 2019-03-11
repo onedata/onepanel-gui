@@ -64,19 +64,10 @@ export default GuiUtils.extend(
      * @override
      */
     manageAccountExternalLink: computed(
-      'onezoneGui.{onezoneGuiUrl,clusterUrlInOnepanel}',
+      'onezoneGui.onezoneGuiUrl',
       function manageAccountExternalLink() {
-        const {
-          onepanelServer,
-          onezoneGui,
-        } = this.getProperties('onepanelServer', 'onezoneGui');
-        // FIXME: remove first option - go to onezone
-        if (get(onepanelServer, 'isStandalone')) {
-          return get(onezoneGui, 'clusterUrlInOnepanel');
-        } else {
-          const onezoneGuiUrl = get(onezoneGui, 'onezoneGuiUrl');
-          return `${onezoneGuiUrl}/onedata/users`;
-        }
+        const onezoneGuiUrl = this.get('onezoneGui.onezoneGuiUrl');
+        return `${onezoneGuiUrl}/onedata/users`;
       }
     ),
 
@@ -101,7 +92,6 @@ export default GuiUtils.extend(
           'clusterModelManager',
           'serviceType'
         );
-        // FIXME: do not show in standalone mode
         if (get(onepanelServer, 'isStandalone')) {
           const isDeployed =
             get(clusterModelManager, 'currentCluster.isNotDeployed') === false;

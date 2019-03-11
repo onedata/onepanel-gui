@@ -36,7 +36,6 @@ describe('Integration | Component | user account button', function () {
     registerService(this, 'gui-utils', GuiUtils);
   });
 
-  // FIXME: this test and valid username fetch should be implemented
   it('renders username got from onepanel server', function () {
     const onepanelServer = lookupService(this, 'onepanelServer');
     const providerManager = lookupService(this, 'providerManager');

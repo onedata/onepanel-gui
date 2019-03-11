@@ -17,6 +17,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
+  i18n: service(),
 
   /**
    * @override

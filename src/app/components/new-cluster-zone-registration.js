@@ -146,7 +146,6 @@ export default Component.extend(I18n, {
         const i18n = this.get('i18n');
         const alertService = this.get('alert');
         if (get(onezoneInfo, 'compatible') === false) {
-          // FIXME: page with compatibility
           alertService.error(null, {
             componentName: 'alerts/register-onezone-not-compatible',
             header: i18n.t(
