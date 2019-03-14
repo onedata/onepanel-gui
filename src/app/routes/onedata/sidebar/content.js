@@ -58,16 +58,10 @@ export default SidebarContentRoute.extend({
                   });
                   window.location = redirectUrl;
                 } else {
-                  const i18n = this.get('i18n');
-                  this.get('alert').error(null, {
-                    componentName: 'alerts/endpoint-error',
-                    header: i18n.t('components.alerts.endpointError.headerPrefix') +
-                      ' ' +
-                      i18n.t('components.alerts.endpointError.onepanel'),
-                    url: origin,
-                    serverType: 'onepanel',
-                  });
-                  throw { isOnedataCustomError: true, type: 'endpoint-error' };
+                  const redirectUrl = onezoneGui.getUrlInOnezone(
+                    `onedata/clusters/${clusterId}`
+                  );
+                  window.location = redirectUrl;
                 }
               });
           } else {

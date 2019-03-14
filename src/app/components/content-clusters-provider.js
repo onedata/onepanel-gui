@@ -25,11 +25,17 @@ export default Component.extend(I18n, GlobalActions, {
   onepanelServer: service(),
   globalNotify: service(),
   i18n: service(),
+  onezoneGui: service(),
 
   /**
    * @override
    */
   i18nPrefix: 'components.contentClustersProvider',
+
+  /**
+   * @virtual
+   */
+  cluster: undefined,
 
   /**
    * Initialized in ``_initProviderProxy``
@@ -120,7 +126,12 @@ export default Component.extend(I18n, GlobalActions, {
    */
   _openDeregisterModalAction: computed(function () {
     return {
-      action: () => this.send('openDeregisterModal'),
+      action: () =>
+        this.send(
+          this.get('isOnepanelStandalone') ?
+          'openDeregisterModal' :
+          'deregisterInOnezone'
+        ),
       title: this.t('deregisterProvider'),
       class: 'btn-deregister-provider',
       buttonStyle: 'danger',
@@ -177,6 +188,12 @@ export default Component.extend(I18n, GlobalActions, {
   actions: {
     toggleModifyProvider() {
       this.toggleProperty('_editing');
+    },
+
+    deregisterInOnezone() {
+      const clusterId = this.get('cluster.id');
+      window.location = this.get('onezoneGui')
+        .getUrlInOnezone(`onedata/clusters/${clusterId}/deregister`);
     },
 
     openDeregisterModal(fromFullToolbar) {
