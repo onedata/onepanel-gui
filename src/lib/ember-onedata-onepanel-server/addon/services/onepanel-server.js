@@ -162,22 +162,17 @@ export default OnepanelServerBase.extend(
      * @param {string} serviceType 
      * @param {string} clusterId 
      */
-    fetchStandaloneOnepanelOrigin(oneproviderTokenData, serviceType, clusterId) {
-      if (!oneproviderTokenData || !serviceType || !clusterId) {
+    fetchStandaloneOnepanelOrigin(serviceType, clusterId) {
+      if (!serviceType || !clusterId) {
         throw new Error(
           'service:onepanel-server#fetchStandaloneOnepanelOrigin: cannot execute without all fetchArgs'
         );
       }
       const _location = this.get('_location');
       if (serviceType === 'oneprovider') {
-        // a small hack to not make oneprovider token call twice
-        let getOneproviderTokenPromise;
-        if (oneproviderTokenData) {
-          getOneproviderTokenPromise = resolve(oneproviderTokenData);
-        } else {
-          getOneproviderTokenPromise = new Promise((resolve, reject) =>
+        return new Promise((resolve, reject) =>
             $.ajax(
-              '/gui-token', {
+              '/gui-origin', {
                 method: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
@@ -186,11 +181,7 @@ export default OnepanelServerBase.extend(
                   clusterType: 'oneprovider',
                 }),
               }
-            ).then(resolve, reject));
-        }
-
-        // we are hosted by Onezone, so make request to /gui-token
-        return getOneproviderTokenPromise
+            ).then(resolve, reject))
           .then(({ domain }) => `https://${domain}:9443`);
       } else {
         // Onezone Panel served from Onezone host is on different port
@@ -205,14 +196,13 @@ export default OnepanelServerBase.extend(
      *   /gui-token for 'oneprovider' cluster - can be used to prevent from
      *   making multiple requests
      */
-    fetchApiOrigin(oneproviderTokenData) {
+    fetchApiOrigin() {
       const clusterIdFromUrl = this.getClusterIdFromUrl();
       const _location = this.get('_location');
       if (clusterIdFromUrl) {
         const serviceType = this.getClusterTypeFromUrl();
         return this.getStandaloneOnepanelOriginProxy({
           fetchArgs: [
-            oneproviderTokenData,
             serviceType,
             clusterIdFromUrl,
           ],
@@ -264,7 +254,7 @@ export default OnepanelServerBase.extend(
           const onepanelToken = tokenData.token;
           const ttl = tokenData.ttl;
 
-          return this.getApiOriginProxy({ fetchArgs: [tokenData] })
+          return this.getApiOriginProxy()
             .then(apiOrigin => {
               return run(() => {
                 return this.initClient({
