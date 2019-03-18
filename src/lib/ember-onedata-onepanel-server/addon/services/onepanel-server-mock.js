@@ -29,9 +29,16 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
 import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
-
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import Onepanel from 'npm:onepanel';
+
+const {
+  TaskStatus,
+  TaskStatus: {
+    StatusEnum,
+  },
+} = Onepanel;
 
 const MOCK_USERNAME = 'mock_admin';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
@@ -93,6 +100,26 @@ const defaultLetsEncryptDeployed = true;
  * Used when generating providers support data
  */
 let providerSupportCounter = 1;
+
+/**
+ * Used when generating file popularity tasks
+ */
+let popularityTaskCounter = 0;
+
+const popularityTasks = {};
+
+function getPopularityTask(taskId) {
+  if (!popularityTasks.hasOwnProperty(taskId)) {
+    popularityTasks[taskId] = TaskStatus.constructFromObject({
+      status: StatusEnum.running,
+    });
+  }
+  const task = popularityTasks[taskId];
+  setTimeout(() => {
+    task.status = StatusEnum.ok;
+  }, 10000);
+  return task;
+}
 
 function _genSupportingProviders() {
   let supportingProviders = {};
@@ -628,6 +655,8 @@ export default OnepanelServerBase.extend(
         success(taskId) {
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
+          } else if (taskId.startsWith('popularity')) {
+            return getPopularityTask(taskId);
           } else {
             throw new Error(
               `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
@@ -863,6 +892,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_configureFilePopularity() {
+      const taskId = `popularity-${popularityTaskCounter++}`;
       return {
         // data: enabled, [lastOpenHourWeight], [avgOpenCountPerDayWeight], [maxAvgOpenCountPerDay]
         success: (id, data) => {
@@ -897,6 +927,7 @@ export default OnepanelServerBase.extend(
           let configuration = spacesFilePopularity.find(s => s.id === id);
           return configuration ? 204 : 404;
         },
+        taskId,
       };
     },
 

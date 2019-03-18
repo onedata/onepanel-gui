@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
+* VFS-5242 Using new async backend to show progress of saving file popularity settings
 * VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update
 * VFS-5114 Infinite-scroll list of auto-cleaning reports, file-popularity options and major refactor of space support views
 * VFS-5153 Added DNS autodetect option
