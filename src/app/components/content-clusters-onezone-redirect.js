@@ -20,8 +20,10 @@ export default Component.extend(
 
     redirectToOnezone() {
       return this.getOnezoneOriginProxy().then(onezoneOrigin => {
-        window.location =
-          `${onezoneOrigin}/oz/onezone/i#/${this.get('path')}`;
+        return new Promise(() => {
+          window.location =
+            `${onezoneOrigin}/ozw/onezone/i#/${this.get('path')}`;
+        });
       });
     },
   });

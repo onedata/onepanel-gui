@@ -16,7 +16,7 @@ const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credent
 
 export default AspectRoute.extend({
   guiUtils: service(),
-  
+
   onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**

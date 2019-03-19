@@ -158,7 +158,6 @@ export default OnepanelServerBase.extend(
 
     /**
      * @override
-     * @param {object} oneproviderTokenData 
      * @param {string} serviceType 
      * @param {string} clusterId 
      */

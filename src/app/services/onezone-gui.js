@@ -24,7 +24,7 @@ export default Service.extend(
      */
     onezoneGuiUrl: computed('onezoneOrigin', function () {
       const onezoneOrigin = this.get('onezoneOrigin');
-      return onezoneOrigin ? `${onezoneOrigin}/oz/onezone/i#` : null;
+      return onezoneOrigin ? `${onezoneOrigin}/ozw/onezone/i#` : null;
     }),
 
     /**
@@ -56,7 +56,7 @@ export default Service.extend(
 
     getUrlInOnezone(path) {
       const onezoneOrigin = this.get('onezoneOrigin');
-      return `${onezoneOrigin}/oz/onezone/i#/${path}`;
+      return `${onezoneOrigin}/ozw/onezone/i#/${path}`;
     },
 
     /**
@@ -96,7 +96,7 @@ export default Service.extend(
           return onezoneOrigin;
         case 'onezone_route':
           // TODO: internal route support in onezone_route redirection
-          return `${onezoneOrigin}/oz/onezone/i#/onedata/clusters/${clusterId}`;
+          return `${onezoneOrigin}/ozw/onezone/i#/onedata/clusters/${clusterId}`;
         default:
           throw new Error(`service:onezone-gui Unsupported redirectType: ${redirectType}`);
       }
@@ -109,7 +109,7 @@ export default Service.extend(
     fetchIsOnezoneAvailable() {
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
-        return checkImg(`${onezoneOrigin}/oz/onezone/favicon.ico`);
+        return checkImg(`${onezoneOrigin}/ozw/onezone/favicon.ico`);
       } else {
         return resolve(false);
       }
