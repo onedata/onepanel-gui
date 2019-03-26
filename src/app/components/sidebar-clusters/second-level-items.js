@@ -76,6 +76,7 @@ export default SecondLevelItems.extend(I18n, {
     'providerItem',
     'storagesItem',
     'spacesItem',
+    'membersItem',
     function () {
       const {
         isNotDeployedCluster,
@@ -94,6 +95,7 @@ export default SecondLevelItems.extend(I18n, {
           providerItem,
           storagesItem,
           spacesItem,
+          membersItem,
         } = this.getProperties(
           'clusterType',
           'cluster',
@@ -105,6 +107,7 @@ export default SecondLevelItems.extend(I18n, {
           'providerItem',
           'storagesItem',
           'spacesItem',
+          'membersItem'
         );
         const commonItems = [
           overviewItem,
@@ -112,6 +115,7 @@ export default SecondLevelItems.extend(I18n, {
           dnsItem,
           certificateItem,
           credentialsItem,
+          membersItem,
         ];
         return clusterType === 'onezone' ? commonItems : [
           ...commonItems,
