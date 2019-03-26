@@ -34,13 +34,13 @@ export default Component.extend(I18n, {
    */
   finish: notImplementedIgnore,
 
-  isStandaloneOnepanel: reads('onepanelServer.isStandalone'),
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 
   onepanelUrl: computed(function onepanelUrl() {
-    if (this.get('isStandaloneOnepanel')) {
+    if (this.get('isEmergencyOnepanel')) {
       return location.origin;
     } else {
-      return this.get('onepanelServer.standaloneOnepanelOrigin');
+      return this.get('onepanelServer.emergencyOnepanelOrigin');
     }
   }),
 

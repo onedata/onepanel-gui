@@ -38,14 +38,17 @@ describe('Unit | Mixin | domain name proxy', function () {
   it('uses provider manager to resolve provider domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
     const providerManager = {
-      getProviderDetails() {},
+      getProviderDetailsProxy() {},
     };
     const domainName = 'provider.domain.name.com';
     const provider = {
       domain: domainName,
     };
-    const getProviderDetails = sinon.stub(providerManager, 'getProviderDetails');
-    getProviderDetails.resolves(provider);
+    const getProviderDetailsProxy = sinon.stub(
+      providerManager,
+      'getProviderDetailsProxy'
+    );
+    getProviderDetailsProxy.resolves(provider);
 
     const subject = DomainNameProxyObject.create({
       onepanelServiceType: 'oneprovider',

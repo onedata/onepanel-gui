@@ -44,7 +44,7 @@ export default ContentInfo.extend(I18n, {
     });
   }),
 
-  buttonLabel: computed('onepanelServiceType', function () {
+  buttonLabel: computed('onepanelServiceType', function buttonLabel() {
     const onepanelServiceType = this.get('onepanelServiceType');
     return this.t('buttonLabel', {
       onepanelServiceType: capitalize(onepanelServiceType),

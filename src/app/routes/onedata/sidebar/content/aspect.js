@@ -32,19 +32,6 @@ export default AspectRoute.extend({
   },
 
   /**
-   * @override
-   */
-  model(params, transition) {
-    if (get(transition, 'params')['onedata.sidebar']['type'] === 'clusters') {
-      const clusterResource = this.modelFor('onedata.sidebar.content');
-      if (!get(clusterResource, 'resource.isLocal')) {
-        return new Promise(() => {});
-      }
-    }
-    return this._super(...arguments);
-  },
-
-  /**
    * Do not allow to go into clusters' aspects other than index if cluster
    * is not initialized yet or allow only nodes if in Zone
    * @param {Ember.Transition} transition 
@@ -54,15 +41,13 @@ export default AspectRoute.extend({
       transition.params['onedata.sidebar.content.aspect'],
       'aspect_id'
     );
-    if (aspectId !== 'not-found') {
+    if (aspectId !== 'not-found' && aspectId !== 'installation') {
       const onepanelServiceType = this.get('onepanelServiceType');
       const contentModel = this.modelFor('onedata.sidebar.content');
-      if (aspectId !== 'installation') {
-        if (get(contentModel, 'resource.isNotDeployed')) {
-          this.transitionTo('onedata.sidebar.content.aspect', 'installation');
-        } else if (onepanelServiceType === 'onezone' && !zoneAspects.has(aspectId)) {
-          this.transitionTo('onedata.sidebar.content.aspect', 'overview');
-        }
+      if (get(contentModel, 'resource.isNotDeployed')) {
+        this.transitionTo('onedata.sidebar.content.aspect', 'installation');
+      } else if (onepanelServiceType === 'onezone' && !zoneAspects.has(aspectId)) {
+        this.transitionTo('onedata.sidebar.content.aspect', 'overview');
       }
     }
   },

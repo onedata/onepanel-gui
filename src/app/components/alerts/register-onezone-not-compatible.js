@@ -1,6 +1,6 @@
 /**
- * Content for alert modal showing error when Onezone to register in
- * is not compatible with Oneprovider deployed with this Onepanel
+ * Content for alert modal showing error when trying to register Oneprovider
+ * in Onezone that is not compatible with it.
  * 
  * @module components/alerts/register-onezone-not-compatible
  * @author Jakub Liput
@@ -30,7 +30,12 @@ export default Component.extend(I18n, {
   domain: reads('options.domain'),
 
   /**
-   * @type {ComputedProperty<Array<string>>}
+   * @type {ComputedProperty<string>}
    */
-  supportedVersions: reads('options.supportedVersions'),
+  oneproviderVersion: reads('options.oneproviderVersion'),
+
+  /**
+   * @type {ComputedProperty<string>}
+   */
+  onezoneVersion: reads('options.onezoneVersion'),
 });

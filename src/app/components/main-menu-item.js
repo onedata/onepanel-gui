@@ -1,5 +1,5 @@
 /**
- * Override names for standalone Onepanel
+ * Override names for emergency Onepanel
  * 
  * @module components/main-menu-item
  * @author Jakub Liput
@@ -18,14 +18,14 @@ export default MainMenuItem.extend({
    * @override
    * @type {Ember.ComputerProperty<string>}
    */
-  name: computed('item.id', 'onepanelServer.isStandalone', function name() {
+  name: computed('item.id', 'onepanelServer.isEmergency', function name() {
     const {
       item,
       i18n,
     } = this.getProperties('item', 'i18n');
     let tid = 'menuItem';
-    if (item.id === 'clusters' && this.get('onepanelServer.isStandalone')) {
-      tid += 'Standalone';
+    if (item.id === 'clusters' && this.get('onepanelServer.isEmergency')) {
+      tid += 'Emergency';
     }
     return i18n.t(`tabs.${item.id}.${tid}`);
   }),

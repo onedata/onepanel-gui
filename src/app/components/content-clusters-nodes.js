@@ -32,9 +32,9 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    * @override
    * @type {PromiseObject<ProviderDetails>}
    */
-  providerDetailsProxy: computed(function getProviderDetailsProxy() {
+  providerDetailsProxy: computed(function providerDetailsProxy() {
     if (this.get('guiUtils.serviceType') === 'oneprovider') {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     }
   }),
 

@@ -1,3 +1,12 @@
+/**
+ * Adds Onepanel/Cluster specific data wait and resolve for `onedata` route
+ * 
+ * @module routes/onedata
+ * @author Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import { inject as service } from '@ember/service';
 import { get, set, setProperties } from '@ember/object';
 import OnedataRoute from 'onedata-gui-common/routes/onedata';
@@ -8,6 +17,7 @@ export default OnedataRoute.extend(I18n, {
   onepanelServer: service(),
   deploymentManager: service(),
   onepanelConfiguration: service(),
+  onezoneGui: service(),
 
   /**
    * @override
@@ -20,17 +30,17 @@ export default OnedataRoute.extend(I18n, {
       return this.get('onepanelConfiguration').getConfigurationProxy()
         .then(() => this.get('clusterModelManager').getCurrentClusterProxy());
     } else {
-      this.transitionTo('login');
+      return this.transitionTo('login');
     }
   },
 
   model() {
-    const isStandalone = this.get('onepanelServer.isStandalone');
+    const isEmergency = this.get('onepanelServer.isEmergency');
     return Promise.all([
       this._super(...arguments),
       this.get('deploymentManager').getInstallationDetailsProxy(),
     ]).then(([model, installDetails]) => {
-      if (isStandalone) {
+      if (isEmergency) {
         const items = get(model, 'mainMenuItems');
         if (get(installDetails, 'isInitialized') === false) {
           set(
@@ -55,13 +65,17 @@ export default OnedataRoute.extend(I18n, {
 
   setupController(controller, model) {
     this._super(...arguments);
-    const onepanelServer = this.get('onepanelServer');
-    return this.get('deploymentManager').getInstallationDetailsProxy()
+    const {
+      onepanelServer,
+      deploymentManager,
+    } = this.getProperties('onepanelServer', 'deploymentManager');
+    const isEmergency = get(onepanelServer, 'isEmergency');
+    return deploymentManager.getInstallationDetailsProxy()
       .then(installationDetails => {
         set(
           controller,
-          'standaloneWarningBarVisible',
-          get(onepanelServer, 'isStandalone') &&
+          'emergencyWarningBarVisible',
+          isEmergency &&
           get(installationDetails, 'isInitialized')
         );
       })

@@ -12,84 +12,94 @@ import { computed, get } from '@ember/object';
 import { union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default Component.extend(I18n, {
-  guiUtils: service(),
-  providerManager: service(),
-  spaceManager: service(),
-  storageManager: service(),
-  deploymentManager: service(),
+export default Component.extend(
+  I18n,
+  createDataProxyMixin('provider'),
+  createDataProxyMixin('providerId'),
+  createDataProxyMixin('installationDetails'), {
+    guiUtils: service(),
+    providerManager: service(),
+    spaceManager: service(),
+    storageManager: service(),
+    deploymentManager: service(),
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.contentClustersOverview',
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.contentClustersOverview',
 
-  /**
-   * @type {PromiseObject<ProviderDetails>}
-   */
-  providerProxy: computed(function providerProxy() {
-    return this.get('providerManager').getProviderDetails();
-  }),
+    // TODO: Uncomment when onezone map will render clusters, that can be accessed
+    // instead of only with our spaces
+    // /**
+    //  * @type {PromiseArray<ProviderDetails>}
+    //  */
+    // providersProxy: computed('providerProxy', function providersProxy() {
+    //   if (this.get('guiUtils.serviceType') === 'oneprovider') {
+    //     return PromiseArray.create({
+    //       promise: this.get('providerProxy')
+    //         .then(provider => [get(provider, 'content')]),
+    //     });
+    //   }
+    // }),
 
-  // TODO Uncomment when onezone map will render clusters, that can be accessed
-  // instead of only with our spaces
-  // /**
-  //  * @type {PromiseArray<ProviderDetails>}
-  //  */
-  // providersProxy: computed('providerProxy', function providersProxy() {
-  //   if (this.get('guiUtils.serviceType') === 'oneprovider') {
-  //     return PromiseArray.create({
-  //       promise: this.get('providerProxy')
-  //         .then(provider => [get(provider, 'content')]),
-  //     });
-  //   }
-  // }),
+    /**
+     * @type {Ember.ComputedProperty<PromiseArray<SpaceDetails>>}
+     */
+    spacesProxy: computed(function spacesProxy() {
+      return PromiseArray.create({
+        promise: this.get('spaceManager').getSpaces().then(list =>
+          Promise.all(list)
+        ),
+      });
+    }),
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<ProviderDetails>>}
-   */
-  providerIdProxy: computed('providerProxy', function providerIdProxy() {
-    return PromiseObject.create({
-      promise: this.get('providerProxy').then(provider => get(provider,
-        'content.id')),
-    });
-  }),
+    /**
+     * @type {Ember.ComputedProperty<PromiseArray<StorageDetails>>}
+     */
+    storagesProxy: computed(function storagesProxy() {
+      return PromiseArray.create({
+        promise: this.get('storageManager').getStorages().then(list =>
+          get(list, 'content')
+        ),
+      });
+    }),
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseArray<SpaceDetails>>}
-   */
-  spacesProxy: computed(function spacesProxy() {
-    return PromiseArray.create({
-      promise: this.get('spaceManager').getSpaces().then(l => Promise.all(l)),
-    });
-  }),
+    /**
+     * @type {Ember.ComputedProperty<Array<string>>}
+     */
+    allNodes: union(
+      'installationDetailsProxy.cluster.databases.hosts',
+      'installationDetailsProxy.cluster.managers.hosts',
+      'installationDetailsProxy.cluster.workers.hosts'
+    ),
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseArray<StorageDetails>>}
-   */
-  storagesProxy: computed(function storagesProxy() {
-    return PromiseArray.create({
-      promise: this.get('storageManager').getStorages().then(l => get(l,
-        'content')),
-    });
-  }),
+    init() {
+      this._super(...arguments);
+      this.updateProviderIdProxy();
+      this.updateInstallationDetailsProxy();
+    },
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<Object>>}
-   */
-  clusterConfigurationProxy: computed(function clusterConfigurationProxy() {
-    return this.get('deploymentManager').getInstallationDetailsProxy();
-  }),
+    /**
+     * @override
+     */
+    fetchProvider() {
+      return this.get('providerManager').getProviderDetailsProxy();
+    },
 
-  /**
-   * @type {Ember.ComputedProperty<Array<string>>}
-   */
-  allNodes: union(
-    'clusterConfigurationProxy.cluster.databases.hosts',
-    'clusterConfigurationProxy.cluster.managers.hosts',
-    'clusterConfigurationProxy.cluster.workers.hosts'
-  ),
-});
+    /**
+     * @override
+     */
+    fetchProviderId() {
+      return this.getProviderProxy().then(provider => get(provider, 'id'));
+    },
+
+    /**
+     * @override
+     */
+    fetchInstallationDetails() {
+      return this.get('deploymentManager').getInstallationDetailsProxy();
+    },
+  });

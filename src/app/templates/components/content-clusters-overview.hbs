@@ -4,11 +4,11 @@
   </h1>
 </div>
 
-{{#promise-proxy-container proxy=clusterConfigurationProxy}}
+{{#promise-proxy-container proxy=installationDetailsProxy}}
   <div class="row content-row">
     <div class="one-tile-container">
       {{#one-tile
-        title="Info"
+        title=(tt this "info")
         isLink=false
         class="resource-info-tile"
       }}
@@ -39,7 +39,7 @@
         </table>
       {{/one-tile}}
       {{#if (gte allNodes.length 2)}}
-        {{cluster-nodes-tile clusterConfigurationProxy=clusterConfigurationProxy}}
+        {{cluster-nodes-tile clusterConfigurationProxy=installationDetailsProxy}}
       {{/if}}
       {{#if (eq cluster.type "oneprovider")}}
         {{!-- TODO Uncomment when onezone map will render clusters, that can be accessed instead of only with our spaces --}}

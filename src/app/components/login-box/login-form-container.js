@@ -12,14 +12,12 @@ import LoginFormContainer from 'onedata-gui-common/components/login-box/login-fo
 import layout from '../../templates/components/login-box/login-form-container';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import { reads } from '@ember/object/computed';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 const animationTimeout = 333;
 
-export default LoginFormContainer.extend(I18n, {
+export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOnezoneUrl'), {
   layout,
 
   i18nPrefix: 'components.loginBox.loginFormContainer',
@@ -51,33 +49,25 @@ export default LoginFormContainer.extend(I18n, {
   isUsernameLoginActive: false,
 
   /**
+   * @override
    * Url to onepanel gui hosted by onezone or null if onezone is not available
-   * @type {Ember.ComputedProperty<string|null>}
    */
-  visitViaOnezoneUrlProxy: computed(
-    function visitViaOnezoneUrlProxy() {
-      const onezoneGui = this.get('onezoneGui');
-
-      const promise = onezoneGui.getCanEnterViaOnezoneProxy()
-        .then(canEnterViaOnezone => {
-          return canEnterViaOnezone ?
-            onezoneGui.getOnepanelNavUrlInOnezone() :
-            null;
-        });
-
-      return PromiseObject.create({ promise });
-    }
-  ),
-
-  visitViaOnezoneUrl: reads('visitViaOnezoneUrlProxy.content'),
+  fetchVisitViaOnezoneUrl() {
+    const onezoneGui = this.get('onezoneGui');
+    return onezoneGui.getCanEnterViaOnezoneProxy()
+      .then(canEnterViaOnezone => {
+        return canEnterViaOnezone ?
+          onezoneGui.getOnepanelNavUrlInOnezone() :
+          null;
+      });
+  },
 
   init() {
     this._super(...arguments);
-    this.get('onezoneGui').getCanEnterViaOnezoneProxy()
-      .then(canEnterViaOnezone => {
-        const isUsernameLoginActive = !canEnterViaOnezone;
-        safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
-      });
+    this.updateVisitViaOnezoneUrlProxy().then(onezoneUrl => {
+      const isUsernameLoginActive = !onezoneUrl;
+      safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
+    });
   },
 
   /**
@@ -103,7 +93,7 @@ export default LoginFormContainer.extend(I18n, {
 
   actions: {
     /**
-     * Toggles login form mode between username/password and auth providers list.
+     * Toggles login form mode between username/password and "open with Onezone".
      * @returns {undefined}
      */
     usernameLoginToggle() {
@@ -122,7 +112,7 @@ export default LoginFormContainer.extend(I18n, {
       const isUsernameLoginActive = this.get('isUsernameLoginActive');
 
       this.get('eventsBus').trigger(
-        'login-controller:toggleStandaloneWarningBar',
+        'login-controller:toggleEmergencyWarningBar',
         isUsernameLoginActive
       );
 

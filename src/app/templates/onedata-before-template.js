@@ -1,1 +1,1 @@
-export { default } from './standalone-bar';
+export { default } from './emergency-bar';

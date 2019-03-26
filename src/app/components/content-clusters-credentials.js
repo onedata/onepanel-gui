@@ -11,6 +11,7 @@ import Component from '@ember/component';
 import { get, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Onepanel from 'npm:onepanel';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   UserModifyRequest,
@@ -25,7 +26,6 @@ export default Component.extend({
   onepanelServer: service(),
 
   /**
-   * To inject.
    * @type {OnepanelGui.UserDetails}
    */
   userProxy: computed(function userProxy() {
@@ -116,7 +116,7 @@ export default Component.extend({
         globalNotify.info(
           i18n.t('components.contentClustersCredentials.passwordChangedSuccess')
         );
-        this.set('_changingPassword', false);
+        safeExec(this, 'set', '_changingPassword', false);
       });
 
       return changingPassword;

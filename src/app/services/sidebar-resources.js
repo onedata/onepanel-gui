@@ -30,13 +30,13 @@ export default SidebarResources.extend({
       case 'users':
         return resolve([]);
       case 'clusters':
-        if (this.get('onepanelServer.isStandalone')) {
+        if (this.get('onepanelServer.isEmergency')) {
           return this.get('clusterModelManager').getCurrentClusterProxy()
             .then(currentCluster => {
               if (currentCluster) {
                 return { list: [currentCluster] };
               } else {
-                // cluster is not deployed yet - only in onepanel standalone mode
+                // cluster is not deployed yet - only in onepanel emergency mode
                 return {
                   list: [this.get('clusterModelManager').getNotDeployedCluster()],
                 };

@@ -11,14 +11,12 @@ import SidebarContentRoute from 'onedata-gui-common/routes/onedata/sidebar/conte
 import { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import checkImg from 'onedata-gui-common/utils/check-img';
+import { Promise } from 'rsvp';
 
 export default SidebarContentRoute.extend({
   clusterModelManager: service(),
-  onepanelServer: service(),
   navigationState: service(),
   onezoneGui: service(),
-  globalNotify: service(),
-  i18n: service(),
   alert: service(),
 
   afterModel(model, transition) {
@@ -50,26 +48,29 @@ export default SidebarContentRoute.extend({
             const origin = `https://${get(model, 'resource.domain')}:9443`;
             return checkImg(`${origin}/favicon.ico`)
               .then(isAvailable => {
+                let redirectUrl;
                 if (isAvailable) {
-                  const redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
+                  redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
                     onepanelType: get(model, 'resource.type'),
                     clusterId,
                     internalRoute: `/onedata/clusters/${clusterId}`,
                   });
-                  window.location = redirectUrl;
                 } else {
-                  const redirectUrl = onezoneGui.getUrlInOnezone(
+                  redirectUrl = onezoneGui.getUrlInOnezone(
                     `onedata/clusters/${clusterId}`
                   );
-                  window.location = redirectUrl;
                 }
+                return new Promise(() => {
+                  window.location = redirectUrl;
+                });
               });
           } else {
-            this.transitionTo('onedata');
+            return this.transitionTo('onedata');
           }
         }
       }
+    } else {
+      return result;
     }
-    return result;
   },
 });

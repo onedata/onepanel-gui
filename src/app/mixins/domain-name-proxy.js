@@ -20,10 +20,12 @@ export default Mixin.create(createDataProxyMixin('domain'), {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     if (onepanelServiceType === 'oneprovider') {
-      promise = this.get('providerManager').getProviderDetails(true)
+      promise = this.get('providerManager')
+        .getProviderDetailsProxy({ reload: true })
         .then(provider => get(provider, 'domain'));
     } else if (onepanelServiceType === 'onezone') {
-      promise = this.get('deploymentManager').getInstallationDetailsProxy({ reload: true })
+      promise = this.get('deploymentManager')
+        .getInstallationDetailsProxy({ reload: true })
         .then(cluster => get(
           cluster,
           `clusterInfo.${onepanelServiceType}.domainName`

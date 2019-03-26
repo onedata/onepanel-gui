@@ -15,19 +15,17 @@ import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 export default Component.extend(
-  createDataProxyMixin('configuration'), {
+  createDataProxyMixin('installationDetails'), {
     deploymentManager: service(),
     router: service(),
 
     initProcess: false,
 
-    configuration: null,
-
     init() {
       this._super(...arguments);
-      this.updateConfigurationProxy();
-      this.get('configurationProxy').then(configuration => {
-        if (get(configuration, 'isInitialized')) {
+      this.updateInstallationDetailsProxy();
+      this.get('installationDetailsProxy').then(installationDetails => {
+        if (get(installationDetails, 'isInitialized')) {
           this.goToDefaultAspect();
         } else {
           this.goToInstallation();
@@ -55,7 +53,7 @@ export default Component.extend(
       );
     },
 
-    fetchConfiguration() {
+    fetchInstallationDetails() {
       return this.get('deploymentManager').getInstallationDetailsProxy();
     },
 

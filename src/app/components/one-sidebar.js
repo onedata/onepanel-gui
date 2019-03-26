@@ -1,5 +1,5 @@
 /**
- * Override names for standalone Onepanel
+ * Override names for emergency Onepanel
  * 
  * @module components/one-sidebar
  * @author Jakub Liput
@@ -19,13 +19,13 @@ export default OneSidebar.extend({
    */
   title: computed(
     'resourcesModel.resourceType',
-    'onepanelServer.isStandalone',
+    'onepanelServer.isEmergency',
     function title() {
       const resourcesType = this.get('resourcesModel.resourceType');
       if (resourcesType) {
         let tid = 'menuItem';
-        if (resourcesType === 'clusters' && this.get('onepanelServer.isStandalone')) {
-          tid += 'Standalone';
+        if (resourcesType === 'clusters' && this.get('onepanelServer.isEmergency')) {
+          tid += 'Emergency';
         }
         return this.get('i18n').t(`tabs.${resourcesType}.${tid}`);
       } else {

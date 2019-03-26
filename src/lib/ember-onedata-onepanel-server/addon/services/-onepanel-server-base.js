@@ -1,7 +1,7 @@
 /**
  * A base class for both real onepanel-server and mocked one (to avoid code redundancy)
  *
- * It should not be used as a standalone service! (thus it's name is "private")
+ * It should not be used as a emergency service! (thus it's name is "private")
  *
  * @module services/-onepanel-server-base
  * @author Jakub Liput
@@ -14,6 +14,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-error-handler';
 import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 import { computed } from '@ember/object';
+import { not } from '@ember/object/computed';
 
 export const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
 
@@ -27,6 +28,12 @@ export default Service.extend(
      */
     _location: location,
 
+    isHosted: not('isEmergency'),
+
+    isEmergency: computed(function isEmergency() {
+      return !this.getClusterIdFromUrl();
+    }),
+
     getClusterTypeFromUrl() {
       const m = this.get('_location').toString().match(reOnepanelInOnzoneUrl);
       return m && (m[1] === 'ozp' ? 'onezone' : 'oneprovider');
@@ -35,20 +42,6 @@ export default Service.extend(
     getClusterIdFromUrl() {
       const m = this.get('_location').toString().match(reOnepanelInOnzoneUrl);
       return m && m[2];
-    },
-
-    isStandalone: computed(function isStandalone() {
-      return !this.getClusterIdFromUrl();
-    }),
-
-    // TODO: this is probably unneded abstraction layer in this service
-    /**
-     * Get hostname of this panel
-     * @returns {Promise<string>}
-     */
-    getHostname() {
-      return this.getNodeProxy()
-        .then(({ hostname }) => hostname);
     },
 
     /**

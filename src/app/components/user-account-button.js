@@ -1,5 +1,5 @@
 /**
- * Add hosted and standalone Onepanel specific features to common user-account-button
+ * Add hosted and emergency Onepanel specific features to common user-account-button
  * 
  * @module components/user-account-button
  * @author Jakub Liput
@@ -15,5 +15,5 @@ import UserAccountButton from 'onedata-gui-common/components/user-account-button
 export default UserAccountButton.extend({
   onepanelServer: service(),
   username: reads('onepanelServer.username'),
-  isStandaloneOnepanel: reads('onepanelServer.isStandalone'),
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 });

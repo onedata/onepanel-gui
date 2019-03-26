@@ -16,23 +16,26 @@ export default NavigationState.extend({
   onepanelServer: service(),
   i18n: service(),
 
-  isStandaloneOnepanel: reads('onepanelServer.isStandalone'),
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 
   /**
    * @override
-   * Global bar title for sidebar, with support for standalone Onepanel
+   * Global bar title for sidebar, with support for emergency Onepanel
    * @type {Ember.ComputedProperty<string>}
    */
   globalBarSidebarTitle: computed(
     'activeResourceType',
-    'isStandaloneOnepanel',
+    'isEmergencyOnepanel',
     function globalBarSidebarTitle() {
       const {
         i18n,
-        isStandaloneOnepanel,
+        isEmergencyOnepanel,
         activeResourceType,
-      } = this.getProperties('i18n', 'isStandaloneOnepanel', 'activeResourceType');
-      let tid = 'menuItem' + (isStandaloneOnepanel ? 'Standalone' : '');
+      } = this.getProperties('i18n', 'isEmergencyOnepanel', 'activeResourceType');
+      let tid = 'menuItem';
+      if (activeResourceType === 'clusters' && isEmergencyOnepanel) {
+        tid += 'Emergency';
+      }
       return i18n.t(`tabs.${activeResourceType}.${tid}`);
     }
   ),

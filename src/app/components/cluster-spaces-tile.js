@@ -19,11 +19,13 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.clusterSpacesTile',
 
   /**
+   * @virtual
    * @type {PromiseObject<Provider>}
    */
   providerIdProxy: undefined,
 
   /**
+   * @virtual
    * @type {PromiseArray<Space>}
    */
   spacesProxy: undefined,

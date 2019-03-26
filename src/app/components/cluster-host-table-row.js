@@ -77,16 +77,17 @@ export default Component.extend({
   }),
 
   /**
-   * True if this row represents current host that 
+   * True if this row represents current host
    * @type {Ember.ComputedProperty<Promise<boolean>>}
    */
-  isThisHost: computed('onepanelServer', 'dataHostname', function () {
+  isThisHost: computed('onepanelServer.nodeProxy', 'dataHostname', function () {
     const {
       onepanelServer,
       dataHostname,
     } = this.getProperties('onepanelServer', 'dataHostname');
     return PromiseObject.create({
-      promise: onepanelServer.getHostname()
+      promise: onepanelServer.getNodeProxy()
+        .then(({ hostname }) => hostname)
         .then(hostname => hostname === dataHostname),
     });
   }),

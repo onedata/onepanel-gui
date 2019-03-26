@@ -1,6 +1,5 @@
 /**
- * A `ClusterInfo` object should be referenced to provide basic information
- * about cluster.
+ * Information about installation of cluster
  *
  * @module models/installation-details
  * @author Jakub Liput

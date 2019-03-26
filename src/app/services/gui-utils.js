@@ -15,7 +15,6 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import { resolve } from 'rsvp';
 
 export default GuiUtils.extend(
-  createDataProxyMixin('guiVersion'),
   createDataProxyMixin('guiName'), {
     onepanelServer: service(),
     onepanelConfiguration: service(),
@@ -25,19 +24,26 @@ export default GuiUtils.extend(
     session: service(),
 
     /**
-     * Panel type: provider or zone.
-     * @type {Ember.ComputedProperty<string>}
+     * @override
      */
-    serviceType: computed('onepanelConfiguration.serviceType', function serviceType() {
-      return this.get('onepanelServer').getClusterTypeFromUrl() ||
-        this.get('onepanelConfiguration.serviceType');
-    }),
+    guiIcon: 'assets/images/onepanel-logo.svg',
 
     /**
      * Just an alias - this name was used in the past
      * @type {Ember.ComputedProperty<string>}
      */
     onepanelServiceType: reads('serviceType'),
+
+    guiVersion: reads('onepanelConfiguration.version'),
+
+    /**
+     * Panel type: oneprovider or onezone.
+     * @type {Ember.ComputedProperty<string>}
+     */
+    serviceType: computed('onepanelConfiguration.serviceType', function serviceType() {
+      return this.get('onepanelServer').getClusterTypeFromUrl() ||
+        this.get('onepanelConfiguration.serviceType');
+    }),
 
     /**
      * Full panel type name: Oneprovider or Onezone.
@@ -57,8 +63,6 @@ export default GuiUtils.extend(
       const serviceType = this.get('serviceType');
       return this.t(`serviceType.${serviceType}`) + ' ' + this.t('panel');
     }),
-
-    guiVersion: reads('onepanelConfiguration.version'),
 
     /**
      * @override
@@ -92,7 +96,7 @@ export default GuiUtils.extend(
           'clusterModelManager',
           'serviceType'
         );
-        if (get(onepanelServer, 'isStandalone')) {
+        if (get(onepanelServer, 'isEmergency')) {
           const isDeployed =
             get(clusterModelManager, 'currentCluster.isNotDeployed') === false;
           if ((serviceType === 'oneprovider' && get(onezoneGui, 'zoneDomain')) ||
@@ -107,11 +111,6 @@ export default GuiUtils.extend(
       }
     ),
 
-    /**
-     * @override
-     */
-    guiIcon: 'assets/images/onepanel-logo.svg',
-
     init() {
       this._super(...arguments);
       this.updateGuiNameProxy();
@@ -123,7 +122,7 @@ export default GuiUtils.extend(
           .then(config => get(config, 'zoneName'));
       } else {
         if (this.get('onepanelServer.isInitialized')) {
-          return this.get('providerManager').getProviderDetails()
+          return this.get('providerManager').getProviderDetailsProxy({ reload: true })
             .then(provider => provider && get(provider, 'name'));
         } else {
           return resolve(null);

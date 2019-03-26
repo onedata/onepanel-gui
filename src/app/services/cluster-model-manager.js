@@ -8,11 +8,17 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { get, set } from '@ember/object';
+import EmberObject, { get, set } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
 import { resolve } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+
+const GuiOneproviderCluster = EmberObject.extend({
+  name: reads('providerManager.providerDetailsProxy.name').readOnly(),
+  domain: reads('providerManager.providerDetailsProxy.domain').readOnly(),
+});
 
 export default Service.extend(
   createDataProxyMixin('rawCurrentCluster'),
@@ -24,7 +30,15 @@ export default Service.extend(
     onepanelConfiguration: service(),
     providerManager: service(),
     deploymentManager: service(),
+    i18n: service(),
 
+    /**
+     * @override
+     * The raw ClusterDetails object from REST backend.
+     * For Cluster model that is used as a resource in frontend, it is processed
+     * in `generateGuiCluster` method.
+     * @returns {Onepanel.ClusterDetails}
+     */
     fetchRawCurrentCluster() {
       return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
         .then(({ data }) => data)
@@ -53,11 +67,18 @@ export default Service.extend(
       ).then(clusters => addConflictLabels(clusters));
     },
 
+    /**
+     * Creates fake Cluster record for use in frontend when there is no cluster
+     * at all when installing.
+     * @returns {Object} something like result of `generateGuiCluster`
+     *  but without some fields
+     */
     getNotDeployedCluster() {
       const type = this.get('guiUtils.serviceType');
+      const i18n = this.get('i18n');
       return {
         id: 'new-cluster',
-        name: 'New cluster',
+        name: i18n.t('services.clusterModelManager.newCluster'),
         domain: location.hostname,
         type,
         isLocal: true,
@@ -90,7 +111,7 @@ export default Service.extend(
       } = this.getProperties('deploymentManager', 'providerManager');
       const onepanelGuiType = this.get('guiUtils.serviceType');
 
-      const cluster = _.cloneDeep(data);
+      let cluster = _.cloneDeep(data);
       let installationDetailsProxy;
 
       return (assumeItIsLocal ? resolve(cluster) : this.getCurrentClusterProxy())
@@ -117,25 +138,36 @@ export default Service.extend(
                 deploymentManager.getInstallationDetailsProxy();
               return installationDetailsProxy
                 .then(installationDetails => {
-                  cluster.name = get(installationDetails, 'name');
-                  cluster.domain = get(installationDetails, 'onezone.domainName');
+                  set(cluster, 'name', get(installationDetails, 'name'));
+                  set(
+                    cluster,
+                    'domain',
+                    get(installationDetails, 'onezone.domainName')
+                  );
                   return cluster;
                 });
             } else {
               return providerManager.getOnezoneInfo()
                 .then(onezoneInfo => {
-                  cluster.name = get(onezoneInfo, 'name');
-                  cluster.domain = get(onezoneInfo, 'domain');
+                  set(cluster, 'name', get(onezoneInfo, 'name'));
+                  set(cluster, 'domain', get(onezoneInfo, 'domain'));
                   return cluster;
                 });
             }
           } else {
-            return providerManager.getRemoteProvider(get(data, 'serviceId'))
-              .then(({ name, domain }) => {
-                cluster.name = name;
-                cluster.domain = domain;
-                return cluster;
-              });
+            if (get(cluster, 'isLocal')) {
+              cluster = GuiOneproviderCluster.create(
+                Object.assign({ providerManager }, cluster)
+              );
+              return cluster;
+            } else {
+              return providerManager.getRemoteProvider(get(data, 'serviceId'))
+                .then(({ name, domain }) => {
+                  set(cluster, 'name', name);
+                  set(cluster, 'domain', domain);
+                  return cluster;
+                });
+            }
           }
         });
     },

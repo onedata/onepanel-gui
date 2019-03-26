@@ -17,12 +17,6 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {boolean}
-   */
-  isOnepanelStandalone: undefined,
-
-  /**
-   * @virtual
    * @type {Function}
    * @returns {Promise|undefined}
    */

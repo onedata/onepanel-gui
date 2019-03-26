@@ -28,12 +28,12 @@ export default LoginRoute.extend({
       onepanelConfiguration,
     } = this.getProperties('onepanelServer', 'onepanelConfiguration');
 
-    // Only in standalone Onepanel we can fetch Onepanel config without being
-    // sure that we are authorized. Also it is essential for standalone Onepanel,
+    // Only in emergency Onepanel we can fetch Onepanel config without being
+    // sure that we are authorized. Also it is essential for emergency Onepanel,
     // because it needs Onezone domain (got from config) to know where to
     // redirect on login page.
     // Hosted Onepanel has information about Onezone domain from URL.
-    if (get(onepanelServer, 'isStandalone')) {
+    if (get(onepanelServer, 'isEmergency')) {
       return resolve(result)
         .then(() => onepanelConfiguration.updateConfigurationProxy());
     } else {
@@ -49,8 +49,20 @@ export default LoginRoute.extend({
     } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
 
     const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
-    const isHosted = !!clusterIdFromUrl;
-    if (isHosted) {
+    const isEmergency = get(onepanelServer, 'isEmergency');
+    if (isEmergency) {
+      const baseModel = this._super(...arguments) || {};
+      return Promise.all([
+        userManager.checkAdminUserExists(),
+        onezoneGui.getCanEnterViaOnezoneProxy(),
+      ]).then(([adminUserExists, canEnterViaOnezone]) => {
+        setProperties(baseModel, {
+          adminUserExists,
+          canEnterViaOnezone,
+        });
+        return baseModel;
+      });
+    } else {
       return new Promise(() => {
         sessionStorage.setItem('authRedirect', '1');
         window.location =
@@ -58,19 +70,6 @@ export default LoginRoute.extend({
             internalRoute: `/clusters/${clusterIdFromUrl}`,
             redirectType: 'redirect',
           });
-      });
-    } else {
-      const baseModel = this._super(...arguments) || {};
-
-      return Promise.all([
-        userManager.checkAdminUserExists(),
-        onezoneGui.getIsOnezoneAvailableProxy(),
-      ]).then(([adminUserExists, isOnezoneAvailable]) => {
-        setProperties(baseModel, {
-          adminUserExists,
-          isOnezoneAvailable,
-        });
-        return baseModel;
       });
     }
   },

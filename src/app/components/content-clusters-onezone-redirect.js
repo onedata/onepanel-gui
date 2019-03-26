@@ -1,29 +1,39 @@
+/**
+ * Redirects to to Onezone app on init showing loader spinner
+ * 
+ * @module components/content-clusters-onezone-redirect
+ * @author Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve } from 'rsvp';
 
-export default Component.extend(
-  createDataProxyMixin('onezoneOrigin'), {
-    onezoneGui: service(),
+export default Component.extend({
+  onezoneGui: service(),
 
-    path: '',
+  /**
+   * @virtual
+   * @type {string}
+   */
+  path: '',
 
-    fetchOnezoneOrigin() {
-      return resolve(this.get('onezoneGui.onezoneOrigin'));
-    },
+  fetchOnezoneOrigin() {
+    return resolve();
+  },
 
-    init() {
-      this._super(...arguments);
-      this.redirectToOnezone();
-    },
+  init() {
+    this._super(...arguments);
+    this.redirectToOnezone();
+  },
 
-    redirectToOnezone() {
-      return this.getOnezoneOriginProxy().then(onezoneOrigin => {
-        return new Promise(() => {
-          window.location =
-            `${onezoneOrigin}/ozw/onezone/i#/${this.get('path')}`;
-        });
-      });
-    },
-  });
+  redirectToOnezone() {
+    const onezoneOrigin = this.get('onezoneGui.onezoneOrigin');
+    return new Promise(() => {
+      window.location =
+        `${onezoneOrigin}/ozw/onezone/i#/${this.get('path')}`;
+    });
+  },
+});

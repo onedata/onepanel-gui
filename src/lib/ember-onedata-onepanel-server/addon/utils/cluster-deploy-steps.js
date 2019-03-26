@@ -22,7 +22,8 @@ const commonDeployStepsInitial = [
   // TODO: there are additional new steps AFTER worker steps, but these are very short
   // Oneprovider Panel
   // 'service_letsencrypt:create',
-  // 'onepanel_deployment:mark_completed', 'service_letsencrypt:disable',
+  // 'onepanel_deployment:mark_completed',
+  // 'service_letsencrypt:disable',
   // 'onepanel_deployment:mark_completed',
   // Onezone Panel
   // before

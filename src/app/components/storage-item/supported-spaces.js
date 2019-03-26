@@ -89,8 +89,8 @@ export default Component.extend({
     this._super(...arguments);
 
     if (this.get('providerId') == null) {
-      // force getProviderDetails to be invoked
-      this.get('providerManager').getProviderDetails();
+      // force getProviderDetailsProxy to be invoked
+      this.get('providerManager').getProviderDetailsProxy();
     }
   },
 });
