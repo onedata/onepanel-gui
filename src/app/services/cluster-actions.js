@@ -30,12 +30,13 @@ export default ClusterActions.extend({
   /**
    * @override
    */
-  buttons: computed('btnAdd', 'isDeployed', function buttons() {
+  buttons: computed('btnAdd', 'btnJoin', 'isDeployed', function buttons() {
     const {
       isDeployed,
       btnAdd,
-    } = this.getProperties('isDeployed', 'btnAdd');
-    return isDeployed ? [btnAdd] : [];
+      btnJoin,
+    } = this.getProperties('isDeployed', 'btnAdd', 'btnJoin');
+    return isDeployed ? [btnAdd, btnJoin] : [];
   }),
 
   /**
@@ -61,6 +62,33 @@ export default ClusterActions.extend({
       tip: isStandalone ? this.t('btnAdd.viaOnezoneHint') : this.t('btnAdd.hint'),
       class: 'add-cluster-btn',
       action: this.get('addAction'),
+      disabled: isStandalone,
+    };
+  }),
+
+  /**
+   * @override
+   */
+  joinAction: computed(function addAction() {
+    const {
+      _window,
+      onezoneGui,
+    } = this.getProperties('_window', 'onezoneGui');
+    return () =>
+      _window.location = onezoneGui.getUrlInOnezone('onedata/clusters/join');
+  }),
+
+  /**
+   * @override
+   */
+  btnJoin: computed('joinAction', function btnJoin() {
+    const isStandalone = this.get('onepanelServer.isStandalone');
+    return {
+      icon: 'join-plug',
+      title: this.t('btnJoin.title'),
+      tip: isStandalone ? this.t('btnAdd.viaOnezoneHint') : this.t('btnJoin.hint'),
+      class: 'join-cluster-btn',
+      action: this.get('joinAction'),
       disabled: isStandalone,
     };
   }),
