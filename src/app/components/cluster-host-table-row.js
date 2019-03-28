@@ -1,3 +1,12 @@
+/**
+ * Single row of cluster hosts table
+ * 
+ * @module components/cluster-host-table-row
+ * @author Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { alias } from '@ember/object/computed';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';

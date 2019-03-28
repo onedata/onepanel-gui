@@ -59,9 +59,9 @@ export default Service.extend(
      */
     fetchNode() {
       return this.staticRequest('onepanel', 'getNode')
-        .then(({ data: { hostname, componentType } }) => ({
+        .then(({ data: { hostname, clusterType } }) => ({
           hostname,
-          componentType,
+          clusterType,
         }));
     },
   }

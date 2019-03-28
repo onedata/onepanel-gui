@@ -196,6 +196,7 @@ const providerCluster2 = {
   build: '4000',
   proxy: true,
 };
+const providerClusters = [providerCluster1, providerCluster2];
 const provider1 = PlainableObject.create({
   id: PROVIDER_ID,
   name: 'Some provider 1',
@@ -211,6 +212,14 @@ const provider1 = PlainableObject.create({
   subdomain: 'somedomain',
   adminEmail: 'some@example.com',
 });
+
+function getCurrentProviderClusterFromUrl() {
+  const url = location.toString();
+  const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
+  const mh = /https:\/\/.*\/opp\/(.*?)\/.*/.exec(url);
+  const id = me && me[1] || mh && mh[1] || 'oneprovider-1';
+  return providerClusters.findBy('id', id);
+}
 
 const isOneprovider = (mockServiceType === 'oneprovider');
 
@@ -378,7 +387,7 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({
         promise: Promise.resolve({
           hostname: 'example.com',
-          componentType: mockServiceType,
+          clusterType: mockServiceType,
         }),
       });
     }),
@@ -1142,7 +1151,7 @@ export default OnepanelServerBase.extend(
       return {
         success: () => ({
           hostname: `${mockSubdomain}.local-onedata.org`,
-          componentType: `one${mockServiceType}`,
+          clusterType: `one${mockServiceType}`,
         }),
         statusCode: () => 200,
       };
@@ -1233,7 +1242,7 @@ export default OnepanelServerBase.extend(
     _req_onepanel_getCurrentCluster() {
       return {
         success: () => (mockServiceType === 'oneprovider' ?
-          providerCluster1 : zoneCluster),
+          getCurrentProviderClusterFromUrl() : zoneCluster),
       };
     },
 

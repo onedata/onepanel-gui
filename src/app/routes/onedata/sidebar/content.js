@@ -57,7 +57,7 @@ export default SidebarContentRoute.extend({
                   });
                 } else {
                   redirectUrl = onezoneGui.getUrlInOnezone(
-                    `onedata/clusters/${clusterId}`
+                    `onedata/clusters/${clusterId}/endpoint-error`
                   );
                 }
                 return new Promise(() => {

@@ -181,9 +181,7 @@ export default Component.extend(
     init() {
       this._super(...arguments);
       this.updateOnezoneInfoProxy();
-      this.updateProviderProxy()
-        // FIXME: debug code
-        .then(() => console.dir(this.get('providerProxy')));
+      this.updateProviderProxy();
       next(() => safeExec(
         this,
         'set',

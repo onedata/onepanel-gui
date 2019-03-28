@@ -307,9 +307,11 @@ export default Component.extend(
             return [domain];
           } else {
             const dnsZone = get(dnsCheck, 'dnsZone') ?
-              Object.assign({ type: 'dnsZone' }, _.cloneDeep(get(dnsCheck,
-              'dnsZone'))) :
-              undefined;
+              Object.assign({
+                  type: 'dnsZone',
+                },
+                _.cloneDeep(get(dnsCheck, 'dnsZone'))
+              ) : undefined;
             const bothChecks = [dnsZone, domain].filter(c => c);
             const builtInDnsServer = this.get('builtInDnsServer');
             const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
@@ -388,8 +390,12 @@ export default Component.extend(
           })
         )
         .then(dnsCheck => {
-          safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck,
-          'timestamp')));
+          safeExec(
+            this,
+            'set',
+            'lastCheckMoment',
+            moment(get(dnsCheck, 'timestamp'))
+          );
           this.get('performCheckCalled')(this.get('allValid'));
         });
       }
@@ -543,8 +549,12 @@ export default Component.extend(
         });
         promise
           .then(dnsCheck => {
-            safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck,
-            'timestamp')));
+            safeExec(
+              this,
+              'set',
+              'lastCheckMoment',
+              moment(get(dnsCheck, 'timestamp'))
+            );
             this.get('performCheckCalled')(this.get('allValid'));
           })
           .then(() => {
