@@ -59,7 +59,7 @@ import onezoneInfoBox from './components/onezone-info-box';
 import sidebarClusters from './components/sidebar-clusters';
 import spaceStorageSynchronization from './components/space-storage-synchronization';
 import supportSizeInfo from './components/support-size-info';
-import standaloneWarningBar from './components/standalone-warning-bar';
+import emergencyWarningBar from './components/emergency-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
 
@@ -68,6 +68,7 @@ import spaceTabs from './mixins/components/space-tabs';
 
 import guiUtils from './services/gui-utils';
 import clusterActions from './services/cluster-actions';
+import clusterModelManager from './services/cluster-model-manager';
 
 import onedata from './routes/onedata';
 
@@ -138,7 +139,7 @@ let translations = {
     sidebarClusters,
     spaceStorageSynchronization,
     supportSizeInfo,
-    standaloneWarningBar,
+    emergencyWarningBar,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,
@@ -153,6 +154,7 @@ let translations = {
   services: {
     guiUtils,
     clusterActions,
+    clusterModelManager,
   },
   routes: {
     onedata,

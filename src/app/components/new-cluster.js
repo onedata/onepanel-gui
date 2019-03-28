@@ -6,7 +6,7 @@
  *
  * @module components/new-cluster
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -17,7 +17,7 @@ import { readOnly } from '@ember/object/computed';
 import { get, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 
@@ -93,12 +93,12 @@ export default Component.extend(I18n, {
   /**
    * @type {PromiseObject<ProviderDetails>}
    */
-  providerDetailsProxy: computed('isAfterDeploy', function getProviderDetailsProxy() {
+  providerDetailsProxy: computed('isAfterDeploy', function providerDetailsProxy() {
     if (
       this.get('isAfterDeploy') &&
       this.get('onepanelServiceType') === 'oneprovider'
     ) {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     }
   }),
 
@@ -109,11 +109,12 @@ export default Component.extend(I18n, {
     this.setProperties({
       currentStepIndex: clusterInitStep,
       _isInProcess: clusterInitStep > STEP.DEPLOY,
-      steps: (onepanelServiceType === 'oneprovider' ? STEPS_PROVIDER : STEPS_ZONE).map(
-        id => ({
-          id,
-          title: this.t(`steps.${onepanelServiceType}.${id}`),
-        })),
+      steps: (onepanelServiceType === 'oneprovider' ? STEPS_PROVIDER : STEPS_ZONE)
+        .map(
+          id => ({
+            id,
+            title: this.t(`steps.${onepanelServiceType}.${id}`),
+          })),
     });
     if (clusterInitStep === STEP.DEPLOY) {
       this.set('isLoading', true);
@@ -188,8 +189,9 @@ export default Component.extend(I18n, {
     const serviceType = get(guiUtils, 'serviceType');
     const isProviderAfterRegister = serviceType === 'oneprovider' &&
       currentStepIndex === STEP.PROVIDER_REGISTER;
-    const isZoneAfterDeploy = serviceType === 'onezone' &&
-      [STEP.DEPLOYMENT_PROGRESS, STEP.ZONE_DEPLOY].includes(currentStepIndex);
+    const isZoneAfterDeploy = serviceType === 'onezone' && [STEP.DEPLOYMENT_PROGRESS,
+      STEP.ZONE_DEPLOY,
+    ].includes(currentStepIndex);
 
     if (isProviderAfterRegister || isZoneAfterDeploy) {
       // Reload whole application to fetch info about newly deployed cluster

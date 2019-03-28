@@ -1,6 +1,6 @@
 export default {
   menuItem: 'Clusters',
-  menuItemStandalone: 'Cluster',
+  menuItemEmergency: 'Cluster',
   aspects: {
     overview: 'Overview',
     index: 'Cluster',

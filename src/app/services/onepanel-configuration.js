@@ -3,7 +3,7 @@
  *
  * @module services/onepanel-configuration
  * @author Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,56 +21,60 @@ export default Service.extend(
     _location: location,
 
     /**
-     * Common
+     * Common field.
+     * Can be set to value from URL on init.
      * @type {Ember.ComputedProperty<string>}
      */
     clusterId: reads('configurationProxy.clusterId'),
 
     /**
-     * Common
+     * Common field.
      * @type {Ember.ComputedProperty<string>}
      */
     version: reads('configurationProxy.version'),
 
     /**
-     * Common
+     * Common field.
      * @type {Ember.ComputedProperty<string>}
      */
     build: reads('configurationProxy.build'),
 
     /**
-     * Common
+     * Common field.
      * @type {Ember.ComputedProperty<boolean>}
      */
     deployed: reads('configurationProxy.deployed'),
 
     /**
-     * Common
+     * Common field.
+     * Can be set to value from URL on init.
      * One of: oneprovider, onezone
      * @type {Ember.ComputedProperty<string>}
      */
     serviceType: reads('configurationProxy.serviceType'),
 
     /**
-     * Common
+     * Common field.
      * @type {Ember.ComputedProperty<string>}
      */
     zoneDomain: reads('configurationProxy.zoneDomain'),
 
     /**
-     * Onezone
+     * Onezone field.
+     * Can be set to value from URL on init.
      * @type {Ember.ComputedProperty<string>}
      */
     zoneName: reads('configurationProxy.zoneName'),
 
     /**
-     * Oneprovider
+     * Oneprovider field.
      * @type {Ember.ComputedProperty<string>}
      */
     providerId: reads('configurationProxy.providerId'),
 
     /**
-     * Oneprovider
+     * Oneprovider field.
+     * Can be set to value from URL on init.
      * @type {Ember.ComputedProperty<boolean>}
      */
     isRegistered: reads('configurationProxy.isRegistered'),

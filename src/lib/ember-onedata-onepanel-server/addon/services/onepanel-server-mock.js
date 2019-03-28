@@ -30,7 +30,7 @@ import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'npm:onepanel';
 
 const {
@@ -196,6 +196,7 @@ const providerCluster2 = {
   build: '4000',
   proxy: true,
 };
+const providerClusters = [providerCluster1, providerCluster2];
 const provider1 = PlainableObject.create({
   id: PROVIDER_ID,
   name: 'Some provider 1',
@@ -211,6 +212,16 @@ const provider1 = PlainableObject.create({
   subdomain: 'somedomain',
   adminEmail: 'some@example.com',
 });
+
+function getCurrentProviderClusterFromUrl() {
+  const url = location.toString();
+  const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
+  const mh = /https:\/\/.*\/opp\/(.*?)\/.*/.exec(url);
+  const id = me && me[1] || mh && mh[1] || 'oneprovider-1';
+  return providerClusters.findBy('id', id);
+}
+
+const isOneprovider = (mockServiceType === 'oneprovider');
 
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
@@ -240,10 +251,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
-    // mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(mockServiceType === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(isOneprovider ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
+    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
+    mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -350,7 +361,11 @@ export default OnepanelServerBase.extend(
               statusCode: handler.statusCode && handler.statusCode(...params),
             };
             run.later(() => {
-              reject({ __request_method: method, response, toString: responseToString });
+              reject({
+                __request_method: method,
+                response,
+                toString: responseToString,
+              });
             }, responseDelay);
           }
 
@@ -372,12 +387,12 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({
         promise: Promise.resolve({
           hostname: 'example.com',
-          componentType: mockServiceType,
+          clusterType: mockServiceType,
         }),
       });
     }),
 
-    getStandaloneOnepanelOriginProxy() {
+    getEmergencyOnepanelOriginProxy() {
       return resolve(`https://${mockSubdomain}.local-onedata.org:9443`);
     },
 
@@ -1136,7 +1151,7 @@ export default OnepanelServerBase.extend(
       return {
         success: () => ({
           hostname: `${mockSubdomain}.local-onedata.org`,
-          componentType: `one${mockServiceType}`,
+          clusterType: `one${mockServiceType}`,
         }),
         statusCode: () => 200,
       };
@@ -1194,44 +1209,6 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getUserLink() {
-      const mockStep = this.get('mockStep');
-      return {
-        success() {
-          if (mockServiceType === 'oneprovider') {
-            if (mockStep > STEP.PROVIDER_REGISTER) {
-              return {
-                zoneName: 'Cyfronet AGH',
-                hostname: 'localhost:4201',
-                username: 'Stub User',
-                alias: 'stub_user',
-              };
-            } else {
-              return null;
-            }
-          } else {
-            if (mockStep >= STEP.ZONE_DONE) {
-              return {
-                zoneName: 'Cyfronet AGH',
-                hostname: 'localhost:4201',
-                username: 'Stub User',
-                alias: 'stub_user',
-              };
-            } else {
-              return null;
-            }
-          }
-        },
-        statusCode() {
-          if (mockServiceType === 'oneprovider') {
-            return mockStep > STEP.PROVIDER_REGISTER ? 200 : 404;
-          } else {
-            return mockStep >= STEP.ZONE_DONE ? 200 : 404;
-          }
-        },
-      };
-    },
-
     _req_oneprovider_getOnezoneInfo() {
       return {
         success: ({ token }) => {
@@ -1265,7 +1242,7 @@ export default OnepanelServerBase.extend(
     _req_onepanel_getCurrentCluster() {
       return {
         success: () => (mockServiceType === 'oneprovider' ?
-          providerCluster1 : zoneCluster),
+          getCurrentProviderClusterFromUrl() : zoneCluster),
       };
     },
 
@@ -1281,15 +1258,16 @@ export default OnepanelServerBase.extend(
       const mockInitializedCluster = this.get('mockInitializedCluster');
       return {
         success: () => ({
-          clusterId: this.get('isStandalone') ?
-            (mockServiceType === 'oneprovider' ? providerCluster1.id : zoneCluster.id) :
-            this.getClusterIdFromUrl(),
+          clusterId: this.get('isEmergency') ?
+            (mockServiceType === 'oneprovider' ?
+              providerCluster1.id : zoneCluster.id) : this.getClusterIdFromUrl(),
           version: '18.02.0-rc13',
           build: '2100',
           deployed: mockInitializedCluster,
+          isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
+            this.get('mockStep') > STEP.PROVIDER_REGISTER,
           serviceType: mockServiceType,
-          zoneDomain: mockServiceType === 'onezone' ?
-            'onezone.local-onedata.org' : undefined,
+          zoneDomain: 'onezone.local-onedata.org',
 
         }),
         statusCode: () => 200,

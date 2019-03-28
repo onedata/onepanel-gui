@@ -1,5 +1,5 @@
 /**
- * Support for standalone warning bar
+ * Support for emergency warning bar
  * 
  * @module controllers/login
  * @author Jakub Liput
@@ -13,25 +13,25 @@ import { inject as service } from '@ember/service';
 export default Controller.extend({
   eventsBus: service(),
 
-  standaloneWarningBarVisible: false,
+  emergencyWarningBarVisible: false,
 
   init() {
     this._super(...arguments);
     this.get('eventsBus').on(
-      'login-controller:toggleStandaloneWarningBar',
-      open => this.toggleStandaloneWarningBar(open)
+      'login-controller:toggleEmergencyWarningBar',
+      open => this.toggleEmergencyWarningBar(open)
     );
   },
 
   destroy() {
     try {
-      this.get('eventsBus').off('login-controller:toggleStandaloneWarningBar');
+      this.get('eventsBus').off('login-controller:toggleEmergencyWarningBar');
     } finally {
       this._super(...arguments);
     }
   },
 
-  toggleStandaloneWarningBar(open) {
-    this.set('standaloneWarningBarVisible', open);
+  toggleEmergencyWarningBar(open) {
+    this.set('emergencyWarningBarVisible', open);
   },
 });

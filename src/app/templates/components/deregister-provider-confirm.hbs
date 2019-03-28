@@ -1,13 +1,13 @@
-<h1>{{tt this (if isOnepanelStandalone "deregisterProviderHeaderStandalone" "deregisterProviderHeaderHosted")}}</h1>
-<p>{{tt this (if isOnepanelStandalone "deregistrationResults" "goToStandaloneDescription")}}</p>
+<h1>{{tt this "deregisterProviderHeaderEmergency"}}</h1>
+<p>{{tt this "deregistrationResults"}}</p>
 <div class="btn-toolbar">
   {{#bs-button class="btn btn-sm" type="info" onClick=closeAction}}
-    {{tt this (if isOnepanelStandalone "keepItRegistered" "cancel")}}
+    {{tt this "keepItRegistered"}}
   {{/bs-button}}
   {{#one-spin-button
-    class=(concat-classes "btn btn-sm" (if isOnepanelStandalone "btn-danger" "btn-warning"))
+    class="btn btn-sm btn-danger"
     action=submitAction
   }}
-    {{one-icon icon=(if isOnepanelStandalone "remove" "onepanel")}} <span>{{tt this (if isOnepanelStandalone "yesDeregister" "goToStandalone")}}</span>
+    {{one-icon icon="remove"}} <span>{{tt this "yesDeregister"}}</span>
   {{/one-spin-button}}
 </div>

@@ -5,14 +5,13 @@
     <span class="one-label">{{tt this "provider"}}</span>
     {{actions-toolbar actionsArray=globalActions}}
   </h1>
-  {{#if isOnepanelStandalone}}
+  {{#if isOnepanelEmergency}}
     {{#one-switchable-popover-modal
       triggersConfiguration=_deregisterPopoverSelector
       popoverClass="popover-deregister-provider"
       submit=(action "deregister")
       as |ospm|}}
       {{deregister-provider-confirm
-        isOnepanelStandalone=isOnepanelStandalone
         submitAction=ospm.submit
         closeAction=ospm.close}}
     {{/one-switchable-popover-modal}}
@@ -24,7 +23,7 @@
     <h1 class="form-title">{{_formTitle}}</h1>
     {{#promise-proxy-container proxy=onezoneInfoProxy}}
       {{#promise-proxy-container proxy=providerProxy}}
-        {{onezone-info-box onezoneInfo=onezoneInfoProxy}}
+        {{onezone-info-box onezoneInfo=onezoneInfoProxy.content}}
         <p class="form-description">{{_formDescription}}</p>
         {{provider-registration-form
           onezoneDomain=onezoneInfoProxy.domain

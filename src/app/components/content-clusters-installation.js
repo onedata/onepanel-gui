@@ -16,7 +16,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
-  createDataProxyMixin('configuration'), {
+  createDataProxyMixin('installationDetails'), {
     deploymentManager: service(),
     onepanelConfiguration: service(),
     router: service(),
@@ -27,11 +27,9 @@ export default Component.extend(
 
     init() {
       this._super(...arguments);
-      this.getConfigurationProxy().then(configuration => {
-        if (!get(configuration, 'isInitialized')) {
-          safeExec(this, 'setProperties', {
-            initProcess: true,
-          });
+      this.getInstallationDetailsProxy().then(installationDetails => {
+        if (!get(installationDetails, 'isInitialized')) {
+          safeExec(this, 'set', 'initProcess', true);
         } else {
           scheduleOnce('afterRender', () => this.goToDefaultAspect());
         }
@@ -48,7 +46,7 @@ export default Component.extend(
       );
     },
 
-    fetchConfiguration() {
+    fetchInstallationDetails() {
       return this.get('deploymentManager').getInstallationDetailsProxy();
     },
 
@@ -56,12 +54,13 @@ export default Component.extend(
       finishInitProcess() {
         return new Promise(() => {
           const clusterId = this.get('onepanelConfiguration.clusterId');
-          this.set('initProcess', false);
-          window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
-            clusterId,
-            internalRoute: `/clusters/${clusterId}`,
-          });
-          if (!this.get('onepanelServer.isStandalone')) {
+          safeExec(this, 'set', 'initProcess', false);
+          if (this.get('onepanelServer.isEmergency')) {
+            window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
+              clusterId,
+              internalRoute: `/clusters/${clusterId}`,
+            });
+          } else {
             window.location.reload();
           }
         });

@@ -1,3 +1,13 @@
+/**
+ * Provides information and methods for this app to cooperate with
+ * Onezone GUI app hosted on the same domain.
+ * 
+ * @module services/onezone-gui
+ * @author Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Service, { inject as service } from '@ember/service';
 import { resolve } from 'rsvp';
 import { get, computed } from '@ember/object';
@@ -11,6 +21,8 @@ export default Service.extend(
     onepanelServer: service(),
     providerManager: service(),
     onepanelConfiguration: service(),
+
+    _location: location,
 
     /**
      * @type {Ember.ComputedProperty<PromiseObject<string>>}
@@ -32,9 +44,15 @@ export default Service.extend(
      */
     onezoneOrigin: computed('zoneDomain', function onezoneOrigin() {
       const zoneDomain = this.get('zoneDomain');
-      return zoneDomain ? 'https://' + this.get('zoneDomain') : null;
+      return zoneDomain ? 'https://' + zoneDomain : null;
     }),
 
+    /**
+     * URL of Onezone main view.
+     * For other Onezone views/redirections use `getOnepanelNavUrlInOnezone`
+     * method.
+     * @type {Ember.ComputedProperty<string>}
+     */
     clusterUrlInOnepanel: computed(
       'onezoneOrigin',
       'onepanelConfiguration.{serviceType,clusterId}',
@@ -42,8 +60,6 @@ export default Service.extend(
         return this.getOnepanelNavUrlInOnezone();
       }
     ),
-
-    _location: location,
 
     /**
      * Returns abbreviation, that can be used to generate links to Onezone
@@ -89,6 +105,11 @@ export default Service.extend(
         case 'direct':
           return `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
         case 'redirect':
+          if (get('onepanelServer', 'isEmergency')) {
+            throw new Error(
+              'service:onezone-gui#getOnepanelNavUrlInOnezone: tried to use redirect on emergency Onepanel which is currently not supported'
+            );
+          }
           sessionStorage.setItem(
             'redirectUrl',
             `/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`
@@ -98,7 +119,8 @@ export default Service.extend(
           // TODO: internal route support in onezone_route redirection
           return `${onezoneOrigin}/ozw/onezone/i#/onedata/clusters/${clusterId}`;
         default:
-          throw new Error(`service:onezone-gui Unsupported redirectType: ${redirectType}`);
+          throw new Error(
+            `service:onezone-gui Unsupported redirectType: ${redirectType}`);
       }
     },
 

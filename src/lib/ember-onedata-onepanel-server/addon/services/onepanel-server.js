@@ -8,7 +8,7 @@
  * 
  * @module services/onepanel-server
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -40,7 +40,7 @@ const CUSTOM_REQUESTS = {};
 
 export default OnepanelServerBase.extend(
   createDataProxyMixin('apiOrigin'),
-  createDataProxyMixin('standaloneOnepanelOrigin'), {
+  createDataProxyMixin('emergencyOnepanelOrigin'), {
     guiUtils: service(),
 
     /**
@@ -161,10 +161,10 @@ export default OnepanelServerBase.extend(
      * @param {string} serviceType 
      * @param {string} clusterId 
      */
-    fetchStandaloneOnepanelOrigin(serviceType, clusterId) {
+    fetchEmergencyOnepanelOrigin(serviceType, clusterId) {
       if (!serviceType || !clusterId) {
         throw new Error(
-          'service:onepanel-server#fetchStandaloneOnepanelOrigin: cannot execute without all fetchArgs'
+          'service:onepanel-server#fetchEmergencyOnepanelOrigin: cannot execute without all fetchArgs'
         );
       }
       const _location = this.get('_location');
@@ -200,7 +200,7 @@ export default OnepanelServerBase.extend(
       const _location = this.get('_location');
       if (clusterIdFromUrl) {
         const serviceType = this.getClusterTypeFromUrl();
-        return this.getStandaloneOnepanelOriginProxy({
+        return this.getEmergencyOnepanelOriginProxy({
           fetchArgs: [
             serviceType,
             clusterIdFromUrl,
@@ -218,37 +218,18 @@ export default OnepanelServerBase.extend(
      * If the session is valid, it automatically (re)initializes the main client.
      * 
      * Token fetching:
-     * - if standalone, then just POST /gui-token without payload
+     * - if emergency, then just POST /gui-token without payload
      * - if hosted, then POST /gui-token with type and clusterId (both from URL)
      * 
      * @returns {Promise<object>} an `initClient` promise if `getSession` succeeds,
      *    resolves object with: token (for Onepanel API), username
      */
     validateSession() {
-      const clusterIdFromUrl = this.getClusterIdFromUrl();
-      const clusterTypeFromUrl = this.getClusterTypeFromUrl();
-
-      /**
-       * True if the Onepanel is hosted by Onezone, so we will use 
-       * @type {boolean}
-       */
-      const isHosted = Boolean(clusterIdFromUrl);
-
       /** 
        * Resolve token for authorizing Onepanel REST calls
        * @type {string}
        */
-      let onepanelTokenPromise;
-      if (isHosted) {
-        onepanelTokenPromise = getHostedOnepanelToken(
-          clusterIdFromUrl,
-          clusterTypeFromUrl
-        );
-      } else {
-        onepanelTokenPromise = getStandaloneOnepanelToken();
-      }
-
-      return onepanelTokenPromise
+      return this.getOnepanelToken()
         .then(tokenData => {
           const onepanelToken = tokenData.token;
           const ttl = tokenData.ttl;
@@ -277,7 +258,7 @@ export default OnepanelServerBase.extend(
     /**
      * Creates and returns Onepanel client instance.
      *
-     * It uses cookies authenticatoin, so make sure that the cookies for current
+     * It uses cookies authentication, so make sure that the cookies for current
      * domain are set (using /login method).
      *
      * @param {string} [origin]
@@ -311,9 +292,7 @@ export default OnepanelServerBase.extend(
     },
 
     destroyClient() {
-      this.setProperties({
-        client: null,
-      });
+      this.set('client', null);
     },
 
     isClientTokenUpToDate() {
@@ -331,17 +310,7 @@ export default OnepanelServerBase.extend(
     renewClientToken() {
       const client = this.get('client');
       if (client) {
-        const isStandalone = this.get('isStandalone');
-        let tokenPromise;
-        if (isStandalone) {
-          tokenPromise = getStandaloneOnepanelToken();
-        } else {
-          tokenPromise = getHostedOnepanelToken(
-            this.getClusterIdFromUrl(),
-            this.getClusterTypeFromUrl()
-          );
-        }
-        return tokenPromise
+        return this.getOnepanelToken()
           .then(({ token, ttl }) => {
             setClientToken(client, token, ttl);
           });
@@ -354,7 +323,7 @@ export default OnepanelServerBase.extend(
 
     /**
      * Makes a request to backend to create session using basic auth.
-     * Only in standalone mode.
+     * Only in emergency mode.
      *
      * @param {string} username 
      * @param {string} password
@@ -405,6 +374,20 @@ export default OnepanelServerBase.extend(
         });
       });
     },
+
+    getOnepanelToken() {
+      const isEmergency = this.get('isEmergency');
+      let tokenPromise;
+      if (isEmergency) {
+        tokenPromise = getEmergencyOnepanelToken();
+      } else {
+        tokenPromise = getHostedOnepanelToken(
+          this.getClusterIdFromUrl(),
+          this.getClusterTypeFromUrl()
+        );
+      }
+      return tokenPromise;
+    },
   }
 );
 
@@ -430,7 +413,7 @@ function getHostedOnepanelToken(clusterId, clusterType) {
   ).then(resolve, reject));
 }
 
-function getStandaloneOnepanelToken() {
+function getEmergencyOnepanelToken() {
   return new Promise((resolve, reject) => $.ajax(
     '/gui-token', {
       method: 'POST',

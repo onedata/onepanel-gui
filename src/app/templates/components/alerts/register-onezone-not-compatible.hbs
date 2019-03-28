@@ -1,18 +1,10 @@
 <p>
-  {{tt this "textIntro"}}
-  <a href="https://{{domain}}">{{domain}}</a>.
-  {{#if supportedVersions.length}}
-    {{tt this "textToRegister"}}
-  {{/if}}
+  {{tt this "textNotCompatible1" oneproviderVersion=oneproviderVersion}}
+  <a class="nowrap" href="https://{{domain}}">{{domain}}</a>
+  {{tt this "textNotCompatible2" onezoneVersion=onezoneVersion}}
 </p>
-{{#if supportedVersions.length}}
-  <ul class="info info-condensed info-gray">
-    {{#each supportedVersions as |version|}}
-      <li>{{version}}</li>
-    {{/each}}
-  </ul>
-{{else}}
-  <p>
-    {{tt this "noSupportedVersions"}}
-  </p>
-{{/if}}
+<p>
+  {{tt this "textDocs1"}}
+  <a href={{one-doc-url "compatibility_reference.html"}}>{{tt this "documentation"}}</a>
+  {{tt this "textDocs2"}}
+</p>

@@ -3,7 +3,7 @@
  *
  * @module services/user-manager
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -73,11 +73,5 @@ export default Service.extend({
 
     return this.get('onepanelServer')
       .staticRequest('onepanel', 'addUser', [userCreateRequest]);
-  },
-
-  getUserLink() {
-    return this.get('onepanelServer')
-      .request('onepanel', 'getUserLink')
-      .then(({ data }) => data);
   },
 });

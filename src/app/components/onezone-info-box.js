@@ -1,5 +1,5 @@
 /**
- * A container component for information about Onezone
+ * A container component with information about Onezone
  *
  * @module components/onezone-info-box
  * @author Michal Borzecki

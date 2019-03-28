@@ -19,6 +19,7 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.clusterStoragesTile',
 
   /**
+   * @virtual
    * @type {PromiseArray<Storage>}
    */
   storagesProxy: undefined,

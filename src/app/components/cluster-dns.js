@@ -4,7 +4,7 @@
  * 
  * @module components/cluster-dns
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -293,46 +293,50 @@ export default Component.extend(
      * Produces array of DnsCheckResults-like objects to render `check-items`
      * @type {Array<Object>}
      */
-    checkResultItems: computed('dnsCheck', 'onepanelServiceType', function checkResultItems() {
-      const {
-        onepanelServiceType,
-        dnsCheck,
-      } = this.getProperties('onepanelServiceType', 'dnsCheck');
-      if (dnsCheck) {
-        const domain = get(dnsCheck, 'domain') ?
-          Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
-          undefined;
-        if (onepanelServiceType === 'oneprovider') {
-          return [domain];
-        } else {
-          const dnsZone = get(dnsCheck, 'dnsZone') ?
-            Object.assign({ type: 'dnsZone' }, _.cloneDeep(get(dnsCheck, 'dnsZone'))) :
+    checkResultItems: computed('dnsCheck', 'onepanelServiceType',
+      function checkResultItems() {
+        const {
+          onepanelServiceType,
+          dnsCheck,
+        } = this.getProperties('onepanelServiceType', 'dnsCheck');
+        if (dnsCheck) {
+          const domain = get(dnsCheck, 'domain') ?
+            Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
             undefined;
-          const bothChecks = [dnsZone, domain].filter(c => c);
-          const builtInDnsServer = this.get('builtInDnsServer');
-          const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
-          const domainValid = (get(dnsCheck, 'domain.summary') === 'ok');
-          const hasInvalidRecords = _.includes(
-            ['missing_records', 'bad_records'],
-            get(dnsCheck, 'domain.summary')
-          );
-
-          if (
-            onepanelServiceType === 'onezone' &&
-            builtInDnsServer &&
-            domainValid &&
-            dnsZoneValid
-          ) {
-            return [dnsZone];
+          if (onepanelServiceType === 'oneprovider') {
+            return [domain];
           } else {
-            if (hasInvalidRecords) {
-              set(domain, 'summary', 'delegation_invalid_records');
+            const dnsZone = get(dnsCheck, 'dnsZone') ?
+              Object.assign({
+                  type: 'dnsZone',
+                },
+                _.cloneDeep(get(dnsCheck, 'dnsZone'))
+              ) : undefined;
+            const bothChecks = [dnsZone, domain].filter(c => c);
+            const builtInDnsServer = this.get('builtInDnsServer');
+            const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
+            const domainValid = (get(dnsCheck, 'domain.summary') === 'ok');
+            const hasInvalidRecords = _.includes(
+              ['missing_records', 'bad_records'],
+              get(dnsCheck, 'domain.summary')
+            );
+
+            if (
+              onepanelServiceType === 'onezone' &&
+              builtInDnsServer &&
+              domainValid &&
+              dnsZoneValid
+            ) {
+              return [dnsZone];
+            } else {
+              if (hasInvalidRecords) {
+                set(domain, 'summary', 'delegation_invalid_records');
+              }
+              return bothChecks;
             }
-            return bothChecks;
           }
         }
-      }
-    }),
+      }),
 
     /**
      * True if all essential DNS checks for user are valid
@@ -386,7 +390,12 @@ export default Component.extend(
           })
         )
         .then(dnsCheck => {
-          safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck, 'timestamp')));
+          safeExec(
+            this,
+            'set',
+            'lastCheckMoment',
+            moment(get(dnsCheck, 'timestamp'))
+          );
           this.get('performCheckCalled')(this.get('allValid'));
         });
       }
@@ -450,7 +459,7 @@ export default Component.extend(
     },
 
     fetchProvider() {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     },
 
     /**
@@ -540,7 +549,12 @@ export default Component.extend(
         });
         promise
           .then(dnsCheck => {
-            safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck, 'timestamp')));
+            safeExec(
+              this,
+              'set',
+              'lastCheckMoment',
+              moment(get(dnsCheck, 'timestamp'))
+            );
             this.get('performCheckCalled')(this.get('allValid'));
           })
           .then(() => {

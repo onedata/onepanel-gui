@@ -3,7 +3,7 @@
  *
  * @module services/content-resources
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -20,12 +20,12 @@ export default Service.extend({
   /**
    * @param {string} type
    * @param {string} id
-   * @returns {Promise<ClusterDetails|string>}
+   * @returns {Promise<Object>}
    */
   getModelFor(type, id) {
     switch (type) {
       case 'clusters':
-        if (this.get('onepanelServer.isStandalone')) {
+        if (this.get('onepanelServer.isEmergency')) {
           return this.get('clusterModelManager').getCurrentClusterProxy()
             .then(currentCluster =>
               currentCluster || this.get('clusterModelManager').getNotDeployedCluster()

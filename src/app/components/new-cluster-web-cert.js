@@ -3,7 +3,7 @@
  *
  * @module components/new-cluster-web-cert
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -104,12 +104,14 @@ export default Component.extend(I18n, {
     let promise;
     switch (onepanelServiceType) {
       case 'oneprovider':
-        promise = this.get('providerManager').getProviderDetails()
+        promise = this.get('providerManager').getProviderDetailsProxy()
           .then(provider => provider && get(provider, 'domain'));
         break;
       case 'onezone':
         promise = this.get('deploymentManager').getConfiguration()
-          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
+          .then(({ data: cluster }) =>
+            cluster && get(cluster, 'onezone.domainName')
+          );
         break;
       default:
         throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);

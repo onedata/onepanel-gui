@@ -3,7 +3,7 @@
  *
  * @module components/content-cluster-certificate
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -20,6 +20,7 @@ import Looper from 'onedata-gui-common/utils/looper';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
+import { resolve } from 'rsvp';
 
 const {
   time: {
@@ -70,6 +71,8 @@ export default Component.extend(I18n, GlobalActions, {
    */
   showRedirectPage: false,
 
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
+
   onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
@@ -108,23 +111,33 @@ export default Component.extend(I18n, GlobalActions, {
   /**
    * @type {Ember.ComputedProperty<PromiseObject<string|undefined>>}
    */
-  redirectDomain: computed('onepanelServiceType', function redirectDomain() {
-    const onepanelServiceType = this.get('onepanelServiceType');
-    let promise;
-    switch (onepanelServiceType) {
-      case 'oneprovider':
-        promise = this.get('providerManager').getProviderDetails()
-          .then(provider => provider && get(provider, 'domain'));
-        break;
-      case 'onezone':
-        promise = this.get('deploymentManager').getConfiguration()
-          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
-        break;
-      default:
-        throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
+  redirectDomain: computed(
+    'onepanelServiceType',
+    'isEmergencyOnepanel',
+    function redirectDomain() {
+      const onepanelServiceType = this.get('onepanelServiceType');
+      let promise;
+      if (this.get('isEmergencyOnepanel')) {
+        switch (onepanelServiceType) {
+          case 'oneprovider':
+            promise = this.get('providerManager').getProviderDetailsProxy()
+              .then(provider => provider && get(provider, 'domain'));
+            break;
+          case 'onezone':
+            promise = this.get('deploymentManager').getConfiguration()
+              .then(({ data: cluster }) =>
+                cluster && get(cluster, 'onezone.domainName')
+              );
+            break;
+          default:
+            throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
+        }
+      } else {
+        promise = resolve(location.hostname);
+      }
+      return PromiseObject.create({ promise });
     }
-    return PromiseObject.create({ promise });
-  }),
+  ),
 
   configureWebCertPoll: observer('shouldPollWebCert', function configureWebCertPoll() {
     const {

@@ -3,7 +3,7 @@
  *
  * @module components/new-cluster-zone-registration
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -32,7 +32,8 @@ export default Component.extend(I18n, {
   onepanelServer: service(),
   i18n: service(),
   clusterModelManager: service(),
-  alert: service(),
+  alertService: service('alert'),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterZoneRegistration',
 
@@ -123,7 +124,8 @@ export default Component.extend(I18n, {
   _submit(providerData) {
     let submitting = new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
-      let providerRegisterRequest = this.createProviderRegisterRequest(providerData);
+      let providerRegisterRequest = this.createProviderRegisterRequest(
+        providerData);
       let addingProvider =
         onepanelServer.request('oneprovider', 'addProvider',
           providerRegisterRequest);
@@ -143,8 +145,11 @@ export default Component.extend(I18n, {
         throw error;
       })
       .then(({ data: onezoneInfo }) => {
-        const i18n = this.get('i18n');
-        const alertService = this.get('alert');
+        const {
+          i18n,
+          alertService,
+          guiUtils,
+        } = this.getProperties('i18n', 'alertService', 'guiUtils');
         if (get(onezoneInfo, 'compatible') === false) {
           alertService.error(null, {
             componentName: 'alerts/register-onezone-not-compatible',
@@ -152,6 +157,8 @@ export default Component.extend(I18n, {
               'components.alerts.registerOnezoneNotCompatible.header'
             ),
             domain: get(onezoneInfo, 'domain'),
+            oneproviderVersion: get(guiUtils, 'guiVersion'),
+            onezoneVersion: get(onezoneInfo, 'version'),
           });
         } else if (get(onezoneInfo, 'online') === false) {
           alertService.error(null, {

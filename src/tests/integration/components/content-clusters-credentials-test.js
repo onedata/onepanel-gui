@@ -29,14 +29,6 @@ describe('Integration | Component | content clusters credentials', function () {
     sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion')
       .resolves('18.01-mock');
 
-    this.on('fetchOnezoneAccount', async function fetchOnezoneAccount() {
-      return {
-        zoneName: 'Mock Onezone',
-        hostname: 'mock.onezone.example.com',
-        username: 'Mock User',
-        alias: 'mock_user',
-      };
-    });
     this.on('fetchClusterDetails', async function fetchClusterDetails() {
       return {
         initStep: 4,
@@ -62,7 +54,6 @@ describe('Integration | Component | content clusters credentials', function () {
     });
 
     this.render(hbs `{{content-clusters-credentials
-      fetchOnezoneAccount=(action "fetchOnezoneAccount")
       fetchClusterDetails=(action "fetchClusterDetails")
     }}
     `);
@@ -97,7 +88,6 @@ describe('Integration | Component | content clusters credentials', function () {
       });
 
       this.render(hbs `{{content-clusters-credentials
-        fetchOnezoneAccount=(action "fetchOnezoneAccount")
         fetchClusterDetails=(action "fetchClusterDetails")
       }}`);
 

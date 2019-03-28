@@ -55,14 +55,14 @@ export default ClusterActions.extend({
    * @override
    */
   btnAdd: computed('addAction', function btnAdd() {
-    const isStandalone = this.get('onepanelServer.isStandalone');
+    const isEmergency = this.get('onepanelServer.isEmergency');
     return {
       icon: 'add-filled',
       title: this.t('btnAdd.title'),
-      tip: isStandalone ? this.t('btnAdd.viaOnezoneHint') : this.t('btnAdd.hint'),
+      tip: isEmergency ? this.t('btnAdd.viaOnezoneHint') : this.t('btnAdd.hint'),
       class: 'add-cluster-btn',
       action: this.get('addAction'),
-      disabled: isStandalone,
+      disabled: isEmergency,
     };
   }),
 

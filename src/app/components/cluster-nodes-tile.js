@@ -3,7 +3,7 @@
  *
  * @module components/cluster-nodes-title
  * @author Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -19,7 +19,7 @@ export default Component.extend(I18n, {
    * @override
    */
   i18nPrefix: 'components.clusterNodesTile',
-  
+
   /**
    * @virtual
    * @type {PromiseObject<Object>}
@@ -56,7 +56,7 @@ export default Component.extend(I18n, {
   ),
 
   /**
-   * @type {@Ember.ComputedProperty<Array<Object>>}
+   * @type {Ember.ComputedProperty<Array<Object>>}
    * It is an array of objects: {
    *   service: string,
    *   serviceName: string,

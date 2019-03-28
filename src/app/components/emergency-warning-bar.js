@@ -1,7 +1,7 @@
 /**
- * Renders a bottom bar that informs user about being on the standalone Onepanel
+ * Renders a bottom bar that informs user about being on the emergency Onepanel
  * 
- * @module components/standalone-warning-bar
+ * @module components/emergency-warning-bar
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -22,5 +22,5 @@ export default Component.extend(I18n, {
   /**
    * @override
    */
-  i18nPrefix: 'components.standaloneWarningBar',
+  i18nPrefix: 'components.emergencyWarningBar',
 });

@@ -3,7 +3,7 @@
  * It can work in two modes (mode property):
  * - new - intended to be a part of the support space form. It doesn't have 
  * a header and a submit button.
- * - edit - standalone form component (with a header and a submit button).
+ * - edit - emergency form component (with a header and a submit button).
  * For both of them defaultValues can be set (through defaultValues property).
  * 
  * Example of defaultValues object (submit result has the same format):

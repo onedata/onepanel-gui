@@ -3,7 +3,7 @@
  *
  * @module utils/cluster-deploy-steps
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -22,7 +22,8 @@ const commonDeployStepsInitial = [
   // TODO: there are additional new steps AFTER worker steps, but these are very short
   // Oneprovider Panel
   // 'service_letsencrypt:create',
-  // 'onepanel_deployment:mark_completed', 'service_letsencrypt:disable',
+  // 'onepanel_deployment:mark_completed',
+  // 'service_letsencrypt:disable',
   // 'onepanel_deployment:mark_completed',
   // Onezone Panel
   // before

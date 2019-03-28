@@ -15,9 +15,10 @@ import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import ClusterDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import InstallationDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import shortServiceType from 'onepanel-gui/utils/short-service-type';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -40,7 +41,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * Last feched ClusterDetails
-   * @type {ClusterDetails}
+   * @type {InstallationDetails}
    */
   _defaultCache: alias('defaultCache.content'),
 
@@ -76,14 +77,14 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               id: currentClusterId,
             }, configuration);
 
-            const clusterDetails = ClusterDetails.create({
+            const installationDetails = InstallationDetails.create({
               name,
               onepanelServiceType: onepanelServiceType,
               clusterInfo: thisCluster,
               initStep: clusterStep,
             });
 
-            return clusterDetails;
+            return installationDetails;
           });
       });
   },
@@ -151,7 +152,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       .bind(onepanelServer);
     return requestFun(
       onepanelServiceType,
-      camelize(`get-${onepanelServiceType.substring(3)}-configuration`)
+      camelize(`get-${shortServiceType(onepanelServiceType)}-configuration`)
     );
   },
 
@@ -162,7 +163,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
         onepanelServiceType,
-        camelize(`get-${onepanelServiceType.substring(3)}-cluster-ips`)
+        camelize(`get-${shortServiceType(onepanelServiceType)}-cluster-ips`)
       )
       .then(({ data }) => data);
   },
@@ -178,7 +179,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
         onepanelServiceType,
-        camelize(`modify-${onepanelServiceType.substring(3)}-cluster-ips`), {
+        camelize(`modify-${shortServiceType(onepanelServiceType)}-cluster-ips`), {
           hosts: hostsData,
         },
       )
@@ -221,7 +222,10 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
       gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
-        resolve({ isRegistered: !!providerDetails, providerDetails: providerDetails });
+        resolve({
+          isRegistered: !!providerDetails,
+          providerDetails: providerDetails,
+        });
       });
       gettingProvider.catch(error => {
         if (error == null || error.response == null) {
@@ -270,7 +274,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   /**
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
-   * See `model:cluster-details CLUSTER_INIT_STEPS` for code explaination.
+   * See `model:installation-details CLUSTER_INIT_STEPS` for code explaination.
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
@@ -320,7 +324,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                     const checkStorage = this._checkIsAnyStorage(
                       onepanelServer
                     );
-                    const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
+                    const checkDnsCheck = this
+                      ._checkIsDnsCheckAcknowledged();
                     checkDnsCheck.then(dnsCheckAck => {
                       if (dnsCheckAck) {
                         checkStorage.then(isAnyStorage => {

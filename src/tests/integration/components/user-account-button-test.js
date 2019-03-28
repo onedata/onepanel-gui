@@ -20,7 +20,7 @@ const OnepanelServer = OnepanelServerStub.extend({
 });
 
 const ProviderManager = Service.extend({
-  getProviderDetails: notImplementedReject,
+  getProviderDetailsProxy: notImplementedReject,
 });
 
 const GuiUtils = Service.extend({});
@@ -43,9 +43,10 @@ describe('Integration | Component | user account button', function () {
     let someUsername = 'some_username';
     onepanelServer.set('username', someUsername);
     sinon.stub(onepanelServer, 'getClusterIdFromUrl').returns('cluster_id');
-    sinon.stub(providerManager, 'getProviderDetails').returns(PromiseObject.create({
-      promise: resolve({}),
-    }));
+    sinon.stub(providerManager, 'getProviderDetailsProxy')
+      .returns(PromiseObject.create({
+        promise: resolve({}),
+      }));
 
     this.render(hbs `{{user-account-button}}`);
     return wait().then(() => {

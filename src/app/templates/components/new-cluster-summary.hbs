@@ -16,7 +16,7 @@
       </div>
       <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
       {{tt this "wayOnezoneInterface3"}}
-      {{#if isStandaloneOnepanel}}
+      {{#if isEmergencyOnepanel}}
         {{tt this "wayOnezoneAccess"}}
       {{/if}}
     </li>
@@ -29,7 +29,7 @@
   </ul>
   <p>
     {{tt this "currentlyOn1"}}
-    {{tt this (concat "currentlyOn" (if isStandaloneOnepanel "Standalone" "Onezone"))}}
+    {{tt this (concat "currentlyOn" (if isEmergencyOnepanel "Emergency" "Onezone"))}}
     {{tt this "currentlyOn2"}}.
   </p>
 {{/content-info}}
