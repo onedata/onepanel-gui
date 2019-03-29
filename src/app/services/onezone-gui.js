@@ -110,13 +110,8 @@ export default Service.extend(
               'service:onezone-gui#getOnepanelNavUrlInOnezone: tried to use redirect on emergency Onepanel which is currently not supported'
             );
           }
-          sessionStorage.setItem(
-            'redirectUrl',
-            `/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`
-          );
-          return onezoneOrigin;
+          return `${onezoneOrigin}/ozw/onezone/i#/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
         case 'onezone_route':
-          // TODO: internal route support in onezone_route redirection
           return `${onezoneOrigin}/ozw/onezone/i#/onedata/clusters/${clusterId}`;
         default:
           throw new Error(
