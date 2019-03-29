@@ -3,12 +3,12 @@
  * onedata-gui-common with extra data available for Onepanel gui.
  *
  * @module component/sidebar-cluster/second-level-items
- * @author Michal Borzecki, Jakub Liput
+ * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import SecondLevelItems from 'onedata-gui-common/components/two-level-sidebar/second-level-items';
+import SecondLevelItems from 'onedata-gui-common/components/sidebar-clusters/second-level-items';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
@@ -17,21 +17,16 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
-  i18n: service(),
 
   /**
-   * @override
+   * @type {Ember.ComputedProperty<boolean>}
    */
-  i18nPrefix: 'components.sidebarClusters.secondLevelItems',
-
   isNotDeployedCluster: reads('item.isNotDeployed'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   isLocalCluster: reads('item.isLocal'),
-
-  clusterType: reads('item.type'),
 
   /**
    * @type {Ember.ComputerProperty<boolean>}
@@ -48,14 +43,6 @@ export default SecondLevelItems.extend(I18n, {
         !this.get('dnsManager.dnsCheckProxy.isRejected');
     }
   ),
-
-  overviewItem: computed(function overviewItem() {
-    return {
-      id: 'overview',
-      label: this.t('overview'),
-      icon: 'overview',
-    };
-  }),
 
   dnsItem: computed('dnsValid', function dnsItem() {
     return {
@@ -77,46 +64,6 @@ export default SecondLevelItems.extend(I18n, {
     };
   }),
 
-  credentialsItem: computed(function credentialsItem() {
-    return {
-      id: 'credentials',
-      label: this.t('credentials'),
-      icon: 'user',
-    };
-  }),
-
-  nodesItem: computed(function nodesItem() {
-    return {
-      id: 'nodes',
-      label: this.t('nodes'),
-      icon: 'node',
-    };
-  }),
-
-  providerItem: computed(function providerItem() {
-    return {
-      id: 'provider',
-      label: this.t('provider'),
-      icon: 'provider',
-    };
-  }),
-
-  storagesItem: computed(function storagesItem() {
-    return {
-      id: 'storages',
-      label: this.t('storages'),
-      icon: 'support',
-    };
-  }),
-
-  spacesItem: computed(function spacesItem() {
-    return {
-      id: 'spaces',
-      label: this.t('spaces'),
-      icon: 'space',
-    };
-  }),
-
   clusterSecondLevelItems: computed(
     'isNotDeployedCluster',
     'isLocalCluster',
@@ -129,6 +76,7 @@ export default SecondLevelItems.extend(I18n, {
     'providerItem',
     'storagesItem',
     'spacesItem',
+    'membersItem',
     function () {
       const {
         isNotDeployedCluster,
@@ -147,6 +95,7 @@ export default SecondLevelItems.extend(I18n, {
           providerItem,
           storagesItem,
           spacesItem,
+          membersItem,
         } = this.getProperties(
           'clusterType',
           'cluster',
@@ -158,6 +107,7 @@ export default SecondLevelItems.extend(I18n, {
           'providerItem',
           'storagesItem',
           'spacesItem',
+          'membersItem'
         );
         const commonItems = [
           overviewItem,
@@ -165,6 +115,7 @@ export default SecondLevelItems.extend(I18n, {
           dnsItem,
           certificateItem,
           credentialsItem,
+          membersItem,
         ];
         return clusterType === 'onezone' ? commonItems : [
           ...commonItems,
@@ -186,8 +137,5 @@ export default SecondLevelItems.extend(I18n, {
     this.get('dnsManager.dnsCheckProxy.isRejected');
 
     this.get('webCertManager').getWebCertProxy();
-
-    // overwrite injected property
-    this.set('internalSecondLevelItems', reads('clusterSecondLevelItems'));
   },
 });

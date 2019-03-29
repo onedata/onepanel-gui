@@ -20,6 +20,11 @@ export default Component.extend({
    */
   path: '',
 
+  /**
+     * @type {boolean}
+     */
+  replace: false,
+
   fetchOnezoneOrigin() {
     return resolve();
   },
@@ -32,8 +37,12 @@ export default Component.extend({
   redirectToOnezone() {
     const onezoneOrigin = this.get('onezoneGui.onezoneOrigin');
     return new Promise(() => {
-      window.location =
-        `${onezoneOrigin}/ozw/onezone/i#/${this.get('path')}`;
+      const url = `${onezoneOrigin}/ozw/onezone/i#/${this.get('path')}`;
+      if (this.get('replace')) {
+        window.location.replace(url);
+      } else {
+        window.location = url;
+      }
     });
   },
 });
