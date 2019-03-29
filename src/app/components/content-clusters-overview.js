@@ -14,6 +14,7 @@ import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { Promise } from 'rsvp';
 
 export default Component.extend(
   I18n,
@@ -30,6 +31,11 @@ export default Component.extend(
      * @override
      */
     i18nPrefix: 'components.contentClustersOverview',
+
+    /**
+     * @virtual
+     */
+    cluster: undefined,
 
     // TODO: Uncomment when onezone map will render clusters, that can be accessed
     // instead of only with our spaces
@@ -78,7 +84,9 @@ export default Component.extend(
 
     init() {
       this._super(...arguments);
-      this.updateProviderIdProxy();
+      if (this.get('cluster.type') === 'oneprovider') {
+        this.updateProviderIdProxy();
+      }
       this.updateInstallationDetailsProxy();
     },
 
