@@ -21,8 +21,8 @@ module.exports = function (environment) {
       },
     },
     'onedataTabs': [
-      { id: 'data', icon: 'folder' },
-      { id: 'spaces', icon: 'space' },
+      { id: 'spaces', icon: 'folder' },
+      { id: 'providers', icon: 'provider' },
       { id: 'groups', icon: 'groups' },
       { id: 'tokens', icon: 'tokens' },
       {

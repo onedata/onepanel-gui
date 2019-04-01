@@ -23,7 +23,7 @@ export default SidebarResources.extend({
    */
   getCollectionFor(type) {
     switch (type) {
-      case 'data':
+      case 'providers':
       case 'spaces':
       case 'groups':
       case 'tokens':
