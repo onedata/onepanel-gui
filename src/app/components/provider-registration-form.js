@@ -432,7 +432,11 @@ export default OneForm.extend(Validations, I18n, {
       if (this.get('mode') === 'edit') {
         const currentFields = this.get('currentFields');
         const domainField = _.find(currentFields, { name: 'editDomain.domain' });
-        const subdomainField = _.find(currentFields, { name: 'editSubdomain.subdomain' });
+        const subdomainField = _.find(
+          currentFields, {
+            name: 'editSubdomain.subdomain',
+          }
+        );
         return domainField && get(domainField, 'changed') ||
           subdomainField && get(subdomainField, 'changed');
       } else {

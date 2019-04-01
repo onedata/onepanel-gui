@@ -16,7 +16,8 @@ describe('Integration | Component | cluster host ip form/host row', function () 
     }}`);
 
     expect(this.$('input')).to.not.exist;
-    expect(this.$('.cluster-host-ip-form-row').text()).to.match(/.*172\.17\.0\.1.*/);
+    expect(this.$('.cluster-host-ip-form-row').text())
+      .to.match(/.*172\.17\.0\.1.*/);
   });
 
   it('renders input if readonly flag is false', function () {

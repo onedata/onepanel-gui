@@ -12,7 +12,14 @@ import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
-const zoneAspects = new Set(['overview', 'nodes', 'dns', 'certificate', 'credentials', 'members']);
+const zoneAspects = new Set([
+  'overview',
+  'nodes',
+  'dns',
+  'certificate',
+  'credentials',
+  'members',
+]);
 
 export default AspectRoute.extend({
   guiUtils: service(),

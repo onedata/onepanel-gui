@@ -22,7 +22,9 @@ describe('Integration | Component | provider registration form', function () {
     function () {
       this.on('submit', function () {});
 
-      this.render(hbs `{{provider-registration-form mode="new" submit=(action "submit")}}`);
+      this.render(hbs `
+        {{provider-registration-form mode="new" submit=(action "submit")}}
+      `);
 
       let helper = new ProviderRegistrationHelper(this.$());
       return wait().then(() => {

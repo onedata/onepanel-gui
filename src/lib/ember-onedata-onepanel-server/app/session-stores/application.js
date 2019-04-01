@@ -28,7 +28,12 @@ export default BaseSessionStore.extend({
   restore() {
     return this.get('onepanelServer').validateSession()
       .then(({ username, token }) => ({
-        authenticated: _.merge({ username, token }, { authenticator: 'authenticator:application' }),
+        authenticated: _.merge({
+          username,
+          token,
+        }, {
+          authenticator: 'authenticator:application',
+        }),
       }))
       .catch(() => ({}));
   },

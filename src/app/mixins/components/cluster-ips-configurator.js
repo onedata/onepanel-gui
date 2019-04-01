@@ -87,7 +87,8 @@ export default Mixin.create({
       .modifyClusterIps(this.get('_ipsFormData'))
       .catch(error => {
         this.get('globalNotify').backendError(
-          this.get('i18n').t('mixins.components.clusterIpsConfigurator.setupAction'),
+          this.get('i18n')
+          .t('mixins.components.clusterIpsConfigurator.setupAction'),
           error
         );
         throw error;

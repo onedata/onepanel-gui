@@ -98,7 +98,8 @@ describe('Integration | Component | new cluster web cert', function () {
 
       return wait().then(() => {
         return click('.btn-cert-next').then(() => {
-          expect(changeDomain).to.be.calledWith('example.com', sinon.match.any);
+          expect(changeDomain)
+            .to.be.calledWith('example.com', sinon.match.any);
           expect(nextStep).to.be.not.called;
         });
       });

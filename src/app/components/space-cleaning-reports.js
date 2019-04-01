@@ -79,10 +79,14 @@ export default Component.extend(I18n, {
     return this.get('_mobileMode') ? 64 : 44;
   }),
 
-  firstRowHeight: computed('rowHeight', 'reportsArray._start', function firstRowHeight() {
-    const _start = this.get('reportsArray._start');
-    return _start ? _start * this.get('rowHeight') : 0;
-  }),
+  firstRowHeight: computed(
+    'rowHeight',
+    'reportsArray._start',
+    function firstRowHeight() {
+      const _start = this.get('reportsArray._start');
+      return _start ? _start * this.get('rowHeight') : 0;
+    }
+  ),
 
   firstRowStyle: computed('firstRowHeight', function firstRowStyle() {
     return htmlSafe(`height: ${this.get('firstRowHeight')}px;`);
@@ -115,12 +119,16 @@ export default Component.extend(I18n, {
     }
   ),
 
-  toggleReportsUpdater: observer('isCleanEnabled', 'headerVisible', function toggleReportsUpdater() {
-    const enable = this.get('headerVisible') && this.get('isCleanEnabled');
-    if (this.get('spaceAutoCleaningReportsUpdater.isEnabled') !== enable) {
-      this.set('spaceAutoCleaningReportsUpdater.isEnabled', enable);
+  toggleReportsUpdater: observer(
+    'isCleanEnabled',
+    'headerVisible',
+    function toggleReportsUpdater() {
+      const enable = this.get('headerVisible') && this.get('isCleanEnabled');
+      if (this.get('spaceAutoCleaningReportsUpdater.isEnabled') !== enable) {
+        this.set('spaceAutoCleaningReportsUpdater.isEnabled', enable);
+      }
     }
-  }),
+  ),
 
   init() {
     this._super(...arguments);

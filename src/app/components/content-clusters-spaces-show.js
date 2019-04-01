@@ -47,18 +47,22 @@ export default Component.extend(
     /**
      * @type {Ember.ComputedProperty<Action>}
      */
-    _revokeSpaceAction: computed('startRevokeSpace', 'space', function _revokeSpaceAction() {
-      const startRevokeSpace = this.get('startRevokeSpace');
-      const space = this.get('space');
-      return {
-        action: () => startRevokeSpace(space)
-          .then(confirmed => confirmed && this.goToSpacesList.bind(this)()),
-        title: this.t('revokeSpaceSupport'),
-        icon: 'remove',
-        class: 'btn-revoke-space-support',
-        buttonStyle: 'danger',
-      };
-    }),
+    _revokeSpaceAction: computed(
+      'startRevokeSpace',
+      'space',
+      function _revokeSpaceAction() {
+        const startRevokeSpace = this.get('startRevokeSpace');
+        const space = this.get('space');
+        return {
+          action: () => startRevokeSpace(space)
+            .then(confirmed => confirmed && this.goToSpacesList.bind(this)()),
+          title: this.t('revokeSpaceSupport'),
+          icon: 'remove',
+          class: 'btn-revoke-space-support',
+          buttonStyle: 'danger',
+        };
+      }
+    ),
 
     /**
      * @override

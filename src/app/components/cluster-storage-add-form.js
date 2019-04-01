@@ -60,17 +60,21 @@ const storagePathTypeDefaults = {
 
 export default OneForm.extend(Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
-  currentFieldsPrefix: computed('selectedStorageType.id', 'showLumaPrefix', function () {
-    let {
-      selectedStorageType,
-      showLumaPrefix,
-    } = this.getProperties('selectedStorageType', 'showLumaPrefix');
-    if (showLumaPrefix) {
-      return ['generic', 'luma', selectedStorageType.id];
-    } else {
-      return ['generic', selectedStorageType.id];
+  currentFieldsPrefix: computed(
+    'selectedStorageType.id',
+    'showLumaPrefix',
+    function () {
+      let {
+        selectedStorageType,
+        showLumaPrefix,
+      } = this.getProperties('selectedStorageType', 'showLumaPrefix');
+      if (showLumaPrefix) {
+        return ['generic', 'luma', selectedStorageType.id];
+      } else {
+        return ['generic', selectedStorageType.id];
+      }
     }
-  }),
+  ),
   allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
     function () {
       let {

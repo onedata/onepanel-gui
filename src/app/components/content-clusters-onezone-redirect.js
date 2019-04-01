@@ -21,8 +21,8 @@ export default Component.extend({
   path: '',
 
   /**
-     * @type {boolean}
-     */
+   * @type {boolean}
+   */
   replace: false,
 
   fetchOnezoneOrigin() {
