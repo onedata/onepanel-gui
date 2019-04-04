@@ -97,7 +97,7 @@ export default Component.extend(
      * @override
      */
     fetchProvider() {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     },
 
     /**

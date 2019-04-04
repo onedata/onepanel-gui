@@ -66,7 +66,7 @@ describe('Integration | Component | cluster host table', function () {
     expect(new ToggleHelper($databaseToggle).isChecked()).to.be.true;
 
     let $clusterManagerToggle = helper.getToggle('host.one.com', 'clusterManager');
-    expect($clusterManagerToggle, 'database toggle').to.exist;
+    expect($clusterManagerToggle, 'cluster manager toggle').to.exist;
     expect(new ToggleHelper($clusterManagerToggle).isChecked()).to.be.false;
   });
 });

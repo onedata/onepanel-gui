@@ -1,7 +1,7 @@
 export default {
   panel: 'Panel',
   serviceType: {
-    provider: 'Provider',
-    zone: 'Zone',
+    oneprovider: 'Oneprovider',
+    onezone: 'Onezone',
   },
 };

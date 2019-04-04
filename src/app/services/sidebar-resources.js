@@ -3,17 +3,19 @@
  *
  * @module services/sidebar-resources
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { Promise } from 'rsvp';
+import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
-  clusterManager: service(),
-  userManager: service(),
+  onepanelServer: service(),
+  clusterModelManager: service(),
+  guiUtils: service(),
+  clusterActions: service(),
 
   /**
    * @param {string} type
@@ -21,14 +23,30 @@ export default SidebarResources.extend({
    */
   getCollectionFor(type) {
     switch (type) {
-      case 'clusters':
-        return this.get('clusterManager').getClusters().get('promise');
+      case 'providers':
+      case 'spaces':
+      case 'groups':
+      case 'tokens':
       case 'users':
-        return this.get('userManager').getUsers().get('promise').then(users => {
-          return Promise.resolve({ list: users });
-        });
+        return resolve([]);
+      case 'clusters':
+        if (this.get('onepanelServer.isEmergency')) {
+          return this.get('clusterModelManager').getCurrentClusterProxy()
+            .then(currentCluster => {
+              if (currentCluster) {
+                return { list: [currentCluster] };
+              } else {
+                // cluster is not deployed yet - only in onepanel emergency mode
+                return {
+                  list: [this.get('clusterModelManager').getNotDeployedCluster()],
+                };
+              }
+            });
+        } else {
+          return this.get('clusterModelManager').getClustersProxy();
+        }
       default:
-        return new Promise((resolve, reject) => reject('No such collection: ' + type));
+        return reject('No such collection: ' + type);
     }
   },
 
@@ -39,7 +57,10 @@ export default SidebarResources.extend({
    */
   getButtonsFor(type) {
     switch (type) {
-      default: return [];
+      case 'clusters':
+        return this.get('clusterActions.buttons');
+      default:
+        return [];
     }
   },
 });

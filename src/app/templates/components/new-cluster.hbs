@@ -10,7 +10,6 @@
       {{#if (eq w.step.id "installation")}}
         {{new-cluster-installation
           nextStep=(action "next")
-          changeClusterName=(action "changeClusterName")
           deploymentTaskId=deploymentTaskId
         }}
       {{else if (eq w.step.id "ips")}}
@@ -21,7 +20,6 @@
       {{else if (eq w.step.id "providerRegistration")}}
         {{new-cluster-zone-registration
           nextStep=(action "next")
-          changeClusterName=(action "changeClusterName")
         }}
       {{else if (eq w.step.id "dns")}}
         {{new-cluster-dns

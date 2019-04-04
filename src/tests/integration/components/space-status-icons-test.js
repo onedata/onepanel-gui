@@ -15,22 +15,25 @@ describe('Integration | Component | space status icons', function () {
     this.inject.service('i18n', { as: 'i18n' });
   });
 
-  it('shows only import icon when import is enabled and update is disabled', function () {
-    this.set('space', EmberObject.create({
-      importEnabled: true,
-      updateEnabled: false,
-    }));
-    this.set('syncStats', {
-      importStatus: 'done',
-    });
+  it(
+    'shows only import icon when import is enabled and update is disabled',
+    function () {
+      this.set('space', EmberObject.create({
+        importEnabled: true,
+        updateEnabled: false,
+      }));
+      this.set('syncStats', {
+        importStatus: 'done',
+      });
 
-    this.render(hbs `
-    {{space-status-icons space=space syncStats=syncStats}}
-    `);
+      this.render(hbs `
+      {{space-status-icons space=space syncStats=syncStats}}
+      `);
 
-    expect(this.$('.oneicon-space-import')).to.be.visible;
-    expect(this.$('.oneicon-update')).to.be.hidden;
-  });
+      expect(this.$('.oneicon-space-import')).to.be.visible;
+      expect(this.$('.oneicon-update')).to.be.hidden;
+    }
+  );
 
   it('shows import and update icons when enabled', function () {
     this.set('space', EmberObject.create({

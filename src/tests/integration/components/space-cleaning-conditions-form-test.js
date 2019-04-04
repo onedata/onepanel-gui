@@ -96,10 +96,11 @@ describe('Integration | Component | space cleaning conditions form', function ()
                   formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
-      return fillIn(group.find('input.condition-number-input')[0], '-3').then(() => {
-        expect(group).to.have.class('has-error');
-        done();
-      });
+      return fillIn(group.find('input.condition-number-input')[0], '-3')
+        .then(() => {
+          expect(group).to.have.class('has-error');
+          done();
+        });
     });
 
     it(`accepts positive numbers in ${fieldName} input`, function (done) {
@@ -215,7 +216,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
       expect(saveSpy).to.be.calledWith({ minFileSize: { enabled: false } });
       return click(greaterCheckboxSelector).then(() => {
         expect(this.$(greaterInputSelector)).to.not.be.disabled;
-        expect(saveSpy).to.be.calledWith({ minFileSize: { enabled: true } });
+        expect(saveSpy)
+          .to.be.calledWith({ minFileSize: { enabled: true } });
         expect(this.$(greaterInputSelector), 'after enable')
           .to.have.value('1');
       });

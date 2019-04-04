@@ -1,0 +1,24 @@
+.cluster-storages-tile {
+  .tile-content {
+    position: relative;
+  }
+  .circle {
+    $-circle-size: 150px;
+    @include absolute-align-middle-center();
+    height: $-circle-size;
+    width: $-circle-size;
+    background-color: $color-one-light-blue;
+    border-radius: 100%;
+    line-height: $-circle-size;
+    font-family: 'Open Sans Semibold';
+    font-size: 40px;
+    white-space: nowrap;
+    .one-icon {
+      position: relative;
+      top: 25px;
+      margin: 0 -10px;
+      font-size: 2em;
+      color: $color-one-blue-gray;
+    }
+  }
+}

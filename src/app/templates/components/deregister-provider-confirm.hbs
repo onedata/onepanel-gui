@@ -1,13 +1,13 @@
-<h1>{{t "components.deregisterProviderConfirm.deregisterProviderHeader"}}</h1>
-<p>{{t "components.deregisterProviderConfirm.deregistrationResults"}}</p>
+<h1>{{tt this "deregisterProviderHeaderEmergency"}}</h1>
+<p>{{tt this "deregistrationResults"}}</p>
 <div class="btn-toolbar">
   {{#bs-button class="btn btn-sm" type="info" onClick=closeAction}}
-    {{t "components.deregisterProviderConfirm.keepItRegistered"}}
+    {{tt this "keepItRegistered"}}
   {{/bs-button}}
   {{#one-spin-button
     class="btn btn-sm btn-danger"
     action=submitAction
   }}
-    {{one-icon icon="remove"}} <span>{{t "components.deregisterProviderConfirm.yesDeregister"}}</span>
+    {{one-icon icon="remove"}} <span>{{tt this "yesDeregister"}}</span>
   {{/one-spin-button}}
 </div>

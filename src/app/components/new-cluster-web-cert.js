@@ -3,7 +3,7 @@
  *
  * @module components/new-cluster-web-cert
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -28,15 +28,16 @@ export default Component.extend(I18n, {
   classNames: ['new-cluster-web-cert'],
 
   onepanelServer: service(),
-  clusterManager: service(),
+  deploymentManager: service(),
   webCertManager: service(),
   providerManager: service(),
   globalNotify: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterWebCert',
 
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * @virtual
@@ -65,7 +66,7 @@ export default Component.extend(I18n, {
    * @type {PromiseObject<Onepanel.WebCert>}
    */
   webCertProxy: computed(function webCertProxy() {
-    const promise = this.get('webCertManager').getWebCert();
+    const promise = this.get('webCertManager').fetchWebCert();
     return PromiseObject.create({ promise });
   }),
 
@@ -102,13 +103,15 @@ export default Component.extend(I18n, {
     const onepanelServiceType = this.get('onepanelServiceType');
     let promise;
     switch (onepanelServiceType) {
-      case 'provider':
-        promise = this.get('providerManager').getProviderDetails()
+      case 'oneprovider':
+        promise = this.get('providerManager').getProviderDetailsProxy()
           .then(provider => provider && get(provider, 'domain'));
         break;
-      case 'zone':
-        promise = this.get('clusterManager').getConfiguration()
-          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
+      case 'onezone':
+        promise = this.get('deploymentManager').getConfiguration()
+          .then(({ data: cluster }) =>
+            cluster && get(cluster, 'onezone.domainName')
+          );
         break;
       default:
         throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);

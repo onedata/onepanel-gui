@@ -3,7 +3,7 @@
  *
  * @module components/new-cluster-deploy-progress
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -24,10 +24,11 @@ const I18N_PREFIX_STEPS = 'components.newClusterDeployProgress.steps.';
 
 // TODO this can be made a generic taskStatus progress component
 export default Component.extend({
+  guiUtils: service(),
+
   classNames: ['new-cluster-deploy-progress'],
 
-  onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   /**
    * Promise for watching deployment process.

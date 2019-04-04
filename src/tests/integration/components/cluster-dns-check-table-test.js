@@ -30,7 +30,7 @@ describe('Integration | Component | cluster dns check table', function () {
     }]);
 
     this.render(hbs `{{cluster-dns-check-table
-      onepanelServiceType="zone"
+      onepanelServiceType="onezone"
       checkResultItems=checkResultItems
     }}`);
 

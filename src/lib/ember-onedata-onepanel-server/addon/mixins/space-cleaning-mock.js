@@ -60,7 +60,12 @@ export default Mixin.create({
     return this._getAutoCleaningStatusMock(id, target, threshold, steps).getData();
   },
 
-  _getAutoCleaningStatusMock(id, target = 100000000, threshold = 500000000, steps = 100) {
+  _getAutoCleaningStatusMock(
+    id,
+    target = 100000000,
+    threshold = 500000000,
+    steps = 100
+  ) {
     const cached = this.get(`cleanStatesCache.${id}`);
     if (cached) {
       return cached;

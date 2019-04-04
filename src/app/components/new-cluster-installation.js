@@ -7,7 +7,7 @@
  *
  * @module components/new-cluster-installation
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -27,7 +27,7 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import _ from 'lodash';
+import shortServiceType from 'onepanel-gui/utils/short-service-type';
 
 const {
   ProviderConfiguration,
@@ -44,21 +44,22 @@ function getHostnamesOfType(hosts, type) {
 }
 
 function configurationClass(serviceType) {
-  return serviceType === 'zone' ? ZoneConfiguration : ProviderConfiguration;
+  return serviceType === 'onezone' ? ZoneConfiguration : ProviderConfiguration;
 }
 
 export default Component.extend(I18n, {
   classNames: ['new-cluster-installation', 'container-fluid'],
 
   onepanelServer: service(),
-  clusterManager: service(),
+  deploymentManager: service(),
   globalNotify: service(),
   cookies: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterInstallation',
 
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   /**
    * @virtual optional
@@ -134,11 +135,6 @@ export default Component.extend(I18n, {
   /**
    * @type {function}
    */
-  changeClusterName: undefined,
-
-  /**
-   * @type {function}
-   */
   nextStep: undefined,
 
   /**
@@ -173,7 +169,7 @@ export default Component.extend(I18n, {
    */
   clusterPorts: computed('onepanelServiceType', function () {
     const onepanelServiceType = this.get('onepanelServiceType');
-    return (onepanelServiceType === 'zone' ? '52, ' : '') +
+    return (onepanelServiceType === 'onezone' ? '52, ' : '') +
       '80, 443, 4369, 9100 - 9139';
   }),
 
@@ -186,9 +182,9 @@ export default Component.extend(I18n, {
       onepanelServiceType,
     } = this.getProperties('i18n', 'onepanelServiceType');
     return onepanelServiceType ?
-      'One' + _.lowerCase(i18n.t(
+      i18n.t(
         `services.guiUtils.serviceType.${onepanelServiceType}`
-      )) : null;
+      ) : null;
   }),
 
   addingNewHostChanged: observer('addingNewHost', function () {
@@ -205,7 +201,7 @@ export default Component.extend(I18n, {
     this.set(
       'hostsProxy',
       PromiseObject.create({
-        promise: this.get('clusterManager').getHosts()
+        promise: this.get('deploymentManager').getHosts()
           .then(hosts => A(hosts.map(h => ClusterHostInfo.create(h)))),
       })
     );
@@ -217,7 +213,7 @@ export default Component.extend(I18n, {
       onepanelServer,
     } = this.getProperties('deploymentTaskId', 'onepanelServer', 'onepanelServiceType');
 
-    if (onepanelServiceType === 'provider') {
+    if (onepanelServiceType === 'oneprovider') {
       this.set('_zoneOptionsValid', true);
     }
 
@@ -229,21 +225,16 @@ export default Component.extend(I18n, {
   },
 
   configureFinished() {
-    let {
+    const {
       globalNotify,
-      onepanelServiceType,
-      _zoneName,
+      nextStep,
     } = this.getProperties(
       'globalNotify',
-      'onepanelServiceType',
-      '_zoneName'
+      'nextStep',
     );
     // TODO i18n
     globalNotify.info('Cluster deployed successfully');
-    if (onepanelServiceType === 'zone') {
-      this.get('changeClusterName')(_zoneName);
-    }
-    this.get('nextStep')();
+    nextStep();
   },
 
   configureFailed({ taskStatus }) {
@@ -262,7 +253,7 @@ export default Component.extend(I18n, {
 
   /**
    * Create an object of cluster deployment configuration using onepanel lib
-   * @param {string} serviceType one of: provider, zone
+   * @param {string} serviceType one of: oneprovider, onezone
    * @return {Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration}
    */
   createConfiguration(serviceType) {
@@ -310,7 +301,7 @@ export default Component.extend(I18n, {
     };
 
     // in zone mode, add zone name    
-    if (serviceType === 'zone') {
+    if (serviceType === 'onezone') {
       configProto.onezone = {
         name: _zoneName,
         domainName: _zoneDomainName,
@@ -356,8 +347,8 @@ export default Component.extend(I18n, {
       } = this.getProperties('onepanelServer', 'onepanelServiceType');
       let providerConfiguration = this.createConfiguration(onepanelServiceType);
       onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`configure-${onepanelServiceType}`),
+        onepanelServiceType,
+        camelize(`configure-${shortServiceType(onepanelServiceType)}`),
         providerConfiguration
       ).then(resolve, reject);
     });
@@ -500,7 +491,7 @@ export default Component.extend(I18n, {
       } else {
         const _newHostname = this.get('_newHostname');
         this.set('_isSubmittingNewHost', true);
-        return this.get('clusterManager').addKnownHost(_newHostname)
+        return this.get('deploymentManager').addKnownHost(_newHostname)
           .then(knownHost => {
             const newHost = ClusterHostInfo.create(knownHost);
             this.get('hosts').pushObject(newHost);

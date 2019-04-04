@@ -48,7 +48,11 @@ export default Mixin.create({
   actions: {
     changeTab(tabId) {
       const spaceId = this.get('space.id');
-      return this.get('router').transitionTo({ queryParams: { options: `space.${spaceId},tab.${tabId}` } });
+      return this.get('router').transitionTo({
+        queryParams: {
+          options: `space.${spaceId},tab.${tabId}`,
+        },
+      });
     },
   },
 });

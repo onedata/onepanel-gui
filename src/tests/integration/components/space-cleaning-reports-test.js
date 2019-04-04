@@ -6,8 +6,47 @@ import moment from 'moment';
 import { resolve } from 'rsvp';
 import wait from 'ember-test-helpers/wait';
 import { click } from 'ember-native-dom-helpers';
+import { get } from '@ember/object';
+import _ from 'lodash';
+import Service from '@ember/service';
+import { registerService } from '../../helpers/stub-service';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
+
+const data = [{
+  id: 'id-0',
+  index: 0,
+  startedAt: new Date(),
+  stoppedAt: new Date(),
+  releasedBytes: 1048576,
+  bytesToRelease: 2097152,
+  filesNumber: 991,
+  status: 'success',
+}, {
+  id: 'id-1',
+  index: 1,
+  startedAt: new Date(),
+  stoppedAt: new Date(),
+  releasedBytes: 1022976,
+  bytesToRelease: 1022976,
+  filesNumber: 992,
+  status: 'failure',
+}];
+
+function fetchReports(index, limit = 1000, offset = 0) {
+  let arrIndex = _.findIndex(this.reports, i => get(i, 'index') === index);
+  if (arrIndex === -1) {
+    arrIndex = 0;
+  }
+  return resolve(data.slice(
+    arrIndex + offset,
+    arrIndex + offset + limit
+  ));
+}
+
+const SpaceManager = Service.extend({
+  getAutoCleaningReports: fetchReports,
+});
 
 describe('Integration | Component | space cleaning reports', function () {
   setupComponentTest('space-cleaning-reports', {
@@ -15,27 +54,19 @@ describe('Integration | Component | space cleaning reports', function () {
   });
 
   beforeEach(function () {
-    this.set('data', [{
-      startedAt: new Date(),
-      stoppedAt: new Date(),
-      releasedBytes: 1048576,
-      bytesToRelease: 2097152,
-      filesNumber: 24,
-      status: 'success',
-    }, {
-      startedAt: new Date(),
-      stoppedAt: new Date(),
-      releasedBytes: 1022976,
-      bytesToRelease: 1022976,
-      filesNumber: 18,
-      status: 'failure',
-    }]);
+    registerService(this, 'spaceManager', SpaceManager);
+
+    this.set('data', data);
+
     this.set('_window', {
       innerWidth: 1000,
       addEventListener() {},
       removeEventListener() {},
     });
+
     this.on('nop', () => {});
+
+    this.on('fetchReports', fetchReports);
   });
 
   it('renders reports', function () {

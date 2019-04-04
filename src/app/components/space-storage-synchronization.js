@@ -76,10 +76,13 @@ export default Component.extend(I18n, {
    * True if import is enabled in configuration
    * @type {boolean}
    */
-  importEnabled: computed('space.importConfiguration.strategy', function importEnabled() {
-    const strategy = this.get('space.importConfiguration.strategy');
-    return !!strategy && strategy !== 'no_import';
-  }),
+  importEnabled: computed(
+    'space.importConfiguration.strategy',
+    function importEnabled() {
+      const strategy = this.get('space.importConfiguration.strategy');
+      return !!strategy && strategy !== 'no_import';
+    }
+  ),
 
   importConfigurationEdition: false,
 

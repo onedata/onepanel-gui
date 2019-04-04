@@ -5,11 +5,14 @@ import hbs from 'htmlbars-inline-precompile';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { Promise } from 'rsvp';
 import I18nStub from '../../helpers/i18n-stub';
-import { registerService } from '../../helpers/stub-service';
+import { registerService, lookupService } from '../../helpers/stub-service';
 import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import Service from '@ember/service';
 import { click } from 'ember-native-dom-helpers';
+import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import { resolve } from 'rsvp';
+import { set } from '@ember/object';
 
 const PROVIDER_DETAILS = {
   id: 'provider_id',
@@ -23,7 +26,11 @@ const PROVIDER_DETAILS = {
   geoLongitude: 21.898093,
 };
 
-const ClusterManager = Service.extend({
+const GuiUtils = Service.extend({
+  updateGuiNameProxy: () => resolve(),
+});
+
+const DeploymentManager = Service.extend({
   getConfiguration() {
     return Promise.resolve({
       data: {
@@ -33,10 +40,11 @@ const ClusterManager = Service.extend({
       },
     });
   },
+  getHostNames: notImplementedThrow,
 });
 
 const WebCertManager = Service.extend({
-  getWebCert() {
+  fetchWebCert() {
     return Promise.resolve({
       letsEncrypt: false,
     });
@@ -47,10 +55,12 @@ const WebCertManager = Service.extend({
 });
 
 const OnepanelServer = Service.extend({
-  serviceType: 'zone',
+  serviceType: 'onezone',
+  fetchConfiguration: notImplementedThrow,
+  requestValidData: notImplementedThrow,
 });
 
-describe('Integration | Component | new cluster provider cert', function () {
+describe('Integration | Component | new cluster web cert', function () {
   setupComponentTest('new-cluster-web-cert', {
     integration: true,
   });
@@ -58,13 +68,14 @@ describe('Integration | Component | new cluster provider cert', function () {
   beforeEach(function () {
     registerService(this, 'i18n', I18nStub);
     registerService(this, 'web-cert-manager', WebCertManager);
-    registerService(this, 'cluster-manager', ClusterManager);
+    registerService(this, 'deployment-manager', DeploymentManager);
     registerService(this, 'onepanel-server', OnepanelServer);
+    registerService(this, 'gui-utils', GuiUtils);
     this.set('_location', {});
   });
 
   it(
-    'changes the domain on next step if LetsEncrypt are enabled',
+    'changes the domain on next step if LetsEncrypt is enabled',
     function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
@@ -77,6 +88,7 @@ describe('Integration | Component | new cluster provider cert', function () {
       this.on('changeDomain', changeDomain);
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
+      set(lookupService(this, 'guiUtils'), 'serviceType', 'onezone');
 
       this.render(hbs `{{new-cluster-web-cert
         _changeDomain=(action "changeDomain")
@@ -86,7 +98,8 @@ describe('Integration | Component | new cluster provider cert', function () {
 
       return wait().then(() => {
         return click('.btn-cert-next').then(() => {
-          expect(changeDomain).to.be.called;
+          expect(changeDomain)
+            .to.be.calledWith('example.com', sinon.match.any);
           expect(nextStep).to.be.not.called;
         });
       });

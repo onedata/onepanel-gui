@@ -1,0 +1,25 @@
+$one-warning-bar-height: 32px;
+
+.one-warning-bar {
+  position: absolute;
+  height: $one-warning-bar-height;
+  background-color: $color-one-blue-gray;
+  width: 100%;
+  bottom: 0;
+  line-height: $one-warning-bar-height;
+  color: $color-one-white;
+  z-index: 1002;
+  
+  @include before-top-shadow($shadow-alpha: 0.1);
+  
+  .one-warning-bar-title {
+    margin-right: 8px;
+  }
+}
+
+.one-warning-bar + .app-layout {
+  bottom: $one-warning-bar-height;
+  .brand-info {
+    bottom: $one-warning-bar-height;
+  }
+}

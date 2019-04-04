@@ -246,35 +246,38 @@ export default Mixin.create({
         syncInterval
       );
 
-    syncStatsPromise.then(newSyncStats => {
-      if (newSyncStats &&
-        this.get('space.updateEnabled') === false &&
-        !isEmpty(get(newSyncStats, 'stats')) &&
-        this.get('space.importEnabled') &&
-        get(newSyncStats, 'importStatus') === 'done') {
+    return syncStatsPromise.then(newSyncStats => {
+        let freezeStats = false;
+        if (newSyncStats &&
+          this.get('space.updateEnabled') === false &&
+          !isEmpty(get(newSyncStats, 'stats')) &&
+          this.get('space.importEnabled') &&
+          get(newSyncStats, 'importStatus') === 'done') {
+          freezeStats = true;
+          safeExec(this, 'set', 'statsFrozen', true);
+        }
 
-        safeExec(this, 'set', 'statsFrozen', true);
-      }
+        this.setProperties({
+          lastStatsUpdateTime: Date.now(),
+          _syncStats: newSyncStats,
+          timeStatsError: null,
+        });
 
-      this.setProperties({
-        lastStatsUpdateTime: Date.now(),
-        _syncStats: newSyncStats,
-        timeStatsError: null,
+        return {
+          freezeStats,
+        };
+      })
+      .catch(error => {
+        this.setProperties({
+          timeStatsError: error,
+        });
+      })
+      .finally(() => {
+        this.setProperties({
+          timeStatsLoading: false,
+          _lastSyncStatusRefresh: Date.now(),
+        });
       });
-    });
-
-    syncStatsPromise.catch(error => {
-      this.setProperties({
-        timeStatsError: error,
-      });
-    });
-
-    syncStatsPromise.finally(() => {
-      this.setProperties({
-        timeStatsLoading: false,
-        _lastSyncStatusRefresh: Date.now(),
-      });
-    });
   },
 
   /**
@@ -285,6 +288,17 @@ export default Mixin.create({
   syncTabActive: computed('selectedTab', function () {
     const selectedTab = this.get('selectedTab');
     return selectedTab && /^tab-sync-/.test(selectedTab);
+  }),
+
+  updateReenabled: observer('space.storageUpdate.strategy', function updateReenabled() {
+    if (this.get('space.storageUpdate.strategy') !== 'no_update') {
+      this.fetchAllSyncStats()
+        .then(({ freezeStats }) => {
+          if (!freezeStats) {
+            safeExec(this, 'set', 'statsFrozen', false);
+          }
+        });
+    }
   }),
 
   reconfigureSyncWatchers: observer(

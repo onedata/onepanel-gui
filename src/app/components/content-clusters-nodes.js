@@ -3,7 +3,7 @@
  *
  * @module components/content-cluster-nodes
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,7 +21,7 @@ import _ from 'lodash';
 
 export default Component.extend(I18n, clusterIpsConfigurator, {
   onepanelServer: service(),
-  clusterManager: service(),
+  deploymentManager: service(),
   providerManager: service(),
   globalNotify: service(),
   guiUtils: service(),
@@ -32,9 +32,9 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    * @override
    * @type {PromiseObject<ProviderDetails>}
    */
-  providerDetailsProxy: computed(function getProviderDetailsProxy() {
-    if (this.get('guiUtils.serviceType') === 'provider') {
-      return this.get('providerManager').getProviderDetails();
+  providerDetailsProxy: computed(function providerDetailsProxy() {
+    if (this.get('guiUtils.serviceType') === 'oneprovider') {
+      return this.get('providerManager').getProviderDetailsProxy();
     }
   }),
 
@@ -69,7 +69,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       rejectClusterHosts = reject;
     });
 
-    let gettingHostsInfo = this.get('clusterManager').getClusterHostsInfo();
+    let gettingHostsInfo = this.get('deploymentManager').getClusterHostsInfo();
 
     gettingHostsInfo.then(({ mainManagerHostname, clusterHostsInfo }) => {
       resolveClusterHosts(clusterHostsInfo);
