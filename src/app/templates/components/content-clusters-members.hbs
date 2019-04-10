@@ -1,0 +1,54 @@
+{{#if isOnepanelEmergency}}
+  {{#content-info
+    class="scroll-breakpoint-700"
+    header=(tt this "header")
+    imagePath=(root-url "assets/images/cluster-members.svg")}}
+    <div class="row row-members-counter">
+      {{#promise-proxy-container proxy=membersProxy}}
+        <p class="text-center">
+          {{tt this "membersOf"}}
+          <strong>{{cluster.name}}</strong>:
+        </p>
+        <div class="row">
+          <div class="col-xs-8 col-sm-9 col-md-7 col-centered">
+            <div class="col-xs-12 col-sm-6">
+              <ul class="info info-condensed info-gray">
+                <li class="li-spaces-count">
+                  {{tt this "directGroups"}}: <span class="direct-groups-number">{{membersProxy.groupsCount}}</span>
+                </li>
+                <li class="li-groups-count">
+                  {{tt this "directUsers"}}: <span class="direct-users-number">{{membersProxy.usersCount}}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <ul class="info info-condensed info-gray">
+                <li class="li-users-count">
+                  {{tt this "effectiveGroups"}}:
+                  <span class="effective-groups-number">
+                    {{membersProxy.effectiveGroupsCount}}
+                  </span>
+                </li>
+                <li class="li-creation-time-count">
+                  {{tt this "effectiveUsers"}}:
+                  <span class="effective-users-number">
+                    {{membersProxy.effectiveUsersCount}}
+                  </span>
+                </li>
+              </ul>
+            </div>          
+          </div>
+        </div>
+      {{/promise-proxy-container}}
+    </div>
+    <div class="text-center">
+      {{#one-spin-button
+        class=(concat "btn btn-primary manage-via-onezone")
+        action=(action "manageViaOnezone")}}
+        {{tt this "manageViaOnezne"}}
+      {{/one-spin-button}}
+    </div>
+  {{/content-info}}
+{{else}}
+  {{content-clusters-onezone-redirect path=(concat "onedata/clusters/" cluster.id "/members") replace=true}}
+{{/if}}
