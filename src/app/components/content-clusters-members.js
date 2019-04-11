@@ -60,6 +60,9 @@ export default Component.extend(
         .then(({ data }) => data);
     },
 
+    /**
+     * @returns {Promise<Onepanel.Token>}
+     */
     fetchUserInvitationToken() {
       const onepanelServer = this.get('onepanelServer');
       return onepanelServer

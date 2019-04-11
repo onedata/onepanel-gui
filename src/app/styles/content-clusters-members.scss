@@ -10,11 +10,8 @@
     margin-top: $padding-base-vertical;
     &.expanded {
       margin-top: 2 * $padding-large-vertical;
-      height: 220px;
+      min-height: 220px;
     }
-  }
-  .invite-user-token-textarea {
-    margin-bottom: $padding-base-vertical;
   }
   .row-yield {
     margin-bottom: 0;
