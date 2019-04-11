@@ -725,6 +725,16 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_createUserInviteToken() {
+      return {
+        success() {
+          return {
+            token: 'user_invitation_token_1234567890',
+          };
+        },
+      };
+    },
+
     _req_oneprovider_configureProvider() {
       this.incrementProperty('mockStep');
       return {

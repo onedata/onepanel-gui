@@ -1,6 +1,6 @@
 {{#if isOnepanelEmergency}}
   {{#content-info
-    class="scroll-breakpoint-700"
+    class=(if isUserTokenVisible "scroll-breakpoint-800" "scroll-breakpoint-600")
     header=(tt this "header")
     imagePath=(root-url "assets/images/cluster-members.svg")}}
     <div class="row row-members-counter">
@@ -47,6 +47,28 @@
         action=(action "manageViaOnezone")}}
         {{tt this "manageViaOnezne"}}
       {{/one-spin-button}}
+    </div>
+    <div class="user-token-container {{if isUserTokenVisible "expanded"}}">
+      {{#if isUserTokenVisible}}
+        <h2 class="text-center">{{tt this "inviteUserUsingToken"}}</h2>
+        {{#promise-proxy-container proxy=userInvitationTokenProxy}}
+          <textarea
+            rows="5"
+            value={{userInvitationTokenProxy.token}}
+            readonly="readonly"
+            class="form-control invite-user-token-textarea token-textarea no-resize" />
+          <a {{action "generateAnotherToken"}}>{{tt this "generateAnotherToken"}}</a>
+          {{one-copy-button
+            class="btn btn-default btn-sm pull-right"
+            parentElementId=elementId
+            localTarget=".invite-user-token-textarea"
+            textType=(tt this "token")}}
+        {{/promise-proxy-container}}
+      {{else}}
+        <p class="text-center">
+          <a {{action "showUserToken"}}>{{tt this "inviteUserUsingToken"}}</a>
+        </p>
+      {{/if}}
     </div>
   {{/content-info}}
 {{else}}

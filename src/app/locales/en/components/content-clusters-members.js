@@ -6,4 +6,7 @@ export default {
   effectiveGroups: 'Effective groups',
   effectiveUsers: 'Effective users',
   manageViaOnezne: 'Manage via Onezone',
+  inviteUserUsingToken: 'Invite user using a token',
+  generateAnotherToken: 'Generate another token',
+  token: 'Token',
 };

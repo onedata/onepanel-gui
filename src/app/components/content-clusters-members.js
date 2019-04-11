@@ -14,52 +14,75 @@ import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default Component.extend(I18n, createDataProxyMixin('members'), {
-  classNames: ['content-clusters-members'],
+export default Component.extend(
+  I18n,
+  createDataProxyMixin('members'),
+  createDataProxyMixin('userInvitationToken'), {
+    classNames: ['content-clusters-members'],
 
-  onepanelServer: service(),
-  onezoneGui: service(),
-  i18n: service(),
+    onepanelServer: service(),
+    onezoneGui: service(),
+    i18n: service(),
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.contentClustersMembers',
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.contentClustersMembers',
 
-  /**
-   * @type {Onepanel.ClusterDetails}
-   * @virtual
-   */
-  cluster: undefined,
+    /**
+     * @type {Onepanel.ClusterDetails}
+     * @virtual
+     */
+    cluster: undefined,
 
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isOnepanelEmergency: reads('onepanelServer.isEmergency'),
+    /**
+     * @type {boolean}
+     */
+    isUserTokenVisible: false,
 
-  init() {
-    this._super(...arguments);
-    this.updateMembersProxy();
-  },
+    /**
+     * @type {Ember.ComputedProperty<boolean>}
+     */
+    isOnepanelEmergency: reads('onepanelServer.isEmergency'),
 
-  /**
-   * @returns {Promise<Onepanel.ClusterMembers>}
-   */
-  fetchMembers() {
-    const onepanelServer = this.get('onepanelServer');
-    return onepanelServer
-      .request('onepanel', 'getClusterMembers')
-      .then(({ data }) => data);
-  },
-
-  actions: {
-    manageViaOnezone() {
-      const onezoneGui = this.get('onezoneGui');
-      const url = onezoneGui.getOnepanelNavUrlInOnezone({
-        redirectType: 'onezone_route',
-      }) + '/members';
-      window.location = url;
-      return new Promise(() => {});
+    init() {
+      this._super(...arguments);
+      this.updateMembersProxy();
     },
-  },
-});
+
+    /**
+     * @returns {Promise<Onepanel.ClusterMembers>}
+     */
+    fetchMembers() {
+      const onepanelServer = this.get('onepanelServer');
+      return onepanelServer
+        .request('onepanel', 'getClusterMembers')
+        .then(({ data }) => data);
+    },
+
+    fetchUserInvitationToken() {
+      const onepanelServer = this.get('onepanelServer');
+      return onepanelServer
+        .request('onepanel', 'createUserInviteToken')
+        .then(({ data }) => data);
+    },
+
+    actions: {
+      manageViaOnezone() {
+        const onezoneGui = this.get('onezoneGui');
+        const url = onezoneGui.getOnepanelNavUrlInOnezone({
+          redirectType: 'onezone_route',
+        }) + '/members';
+        window.location = url;
+        return new Promise(() => {});
+      },
+      showUserToken() {
+        this.set('isUserTokenVisible', true);
+        this.updateUserInvitationTokenProxy();
+      },
+      generateAnotherToken() {
+        this.updateUserInvitationTokenProxy();
+      },
+    },
+  }
+);
