@@ -4,7 +4,7 @@
     header=(tt this "header")
     imagePath=(root-url "assets/images/cluster-members.svg")}}
     <div class="row row-members-counter">
-      {{#promise-proxy-container proxy=membersProxy}}
+      {{#promise-proxy-container proxy=membersProxy sizeClass="sm"}}
         <p class="text-center">
           {{tt this "membersOf"}}
           <strong>{{cluster.name}}</strong>:
@@ -45,7 +45,7 @@
       {{#one-spin-button
         class=(concat "btn btn-primary manage-via-onezone")
         action=(action "manageViaOnezone")}}
-        {{tt this "manageViaOnezne"}}
+        {{tt this "openInOnezone"}}
       {{/one-spin-button}}
     </div>
     <div class="user-token-container {{if isUserTokenVisible "expanded"}}">

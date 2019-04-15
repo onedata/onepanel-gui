@@ -51,6 +51,7 @@ export default Component.extend(
     },
 
     /**
+     * @overrides
      * @returns {Promise<Onepanel.ClusterMembers>}
      */
     fetchMembers() {
@@ -61,6 +62,7 @@ export default Component.extend(
     },
 
     /**
+     * @overrides
      * @returns {Promise<Onepanel.Token>}
      */
     fetchUserInvitationToken() {
@@ -76,8 +78,9 @@ export default Component.extend(
         const url = onezoneGui.getOnepanelNavUrlInOnezone({
           redirectType: 'onezone_route',
         }) + '/members';
-        window.location = url;
-        return new Promise(() => {});
+        return new Promise(() => {
+          window.location = url;
+        });
       },
       showUserToken() {
         this.set('isUserTokenVisible', true);

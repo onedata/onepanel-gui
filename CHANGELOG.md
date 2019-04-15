@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5377 Simple members view in emergency mode of Onepanel GUI
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
 * VFS-5242 Using new async backend to show progress of saving file popularity settings
 * VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update

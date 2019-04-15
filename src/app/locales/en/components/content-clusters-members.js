@@ -5,7 +5,7 @@ export default {
   directUsers: 'Direct users',
   effectiveGroups: 'Effective groups',
   effectiveUsers: 'Effective users',
-  manageViaOnezne: 'Manage via Onezone',
+  openInOnezone: 'Open in Onezone',
   inviteUserUsingToken: 'Invite user using a token',
   generateAnotherToken: 'Generate another token',
   token: 'Token',
