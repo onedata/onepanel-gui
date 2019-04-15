@@ -3,7 +3,7 @@
  *
  * @module components/storage-item/supported-spaces
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -89,8 +89,8 @@ export default Component.extend({
     this._super(...arguments);
 
     if (this.get('providerId') == null) {
-      // force getProviderDetails to be invoked
-      this.get('providerManager').getProviderDetails();
+      // force getProviderDetailsProxy to be invoked
+      this.get('providerManager').getProviderDetailsProxy();
     }
   },
 });

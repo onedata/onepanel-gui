@@ -6,7 +6,7 @@ const summary = 'summary';
 
 export default {
   steps: {
-    provider: {
+    oneprovider: {
       installation,
       ceph: 'ceph configuration',
       ips,
@@ -16,7 +16,7 @@ export default {
       providerStorage: 'storage configuration',
       summary,
     },
-    zone: {
+    onezone: {
       installation,
       webCert,
       dns,

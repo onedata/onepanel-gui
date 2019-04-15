@@ -3,37 +3,67 @@
  *
  * @module component/content-clusters
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
-
 import { Promise } from 'rsvp';
 import { scheduleOnce } from '@ember/runloop';
-import { invokeAction } from 'ember-invoke-action';
+import { get } from '@ember/object';
+import { inject as service } from '@ember/service';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default Component.extend({
-  initProcess: false,
+export default Component.extend(
+  createDataProxyMixin('installationDetails'), {
+    deploymentManager: service(),
+    router: service(),
 
-  cluster: null,
+    initProcess: false,
 
-  init() {
-    this._super(...arguments);
-    if (!this.get('cluster.isInitialized')) {
-      this.set('initProcess', true);
-    } else {
-      scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
-    }
-  },
-
-  actions: {
-    finishInitProcess() {
-      return new Promise(resolve => {
-        this.set('initProcess', false);
-        scheduleOnce('afterRender', () => invokeAction(this, 'goToDefaultAspect'));
-        resolve();
+    init() {
+      this._super(...arguments);
+      this.updateInstallationDetailsProxy();
+      this.get('installationDetailsProxy').then(installationDetails => {
+        if (get(installationDetails, 'isInitialized')) {
+          this.goToDefaultAspect();
+        } else {
+          this.goToInstallation();
+        }
       });
     },
-  },
-});
+
+    goToDefaultAspect() {
+      return scheduleOnce(
+        'afterRender',
+        () => this.get('router').transitionTo(
+          'onedata.sidebar.content.aspect',
+          'overview'
+        )
+      );
+    },
+
+    goToInstallation() {
+      return scheduleOnce(
+        'afterRender',
+        () => this.get('router').transitionTo(
+          'onedata.sidebar.content',
+          'installation'
+        )
+      );
+    },
+
+    fetchInstallationDetails() {
+      return this.get('deploymentManager').getInstallationDetailsProxy();
+    },
+
+    actions: {
+      finishInitProcess() {
+        return new Promise(resolve => {
+          this.set('initProcess', false);
+          scheduleOnce('afterRender', () => this.goToDefaultAspect());
+          resolve();
+        });
+      },
+    },
+  });

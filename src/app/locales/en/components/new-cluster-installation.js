@@ -2,7 +2,7 @@ export default {
   clusterDeployment: 'Cluster deployment',
   deploy: 'Deploy',
   proceed: 'Proceed',
-  zoneOptions: 'Zone options',
+  onezoneOptions: 'Onezone options',
   clusterHosts: 'Cluster hosts',
   domainLink: 'the documentation',
   addNewHost: 'Add new host',

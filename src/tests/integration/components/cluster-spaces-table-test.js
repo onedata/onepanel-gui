@@ -3,10 +3,16 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
+import Service from '@ember/service';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import StorageManagerStub from '../../helpers/storage-manager-stub';
-
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
+import sinon from 'sinon';
+import { registerService, lookupService } from '../../helpers/stub-service';
+
+const OnepanelServer = Service.extend({
+  request() {},
+});
 
 describe('Integration | Component | cluster spaces table', function () {
   setupComponentTest('cluster-spaces-table', {
@@ -14,11 +20,26 @@ describe('Integration | Component | cluster spaces table', function () {
   });
 
   beforeEach(function () {
-    this.register('service:storage-manager', StorageManagerStub);
-    this.inject.service('storage-manager', { as: 'storageManager' });
+    registerService(this, 'storage-manager', StorageManagerStub);
+    registerService(this, 'provider-manager', ProviderManagerStub);
+    registerService(this, 'onepanel-server', OnepanelServer);
 
-    this.register('service:provider-manager', ProviderManagerStub);
-    this.inject.service('provider-manager', { as: 'providerManager' });
+    const onepanelServer = lookupService(this, 'onepanelServer');
+    const requestStub = sinon.stub(onepanelServer, 'request');
+
+    requestStub.rejects();
+
+    requestStub.withArgs(
+      'oneprovider',
+      'getFilePopularityConfiguration',
+      sinon.match.any
+    ).resolves({ data: {} });
+
+    requestStub.withArgs(
+      'oneprovider',
+      'getSpaceAutoCleaningConfiguration',
+      sinon.match.any
+    ).resolves({ data: {} });
   });
 
   it('renders error message when at least one space details fetch was rejected',

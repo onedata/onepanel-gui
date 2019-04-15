@@ -1,0 +1,38 @@
+<div class="row content-row no-border no-padding-top">
+  <h1>
+    
+  </h1>
+  <p>
+    {{tt this "configurationText"}}
+    <a href={{one-doc-url "administering_onedata/file_popularity[the-popularity-function].html"}}>{{tt this "configurationTextDoc"}}</a>.
+  </p>
+  {{#bs-form class="space-file-popularity-configuration-form" as |form|}}
+    {{#each sourceFieldNames as |fieldName|}}
+      {{#form.group 
+        class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
+      }}
+        <label for={{concat elementId fieldName}} class="label-column control-label">
+          {{tt this fieldName}}
+        </label>
+        <div class="fields-column">
+          <input type="text"
+            value={{get formData fieldName}}
+            disabled={{eq formStatus "saving"}}
+            class="condition-number-input form-control"
+            oninput={{action "dataChanged" fieldName}}
+            onkeyup={{action "inputOnKeyUp"}}
+            onblur={{action "lostFocus"}}
+            disabled={{whileSaving}}
+            id={{concat elementId fieldName}}
+            class="input-sm"
+          >
+        </div>
+        <div class="hint-column">
+          {{one-label-tip
+            title=(tt this (concat fieldName "Hint"))
+          }}
+        </div>
+      {{/form.group}}
+    {{/each}}
+  {{/bs-form}}
+</div>

@@ -2,7 +2,7 @@
 export default [{
     name: 'token',
     type: 'text',
-    tip: 'Globally unique identifier assigned by onezone',
+    tip: 'Globally unique identifier assigned by Onezone',
     example: 'MDAxNWxvY...',
   },
   { name: 'size', type: 'number', gt: 0, example: '100' },

@@ -3,67 +3,58 @@
  *
  * @module mixins/components/space-tabs
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { computed } from '@ember/object';
 import Mixin from '@ember/object/mixin';
 import { camelize } from '@ember/string';
-import _ from 'lodash';
 
-const ENABLED_CLASS = 'enabled';
-const DISABLED_CLASS = 'disabled';
+const enabledClass = 'enabled';
+const disabledClass = 'disabled';
 
 export default Mixin.create({
   // requires i18n service
 
-  /**
-   * Store active tab (updated on bs-tab change action)
-   * @type {string}
-   */
-  activeTabId: undefined,
+  selectedTab: undefined,
 
-  tabSyncClass: computed('space.importEnabled', function () {
-    return this.get('space.importEnabled') ? ENABLED_CLASS : DISABLED_CLASS;
-  }),
+  tabOverviewClass: enabledClass,
+  tabOverviewId: computedTabId('overview'),
+  tabOverviewHint: computedTabHint('overview'),
+
+  tabSyncClass: enabledClass,
   tabSyncId: computedTabId('sync'),
   tabSyncHint: computedTabHint('sync'),
 
-  tabPopularClass: ENABLED_CLASS,
+  tabPopularClass: enabledClass,
   tabPopularId: computedTabId('popular'),
   tabPopularHint: computedTabHint('popular'),
 
-  tabCleanClass: computed('filesPopularityConfiguration.enabled', function () {
-    return this.get('filesPopularityConfiguration.enabled') ? ENABLED_CLASS :
-      DISABLED_CLASS;
+  tabCleanClass: computed('filePopularityConfiguration.enabled', function () {
+    return this.get('filePopularityConfiguration.enabled') ? enabledClass :
+      disabledClass;
   }),
   tabCleanId: computedTabId('clean'),
   tabCleanHint: computedTabHint('clean'),
 
-  _allTabsIdComputed: computed('tabSyncId', 'tabPopularId', 'tabCleanId', function () {
-    return _.every(this.getProperties(
-      'tabSyncId',
-      'tabPopularId',
-      'tabCleanId',
-    ));
-  }),
-
-  initActiveTabId: computed('_allTabsIdComputed', function () {
-    let _initActiveTabId = this.get('_initActiveTabId');
-    if (_initActiveTabId) {
-      return _initActiveTabId;
-    } else if (this.get('_allTabsIdComputed')) {
-      const activeTabShort = _.find(['sync', 'popular', 'clean'], tab =>
-        this.get(camelize(`tab-${tab}-class`)) === ENABLED_CLASS
-      );
-      _initActiveTabId = this.get(camelize(`tab-${activeTabShort}-id`));
-      this.set('_initActiveTabId', _initActiveTabId);
-      // using side effect to not use observer (should be fired only once)
-      this.set('activeTabId', _initActiveTabId);
-      return _initActiveTabId;
+  init() {
+    this._super(...arguments);
+    if (this.get('selectedTab') == null) {
+      this.set('selectedTab', this.get('tabOverviewId'));
     }
-  }),
+  },
+
+  actions: {
+    changeTab(tabId) {
+      const spaceId = this.get('space.id');
+      return this.get('router').transitionTo({
+        queryParams: {
+          options: `space.${spaceId},tab.${tabId}`,
+        },
+      });
+    },
+  },
 });
 
 /**
@@ -87,6 +78,6 @@ function computedTabHint(tab) {
   return computed(classProperty, function () {
     const classValue = this.get(classProperty);
     return this.get('i18n')
-      .t(`components.clusterSpacesTableItem.tabs.${tab}.hints.${classValue}`);
+      .t(`mixins.components.spaceTabs.tabs.${tab}.hints.${classValue}`);
   });
 }

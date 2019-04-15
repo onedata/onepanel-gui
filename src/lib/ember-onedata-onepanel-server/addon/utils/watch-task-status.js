@@ -43,8 +43,10 @@ function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) 
   });
 
   gettingTaskStatus.catch(error => {
-    console.error('component:new-cluster-installation: getting status of task failed: ' +
-      JSON.stringify(error));
+    console.error(
+      'component:new-cluster-installation: getting status of task failed: ' +
+      JSON.stringify(error)
+    );
     deferred.reject(error);
   });
 }

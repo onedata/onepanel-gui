@@ -9,8 +9,8 @@ import _ from 'lodash';
 
 const globalData = Object.freeze({
   enabled: true,
-  lowerFileSizeLimit: { enabled: true, value: 1048576 },
-  upperFileSizeLimit: { enabled: true, value: 2097152 },
+  minFileSize: { enabled: true, value: 1048576 },
+  maxFileSize: { enabled: true, value: 2097152 },
   minHoursSinceLastOpen: { enabled: true, value: 2 },
   maxOpenCount: { enabled: true, value: 13 },
   maxHourlyMovingAverage: { enabled: true, value: 14 },
@@ -33,16 +33,16 @@ describe('Integration | Component | space cleaning conditions form', function ()
         data=data
         formSendDebounceTime=0
         formSavedInfoHideTimeout=0}}`);
-    const lowerFileSizeLimitGroup = this.$('.lowerFileSizeLimitGroup');
-    const upperFileSizeLimitGroup = this.$('.upperFileSizeLimitGroup');
+    const minFileSizeGroup = this.$('.minFileSizeGroup');
+    const maxFileSizeGroup = this.$('.maxFileSizeGroup');
     const timeGroup = this.$('.minHoursSinceLastOpenGroup');
     const maxOpenCountGroup = this.$('.maxOpenCountGroup');
     const maxHourlyMovingAverageGroup = this.$('.maxHourlyMovingAverageGroup');
     const maxDailyMovingAverageGroup = this.$('.maxDailyMovingAverageGroup');
     const maxMonthlyMovingAverageGroup = this.$('.maxMonthlyMovingAverageGroup');
-    expect(lowerFileSizeLimitGroup.find('input.condition-number-input'))
+    expect(minFileSizeGroup.find('input.condition-number-input'))
       .to.have.value('1');
-    expect(upperFileSizeLimitGroup.find('input.condition-number-input'))
+    expect(maxFileSizeGroup.find('input.condition-number-input'))
       .to.have.value('2');
     expect(timeGroup.find('input.condition-number-input'))
       .to.have.value('2');
@@ -55,9 +55,9 @@ describe('Integration | Component | space cleaning conditions form', function ()
     expect(maxMonthlyMovingAverageGroup.find('input.condition-number-input'))
       .to.have.value('16');
     return wait().then(() => {
-      expect(lowerFileSizeLimitGroup.find('.ember-power-select-selected-item'))
+      expect(minFileSizeGroup.find('.ember-power-select-selected-item'))
         .to.contain('MiB');
-      expect(upperFileSizeLimitGroup.find('.ember-power-select-selected-item'))
+      expect(maxFileSizeGroup.find('.ember-power-select-selected-item'))
         .to.contain('MiB');
       expect(timeGroup.find('.ember-power-select-selected-item'))
         .to.contain('Hours');
@@ -65,8 +65,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   [
-    'lowerFileSizeLimit',
-    'upperFileSizeLimit',
+    'minFileSize',
+    'maxFileSize',
     'minHoursSinceLastOpen',
     'minHoursSinceLastOpen',
     'maxOpenCount',
@@ -96,10 +96,11 @@ describe('Integration | Component | space cleaning conditions form', function ()
                   formSavedInfoHideTimeout=0}}`);
 
       const group = this.$(`.${fieldName}Group`);
-      return fillIn(group.find('input.condition-number-input')[0], '-3').then(() => {
-        expect(group).to.have.class('has-error');
-        done();
-      });
+      return fillIn(group.find('input.condition-number-input')[0], '-3')
+        .then(() => {
+          expect(group).to.have.class('has-error');
+          done();
+        });
     });
 
     it(`accepts positive numbers in ${fieldName} input`, function (done) {
@@ -128,7 +129,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
 
       const saveArg = {};
 
-      if (fieldName.endsWith('FileSizeLimit')) {
+      if (fieldName.endsWith('FileSize')) {
         saveArg[fieldName] = { value: 3145728 };
       } else {
         saveArg[fieldName] = { value: 3 };
@@ -169,13 +170,13 @@ describe('Integration | Component | space cleaning conditions form', function ()
                 onSave=(action "onSave")}}`);
 
     const saveArg = {
-      lowerFileSizeLimit: { value: 2097152 },
-      upperFileSizeLimit: { value: 3145728 },
+      minFileSize: { value: 2097152 },
+      maxFileSize: { value: 3145728 },
     };
     const greaterInputSelector =
-      '.lowerFileSizeLimitGroup input.condition-number-input';
+      '.minFileSizeGroup input.condition-number-input';
     const lesserInputSelector =
-      '.upperFileSizeLimitGroup input.condition-number-input';
+      '.maxFileSizeGroup input.condition-number-input';
     fillIn(lesserInputSelector, '3').then(() => {
       fillIn(greaterInputSelector, '2').then(() => {
         blur(greaterInputSelector).then(() => {
@@ -204,18 +205,19 @@ describe('Integration | Component | space cleaning conditions form', function ()
                 onSave=(action "onSave")}}`);
 
     const greaterInputSelector =
-      '.lowerFileSizeLimitGroup input.condition-number-input';
+      '.minFileSizeGroup input.condition-number-input';
 
     const greaterCheckboxSelector =
-      '.lowerFileSizeLimitGroup .one-checkbox';
+      '.minFileSizeGroup .one-checkbox';
 
     expect(this.$(greaterInputSelector), 'before disable').to.have.value('1');
     return click(greaterCheckboxSelector).then(() => {
       expect(this.$(greaterInputSelector)).to.be.disabled;
-      expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: false } });
+      expect(saveSpy).to.be.calledWith({ minFileSize: { enabled: false } });
       return click(greaterCheckboxSelector).then(() => {
         expect(this.$(greaterInputSelector)).to.not.be.disabled;
-        expect(saveSpy).to.be.calledWith({ lowerFileSizeLimit: { enabled: true } });
+        expect(saveSpy)
+          .to.be.calledWith({ minFileSize: { enabled: true } });
         expect(this.$(greaterInputSelector), 'after enable')
           .to.have.value('1');
       });

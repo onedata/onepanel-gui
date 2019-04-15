@@ -2,8 +2,8 @@
  * Shows status of cluster deployment process
  *
  * @module components/new-cluster-deploy-progress
- * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -20,16 +20,14 @@ const RE_STEP = /service_?(.*):(.*)/;
 
 // TODO this can be made a generic taskStatus progress component
 export default Component.extend(I18n, {
-  tagName: '',
+  classNames: ['new-cluster-deploy-progress'],
 
   i18n: service(),
+  guiUtils: service(),
   onepanelServer: service(),
 
-  /**
-   * @override
-   */
   i18nPrefix: 'components.newClusterDeployProgress',
-
+  
   /**
    * Promise for watching deployment process.
    * @type {jQuery.Promise}
@@ -57,7 +55,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * Actual step

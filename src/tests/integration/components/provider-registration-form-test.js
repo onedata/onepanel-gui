@@ -18,118 +18,119 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it(
-    'renders name, zone domain, Subdomain Delegation, latitude and logitude fields in new mode',
-    function (done) {
+    'renders name, domain, latitude and logitude fields in new mode',
+    function () {
       this.on('submit', function () {});
 
-      this.render(hbs `{{provider-registration-form mode="new" submit=(action "submit")}}`);
+      this.render(hbs `
+        {{provider-registration-form mode="new" submit=(action "submit")}}
+      `);
 
       let helper = new ProviderRegistrationHelper(this.$());
-      wait().then(() => {
-        ['editTop-name', 'editTop-onezoneDomainName', 'editSubdomain-subdomain',
-          'editBottom-geoLatitude', 'editBottom-geoLongitude',
+      return wait().then(() => {
+        [
+          'editTop-name',
+          'editDomain-domain',
+          'editBottom-adminEmail',
+          'editBottom-geoLatitude',
+          'editBottom-geoLongitude',
         ]
         .forEach(fname => {
           expect(helper.getInput(fname), `${fname} field`).to.exist;
         });
-        done();
       });
     }
   );
 
-  it('changes hostname/subdomain visibility with toggle', function (done) {
+  it('changes hostname/subdomain visibility with toggle', function () {
     this.render(hbs `
       {{provider-registration-form
-        mode="new"}}`);
+        mode="new"
+        subdomainDelegationSupported=true
+      }}`);
 
     const toggleSelector = '.toggle-field-editTop-subdomainDelegation';
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     const hostnameInputSelector = '.field-editDomain-domain';
 
-    wait().then(() => {
-      expect(this.$(toggleSelector)).to.have.class('checked');
+    return wait().then(() => {
+      expect(this.$(toggleSelector), 'subdomain toggle')
+        .to.have.class('checked');
       expect(this.$(subdomainInputSelector)).to.exist;
       expect(this.$(hostnameInputSelector)).not.to.exist;
-      click(toggleSelector).then(() => {
+      return click(toggleSelector).then(() => {
         expect(this.$(toggleSelector)).not.to.have.class('checked');
         expect(this.$(subdomainInputSelector)).not.to.exist;
         expect(this.$(hostnameInputSelector)).to.exist;
-        click(toggleSelector).then(() => {
+        return click(toggleSelector).then(() => {
           expect(this.$(toggleSelector)).to.have.class('checked');
           expect(this.$(subdomainInputSelector)).to.exist;
           expect(this.$(hostnameInputSelector)).not.to.exist;
-          done();
         });
       });
     });
   });
 
-  it('checks for excluded subdomains', function (done) {
+  it('checks for excluded subdomains', function () {
     const excludedSubdomains = ['a', 'b'];
     this.set('excludedSubdomains', excludedSubdomains);
     this.render(hbs `
       {{provider-registration-form
         mode="new"
+        subdomainDelegationSupported=true
         excludedSubdomains=excludedSubdomains}}`);
 
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
-    wait().then(() => {
+    return wait().then(() => {
       expect(this.$('.has-error')).not.to.exist;
-      fillIn(subdomainInputSelector, 'a').then(() => {
+      return fillIn(subdomainInputSelector, 'a').then(() => {
         expect(this.$('.has-error')).to.contain('Subdomain');
-        fillIn(subdomainInputSelector, 'ab').then(() => {
+        return fillIn(subdomainInputSelector, 'ab').then(() => {
           expect(this.$('.has-success')).to.contain('Subdomain');
-          done();
         });
       });
     });
   });
 
-  it('accepts IP address in onezone domain and provider domain fields',
-    function (done) {
+  it('accepts IP address in provider domain fields',
+    function () {
       this.render(hbs `
         {{provider-registration-form
+          subdomainDelegationSupported=true
           mode="new"}}`);
-      wait().then(() => {
-        click('.toggle-field-editTop-subdomainDelegation').then(() => {
-          fillIn('.field-editTop-onezoneDomainName', '10.10.10.10').then(() => {
-            fillIn('.field-editDomain-domain', '12.12.12.12').then(() => {
+      return wait().then(() => {
+        return click('.toggle-field-editTop-subdomainDelegation').then(() => {
+          return fillIn('.field-editDomain-domain', '12.12.12.12').then(
+            () => {
               expect(this.$('.has-error')).not.to.exist;
-              done();
             });
-          });
         });
       });
     }
   );
 
-  it('accepts domain name in onezone domain and provider domain fields',
-    function (done) {
+  it('accepts domain name in provider domain fields',
+    function () {
       this.render(hbs `
         {{provider-registration-form
           mode="new"}}`);
-      wait().then(() => {
-        click('.toggle-field-editTop-subdomainDelegation').then(() => {
-          fillIn('.field-editTop-onezoneDomainName', 'abc.def.com').then(() => {
-            fillIn('.field-editDomain-domain', 'xyz.com').then(() => {
-              expect(this.$('.has-error')).not.to.exist;
-              done();
-            });
-          });
+      return wait().then(() => {
+        return fillIn('.field-editDomain-domain', 'xyz.com').then(() => {
+          expect(this.$('.has-error')).not.to.exist;
         });
       });
     }
   );
 
-  it('accepts valid subdomain field value', function (done) {
+  it('accepts valid subdomain field value', function () {
     this.render(hbs `
       {{provider-registration-form
+        subdomainDelegationSupported=true
         mode="new"}}`);
 
-    wait().then(() => {
-      fillIn('.field-editSubdomain-subdomain', 'test').then(() => {
+    return wait().then(() => {
+      return fillIn('.field-editSubdomain-subdomain', 'test').then(() => {
         expect(this.$('.has-error')).not.to.exist;
-        done();
       });
     });
   });

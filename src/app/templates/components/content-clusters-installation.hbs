@@ -1,0 +1,6 @@
+{{#promise-proxy-container proxy=installationDetailsProxy}}
+  {{new-cluster
+    cluster=installationDetails
+    finishInitProcess=(action "finishInitProcess")
+  }}
+{{/promise-proxy-container}}

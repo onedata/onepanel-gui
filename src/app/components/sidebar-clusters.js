@@ -1,157 +1,34 @@
 /**
- * A sidebar for clusters (extension of ``two-level-sidebar``)
+ * A sidebar for clusters (extension of `two-level-sidebar`)
  *
  * @module components/sidebar-clusters
- * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @author Jakub Liput
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { reads } from '@ember/object/computed';
-import { computed, getProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
-import TwoLevelSidebar from 'onedata-gui-common/components/two-level-sidebar';
+import SidebarClusters from 'onedata-gui-common/components/sidebar-clusters';
 import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default TwoLevelSidebar.extend(I18n, {
+export default SidebarClusters.extend({
   layout,
 
-  classNames: ['sidebar-clusters'],
+  classNames: ['sidebar-clusters-onepanel'],
 
-  i18nPrefix: 'components.sidebarClusters',
-
-  onepanelServer: service(),
+  guiUtils: service(),
   dnsManager: service(),
-  cephManager: service(),
-  i18n: service(),
-
-  onepanelServiceType: reads('onepanelServer.serviceType'),
-
-  // TODO this will not work in generic multi-clusters menu  
-  cluster: reads('model.collection.list.firstObject'),
-
-  firstLevelItemIcon: 'menu-clusters',
 
   /**
-   * @implements TwoLevelSidebar
+   * @virtual
+   * @type {Array<ClusterDetails>}
    */
-  sidebarType: 'clusters',
-
-  dnsValid: computed(
-    'dnsManager.{dnsValid,dnsCheckProxy.isRejected}',
-    function dnsValid() {
-      return this.get('dnsManager.dnsValid') !== false &&
-        !this.get('dnsManager.dnsCheckProxy.isRejected');
-    }
-  ),
-
-  dnsItem: computed('dnsValid', function dnsItem() {
-    return {
-      id: 'dns',
-      label: this.t('menuItems.dns'),
-      icon: 'globe-cursor',
-      warningMessage: this.get('dnsValid') === false ?
-        this.t('dnsWarning') : undefined,
-    };
-  }),
-
-  certificateItem: computed(function certificateItem() {
-    return {
-      id: 'certificate',
-      label: this.t('menuItems.certificate'),
-      icon: 'certificate',
-    };
-  }),
+  model: undefined,
 
   /**
-   * @type {Ember.ComputedProperty<Object>}
+   * @override
    */
-  cephItem: computed('cephManager.status.level', function cephItem() {
-    const cephStatusLevel = this.get('cephManager.status.level');
-    return {
-      id: 'ceph',
-      label: this.t('menuItems.ceph'),
-      icon: 'ceph',
-      warningMessage: (cephStatusLevel && cephStatusLevel !== 'ok') ?
-        this.t('cephWarning') : undefined,
-    };
-  }),
-
-  nodesItem: computed(function nodesItem() {
-    return {
-      id: 'nodes',
-      label: this.t('menuItems.nodes'),
-      icon: 'node',
-    };
-  }),
-
-  secondLevelItems: computed(
-    'onepanelServiceType',
-    'dnsItem',
-    'certificateItem',
-    'cephItem',
-    'nodesItem',
-    'cluster.{isInitialized,hasCephDeployed}',
-    function () {
-      const {
-        onepanelServiceType,
-        cluster,
-        dnsItem,
-        certificateItem,
-        cephItem,
-        nodesItem,
-      } = this.getProperties(
-        'onepanelServiceType',
-        'cluster',
-        'dnsItem',
-        'certificateItem',
-        'cephItem',
-        'nodesItem'
-      );
-      const {
-        isInitialized,
-        hasCephDeployed,
-      } = getProperties(cluster, 'isInitialized', 'hasCephDeployed');
-
-      const cephItemArray = hasCephDeployed ? [cephItem] : [];
-
-      if (isInitialized) {
-        switch (onepanelServiceType) {
-          case 'provider':
-            return [
-              nodesItem,
-              dnsItem,
-              certificateItem,
-              {
-                id: 'provider',
-                label: this.t('menuItems.provider'),
-                icon: 'provider',
-              },
-              ...cephItemArray,
-              {
-                id: 'storages',
-                label: this.t('menuItems.storages'),
-                icon: 'support',
-              },
-              {
-                id: 'spaces',
-                label: this.t('menuItems.spaces'),
-                icon: 'space',
-              },
-            ];
-          case 'zone':
-            return [
-              nodesItem,
-              dnsItem,
-              certificateItem,
-            ];
-          default:
-            return [];
-        }
-      }
-    }
-  ),
+  secondLevelItemsComponent: 'sidebar-clusters/second-level-items',
 
   init() {
     this._super(...arguments);

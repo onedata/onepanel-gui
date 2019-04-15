@@ -1,9 +1,35 @@
-{{!-- TODO link ember hrefs should be parametrized not hardcoded --}}
-
-{{content-info
+{{#content-info
   class="scroll-breakpoint-500"
-  header="Cluster configuration completed"
-  text="You can now use your cluster and manage it."
-  buttonLabel="Manage the cluster"
+  header=(tt this "header")
+  buttonLabel=(tt this "buttonLabel")
   buttonAction=(action "manageNewCluster")
 }}
+  <p class="text-center">{{tt this "textFullyOperational"}}</p>
+  <p class="text-center">{{tt this "textTwoWays"}}</p>
+  <ul class="info">
+    <li>
+      {{tt this "wayOnezoneInterface"}}
+      <strong>({{tt this "wayOnezoneRecommended"}})</strong> –
+      {{tt this "wayOnezoneInterface1"}}
+      <div class="inline-icon-container">
+        {{one-icon icon="cluster"}}
+      </div>
+      <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
+      {{tt this "wayOnezoneInterface3"}}
+      {{#if isEmergencyOnepanel}}
+        {{tt this "wayOnezoneAccess"}}
+      {{/if}}
+    </li>
+    <li>
+      {{tt this "wayOnepanelIntro"}}
+      {{tt this "wayOnepanelInterface1"}}
+      (<a href={{onepanelUrl}}>{{onepanelUrl}}</a>)
+      {{tt this "wayOnepanelInterface2"}}
+    </li>
+  </ul>
+  <p>
+    {{tt this "currentlyOn1"}}
+    {{tt this (concat "currentlyOn" (if isEmergencyOnepanel "Emergency" "Onezone"))}}
+    {{tt this "currentlyOn2"}}.
+  </p>
+{{/content-info}}

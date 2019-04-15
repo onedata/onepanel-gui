@@ -4,8 +4,8 @@
  * Please put it in ``cluster-storage-table``.
  *
  * @module components/storage-item
- * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @author Jakub Liput
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 import Component from '@ember/component';

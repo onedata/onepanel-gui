@@ -102,8 +102,8 @@ export default SpaceSyncChartBase.extend({
         values.forEach(value => _chartValues[index].push(value));
       });
       return {
-        labels: _.range(1, _chartValues[0].length + 1).reverse().map(n => this.getChartLabel(
-          n)),
+        labels: _.range(1, _chartValues[0].length + 1)
+          .reverse().map(n => this.getChartLabel(n)),
         series: _chartValues.map((values, index) => {
           return {
             name: chartSeriesLabels[index],

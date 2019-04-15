@@ -93,7 +93,8 @@ export default Service.extend({
           id
         );
         req.then(({ data }) => {
-          record = _collectionMap[id] = (_collectionMap[id] || ObjectProxy.create({}));
+          record = _collectionMap[id] =
+            (_collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);
           resolve(record);
         });

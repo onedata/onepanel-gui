@@ -19,6 +19,7 @@ import { camelize } from '@ember/string';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import Onepanel from 'npm:onepanel';
+import shortServiceType from 'onepanel-gui/utils/short-service-type';
 
 const {
   ProviderConfiguration,
@@ -32,6 +33,7 @@ const cookieDeploymentTaskId = 'deploymentTaskId';
 
 export default EmberObject.extend({
   globalNotify: service(),
+  guiUtils: service(),
   onepanelServer: service(),
   cookies: service(),
 
@@ -70,7 +72,7 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  onepanelServiceType: reads('onepanelServer.serviceType'),
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * Configuration class proper for onepanel service (zone or provider)
@@ -119,8 +121,8 @@ export default EmberObject.extend({
     const start = new Promise((resolve, reject) => {
       const config = configurationClass.constructFromObject(configuration);
       onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`configure-${onepanelServiceType}`),
+        onepanelServiceType,
+        camelize(`configure-${shortServiceType(onepanelServiceType)}`),
         config
       ).then(resolve, reject);
     });

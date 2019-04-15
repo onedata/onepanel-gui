@@ -3,7 +3,7 @@
  *
  * @module components/space-cleaning-conditions-form
  * @author Michal Borzecki, Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -11,7 +11,7 @@ import Component from '@ember/component';
 
 import { reads, union } from '@ember/object/computed';
 import EmberObject, { computed, get } from '@ember/object';
-import { cancel, debounce, run } from '@ember/runloop';
+import { run } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import bytesToString, { iecUnits } from 'onedata-gui-common/utils/bytes-to-string';
 import _ from 'lodash';
@@ -27,8 +27,7 @@ import {
   MAX_OPEN_COUNT,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-
-const FORM_SEND_DEBOUNCE_TIME = 4000;
+import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';
 
 const FILE_SIZE_LT_FIELD = {
   type: 'number',
@@ -59,19 +58,20 @@ const TIME_NUMBER_FIELD = {
 };
 
 const VALIDATORS = {
-  '_formData.lowerFileSizeLimit': createFieldValidator(FILE_SIZE_GT_FIELD),
-  '_formData.upperFileSizeLimit': createFieldValidator(FILE_SIZE_LT_FIELD),
-  '_formData.minHoursSinceLastOpen': createFieldValidator(TIME_FIELD),
-  '_formData.minHoursSinceLastOpenNumber': createFieldValidator(TIME_NUMBER_FIELD),
-  '_formData.maxOpenCountNumber': createFieldValidator(COUNT_FIELD),
-  '_formData.maxHourlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
-  '_formData.maxDailyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
-  '_formData.maxMonthlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
+  'formData.minFileSize': createFieldValidator(FILE_SIZE_GT_FIELD),
+  'formData.maxFileSize': createFieldValidator(FILE_SIZE_LT_FIELD),
+  'formData.minHoursSinceLastOpen': createFieldValidator(TIME_FIELD),
+  'formData.minHoursSinceLastOpenNumber': createFieldValidator(TIME_NUMBER_FIELD),
+  'formData.maxOpenCountNumber': createFieldValidator(COUNT_FIELD),
+  'formData.maxHourlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
+  'formData.maxDailyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
+  'formData.maxMonthlyMovingAverageNumber': createFieldValidator(COUNT_FIELD),
 };
 
-export default Component.extend(buildValidations(VALIDATORS), I18n, {
-  classNames: ['space-cleaning-conditions-form'],
+export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm, {
+  classNames: ['space-cleaning-conditions-form', 'auto-save-form'],
 
+  media: service(),
   i18n: service(),
   onepanelServer: service(),
   globalNotify: service(),
@@ -85,22 +85,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    */
   data: null,
 
-  /**
-   * Action called on data send. The only arguments is an object with 
-   * modified data.
-   * @virtual
-   * @type {Function}
-   * @returns {Promise<undefined|any>} resolved value will be ignored
-   */
-  onSave: () => Promise.resolve(),
-
   isEnabled: reads('data.enabled'),
-
-  /**
-   * Form send debounce time.
-   * @type {number}
-   */
-  formSendDebounceTime: FORM_SEND_DEBOUNCE_TIME,
 
   /**
    * Delay after "saved" text will be hidden
@@ -108,39 +93,9 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    */
   formSavedInfoHideTimeout: 3000,
 
-  /**
-   * Form save status
-   * @type {string}
-   */
-  _formStatus: '',
-
-  /**
-   * If true, form has some unsaved changes.
-   * @type {boolean}
-   */
-  _isDirty: false,
-
-  /**
-   * If true, some input have lost its focus since last save.
-   * @type {boolean}
-   */
-  _lostInputfocus: false,
-
-  /**
-   * Save debounce timer handle
-   * @type {Array}
-   */
-  _saveDebounceTimer: null,
-
-  /**
-   * Window object (for testing purposes).
-   * @type {Window}
-   */
-  _window: window,
-
   _sourceFieldWithUnitNames: Object.freeze([
-    'lowerFileSizeLimit',
-    'upperFileSizeLimit',
+    'minFileSize',
+    'maxFileSize',
     'minHoursSinceLastOpen',
   ]),
 
@@ -155,7 +110,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
    * Array of field names.
    * @type {ComputedProperty<Array<string>>}
    */
-  _sourceFieldNames: union('_sourceFieldWithUnitNames', '_sourceFieldCountNames'),
+  sourceFieldNames: union('_sourceFieldWithUnitNames', '_sourceFieldCountNames'),
 
   /**
    * Units used in 'file size' condition.
@@ -186,10 +141,11 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
   /**
    * Form data (has different format than the `data` property).
    * @type {Ember.Object}
+   * @override
    */
-  _formData: computed('data', '_sizeUnits', '_timeUnits', {
+  formData: computed('data', '_sizeUnits', '_timeUnits', {
     get() {
-      return this._generateInitialData();
+      return this.generateInitialData();
     },
     set(key, value) {
       return value;
@@ -197,68 +153,29 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
   }),
 
   /**
-   * Page unload handler.
-   * @type {computed.Function}
-   */
-  _unloadHandler: computed(function () {
-    return () => {
-      this._scheduleSendChanges(false);
-      this._sendChanges();
-    };
-  }),
-
-  /**
    * Fields errors.
    * @type {computed.Object}
+   * @override
    */
-  _formFieldsErrors: computed('validations.errors.[]', '_sourceFieldNames', function () {
-    let _sourceFieldNames = this.get('_sourceFieldNames');
+  formFieldsErrors: computed('validations.errors.[]', 'sourceFieldNames', function () {
+    let sourceFieldNames = this.get('sourceFieldNames');
     let errors = this.get('validations.errors');
     let fieldsErrors = {};
-    _sourceFieldNames
+    sourceFieldNames
       .forEach((fieldName) => {
         fieldsErrors[fieldName] =
-          _.find(errors, { attribute: `_formData.${fieldName}Number` }) ||
-          _.find(errors, { attribute: '_formData.' + fieldName });
+          _.find(errors, { attribute: `formData.${fieldName}Number` }) ||
+          _.find(errors, { attribute: 'formData.' + fieldName });
       });
     return fieldsErrors;
   }),
 
   /**
-   * Modification state of fields.
-   * @type {Ember.Object}
-   */
-  _formFieldsModified: computed(function () {
-    return EmberObject.create();
-  }),
-
-  init() {
-    this._super(...arguments);
-    let {
-      _window,
-      _unloadHandler,
-    } = this.getProperties('_window', '_unloadHandler');
-    _window.addEventListener('beforeunload', _unloadHandler);
-  },
-
-  willDestroyElement() {
-    try {
-      let {
-        _window,
-        _unloadHandler,
-      } = this.getProperties('_window', '_unloadHandler');
-      _window.removeEventListener('beforeunload', _unloadHandler);
-      _unloadHandler();
-    } finally {
-      this._super(...arguments);
-    }
-  },
-
-  /**
    * Generates initial form data object using injected data
    * @returns {Object}
+   * @override
    */
-  _generateInitialData() {
+  generateInitialData() {
     let {
       data,
       _sizeUnits,
@@ -272,35 +189,41 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       '_sourceFieldWithUnitNames',
       '_sourceFieldCountNames',
     );
-    this._cleanModificationState();
+    this.cleanModificationState();
     if (!data) {
       data = {};
     }
-    let _formData = EmberObject.create();
+    let formData = EmberObject.create();
     [
-      'lowerFileSizeLimit',
-      'upperFileSizeLimit',
+      'minFileSize',
+      'maxFileSize',
     ].forEach((fieldName) => {
       const field = get(data, fieldName) || { enabled: false, value: 0 };
       const enabled = field.enabled;
-      const bytesValue = bytesToString(field.value, { iecFormat: true, separated: true });
-      _formData.setProperties({
+      const bytesValue = bytesToString(field.value, {
+        iecFormat: true,
+        separated: true,
+      });
+      formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(bytesValue.number),
         [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) ||
-          { multiplicator: 1, name: 'B' },
+        { multiplicator: 1, name: 'B' },
       });
     });
 
     let minHoursSinceLastOpenField = get(data, 'minHoursSinceLastOpen');
-    minHoursSinceLastOpenField = minHoursSinceLastOpenField || { enabled: false, value: 0 };
+    minHoursSinceLastOpenField = minHoursSinceLastOpenField || {
+      enabled: false,
+      value: 0,
+    };
     let unit = _timeUnits[0];
     _timeUnits.forEach((u) => {
       if (minHoursSinceLastOpenField / u.multiplicator >= 1) {
         unit = u;
       }
     });
-    _formData.setProperties({
+    formData.setProperties({
       minHoursSinceLastOpenEnabled: get(minHoursSinceLastOpenField, 'enabled'),
       minHoursSinceLastOpenNumber: String(
         get(minHoursSinceLastOpenField, 'value') / unit.multiplicator
@@ -317,7 +240,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
       let field = get(data, fieldName);
       field = field || { enabled: false, value: 0 };
       const { enabled, value } = field;
-      _formData.setProperties({
+      formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(value),
       });
@@ -325,7 +248,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
 
     // Computing display number and units in form
     _sourceFieldWithUnitNames.forEach(fieldName => {
-      _formData.set(fieldName, computed(
+      formData.set(fieldName, computed(
         `${fieldName}Number`,
         `${fieldName}Unit`,
         function () {
@@ -337,57 +260,31 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
         }));
     });
     _sourceFieldCountNames.forEach(fieldName => {
-      _formData.set(fieldName, computed(
+      formData.set(fieldName, computed(
         `${fieldName}Number`,
         function () {
           const number = Math.floor(parseFloat(this.get(`${fieldName}Number`)));
           return number > 0 ? number : '';
         }));
     });
-    return _formData;
+    return formData;
   },
 
   /**
-   * Checks if modified values are valid and can be saved
-   * @returns {boolean} true if values are valid, false otherwise
+   * @override
    */
-  _isValid() {
-    let {
-      _formFieldsErrors,
-      _formFieldsModified: modified,
-      _formData,
-      _sourceFieldNames,
-    } = this.getProperties(
-      '_formFieldsErrors',
-      '_formFieldsModified',
-      '_formData',
-      '_sourceFieldNames',
-    );
-    let isValid = true;
-    _sourceFieldNames.forEach((fieldName) => {
-      const isModified = modified.get(fieldName + 'Number') ||
-        modified.get(fieldName + 'Enabled') ||
-        modified.get(fieldName + 'Unit');
-      if (_formData.get(fieldName + 'Enabled') && isModified &&
-        _formFieldsErrors[fieldName]) {
-        isValid = false;
-      }
-    });
-    return isValid;
-  },
-
-  _modifiedData() {
+  modifiedData() {
     const {
-      _formData,
-      _sourceFieldNames,
-      _formFieldsModified: modified,
+      formData,
+      sourceFieldNames,
+      formFieldsModified: modified,
     } = this.getProperties(
-      '_formFieldsModified',
-      '_formData',
-      '_sourceFieldNames',
+      'formFieldsModified',
+      'formData',
+      'sourceFieldNames',
     );
     const data = {};
-    _sourceFieldNames.forEach((fieldName) => {
+    sourceFieldNames.forEach((fieldName) => {
       const isValueModified = modified.get(fieldName + 'Number') ||
         modified.get(fieldName + 'Unit');
       const isEnabledModified = modified.get(fieldName + 'Enabled');
@@ -395,10 +292,10 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
         data[fieldName] = data[fieldName] || {};
         const field = data[fieldName];
         if (isEnabledModified) {
-          field.enabled = _formData.get(fieldName + 'Enabled');
+          field.enabled = formData.get(fieldName + 'Enabled');
         }
-        if (isValueModified && _formData.get(fieldName + 'Enabled')) {
-          field.value = _formData.get(fieldName);
+        if (isValueModified && formData.get(fieldName + 'Enabled')) {
+          field.value = formData.get(fieldName);
         }
       }
     });
@@ -406,99 +303,43 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
   },
 
   /**
-   * Sends modified data.
+   * @override
    */
-  _sendChanges() {
+  isValid() {
     let {
-      _isDirty,
-      onSave,
-      formSavedInfoHideTimeout,
+      formFieldsErrors,
+      formFieldsModified: modified,
+      formData,
+      sourceFieldNames,
     } = this.getProperties(
-      '_isDirty',
-      'onSave',
-      'formSavedInfoHideTimeout'
+      'formFieldsErrors',
+      'formFieldsModified',
+      'formData',
+      'sourceFieldNames',
     );
-    if (_isDirty && this._isValid()) {
-      const data = this._modifiedData();
-      if (Object.keys(data).length === 0) {
-        return;
+    let isValid = true;
+    sourceFieldNames.forEach(fieldName => {
+      const isModified = modified.get(fieldName + 'Number') ||
+        modified.get(fieldName + 'Enabled') ||
+        modified.get(fieldName + 'Unit');
+      if (formData.get(fieldName + 'Enabled') && isModified &&
+        formFieldsErrors[fieldName]) {
+        isValid = false;
       }
-      this._cleanModificationState();
-      this.set('_formStatus', 'saving');
-      onSave(data).then(() => {
-        if (!this.isDestroyed && !this.isDestroying) {
-          this.set('_formStatus', 'saved');
-          run.later(this, () => {
-            if (!this.isDestroyed && !this.isDestroying) {
-              // prevent resetting state other than saved
-              if (this.get('_formStatus') === 'saved') {
-                this.set('_formStatus', '');
-              }
-            }
-          }, formSavedInfoHideTimeout);
-        }
-      }).catch(() => {
-        this.set('_formStatus', 'failed');
-        this.set('_formData', this._generateInitialData());
-        this._cleanModificationState();
-      });
-      this.setProperties({
-        _lostInputFocus: false,
-        _isDirty: false,
-      });
-    }
-  },
-
-  /**
-   * Marks all fields as not modified.
-   */
-  _cleanModificationState() {
-    let _formFieldsModified = this.get('_formFieldsModified');
-    Object.keys(_formFieldsModified)
-      .forEach((key) => _formFieldsModified.set(key, false));
-  },
-
-  /**
-   * Schedules changes send (with debounce).
-   * @param {boolean} schedule If false, scheduled save will be canceled.
-   */
-  _scheduleSendChanges(schedule = true) {
-    const formSendDebounceTime = this.get('formSendDebounceTime');
-    if (schedule === false) {
-      this._cancelDebounceTimer();
-    } else {
-      const data = this._modifiedData();
-      if (Object.keys(data).length > 0 && this._isValid()) {
-        this.set('_formStatus', 'modified');
-        this.set(
-          '_saveDebounceTimer',
-          debounce(this, '_sendChanges', formSendDebounceTime)
-        );
-        run.next(() => {
-          if (!this._isValid()) {
-            this._cancelDebounceTimer();
-          }
-        });
-      } else {
-        this._cancelDebounceTimer();
-      }
-    }
-  },
-
-  _cancelDebounceTimer() {
-    if (this.get('_formStatus') === 'modified') {
-      this.set('_formStatus', '');
-    }
-    cancel(this.get('_saveDebounceTimer'));
+    });
+    return isValid;
   },
 
   actions: {
+    /**
+     * @override
+     */
     dataChanged(fieldName, value) {
-      this.set('_formData.' + fieldName, value);
-      this.set('_isDirty', true);
-      this.set('_formFieldsModified.' + fieldName, true);
-      if (!_.endsWith(fieldName, 'Number') || this.get('_lostInputFocus')) {
-        this._scheduleSendChanges();
+      this.set('formData.' + fieldName, value);
+      this.set('isDirty', true);
+      this.set('formFieldsModified.' + fieldName, true);
+      if (!_.endsWith(fieldName, 'Number') || this.get('lostInputFocus')) {
+        this.scheduleSendChanges();
       }
       if (_.endsWith(fieldName, 'Enabled') && value) {
         const numberField =
@@ -517,14 +358,6 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, {
           error
         );
       });
-    },
-    lostFocus() {
-      this.set('_lostInputFocus', true);
-      this._scheduleSendChanges();
-    },
-    forceSave() {
-      this._scheduleSendChanges(false);
-      this._sendChanges();
     },
   },
 });

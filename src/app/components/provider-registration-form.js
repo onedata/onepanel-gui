@@ -3,7 +3,7 @@
  *
  * @module components/provider-registration-form
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -39,15 +39,11 @@ const COMMON_FIELDS_TOP = [{
   {
     name: 'name',
     type: 'text',
-  },
-  {
-    name: 'onezoneDomainName',
-    type: 'text',
+    example: 'My provider',
   },
   {
     name: 'subdomainDelegation',
     type: 'checkbox',
-    defaultValue: true,
     tip: true,
   },
 ];
@@ -57,6 +53,7 @@ const HOSTNAME_FIELD = {
   type: 'text',
   regex: DOMAIN_REGEX,
   tip: true,
+  example: location.hostname,
 };
 
 const SUBDOMAIN_FIELD = {
@@ -64,6 +61,7 @@ const SUBDOMAIN_FIELD = {
   type: 'text',
   regex: SUBDOMAIN_REGEX,
   tip: true,
+  example: 'my-provider',
 };
 
 const COMMON_FIELDS_BOTTOM = [{
@@ -71,6 +69,7 @@ const COMMON_FIELDS_BOTTOM = [{
     type: 'text',
     regex: EMAIL_REGEX,
     tip: true,
+    example: 'admin@example.com',
   }, {
     name: 'geoLatitude',
     type: 'number',
@@ -78,6 +77,7 @@ const COMMON_FIELDS_BOTTOM = [{
     lte: 90,
     gte: -90,
     optional: true,
+    example: '50.068940',
   },
   {
     name: 'geoLongitude',
@@ -87,6 +87,7 @@ const COMMON_FIELDS_BOTTOM = [{
     lte: 180,
     gte: -180,
     optional: true,
+    example: '19.909213',
   },
 ];
 
@@ -104,7 +105,8 @@ FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
     if (field.name === 'subdomain') {
       validators.push(
         validator(
-          'exclusion', { in: readOnly('model.excludedSubdomains'),
+          'exclusion', {
+            in: readOnly('model.excludedSubdomains'),
             message: computed(function () {
               return this.get('model.i18n')
                 .t('components.providerRegistrationForm.subdomainReserved');
@@ -116,21 +118,6 @@ FIELDS_PREFIXES.forEach(({ fields, prefix }) => {
     VALIDATIONS_PROTO[`allFieldsValues.${prefix}.${field.name}`] = validators;
   });
 });
-
-// validate onezoneDomainName only in "new" mode
-VALIDATIONS_PROTO['allFieldsValues.editTop.onezoneDomainName'] = [
-  validator('presence', {
-    presence: true,
-    ignoreBlank: true,
-    disabled: computed('model.mode', function () {
-      return this.get('model.mode') !== 'new';
-    }),
-  }),
-  validator('format', {
-    regex: DOMAIN_REGEX,
-    allowBlank: true,
-  }),
-];
 
 const Validations = buildValidations(VALIDATIONS_PROTO);
 const ALL_PREFIXES = [
@@ -151,6 +138,24 @@ export default OneForm.extend(Validations, I18n, {
   webCertManager: service(),
 
   i18nPrefix: 'components.providerRegistrationForm',
+
+  /**
+   * @virtual optional
+   * @type {string}
+   */
+  token: undefined,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
+  subdomainDelegationSupported: undefined,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
+  onezoneDomain: undefined,
 
   /**
    * To inject. One of: show, edit, new
@@ -193,7 +198,7 @@ export default OneForm.extend(Validations, I18n, {
   submit: () => {},
 
   webCertProxy: computed(function webCertProxy() {
-    const promise = this.get('webCertManager').getWebCert();
+    const promise = this.get('webCertManager').fetchWebCert();
     return PromiseObject.create({ promise });
   }),
 
@@ -210,11 +215,7 @@ export default OneForm.extend(Validations, I18n, {
           return ['showTop', 'showDomain', 'showBottom'];
         }
       case 'edit':
-        if (_subdomainDelegation) {
-          return ['editTop', 'editSubdomain', 'editBottom'];
-        } else {
-          return ['editTop', 'editDomain', 'editBottom'];
-        }
+      case 'new':
       default:
         if (_subdomainDelegation) {
           return ['editTop', 'editSubdomain', 'editBottom'];
@@ -226,7 +227,7 @@ export default OneForm.extend(Validations, I18n, {
 
   /**
    * Preprocessed fields objects
-   * @type {computed.Array.FieldType}
+   * @type {computed.EmberObject}
    */
   _fieldsSource: computed(function () {
     let i18n = this.get('i18n');
@@ -234,6 +235,7 @@ export default OneForm.extend(Validations, I18n, {
     let prepareField = (field) => _.assign({}, field, {
       label: i18n.t(tPrefix + field.name + '.label'),
       tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
+      example: field.example,
     });
     let fields = EmberObject.create({
       topFields: COMMON_FIELDS_TOP.map(prepareField),
@@ -254,7 +256,7 @@ export default OneForm.extend(Validations, I18n, {
         _fieldsSource,
         mode,
       } = this.getProperties('_fieldsSource', 'mode');
-      let excludedFields = mode === 'edit' ? ['onezoneDomainName'] : ['id'];
+      let excludedFields = mode === 'edit' ? [] : ['id'];
       return _fieldsSource.get('topFields')
         .filter((field) => excludedFields.indexOf(field.name) === -1)
         .map((field) =>
@@ -306,9 +308,7 @@ export default OneForm.extend(Validations, I18n, {
    * @type {computed.Array.Ember.Object}
    */
   _staticTopFields: computed('_fieldsSource.topFields', 'provider', function () {
-    let excludedFields = ['onezoneDomainName'];
     return this.get('_fieldsSource.topFields')
-      .filter((field) => excludedFields.indexOf(field.name) === -1)
       .map((field) => this._preprocessField(field, 'showTop', true));
   }),
 
@@ -432,7 +432,11 @@ export default OneForm.extend(Validations, I18n, {
       if (this.get('mode') === 'edit') {
         const currentFields = this.get('currentFields');
         const domainField = _.find(currentFields, { name: 'editDomain.domain' });
-        const subdomainField = _.find(currentFields, { name: 'editSubdomain.subdomain' });
+        const subdomainField = _.find(
+          currentFields, {
+            name: 'editSubdomain.subdomain',
+          }
+        );
         return domainField && get(domainField, 'changed') ||
           subdomainField && get(subdomainField, 'changed');
       } else {
@@ -445,31 +449,9 @@ export default OneForm.extend(Validations, I18n, {
     this.resetFormValues(ALL_PREFIXES);
   }),
 
-  _subdomainSuffixObserver: observer(
-    'mode',
-    'allFields',
-    'allFieldsValues.editTop.onezoneDomainName',
-    function () {
-      let {
-        mode,
-        allFields,
-        allFieldsValues,
-      } = this.getProperties('mode', 'allFields', 'allFieldsValues');
-      if (mode === 'new') {
-        let subdomainField = _.find(
-          allFields,
-          (field) => field.get('name') === 'editSubdomain.subdomain'
-        );
-        let domain = allFieldsValues.get('editTop.onezoneDomainName');
-        subdomainField.set('rightText', domain ? '.' + domain : null);
-      }
-    }
-  ),
-
   init() {
     this._super(...arguments);
     this.prepareFields();
-    this._subdomainSuffixObserver();
     next(() => this._modeObserver());
   },
 
@@ -481,11 +463,19 @@ export default OneForm.extend(Validations, I18n, {
    * @returns {object} prepared field
    */
   _preprocessField(field, prefix, isStatic = false) {
-    let provider = this.get('provider');
+    const {
+      provider,
+      subdomainDelegationSupported,
+    } = this.getProperties('provider', 'subdomainDelegationSupported');
+
     field = EmberObject.create(field);
+    const name = field.get('name');
+
+    if (name === 'subdomain') {
+      field.set('rightText', '.' + this.get('onezoneDomain'));
+    }
     if (provider) {
       const subdomainDelegation = get(provider, 'subdomainDelegation');
-      const name = field.get('name');
       const value = get(provider, field.get('name'));
       if (value === undefined) {
         if (field.get('defaultValue') === undefined) {
@@ -494,11 +484,25 @@ export default OneForm.extend(Validations, I18n, {
       } else {
         field.set('defaultValue', value);
       }
-      if (name === 'subdomain') {
-        field.set('rightText', '.' + get(provider, 'onezoneDomainName'));
+      if (name === 'subdomainDelegation') {
+        if (!subdomainDelegation && subdomainDelegationSupported === false) {
+          field.setProperties({
+            defaultValue: false,
+            disabled: true,
+            lockHint: this.t('fields.subdomainDelegation.lockHint'),
+          });
+        }
       }
       if (name === 'domain' && subdomainDelegation) {
         field.set('defaultValue', null);
+      }
+    } else if (this.get('mode') === 'new') {
+      if (name === 'subdomainDelegation') {
+        field.setProperties({
+          defaultValue: subdomainDelegationSupported,
+          disabled: !subdomainDelegationSupported,
+          lockHint: this.t('fields.subdomainDelegation.lockHint'),
+        });
       }
     }
     field.set('name', `${prefix}.${field.get('name')}`);
@@ -542,8 +546,15 @@ export default OneForm.extend(Validations, I18n, {
       const {
         formValues,
         allFields,
+        token,
         _willChangeDomainAfterSubmit,
-      } = this.getProperties('formValues', 'allFields', '_willChangeDomainAfterSubmit');
+      } = this.getProperties(
+        'formValues',
+        'allFields',
+        'token',
+        '_willChangeDomainAfterSubmit'
+      );
+
       let values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
         let prefixValues = formValues.get(prefix);
@@ -551,6 +562,10 @@ export default OneForm.extend(Validations, I18n, {
           (key) => values.set(key, prefixValues.get(key))
         );
       });
+      if (token) {
+        values.set('token', token);
+      }
+
       this.set('_disabled', true);
       return this.get('submit')(values)
         .then(() => {

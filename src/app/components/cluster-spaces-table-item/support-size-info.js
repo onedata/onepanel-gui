@@ -3,7 +3,7 @@
  *
  * @module components/cluster-spaces-table-item/supporte-size-info
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -14,9 +14,12 @@ import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 import generateColors from 'onedata-gui-common/utils/generate-colors';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['chart-component', 'space-support-chart'],
+
+  i18nPrefix: 'components.supportSizeInfo',
 
   i18n: service(),
 

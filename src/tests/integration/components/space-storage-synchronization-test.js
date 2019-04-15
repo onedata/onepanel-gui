@@ -17,8 +17,9 @@ describe('Integration | Component | space storage synchronization', function () 
       this.on('syncIntervalChanged', syncIntervalChanged);
 
       this.render(hbs `{{space-storage-synchronization
-      syncIntervalChanged=(action "syncIntervalChanged")
-    }}`);
+        importEnabled=true
+        syncIntervalChanged=(action "syncIntervalChanged")
+      }}`);
 
       this.$('.btn-sync-interval-day').click();
 

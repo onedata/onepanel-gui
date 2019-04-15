@@ -12,11 +12,13 @@ export default {
       ceph_mon: 'Ceph Monitor',
       ceph_mgr: 'Ceph Manager',
       ceph_osd: 'Ceph OSD',
+      oneprovider: 'Oneprovider',
+      onezone: 'Onezone',
     },
     action: {
       configure: 'configuring {{service}}',
       start: 'starting {{service}}',
-      wait_for_init: 'waiting for {{service}} initalization',
+      wait_for_init: 'waiting for {{service}} initialization',
       init_cluster: 'initializing {{service}} cluster',
       rebalance_cluster: 'rebalacing {{service}} cluster',
       save: 'saving {{service}}',
@@ -34,6 +36,7 @@ export default {
       set_pool_replication: 'setting {{service}} pool replication',
       add_pool_as_storage: 'adding {{service}} pool as storage',
       cleanup: 'cleaning up {{service}}',
+      set_up_service_in_onezone: 'setting up web GUI',
     },
   },
 };

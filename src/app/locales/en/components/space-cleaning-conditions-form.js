@@ -1,6 +1,6 @@
 export default {
-  lowerFileSizeLimit: 'Lower size limit',
-  upperFileSizeLimit: 'Upper size limit',
+  minFileSize: 'Lower size limit',
+  maxFileSize: 'Upper size limit',
   minHoursSinceLastOpen: 'Not opened for',
   maxOpenCount: 'Opened up till now',
   maxHourlyMovingAverage: 'Opened per hour',
@@ -11,8 +11,8 @@ export default {
   conditionsHintEnabledEnd: 'specified below.',
   conditionsHintDisabled: 'When disabled, evicts redundant replicas arbitrarily.',
   hint: {
-    lowerFileSizeLimit: 'Only files which size is greater than given value may be cleaned.',
-    upperFileSizeLimit: 'Only files which size is less than given value may be cleaned.',
+    minFileSize: 'Only files which size is greater than given value may be cleaned.',
+    maxFileSize: 'Only files which size is less than given value may be cleaned.',
     minHoursSinceLastOpen: 'Files that haven\'t been opened for longer than or equal to given period may be cleaned.',
     maxOpenCount: 'File that have been opened less times will be cleaned.',
     maxHourlyMovingAverage: 'Files that have moving average of open operations count per hour less than given value may be cleaned. The average is calculated in 24 hours window.',
@@ -25,10 +25,6 @@ export default {
     hours: 'Hours',
     days: 'Days',
   },
-  modified: 'Not saved yet...',
-  saving: 'Saving...',
-  saved: 'Saved!',
-  updateFailed: 'Update failed!',
   times: 'times',
   togglingSelectiveCleaning: 'toggling selective cleaning',
 };

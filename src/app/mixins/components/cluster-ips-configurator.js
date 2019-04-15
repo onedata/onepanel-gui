@@ -4,7 +4,7 @@
  * 
  * @module mixins/components/cluster-ips-configurator
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -15,8 +15,11 @@ import { Promise } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 
 export default Mixin.create({
+  guiUtils: service(),
+
   i18nPrefix: 'mixins.components.clusterIpsConfigurator',
 
   /**
@@ -29,7 +32,7 @@ export default Mixin.create({
    * @virtual
    * @type {Ember.Service}
    */
-  clusterManager: undefined,
+  deploymentManager: undefined,
 
   /**
    * @virtual 
@@ -40,7 +43,7 @@ export default Mixin.create({
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  serviceType: reads('onepanelServer.serviceType'),
+  serviceType: reads('guiUtils.serviceType'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -80,11 +83,12 @@ export default Mixin.create({
   }),
 
   _startSetup() {
-    return this.get('clusterManager')
+    return this.get('deploymentManager')
       .modifyClusterIps(this.get('_ipsFormData'))
       .catch(error => {
         this.get('globalNotify').backendError(
-          this.get('i18n').t('mixins.components.clusterIpsConfigurator.setupAction'),
+          this.get('i18n')
+          .t('mixins.components.clusterIpsConfigurator.setupAction'),
           error
         );
         throw error;
@@ -102,7 +106,7 @@ export default Mixin.create({
     this.set(
       'hostsIpsProxy',
       PromiseObject.create({
-        promise: this.get('clusterManager').getClusterIps()
+        promise: this.get('deploymentManager').getClusterIps()
           .then(({ hosts }) => {
             safeExec(this, () => {
               this.prepareHosts(hosts);

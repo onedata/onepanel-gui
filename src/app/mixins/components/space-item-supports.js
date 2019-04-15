@@ -3,7 +3,7 @@
  *
  * @module mixins/components/space-item-supports
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -53,7 +53,7 @@ export default Mixin.create({
       let _providerDetailsProxy = this.get('_providerDetailsProxy');
       let supportingProviders = this.get('supportingProviders');
       return PromiseObject.create({
-        promise: _providerDetailsProxy.get('promise')
+        promise: _providerDetailsProxy
           .then(provider => {
             let id = get(provider, 'id');
             let name = get(provider, 'name');
@@ -71,7 +71,7 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
     let providerManager = this.get('providerManager');
-    this.set('_providerDetailsProxy', providerManager.getProviderDetails());
+    this.set('_providerDetailsProxy', providerManager.getProviderDetailsProxy());
   },
 
   createSupportersArray(supportingProviders, currentProviderId, currentProviderName) {

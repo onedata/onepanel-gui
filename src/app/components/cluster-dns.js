@@ -4,13 +4,13 @@
  * 
  * @module components/cluster-dns
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import EmberObject, { computed, get, set } from '@ember/object';
+import EmberObject, { computed, observer, get, set } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';
@@ -37,11 +37,12 @@ export default Component.extend(
     classNames: ['cluster-dns'],
 
     onepanelServer: service(),
-    clusterManager: service(),
+    deploymentManager: service(),
     providerManager: service(),
     dnsManager: service(),
     guiUtils: service(),
     globalNotify: service(),
+    i18n: service(),
 
     i18nPrefix: 'components.clusterDns',
 
@@ -69,6 +70,14 @@ export default Component.extend(
      * Invoked withoud params when settings changes (check is not current anymore)
      */
     settingsChanged: notImplementedIgnore,
+
+    /**
+     * @virtual optional
+     * Invoked with isIpDomain value when isIpDomain changed.
+     * @type {function}
+     * @param {boolean} isIpChanged
+     */
+    isIpDomainChanged: notImplementedIgnore,
 
     /**
      * @type {EmberObject}
@@ -113,6 +122,18 @@ export default Component.extend(
     subdomainDelegationPrev: undefined,
 
     /**
+     * Contains old value of dnsServers to preserve dns servers input state
+     * after change to autodetect mode.
+     * @type {Array<string>}
+     */
+    dnsServersPrev: Object.freeze([]),
+
+    /**
+     * @type {string}
+     */
+    dnsCheckMode: 'autodetect',
+
+    /**
      * @type {Ember.ComputedProperty<string>}
      */
     onepanelServiceType: reads('guiUtils.serviceType'),
@@ -140,7 +161,7 @@ export default Component.extend(
       'zonePolicies.subdomainDelegation',
       'provider.subdomainDelegation',
       function subdomainDelegation() {
-        if (this.get('onepanelServiceType') === 'zone') {
+        if (this.get('onepanelServiceType') === 'onezone') {
           return this.get('zonePolicies.subdomainDelegation');
         } else {
           return this.get('provider.subdomainDelegation');
@@ -225,7 +246,7 @@ export default Component.extend(
           'isIpDomain',
           'subdomainDelegation',
         );
-        if (onepanelServiceType === 'provider') {
+        if (onepanelServiceType === 'oneprovider') {
           if (isIpDomain) {
             return 'providerIp';
           } else if (subdomainDelegation) {
@@ -257,9 +278,14 @@ export default Component.extend(
      * True if the list in tokenized input of DNS servers is valid.
      * @type {Ember.ComputedProperty<boolean>}
      */
-    dnsServersInputValid: computed('dnsServers.[]', function dnsServersInputValid() {
-      return !_.isEmpty(this.get('dnsServers'));
-    }),
+    dnsServersInputValid: computed(
+      'dnsServers.[]',
+      'dnsCheckMode',
+      function dnsServersInputValid() {
+        return !_.isEmpty(this.get('dnsServers')) ||
+          this.get('dnsCheckMode') === 'autodetect';
+      }
+    ),
 
     /**
      * Each object is a modified clone of Onepanel.DnsCheckResult with type added
@@ -267,46 +293,50 @@ export default Component.extend(
      * Produces array of DnsCheckResults-like objects to render `check-items`
      * @type {Array<Object>}
      */
-    checkResultItems: computed('dnsCheck', 'onepanelServiceType', function checkResultItems() {
-      const {
-        onepanelServiceType,
-        dnsCheck,
-      } = this.getProperties('onepanelServiceType', 'dnsCheck');
-      if (dnsCheck) {
-        const domain = get(dnsCheck, 'domain') ?
-          Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
-          undefined;
-        if (onepanelServiceType === 'provider') {
-          return [domain];
-        } else {
-          const dnsZone = get(dnsCheck, 'dnsZone') ?
-            Object.assign({ type: 'dnsZone' }, _.cloneDeep(get(dnsCheck, 'dnsZone'))) :
+    checkResultItems: computed('dnsCheck', 'onepanelServiceType',
+      function checkResultItems() {
+        const {
+          onepanelServiceType,
+          dnsCheck,
+        } = this.getProperties('onepanelServiceType', 'dnsCheck');
+        if (dnsCheck) {
+          const domain = get(dnsCheck, 'domain') ?
+            Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
             undefined;
-          const bothChecks = [dnsZone, domain].filter(c => c);
-          const builtInDnsServer = this.get('builtInDnsServer');
-          const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
-          const domainValid = (get(dnsCheck, 'domain.summary') === 'ok');
-          const hasInvalidRecords = _.includes(
-            ['missing_records', 'bad_records'],
-            get(dnsCheck, 'domain.summary')
-          );
-
-          if (
-            onepanelServiceType === 'zone' &&
-            builtInDnsServer &&
-            domainValid &&
-            dnsZoneValid
-          ) {
-            return [dnsZone];
+          if (onepanelServiceType === 'oneprovider') {
+            return [domain];
           } else {
-            if (hasInvalidRecords) {
-              set(domain, 'summary', 'delegation_invalid_records');
+            const dnsZone = get(dnsCheck, 'dnsZone') ?
+              Object.assign({
+                  type: 'dnsZone',
+                },
+                _.cloneDeep(get(dnsCheck, 'dnsZone'))
+              ) : undefined;
+            const bothChecks = [dnsZone, domain].filter(c => c);
+            const builtInDnsServer = this.get('builtInDnsServer');
+            const dnsZoneValid = (get(dnsCheck, 'dnsZone.summary') === 'ok');
+            const domainValid = (get(dnsCheck, 'domain.summary') === 'ok');
+            const hasInvalidRecords = _.includes(
+              ['missing_records', 'bad_records'],
+              get(dnsCheck, 'domain.summary')
+            );
+
+            if (
+              onepanelServiceType === 'onezone' &&
+              builtInDnsServer &&
+              domainValid &&
+              dnsZoneValid
+            ) {
+              return [dnsZone];
+            } else {
+              if (hasInvalidRecords) {
+                set(domain, 'summary', 'delegation_invalid_records');
+              }
+              return bothChecks;
             }
-            return bothChecks;
           }
         }
-      }
-    }),
+      }),
 
     /**
      * True if all essential DNS checks for user are valid
@@ -317,6 +347,27 @@ export default Component.extend(
       return checkResultItems.every(i => get(i, 'summary') === 'ok');
     }),
 
+    /**
+     * @type {Ember.ComputedProperty<Array<Object>>}
+     */
+    dnsCheckModes: computed(function dnsCheckModes() {
+      return [{
+        label: this.t('dnsCheckAutodetect'),
+        value: 'autodetect',
+      }, {
+        label: this.t('dnsCheckManual'),
+        value: 'manual',
+      }];
+    }),
+
+    isIpDomainObserver: observer('isIpDomain', function isIpDomainObserver() {
+      const {
+        isIpDomainChanged,
+        isIpDomain,
+      } = this.getProperties('isIpDomainChanged', 'isIpDomain');
+      isIpDomainChanged(isIpDomain);
+    }),
+
     init() {
       this._super(...arguments);
       if (!this.get('formValues')) {
@@ -324,7 +375,11 @@ export default Component.extend(
           letsEncrypt: true,
         }));
       }
-      this.updateDnsCheckConfigurationProxy();
+      this.updateDnsCheckConfigurationProxy()
+        .then(({ dnsServers }) => safeExec(this, () => {
+          this.set('dnsCheckMode', get(dnsServers, 'length') ? 'manual' :
+            'autodetect');
+        }));
       this.updateDomainProxy();
       if (this.get('getDnsCheckProxyOnStart')) {
         (
@@ -335,15 +390,22 @@ export default Component.extend(
           })
         )
         .then(dnsCheck => {
-          safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck, 'timestamp')));
+          safeExec(
+            this,
+            'set',
+            'lastCheckMoment',
+            moment(get(dnsCheck, 'timestamp'))
+          );
           this.get('performCheckCalled')(this.get('allValid'));
         });
       }
-      if (this.get('onepanelServiceType') === 'zone') {
+      if (this.get('onepanelServiceType') === 'onezone') {
         this.updateZonePoliciesProxy();
       } else {
         this.updateProviderProxy();
       }
+      // enable isIpDomainObserver 
+      this.get('isIpDomain');
     },
 
     willDestroyElement() {
@@ -397,7 +459,7 @@ export default Component.extend(
     },
 
     fetchProvider() {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     },
 
     /**
@@ -487,7 +549,12 @@ export default Component.extend(
         });
         promise
           .then(dnsCheck => {
-            safeExec(this, 'set', 'lastCheckMoment', moment(get(dnsCheck, 'timestamp')));
+            safeExec(
+              this,
+              'set',
+              'lastCheckMoment',
+              moment(get(dnsCheck, 'timestamp'))
+            );
             this.get('performCheckCalled')(this.get('allValid'));
           })
           .then(() => {
@@ -535,6 +602,18 @@ export default Component.extend(
             dnsServers: _.without(dnsServersUpdate, newIpAddress),
             newIpAddress,
           });
+        }
+      },
+      dnsCheckModeChanged(value) {
+        this.set('dnsCheckMode', value);
+        if (value === 'autodetect') {
+          this.set('dnsServersPrev', this.get('dnsServers'));
+          this.send('dnsServersChanged', []);
+        } else {
+          const dnsServersPrev = this.get('dnsServersPrev');
+          if (get(dnsServersPrev, 'length')) {
+            this.send('dnsServersChanged', this.get('dnsServersPrev'));
+          }
         }
       },
     },

@@ -1,3 +1,12 @@
+/**
+ * Single row of cluster hosts table
+ * 
+ * @module components/cluster-host-table-row
+ * @author Jakub Liput
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { alias } from '@ember/object/computed';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
@@ -83,16 +92,17 @@ export default Component.extend({
   }),
 
   /**
-   * True if this row represents current host that 
+   * True if this row represents current host
    * @type {Ember.ComputedProperty<Promise<boolean>>}
    */
-  isThisHost: computed('onepanelServer', 'dataHostname', function () {
+  isThisHost: computed('onepanelServer.nodeProxy', 'dataHostname', function () {
     const {
       onepanelServer,
       dataHostname,
     } = this.getProperties('onepanelServer', 'dataHostname');
     return PromiseObject.create({
-      promise: onepanelServer.getHostname()
+      promise: onepanelServer.getNodeProxy()
+        .then(({ hostname }) => hostname)
         .then(hostname => hostname === dataHostname),
     });
   }),

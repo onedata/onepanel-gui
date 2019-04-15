@@ -5,7 +5,7 @@
   </div>
 </div>
 
-{{#if (eq onepanelServiceType "zone")}}
+{{#if (eq onepanelServiceType "onezone")}}
   <div class="row content-row no-border row-onezone-built-in-server">
     <h1>{{tt this "onezoneBuiltInServer.header"}}</h1>
       {{#promise-proxy-container
@@ -84,13 +84,13 @@
   </div>
 {{/if}}
 
-<div class="row content-row no-border row-dns-check">
-  <h1>{{tt this "dnsCheck.header"}}</h1>
-  {{#promise-proxy-container
-    absoluteCentered=false
-    spinnerBlockClass="loadable-row lg"
-    proxy=domainProxy
-  }}
+{{#promise-proxy-container
+  absoluteCentered=false
+  spinnerBlockClass="loadable-row lg"
+  proxy=domainProxy
+}}
+  <div class="row content-row no-border row-dns-check">
+    <h1>{{tt this "dnsCheck.header"}}</h1>
     <div class="inner-row-content">
       <div class="subheader-text dns-check-state-info">
         {{#if (eq stateInfo "providerIp")}}
@@ -119,20 +119,32 @@
         <p class="dns-servers-input-intro">
           {{tt this "dnsCheck.inputIntro" domain=domain serviceName=guiUtils.fullServiceName}}
         </p>
-        <div class="row row-ip-addresses-input-tokenizer">
-          {{one-input-tokenizer
-            inputValue=newIpAddress
-            tokens=dnsServers
-            tokensChanged=(action "dnsServersChanged")
-            inputValueChanged=(action (mut newIpAddress))
-            placeholder=(tt this "dnsCheck.ipInputPlaceholder")
-            isBusy=clusterDnsInputBusy
+        <p>
+          {{one-way-radio-group
+            class="dns-check-mode"
+            value=dnsCheckMode
+            options=dnsCheckModes
+            update=(action "dnsCheckModeChanged")
+            isReadOnly=clusterDnsInputBusy
+            radioInline=false
           }}
-        </div>
+        </p>
+        {{#if (eq dnsCheckMode "manual")}}
+          <div class="row row-ip-addresses-input-tokenizer">
+            {{one-input-tokenizer
+              inputValue=newIpAddress
+              tokens=dnsServers
+              tokensChanged=(action "dnsServersChanged")
+              inputValueChanged=(action (mut newIpAddress))
+              placeholder=(tt this "dnsCheck.ipInputPlaceholder")
+              isBusy=clusterDnsInputBusy
+            }}
+          </div>
+        {{/if}}
         <div class="btn-container">
           <div class="row row-btn">
             {{#one-spin-button
-              class=(concat "btn btn-default btn-perform-dns-check")
+              class=(concat "btn btn-sm btn-primary btn-perform-dns-check")
               action=(action "performDnsCheck")
               disabled=(not performCheckEnabled)
             }}
@@ -142,30 +154,30 @@
         </div>
       {{/unless}}
     </div>
-  {{/promise-proxy-container}}
-</div>
-
-{{#if (not (eq dnsCheckProxy undefined))}}
-  <div class="row content-row no-border row-dns-check-results">
-    {{#promise-proxy-container
-      absoluteCentered=false
-      spinnerBlockClass="loadable-row lg"
-      proxy=dnsCheckProxy
-    }}
-      <h1>{{tt this "dnsCheck.result.header"}}
-        <span class="header-addon">
-          ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
-        </span>
-      </h1>
-      {{cluster-dns-check-table
-        checkResultItems=checkResultItems
-        onepanelServiceType=onepanelServiceType
-        builtInDnsServer=builtInDnsServer
-        subdomainDelegation=subdomainDelegation
-        domain=domain
-        providerOnezoneDomain=providerOnezoneDomain
-      }}
-    {{/promise-proxy-container}}
   </div>
-{{/if}}
+
+  {{#if (and (not (eq dnsCheckProxy undefined)) (not isIpDomain))}}
+    <div class="row content-row no-border row-dns-check-results">
+      {{#promise-proxy-container
+        absoluteCentered=false
+        spinnerBlockClass="loadable-row lg"
+        proxy=dnsCheckProxy
+      }}
+        <h1>{{tt this "dnsCheck.result.header"}}
+          <span class="header-addon">
+            ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
+          </span>
+        </h1>
+        {{cluster-dns-check-table
+          checkResultItems=checkResultItems
+          onepanelServiceType=onepanelServiceType
+          builtInDnsServer=builtInDnsServer
+          subdomainDelegation=subdomainDelegation
+          domain=domain
+          providerOnezoneDomain=providerOnezoneDomain
+        }}
+      {{/promise-proxy-container}}
+    </div>
+  {{/if}}
+{{/promise-proxy-container}}
 

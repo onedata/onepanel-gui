@@ -1,0 +1,56 @@
+<div class="row content-row header-row hidden-xs">
+  <h1 class="normal-case">
+    {{#truncated-string class="one-label"}}{{cluster.name}}{{/truncated-string}}
+  </h1>
+</div>
+
+{{#promise-proxy-container proxy=installationDetailsProxy}}
+  <div class="row content-row">
+    <div class="one-tile-container">
+      {{#one-tile
+        title=(tt this "info")
+        isLink=false
+        class="resource-info-tile"
+      }}
+        <table class="table table-condensed">
+          <tbody>
+            <tr>
+              <td class="property-name">{{tt this "name"}}</td>
+              <td class="property-value">
+                {{cluster.name}}
+              </td>
+            </tr>
+            <tr>
+              <td class="property-name">{{tt this "type"}}</td>
+              <td class="property-value creation-time">{{cluster.type}}</td>
+            </tr>
+            {{yield}}
+            <tr>
+              <td class="property-name">{{tt this "clusterId"}}</td>
+              <td class="property-value id">
+                {{one-clipboard-line
+                  size="sm"
+                  value=cluster.id
+                  showText=false
+                  btnType="success"}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      {{/one-tile}}
+      {{#if (gte allNodes.length 2)}}
+        {{cluster-nodes-tile clusterConfigurationProxy=installationDetailsProxy}}
+      {{/if}}
+      {{#if (eq cluster.type "oneprovider")}}
+        {{!-- TODO Uncomment when onezone map will render clusters, that can be accessed instead of only with our spaces --}}
+        {{!-- {{providers-map-tile
+          providersProxy=providersProxy
+          customLink=(concat "/ozw/onezone/i#/onedata/data/" cluster.serviceId)
+          moreText=(tt this "showOnMap")
+          title=(tt this "oneproviderTileTitle")}} --}}
+        {{cluster-spaces-tile providerIdProxy=providerIdProxy spacesProxy=spacesProxy}}
+        {{cluster-storages-tile storagesProxy=storagesProxy}}
+      {{/if}}
+    </div>
+  </div>
+{{/promise-proxy-container}}

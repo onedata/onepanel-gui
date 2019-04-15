@@ -3,7 +3,7 @@
  *
  * @module components/cluster-spaces-table.js
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -11,21 +11,21 @@ import Component from '@ember/component';
 
 import { get, computed } from '@ember/object';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { inject as service } from '@ember/service';
 
-export default Component.extend({
+export default Component.extend(I18n, {
+  router: service(),
+
   classNames: ['cluster-spaces-table'],
 
-  /**
-   * @virtual
-   * @type {function}
-   */
-  modifySpace: notImplementedReject,
+  i18nPrefix: 'components.clusterSpacesTable',
 
   /**
    * @virtual
    * @type {function}
    */
-  revokeSpace: notImplementedReject,
+  startRevokeSpace: notImplementedReject,
 
   /**
    * @type {SpaceDetails[]|Ember.ArrayProxy<SpaceDetails>}
@@ -40,14 +40,15 @@ export default Component.extend({
   }),
 
   actions: {
-    revokeSpace(space) {
-      return this.get('revokeSpace')(space);
+    startRevokeSpace(space) {
+      return this.get('startRevokeSpace')(space);
     },
     closeRejectedError() {
       this.set('anySpaceRejected', false);
     },
-    submitModifySpace(space, data) {
-      return this.get('modifySpace')(space, data);
+    spaceClicked(spaceId) {
+      return this.get('router')
+        .transitionTo({ queryParams: { options: `space.${spaceId}` } });
     },
   },
 });

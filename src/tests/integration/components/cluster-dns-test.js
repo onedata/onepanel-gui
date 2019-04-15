@@ -8,13 +8,18 @@ import wait from 'ember-test-helpers/wait';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const ProviderManager = Service.extend({
-  getProviderDetails() {},
+  getProviderDetailsProxy() {},
 });
 
 const OnepanelServer = Service.extend({
   request() {},
+});
+
+const GuiUtils = Service.extend({
+  fetchGuiVersion: notImplementedReject,
 });
 
 describe('Integration | Component | cluster dns', function () {
@@ -24,8 +29,12 @@ describe('Integration | Component | cluster dns', function () {
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
-    registerService(this, 'clusterManager', Service);
+    registerService(this, 'deploymentManager', Service);
     registerService(this, 'onepanelServer', OnepanelServer);
+    registerService(this, 'guiUtils', GuiUtils);
+
+    sinon.stub(lookupService(this, 'guiUtils'), 'fetchGuiVersion')
+      .resolves('18.03.1');
   });
 
   it('renders DNS server IPs fetched from server', function () {
@@ -40,7 +49,7 @@ describe('Integration | Component | cluster dns', function () {
     this.set('zonePoliciesProxy', PromiseObject.create({
       promise: reject(),
     }));
-    sinon.stub(lookupService(this, 'providerManager'), 'getProviderDetails')
+    sinon.stub(lookupService(this, 'providerManager'), 'getProviderDetailsProxy')
       .resolves({
         domain: 'hello.domain',
         subdomainDelegation: false,
@@ -56,7 +65,7 @@ describe('Integration | Component | cluster dns', function () {
       });
 
     this.render(hbs `{{cluster-dns
-      onepanelServiceType="provider"
+      onepanelServiceType="oneprovider"
       dnsCheckProxy=dnsCheckProxy
       zonePoliciesProxy=zonePoliciesProxy
     }}`);
