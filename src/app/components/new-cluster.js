@@ -101,7 +101,7 @@ export default Component.extend(I18n, {
       stepsIds = stepsIds.filter(step => step !== 'ceph');
     }
     return stepsIds.map(id => ({
-      id,
+      id, 
       title: this.t(`steps.${onepanelServiceType}.${id}`),
     }));
   }),
@@ -208,12 +208,20 @@ export default Component.extend(I18n, {
       currentStepIndex,
       guiUtils,
       _location,
-    } = this.getProperties('currentStepIndex', 'guiUtils', '_location');
+      showCephStep,
+    } = this.getProperties(
+      'currentStepIndex',
+      'guiUtils',
+      '_location',
+      'showCephStep'
+    );
 
     const serviceType = get(guiUtils, 'serviceType');
-    const isProviderAfterRegister = serviceType === 'oneprovider' &&
+    const isOneprovider = serviceType === 'oneprovider';
+    const isProviderAfterRegister = isOneprovider &&
       currentStepIndex === STEP.PROVIDER_REGISTER;
-    const isZoneAfterDeploy = serviceType === 'onezone' && [STEP.DEPLOYMENT_PROGRESS,
+    const isZoneAfterDeploy = !isOneprovider && [
+      STEP.DEPLOYMENT_PROGRESS,
       STEP.ZONE_DEPLOY,
     ].includes(currentStepIndex);
 
@@ -221,7 +229,15 @@ export default Component.extend(I18n, {
       // Reload whole application to fetch info about newly deployed cluster
       _location.reload();
     } else {
-      const nextStep = nextInt(currentStepIndex);
+      let nextStep = nextInt(currentStepIndex);
+      if (
+        isOneprovider &&
+        currentStepIndex === STEP.PROVIDER_DEPLOY &&
+        !showCephStep
+      ) {
+        // omit ceph deployment step
+        nextStep = nextInt(currentStepIndex);
+      }
       this.set('cluster.initStep', nextStep);
       this.set('currentStepIndex', nextStep);
       this.setProperties({

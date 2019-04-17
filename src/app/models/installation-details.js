@@ -14,19 +14,20 @@ import { alias, reads } from '@ember/object/computed';
 export const CLUSTER_INIT_STEPS = Object.freeze({
   DEPLOY: 0,
   // pseudo-step: should be always between DEPLOY and DEPLOY + 1
-  DEPLOYMENT_PROGRESS: 0.5,
+  DEPLOYMENT_PROGRESS: 1.5,
   ZONE_DEPLOY: 0,
   ZONE_IPS: 1,
   ZONE_DNS: 2,
   ZONE_WEB_CERT: 3,
   ZONE_DONE: 4,
   PROVIDER_DEPLOY: 0,
-  PROVIDER_REGISTER: 1,
-  PROVIDER_IPS: 2,
-  PROVIDER_DNS: 3,
-  PROVIDER_WEB_CERT: 4,
-  PROVIDER_STORAGE_ADD: 5,
-  PROVIDER_DONE: 6,
+  PROVIDER_CEPH: 1,
+  PROVIDER_REGISTER: 2,
+  PROVIDER_IPS: 3,
+  PROVIDER_DNS: 4,
+  PROVIDER_WEB_CERT: 5,
+  PROVIDER_STORAGE_ADD: 6,
+  PROVIDER_DONE: 7,
 });
 
 export default ObjectProxy.extend({
