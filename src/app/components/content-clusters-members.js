@@ -57,7 +57,7 @@ export default Component.extend(
     fetchMembers() {
       const onepanelServer = this.get('onepanelServer');
       return onepanelServer
-        .request('onepanel', 'getClusterMembers')
+        .request('onepanel', 'getClusterMembersSummary')
         .then(({ data }) => data);
     },
 

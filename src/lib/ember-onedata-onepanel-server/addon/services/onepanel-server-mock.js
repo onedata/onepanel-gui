@@ -712,7 +712,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getClusterMembers() {
+    _req_onepanel_getClusterMembersSummary() {
       return {
         success() {
           return {
