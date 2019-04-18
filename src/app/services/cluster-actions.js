@@ -82,14 +82,14 @@ export default ClusterActions.extend({
    * @override
    */
   btnJoin: computed('joinAction', function btnJoin() {
-    const isStandalone = this.get('onepanelServer.isStandalone');
+    const isEmergency = this.get('onepanelServer.isEmergency');
     return {
       icon: 'join-plug',
       title: this.t('btnJoin.title'),
-      tip: isStandalone ? this.t('btnAdd.viaOnezoneHint') : this.t('btnJoin.hint'),
+      tip: isEmergency ? this.t('btnAdd.viaOnezoneHint') : this.t('btnJoin.hint'),
       class: 'join-cluster-btn',
       action: this.get('joinAction'),
-      disabled: isStandalone,
+      disabled: isEmergency,
     };
   }),
 });
