@@ -8,8 +8,9 @@
  */
 
 import Mixin from '@ember/object/mixin';
-
 import { inject as service } from '@ember/service';
+import { sessionExpiredKey } from 'onedata-gui-common/components/login-box';
+import { get } from '@ember/object';
 
 function isLogoutResponse(response) {
   return response && response.req.method === 'DELETE' &&
@@ -18,6 +19,11 @@ function isLogoutResponse(response) {
 
 export default Mixin.create({
   session: service(),
+
+  /**
+   * @type {Storage}
+   */
+  _sessionStorage: sessionStorage,
 
   handleRequestError(error) {
     if (error && error.response && error.response.statusCode) {
@@ -31,9 +37,12 @@ export default Mixin.create({
   },
 
   _handleUnauhtorizedError() {
-    let session = this.get('session');
+    const session = this.get('session');
+    if (get(session, 'isAuthenticated')) {
+      const _sessionStorage = this.get('_sessionStorage');
+      _sessionStorage.setItem(sessionExpiredKey, '1');
+    }
     session.invalidate().then(() => {
-      this.get('session').set('data.hasExpired', true);
       this.destroyClient();
     });
   },

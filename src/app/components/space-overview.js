@@ -14,6 +14,7 @@ import _ from 'lodash';
 import spaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import { inject as service } from '@ember/service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import Looper from 'onedata-gui-common/utils/looper';
 
 /**
  * Space's `storageImport` properties that shouldn't be listed as generic
@@ -32,6 +33,7 @@ const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
 export default Component.extend(I18n, spaceItemSupports, {
   i18nPrefix: 'components.spaceOverview',
 
+  spaceManager: service(),
   storageManager: service(),
 
   /**
@@ -45,6 +47,19 @@ export default Component.extend(I18n, spaceItemSupports, {
    * @type {function}
    */
   submitModifySpace: notImplementedReject,
+
+  /**
+   * Interval in ms for updating space data.
+   * @type {Number}
+   */
+  spaceUpdateInterval: 5000,
+
+  /**
+   * Updates space record to watch changes in space occupancy.
+   * Initialized in init.
+   * @type {Looper}
+   */
+  spaceUpdater: undefined,
 
   importStrategyLabel: computed('space.storageImport.strategy', function () {
     let i18n = this.get('i18n');
@@ -139,6 +154,33 @@ export default Component.extend(I18n, spaceItemSupports, {
       return storageManager.getStorageDetails(get(space, 'storageId'));
     }
   }),
+
+  init() {
+    this._super(...arguments);
+    const spaceUpdateInterval = this.get('spaceUpdateInterval');
+    const spaceUpdater = new Looper({
+      immediate: true,
+      interval: spaceUpdateInterval,
+    });
+    spaceUpdater.on('tick', () => this.updateSpace());
+    this.set('spaceUpdater', spaceUpdater);
+  },
+
+  willDestroyElement() {
+    try {
+      const spaceUpdater = this.get('spaceUpdater');
+      if (spaceUpdater) {
+        spaceUpdater.destroy();
+      }
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
+  updateSpace() {
+    const spaceId = this.get('space.id');
+    this.get('spaceManager').updateSpaceDetailsCache(spaceId);
+  },
 
   actions: {
     submitModifySpace(data) {
