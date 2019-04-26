@@ -8,6 +8,9 @@ import webdav from './storage-item/webdav';
 import nulldevice from './storage-item/nulldevice';
 
 export default {
+  modifyStorageDetails: 'Modify storage details',
+  cancelStorageModification: 'Cancel modification',
+  removeStorage: 'Remove storage',
   generic: {
     id: 'Id',
     type: 'Type',

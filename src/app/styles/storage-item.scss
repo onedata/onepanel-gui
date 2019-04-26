@@ -1,5 +1,122 @@
 .storage-item {
+  $storage-item-padding: 1.5em;
   .one-collapsible-list-item-header {
     padding-right: 60px;
+  }
+  .id-edition-label .clipboard-line-label {
+    @media (min-width: $screen-sm-min) {
+      width: 25%;
+    }
+  }
+  .cluster-storage-add-form {
+    padding: $storage-item-padding;
+    padding-top: 0;
+
+    &.form-static {
+      padding-bottom: 0;
+    }
+    
+    .form {
+      margin: 0;
+      padding: 0;
+
+      .row {
+        margin: 0;
+        transition: none;
+      }
+
+      .form-group-static {
+        .one-label-tip {
+          display: none;
+        }
+        @media (max-width: $screen-xs-max) {
+          .row {
+            border-bottom: 0;
+          }
+        }
+      }
+
+      &.form-static {
+        .form-group-static {
+          .row {
+            padding: $content-row-vertical-padding 0;
+          }
+          .form-control-static, .control-label {
+            display: inline;
+            float: none;
+          }
+        }
+      }
+
+      .form-group:last-child .row {
+        border-bottom: 0;
+      }
+
+      .submit-group {
+        .btn {
+          margin-bottom: $padding-small-vertical;
+        }
+        .row {
+          padding-bottom: 0;
+        }
+      }
+      
+      @media (min-width: $screen-sm-min) {
+        .form-group {
+          margin: 0;
+        }
+        .control-label {
+          padding: $storage-item-padding 0;
+          padding-right: $padding-small-horizontal;
+          margin: 0;
+          text-align: left;
+        }
+        .one-label-tip {
+          right: 40px;
+          top: $storage-item-padding * 0.33;
+          transform: translateX(1.5em);
+          text-align: right;
+        }
+        .form-control-static {
+          padding: $storage-item-padding 0;
+        }
+        .form-control {
+          margin-top: $storage-item-padding * 0.33;
+        }
+        .form-control-column {
+          margin-right: 50px;
+          width: calc(75% - 50px);
+        }
+        .form-group-editable .one-way-toggle {
+          padding-top: $padding-base-vertical;
+        }
+        .submit-group {
+          padding-top: $storage-item-padding * 0.33;
+        }
+        .has-feedback .form-control-feedback {
+          right: 50px;
+          margin-top: $storage-item-padding * 0.33;
+          padding-right: $padding-base-horizontal;
+          text-align: right;
+        }
+      }
+      @media (max-width: $screen-xs-max) {
+        .form-group {
+          .row {
+            &.toggle-form-row {
+              .control-label {
+                margin-bottom: 0;
+              }
+            }
+            border-bottom: 0;
+          }
+          &.form-group-static {
+            .control-label {
+              padding-right: $storage-item-padding * 0.66;
+            }
+          }
+        }
+      }
+    }
   }
 }
