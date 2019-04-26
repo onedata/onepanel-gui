@@ -37,8 +37,8 @@ import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
-import noAdminBox from './components/no-admin-box';
-import createAdminForm from './components/create-admin-form';
+import noRootPasswordBox from './components/no-root-password-box';
+import firstRootPasswordForm from './components/first-root-password-form';
 import clusterHostTable from './components/cluster-host-table';
 import clusterHostTableRow from './components/cluster-host-table-row';
 import manageClusterStorages from './components/manage-cluster-storages';
@@ -115,8 +115,8 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
-    noAdminBox,
-    createAdminForm,
+    noRootPasswordBox,
+    firstRootPasswordForm,
     clusterHostTable,
     clusterHostTableRow,
     manageClusterStorages,

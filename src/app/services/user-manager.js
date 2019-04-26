@@ -53,8 +53,10 @@ export default Service.extend({
       .then(({ data: { isSet } }) => isSet);
   },
 
-  setRootPassword(password) {
+  setFirstRootPassword(password) {
     return this.get('onepanelServer')
-      .staticRequest('onepanel', 'setRootPassword', [{ password }]);
+      .staticRequest('onepanel', 'setRootPassword', [{
+        newPassword: password,
+      }]);
   },
 });

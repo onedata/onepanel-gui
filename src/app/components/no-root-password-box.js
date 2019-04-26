@@ -1,8 +1,8 @@
 /**
- * A container component for creating first admin user
+ * A container component for setting first root password
  *
- * @module components/no-admin-box
- * @author Jakub Liput
+ * @module components/no-root-password-box
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,9 +17,9 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, {
   layout,
-  classNames: ['login-box', 'no-admin-box'],
+  classNames: ['login-box', 'no-root-password-box'],
 
-  i18nPrefix: 'components.noAdminBox.',
+  i18nPrefix: 'components.noRootPasswordBox.',
 
   globalNotify: service(),
   userManager: service(),
@@ -68,16 +68,16 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    registerStarted() {
+    settingPasswordStarted() {
       this.set('isBusy', true);
     },
 
-    registerSuccess() {
-      this.get('globalNotify').info(this.tt('registerSuccess'));
+    settingPasswordSuccess() {
+      this.get('globalNotify').info(this.tt('settingPasswordSuccess'));
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 
-    registerFailure() {
+    settingPasswordFailure() {
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 

@@ -19,6 +19,6 @@ export default {
   createNewCluster: 'Create a new cluster',
   joinCluster: 'Join a cluster',
   back: 'Back',
-  registerSuccess: 'Admin user registered successfully',
+  settingPasswordSuccess: 'Root password set successfully',
   copy: 'Copy',
 };

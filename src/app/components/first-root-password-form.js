@@ -1,8 +1,8 @@
 /**
- * A component with form for creating first admin user
+ * A component with form for setting first root password
  *
- * @module components/create-admin-form
- * @author Jakub Liput
+ * @module components/first-root-password-form
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,32 +17,32 @@ import _ from 'lodash';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 
 export default Component.extend(I18n, {
-  classNames: ['create-admin-form', 'basicauth-login-form'],
+  classNames: ['first-root-password-form', 'basicauth-login-form'],
 
   session: service(),
   userManager: service(),
   globalNotify: service(),
   i18n: service(),
 
-  i18nPrefix: 'components.createAdminForm.',
+  i18nPrefix: 'components.firstRootPasswordForm.',
 
   /**
    * @virtual 
    * @type {Function}
    */
-  registerStarted: notImplementedWarn,
+  settingPasswordStarted: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  registerFailure: notImplementedWarn,
+  settingPasswordFailure: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  registerSuccess: notImplementedWarn,
+  settingPasswordSuccess: notImplementedWarn,
 
   /**
    * @virtual 
@@ -134,32 +134,32 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    submitAddUser(password, confirmPassword) {
+    submitPassword(password, confirmPassword) {
       if (this.get('submitEnabled')) {
         this.set('isDisabled', true);
         let promise;
         if (password && password === confirmPassword) {
-          this.get('registerStarted')();
-          promise = this.get('userManager').setRootPassword(password)
+          this.get('settingPasswordStarted')();
+          promise = this.get('userManager').setFirstRootPassword(password)
             .catch(error => {
               this.get('globalNotify').backendError(
-                this.tt('creationBackendError'),
+                this.tt('settingPasswordBackendError'),
                 error
               );
-              safeExec(this, 'set', 'addUserError', error || 'unknown');
+              safeExec(this,  'settingPasswordFailure');
               throw error;
             });
         } else {
           promise = Promise.reject();
         }
         return promise
-          .then(() => safeExec(this, 'registerSuccess'))
+          .then(() => safeExec(this, 'settingPasswordSuccess'))
           .then(() => {
             return this.get('session').authenticate(
               'authenticator:application', {
                 password,
               }).catch(() => {
-              // in very rare cases, new account can be broken (unavailable)
+              // in very rare cases cannot login immediately
               window.location.reload();
             });
           })
