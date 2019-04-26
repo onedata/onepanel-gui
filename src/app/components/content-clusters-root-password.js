@@ -1,37 +1,34 @@
 /**
- * Implements operations on user for onepanel
+ * Implements root password change operation
  * 
- * @module components/content-clusters-credentials
- * @author Jakub Liput, Michal Borzecki
+ * @module components/content-clusters-root-password
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
-import { get, computed } from '@ember/object';
+import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 import Onepanel from 'npm:onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
-  UserModifyRequest,
+  RootPasswordChangeRequest,
 } = Onepanel;
 
-export default Component.extend({
-  classNames: ['content-cluster-credentials'],
+export default Component.extend(I18n, {
+  classNames: ['content-cluster-root-password'],
 
   i18n: service(),
   globalNotify: service(),
-  userManager: service(),
   onepanelServer: service(),
 
   /**
-   * @type {OnepanelGui.UserDetails}
+   * @override
    */
-  userProxy: computed(function userProxy() {
-    // FIXME: will not work in emergency mode
-    return this.get('userManager').getCurrentUser();
-  }),
+  i18nPrefix: 'components.contentClustersRootPassword',
 
   /**
    * If true, set credentials form to changingPassword mode
@@ -40,10 +37,9 @@ export default Component.extend({
   _changingPassword: false,
 
   _changePasswordButtonLabel: computed('_changingPassword', function () {
-    let i18n = this.get('i18n');
     return this.get('_changingPassword') ?
-      i18n.t('components.contentClustersCredentials.cancelChangePassword') :
-      i18n.t('components.contentClustersCredentials.changePassword');
+      this.t('cancelChangePassword') :
+      this.t('changePassword');
   }),
 
   _changePasswordButtonType: computed('_changingPassword', function () {
@@ -56,7 +52,7 @@ export default Component.extend({
   }),
 
   /**
-   * Make an API call to change password of current user
+   * Make an API call to change root password
    * @override
    * @param {object} data
    * @param {string} data.currentPassword
@@ -64,20 +60,12 @@ export default Component.extend({
    * @returns {Promise} resolves on change password success
    */
   _changePassword({ currentPassword, newPassword }) {
-    let {
-      userProxy,
-      onepanelServer,
-    } = this.getProperties(
-      'userProxy',
-      'onepanelServer',
-    );
+    const onepanelServer = this.get('onepanelServer');
 
-    // FIXME: use PUT password
     return onepanelServer.request(
       'onepanel',
-      'modifyUser',
-      get(userProxy, 'id'),
-      UserModifyRequest.constructFromObject({
+      'setRootPassword',
+      RootPasswordChangeRequest.constructFromObject({
         currentPassword,
         newPassword,
       })
@@ -90,34 +78,23 @@ export default Component.extend({
     },
 
     /**
-     * Make an API call to change password of current user
-     * and handles promise resolve, reject
+     * Make an API call to change root password and handles promise
+     * resolve, reject
      * 
-     * @param {object} { oldPassword: string, newPassword: string }
+     * @param {object} { currentPassword: string, newPassword: string }
      * @returns {Promise} an API call promise, resolves on change password success
      */
     submitChangePassword({ currentPassword, newPassword }) {
-      let {
-        i18n,
-        globalNotify,
-      } = this.getProperties(
-        'i18n',
-        'globalNotify'
-      );
+      const globalNotify = this.get('globalNotify');
 
       let changingPassword = this._changePassword({ currentPassword, newPassword });
 
       changingPassword.catch(error => {
-        globalNotify.backendError(
-          i18n.t('components.contentClustersCredentials.passwordChangedSuccess'),
-          error
-        );
+        globalNotify.backendError(this.t('passwordChangeErrorType'), error);
       });
 
       changingPassword.then(() => {
-        globalNotify.info(
-          i18n.t('components.contentClustersCredentials.passwordChangedSuccess')
-        );
+        globalNotify.info(this.t('passwordChangedSuccess'));
         safeExec(this, 'set', '_changingPassword', false);
       });
 

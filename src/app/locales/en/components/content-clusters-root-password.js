@@ -1,5 +1,5 @@
 export default {
-  title: 'Credentials',
+  title: 'Root password',
   changePassword: 'Change password',
   cancelChangePassword: 'Cancel password change',
   passwordChangedSuccess: 'Password changed successfully',

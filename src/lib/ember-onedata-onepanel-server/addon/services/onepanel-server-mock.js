@@ -1260,8 +1260,8 @@ export default OnepanelServerBase.extend(
 
     _req_onepanel_setRootPassword() {
       return {
-        success: ({ password }) => {
-          this.set('currentRootPassword', password);
+        success: ({ newPassword }) => {
+          this.set('currentRootPassword', newPassword);
         },
         statusCode: () => 200,
       };

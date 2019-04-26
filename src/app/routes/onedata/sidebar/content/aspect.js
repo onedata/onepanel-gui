@@ -17,7 +17,7 @@ const zoneAspects = new Set([
   'nodes',
   'dns',
   'certificate',
-  'credentials',
+  'root-password',
   'members',
 ]);
 

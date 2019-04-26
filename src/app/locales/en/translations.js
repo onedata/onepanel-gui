@@ -50,7 +50,7 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
-import contentClustersCredentials from './components/content-clusters-credentials';
+import contentClustersRootPassword from './components/content-clusters-root-password';
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
@@ -130,7 +130,7 @@ let translations = {
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
-    contentClustersCredentials,
+    contentClustersRootPassword,
     clusterNodesTile,
     clusterSpacesTile,
     clusterStoragesTile,
