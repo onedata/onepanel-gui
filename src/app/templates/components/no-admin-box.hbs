@@ -12,6 +12,12 @@
         <h4>
           <span class="one-label">
             {{tt this (concat "headers." mode)}}
+            {{#if (eq mode "create")}}
+              <span class="subtitle-tip">
+                {{one-icon icon="sign-question"}}
+                {{one-tooltip title=(tt this "createHint")}}
+              </span>
+            {{/if}}
           </span>
         </h4>
       </div>

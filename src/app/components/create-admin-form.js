@@ -14,7 +14,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { computed } from '@ember/object';
 import _ from 'lodash';
-import notImplementedWarm from 'onedata-gui-common/utils/not-implemented-warn';
+import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 
 export default Component.extend(I18n, {
   classNames: ['create-admin-form', 'basicauth-login-form'],
@@ -30,30 +30,25 @@ export default Component.extend(I18n, {
    * @virtual 
    * @type {Function}
    */
-  registerStarted: notImplementedWarm,
+  registerStarted: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  registerFailure: notImplementedWarm,
+  registerFailure: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  registerSuccess: notImplementedWarm,
+  registerSuccess: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  back: notImplementedWarm,
-
-  /**
-   * @type {string}
-   */
-  username: '',
+  back: notImplementedWarn,
 
   /**
    * @type {string}
@@ -72,30 +67,24 @@ export default Component.extend(I18n, {
   passwordEntered: false,
   confirmEntered: false,
   confirmTyped: false,
-  usernameEntered: false,
 
-  passwordsMatch: computed('password', 'confirmPassword', function () {
+  passwordsMatch: computed('password', 'confirmPassword', function passwordsMatch() {
     return this.get('password') === this.get('confirmPassword');
   }),
 
-  usernameInvalidMessage: computed('username', function () {
-    const username = this.get('username');
-    if (username.length < 2) {
-      return 'tooShort';
-    } else {
-      return null;
+  confirmInvalid: computed(
+    'confirmEntered',
+    'passwordsMatch',
+    function confirmInvalid() {
+      return this.get('confirmEntered') && !this.get('passwordsMatch');
     }
-  }),
+  ),
 
-  confirmInvalid: computed('confirmEntered', 'passwordsMatch', function () {
-    return this.get('confirmEntered') && !this.get('passwordsMatch');
-  }),
-
-  confirmValid: computed('confirmTyped', 'passwordsMatch', function () {
+  confirmValid: computed('confirmTyped', 'passwordsMatch', function confirmValid() {
     return this.get('confirmTyped') && this.get('passwordsMatch');
   }),
 
-  passwordInvalidMessage: computed('password', function () {
+  passwordInvalidMessage: computed('password', function passwordInvalidMessage() {
     const password = this.get('password');
     if (password.length < 8) {
       return 'tooShort';
@@ -108,38 +97,25 @@ export default Component.extend(I18n, {
 
   submitEnabled: computed(
     'confirmValid',
-    'username',
     'password',
     'passwordInvalidMessage',
-    'usernameInvalidMessage',
-    function () {
+    function submitEnabled() {
       const {
         confirmValid,
-        username,
         password,
         passwordInvalidMessage,
-        usernameInvalidMessage,
       } = this.getProperties(
         'confirmValid',
-        'username',
         'password',
         'passwordInvalidMessage',
-        'usernameInvalidMessage',
       );
 
-      return username &&
-        password &&
+      return password &&
         !passwordInvalidMessage &&
-        !usernameInvalidMessage &&
         confirmValid;
     }),
 
   didInsertElement() {
-    this.$('.add-user-username').on('focusout', () => {
-      if (!this.get('usernameEntered')) {
-        safeExec(this, 'set', 'usernameEntered', true);
-      }
-    });
     this.$('.password').on('focusout', () => {
       if (!this.get('passwordEntered')) {
         safeExec(this, 'set', 'passwordEntered', true);
@@ -158,17 +134,13 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    submitAddUser(username, password, confirmPassword) {
+    submitAddUser(password, confirmPassword) {
       if (this.get('submitEnabled')) {
         this.set('isDisabled', true);
         let promise;
-        if (username && password && password === confirmPassword) {
+        if (password && password === confirmPassword) {
           this.get('registerStarted')();
-          promise = this.get('userManager').addUser(
-              username,
-              password,
-              'admin',
-            )
+          promise = this.get('userManager').setRootPassword(password)
             .catch(error => {
               this.get('globalNotify').backendError(
                 this.tt('creationBackendError'),
@@ -184,10 +156,9 @@ export default Component.extend(I18n, {
           .then(() => safeExec(this, 'registerSuccess'))
           .then(() => {
             return this.get('session').authenticate(
-              'authenticator:application',
-              username,
-              password
-            ).catch(() => {
+              'authenticator:application', {
+                password,
+              }).catch(() => {
               // in very rare cases, new account can be broken (unavailable)
               window.location.reload();
             });

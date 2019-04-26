@@ -29,6 +29,7 @@ export default Component.extend({
    * @type {OnepanelGui.UserDetails}
    */
   userProxy: computed(function userProxy() {
+    // FIXME: will not work in emergency mode
     return this.get('userManager').getCurrentUser();
   }),
 
@@ -71,6 +72,7 @@ export default Component.extend({
       'onepanelServer',
     );
 
+    // FIXME: use PUT password
     return onepanelServer.request(
       'onepanel',
       'modifyUser',

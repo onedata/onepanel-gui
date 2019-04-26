@@ -17,6 +17,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
+  onepanelServer: service(),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -32,6 +33,12 @@ export default SecondLevelItems.extend(I18n, {
    * @type {Ember.ComputerProperty<boolean>}
    */
   webCertValid: reads('webCertManager.webCertValid'),
+
+  /**
+   * @override
+   * @type {ComputedProperty<boolean>}
+   */
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -63,69 +70,6 @@ export default SecondLevelItems.extend(I18n, {
         this.t('webCertWarning') : undefined,
     };
   }),
-
-  clusterSecondLevelItems: computed(
-    'isNotDeployedCluster',
-    'isLocalCluster',
-    'clusterType',
-    'dnsItem',
-    'certificateItem',
-    'credentialsItem',
-    'nodesItem',
-    'overviewItem',
-    'providerItem',
-    'storagesItem',
-    'spacesItem',
-    'membersItem',
-    function () {
-      const {
-        isNotDeployedCluster,
-        isLocalCluster,
-      } = this.getProperties('isNotDeployedCluster', 'isLocalCluster');
-      if (isNotDeployedCluster || !isLocalCluster) {
-        return [];
-      } else {
-        const {
-          clusterType,
-          dnsItem,
-          certificateItem,
-          credentialsItem,
-          nodesItem,
-          overviewItem,
-          providerItem,
-          storagesItem,
-          spacesItem,
-          membersItem,
-        } = this.getProperties(
-          'clusterType',
-          'cluster',
-          'dnsItem',
-          'certificateItem',
-          'credentialsItem',
-          'nodesItem',
-          'overviewItem',
-          'providerItem',
-          'storagesItem',
-          'spacesItem',
-          'membersItem'
-        );
-        const commonItems = [
-          overviewItem,
-          nodesItem,
-          dnsItem,
-          certificateItem,
-          credentialsItem,
-          membersItem,
-        ];
-        return clusterType === 'onezone' ? commonItems : [
-          ...commonItems,
-          providerItem,
-          storagesItem,
-          spacesItem,
-        ];
-      }
-    }
-  ),
 
   init() {
     this._super(...arguments);

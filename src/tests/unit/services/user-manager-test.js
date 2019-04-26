@@ -29,18 +29,4 @@ describe('Unit | Service | user manager', function () {
 
     expect(currentUserResult).to.be.equal(currentUserProxy);
   });
-
-  it('resolves list with only current user details', function (done) {
-    let service = this.subject();
-    let currentUserProxy = { some: 'proxy' };
-    service.getCurrentUser = function () {
-      return currentUserProxy;
-    };
-
-    service.getUsers().get('promise').then(users => {
-      expect(users).to.have.length(1);
-      expect(users[0]).to.be.equal(currentUserProxy);
-      done();
-    });
-  });
 });

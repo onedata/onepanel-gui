@@ -1,9 +1,10 @@
 export default {
   headers: {
     first: 'New Onepanel installation',
-    create: 'Create an admin account',
+    create: 'Set Onepanel root password',
     join: 'Join a cluster',
   },
+  createHint: 'Root password is used to gain administrative access to the Onepanel emergency interface, allowing to view, modify and remove the cluster installation. It is not associated with any user in the system. The root password is especially useful for maintenance when the superior Onezone service is down and its not possible to log in with your Onedata user account.',
   descriptions: {
     first: 'Onepanel is used to create a deployment on a cluster of nodes.',
     firstMore: 'Please ensure it is preinstalled on all nodes destined to be a ' +

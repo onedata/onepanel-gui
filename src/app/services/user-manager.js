@@ -20,9 +20,11 @@ export default Service.extend({
   username: oneWay('onepanelServer.username'),
 
   getCurrentUser() {
+    // FIXME: will not work in emergency
     return this.getUserDetails(this.get('username'));
   },
 
+  // FIXME: unneeded abstraction?
   getUserDetails(username) {
     let user = this.get('onepanelServer')
       .request('onepanel', 'getCurrentUser')
@@ -34,6 +36,7 @@ export default Service.extend({
     return PromiseObject.create({ promise: user });
   },
 
+  // FIXME: not avail now
   getUsers() {
     let promise = new Promise(resolve => {
       resolve(A([this.getCurrentUser()]));
@@ -42,36 +45,16 @@ export default Service.extend({
   },
 
   /**
-   * @returns {Promise<boolean|any>}
+   * @returns {Promise<boolean>}
    */
   checkAdminUserExists() {
     return this.get('onepanelServer')
-      .staticRequest('onepanel', 'getUsers', [{ role: 'admin' }])
-      .then(({ data: { usernames } }) => usernames.length > 0)
-      .catch(error => {
-        if (error.response.statusCode === 403) {
-          return true;
-        } else {
-          throw error;
-        }
-      });
+      .staticRequest('onepanel', 'getRootPasswordStatus')
+      .then(({ data: { isSet } }) => isSet);
   },
 
-  /**
-   * Create Panel user
-   * @param {string} username 
-   * @param {string} password 
-   * @param {string} userRole one of: admin, regular
-   * @returns {Promise<undefined|any>}
-   */
-  addUser(username, password, userRole) {
-    const userCreateRequest = {
-      username,
-      password,
-      userRole,
-    };
-
+  setRootPassword(password) {
     return this.get('onepanelServer')
-      .staticRequest('onepanel', 'addUser', [userCreateRequest]);
+      .staticRequest('onepanel', 'setRootPassword', [{ password }]);
   },
 });

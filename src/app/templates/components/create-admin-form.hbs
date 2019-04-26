@@ -1,28 +1,10 @@
 <div class="row text-center">
   <div class="col-xs-12">
     {{#bs-form class="form-horizontal"
-      onSubmit=(action "submitAddUser" username password confirmPassword)
+      onSubmit=(action "submitAddUser" password confirmPassword)
       formLayout="horizontal"
       as |form|
     }}
-      {{#form.group class=(if (and usernameInvalidMessage usernameEntered) "has-error")}}
-        <div class="input-group with-icon-addon">
-          <div class="input-group-addon">
-            {{one-icon icon="user"}}
-          </div>
-          {{one-way-input username
-            class="form-control add-user-username"
-            update=(action (mut username))
-            placeholder=(tt this "username")
-            disabled=isDisabled
-          }}
-        </div>
-        {{#if (and usernameInvalidMessage usernameEntered)}}
-          <div class="form-message">
-            {{tt this (concat "invalidUsername." usernameInvalidMessage)}}
-          </div>
-        {{/if}}
-      {{/form.group}}
       {{#form.group class=(if (and passwordInvalidMessage passwordEntered) "has-error")}}
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
@@ -74,7 +56,7 @@
         {{#one-spin-button class="btn btn-primary"
           buttonStyle="expand-left"
           disabled=(not submitEnabled)
-          action=(action "submitAddUser" username password confirmPassword)
+          action=(action "submitAddUser" password confirmPassword)
         }}
           {{tt this "create"}}
         {{/one-spin-button}}

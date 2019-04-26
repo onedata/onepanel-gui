@@ -6,13 +6,10 @@ export default {
   error: 'Creation of admin user failed:',
   unknownError: 'unknown error',
   passwordsNotMatch: 'Passwords should match',
-  create: 'Create',
+  create: 'Submit',
   invalidPassword: {
     tooShort: 'Password should be at least 8 characters long',
     semicolon: 'Password should not contain colon character',
-  },
-  invalidUsername: {
-    tooShort: 'Username should be at least 2 characters long',
   },
   back: 'Back',
 };

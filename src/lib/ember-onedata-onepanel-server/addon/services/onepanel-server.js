@@ -243,6 +243,7 @@ export default OnepanelServerBase.extend(
                     ttl,
                   })
                   .then(() => {
+                    // FIXME: will not work in emergency
                     return this.request('onepanel', 'getCurrentUser').then(
                       ({ data }) => {
                         const username = get(data, 'username');
@@ -325,15 +326,14 @@ export default OnepanelServerBase.extend(
      * Makes a request to backend to create session using basic auth.
      * Only in emergency mode.
      *
-     * @param {string} username 
      * @param {string} password
      * @returns {Promise}
      */
-    login(username, password) {
+    login(password) {
       return new Promise((resolve, reject) => {
         $.ajax('/login', {
           method: 'POST',
-          headers: { Authorization: 'Basic ' + btoa(username + ':' + password) },
+          headers: { Authorization: 'Basic ' + btoa(password) },
         }).then(resolve, reject);
       }).then(() => this.validateSession());
     },

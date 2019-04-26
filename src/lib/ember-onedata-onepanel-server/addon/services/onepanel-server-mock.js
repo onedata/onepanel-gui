@@ -239,12 +239,6 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
-    /**
-     * Set to false if want to see create cluster init options (add admin, etc.)
-     * @type {boolean}
-     */
-    adminUserPresent: true,
-
     username: MOCK_USERNAME,
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
@@ -265,6 +259,12 @@ export default OnepanelServerBase.extend(
      * @type {computed<Boolean>}
      */
     isInitialized: false,
+
+    /**
+     * Set to undefined here to see create admin account screen
+     * @type {computed}
+     */
+    currentRootPassword: 'password',
 
     /**
      * @returns {Promise}
@@ -415,11 +415,12 @@ export default OnepanelServerBase.extend(
         .then(() => ({ token: 'mock-token', username: MOCK_USERNAME }));
     },
 
-    login(username, password) {
-      console.debug(`service:onepanel-server-mock: login ${username}`);
+    login(password) {
+      const currentRootPassword = this.get('currentRootPassword');
+      console.debug('service:onepanel-server-mock: login');
       let cookies = this.get('cookies');
       let loginCall = new Promise((resolve, reject) => {
-        if (username === 'admin' && password === 'password') {
+        if (password === currentRootPassword) {
           cookies.write('is-authenticated', 'true');
           run.next(resolve);
         } else {
@@ -1100,13 +1101,6 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_addUser() {
-      return {
-        success: () => undefined,
-        statusCode: () => 204,
-      };
-    },
-
     _req_onepanel_addClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
@@ -1128,23 +1122,6 @@ export default OnepanelServerBase.extend(
         },
         statusCode: () => 204,
       };
-    },
-
-    /**
-     * Currently only unauthenticated response
-     * @returns {object}
-     */
-    _req_onepanel_getUsers() {
-      if (this.get('adminUserPresent')) {
-        return {
-          statusCode: () => 403,
-        };
-      } else {
-        return {
-          success: () => ({ usernames: [] }),
-          statusCode: () => 200,
-        };
-      }
     },
 
     _req_onepanel_getNode() {
@@ -1270,6 +1247,22 @@ export default OnepanelServerBase.extend(
           zoneDomain: 'onezone.local-onedata.org',
 
         }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_getRootPasswordStatus() {
+      return {
+        success: () => ({ isSet: Boolean(this.get('currentRootPassword')) }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_setRootPassword() {
+      return {
+        success: ({ password }) => {
+          this.set('currentRootPassword', password);
+        },
         statusCode: () => 200,
       };
     },
