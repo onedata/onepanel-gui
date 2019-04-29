@@ -6,9 +6,6 @@
 }}
   <p class="text-center">
     {{tt this "textFullyOperational"}}
-    {{#if (eq serviceType "onezone")}}
-      {{tt this "adminInOnezoneCreated"}}
-    {{/if}}
   </p>
   <p class="text-center">{{tt this "textTwoWays"}}</p>
   <ul class="info">
@@ -21,8 +18,17 @@
       </div>
       <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
       {{tt this "wayOnezoneInterface3"}}
-      {{#if isEmergencyOnepanel}}
-        {{tt this "wayOnezoneAccess"}}
+      {{#if (eq serviceType "oneprovider")}}
+        {{#if isEmergencyOnepanel}}
+          {{tt this "wayOnezoneAccessProvider"}}
+        {{/if}}
+      {{else}}
+        {{tt this "wayOnezoneAccessZone"}}
+        <div class="admin-account-info">
+          {{tt this "login"}}: <strong>admin</strong><br>
+          {{tt this "password"}}: <strong>{{tt this "sameAsPassphrase"}}</strong>
+        </div>
+        {{tt this "canChangePassword"}}
       {{/if}}
     </li>
     <li>
