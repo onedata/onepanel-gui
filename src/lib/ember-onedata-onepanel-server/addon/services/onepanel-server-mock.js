@@ -40,7 +40,7 @@ const {
   },
 } = Onepanel;
 
-const MOCK_USERNAME = 'mock_admin';
+const MOCK_USERNAME = 'mock_root';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 const PROVIDER1_ID = PROVIDER_ID;
 const PROVIDER2_ID = 'dsnu8ew3724t3643t62344e-fdfdj8h78d';
@@ -682,25 +682,6 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getUser: computed(function () {
-      return {
-        success() {
-          return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
-          };
-        },
-      };
-    }),
-
-    _req_onepanel_modifyUser: computed(function () {
-      return {
-        success( /* ignore password */ ) {
-          return null;
-        },
-      };
-    }),
-
     _req_onepanel_getCurrentUser() {
       return {
         success() {
@@ -708,6 +689,17 @@ export default OnepanelServerBase.extend(
             userId: 'usrid123',
             username: MOCK_USERNAME,
             userRole: 'admin',
+            clusterPrivileges: [
+              'cluster_view',
+              'cluster_update',
+              'cluster_delete',
+              'cluster_view_privileges',
+              'cluster_set_privileges',
+              'cluster_add_user',
+              'cluster_remove_user',
+              'cluster_add_group',
+              'cluster_remove_group',
+            ],
           };
         },
       };

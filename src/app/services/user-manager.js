@@ -8,9 +8,7 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-
-import { Promise } from 'rsvp';
-import { A } from '@ember/array';
+import { getProperties } from '@ember/object';
 import { oneWay } from '@ember/object/computed';
 import UserDetails from 'onepanel-gui/models/user-details';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -19,35 +17,31 @@ export default Service.extend({
   onepanelServer: service(),
   username: oneWay('onepanelServer.username'),
 
+  /**
+   * @returns {PromiseObject<models.UserDetails>}
+   */
   getCurrentUser() {
-    // FIXME: will not work in emergency
-    return this.getUserDetails(this.get('username'));
-  },
+    const onepanelServer = this.get('onepanelServer');
 
-  // FIXME: unneeded abstraction?
-  getUserDetails(username) {
-    let user = this.get('onepanelServer')
-      .request('onepanel', 'getCurrentUser')
-      .then(({ data }) => UserDetails.create({
-        username: username,
-        userId: data.userId,
-        userRole: data.userRole,
-      }));
-    return PromiseObject.create({ promise: user });
-  },
-
-  // FIXME: not avail now
-  getUsers() {
-    let promise = new Promise(resolve => {
-      resolve(A([this.getCurrentUser()]));
-    });
-    return PromiseObject.create({ promise });
+    const fetchUserPromise = onepanelServer.getCurrentUser()
+      .then(userDetails => {
+        const userBasicData = getProperties(
+          userDetails,
+          'username',
+          'userId',
+          'userRole',
+          'clusterPrivileges'
+        );
+        return UserDetails.create(userBasicData);
+      });
+    
+    return PromiseObject.create({ promise: fetchUserPromise });
   },
 
   /**
    * @returns {Promise<boolean>}
    */
-  checkAdminUserExists() {
+  checkRootPasswordIsSet() {
     return this.get('onepanelServer')
       .staticRequest('onepanel', 'getRootPasswordStatus')
       .then(({ data: { isSet } }) => isSet);

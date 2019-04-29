@@ -53,11 +53,11 @@ export default LoginRoute.extend({
     if (isEmergency) {
       const baseModel = this._super(...arguments) || {};
       return Promise.all([
-        userManager.checkAdminUserExists(),
+        userManager.checkRootPasswordIsSet(),
         onezoneGui.getCanEnterViaOnezoneProxy(),
-      ]).then(([adminUserExists, canEnterViaOnezone]) => {
+      ]).then(([isRootPasswordSet, canEnterViaOnezone]) => {
         setProperties(baseModel, {
-          adminUserExists,
+          isRootPasswordSet,
           canEnterViaOnezone,
         });
         return baseModel;

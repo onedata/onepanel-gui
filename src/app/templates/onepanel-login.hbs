@@ -1,7 +1,7 @@
 {{partial "emergency-bar"}}
 
 {{#login-layout}}
-  {{#if model.adminUserExists}}
+  {{#if model.isRootPasswordSet}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}
     {{no-root-password-box}}

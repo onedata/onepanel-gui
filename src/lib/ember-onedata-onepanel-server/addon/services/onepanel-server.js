@@ -225,10 +225,6 @@ export default OnepanelServerBase.extend(
      *    resolves object with: token (for Onepanel API), username
      */
     validateSession() {
-      /** 
-       * Resolve token for authorizing Onepanel REST calls
-       * @type {string}
-       */
       return this.getOnepanelToken()
         .then(tokenData => {
           const onepanelToken = tokenData.token;
@@ -243,10 +239,9 @@ export default OnepanelServerBase.extend(
                     ttl,
                   })
                   .then(() => {
-                    // FIXME: will not work in emergency
-                    return this.request('onepanel', 'getCurrentUser').then(
-                      ({ data }) => {
-                        const username = get(data, 'username');
+                    return this.getCurrentUser()
+                      .then(userDetails => {
+                        const username = get(userDetails, 'username');
                         safeExec(this, 'set', 'username', username);
                         return { token: onepanelToken, username };
                       });
@@ -254,6 +249,37 @@ export default OnepanelServerBase.extend(
               });
             });
         });
+    },
+
+    /**
+     * Returns promise that resolves to current user details
+     * @returns {Promise<Onepanel.UserDetails>}
+     */
+    getCurrentUser() {
+      const isEmergency = this.get('isEmergency');
+
+      if (isEmergency) {
+        // root account
+        return resolve({
+          userId: 'root',
+          username: 'root',
+          userRole: 'admin',
+          clusterPrivileges: [
+            'cluster_view',
+            'cluster_update',
+            'cluster_delete',
+            'cluster_view_privileges',
+            'cluster_set_privileges',
+            'cluster_add_user',
+            'cluster_remove_user',
+            'cluster_add_group',
+            'cluster_remove_group',
+          ],
+        });
+      } else {
+        this.request('onepanel', 'getCurrentUser')
+          .then(({ data }) => data);
+      }
     },
 
     /**
@@ -375,6 +401,10 @@ export default OnepanelServerBase.extend(
       });
     },
 
+    /** 
+     * Resolves to token for authorizing Onepanel REST calls
+     * @returns {Promise<string>}
+     */
     getOnepanelToken() {
       const isEmergency = this.get('isEmergency');
       let tokenPromise;

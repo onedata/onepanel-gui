@@ -22,7 +22,6 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.noRootPasswordBox.',
 
   globalNotify: service(),
-  userManager: service(),
   session: service(),
   onepanelServer: service(),
 

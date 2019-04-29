@@ -34,7 +34,7 @@ export default Service.extend({
           return this.get('clusterModelManager').getCluster(id);
         }
       case 'users':
-        return this.get('userManager').getUserDetails(id).get('promise');
+        return this.get('userManager').getCurrentUser().get('promise');
       default:
         return new Promise((resolve, reject) => reject('No such model type: ' + type));
     }

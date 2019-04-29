@@ -22,7 +22,7 @@
       </div>
       <div class="col-xs-12 col-centered login-separator">
         <p class="text-center">
-          <a {{action "usernameLoginToggle"}} class="username-login-toggle text-link">
+          <a {{action "rootPasswordLoginToggle"}} class="username-login-toggle text-link">
             {{tt this "signInWithCredentialsLink"}}
           </a>
         </p>
@@ -42,7 +42,7 @@
       authenticationSuccess=authenticationSuccess
       authenticationFailure=authenticationFailure
       authenticationStarted=authenticationStarted
-      backButtonAction=(if visitViaOnezoneUrl (action "usernameLoginToggle") undefined)
+      backButtonAction=(if visitViaOnezoneUrl (action "rootPasswordLoginToggle") undefined)
     }}
   </div>
 {{/promise-proxy-container}}
