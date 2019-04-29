@@ -1,6 +1,7 @@
 export default {
   header: 'Cluster configured successfully',
   textFullyOperational: 'Your cluster is now fully operational.',
+  adminInOnezoneCreated: '"admin" account has been created in Onezone with the same password as root.',
   textTwoWays: 'There are two ways you can access the Onepanel interface to manage your cluster:',
   buttonLabel: 'Manage cluster via Onezone',
   wayOnezoneInterface: 'Onezone interface',

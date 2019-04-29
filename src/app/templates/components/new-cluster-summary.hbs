@@ -1,10 +1,15 @@
 {{#content-info
-  class="scroll-breakpoint-500"
+  class="scroll-breakpoint-700"
   header=(tt this "header")
   buttonLabel=(tt this "buttonLabel")
   buttonAction=(action "manageNewCluster")
 }}
-  <p class="text-center">{{tt this "textFullyOperational"}}</p>
+  <p class="text-center">
+    {{tt this "textFullyOperational"}}
+    {{#if (eq serviceType "onezone")}}
+      {{tt this "adminInOnezoneCreated"}}
+    {{/if}}
+  </p>
   <p class="text-center">{{tt this "textTwoWays"}}</p>
   <ul class="info">
     <li>
