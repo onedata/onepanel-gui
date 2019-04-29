@@ -57,11 +57,11 @@
             {{/bs-button}}
           </div>
         {{else if (eq mode "create")}}
-          {{first-root-password-form
+          {{first-emergency-passphrase-form
             isBusy=isBusy
-            settingPasswordSuccess=(action "settingPasswordSuccess")
-            settingPasswordFailure=(action "settingPasswordFailure")
-            settingPasswordStarted=(action "settingPasswordStarted")
+            settingPassphraseSuccess=(action "settingPassphraseSuccess")
+            settingPassphraseFailure=(action "settingPassphraseFailure")
+            settingPassphraseStarted=(action "settingPassphraseStarted")
             back=(action "changeMode" "first")
           }}
         {{else if (eq mode "join")}}

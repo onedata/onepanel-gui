@@ -264,7 +264,7 @@ export default OnepanelServerBase.extend(
      * Set to undefined here to see create admin account screen
      * @type {computed}
      */
-    currentRootPassword: 'password',
+    currentEmergencyPassphrase: 'password',
 
     /**
      * @returns {Promise}
@@ -415,12 +415,12 @@ export default OnepanelServerBase.extend(
         .then(() => ({ token: 'mock-token', username: MOCK_USERNAME }));
     },
 
-    login(password) {
-      const currentRootPassword = this.get('currentRootPassword');
+    login(passphrase) {
+      const currentEmergencyPassphrase = this.get('currentEmergencyPassphrase');
       console.debug('service:onepanel-server-mock: login');
       let cookies = this.get('cookies');
       let loginCall = new Promise((resolve, reject) => {
-        if (password === currentRootPassword) {
+        if (passphrase === currentEmergencyPassphrase) {
           cookies.write('is-authenticated', 'true');
           run.next(resolve);
         } else {
@@ -1243,17 +1243,17 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getRootPasswordStatus() {
+    _req_onepanel_getEmergencyPassphraseStatus() {
       return {
-        success: () => ({ isSet: Boolean(this.get('currentRootPassword')) }),
+        success: () => ({ isSet: Boolean(this.get('currentEmergencyPassphrase')) }),
         statusCode: () => 200,
       };
     },
 
-    _req_onepanel_setRootPassword() {
+    _req_onepanel_setEmergencyPassphrase() {
       return {
-        success: ({ newPassword }) => {
-          this.set('currentRootPassword', newPassword);
+        success: ({ newPassphrase }) => {
+          this.set('currentEmergencyPassphrase', newPassphrase);
         },
         statusCode: () => 200,
       };

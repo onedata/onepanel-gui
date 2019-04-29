@@ -1,9 +1,9 @@
 {{partial "emergency-bar"}}
 
 {{#login-layout}}
-  {{#if model.isRootPasswordSet}}
+  {{#if model.isEmergencyPassphraseSet}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}
-    {{no-root-password-box}}
+    {{no-emergency-passphrase-box}}
   {{/if}}
 {{/login-layout}}

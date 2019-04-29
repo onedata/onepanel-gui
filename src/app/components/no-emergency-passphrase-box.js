@@ -1,7 +1,7 @@
 /**
- * A container component for setting first root password
+ * A container component for setting first emergency passphrase
  *
- * @module components/no-root-password-box
+ * @module components/no-emergency-passphrase-box
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -17,9 +17,9 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, {
   layout,
-  classNames: ['login-box', 'no-root-password-box'],
+  classNames: ['login-box', 'no-emergency-passphrase-box'],
 
-  i18nPrefix: 'components.noRootPasswordBox.',
+  i18nPrefix: 'components.noEmergencyPassphraseBox.',
 
   globalNotify: service(),
   session: service(),
@@ -67,16 +67,16 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    settingPasswordStarted() {
+    settingPassphraseStarted() {
       this.set('isBusy', true);
     },
 
-    settingPasswordSuccess() {
-      this.get('globalNotify').info(this.tt('settingPasswordSuccess'));
+    settingPassphraseSuccess() {
+      this.get('globalNotify').info(this.tt('settingPassphraseSuccess'));
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 
-    settingPasswordFailure() {
+    settingPassphraseFailure() {
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 

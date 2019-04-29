@@ -1,0 +1,22 @@
+<div class="row content-row header-row">
+  <h1>
+    {{tt this "title"}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        type=_changePassphraseButtonType
+        class="btn-sm btn-change-passphrase"
+        onClick=(action "toggleChangePassphrase")
+      }}
+        {{_changePassphraseButtonLabel}}
+      {{/bs-button}}
+    </div>
+  </h1>
+</div>
+<div class="row content-row">
+  {{user-credentials-form
+    type="passphrase"
+    changingPassword=_changingPassphrase
+    submit=(action "submitChangePassphrase")
+    class=_changePassphraseButtonClass
+  }}
+</div>

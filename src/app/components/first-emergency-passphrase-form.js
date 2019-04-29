@@ -1,7 +1,7 @@
 /**
- * A component with form for setting first root password
+ * A component with form for setting first emergency passphrase
  *
- * @module components/first-root-password-form
+ * @module components/first-emergency-passphrase-form
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -17,32 +17,32 @@ import _ from 'lodash';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 
 export default Component.extend(I18n, {
-  classNames: ['first-root-password-form', 'basicauth-login-form'],
+  classNames: ['first-emergency-passphrase-form', 'basicauth-login-form'],
 
   session: service(),
   userManager: service(),
   globalNotify: service(),
   i18n: service(),
 
-  i18nPrefix: 'components.firstRootPasswordForm.',
+  i18nPrefix: 'components.firstEmergencyPassphraseForm.',
 
   /**
    * @virtual 
    * @type {Function}
    */
-  settingPasswordStarted: notImplementedWarn,
+  settingPassphraseStarted: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  settingPasswordFailure: notImplementedWarn,
+  settingPassphraseFailure: notImplementedWarn,
 
   /**
    * @virtual 
    * @type {Function}
    */
-  settingPasswordSuccess: notImplementedWarn,
+  settingPassphraseSuccess: notImplementedWarn,
 
   /**
    * @virtual 
@@ -53,42 +53,42 @@ export default Component.extend(I18n, {
   /**
    * @type {string}
    */
-  password: '',
+  passphrase: '',
 
   /**
    * @type {string}
    */
-  confirmPassword: '',
+  confirmPassphrase: '',
 
   isDisabled: false,
 
   error: undefined,
 
-  passwordEntered: false,
+  passphraseEntered: false,
   confirmEntered: false,
   confirmTyped: false,
 
-  passwordsMatch: computed('password', 'confirmPassword', function passwordsMatch() {
-    return this.get('password') === this.get('confirmPassword');
+  passphrasesMatch: computed('passphrase', 'confirmPassphrase', function passphrasesMatch() {
+    return this.get('passphrase') === this.get('confirmPassphrase');
   }),
 
   confirmInvalid: computed(
     'confirmEntered',
-    'passwordsMatch',
+    'passphrasesMatch',
     function confirmInvalid() {
-      return this.get('confirmEntered') && !this.get('passwordsMatch');
+      return this.get('confirmEntered') && !this.get('passphrasesMatch');
     }
   ),
 
-  confirmValid: computed('confirmTyped', 'passwordsMatch', function confirmValid() {
-    return this.get('confirmTyped') && this.get('passwordsMatch');
+  confirmValid: computed('confirmTyped', 'passphrasesMatch', function confirmValid() {
+    return this.get('confirmTyped') && this.get('passphrasesMatch');
   }),
 
-  passwordInvalidMessage: computed('password', function passwordInvalidMessage() {
-    const password = this.get('password');
-    if (password.length < 8) {
+  passphraseInvalidMessage: computed('passphrase', function passphraseInvalidMessage() {
+    const passphrase = this.get('passphrase');
+    if (passphrase.length < 8) {
       return 'tooShort';
-    } else if (_.includes(password, ':')) {
+    } else if (_.includes(passphrase, ':')) {
       return 'semicolon';
     } else {
       return null;
@@ -97,36 +97,36 @@ export default Component.extend(I18n, {
 
   submitEnabled: computed(
     'confirmValid',
-    'password',
-    'passwordInvalidMessage',
+    'passphrase',
+    'passphraseInvalidMessage',
     function submitEnabled() {
       const {
         confirmValid,
-        password,
-        passwordInvalidMessage,
+        passphrase,
+        passphraseInvalidMessage,
       } = this.getProperties(
         'confirmValid',
-        'password',
-        'passwordInvalidMessage',
+        'passphrase',
+        'passphraseInvalidMessage',
       );
 
-      return password &&
-        !passwordInvalidMessage &&
+      return passphrase &&
+        !passphraseInvalidMessage &&
         confirmValid;
     }),
 
   didInsertElement() {
-    this.$('.password').on('focusout', () => {
-      if (!this.get('passwordEntered')) {
-        safeExec(this, 'set', 'passwordEntered', true);
+    this.$('.passphrase').on('focusout', () => {
+      if (!this.get('passphraseEntered')) {
+        safeExec(this, 'set', 'passphraseEntered', true);
       }
     });
-    this.$('.confirm-password').on('focusout', () => {
+    this.$('.confirm-passphrase').on('focusout', () => {
       if (!this.get('confirmEntered')) {
         safeExec(this, 'set', 'confirmEntered', true);
       }
     });
-    this.$('.confirm-password').on('keydown', () => {
+    this.$('.confirm-passphrase').on('keydown', () => {
       if (!this.get('confirmTyped')) {
         safeExec(this, 'set', 'confirmTyped', true);
       }
@@ -134,30 +134,30 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    submitPassword(password, confirmPassword) {
+    submitPassphrase(passphrase, confirmPassphrase) {
       if (this.get('submitEnabled')) {
         this.set('isDisabled', true);
         let promise;
-        if (password && password === confirmPassword) {
-          this.get('settingPasswordStarted')();
-          promise = this.get('userManager').setFirstRootPassword(password)
+        if (passphrase && passphrase === confirmPassphrase) {
+          this.get('settingPassphraseStarted')();
+          promise = this.get('userManager').setFirstEmergencyPassphrase(passphrase)
             .catch(error => {
               this.get('globalNotify').backendError(
-                this.tt('settingPasswordBackendError'),
+                this.tt('settingPassphraseBackendError'),
                 error
               );
-              safeExec(this,  'settingPasswordFailure');
+              safeExec(this,  'settingPassphraseFailure');
               throw error;
             });
         } else {
           promise = Promise.reject();
         }
         return promise
-          .then(() => safeExec(this, 'settingPasswordSuccess'))
+          .then(() => safeExec(this, 'settingPassphraseSuccess'))
           .then(() => {
             return this.get('session').authenticate(
               'authenticator:application', {
-                password,
+                password: passphrase,
               }).catch(() => {
               // in very rare cases cannot login immediately
               window.location.reload();

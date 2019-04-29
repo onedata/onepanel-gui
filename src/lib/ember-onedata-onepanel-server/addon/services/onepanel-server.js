@@ -365,15 +365,14 @@ export default OnepanelServerBase.extend(
     },
 
     staticRequest(apiName, method, callArgs = [], {
-      username,
       password,
       token,
     } = {}) {
       return this.getApiOriginProxy().then(apiOrigin => {
         const client = this.createClient({ origin: apiOrigin, token });
-        if (username && password) {
+        if (password) {
           client.defaultHeaders['Authorization'] =
-            'Basic ' + btoa(username + ':' + password);
+            'Basic ' + btoa(password);
         }
         const ApiConstructor = Onepanel[classify(`${apiName}-api`)];
         const api = new ApiConstructor(client);

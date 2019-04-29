@@ -2,7 +2,7 @@
  * Provides data for routes and components that manipulates user details
  *
  * @module services/user-manager
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -41,16 +41,16 @@ export default Service.extend({
   /**
    * @returns {Promise<boolean>}
    */
-  checkRootPasswordIsSet() {
+  checkEmergencyPassphraseIsSet() {
     return this.get('onepanelServer')
-      .staticRequest('onepanel', 'getRootPasswordStatus')
+      .staticRequest('onepanel', 'getEmergencyPassphraseStatus')
       .then(({ data: { isSet } }) => isSet);
   },
 
-  setFirstRootPassword(password) {
+  setFirstEmergencyPassphrase(passphrase) {
     return this.get('onepanelServer')
-      .staticRequest('onepanel', 'setRootPassword', [{
-        newPassword: password,
+      .staticRequest('onepanel', 'setEmergencyPassphrase', [{
+        newPassphrase: passphrase,
       }]);
   },
 });

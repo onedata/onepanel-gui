@@ -49,7 +49,7 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
   /**
    * @type {boolean}
    */
-  isRootPasswordLoginActive: false,
+  isEmergencyPassphraseLoginActive: false,
 
   /**
    * @override
@@ -68,8 +68,13 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
   init() {
     this._super(...arguments);
     this.updateVisitViaOnezoneUrlProxy().then(onezoneUrl => {
-      const isRootPasswordLoginActive = !onezoneUrl;
-      safeExec(this, 'set', 'isRootPasswordLoginActive', isRootPasswordLoginActive);
+      const isEmergencyPassphraseLoginActive = !onezoneUrl;
+      safeExec(
+        this,
+        'set',
+        'isEmergencyPassphraseLoginActive',
+        isEmergencyPassphraseLoginActive
+      );
     });
   },
 
@@ -96,10 +101,10 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
 
   actions: {
     /**
-     * Toggles login form mode between root password and "open with Onezone".
+     * Toggles login form mode between emergency passphrase and "open with Onezone".
      * @returns {undefined}
      */
-    rootPasswordLoginToggle() {
+    emergencyPassphraseLoginToggle() {
       const {
         _formAnimationTimeoutId,
         _animationTimeout,
@@ -111,15 +116,16 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
       const $onezoneButton = this.$('.onezone-button-container');
       clearTimeout(_formAnimationTimeoutId);
 
-      this.toggleProperty('isRootPasswordLoginActive');
-      const isRootPasswordLoginActive = this.get('isRootPasswordLoginActive');
+      this.toggleProperty('isEmergencyPassphraseLoginActive');
+      const isEmergencyPassphraseLoginActive =
+        this.get('isEmergencyPassphraseLoginActive');
 
       this.get('eventsBus').trigger(
         'login-controller:toggleEmergencyWarningBar',
-        isRootPasswordLoginActive
+        isEmergencyPassphraseLoginActive
       );
 
-      if (isRootPasswordLoginActive) {
+      if (isEmergencyPassphraseLoginActive) {
         this._animateHide($onezoneButton);
         this._animateShow($loginForm, true);
         this.$('.login-lock').focus();
