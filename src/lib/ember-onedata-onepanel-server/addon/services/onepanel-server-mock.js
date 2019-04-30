@@ -688,7 +688,6 @@ export default OnepanelServerBase.extend(
           return {
             userId: 'usrid123',
             username: MOCK_USERNAME,
-            userRole: 'admin',
             clusterPrivileges: [
               'cluster_view',
               'cluster_update',

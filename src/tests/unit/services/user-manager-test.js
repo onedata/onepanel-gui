@@ -20,7 +20,6 @@ describe('Unit | Service | user manager', function () {
     const currentUser = {
       userId: 'root',
       username: 'root',
-      userRole: 'admin',
       clusterPrivileges: ['some_privilege'],
     };
     const onepanelServer = lookupService(this, 'onepanelServer');
@@ -33,7 +32,6 @@ describe('Unit | Service | user manager', function () {
         user,
         'userId',
         'username',
-        'userRole',
         'clusterPrivileges'
       );
       expect(userBasicProps).to.deep.equal(currentUser);

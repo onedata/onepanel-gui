@@ -263,7 +263,6 @@ export default OnepanelServerBase.extend(
         return resolve({
           userId: 'root',
           username: 'root',
-          userRole: 'admin',
           clusterPrivileges: [
             'cluster_view',
             'cluster_update',

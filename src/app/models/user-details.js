@@ -3,7 +3,6 @@
  *
  * Uses fields from UserDetails:
  * - userId
- * - userRole
  * - username
  * - clusterPrivileges
  *
@@ -26,12 +25,6 @@ export default EmberObject.extend({
    * @type {string}
    */
   userId: null,
-
-  /**
-   * @virtual
-   * @type {string}
-   */
-  userRole: null,
 
   /**
    * @virtual

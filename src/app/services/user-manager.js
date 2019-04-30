@@ -29,7 +29,6 @@ export default Service.extend({
           userDetails,
           'username',
           'userId',
-          'userRole',
           'clusterPrivileges'
         );
         return UserDetails.create(userBasicData);
