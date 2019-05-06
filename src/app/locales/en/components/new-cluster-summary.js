@@ -14,7 +14,7 @@ export default {
   login: 'login',
   password: 'password',
   sameAsPassphrase: 'your emergency passphrase',
-  wayOnepanelIntro: 'Emergency Onepanel interface – this interface is limited to this cluster only and most of the functionalities are disabled. You can only sign in using your Onepanel root password.',
+  wayOnepanelIntro: 'Emergency Onepanel interface – this interface is limited to this cluster only and most of the functionalities are disabled. You can only sign in using your Onepanel emergency passphrase.',
   wayOnepanelInterface1: 'The interface is available on port 9443',
   wayOnepanelInterface2: 'and should be used for emergency situations, typically when the Onezone interface is not available.',
   currentlyOn1: 'You are currently on the',

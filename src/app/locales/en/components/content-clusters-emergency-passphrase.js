@@ -3,5 +3,5 @@ export default {
   changePassphrase: 'Change passphrase',
   cancelChangePassphrase: 'Cancel passphrase change',
   passphraseChangedSuccess: 'Emergency passphrase changed successfully',
-  passphrasedChangeErrorType: 'Emergency passphrase change',
+  passphraseChangeErrorType: 'changing emergency passphrase',
 };
