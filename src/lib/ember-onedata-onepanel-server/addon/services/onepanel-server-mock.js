@@ -712,6 +712,29 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onepanel_getClusterMembersSummary() {
+      return {
+        success() {
+          return {
+            groupsCount: 1,
+            usersCount: 2,
+            effectiveGroupsCount: 3,
+            effectiveUsersCount: 4,
+          };
+        },
+      };
+    },
+
+    _req_onepanel_createUserInviteToken() {
+      return {
+        success() {
+          return {
+            token: 'user_invitation_token_1234567890',
+          };
+        },
+      };
+    },
+
     _req_oneprovider_configureProvider() {
       this.incrementProperty('mockStep');
       return {
