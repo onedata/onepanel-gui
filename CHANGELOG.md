@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5411 Basic-auth sign-in changed to emergency passphrase
 * VFS-5377 Simple members view in emergency mode of Onepanel GUI
 * VFS-4640 Added auto-polling of space occupancy, disabled join space in emergency, changed session expired message
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
