@@ -1,6 +1,12 @@
 .no-emergency-passphrase-box {
   $-box-vertial-padding: 20px;
-    
+  
+  .row-login-header {
+    margin-bottom: $form-group-margin-bottom;
+    .subtitle-tip {
+      font-size: 21px;
+    }
+  }
   .row-first-button {
     padding-top: $-box-vertial-padding;
     text-align: center;

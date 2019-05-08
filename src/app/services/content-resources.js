@@ -8,7 +8,7 @@
  */
 
 import { Promise } from 'rsvp';
-
+import { get } from '@ember/object';
 import Service, { inject as service } from '@ember/service';
 
 export default Service.extend({
@@ -34,7 +34,14 @@ export default Service.extend({
           return this.get('clusterModelManager').getCluster(id);
         }
       case 'users':
-        return this.get('userManager').getCurrentUser().get('promise');
+        return this.get('userManager').getCurrentUser().get('promise')
+          .then(userDetails => {
+            if (get(userDetails, 'id') !== id) {
+              throw new Error('Incorrect user ID');
+            } else {
+              return userDetails;
+            }
+          });
       default:
         return new Promise((resolve, reject) => reject('No such model type: ' + type));
     }

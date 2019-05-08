@@ -1,18 +1,11 @@
 import Service from '@ember/service';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 export default Service.extend({
-  /**
-   * @virtual
-   * @type {Promise}
-   */
-  userPromise: undefined,
-
   serviceType: 'oneprovider',
   init() {
     this._super(...arguments);
   },
 
-  getCurrentUser() {
-    return this.get('userPromise');
-  },
+  getCurrentUser: notImplementedReject,
 });

@@ -683,25 +683,32 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_onepanel_getCurrentUser() {
-      return {
-        success() {
-          return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
-            clusterPrivileges: [
-              'cluster_view',
-              'cluster_update',
-              'cluster_delete',
-              'cluster_view_privileges',
-              'cluster_set_privileges',
-              'cluster_add_user',
-              'cluster_remove_user',
-              'cluster_add_group',
-              'cluster_remove_group',
-            ],
-          };
-        },
-      };
+      const isEmergency = this.get('isEmergency');
+      if (isEmergency) {
+        return {
+          statusCode: () => 401,
+        };
+      } else {
+        return {
+          success() {
+            return {
+              userId: 'usrid123',
+              username: MOCK_USERNAME,
+              clusterPrivileges: [
+                'cluster_view',
+                'cluster_update',
+                'cluster_delete',
+                'cluster_view_privileges',
+                'cluster_set_privileges',
+                'cluster_add_user',
+                'cluster_remove_user',
+                'cluster_add_group',
+                'cluster_remove_group',
+              ],
+            };
+          },
+        };
+      }
     },
 
     _req_oneprovider_configureProvider() {

@@ -11,7 +11,12 @@ import Service, { inject as service } from '@ember/service';
 import { getProperties } from '@ember/object';
 import { oneWay } from '@ember/object/computed';
 import UserDetails from 'onepanel-gui/models/user-details';
+import Onepanel from 'npm:onepanel';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+
+const {
+  EmergencyPassphraseChangeRequest,
+} = Onepanel;
 
 export default Service.extend({
   onepanelServer: service(),
@@ -41,15 +46,43 @@ export default Service.extend({
    * @returns {Promise<boolean>}
    */
   checkEmergencyPassphraseIsSet() {
-    return this.get('onepanelServer')
+    const onepanelServer = this.get('onepanelServer');
+
+    return onepanelServer
       .staticRequest('onepanel', 'getEmergencyPassphraseStatus')
       .then(({ data: { isSet } }) => isSet);
   },
 
+  /**
+   * @param {string} passphrase 
+   * @returns {Promise}
+   */
   setFirstEmergencyPassphrase(passphrase) {
-    return this.get('onepanelServer')
-      .staticRequest('onepanel', 'setEmergencyPassphrase', [{
-        newPassphrase: passphrase,
-      }]);
+    const onepanelServer = this.get('onepanelServer');
+
+    const requestData = EmergencyPassphraseChangeRequest.constructFromObject({
+      newPassphrase: passphrase,
+    });
+    return onepanelServer
+      .staticRequest('onepanel', 'setEmergencyPassphrase', [requestData]);
+  },
+
+  /**
+   * @param {string} currentPassphrase
+   * @param {string} newPassphrase
+   * @returns {Promise}
+   */
+  changeEmergencyPassphrase(currentPassphrase, newPassphrase) {
+    const onepanelServer = this.get('onepanelServer');
+    
+    const requestData = EmergencyPassphraseChangeRequest.constructFromObject({
+      currentPassphrase,
+      newPassphrase,
+    });
+    return onepanelServer.request(
+      'onepanel',
+      'setEmergencyPassphrase',
+      requestData
+    );
   },
 });

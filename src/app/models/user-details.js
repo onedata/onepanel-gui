@@ -41,7 +41,7 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  id: alias('username'),
+  id: alias('userId'),
 
   /**
    * @type {Ember.ComputedProperty<string>}

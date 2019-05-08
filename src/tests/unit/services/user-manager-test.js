@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
-import { resolve } from 'rsvp';
 import { get, getProperties } from '@ember/object';
 import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
 
 describe('Unit | Service | user manager', function () {
   setupTest('service:user-manager', {
@@ -23,7 +23,7 @@ describe('Unit | Service | user manager', function () {
       clusterPrivileges: ['some_privilege'],
     };
     const onepanelServer = lookupService(this, 'onepanelServer');
-    onepanelServer.set('userPromise', resolve(currentUser));
+    sinon.stub(onepanelServer, 'getCurrentUser').resolves(currentUser);
 
     const service = this.subject();
     const currentUserResult = service.getCurrentUser();

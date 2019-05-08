@@ -25,7 +25,7 @@ describe(
         this.$('.btn-change-passphrase').click();
 
         return wait().then(() => {
-          expect(this.$('.field-change-currentPassword'), 'current pass')
+          expect(this.$('.field-verify-currentPassword'), 'current pass')
             .to.exist;
           expect(this.$('.field-change-newPassword'), 'new pass')
             .to.exist;

@@ -11,12 +11,7 @@ import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import Onepanel from 'npm:onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-
-const {
-  EmergencyPassphraseChangeRequest,
-} = Onepanel;
 
 export default Component.extend(I18n, {
   classNames: ['content-cluster-emergency-passphrase'],
@@ -24,6 +19,7 @@ export default Component.extend(I18n, {
   i18n: service(),
   globalNotify: service(),
   onepanelServer: service(),
+  userManager: service(),
 
   /**
    * @override
@@ -51,26 +47,6 @@ export default Component.extend(I18n, {
       'btn-change-passphrase-cancel' : 'btn-change-passphrase-start';
   }),
 
-  /**
-   * Make an API call to change emergency passphrase
-   * @override
-   * @param {object} data
-   * @param {string} data.currentPassphrase
-   * @param {string} data.newPassphrase
-   * @returns {Promise} resolves on change passphrase success
-   */
-  _changePassphrase({ currentPassphrase, newPassphrase }) {
-    const onepanelServer = this.get('onepanelServer');
-
-    return onepanelServer.request(
-      'onepanel',
-      'setEmergencyPassphrase',
-      EmergencyPassphraseChangeRequest.constructFromObject({
-        currentPassphrase,
-        newPassphrase,
-      })
-    );
-  },
 
   actions: {
     toggleChangePassphrase() {
@@ -85,12 +61,15 @@ export default Component.extend(I18n, {
      * @returns {Promise} an API call promise, resolves on change passphrase success
      */
     submitChangePassphrase({ currentPassword, newPassword }) {
-      const globalNotify = this.get('globalNotify');
+      const {
+        globalNotify,
+        userManager,
+      } = this.getProperties('globalNotify', 'userManager');
 
-      let changingPassphrase = this._changePassphrase({
-        currentPassphrase: currentPassword,
-        newPassphrase: newPassword,
-      });
+      const changingPassphrase = userManager.changeEmergencyPassphrase(
+        currentPassword,
+        newPassword
+      );
 
       changingPassphrase.catch(error => {
         globalNotify.backendError(this.t('passphraseChangeErrorType'), error);
