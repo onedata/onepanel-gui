@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5377 Simple members view in emergency mode of Onepanel GUI
 * VFS-4640 Added auto-polling of space occupancy, disabled join space in emergency, changed session expired message
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
 * VFS-5242 Using new async backend to show progress of saving file popularity settings
