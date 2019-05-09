@@ -86,7 +86,7 @@
     "input-tokenizer": "1.3.2",
     "jquery.scrollto": "2.1.2",
     "loader.js": "4.6.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#328b8ec7140688b64d91697634dd6b6b564d1b65",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#7a88d8db0e3e34a17269af4405a6911acc00baa9",
     "perfect-scrollbar": "0.8.1",
     "round10": "1.0.3",
     "sass": "1.17.0",
