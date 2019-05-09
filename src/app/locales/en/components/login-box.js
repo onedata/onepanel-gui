@@ -6,7 +6,7 @@ export default {
   loginFormContainer: {
     visitViaOnezoneHeader: 'using your Onezone account',
     visitViaOnezoneButton: 'Open in Onezone',
-    visitViaOnezoneHint: 'The recommended way of managing your cluster is via the Onezone interface. This interface integrates all functionalities offered by Onedata.',
+    visitViaOnezoneHint: 'The recommended way of managing your cluster is via the Onezone interface. This interface integrates all features offered by Onedata.',
     signInWithCredentialsLink: 'Sign in to emergency interface',
     or: 'or',
     signInWithCredentialsHeader: 'using Onepanel emergency passphrase',
