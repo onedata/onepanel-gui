@@ -14,6 +14,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import _ from 'lodash';
 import { resolve } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+import Cluster from 'onepanel-gui/models/cluster';
 
 const GuiOneproviderCluster = EmberObject.extend({
   name: reads('providerManager.providerDetailsProxy.name').readOnly(),
@@ -169,7 +170,8 @@ export default Service.extend(
                 });
             }
           }
-        });
+        })
+        .then(cluster => Cluster.create(cluster));
     },
   }
 );
