@@ -8,7 +8,6 @@
  */
 
 import Component from '@ember/component';
-import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -18,7 +17,6 @@ export default Component.extend(I18n, {
 
   i18n: service(),
   globalNotify: service(),
-  onepanelServer: service(),
   userManager: service(),
 
   /**
@@ -30,27 +28,11 @@ export default Component.extend(I18n, {
    * If true, set credentials form to changingPassphrase mode
    * @type {boolean}
    */
-  _changingPassphrase: false,
-
-  _changePassphraseButtonLabel: computed('_changingPassphrase', function () {
-    return this.get('_changingPassphrase') ?
-      this.t('cancelChangePassphrase') :
-      this.t('changePassphrase');
-  }),
-
-  _changePassphraseButtonType: computed('_changingPassphrase', function () {
-    return this.get('_changingPassphrase') ? 'default' : 'primary';
-  }),
-
-  _changePassphraseButtonClass: computed('_changingPassphrase', function () {
-    return this.get('_changingPassphrase') ?
-      'btn-change-passphrase-cancel' : 'btn-change-passphrase-start';
-  }),
-
+  isChangingPassphrase: false,
 
   actions: {
     toggleChangePassphrase() {
-      this.toggleProperty('_changingPassphrase');
+      this.toggleProperty('isChangingPassphrase');
     },
 
     /**
@@ -77,7 +59,7 @@ export default Component.extend(I18n, {
 
       changingPassphrase.then(() => {
         globalNotify.info(this.t('passphraseChangedSuccess'));
-        safeExec(this, 'set', '_changingPassphrase', false);
+        safeExec(this, 'set', 'isChangingPassphrase', false);
       });
 
       return changingPassphrase;
