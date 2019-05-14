@@ -1,3 +1,6 @@
+// Onepanel specific variables
+$one-warning-bar-height: 32px;
+
 @import 'onedata-gui-common';
 
 // Onepanel specific styles
@@ -25,3 +28,4 @@
 @import 'content-clusters-spaces-show';
 @import 'one-warning-bar';
 @import 'content-clusters-spaces-show';
+@import 'login-layout';
