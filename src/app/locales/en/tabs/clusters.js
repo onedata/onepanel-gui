@@ -11,6 +11,7 @@ export default {
     provider: 'Provider',
     storages: 'Storages',
     spaces: 'Spaces',
+    members: 'Members',
     notFound: 'Cluster not found',
     installation: 'Installation',
   },
