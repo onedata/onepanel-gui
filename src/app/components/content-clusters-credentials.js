@@ -107,7 +107,7 @@ export default Component.extend({
 
       changingPassword.catch(error => {
         globalNotify.backendError(
-          i18n.t('components.contentClustersCredentials.passwordChangedSuccess'),
+          i18n.t('components.contentClustersCredentials.passwordChangeErrorType'),
           error
         );
       });
