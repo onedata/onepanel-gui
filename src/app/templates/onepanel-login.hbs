@@ -1,6 +1,6 @@
 {{partial "emergency-bar"}}
 
-{{#login-layout}}
+{{#login-layout withEmergencyWarningBar=emergencyWarningBarVisible}}
   {{#if model.isEmergencyPassphraseSet}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}
