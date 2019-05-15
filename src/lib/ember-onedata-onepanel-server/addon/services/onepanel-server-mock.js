@@ -686,7 +686,7 @@ export default OnepanelServerBase.extend(
       const isEmergency = this.get('isEmergency');
       if (isEmergency) {
         return {
-          statusCode: () => 401,
+          statusCode: () => 404,
         };
       } else {
         return {
