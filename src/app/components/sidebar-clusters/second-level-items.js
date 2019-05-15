@@ -35,7 +35,6 @@ export default SecondLevelItems.extend(I18n, {
   webCertValid: reads('webCertManager.webCertValid'),
 
   /**
-   * @override
    * @type {ComputedProperty<boolean>}
    */
   isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
@@ -70,6 +69,57 @@ export default SecondLevelItems.extend(I18n, {
         this.t('webCertWarning') : undefined,
     };
   }),
+
+  emergencyPassphraseItem: computed(function emergencyPassphraseItem() {
+    return {
+      id: 'emergency-passphrase',
+      label: this.t('emergencyPassphrase'),
+      icon: 'key',
+    };
+  }),
+
+  /**
+   * @override
+   */
+  clusterSecondLevelItems: computed(
+    'isNotDeployedCluster',
+    'isLocalCluster',
+    'isEmergencyOnepanel',
+    'clusterType',
+    'dnsItem',
+    'certificateItem',
+    'emergencyPassphraseItem',
+    'nodesItem',
+    'overviewItem',
+    'providerItem',
+    'storagesItem',
+    'spacesItem',
+    'membersItem',
+    function clusterSecondLevelItems() {
+      const {
+        isNotDeployedCluster,
+        isLocalCluster,
+        isEmergencyOnepanel,
+        emergencyPassphraseItem,
+        clusterType,
+      } = this.getProperties(
+        'isNotDeployedCluster',
+        'isLocalCluster',
+        'isEmergencyOnepanel',
+        'emergencyPassphraseItem',
+        'clusterType'
+      );
+      if (isNotDeployedCluster || !isLocalCluster || !clusterType) {
+        return [];
+      } else {
+        const items = this._super(...arguments);
+        if (isEmergencyOnepanel) {
+          items.push(emergencyPassphraseItem);
+        }
+        return items;
+      }
+    }
+  ),
 
   init() {
     this._super(...arguments);
