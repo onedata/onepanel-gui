@@ -34,7 +34,19 @@ export default GuiUtils.extend(
      */
     onepanelServiceType: reads('serviceType'),
 
-    guiVersion: reads('onepanelConfiguration.version'),
+    /**
+     * @override
+     */
+    softwareVersionDetails: computed(
+      'onepanelConfiguration.{version,build}',
+      function softwareVersionDetails() {
+        const onepanelConfiguration = this.get('onepanelConfiguration');
+        return {
+          serviceVersion: get(onepanelConfiguration, 'version'),
+          serviceBuildVersion: get(onepanelConfiguration, 'build'),
+        };
+      },
+    ),
 
     /**
      * Panel type: oneprovider or onezone.
