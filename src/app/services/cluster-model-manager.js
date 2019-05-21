@@ -22,11 +22,7 @@ const GuiOneproviderCluster = Cluster.extend({
 
   init() {
     this._super(...arguments);
-    this.get('providerManager').getProviderDetailsProxy()
-      .then(details => {
-        console.dir(details);
-        console.log(this.get('providerManager.providerDetails.name'));
-      });
+    this.get('providerManager').getProviderDetailsProxy();
   },
 });
 
@@ -34,7 +30,7 @@ export default Service.extend(
   createDataProxyMixin('rawCurrentCluster'),
   createDataProxyMixin('currentCluster'),
   createDataProxyMixin('clusterIds'),
-  createDataProxyMixin('clusters'), {
+  createDataProxyMixin('clusters', { type: 'array' }), {
     onepanelServer: service(),
     guiUtils: service(),
     onepanelConfiguration: service(),
@@ -61,20 +57,29 @@ export default Service.extend(
         });
     },
 
+    /**
+     * @override
+     */
     fetchCurrentCluster() {
       return this.getRawCurrentClusterProxy()
         .then(cluster => cluster && this.generateGuiCluster(cluster, true));
     },
 
+    /**
+     * @override
+     */
     fetchClusterIds() {
       return this.get('onepanelServer').request('onepanel', 'getClusters')
         .then(({ data }) => data.ids);
     },
 
+    /**
+     * @override
+     */
     fetchClusters() {
-      return this.getClusterIdsProxy({ reload: true }).then(ids =>
-        Promise.all(ids.map(id => this.getCluster(id)))
-      ).then(clusters => addConflictLabels(clusters));
+      return this.getClusterIdsProxy({ reload: true })
+        .then(ids => Promise.all(ids.map(id => this.getCluster(id))))
+        .then(clusters => addConflictLabels(clusters));
     },
 
     /**
@@ -142,7 +147,7 @@ export default Service.extend(
           }
         })
         .then(() => {
-          if (cluster.type === 'onezone') {
+          if (get(cluster, 'type') === 'onezone') {
             if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
                 deploymentManager.getInstallationDetailsProxy();
