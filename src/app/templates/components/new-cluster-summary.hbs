@@ -4,7 +4,9 @@
   buttonLabel=(tt this "buttonLabel")
   buttonAction=(action "manageNewCluster")
 }}
-  <p class="text-center">{{tt this "textFullyOperational"}}</p>
+  <p class="text-center">
+    {{tt this "textFullyOperational"}}
+  </p>
   <p class="text-center">{{tt this "textTwoWays"}}</p>
   <ul class="info">
     <li>
@@ -16,8 +18,17 @@
       </div>
       <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
       {{tt this "wayOnezoneInterface3"}}
-      {{#if isEmergencyOnepanel}}
-        {{tt this "wayOnezoneAccess"}}
+      {{#if (eq serviceType "oneprovider")}}
+        {{#if isEmergencyOnepanel}}
+          {{tt this "wayOnezoneAccessProvider"}}
+        {{/if}}
+      {{else}}
+        {{tt this "wayOnezoneAccessZone"}}
+        <div class="admin-account-info">
+          <strong>{{tt this "login"}}:</strong> admin<br>
+          <strong>{{tt this "password"}}:</strong> <em>{{tt this "sameAsPassphrase"}}</em>
+        </div>
+        {{tt this "canChangePassword"}}
       {{/if}}
     </li>
     <li>

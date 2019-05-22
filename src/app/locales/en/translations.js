@@ -37,8 +37,8 @@ import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
-import noAdminBox from './components/no-admin-box';
-import createAdminForm from './components/create-admin-form';
+import noEmergencyPassphraseBox from './components/no-emergency-passphrase-box';
+import firstEmergencyPassphraseForm from './components/first-emergency-passphrase-form';
 import clusterHostTable from './components/cluster-host-table';
 import clusterHostTableRow from './components/cluster-host-table-row';
 import manageClusterStorages from './components/manage-cluster-storages';
@@ -50,7 +50,7 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
-import contentClustersCredentials from './components/content-clusters-credentials';
+import contentClustersEmergencyPassphrase from './components/content-clusters-emergency-passphrase';
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
 import clusterStoragesTile from './components/cluster-storages-tile';
@@ -116,8 +116,8 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
-    noAdminBox,
-    createAdminForm,
+    noEmergencyPassphraseBox,
+    firstEmergencyPassphraseForm,
     clusterHostTable,
     clusterHostTableRow,
     manageClusterStorages,
@@ -131,7 +131,7 @@ let translations = {
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
-    contentClustersCredentials,
+    contentClustersEmergencyPassphrase,
     clusterNodesTile,
     clusterSpacesTile,
     clusterStoragesTile,

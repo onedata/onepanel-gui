@@ -22,11 +22,7 @@ const GuiOneproviderCluster = Cluster.extend({
 
   init() {
     this._super(...arguments);
-    this.get('providerManager').getProviderDetailsProxy()
-      .then(details => {
-        console.dir(details);
-        console.log(this.get('providerManager.providerDetails.name'));
-      });
+    this.get('providerManager').getProviderDetailsProxy();
   },
 });
 

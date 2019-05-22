@@ -3,7 +3,7 @@
  * with "Login with Onezone" button.
  * 
  * @module components/login-box/login-form-container
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -46,7 +46,10 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
    */
   _animationTimeout: animationTimeout,
 
-  isUsernameLoginActive: false,
+  /**
+   * @type {boolean}
+   */
+  isEmergencyPassphraseLoginActive: false,
 
   /**
    * @override
@@ -65,8 +68,13 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
   init() {
     this._super(...arguments);
     this.updateVisitViaOnezoneUrlProxy().then(onezoneUrl => {
-      const isUsernameLoginActive = !onezoneUrl;
-      safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
+      const isEmergencyPassphraseLoginActive = !onezoneUrl;
+      safeExec(
+        this,
+        'set',
+        'isEmergencyPassphraseLoginActive',
+        isEmergencyPassphraseLoginActive
+      );
     });
   },
 
@@ -93,10 +101,10 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
 
   actions: {
     /**
-     * Toggles login form mode between username/password and "open with Onezone".
+     * Toggles login form mode between emergency passphrase and "open with Onezone".
      * @returns {undefined}
      */
-    usernameLoginToggle() {
+    emergencyPassphraseLoginToggle() {
       const {
         _formAnimationTimeoutId,
         _animationTimeout,
@@ -108,18 +116,19 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
       const $onezoneButton = this.$('.onezone-button-container');
       clearTimeout(_formAnimationTimeoutId);
 
-      this.toggleProperty('isUsernameLoginActive');
-      const isUsernameLoginActive = this.get('isUsernameLoginActive');
+      this.toggleProperty('isEmergencyPassphraseLoginActive');
+      const isEmergencyPassphraseLoginActive =
+        this.get('isEmergencyPassphraseLoginActive');
 
       this.get('eventsBus').trigger(
         'login-controller:toggleEmergencyWarningBar',
-        isUsernameLoginActive
+        isEmergencyPassphraseLoginActive
       );
 
-      if (isUsernameLoginActive) {
+      if (isEmergencyPassphraseLoginActive) {
         this._animateHide($onezoneButton);
         this._animateShow($loginForm, true);
-        this.$('.login-username').focus();
+        this.$('.login-lock').focus();
         // hide dropdown
         this.set('_formAnimationTimeoutId',
           setTimeout(() => $onezoneButton.addClass('hide'), _animationTimeout)

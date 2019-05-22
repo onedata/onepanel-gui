@@ -22,8 +22,8 @@
       </div>
       <div class="col-xs-12 col-centered login-separator">
         <p class="text-center">
-          <a {{action "usernameLoginToggle"}} class="username-login-toggle text-link">
-            {{tt this "loginWithCredentialsLink"}}
+          <a {{action "emergencyPassphraseLoginToggle"}} class="username-login-toggle text-link">
+            {{tt this "signInWithCredentialsLink"}}
           </a>
         </p>
       </div>
@@ -31,17 +31,18 @@
   {{/if}}
   <div class="basicauth-login-form-container fading-login-method-container animated fast {{if visitViaOnezoneUrl "hide" "always-visible"}}">
     <h2>
-      {{t "components.loginBox.loginFormContainer.loginWithCredentialsHeader"}} 
+      {{t "components.loginBox.loginFormContainer.signInWithCredentialsHeader"}} 
       <span class="subtitle-tip">
         {{one-icon icon="sign-question"}}
-        {{one-tooltip title=(tt this "loginWithCredentialsHint")}}
+        {{one-tooltip title=(tt this "signInWithCredentialsHint")}}
       </span>
     </h2>
     {{basicauth-login-form
+      passphraseMode=true
       authenticationSuccess=authenticationSuccess
       authenticationFailure=authenticationFailure
       authenticationStarted=authenticationStarted
-      backButtonAction=(if visitViaOnezoneUrl (action "usernameLoginToggle") undefined)
+      backButtonAction=(if visitViaOnezoneUrl (action "emergencyPassphraseLoginToggle") undefined)
     }}
   </div>
 {{/promise-proxy-container}}
