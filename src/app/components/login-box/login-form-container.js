@@ -12,8 +12,8 @@ import LoginFormContainer from 'onedata-gui-common/components/login-box/login-fo
 import layout from '../../templates/components/login-box/login-form-container';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { reads } from '@ember/object/computed';
 
 const animationTimeout = 333;
 
@@ -48,6 +48,8 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
 
   isUsernameLoginActive: false,
 
+  onezoneOrigin: reads('onezoneGui.onezoneOrigin'),
+
   /**
    * @override
    * Url to onepanel gui hosted by onezone or null if onezone is not available
@@ -64,10 +66,7 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
 
   init() {
     this._super(...arguments);
-    this.updateVisitViaOnezoneUrlProxy().then(onezoneUrl => {
-      const isUsernameLoginActive = !onezoneUrl;
-      safeExec(this, 'set', 'isUsernameLoginActive', isUsernameLoginActive);
-    });
+    this.updateVisitViaOnezoneUrlProxy();
   },
 
   /**
