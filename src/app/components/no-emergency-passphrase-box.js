@@ -1,8 +1,8 @@
 /**
- * A container component for creating first admin user
+ * A container component for setting first emergency passphrase
  *
- * @module components/no-admin-box
- * @author Jakub Liput
+ * @module components/no-emergency-passphrase-box
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,12 +17,11 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, {
   layout,
-  classNames: ['login-box', 'no-admin-box'],
+  classNames: ['login-box', 'no-emergency-passphrase-box'],
 
-  i18nPrefix: 'components.noAdminBox.',
+  i18nPrefix: 'components.noEmergencyPassphraseBox.',
 
   globalNotify: service(),
-  userManager: service(),
   session: service(),
   onepanelServer: service(),
 
@@ -68,16 +67,16 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    registerStarted() {
+    settingPassphraseStarted() {
       this.set('isBusy', true);
     },
 
-    registerSuccess() {
-      this.get('globalNotify').info(this.tt('registerSuccess'));
+    settingPassphraseSuccess() {
+      this.get('globalNotify').info(this.tt('settingPassphraseSuccess'));
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 
-    registerFailure() {
+    settingPassphraseFailure() {
       safeMethodExecution(this, 'set', 'isBusy', false);
     },
 

@@ -3,27 +3,48 @@
  *
  * Uses fields from UserDetails:
  * - userId
- * - userRole
  * - username
+ * - clusterPrivileges
  *
  * Adds:
  * - id: alias to username
  * - name: alias to username
  *
  * @module models/user-details
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import EmberObject from '@ember/object';
-
 import { alias } from '@ember/object/computed';
 
 export default EmberObject.extend({
-  id: alias('username'),
-  name: alias('username'),
+  /**
+   * @virtual
+   * @type {string}
+   */
   userId: null,
-  userRole: null,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
   username: null,
+
+  /**
+   * @virtual
+   * @type {Array<string>}
+   */
+  clusterPrivileges: null,
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  id: alias('userId'),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  name: alias('username'),
 });
