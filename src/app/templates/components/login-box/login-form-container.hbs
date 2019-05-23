@@ -29,23 +29,13 @@
     <div class="col-xs-12 col-centered login-separator">
       {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
     </div>
-    <p class="col-xs-12 col-centered login-separator">
+    <div class="col-xs-12 col-centered login-separator">
       <p class="text-center">
-        <a {{action "usernameLoginToggle"}} class="username-login-toggle text-link">
-          {{tt this "loginWithCredentialsLink"}}
+        <a {{action "emergencyPassphraseLoginToggle"}} class="username-login-toggle text-link">
+          {{tt this "signInWithCredentialsLink"}}
         </a>
       </p>
-      <div class="col-xs-12 col-centered login-separator">
-        {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
-      </div>
-      <div class="col-xs-12 col-centered login-separator">
-        <p class="text-center">
-          <a {{action "emergencyPassphraseLoginToggle"}} class="username-login-toggle text-link">
-            {{tt this "signInWithCredentialsLink"}}
-          </a>
-        </p>
-      </div>
-    </p>
+    </div>
   </p>
   <div class="basicauth-login-form-container fading-login-method-container animated fast hide">
     <h2>

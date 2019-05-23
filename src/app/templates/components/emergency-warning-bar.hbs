@@ -22,11 +22,11 @@
     <a
       href={{visitViaOnezoneUrl}}
       class="btn btn-primary"
-      disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezone)}}
+      disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezoneUrl)}}
     >
       {{one-icon icon="onezone"}}
       {{tt this "modal.openInOnezone"}}
-      {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezone))}}
+      {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezoneUrl))}}
         {{#one-tooltip}}
           {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
         {{/one-tooltip}}

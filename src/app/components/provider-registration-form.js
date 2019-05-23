@@ -209,20 +209,21 @@ export default OneForm.extend(Validations, I18n, {
       _subdomainDelegation,
     } = this.getProperties('mode', '_subdomainDelegation');
     switch (mode) {
-      case 'show':
+      case 'show': {
         if (_subdomainDelegation) {
           return ['showTop', 'showSubdomain', 'showBottom'];
         } else {
           return ['showTop', 'showDomain', 'showBottom'];
         }
-        case 'edit':
-        case 'new':
-        default:
-          if (_subdomainDelegation) {
-            return ['editTop', 'editSubdomain', 'editBottom'];
-          } else {
-            return ['editTop', 'editDomain', 'editBottom'];
-          }
+      }
+      case 'edit':
+      case 'new':
+      default:
+        if (_subdomainDelegation) {
+          return ['editTop', 'editSubdomain', 'editBottom'];
+        } else {
+          return ['editTop', 'editDomain', 'editBottom'];
+        }
     }
   }),
 
