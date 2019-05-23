@@ -19,9 +19,18 @@
     }}
       {{tt this "modal.close"}}
     {{/bs-button}}
-    <a href={{onezoneUrl}} class="btn btn-primary">
+    <a
+      href={{visitViaOnezoneUrl}}
+      class="btn btn-primary"
+      disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezoneUrl)}}
+    >
       {{one-icon icon="onezone"}}
       {{tt this "modal.openInOnezone"}}
+      {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezoneUrl))}}
+        {{#one-tooltip}}
+          {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
+        {{/one-tooltip}}
+      {{/if}}
     </a>
   {{/bar.modal.footer}}
 {{/one-warning-bar}}

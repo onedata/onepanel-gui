@@ -11,5 +11,6 @@ export default {
     or: 'or',
     signInWithCredentialsHeader: 'using Onepanel emergency passphrase',
     signInWithCredentialsHint: 'Use you Onepanel emergency passphrase to sign in to the emergency Onepanel interface. It is limited to this cluster only and should be used for emergency situations, typically when the Onezone interface is not available.',
+    signInToEmergencyBelow: 'You can sign in to the emergency interface below.',
   },
 };

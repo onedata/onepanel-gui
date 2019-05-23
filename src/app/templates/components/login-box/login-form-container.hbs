@@ -2,34 +2,42 @@
   proxy=visitViaOnezoneUrlProxy
   absoluteCentered=true
 }}
-  {{#if visitViaOnezoneUrl}}
-    <div class="onezone-button-container fading-login-method-container animated fast">
-      <h2>
-        {{t "components.loginBox.loginFormContainer.visitViaOnezoneHeader"}}
-        <span class="subtitle-tip">
-          {{one-icon icon="sign-question"}}
-          {{one-tooltip title=(tt this "visitViaOnezoneHint")}}
-        </span>
-      </h2>
-      <div class="col-xs-12 col-centered login-separator">
-        <a href={{visitViaOnezoneUrl}} class="btn btn-primary with-addon full-width btn-login-onezone">
-          <img class="btn-img-addon" src="assets/images/auth-providers/onezone.svg">
-          <span class="text">{{tt this "visitViaOnezoneButton"}}</span>
-        </a>
-      </div>
-      <div class="col-xs-12 col-centered login-separator">
-        {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
-      </div>
-      <div class="col-xs-12 col-centered login-separator">
-        <p class="text-center">
-          <a {{action "emergencyPassphraseLoginToggle"}} class="username-login-toggle text-link">
-            {{tt this "signInWithCredentialsLink"}}
-          </a>
-        </p>
-      </div>
+  <p class="onezone-button-container fading-login-method-container animated fast">
+    <h2>
+      {{t "components.loginBox.loginFormContainer.visitViaOnezoneHeader"}}
+      <span class="subtitle-tip">
+        {{one-icon icon="sign-question"}}
+        {{one-tooltip title=(tt this "visitViaOnezoneHint")}}
+      </span>
+    </h2>
+    <div class="col-xs-12 col-centered login-separator">
+      <a
+        href={{visitViaOnezoneUrl}}
+        class="btn btn-primary with-addon full-width btn-login-onezone"
+        disabled={{not visitViaOnezoneUrl}}
+      >
+        <img class="btn-img-addon" src="assets/images/auth-providers/onezone.svg">
+        <span class="text">{{tt this "visitViaOnezoneButton"}}</span>
+        {{#unless visitViaOnezoneUrl}}
+          {{#one-tooltip}}
+            {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
+            {{tt this "signInToEmergencyBelow"}}
+          {{/one-tooltip}}
+        {{/unless}}
+      </a>
     </div>
-  {{/if}}
-  <div class="basicauth-login-form-container fading-login-method-container animated fast {{if visitViaOnezoneUrl "hide" "always-visible"}}">
+    <div class="col-xs-12 col-centered login-separator">
+      {{#hr-label class="light"}}{{tt this "or"}}{{/hr-label}}
+    </div>
+    <div class="col-xs-12 col-centered login-separator">
+      <p class="text-center">
+        <a {{action "emergencyPassphraseLoginToggle"}} class="username-login-toggle text-link">
+          {{tt this "signInWithCredentialsLink"}}
+        </a>
+      </p>
+    </div>
+  </p>
+  <div class="basicauth-login-form-container fading-login-method-container animated fast hide">
     <h2>
       {{t "components.loginBox.loginFormContainer.signInWithCredentialsHeader"}} 
       <span class="subtitle-tip">
@@ -42,7 +50,7 @@
       authenticationSuccess=authenticationSuccess
       authenticationFailure=authenticationFailure
       authenticationStarted=authenticationStarted
-      backButtonAction=(if visitViaOnezoneUrl (action "emergencyPassphraseLoginToggle") undefined)
+      backButtonAction=(action "emergencyPassphraseLoginToggle")
     }}
   </div>
 {{/promise-proxy-container}}
