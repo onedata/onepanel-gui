@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5452 Fixed not working cluster deployment GUI after SP3 changes
 * VFS-5425 Service Pack 3 for unified GUI
 * VFS-5411 Basic-auth sign-in changed to emergency passphrase
 * VFS-5377 Simple members view in emergency mode of Onepanel GUI

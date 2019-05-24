@@ -19,7 +19,7 @@ export default SidebarIndexRoute.extend({
    */
   getDefaultResource(list, resourceType) {
     if (resourceType === 'clusters') {
-      const first = list[0];
+      const first = list[0] || list.objectAt(0);
       if (first && get(first, 'id') === 'new-cluster') {
         return first;
       } else {
