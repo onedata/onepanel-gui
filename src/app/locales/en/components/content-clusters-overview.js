@@ -5,4 +5,9 @@ export default {
   clusterId: 'Cluster ID',
   showOnMap: 'Show on map',
   oneproviderTileTitle: 'Oneprovider',
+  domain: 'Domain',
+  clusterType: {
+    onezone: 'Onezone',
+    oneprovider: 'Oneprovider',
+  },
 };

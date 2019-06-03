@@ -12,6 +12,12 @@
         <h4>
           <span class="one-label">
             {{tt this (concat "headers." mode)}}
+            {{#if (eq mode "create")}}
+              <span class="subtitle-tip">
+                {{one-icon icon="sign-question"}}
+                {{one-tooltip title=(tt this "createHint")}}
+              </span>
+            {{/if}}
           </span>
         </h4>
       </div>
@@ -51,11 +57,11 @@
             {{/bs-button}}
           </div>
         {{else if (eq mode "create")}}
-          {{create-admin-form
+          {{first-emergency-passphrase-form
             isBusy=isBusy
-            registerSuccess=(action "registerSuccess")
-            registerFailure=(action "registerFailure")
-            registerStarted=(action "registerStarted")
+            settingPassphraseSuccess=(action "settingPassphraseSuccess")
+            settingPassphraseFailure=(action "settingPassphraseFailure")
+            settingPassphraseStarted=(action "settingPassphraseStarted")
             back=(action "changeMode" "first")
           }}
         {{else if (eq mode "join")}}

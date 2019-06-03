@@ -287,7 +287,7 @@ export default Mixin.create({
    */
   syncTabActive: computed('selectedTab', function () {
     const selectedTab = this.get('selectedTab');
-    return selectedTab && /^tab-sync-/.test(selectedTab);
+    return selectedTab && selectedTab === 'sync';
   }),
 
   updateReenabled: observer('space.storageUpdate.strategy', function updateReenabled() {

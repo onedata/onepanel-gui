@@ -1,6 +1,6 @@
 /**
- * An authenticator for ``ember-simple-auth`` that uses Onepanel REST API
- * by using ``onepanel-server`` service
+ * An authenticator for `ember-simple-auth` that uses Onepanel REST API
+ * by using `onepanel-server` service
  *
  * @module authenticators/onepanel-rest
  * @author Jakub Liput
@@ -26,8 +26,8 @@ export default BaseAuthenticator.extend({
     return Promise.resolve(data);
   },
 
-  authenticate(username, password) {
-    return this.get('onepanelServer').login(username, password);
+  authenticate({ password }) {
+    return this.get('onepanelServer').login(password);
   },
 
   invalidate() {

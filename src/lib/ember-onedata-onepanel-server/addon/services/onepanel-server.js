@@ -225,10 +225,6 @@ export default OnepanelServerBase.extend(
      *    resolves object with: token (for Onepanel API), username
      */
     validateSession() {
-      /** 
-       * Resolve token for authorizing Onepanel REST calls
-       * @type {string}
-       */
       return this.getOnepanelToken()
         .then(tokenData => {
           const onepanelToken = tokenData.token;
@@ -243,9 +239,9 @@ export default OnepanelServerBase.extend(
                     ttl,
                   })
                   .then(() => {
-                    return this.request('onepanel', 'getCurrentUser').then(
-                      ({ data }) => {
-                        const username = get(data, 'username');
+                    return this.getCurrentUser()
+                      .then(userDetails => {
+                        const username = get(userDetails, 'username');
                         safeExec(this, 'set', 'username', username);
                         return { token: onepanelToken, username };
                       });
@@ -325,29 +321,27 @@ export default OnepanelServerBase.extend(
      * Makes a request to backend to create session using basic auth.
      * Only in emergency mode.
      *
-     * @param {string} username 
      * @param {string} password
      * @returns {Promise}
      */
-    login(username, password) {
+    login(password) {
       return new Promise((resolve, reject) => {
         $.ajax('/login', {
           method: 'POST',
-          headers: { Authorization: 'Basic ' + btoa(username + ':' + password) },
+          headers: { Authorization: 'Basic ' + btoa(password) },
         }).then(resolve, reject);
       }).then(() => this.validateSession());
     },
 
     staticRequest(apiName, method, callArgs = [], {
-      username,
       password,
       token,
     } = {}) {
       return this.getApiOriginProxy().then(apiOrigin => {
         const client = this.createClient({ origin: apiOrigin, token });
-        if (username && password) {
+        if (password) {
           client.defaultHeaders['Authorization'] =
-            'Basic ' + btoa(username + ':' + password);
+            'Basic ' + btoa(password);
         }
         const ApiConstructor = Onepanel[classify(`${apiName}-api`)];
         const api = new ApiConstructor(client);
@@ -375,6 +369,10 @@ export default OnepanelServerBase.extend(
       });
     },
 
+    /** 
+     * Resolves to token for authorizing Onepanel REST calls
+     * @returns {Promise<string>}
+     */
     getOnepanelToken() {
       const isEmergency = this.get('isEmergency');
       let tokenPromise;

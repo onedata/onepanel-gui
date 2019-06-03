@@ -14,6 +14,7 @@ import checkImg from 'onedata-gui-common/utils/check-img';
 import { Promise } from 'rsvp';
 
 export default SidebarContentRoute.extend({
+  onepanelServer: service(),
   clusterModelManager: service(),
   navigationState: service(),
   onezoneGui: service(),
@@ -25,9 +26,11 @@ export default SidebarContentRoute.extend({
       const {
         clusterModelManager,
         onezoneGui,
+        onepanelServer,
       } = this.getProperties(
         'clusterModelManager',
-        'onezoneGui'
+        'onezoneGui',
+        'onepanelServer'
       );
 
       const currentClusterId = get(clusterModelManager, 'currentClusterProxy.id') ||
@@ -40,6 +43,14 @@ export default SidebarContentRoute.extend({
       if (clusterId !== currentClusterId) {
         if (clusterId === 'new-cluster') {
           return this.transitionTo('onedata.sidebar.content', currentClusterId);
+        } else if (onepanelServer.get('isEmergency')) {
+          return this.transitionTo('onedata.sidebar.index');
+        } else if (!get(model, 'resource')) {
+          return new Promise(() => {
+            window.location.replace(onezoneGui.getUrlInOnezone(
+              `onedata/clusters/${urlClusterId}/not-found`
+            ));
+          });
         } else {
           // If selected cluster is different than this cluster, redirect to
           // another Onepanel if possible. If Onezone is not available, then

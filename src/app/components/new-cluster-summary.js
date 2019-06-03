@@ -15,6 +15,8 @@ import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {
+  classNames: ['new-cluster-summary'],
+
   onezoneGui: service(),
   guiUtils: service(),
   onepanelConfiguration: service(),
@@ -35,6 +37,11 @@ export default Component.extend(I18n, {
   finish: notImplementedIgnore,
 
   isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  serviceType: reads('onepanelConfiguration.serviceType'),
 
   onepanelUrl: computed(function onepanelUrl() {
     if (this.get('isEmergencyOnepanel')) {

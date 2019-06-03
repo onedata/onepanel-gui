@@ -1,0 +1,23 @@
+.content-clusters-members {
+  .manage-via-onezone {
+    margin-top: $padding-large-vertical;
+  }
+  .row-members-counter {
+    position: relative;
+    min-height: 100px;
+  }
+  .user-token-container {
+    position: relative;
+    margin-top: $padding-base-vertical;
+    &.expanded {
+      margin-top: 2 * $padding-large-vertical;
+      min-height: 220px;
+    }
+  }
+  .row-yield {
+    margin-bottom: 0;
+  }
+  .one-image .image {
+    max-height: 130px;
+  }
+}

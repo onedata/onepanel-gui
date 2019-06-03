@@ -40,7 +40,7 @@ const {
   },
 } = Onepanel;
 
-const MOCK_USERNAME = 'mock_admin';
+const MOCK_USERNAME = 'mock_root';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 const PROVIDER1_ID = PROVIDER_ID;
 const PROVIDER2_ID = 'dsnu8ew3724t3643t62344e-fdfdj8h78d';
@@ -239,22 +239,16 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
-    /**
-     * Set to false if want to see create cluster init options (add admin, etc.)
-     * @type {boolean}
-     */
-    adminUserPresent: true,
-
     username: MOCK_USERNAME,
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(isOneprovider ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(isOneprovider ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -265,6 +259,12 @@ export default OnepanelServerBase.extend(
      * @type {computed<Boolean>}
      */
     isInitialized: false,
+
+    /**
+     * Set to undefined here to see create admin account screen
+     * @type {computed}
+     */
+    currentEmergencyPassphrase: 'password',
 
     /**
      * @returns {Promise}
@@ -415,11 +415,12 @@ export default OnepanelServerBase.extend(
         .then(() => ({ token: 'mock-token', username: MOCK_USERNAME }));
     },
 
-    login(username, password) {
-      console.debug(`service:onepanel-server-mock: login ${username}`);
+    login(passphrase) {
+      const currentEmergencyPassphrase = this.get('currentEmergencyPassphrase');
+      console.debug('service:onepanel-server-mock: login');
       let cookies = this.get('cookies');
       let loginCall = new Promise((resolve, reject) => {
-        if (username === 'admin' && password === 'password') {
+        if (passphrase === currentEmergencyPassphrase) {
           cookies.write('is-authenticated', 'true');
           run.next(resolve);
         } else {
@@ -681,32 +682,53 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getUser: computed(function () {
+    _req_onepanel_getCurrentUser() {
+      const isEmergency = this.get('isEmergency');
+      if (isEmergency) {
+        return {
+          statusCode: () => 404,
+        };
+      } else {
+        return {
+          success() {
+            return {
+              userId: 'usrid123',
+              username: MOCK_USERNAME,
+              clusterPrivileges: [
+                'cluster_view',
+                'cluster_update',
+                'cluster_delete',
+                'cluster_view_privileges',
+                'cluster_set_privileges',
+                'cluster_add_user',
+                'cluster_remove_user',
+                'cluster_add_group',
+                'cluster_remove_group',
+              ],
+            };
+          },
+        };
+      }
+    },
+
+    _req_onepanel_getClusterMembersSummary() {
       return {
         success() {
           return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
+            groupsCount: 1,
+            usersCount: 2,
+            effectiveGroupsCount: 3,
+            effectiveUsersCount: 4,
           };
         },
       };
-    }),
+    },
 
-    _req_onepanel_modifyUser: computed(function () {
-      return {
-        success( /* ignore password */ ) {
-          return null;
-        },
-      };
-    }),
-
-    _req_onepanel_getCurrentUser() {
+    _req_onepanel_createUserInviteToken() {
       return {
         success() {
           return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
-            userRole: 'admin',
+            token: 'user_invitation_token_1234567890',
           };
         },
       };
@@ -1100,13 +1122,6 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_addUser() {
-      return {
-        success: () => undefined,
-        statusCode: () => 204,
-      };
-    },
-
     _req_onepanel_addClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
@@ -1128,23 +1143,6 @@ export default OnepanelServerBase.extend(
         },
         statusCode: () => 204,
       };
-    },
-
-    /**
-     * Currently only unauthenticated response
-     * @returns {object}
-     */
-    _req_onepanel_getUsers() {
-      if (this.get('adminUserPresent')) {
-        return {
-          statusCode: () => 403,
-        };
-      } else {
-        return {
-          success: () => ({ usernames: [] }),
-          statusCode: () => 200,
-        };
-      }
     },
 
     _req_onepanel_getNode() {
@@ -1270,6 +1268,22 @@ export default OnepanelServerBase.extend(
           zoneDomain: 'onezone.local-onedata.org',
 
         }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_getEmergencyPassphraseStatus() {
+      return {
+        success: () => ({ isSet: Boolean(this.get('currentEmergencyPassphrase')) }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_setEmergencyPassphrase() {
+      return {
+        success: ({ newPassphrase }) => {
+          this.set('currentEmergencyPassphrase', newPassphrase);
+        },
         statusCode: () => 200,
       };
     },

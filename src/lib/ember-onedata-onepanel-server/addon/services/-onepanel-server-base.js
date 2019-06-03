@@ -15,6 +15,7 @@ import RequestErrorHandler from 'ember-onedata-onepanel-server/mixins/request-er
 import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-validator';
 import { computed } from '@ember/object';
 import { not } from '@ember/object/computed';
+import { resolve } from 'rsvp';
 
 export const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
 
@@ -63,6 +64,36 @@ export default Service.extend(
           hostname,
           clusterType,
         }));
+    },
+
+    /**
+     * Returns promise that resolves to current user details
+     * @returns {Promise<Onepanel.UserDetails>}
+     */
+    getCurrentUser() {
+      const isEmergency = this.get('isEmergency');
+
+      if (isEmergency) {
+        // root account
+        return resolve({
+          userId: 'root',
+          username: 'root',
+          clusterPrivileges: [
+            'cluster_view',
+            'cluster_update',
+            'cluster_delete',
+            'cluster_view_privileges',
+            'cluster_set_privileges',
+            'cluster_add_user',
+            'cluster_remove_user',
+            'cluster_add_group',
+            'cluster_remove_group',
+          ],
+        });
+      } else {
+        return this.request('onepanel', 'getCurrentUser')
+          .then(({ data }) => data);
+      }
     },
   }
 );
