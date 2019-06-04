@@ -11,7 +11,7 @@
 
 import { A } from '@ember/array';
 
-import { Promise, resolve } from 'rsvp';
+import { Promise } from 'rsvp';
 import { readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { set, get, setProperties, computed } from '@ember/object';
@@ -402,10 +402,6 @@ export default OnepanelServerBase.extend(
         }),
       });
     }),
-
-    getEmergencyOnepanelOriginProxy() {
-      return resolve(`https://${mockSubdomain}.local-onedata.org:9443`);
-    },
 
     watchTaskStatus(taskId) {
       return watchTaskStatus(this, taskId);

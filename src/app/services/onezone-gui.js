@@ -108,7 +108,7 @@ export default Service.extend(
           return getOnezoneUrl(onezoneOrigin, `onedata/clusters/${clusterId}`);
         default:
           throw new Error(
-            `service: onezone - gui Unsupported redirectType: ${redirectType}`
+            `service: onezone-gui Unsupported redirectType: ${redirectType}`
           );
       }
     },

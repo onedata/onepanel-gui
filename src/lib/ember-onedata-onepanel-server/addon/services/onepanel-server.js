@@ -39,8 +39,7 @@ function replaceUrlOrigin(url, newOrigin) {
 const CUSTOM_REQUESTS = {};
 
 export default OnepanelServerBase.extend(
-  createDataProxyMixin('apiOrigin'),
-  createDataProxyMixin('emergencyOnepanelOrigin'), {
+  createDataProxyMixin('apiOrigin'), {
     guiUtils: service(),
 
     /**
@@ -144,13 +143,6 @@ export default OnepanelServerBase.extend(
           this.handleRequestError(error);
           throw error;
         });
-    },
-
-    /**
-     * @override
-     */
-    fetchEmergencyOnepanelOrigin() {
-      return this.getGuiContextProxy().then(({ origin }) => origin);
     },
 
     /**

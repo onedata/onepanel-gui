@@ -6,7 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
-* VFS-5476 Refactoring of token/origin endpoints and unfied GUI URL
+* VFS-5476 Refactoring of token/origin endpoints and unified GUI URL
 * VFS-5452 Fixed not working cluster deployment GUI after SP3 changes
 * VFS-5425 Service Pack 3 for unified GUI
 * VFS-5411 Basic-auth sign-in changed to emergency passphrase

@@ -9,23 +9,27 @@
 
 import ApplicationRoute from 'onedata-gui-common/routes/application';
 import { inject as service } from '@ember/service';
+import { resolve } from 'rsvp';
 
 export default ApplicationRoute.extend({
   onepanelServer: service(),
 
   beforeModel() {
     const superResult = this._super(...arguments);
-    return this.get('onepanelServer').getGuiContextProxy()
-      .then(guiContext => {
-        if (typeof superResult === 'object') {
-          return Object.assign({}, superResult, {
-            guiContext,
+    return resolve(superResult)
+      .then(superResultContent => {
+        return this.get('onepanelServer').getGuiContextProxy()
+          .then(guiContext => {
+            if (superResultContent && typeof superResultContent === 'object') {
+              return Object.assign({}, superResultContent, {
+                guiContext,
+              });
+            } else {
+              return {
+                guiContext,
+              };
+            }
           });
-        } else {
-          return {
-            guiContext,
-          };
-        }
       });
   },
 });
