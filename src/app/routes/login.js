@@ -48,7 +48,7 @@ export default LoginRoute.extend({
       onepanelServer,
     } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
 
-    const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
+    const clusterId = get(onepanelServer, 'guiContext.clusterId');
     const isEmergency = get(onepanelServer, 'isEmergency');
     if (isEmergency) {
       const baseModel = this._super(...arguments) || {};
@@ -67,7 +67,7 @@ export default LoginRoute.extend({
         sessionStorage.setItem('authRedirect', '1');
         window.location =
           onezoneGui.getOnepanelNavUrlInOnezone({
-            internalRoute: `/clusters/${clusterIdFromUrl}`,
+            internalRoute: `/clusters/${clusterId}`,
             redirectType: 'redirect',
           });
       });

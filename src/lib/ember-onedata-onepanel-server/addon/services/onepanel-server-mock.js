@@ -32,6 +32,7 @@ import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'npm:onepanel';
+import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
 const {
   TaskStatus,
@@ -52,6 +53,11 @@ const MOCKED_SUPPORT = {
 
 const fallbackMockServiceType = 'onezone';
 
+/**
+ * Match using URL, because we know that this is NodeJS-based mocked backend,
+ * and we don't want to use REST calls.
+ * @returns {string} one of: onezone, oneprovider
+ */
 function getMockServiceType() {
   const url = location.toString();
   if (/https:\/\/onezone.*9443/.test(url)) {
@@ -59,9 +65,10 @@ function getMockServiceType() {
   } else if (/https:\/\/oneprovider.*9443/.test(url)) {
     return 'oneprovider';
   } else {
-    const letterMatch = url.match(new RegExp(`${location.origin}\\/o(z|p)p\\/.*`));
-    if (letterMatch) {
-      return letterMatch[1] === 'z' ? 'onezone' : 'oneprovider';
+    const clusterMatch = url.match(new RegExp(
+      `${location.origin}\\/${onepanelAbbrev}\\/(.*?)\\/.*`));
+    if (clusterMatch) {
+      return /oneprovider/.test(clusterMatch[1]) ? 'oneprovider' : 'onezone';
     } else {
       return fallbackMockServiceType;
     }
@@ -213,10 +220,14 @@ const provider1 = PlainableObject.create({
   adminEmail: 'some@example.com',
 });
 
+/**
+ * Mocked NodeJS-based environment has provider ID in its URL.
+ * @returns {Object} mocked cluster record object
+ */
 function getCurrentProviderClusterFromUrl() {
   const url = location.toString();
   const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
-  const mh = /https:\/\/.*\/opp\/(.*?)\/.*/.exec(url);
+  const mh = new RegExp(`https://.*/${onepanelAbbrev}/(.*?)/.*/`).exec(url);
   const id = me && me[1] || mh && mh[1] || 'oneprovider-1';
   return providerClusters.findBy('id', id);
 }
@@ -245,10 +256,10 @@ export default OnepanelServerBase.extend(
     // see STEP import for more info
     // mockStep: Number(STEP.ZONE_IPS),
     // NOTE: below: first step of deployment
-    mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
+    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
     // mockStep: Number(isOneprovider ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
     // mockStep: Number(isOneprovider ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
 
     mockInitializedCluster: computed.gte(
       'mockStep',
@@ -1258,7 +1269,7 @@ export default OnepanelServerBase.extend(
         success: () => ({
           clusterId: this.get('isEmergency') ?
             (mockServiceType === 'oneprovider' ?
-              providerCluster1.id : zoneCluster.id) : this.getClusterIdFromUrl(),
+              providerCluster1.id : zoneCluster.id) : this.get('guiContext.guiMode'),
           version: '18.02.0-rc13',
           build: '2100',
           deployed: mockInitializedCluster,
@@ -1266,7 +1277,6 @@ export default OnepanelServerBase.extend(
             this.get('mockStep') > STEP.PROVIDER_REGISTER,
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
-
         }),
         statusCode: () => 200,
       };

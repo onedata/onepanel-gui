@@ -14,6 +14,11 @@ import { get, computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import checkImg from 'onedata-gui-common/utils/check-img';
+import {
+  onepanelAbbrev,
+  onezoneDefaultRootPath,
+  getOnezoneUrl,
+} from 'onedata-gui-common/utils/onedata-urls';
 
 export default Service.extend(
   createDataProxyMixin('isOnezoneAvailable'),
@@ -36,7 +41,8 @@ export default Service.extend(
      */
     onezoneGuiUrl: computed('onezoneOrigin', function () {
       const onezoneOrigin = this.get('onezoneOrigin');
-      return onezoneOrigin ? `${onezoneOrigin}/ozw/onezone/i#` : null;
+      return onezoneOrigin ?
+        getOnezoneUrl(onezoneOrigin) : null;
     }),
 
     /**
@@ -61,30 +67,18 @@ export default Service.extend(
       }
     ),
 
-    /**
-     * Returns abbreviation, that can be used to generate links to Onezone
-     * @param {string} type one of: oneprovider, onezone
-     * @returns {string}
-     */
-    getOnepanelAbbrev(type) {
-      return type === 'onezone' ? 'ozp' : 'opp';
-    },
-
     getUrlInOnezone(path) {
-      const onezoneOrigin = this.get('onezoneOrigin');
-      return `${onezoneOrigin}/ozw/onezone/i#/${path}`;
+      return getOnezoneUrl(this.get('onezoneOrigin'), path);
     },
 
     /**
      * Returns url to specified place in Onepanel hosted by onezone
-     * @param {string} onepanelType one of: oneprovider, onezone
      * @param {string} clusterId
      * @param {string} [internalRoute='/'] Onezone application internal route
      * @param {boolean} [redirectType='direct]
      * @returns {string}
      */
     getOnepanelNavUrlInOnezone({
-      onepanelType,
       clusterId,
       internalRoute = '/',
       redirectType = 'direct',
@@ -93,29 +87,29 @@ export default Service.extend(
       redirectType: 'onezone_route',
     }) {
       const onezoneOrigin = this.get('onezoneOrigin');
-      if (!onepanelType) {
-        onepanelType = this.get('onepanelConfiguration.serviceType');
-      }
       if (!clusterId) {
         clusterId = this.get('onepanelConfiguration.clusterId');
       }
 
-      const onepanelAbbrev = this.getOnepanelAbbrev(onepanelType);
       switch (redirectType) {
         case 'direct':
-          return `${onezoneOrigin}/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+          return getOnezoneUrl(onezoneOrigin, internalRoute);
         case 'redirect':
           if (get('onepanelServer', 'isEmergency')) {
             throw new Error(
               'service:onezone-gui#getOnepanelNavUrlInOnezone: tried to use redirect on emergency Onepanel which is currently not supported'
             );
           }
-          return `${onezoneOrigin}/ozw/onezone/i#/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`;
+          return getOnezoneUrl(
+            onezoneOrigin,
+            `/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`
+          );
         case 'onezone_route':
-          return `${onezoneOrigin}/ozw/onezone/i#/onedata/clusters/${clusterId}`;
+          return getOnezoneUrl(onezoneOrigin, `onedata/clusters/${clusterId}`);
         default:
           throw new Error(
-            `service:onezone-gui Unsupported redirectType: ${redirectType}`);
+            `service: onezone - gui Unsupported redirectType: ${redirectType}`
+          );
       }
     },
 
@@ -126,7 +120,7 @@ export default Service.extend(
     fetchIsOnezoneAvailable() {
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
-        return checkImg(`${onezoneOrigin}/ozw/onezone/favicon.ico`);
+        return checkImg(`${onezoneOrigin}${onezoneDefaultRootPath}/favicon.ico`);
       } else {
         return resolve(false);
       }

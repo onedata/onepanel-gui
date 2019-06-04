@@ -62,7 +62,6 @@ export default SidebarContentRoute.extend({
                 let redirectUrl;
                 if (isAvailable) {
                   redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
-                    onepanelType: get(model, 'resource.type'),
                     clusterId,
                     internalRoute: `/onedata/clusters/${clusterId}`,
                   });
