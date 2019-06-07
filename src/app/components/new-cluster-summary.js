@@ -47,7 +47,7 @@ export default Component.extend(I18n, {
     if (this.get('isEmergencyOnepanel')) {
       return location.origin;
     } else {
-      return this.get('onepanelServer.apiOrigin');
+      return 'https://' + this.get('onepanelServer.apiOrigin');
     }
   }),
 

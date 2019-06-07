@@ -58,7 +58,7 @@ export default Service.extend(
     /**
      * @override
      * Mocked environment requires now `onedata-gui-server-mock`,
-     * which has `./origin` method implemented.
+     * which has `./gui-context` method implemented.
      * @returns {Object} properties: origin, clusterType, clusterId
      */
     fetchGuiContext() {

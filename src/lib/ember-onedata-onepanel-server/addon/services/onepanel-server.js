@@ -149,7 +149,7 @@ export default OnepanelServerBase.extend(
      * @override
      */
     fetchApiOrigin() {
-      return this.getGuiContextProxy().then(({ origin }) => origin);
+      return this.getGuiContextProxy().then(({ apiOrigin }) => apiOrigin);
     },
 
     /**
@@ -175,7 +175,7 @@ export default OnepanelServerBase.extend(
               return run(() => {
                 return this.initClient({
                     token: onepanelToken,
-                    origin: apiOrigin,
+                    origin: 'https://' + apiOrigin,
                     ttl,
                   })
                   .then(() => {
