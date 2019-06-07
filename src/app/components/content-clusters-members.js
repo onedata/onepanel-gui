@@ -16,12 +16,12 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 
 export default Component.extend(
   I18n,
-  createDataProxyMixin('members'),
   createDataProxyMixin('userInvitationToken'), {
     classNames: ['content-clusters-members'],
 
     onepanelServer: service(),
     onezoneGui: service(),
+    memberManager: service(),
     i18n: service(),
 
     /**
@@ -45,31 +45,22 @@ export default Component.extend(
      */
     isOnepanelEmergency: reads('onepanelServer.isEmergency'),
 
-    init() {
-      this._super(...arguments);
-      this.updateMembersProxy();
-    },
+    /**
+     * @type {Ember.ComputedProperty<PromiseObject>}
+     */
+    membersProxy: reads('memberManager.membersProxy'),
 
     /**
-     * @overrides
-     * @returns {Promise<Onepanel.ClusterMembers>}
+     * @type {Ember.ComputedProperty<boolean>}
      */
-    fetchMembers() {
-      const onepanelServer = this.get('onepanelServer');
-      return onepanelServer
-        .request('onepanel', 'getClusterMembersSummary')
-        .then(({ data }) => data);
-    },
+    hasNoConnectedUser: reads('memberManager.hasNoConnectedUser'),
 
     /**
      * @overrides
      * @returns {Promise<Onepanel.Token>}
      */
     fetchUserInvitationToken() {
-      const onepanelServer = this.get('onepanelServer');
-      return onepanelServer
-        .request('onepanel', 'createUserInviteToken')
-        .then(({ data }) => data);
+      return this.get('memberManager').createUserInvitationToken();
     },
 
     actions: {

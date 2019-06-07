@@ -39,12 +39,18 @@
             </div>          
           </div>
         </div>
+        {{#if hasNoConnectedUser}}
+          <div class="alert alert-danger text-center no-users-warning">
+            {{tt this "noConnectedUserWarning"}}
+          </div>
+        {{/if}}
       {{/promise-proxy-container}}
     </div>
     <div class="text-center">
       {{#one-spin-button
         class=(concat "btn btn-primary manage-via-onezone")
-        action=(action "manageViaOnezone")}}
+        action=(action "manageViaOnezone")
+        disabled=(or membersProxy.isPending hasNoConnectedUser)}}
         {{tt this "openInOnezone"}}
       {{/one-spin-button}}
     </div>
