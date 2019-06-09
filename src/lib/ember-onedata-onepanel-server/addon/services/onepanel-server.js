@@ -26,7 +26,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { Promise, resolve } from 'rsvp';
 
 function replaceUrlOrigin(url, newOrigin) {
-  return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
+  return url.replace(/(https?:\/\/).*?(\/.*)/, `$1${newOrigin}$2`);
 }
 
 /**
@@ -197,16 +197,21 @@ export default OnepanelServerBase.extend(
      * It uses cookies authentication, so make sure that the cookies for current
      * domain are set (using /login method).
      *
-     * @param {string} [origin]
+     * @param {string} [token]
+     * @param {string} [apiOrigin]
+     * @param {number} [ttl]
      * @returns {Onepanel.ApiClient}
      */
-    createClient({ token, origin, ttl } = {}) {
+    createClient({ token, apiOrigin, ttl } = {}) {
       const location = this.get('_location');
       let client = new Onepanel.ApiClient();
       if (token) {
         setClientToken(client, token, ttl);
       }
-      client.basePath = replaceUrlOrigin(client.basePath, origin || location.origin);
+      client.basePath = replaceUrlOrigin(
+        client.basePath,
+        apiOrigin || location.host
+      );
       return client;
     },
 
@@ -219,9 +224,9 @@ export default OnepanelServerBase.extend(
      * @param {string} [origin]
      * @returns {Promise}
      */
-    initClient({ token, origin, ttl } = {}) {
+    initClient({ token, apiOrigin, ttl } = {}) {
       return new Promise((resolve) => {
-        let client = this.createClient({ token, origin, ttl });
+        let client = this.createClient({ token, apiOrigin, ttl });
         this.set('client', client);
         resolve();
       });
@@ -278,7 +283,7 @@ export default OnepanelServerBase.extend(
       token,
     } = {}) {
       return this.getApiOriginProxy().then(apiOrigin => {
-        const client = this.createClient({ origin: apiOrigin, token });
+        const client = this.createClient({ apiOrigin, token });
         if (password) {
           client.defaultHeaders['Authorization'] =
             'Basic ' + btoa(password);
