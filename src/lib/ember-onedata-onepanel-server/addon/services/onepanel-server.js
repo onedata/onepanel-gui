@@ -26,21 +26,20 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { Promise, resolve } from 'rsvp';
 
 function replaceUrlOrigin(url, newOrigin) {
-  return url.replace(/https?:\/\/.*?(\/.*)/, newOrigin + '$1');
+  return url.replace(/(https?:\/\/).*?(\/.*)/, `$1${newOrigin}$2`);
 }
 
 /**
  * Contains alternative implementation of onepanel client methods
  *
  * Each method should have the same signature as a onepanel client method.
- * The ``callback`` that is passed as a last parameter should take:
- * ``error, data, response``.
+ * The `callback` that is passed as a last parameter should take:
+ * `error, data, response`.
  */
 const CUSTOM_REQUESTS = {};
 
 export default OnepanelServerBase.extend(
-  createDataProxyMixin('apiOrigin'),
-  createDataProxyMixin('emergencyOnepanelOrigin'), {
+  createDataProxyMixin('apiOrigin'), {
     guiUtils: service(),
 
     /**
@@ -146,70 +145,11 @@ export default OnepanelServerBase.extend(
         });
     },
 
-    getClusterId() {
-      const idFromLocation = this.getClusterIdFromUrl();
-      if (idFromLocation) {
-        return resolve(idFromLocation);
-      } else {
-        return this.request('onepanel', 'getCurrentCluster')
-          .then(({ data }) => data.id);
-      }
-    },
-
     /**
      * @override
-     * @param {string} serviceType 
-     * @param {string} clusterId 
-     */
-    fetchEmergencyOnepanelOrigin(serviceType, clusterId) {
-      if (!serviceType || !clusterId) {
-        throw new Error(
-          'service:onepanel-server#fetchEmergencyOnepanelOrigin: cannot execute without all fetchArgs'
-        );
-      }
-      const _location = this.get('_location');
-      if (serviceType === 'oneprovider') {
-        return new Promise((resolve, reject) =>
-            $.ajax(
-              '/gui-origin', {
-                method: 'POST',
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                data: JSON.stringify({
-                  clusterId: clusterId,
-                  clusterType: 'oneprovider',
-                }),
-              }
-            ).then(resolve, reject))
-          .then(({ domain }) => `https://${domain}:9443`);
-      } else {
-        // Onezone Panel served from Onezone host is on different port
-        // TODO: probably unsafe if using other port for https
-        return resolve(`${_location.origin}:9443`);
-      }
-    },
-
-    /**
-     * @override
-     * @param {object} [oneproviderTokenData] data fetched from Onezone's
-     *   /gui-token for 'oneprovider' cluster - can be used to prevent from
-     *   making multiple requests
      */
     fetchApiOrigin() {
-      const clusterIdFromUrl = this.getClusterIdFromUrl();
-      const _location = this.get('_location');
-      if (clusterIdFromUrl) {
-        const serviceType = this.getClusterTypeFromUrl();
-        return this.getEmergencyOnepanelOriginProxy({
-          fetchArgs: [
-            serviceType,
-            clusterIdFromUrl,
-          ],
-        });
-      } else {
-        // frontend is served from Onepanel host
-        return resolve(_location.origin);
-      }
+      return this.getGuiContextProxy().then(({ apiOrigin }) => apiOrigin);
     },
 
     /**
@@ -235,7 +175,7 @@ export default OnepanelServerBase.extend(
               return run(() => {
                 return this.initClient({
                     token: onepanelToken,
-                    origin: apiOrigin,
+                    apiOrigin,
                     ttl,
                   })
                   .then(() => {
@@ -257,16 +197,21 @@ export default OnepanelServerBase.extend(
      * It uses cookies authentication, so make sure that the cookies for current
      * domain are set (using /login method).
      *
-     * @param {string} [origin]
+     * @param {string} [token]
+     * @param {string} [apiOrigin]
+     * @param {number} [ttl]
      * @returns {Onepanel.ApiClient}
      */
-    createClient({ token, origin, ttl } = {}) {
+    createClient({ token, apiOrigin, ttl } = {}) {
       const location = this.get('_location');
       let client = new Onepanel.ApiClient();
       if (token) {
         setClientToken(client, token, ttl);
       }
-      client.basePath = replaceUrlOrigin(client.basePath, origin || location.origin);
+      client.basePath = replaceUrlOrigin(
+        client.basePath,
+        apiOrigin || location.host
+      );
       return client;
     },
 
@@ -276,12 +221,12 @@ export default OnepanelServerBase.extend(
      * Must be invoked before using `request` method!
      * 
      * @param {string} [token]
-     * @param {string} [origin]
+     * @param {string} [apiOrigin]
      * @returns {Promise}
      */
-    initClient({ token, origin, ttl } = {}) {
+    initClient({ token, apiOrigin, ttl } = {}) {
       return new Promise((resolve) => {
-        let client = this.createClient({ token, origin, ttl });
+        let client = this.createClient({ token, apiOrigin, ttl });
         this.set('client', client);
         resolve();
       });
@@ -338,7 +283,7 @@ export default OnepanelServerBase.extend(
       token,
     } = {}) {
       return this.getApiOriginProxy().then(apiOrigin => {
-        const client = this.createClient({ origin: apiOrigin, token });
+        const client = this.createClient({ apiOrigin, token });
         if (password) {
           client.defaultHeaders['Authorization'] =
             'Basic ' + btoa(password);
@@ -369,22 +314,12 @@ export default OnepanelServerBase.extend(
       });
     },
 
-    /** 
+    /**
      * Resolves to token for authorizing Onepanel REST calls
-     * @returns {Promise<string>}
+     * @returns {Promise<object>} object properties: token, ttl
      */
     getOnepanelToken() {
-      const isEmergency = this.get('isEmergency');
-      let tokenPromise;
-      if (isEmergency) {
-        tokenPromise = getEmergencyOnepanelToken();
-      } else {
-        tokenPromise = getHostedOnepanelToken(
-          this.getClusterIdFromUrl(),
-          this.getClusterTypeFromUrl()
-        );
-      }
-      return tokenPromise;
+      return resolve($.post('./gui-preauthorize'));
     },
   }
 );
@@ -395,26 +330,4 @@ function setClientToken(client, token, ttl) {
   if (ttl != null) {
     client.ttl = ttl;
   }
-}
-
-function getHostedOnepanelToken(clusterId, clusterType) {
-  return new Promise((resolve, reject) => $.ajax(
-    '/gui-token', {
-      method: 'POST',
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      data: JSON.stringify({
-        clusterId: clusterId,
-        clusterType: clusterType,
-      }),
-    }
-  ).then(resolve, reject));
-}
-
-function getEmergencyOnepanelToken() {
-  return new Promise((resolve, reject) => $.ajax(
-    '/gui-token', {
-      method: 'POST',
-    }
-  ).then(resolve, reject));
 }

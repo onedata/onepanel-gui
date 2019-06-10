@@ -17,13 +17,12 @@ import { computed } from '@ember/object';
 import { not } from '@ember/object/computed';
 import { resolve } from 'rsvp';
 
-export const reOnepanelInOnzoneUrl = /.*\/(opp|ozp)\/(.*?)\/(.*)/;
-
 export default Service.extend(
   RequestErrorHandler,
   ResponseValidator,
   createDataProxyMixin('configuration'),
-  createDataProxyMixin('node'), {
+  createDataProxyMixin('node'),
+  createDataProxyMixin('guiContext'), {
     /**
      * @type {Window.Location}
      */
@@ -32,18 +31,8 @@ export default Service.extend(
     isHosted: not('isEmergency'),
 
     isEmergency: computed(function isEmergency() {
-      return !this.getClusterIdFromUrl();
+      return this.get('guiContext.guiMode') === 'emergency';
     }),
-
-    getClusterTypeFromUrl() {
-      const m = this.get('_location').toString().match(reOnepanelInOnzoneUrl);
-      return m && (m[1] === 'ozp' ? 'onezone' : 'oneprovider');
-    },
-
-    getClusterIdFromUrl() {
-      const m = this.get('_location').toString().match(reOnepanelInOnzoneUrl);
-      return m && m[2];
-    },
 
     /**
      * @override
@@ -64,6 +53,18 @@ export default Service.extend(
           hostname,
           clusterType,
         }));
+    },
+
+    /**
+     * @override
+     * Mocked environment requires now `onedata-gui-server-mock`,
+     * which has `./gui-context` method implemented.
+     * @returns {Object} properties: origin, clusterType, clusterId
+     */
+    fetchGuiContext() {
+      return new Promise((resolve, reject) =>
+        $.get('./gui-context').then(resolve, reject)
+      );
     },
 
     /**

@@ -52,10 +52,14 @@ export default GuiUtils.extend(
      * Panel type: oneprovider or onezone.
      * @type {Ember.ComputedProperty<string>}
      */
-    serviceType: computed('onepanelConfiguration.serviceType', function serviceType() {
-      return this.get('onepanelServer').getClusterTypeFromUrl() ||
-        this.get('onepanelConfiguration.serviceType');
-    }),
+    serviceType: computed(
+      'onepanelConfiguration.serviceType',
+      'onepanelServer.guiContext.clusterType',
+      function serviceType() {
+        return this.get('onepanelServer.guiContext.clusterType') ||
+          this.get('onepanelConfiguration.serviceType');
+      }
+    ),
 
     /**
      * Full panel type name: Oneprovider or Onezone.
@@ -83,7 +87,7 @@ export default GuiUtils.extend(
       'onezoneGui.onezoneGuiUrl',
       function manageAccountExternalLink() {
         const onezoneGuiUrl = this.get('onezoneGui.onezoneGuiUrl');
-        return `${onezoneGuiUrl}/onedata/users`;
+        return `${onezoneGuiUrl}onedata/users`;
       }
     ),
 

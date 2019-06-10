@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5476 Refactoring of token/origin endpoints and unified GUI URL
 * VFS-5496 Added notification about no linked Onezone user
 * VFS-5219 Common libraries update
 * VFS-5452 Fixed not working cluster deployment GUI after SP3 changes

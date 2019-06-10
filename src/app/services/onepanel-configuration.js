@@ -8,6 +8,7 @@
  */
 
 import Service, { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
@@ -88,12 +89,12 @@ export default Service.extend(
       } = this.getProperties('onepanelServer', '_location');
 
       // Fill some already known data if Onepanel is hosted
-      const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
-      if (clusterIdFromUrl) {
+      const isHosted = (get(onepanelServer, 'guiContext.guiMode') === 'unified');
+      if (isHosted) {
         this.setProperties({
           zoneDomain: _location.host,
-          serviceType: onepanelServer.getClusterTypeFromUrl(),
-          clusterId: clusterIdFromUrl,
+          serviceType: get(onepanelServer, 'guiContext.clusterType'),
+          clusterId: get(onepanelServer, 'guiContext.clusterId'),
           isRegistered: true,
         });
       }
