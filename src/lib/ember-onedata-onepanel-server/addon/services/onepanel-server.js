@@ -175,7 +175,7 @@ export default OnepanelServerBase.extend(
               return run(() => {
                 return this.initClient({
                     token: onepanelToken,
-                    origin: 'https://' + apiOrigin,
+                    apiOrigin,
                     ttl,
                   })
                   .then(() => {
@@ -221,7 +221,7 @@ export default OnepanelServerBase.extend(
      * Must be invoked before using `request` method!
      * 
      * @param {string} [token]
-     * @param {string} [origin]
+     * @param {string} [apiOrigin]
      * @returns {Promise}
      */
     initClient({ token, apiOrigin, ttl } = {}) {
