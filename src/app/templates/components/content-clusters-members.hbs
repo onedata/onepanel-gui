@@ -41,7 +41,8 @@
         </div>
         {{#if hasNoConnectedUser}}
           <div class="alert alert-danger text-center no-users-warning">
-            {{tt this "noConnectedUserWarning"}}
+            <p class="text-center"><strong>{{tt this "noConnectedUserWarningHeader"}}</strong></p>
+            <p>{{tt this "noConnectedUserWarning"}}</p>
           </div>
         {{/if}}
       {{/promise-proxy-container}}
