@@ -87,7 +87,7 @@ export default GuiUtils.extend(
       'onezoneGui.onezoneGuiUrl',
       function manageAccountExternalLink() {
         const onezoneGuiUrl = this.get('onezoneGui.onezoneGuiUrl');
-        return `${onezoneGuiUrl}/onedata/users`;
+        return `${onezoneGuiUrl}onedata/users`;
       }
     ),
 
