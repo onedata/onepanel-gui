@@ -17,6 +17,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
+  memberManager: service(),
   onepanelServer: service(),
 
   /**
@@ -33,6 +34,11 @@ export default SecondLevelItems.extend(I18n, {
    * @type {Ember.ComputerProperty<boolean>}
    */
   webCertValid: reads('webCertManager.webCertValid'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  hasNoConnectedUser: reads('memberManager.hasNoConnectedUser'),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -67,6 +73,16 @@ export default SecondLevelItems.extend(I18n, {
       icon: 'certificate',
       warningMessage: this.get('webCertValid') === false ?
         this.t('webCertWarning') : undefined,
+    };
+  }),
+
+  membersItem: computed('hasNoConnectedUser', function membersItem() {
+    return {
+      id: 'members',
+      label: this.t('members'),
+      icon: 'group',
+      warningMessage: this.get('hasNoConnectedUser') ?
+        this.t('noConnectedUserWarning') : undefined,
     };
   }),
 
