@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-5496 Added notification about no linked Onezone user
+* VFS-5219 Common libraries update
 * VFS-5452 Fixed not working cluster deployment GUI after SP3 changes
 * VFS-5425 Service Pack 3 for unified GUI
 * VFS-5411 Basic-auth sign-in changed to emergency passphrase

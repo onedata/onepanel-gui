@@ -28,6 +28,7 @@ export default SidebarResources.extend({
       case 'spaces':
       case 'groups':
       case 'tokens':
+      case 'harvesters':
       case 'users': {
         return resolve([]);
       }
