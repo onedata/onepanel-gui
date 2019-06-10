@@ -82,7 +82,7 @@ export default SecondLevelItems.extend(I18n, {
       label: this.t('members'),
       icon: 'group',
       warningMessage: this.get('hasNoConnectedUser') ?
-        this.t('noConnectedUsersWarning') : undefined,
+        this.t('noConnectedUserWarning') : undefined,
     };
   }),
 
