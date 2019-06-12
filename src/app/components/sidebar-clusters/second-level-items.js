@@ -17,6 +17,8 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
+  memberManager: service(),
+  onepanelServer: service(),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -32,6 +34,16 @@ export default SecondLevelItems.extend(I18n, {
    * @type {Ember.ComputerProperty<boolean>}
    */
   webCertValid: reads('webCertManager.webCertValid'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  hasNoConnectedUser: reads('memberManager.hasNoConnectedUser'),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -64,65 +76,63 @@ export default SecondLevelItems.extend(I18n, {
     };
   }),
 
+  membersItem: computed('hasNoConnectedUser', function membersItem() {
+    return {
+      id: 'members',
+      label: this.t('members'),
+      icon: 'group',
+      warningMessage: this.get('hasNoConnectedUser') ?
+        this.t('noConnectedUserWarning') : undefined,
+    };
+  }),
+
+  emergencyPassphraseItem: computed(function emergencyPassphraseItem() {
+    return {
+      id: 'emergency-passphrase',
+      label: this.t('emergencyPassphrase'),
+      icon: 'key',
+    };
+  }),
+
+  /**
+   * @override
+   */
   clusterSecondLevelItems: computed(
     'isNotDeployedCluster',
     'isLocalCluster',
+    'isEmergencyOnepanel',
     'clusterType',
     'dnsItem',
     'certificateItem',
-    'credentialsItem',
+    'emergencyPassphraseItem',
     'nodesItem',
     'overviewItem',
     'providerItem',
     'storagesItem',
     'spacesItem',
     'membersItem',
-    function () {
+    function clusterSecondLevelItems() {
       const {
         isNotDeployedCluster,
         isLocalCluster,
-      } = this.getProperties('isNotDeployedCluster', 'isLocalCluster');
-      if (isNotDeployedCluster || !isLocalCluster) {
+        isEmergencyOnepanel,
+        emergencyPassphraseItem,
+        clusterType,
+      } = this.getProperties(
+        'isNotDeployedCluster',
+        'isLocalCluster',
+        'isEmergencyOnepanel',
+        'emergencyPassphraseItem',
+        'clusterType'
+      );
+      if (isNotDeployedCluster || !isLocalCluster || !clusterType) {
         return [];
       } else {
-        const {
-          clusterType,
-          dnsItem,
-          certificateItem,
-          credentialsItem,
-          nodesItem,
-          overviewItem,
-          providerItem,
-          storagesItem,
-          spacesItem,
-          membersItem,
-        } = this.getProperties(
-          'clusterType',
-          'cluster',
-          'dnsItem',
-          'certificateItem',
-          'credentialsItem',
-          'nodesItem',
-          'overviewItem',
-          'providerItem',
-          'storagesItem',
-          'spacesItem',
-          'membersItem'
-        );
-        const commonItems = [
-          overviewItem,
-          nodesItem,
-          dnsItem,
-          certificateItem,
-          credentialsItem,
-          membersItem,
-        ];
-        return clusterType === 'onezone' ? commonItems : [
-          ...commonItems,
-          providerItem,
-          storagesItem,
-          spacesItem,
-        ];
+        const items = this._super(...arguments);
+        if (isEmergencyOnepanel) {
+          items.push(emergencyPassphraseItem);
+        }
+        return items;
       }
     }
   ),

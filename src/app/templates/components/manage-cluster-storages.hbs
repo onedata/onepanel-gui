@@ -12,7 +12,9 @@
       isFormOpened=addStorageOpened}}
 </div>
 <div class="row">
-  {{#loading-container isLoading=storagesLoading errorReason=storagesError}}
+  {{#loading-container
+    isLoading=(or storagesLoading spacesProxy.isPending)
+    errorReason=(or storagesError spacesProxy.reason)}}
     {{#unless noStorages}}
       {{cluster-storage-table 
         storages=storagesProxy.content 

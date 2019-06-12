@@ -1,9 +1,9 @@
 {{partial "emergency-bar"}}
 
-{{#login-layout}}
-  {{#if model.adminUserExists}}
+{{#login-layout withEmergencyWarningBar=emergencyWarningBarVisible}}
+  {{#if model.isEmergencyPassphraseSet}}
     {{login-box authenticationSuccess="authenticationSuccess"}}
   {{else}}
-    {{no-admin-box}}
+    {{no-emergency-passphrase-box}}
   {{/if}}
 {{/login-layout}}

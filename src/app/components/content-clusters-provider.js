@@ -32,6 +32,7 @@ export default Component.extend(
     i18n: service(),
     onezoneGui: service(),
     guiUtils: service(),
+    clusterModelManager: service(),
 
     /**
      * @override
@@ -249,7 +250,7 @@ export default Component.extend(
        * @returns {Promise<any>} ProviderManager.modifyProvider promise
        */
       submitModify(data) {
-        let {
+        const {
           globalNotify,
           providerManager,
           _excludedSubdomains,
@@ -258,7 +259,7 @@ export default Component.extend(
           'providerManager',
           '_excludedSubdomains'
         );
-        let modifyProviderData = data.getProperties(
+        const modifyProviderData = data.getProperties(
           'name',
           'subdomainDelegation',
           'subdomain',
@@ -272,8 +273,12 @@ export default Component.extend(
           .catch(error => {
             const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
             if (subdomainReservedMsg) {
-              this.set('_excludedSubdomains', _excludedSubdomains.concat(data
-                .subdomain));
+              safeExec(
+                this,
+                'set',
+                '_excludedSubdomains',
+                _excludedSubdomains.concat(data.subdomain)
+              );
               error = { error: error.error, message: subdomainReservedMsg };
             } else {
               const letsEncryptError = getSpecialLetsEncryptError(error);
@@ -291,12 +296,19 @@ export default Component.extend(
           })
           .then(() => {
             globalNotify.info(this.t('modifySuccess'));
-            this.updateProviderProxy();
-            this.set('_editing', false);
+            safeExec(this, 'set', '_editing', false);
+            return this.updateProviderProxy();
           })
           .finally(() => {
-            this.set('_submitting', false);
-            this.get('guiUtils').updateGuiNameProxy({ replace: true });
+            safeExec(this, 'set', '_submitting', false);
+            const {
+              guiUtils,
+              clusterModelManager,
+            } = this.getProperties('guiUtils', 'clusterModelManager');
+            return guiUtils.updateGuiNameProxy({ replace: true })
+              .then(() => clusterModelManager.updateClustersProxy({
+                replace: true,
+              }));
           });
       },
 

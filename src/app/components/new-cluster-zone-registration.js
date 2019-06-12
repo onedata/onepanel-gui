@@ -157,7 +157,10 @@ export default Component.extend(I18n, {
               'components.alerts.registerOnezoneNotCompatible.header'
             ),
             domain: get(onezoneInfo, 'domain'),
-            oneproviderVersion: get(guiUtils, 'guiVersion'),
+            oneproviderVersion: get(
+              guiUtils,
+              'softwareVersionDetails.serviceVersion'
+            ),
             onezoneVersion: get(onezoneInfo, 'version'),
           });
         } else if (get(onezoneInfo, 'online') === false) {

@@ -1,3 +1,6 @@
+// Onepanel specific variables
+$one-warning-bar-height: 32px;
+
 @import 'onedata-gui-common';
 
 // Onepanel specific styles
@@ -14,9 +17,9 @@
 @import 'space-sync-chart-queue';
 @import 'space-sync-chart-throughput';
 @import 'login-box';
-@import 'create-admin-form';
+@import 'first-emergency-passphrase-form';
 @import 'new-cluster-installation';
-@import 'no-admin-box';
+@import 'no-emergency-passphrase-box';
 @import 'check-state-icon';
 @import 'cluster-dns-check-table';
 @import 'cluster-nodes-tile';
@@ -25,3 +28,6 @@
 @import 'content-clusters-spaces-show';
 @import 'one-warning-bar';
 @import 'content-clusters-spaces-show';
+@import 'login-layout';
+@import 'content-clusters-members';
+@import 'new-cluster-summary';

@@ -2,6 +2,9 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
+import { get, getProperties } from '@ember/object';
+import { registerService, lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
 
 describe('Unit | Service | user manager', function () {
   setupTest('service:user-manager', {
@@ -10,37 +13,30 @@ describe('Unit | Service | user manager', function () {
   });
 
   beforeEach(function () {
-    this.register('service:onepanel-server', onepanelServerStub);
-    this.inject.service('onepanel-server', { as: 'onepanelServer' });
+    registerService(this, 'onepanelServer', onepanelServerStub);
   });
 
-  it('gets user details of current user if asked', function () {
-    let service = this.subject();
-    let onepanelServer = this.container.lookup('service:onepanelServer');
-    let currentUsername = 'some_user_1';
-    let currentUserProxy = { some: 'proxy' };
-    onepanelServer.set('username', currentUsername);
-    service.getUserDetails = function (username) {
-      expect(username).to.be.equal(currentUsername);
-      return currentUserProxy;
+  it('gets current user', function () {
+    const currentUser = {
+      userId: 'root',
+      username: 'root',
+      clusterPrivileges: ['some_privilege'],
     };
+    const onepanelServer = lookupService(this, 'onepanelServer');
+    sinon.stub(onepanelServer, 'getCurrentUser').resolves(currentUser);
 
-    let currentUserResult = service.getCurrentUser();
-
-    expect(currentUserResult).to.be.equal(currentUserProxy);
-  });
-
-  it('resolves list with only current user details', function (done) {
-    let service = this.subject();
-    let currentUserProxy = { some: 'proxy' };
-    service.getCurrentUser = function () {
-      return currentUserProxy;
-    };
-
-    service.getUsers().get('promise').then(users => {
-      expect(users).to.have.length(1);
-      expect(users[0]).to.be.equal(currentUserProxy);
-      done();
+    const service = this.subject();
+    const currentUserResult = service.getCurrentUser();
+    return currentUserResult.then(user => {
+      const userBasicProps = getProperties(
+        user,
+        'userId',
+        'username',
+        'clusterPrivileges'
+      );
+      expect(userBasicProps).to.deep.equal(currentUser);
+      expect(get(user, 'id')).to.equal(get(currentUser, 'username'));
+      expect(get(user, 'name')).to.equal(get(currentUser, 'username'));
     });
   });
 });

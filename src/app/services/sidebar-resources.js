@@ -9,6 +9,7 @@
 
 import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
 
 export default SidebarResources.extend({
@@ -19,7 +20,7 @@ export default SidebarResources.extend({
 
   /**
    * @param {string} type
-   * @returns {Promise}
+   * @returns {Promise|PromiseObject|PromiseArray}
    */
   getCollectionFor(type) {
     switch (type) {
@@ -27,24 +28,29 @@ export default SidebarResources.extend({
       case 'spaces':
       case 'groups':
       case 'tokens':
-      case 'users':
+      case 'harvesters':
+      case 'users': {
         return resolve([]);
-      case 'clusters':
-        if (this.get('onepanelServer.isEmergency')) {
-          return this.get('clusterModelManager').getCurrentClusterProxy()
+      }
+      case 'clusters': {
+        const {
+          onepanelServer,
+          clusterModelManager,
+        } = this.getProperties('onepanelServer', 'clusterModelManager');
+        if (get(onepanelServer, 'isEmergency')) {
+          return clusterModelManager.getCurrentClusterProxy()
             .then(currentCluster => {
               if (currentCluster) {
-                return { list: [currentCluster] };
+                return resolve([currentCluster]);
               } else {
                 // cluster is not deployed yet - only in onepanel emergency mode
-                return {
-                  list: [this.get('clusterModelManager').getNotDeployedCluster()],
-                };
+                return resolve([clusterModelManager.getNotDeployedCluster()]);
               }
             });
         } else {
-          return this.get('clusterModelManager').getClustersProxy();
+          return clusterModelManager.getClustersProxy();
         }
+      }
       default:
         return reject('No such collection: ' + type);
     }

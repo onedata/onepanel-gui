@@ -24,6 +24,7 @@ import createFieldValidator from 'onedata-gui-common/utils/create-field-validato
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
@@ -208,12 +209,13 @@ export default OneForm.extend(Validations, I18n, {
       _subdomainDelegation,
     } = this.getProperties('mode', '_subdomainDelegation');
     switch (mode) {
-      case 'show':
+      case 'show': {
         if (_subdomainDelegation) {
           return ['showTop', 'showSubdomain', 'showBottom'];
         } else {
           return ['showTop', 'showDomain', 'showBottom'];
         }
+      }
       case 'edit':
       case 'new':
       default:
@@ -575,7 +577,7 @@ export default OneForm.extend(Validations, I18n, {
           }
         })
         .finally(() => {
-          this.set('_disabled', false);
+          safeExec(this, 'set', '_disabled', false);
           next(() => {
             if (this.isDestroyed) {
               return;

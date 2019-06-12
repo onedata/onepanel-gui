@@ -6,7 +6,7 @@ export default {
   zoneTokenIntroWithHelp: 'Please follow the steps below:',
   zoneTokenDocsLink: 'show me how',
   stepGoToOnezone: 'Go to the Onezone of your choice',
-  stepLogin: 'Log in (your account will be later linked to this cluster)',
+  stepSignIn: 'Sign in (your account will be later linked to this cluster)',
   stepSelect1: 'Select',
   stepSelectCluster: 'Clusters',
   stepSelect2: 'from the side menu',

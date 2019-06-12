@@ -25,6 +25,7 @@ module.exports = function (environment) {
       { id: 'providers', icon: 'provider' },
       { id: 'groups', icon: 'groups' },
       { id: 'tokens', icon: 'tokens' },
+      { id: 'harvesters', icon: 'light-bulb' },
       {
         id: 'clusters',
         icon: 'cluster',

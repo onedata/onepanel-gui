@@ -8,23 +8,29 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import EmberObject, { get, set } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { get, set } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
 import { resolve } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+import Cluster from 'onepanel-gui/models/cluster';
 
-const GuiOneproviderCluster = EmberObject.extend({
-  name: reads('providerManager.providerDetailsProxy.name').readOnly(),
-  domain: reads('providerManager.providerDetailsProxy.domain').readOnly(),
+const GuiOneproviderCluster = Cluster.extend({
+  name: reads('providerManager.providerDetails.name').readOnly(),
+  domain: reads('providerManager.providerDetails.domain').readOnly(),
+
+  init() {
+    this._super(...arguments);
+    this.get('providerManager').getProviderDetailsProxy();
+  },
 });
 
 export default Service.extend(
   createDataProxyMixin('rawCurrentCluster'),
   createDataProxyMixin('currentCluster'),
   createDataProxyMixin('clusterIds'),
-  createDataProxyMixin('clusters'), {
+  createDataProxyMixin('clusters', { type: 'array' }), {
     onepanelServer: service(),
     guiUtils: service(),
     onepanelConfiguration: service(),
@@ -51,20 +57,29 @@ export default Service.extend(
         });
     },
 
+    /**
+     * @override
+     */
     fetchCurrentCluster() {
       return this.getRawCurrentClusterProxy()
         .then(cluster => cluster && this.generateGuiCluster(cluster, true));
     },
 
+    /**
+     * @override
+     */
     fetchClusterIds() {
       return this.get('onepanelServer').request('onepanel', 'getClusters')
         .then(({ data }) => data.ids);
     },
 
+    /**
+     * @override
+     */
     fetchClusters() {
-      return this.getClusterIdsProxy({ reload: true }).then(ids =>
-        Promise.all(ids.map(id => this.getCluster(id)))
-      ).then(clusters => addConflictLabels(clusters));
+      return this.getClusterIdsProxy({ reload: true })
+        .then(ids => Promise.all(ids.map(id => this.getCluster(id))))
+        .then(clusters => addConflictLabels(clusters));
     },
 
     /**
@@ -132,7 +147,7 @@ export default Service.extend(
           }
         })
         .then(() => {
-          if (cluster.type === 'onezone') {
+          if (get(cluster, 'type') === 'onezone') {
             if (onepanelGuiType === 'onezone') {
               installationDetailsProxy = installationDetailsProxy ||
                 deploymentManager.getInstallationDetailsProxy();
@@ -169,7 +184,10 @@ export default Service.extend(
                 });
             }
           }
-        });
+        })
+        .then(cluster =>
+          cluster instanceof Cluster ? cluster : Cluster.create(cluster)
+        );
     },
   }
 );

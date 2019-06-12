@@ -39,7 +39,7 @@ export default Component.extend({
    * Used for checking what support is local
    * @type {String}
    */
-  providerId: oneWay('providerManager.providerCache.id'),
+  providerId: oneWay('providerManager.providerDetails.id'),
 
   /**
    * List of spaces supported by this storage (filtered list of spaces)

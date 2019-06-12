@@ -22,9 +22,21 @@
             </tr>
             <tr>
               <td class="property-name">{{tt this "type"}}</td>
-              <td class="property-value creation-time">{{cluster.type}}</td>
+              <td class="property-value creation-time">
+                {{tt this (concat "clusterType." cluster.type)}}
+              </td>
             </tr>
             {{yield}}
+            <tr>
+              <td class="property-name">{{tt this "domain"}}</td>
+              <td class="property-value domain">
+                {{one-clipboard-line
+                  size="sm"
+                  value=cluster.domain
+                  showText=false
+                  btnType="default"}}
+              </td>
+            </tr>
             <tr>
               <td class="property-name">{{tt this "clusterId"}}</td>
               <td class="property-value id">
@@ -32,7 +44,7 @@
                   size="sm"
                   value=cluster.id
                   showText=false
-                  btnType="success"}}
+                  btnType="default"}}
               </td>
             </tr>
           </tbody>

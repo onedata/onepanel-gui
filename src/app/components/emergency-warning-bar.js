@@ -9,18 +9,41 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { reads } from '@ember/object/computed';
 
-export default Component.extend(I18n, {
-  tagName: '',
+export default Component.extend(
+  createDataProxyMixin('visitViaOnezoneUrl'),
+  I18n, {
+    tagName: '',
 
-  onezoneGui: service(),
+    onezoneGui: service(),
 
-  onezoneUrl: reads('onezoneGui.clusterUrlInOnepanel'),
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.emergencyWarningBar',
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.emergencyWarningBar',
-});
+    onezoneOrigin: reads('onezoneGui.onezoneOrigin'),
+
+    init() {
+      this._super(...arguments);
+      this.updateVisitViaOnezoneUrlProxy();
+    },
+
+    /**
+     * @override
+     * Url to onepanel gui hosted by onezone or null if onezone is not available
+     */
+    fetchVisitViaOnezoneUrl() {
+      const onezoneGui = this.get('onezoneGui');
+      return onezoneGui.getCanEnterViaOnezoneProxy()
+        .then(canEnterViaOnezone => {
+          return canEnterViaOnezone ?
+            onezoneGui.getOnepanelNavUrlInOnezone() :
+            null;
+        });
+    },
+  }
+);

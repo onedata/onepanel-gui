@@ -13,7 +13,7 @@ const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 export default Service.extend({
   __providerDetails: undefined,
 
-  providerCache: computed('__providerDetails', function () {
+  providerDetails: computed('__providerDetails', function () {
     return ObjectProxy.create({ content: this.get('__providerDetails') });
   }),
 
