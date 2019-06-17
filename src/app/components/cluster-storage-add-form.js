@@ -21,6 +21,7 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { resolve } from 'rsvp';
+import { notEmpty } from 'ember-awesome-macros';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -166,6 +167,16 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {boolean}
    */
+  areQosParamsValid: true,
+
+  /**
+   * @type {Object}
+   */
+  editedQosParams: undefined,
+
+  /**
+   * @type {boolean}
+   */
   isSavingStorage: false,
 
   /**
@@ -187,6 +198,11 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Ember.ComputedProperty<Object>}
    */
   selectedStorageType: reads('storageTypes.firstObject'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  storageHasQosParameters: notEmpty('storage.qosParameters'),
 
   /**
    * @override
@@ -313,14 +329,23 @@ export default OneForm.extend(I18n, Validations, {
     'errors.[]',
     'inEditionMode',
     'lumaEnabledByEdition',
+    'areQosParamsValid',
     function isValid() {
       const {
+        areQosParamsValid,
         errors,
         inEditionMode,
         lumaEnabledByEdition,
-      } = this.getProperties('errors', 'inEditionMode', 'lumaEnabledByEdition');
+      } = this.getProperties(
+        'areQosParamsValid',
+        'errors',
+        'inEditionMode',
+        'lumaEnabledByEdition'
+      );
 
-      if (inEditionMode) {
+      if (!areQosParamsValid) {
+        return false;
+      } else if (inEditionMode) {
         // If luma has been enabled but luma fields are invalid, then the whole
         // form is invalid
         if (lumaEnabledByEdition) {
@@ -365,6 +390,10 @@ export default OneForm.extend(I18n, Validations, {
 
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
+    this.setProperties({
+      areQosParamsValid: true,
+      editedQosParams: undefined,
+    });
   }),
 
   init() {
@@ -416,6 +445,17 @@ export default OneForm.extend(I18n, Validations, {
       'allFieldsValues.generic.storagePathType',
       storagePathTypeDefaults[this.get('selectedStorageType.id')]
     );
+    this.resetQosFormState();
+  },
+
+  /**
+   * @returns {undefined}
+   */
+  resetQosFormState() {
+    this.setProperties({
+      areQosParamsValid: true,
+      editedQosParams: undefined,
+    });
   },
 
   /**
@@ -515,6 +555,7 @@ export default OneForm.extend(I18n, Validations, {
     );
 
     this.prepareFields();
+    this.resetQosFormState();
 
     const storageType = storageTypes.findBy('id', get(storage, 'type'));
     this.send('storageTypeChanged', storageType);
@@ -640,6 +681,13 @@ export default OneForm.extend(I18n, Validations, {
       return resolve();
     },
 
+    qosParamsChanged({ isValid, qosParams }) {
+      this.setProperties({
+        areQosParamsValid: isValid,
+        editedQosParams: qosParams,
+      });
+    },
+
     submit() {
       let {
         formValues,
@@ -647,12 +695,14 @@ export default OneForm.extend(I18n, Validations, {
         selectedStorageType,
         inEditionMode,
         storage,
+        editedQosParams,
       } = this.getProperties(
         'formValues',
         'currentFields',
         'selectedStorageType',
         'inEditionMode',
-        'storage'
+        'storage',
+        'editedQosParams'
       );
 
       this.set('isSavingStorage', true);
@@ -664,6 +714,9 @@ export default OneForm.extend(I18n, Validations, {
         formData[prefixlessName] = formValues.get(name);
       });
       formData = stripObject(formData, [undefined, null]);
+      if (editedQosParams) {
+        set(formData, 'qosParameters', editedQosParams);
+      }
       if (!inEditionMode) {
         formData = stripObject(formData, ['']);
       } else {

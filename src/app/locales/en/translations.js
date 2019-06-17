@@ -63,6 +63,7 @@ import emergencyWarningBar from './components/emergency-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
 import contentClustersMembers from './components/content-clusters-members';
+import qosParamsEditor from './components/qos-params-editor';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -144,6 +145,7 @@ let translations = {
     supportSizeInfo,
     emergencyWarningBar,
     contentClustersMembers,
+    qosParamsEditor,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,

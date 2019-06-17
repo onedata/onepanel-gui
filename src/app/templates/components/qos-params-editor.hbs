@@ -1,0 +1,48 @@
+{{#if (eq mode "show")}}
+  {{#if paramRecords.length}}
+    <div class="row content-row">
+      <strong class="property-label">{{tt this "header"}}:</strong>
+      {{#each paramRecords as |qosParam|}}
+        <div class="row content-row nested-row">
+          <strong class="property-label qos-param-key">{{qosParam.key}}:</strong>
+          <span class="one-label qos-param-value">{{qosParam.value}}</span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+{{else}}
+  <h2 class="form-section-title">{{tt this "header"}}</h2>
+  {{#each paramEditRecords as |editRecord|}}
+    <div class={{concat-classes
+      "col-xs-12 form-group form-group-editable text-input animated fast group-with-tip"
+      (unless editRecord.disableCreateAnimation "fadeIn")
+      (if editRecord.isRemoved "fadeOut")
+      (if (eq editRecord activeParamEditRecords.lastObject) "last-record")
+      (if (or editRecord.isDuplicate (and (eq editRecord.key "") (not-eq editRecord.value ""))) "has-error")}}>
+      <div class="row">
+        <div class="label-column {{layoutConfig.formLabelColumns}} control-label">
+          {{one-inline-editor
+            value=editRecord.key
+            hideCancelButton=true
+            onInputValueChanged=(action "keyChanged" editRecord)
+            onSave=(action "keyChanged" editRecord)
+            onLostFocus=(action "inputLostFocus" editRecord)
+            staticPlaceholder=(tt this "newValueKey")}}
+          {{#unless (eq editRecord activeParamEditRecords.lastObject)}}
+            {{one-icon icon="close" class="form-field-right-addon remove-param" click=(action "removeRecord" editRecord)}}
+          {{/unless}}
+        </div>
+        <div class="form-control-column {{layoutConfig.formInputColumns}}">
+          <input
+            type="text"
+            class="form-control qos-field"
+            value={{editRecord.value}}
+            oninput={{action "valueChanged" editRecord}}
+            onblur={{action "inputLostFocus" editRecord}}>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+{{/if}}
+
+{{yield}}

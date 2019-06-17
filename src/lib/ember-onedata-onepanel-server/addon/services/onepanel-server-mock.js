@@ -51,7 +51,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const fallbackMockServiceType = 'onezone';
+const fallbackMockServiceType = 'oneprovider';
 
 /**
  * Match using URL, because we know that this is NodeJS-based mocked backend,
@@ -477,6 +477,11 @@ export default OnepanelServerBase.extend(
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',
             lumaApiKey: 'some_storage',
+            qosParameters: {
+              param1: 'abc',
+              param2: 'def',
+              param3: '123',
+            },
           };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
