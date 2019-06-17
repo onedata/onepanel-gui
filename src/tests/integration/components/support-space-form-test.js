@@ -157,8 +157,9 @@ describe('Integration | Component | support space form', function () {
     `);
 
     wait().then(() => {
-      expect(this.$('.import-configuration-section').parents('.collapse-hidden'))
-        .to.exist;
+      expect(
+        this.$('.import-configuration-section').parents('.collapse-hidden')
+      ).to.exist;
       done();
     });
   });
@@ -172,8 +173,9 @@ describe('Integration | Component | support space form', function () {
     helper.getToggleInput('main-_importEnabled').click();
 
     wait().then(() => {
-      expect(this.$('.import-configuration-section').parents('.collapse-hidden'))
-        .to.not.exist;
+      expect(
+        this.$('.import-configuration-section').parents('.collapse-hidden')
+      ).to.not.exist;
       done();
     });
   });

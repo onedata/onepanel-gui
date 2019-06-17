@@ -3,7 +3,7 @@
  *
  * @module components/cluster-storage-add-form
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -60,17 +60,21 @@ const storagePathTypeDefaults = {
 
 export default OneForm.extend(Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
-  currentFieldsPrefix: computed('selectedStorageType.id', 'showLumaPrefix', function () {
-    let {
-      selectedStorageType,
-      showLumaPrefix,
-    } = this.getProperties('selectedStorageType', 'showLumaPrefix');
-    if (showLumaPrefix) {
-      return ['generic', 'luma', selectedStorageType.id];
-    } else {
-      return ['generic', selectedStorageType.id];
+  currentFieldsPrefix: computed(
+    'selectedStorageType.id',
+    'showLumaPrefix',
+    function () {
+      let {
+        selectedStorageType,
+        showLumaPrefix,
+      } = this.getProperties('selectedStorageType', 'showLumaPrefix');
+      if (showLumaPrefix) {
+        return ['generic', 'luma', selectedStorageType.id];
+      } else {
+        return ['generic', selectedStorageType.id];
+      }
     }
-  }),
+  ),
   allFields: computed('storageTypes.@each.fields', 'genericFields', 'lumaFields',
     function () {
       let {

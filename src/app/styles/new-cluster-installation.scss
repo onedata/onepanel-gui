@@ -1,0 +1,36 @@
+.new-cluster-installation {
+  .cluster-host-table-row {
+    .add-instructions {
+      margin-left: 40px;
+    }
+
+    // basictable breakpoint
+    @media (max-width: 1201px) {
+      padding-left: 5em;
+      position: relative;
+      
+      .new-host-icon.item-icon-container {
+        position: absolute;
+        margin-top: 5px;
+        left: 2.5rem;
+      }
+
+      .add-instructions {
+        margin-left: 0;
+      }
+    }
+  }
+  .form-group-new-host {
+    display: inline-block;
+    width: 400px;
+    max-width: 55%;
+    margin-bottom: $padding-base-vertical;
+    
+    @media (max-width: 841px) {
+      max-width: 40%;
+    }
+  }
+  .add-more-info {
+    padding-top: $padding-base-vertical;
+  }
+}

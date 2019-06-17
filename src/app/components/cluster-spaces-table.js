@@ -47,7 +47,8 @@ export default Component.extend(I18n, {
       this.set('anySpaceRejected', false);
     },
     spaceClicked(spaceId) {
-      return this.get('router').transitionTo({ queryParams: { options: `space.${spaceId}` } });
+      return this.get('router')
+        .transitionTo({ queryParams: { options: `space.${spaceId}` } });
     },
   },
 });

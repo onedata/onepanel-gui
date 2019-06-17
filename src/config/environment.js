@@ -6,7 +6,7 @@ module.exports = function (environment) {
     'modulePrefix': 'onepanel-gui',
     'environment': environment,
     // NOTE: the rootURL is set also in ember-cli-build for SASS function
-    'rootURL': '/',
+    'rootURL': null,
     'locationType': 'hash',
     'EmberENV': {
       FEATURES: {
@@ -21,15 +21,17 @@ module.exports = function (environment) {
       },
     },
     'onedataTabs': [
-      { id: 'clusters', icon: 'menu-clusters' },
-      // features below are not available yet
-      // { id: 'providers', icon: 'provider' },
-      // { id: 'data', icon: 'folder' },
-      // { id: 'promises', icon: 'star' },
-      // { id: 'spaces', icon: 'space' },
-      // { id: 'groups', icon: 'groups' },
-      // { id: 'shares', icon: 'share' },
-      // { id: 'tokens', icon: 'tokens' },
+      { id: 'spaces', icon: 'folder' },
+      { id: 'providers', icon: 'provider' },
+      { id: 'groups', icon: 'groups' },
+      { id: 'tokens', icon: 'tokens' },
+      { id: 'harvesters', icon: 'light-bulb' },
+      {
+        id: 'clusters',
+        icon: 'cluster',
+        isDefault: true,
+        defaultAspect: 'overview',
+      },
     ],
     'layoutConfig': {
       formLabelColumns: 'col-xs-12 col-sm-5',
@@ -73,6 +75,8 @@ module.exports = function (environment) {
   }
 
   if (environment === 'test') {
+    ENV.rootURL = '/';
+
     // Testem prefers this...
     ENV.locationType = 'none';
 

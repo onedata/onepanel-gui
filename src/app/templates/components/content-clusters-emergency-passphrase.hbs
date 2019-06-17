@@ -1,0 +1,25 @@
+<div class="row content-row header-row">
+  <h1>
+    {{tt this "title"}}
+    <div class="btn-toolbar">
+      {{#unless isChangingPassphrase}}
+        {{#bs-button
+          type="primary"
+          class="btn-sm btn-change-passphrase"
+          onClick=(action "toggleChangePassphrase")
+        }}
+          {{tt this "changePassphrase"}}
+        {{/bs-button}}
+      {{/unless}}
+    </div>
+  </h1>
+</div>
+<div class="row content-row no-border"><p>{{tt this "description"}}</p></div>
+<div class="row content-row">
+  {{user-credentials-form
+    type="passphrase"
+    changingPassword=isChangingPassphrase
+    submit=(action "submitChangePassphrase")
+    cancel=(action "toggleChangePassphrase")
+  }}
+</div>

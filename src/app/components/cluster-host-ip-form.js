@@ -3,7 +3,7 @@
  * 
  * @module components/cluster-host-ip-form
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -91,14 +91,14 @@ export default BasicTable.extend(I18n, {
   init() {
     this._super(...arguments);
 
-    const _hostsData = A(
-      _.map(
-        this.get('hosts'),
-        (ip, hostname) => ({ hostname, ip })
-      )
+    const hostsArray = _.map(
+      this.get('hosts'),
+      (ip, hostname) => ({ hostname, ip })
     );
 
-    this.set('_hostsData', _hostsData);
+    this.set('_hostsData', A(
+      _.sortBy(hostsArray, ['hostname'])
+    ));
 
     this.observeAllValid();
   },

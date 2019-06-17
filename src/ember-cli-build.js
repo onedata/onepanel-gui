@@ -6,11 +6,16 @@ const defineSassColors = require('./lib/onedata-gui-common/addon/utils/define-sa
 const defineSassBreakpoints = require(
   './lib/onedata-gui-common/addon/utils/define-sass-breakpoints'
 );
+const writeAppConfig = require('./lib/onedata-gui-common/addon/utils/write-app-config');
 const colors = require('./lib/onedata-gui-common/addon/colors').default;
-const breakpointValues = require('./lib/onedata-gui-common/addon/breakpoint-values').default;
+const breakpointValues =
+  require('./lib/onedata-gui-common/addon/breakpoint-values').default;
 
 module.exports = function (defaults) {
   var app = new EmberApp(defaults, {
+    'fingerprint': {
+      extensions: ['js', 'css', 'map'],
+    },
     'ember-cli-babel': {
       includePolyfill: true,
     },
@@ -49,8 +54,13 @@ module.exports = function (defaults) {
     },
   });
 
+  writeAppConfig(app);
+
   defineSassColors(app, colors);
   defineSassBreakpoints(app, breakpointValues);
+
+  // Generate app-config.json for environment that is used.
+  // Currently app-config.json is always overwritten on build.
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
@@ -66,8 +76,6 @@ module.exports = function (defaults) {
   // along with the exports of each module as its value.
 
   const BOWER_ASSETS = [
-    'basictable/jquery.basictable.min.js',
-    'basictable/basictable.css',
     'webui-popover/dist/jquery.webui-popover.css',
     'webui-popover/dist/jquery.webui-popover.js',
   ];
@@ -76,6 +84,7 @@ module.exports = function (defaults) {
     'chartist-plugin-legend/chartist-plugin-legend.js',
     'jquery.scrollto/jquery.scrollTo.min.js',
     'input-tokenizer/tokenizer.min.js',
+    'basictable/basictable.css',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));

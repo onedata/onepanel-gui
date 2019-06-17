@@ -3,18 +3,21 @@
  *
  * @module components/new-cluster-zone-registration
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { inject as service } from '@ember/service';
-
-import { Promise } from 'rsvp';
+import { not } from '@ember/object/computed';
+import { Promise, reject } from 'rsvp';
 import Component from '@ember/component';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
 import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { get } from '@ember/object';
 
 const {
   ProviderRegisterRequest,
@@ -22,10 +25,22 @@ const {
 
 const I18N_PREFIX = 'components.newClusterZoneRegistration.';
 
-export default Component.extend({
+export default Component.extend(I18n, {
+  classNames: ['new-cluster-zone-registration'],
+
   globalNotify: service(),
   onepanelServer: service(),
   i18n: service(),
+  clusterModelManager: service(),
+  alertService: service('alert'),
+  guiUtils: service(),
+
+  i18nPrefix: 'components.newClusterZoneRegistration',
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  proceedTokenDisabled: not('token'),
 
   /**
    * Subdomains that are reserved and cannot be used
@@ -34,11 +49,36 @@ export default Component.extend({
   _excludedSubdomains: Object.freeze([]),
 
   /**
+   * One of: token, form, notCompatible, offline
+   * @type {string}
+   */
+  mode: 'token',
+
+  /**
+   * If true, shows additional tutorial for getting the token
+   * @type {boolean}
+   */
+  showTokenHelp: false,
+
+  /**
+   * Onezone token pasted by user
+   * @type {string}
+   */
+  token: '',
+
+  /**
+   * Is set by `handleProceedToken` after successful token submission
+   * @type {Onepanel.OnezoneInfo}
+   */
+  onezoneInfo: undefined,
+
+  /**
    * @param {Ember.Object} providerData data from provider registration form
    * @returns {Onepanel.ProviderRegisterRequest}
    */
   createProviderRegisterRequest(providerData) {
     let {
+      token,
       name,
       onezoneDomainName,
       subdomainDelegation,
@@ -48,6 +88,7 @@ export default Component.extend({
       geoLatitude,
       adminEmail,
     } = providerData.getProperties(
+      'token',
       'name',
       'onezoneDomainName',
       'subdomainDelegation',
@@ -59,6 +100,7 @@ export default Component.extend({
     );
 
     let reqProto = stripObject({
+      token,
       name,
       onezoneDomainName,
       subdomainDelegation,
@@ -82,7 +124,8 @@ export default Component.extend({
   _submit(providerData) {
     let submitting = new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
-      let providerRegisterRequest = this.createProviderRegisterRequest(providerData);
+      let providerRegisterRequest = this.createProviderRegisterRequest(
+        providerData);
       let addingProvider =
         onepanelServer.request('oneprovider', 'addProvider',
           providerRegisterRequest);
@@ -91,6 +134,50 @@ export default Component.extend({
     });
 
     return submitting;
+  },
+
+  handleProceedToken() {
+    return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
+        token: this.get('token').trim(),
+      })
+      .catch(error => {
+        this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
+        throw error;
+      })
+      .then(({ data: onezoneInfo }) => {
+        const {
+          i18n,
+          alertService,
+          guiUtils,
+        } = this.getProperties('i18n', 'alertService', 'guiUtils');
+        if (get(onezoneInfo, 'compatible') === false) {
+          alertService.error(null, {
+            componentName: 'alerts/register-onezone-not-compatible',
+            header: i18n.t(
+              'components.alerts.registerOnezoneNotCompatible.header'
+            ),
+            domain: get(onezoneInfo, 'domain'),
+            oneproviderVersion: get(
+              guiUtils,
+              'softwareVersionDetails.serviceVersion'
+            ),
+            onezoneVersion: get(onezoneInfo, 'version'),
+          });
+        } else if (get(onezoneInfo, 'online') === false) {
+          alertService.error(null, {
+            componentName: 'alerts/register-onezone-offline',
+            header: i18n.t(
+              'components.alerts.registerOnezoneOffline.header'
+            ),
+            domain: get(onezoneInfo, 'domain'),
+          });
+        } else {
+          safeExec(this, 'setProperties', {
+            onezoneInfo,
+            mode: 'form',
+          });
+        }
+      });
   },
 
   actions: {
@@ -105,17 +192,17 @@ export default Component.extend({
         _excludedSubdomains,
         i18n,
       } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n');
-      let name = providerData.get('name');
       let submitting = this._submit(providerData);
       submitting.then(() => {
         globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
-        invokeAction(this, 'changeClusterName', name);
         invokeAction(this, 'nextStep');
+        this.get('clusterModelManager').updateCurrentClusterProxy();
       });
       submitting.catch(error => {
         const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
         if (subdomainReservedMsg) {
-          this.set('_excludedSubdomains', _excludedSubdomains.concat(providerData.subdomain));
+          this.set('_excludedSubdomains', _excludedSubdomains.concat(
+            providerData.subdomain));
           error = { error: error.error, message: subdomainReservedMsg };
         }
         this.get('globalNotify').backendError(
@@ -124,6 +211,21 @@ export default Component.extend({
         );
       });
       return submitting;
+    },
+
+    proceedToken() {
+      if (!this.get('proceedTokenDisabled')) {
+        return this.handleProceedToken();
+      } else {
+        return reject();
+      }
+    },
+
+    back() {
+      this.setProperties({
+        mode: 'token',
+        onezoneInfo: undefined,
+      });
     },
   },
 });

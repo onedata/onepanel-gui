@@ -6,10 +6,10 @@ import sinon from 'sinon';
 
 describe('Unit | Mixin | domain name proxy', function () {
 
-  it('uses cluster manager to resolve zone domain name', function () {
+  it('uses deployment manager to resolve onezone domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
-    const clusterManager = {
-      getDefaultRecord() {},
+    const deploymentManager = {
+      getInstallationDetailsProxy() {},
     };
     const domainName = 'zone.domain.name.com';
     const cluster = {
@@ -19,12 +19,15 @@ describe('Unit | Mixin | domain name proxy', function () {
         },
       },
     };
-    const getDefaultRecord = sinon.stub(clusterManager, 'getDefaultRecord');
-    getDefaultRecord.resolves(cluster);
+    const getInstallationDetailsProxy = sinon.stub(
+      deploymentManager,
+      'getInstallationDetailsProxy'
+    );
+    getInstallationDetailsProxy.resolves(cluster);
 
     const subject = DomainNameProxyObject.create({
-      onepanelServiceType: 'zone',
-      clusterManager,
+      onepanelServiceType: 'onezone',
+      deploymentManager,
     });
 
     return subject.getDomainProxy().then(domain => {
@@ -35,17 +38,20 @@ describe('Unit | Mixin | domain name proxy', function () {
   it('uses provider manager to resolve provider domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
     const providerManager = {
-      getProviderDetails() {},
+      getProviderDetailsProxy() {},
     };
     const domainName = 'provider.domain.name.com';
     const provider = {
       domain: domainName,
     };
-    const getProviderDetails = sinon.stub(providerManager, 'getProviderDetails');
-    getProviderDetails.resolves(provider);
+    const getProviderDetailsProxy = sinon.stub(
+      providerManager,
+      'getProviderDetailsProxy'
+    );
+    getProviderDetailsProxy.resolves(provider);
 
     const subject = DomainNameProxyObject.create({
-      onepanelServiceType: 'provider',
+      onepanelServiceType: 'oneprovider',
       providerManager,
     });
 

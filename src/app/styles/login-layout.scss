@@ -1,0 +1,12 @@
+.login-layout {
+  &.with-emergency-warning-bar {
+    margin-bottom: -$one-warning-bar-height;
+    padding-bottom: $one-warning-bar-height * 2;
+    
+    .login-service-version {
+      @media (min-height: $screen-fixed-service-version-height-min) {
+        bottom: $one-warning-bar-height;
+      }
+    }
+  }
+}

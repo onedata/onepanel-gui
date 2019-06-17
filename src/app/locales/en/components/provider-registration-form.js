@@ -6,6 +6,10 @@ export default {
   subdomainReserved: 'This subdomain is reserved.',
   redirectInfo: 'Upon successful modification of domain or subdomain, you will be asked to update your certificate.',
   fields: {
+    token: {
+      label: 'Registration token',
+      tip: 'Provide registration token to register in Onezone of your choice. It can be obtained in Onezone Web GUI by admin.',
+    },
     id: {
       label: 'ID',
     },
@@ -27,6 +31,7 @@ export default {
         'choice in Onezone\'s domain. Onezone will automatically handle DNS ' +
         'configuration for this provider. If disabled, you will need to ' +
         'manually configure hostname and DNS entries for this provider.',
+      lockHint: 'Not supported by chosen Onezone',
     },
     domain: {
       label: 'Domain',

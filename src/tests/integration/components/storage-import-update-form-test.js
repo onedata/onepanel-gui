@@ -61,7 +61,8 @@ describe('Integration | Component | storage import update form', function () {
 
     expect(this.$('.one-form-field-static .field-import-strategy').text())
       .to.equal(SIMPLE_SCAN_NAME);
-    expect(this.$('.one-form-field-static.field-import_generic-maxDepth').text().trim())
+    expect(this.$('.one-form-field-static.field-import_generic-maxDepth').text()
+        .trim())
       .to.equal(this.get('defaultValues.storageImport.maxDepth').toString());
   });
 
@@ -71,6 +72,29 @@ describe('Integration | Component | storage import update form', function () {
     `);
 
     expect(this.$('.update-configuration-section input')).to.not.exist;
+  });
+
+  it('shows update fields if update strategy is selected on init', function () {
+    const space = {
+      storageImport: {
+        strategy: 'simple_scan',
+      },
+      storageUpdate: {
+        strategy: 'simple_scan',
+      },
+    };
+
+    this.set('space', space);
+
+    this.render(hbs `
+      {{storage-import-update-form
+        defaultValues=space
+      }}
+    `);
+
+    return wait().then(() => {
+      expect(this.$('.update-configuration-section input')).to.exist;
+    });
   });
 
   it('shows fields on update strategy change', function (done) {
@@ -101,7 +125,8 @@ describe('Integration | Component | storage import update form', function () {
       powerSelectHelper.selectOption(1, () => {
         powerSelectHelper.selectOption(2, () => {
           expect(
-            helper.getInput('update_generic-maxDepth').val()).to.be.empty;
+              helper.getInput('update_generic-maxDepth').val()).to.be
+            .empty;
           done();
         });
       });

@@ -3,7 +3,7 @@
  * It can work in two modes (mode property):
  * - new - intended to be a part of the support space form. It doesn't have 
  * a header and a submit button.
- * - edit - standalone form component (with a header and a submit button).
+ * - edit - emergency form component (with a header and a submit button).
  * For both of them defaultValues can be set (through defaultValues property).
  * 
  * Example of defaultValues object (submit result has the same format):
@@ -174,19 +174,41 @@ export default OneForm.extend(I18n, Validations, {
    * Selected import strategy
    * @type {Ember.Object}
    */
-  selectedImportStrategy: null,
+  selectedImportStrategy: computed('defaultValues.storageImport.strategy',
+    function selectedImportStrategy() {
+      const importStrategies = this.get('importStrategies');
+      if (this.get('defaultValues.storageImport')) {
+        return _find(importStrategies, {
+            id: this.get(
+              'defaultValues.storageImport.strategy'),
+          }) ||
+          importStrategies[0];
+      } else {
+        return importStrategies[0];
+      }
+    }),
 
   /**
    * Selected update strategy
    * @type {Ember.Object}
    */
-  selectedUpdateStrategy: null,
+  selectedUpdateStrategy: computed('defaultValues.storageUpdate.strategy',
+    function selectedUpdateStrategy() {
+      const updateStrategies = this.get('updateStrategies');
+      if (this.get('defaultValues.storageUpdate')) {
+        return _find(updateStrategies, {
+          id: this.get('defaultValues.storageUpdate.strategy'),
+        }) || _find(updateStrategies, { id: 'no_update' });
+      } else {
+        return _find(updateStrategies, { id: 'no_update' });
+      }
+    }),
 
   unknownFieldErrorMsg: 'component:storage-import-update-form: attempt to change not known input type',
   currentFieldsPrefix: computed('selectedImportStrategy.id',
     'selectedUpdateStrategy.id', 'mode',
     function () {
-      let {
+      const {
         selectedImportStrategy,
         selectedUpdateStrategy,
         updateStrategies,
@@ -196,7 +218,7 @@ export default OneForm.extend(I18n, Validations, {
         'updateStrategies'
       );
       let prefixes = ['import_generic', 'import_' + selectedImportStrategy.id];
-      let noUpdateStrategy = _find(updateStrategies, { id: 'no_update' });
+      const noUpdateStrategy = _find(updateStrategies, { id: 'no_update' });
       if (selectedUpdateStrategy !== noUpdateStrategy) {
         prefixes = prefixes.concat(['update_generic', 'update_' +
           selectedUpdateStrategy.id,
@@ -282,7 +304,7 @@ export default OneForm.extend(I18n, Validations, {
    * Fields for "update" form part
    * @type {computed.Array.Ember.Object}
    */
-  currentUpdateFields: computed('currentFields', function () {
+  currentUpdateFields: computed('currentFields.@each.name', function () {
     return this.get('currentFields').filter(field =>
       field.get('name').startsWith('update_')
     );
@@ -311,12 +333,6 @@ export default OneForm.extend(I18n, Validations, {
 
   init() {
     this._super(...arguments);
-    if (this.get('selectedImportStrategy') === null) {
-      this.set('selectedImportStrategy', this.get('importStrategies.firstObject'));
-    }
-    if (this.get('selectedUpdateStrategy') === null) {
-      this.set('selectedUpdateStrategy', this.get('updateStrategies.firstObject'));
-    }
     this.get('importGenericFields').forEach(field => field.set('name',
       'import_generic.' + field.get('name')));
     this.get('updateGenericFields').forEach(field => field.set('name',
@@ -402,27 +418,23 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   _loadDefaultValues() {
-    let {
+    const {
       defaultValues,
       importGenericFields,
       updateGenericFields,
-      importStrategies,
-      updateStrategies,
-    } = this.getProperties('defaultValues', 'importGenericFields',
-      'updateGenericFields', 'importStrategies', 'updateStrategies');
+      selectedImportStrategy,
+      selectedUpdateStrategy,
+    } = this.getProperties(
+      'defaultValues',
+      'importGenericFields',
+      'updateGenericFields',
+      'selectedImportStrategy',
+      'selectedUpdateStrategy'
+    );
 
-    this.resetFormValues(true);
+    this.resetFormValues(false);
 
     if (defaultValues) {
-      let selectedImportStrategy =
-        _find(importStrategies, { id: get(defaultValues, 'storageImport.strategy') }) ||
-        importStrategies[0];
-      let selectedUpdateStrategy =
-        _find(updateStrategies, { id: get(defaultValues, 'storageUpdate.strategy') }) ||
-        _find(updateStrategies, { id: 'no_update' });
-      this.set('selectedImportStrategy', selectedImportStrategy);
-      this.set('selectedUpdateStrategy', selectedUpdateStrategy);
-
       importGenericFields.concat(selectedImportStrategy.fields)
         .forEach(({ name }) =>
           this.set(`allFieldsValues.${name}`,

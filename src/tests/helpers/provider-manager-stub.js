@@ -30,7 +30,7 @@ export default Service.extend({
     });
   },
 
-  getProviderDetails() {
+  getProviderDetailsProxy() {
     return PromiseObject.create({
       promise: new Promise(resolve => {
         resolve(this.get('__providerDetails'));

@@ -1,9 +1,9 @@
 /**
- * Cluster init step: DNS setup for Zone cluster
+ * Cluster init step: DNS setup for Onezone cluster
  *
  * @module components/new-cluster-ips
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -16,9 +16,8 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   classNames: ['new-cluster-ips', 'container-fluid'],
 
   onepanelServer: service(),
-  clusterManager: service(),
+  deploymentManager: service(),
   globalNotify: service(),
-  cookies: service(),
 
   i18nPrefix: 'components.newClusterIps',
 

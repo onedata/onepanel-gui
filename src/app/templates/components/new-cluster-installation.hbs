@@ -13,10 +13,10 @@
   </h1>
 </div>
 {{!-- TODO i18n --}}
-{{#if (eq onepanelServiceType "zone")}}
+{{#if (eq onepanelServiceType "onezone")}}
   <div class="row content-row">
     <div class="row">
-      <h1>{{tt this "zoneOptions"}}</h1>
+      <h1>{{tt this "onezoneOptions"}}</h1>
       {{zone-installation-form
         zoneFormChanged=(action "zoneFormChanged")
         allValidChanged=(action "zoneOptionsValidChanged")
@@ -28,12 +28,82 @@
   <h1>{{tt this "clusterHosts"}}</h1>
   {{#promise-proxy-container proxy=hostsProxy}}
     {{cluster-host-table
-      hosts=hosts
+      hosts=hostsSorted
       primaryClusterManager=primaryClusterManager
       hostOptionChanged=(action "hostOptionChanged")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")
       allValidChanged=(action "hostTableValidChanged")
+      addingNewHost=addingNewHost
+      submitAddress=(action "submitNewHost")
+      removeHost=(action "removeHost")
+      blinkingHosts=newHosts
     }}
+    {{#if addingNewHost}}
+      <div class="row row-new-host pseudo-table-row cluster-host-table-row">
+        <span class="new-host-icon item-icon-container btn-group-sm">
+          {{one-icon class="item-icon" icon="node"}}
+        </span>
+        <div class="form-group form-group-sm form-group-new-host">
+          <input
+            class="form-control input-add-host"
+            value={{_newHostname}}
+            oninput={{action (mut _newHostname) value="target.value"}}
+            onkeydown={{invoke-on-enter (action "submitNewHost")}}
+            placeholder={{tt this "newHostnameExample"}}
+            disabled={{_isSubmittingNewHost}}
+          >
+        </div>
+        <span class="new-host-btn-group row-btn-spacing">
+          {{#one-spin-button
+            class="btn btn-primary btn-sm btn-submit-new-host"
+            action=(action "submitNewHost")
+            disabled=(not _newHostname)
+            inFlight=_isSubmittingNewHost
+          }}
+            {{tt this "save"}}
+          {{/one-spin-button}}
+          {{#bs-button
+            class="btn-cancel-new-host"
+            size="sm"
+            type="default"
+            onClick=(action (mut addingNewHost) false)
+          }}
+            {{tt this "cancel"}}
+          {{/bs-button}}
+        </span>
+        <div class="add-instructions">
+          <a class="show-add-instructions" {{action (mut addMoreInfoVisible) (not addMoreInfoVisible)}}>
+            {{tt this (if addMoreInfoVisible "hideAddInformation" "showAddInformation")}}
+          </a>
+          {{#if addMoreInfoVisible}}
+            <div class="add-more-info">
+              {{tt this "addInfoStepsDescription"}}
+              <ol>
+                <li>{{tt this "addInfoStep1" serviceName=panelType}}</li>
+                <li>
+                  {{tt this "addInfoStep2"}}<br>
+                  {{tt this "addHostInfoClusterPorts" clusterPorts=clusterPorts}}<br>
+                  {{tt this "addHostInfoCouchbasePorts" couchbasePorts=couchbasePorts}}
+                </li>
+                <li>{{tt this "addInfoStep3"}}</li>
+                <li>{{tt this "addInfoStep4"}}</li>
+              </ol>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{else}}
+      <div class="row inner-row-content">
+        {{#bs-button 
+          type="default"
+          size="sm"
+          onClick=(action (mut addingNewHost) true)
+        }}
+          {{one-icon icon="add-filled"}}
+          {{tt this "addNewHost"}}
+        {{/bs-button}}
+      </div>
+    {{/if}}
   {{/promise-proxy-container}}
 </div>
 
