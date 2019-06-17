@@ -71,7 +71,7 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
     let providerManager = this.get('providerManager');
-    this.set('_providerDetailsProxy', providerManager.getProviderDetails());
+    this.set('_providerDetailsProxy', providerManager.getProviderDetailsProxy());
   },
 
   createSupportersArray(supportingProviders, currentProviderId, currentProviderName) {

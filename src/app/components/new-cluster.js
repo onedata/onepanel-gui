@@ -6,7 +6,7 @@
  *
  * @module components/new-cluster
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -17,7 +17,7 @@ import { readOnly } from '@ember/object/computed';
 import { get, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 
@@ -58,12 +58,13 @@ const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 export default Component.extend(I18n, {
   onepanelServer: service(),
   cookies: service(),
-  clusterManager: service(),
+  deploymentManager: service(),
   providerManager: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newCluster',
 
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   currentStepIndex: Number(STEP.DEPLOY),
 
@@ -76,6 +77,11 @@ export default Component.extend(I18n, {
 
   steps: Object.freeze([]),
 
+  /**
+   * @type {Window.Location}
+   */
+  _location: location,
+
   wizardIndex: computed('currentStepIndex', function () {
     return Math.floor(this.get('currentStepIndex'));
   }),
@@ -87,12 +93,12 @@ export default Component.extend(I18n, {
   /**
    * @type {PromiseObject<ProviderDetails>}
    */
-  providerDetailsProxy: computed('isAfterDeploy', function getProviderDetailsProxy() {
+  providerDetailsProxy: computed('isAfterDeploy', function providerDetailsProxy() {
     if (
       this.get('isAfterDeploy') &&
-      this.get('onepanelServer.serviceType') === 'provider'
+      this.get('onepanelServiceType') === 'oneprovider'
     ) {
-      return this.get('providerManager').getProviderDetails();
+      return this.get('providerManager').getProviderDetailsProxy();
     }
   }),
 
@@ -103,11 +109,12 @@ export default Component.extend(I18n, {
     this.setProperties({
       currentStepIndex: clusterInitStep,
       _isInProcess: clusterInitStep > STEP.DEPLOY,
-      steps: (onepanelServiceType === 'provider' ? STEPS_PROVIDER : STEPS_ZONE).map(
-        id => ({
-          id,
-          title: this.t(`steps.${onepanelServiceType}.${id}`),
-        })),
+      steps: (onepanelServiceType === 'oneprovider' ? STEPS_PROVIDER : STEPS_ZONE)
+        .map(
+          id => ({
+            id,
+            title: this.t(`steps.${onepanelServiceType}.${id}`),
+          })),
     });
     if (clusterInitStep === STEP.DEPLOY) {
       this.set('isLoading', true);
@@ -173,9 +180,27 @@ export default Component.extend(I18n, {
    * Go to next deployment step
    */
   _next() {
-    const nextStep = nextInt(this.get('currentStepIndex'));
-    this.set('cluster.initStep', nextStep);
-    this.set('currentStepIndex', nextStep);
+    const {
+      currentStepIndex,
+      guiUtils,
+      _location,
+    } = this.getProperties('currentStepIndex', 'guiUtils', '_location');
+
+    const serviceType = get(guiUtils, 'serviceType');
+    const isProviderAfterRegister = serviceType === 'oneprovider' &&
+      currentStepIndex === STEP.PROVIDER_REGISTER;
+    const isZoneAfterDeploy = serviceType === 'onezone' && [STEP.DEPLOYMENT_PROGRESS,
+      STEP.ZONE_DEPLOY,
+    ].includes(currentStepIndex);
+
+    if (isProviderAfterRegister || isZoneAfterDeploy) {
+      // Reload whole application to fetch info about newly deployed cluster
+      _location.reload();
+    } else {
+      const nextStep = nextInt(currentStepIndex);
+      this.set('cluster.initStep', nextStep);
+      this.set('currentStepIndex', nextStep);
+    }
   },
 
   _prev() {
@@ -192,15 +217,6 @@ export default Component.extend(I18n, {
     prev() {
       $('.col-content').scrollTop(0);
       this._prev();
-    },
-    changeClusterName(name) {
-      if (!name) {
-        this.get('clusterManager')
-          .getClusterDetails(this.get('cluster.id'), true)
-          .then(cluster => get(cluster, 'name'));
-      } else {
-        this.set('cluster.name', name);
-      }
     },
     finishInitProcess() {
       return invokeAction(this, 'finishInitProcess');

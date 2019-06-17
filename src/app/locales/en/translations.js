@@ -1,4 +1,9 @@
+import providers from './tabs/providers';
 import clusters from './tabs/clusters';
+import tokens from './tabs/tokens';
+import spaces from './tabs/spaces';
+import groups from './tabs/groups';
+import harvesters from './tabs/harvesters';
 import users from './tabs/users';
 
 import clusterStorageAddForm from './components/cluster-storage-add-form';
@@ -26,12 +31,17 @@ import contentClustersNodes from './components/content-clusters-nodes';
 import newClusterDeployProgress from './components/new-cluster-deploy-progress';
 import newClusterInstallation from './components/new-cluster-installation';
 import newClusterIps from './components/new-cluster-ips';
+import newClusterSummary from './components/new-cluster-summary';
+import newClusterWelcome from './components/new-cluster-welcome';
 import contentClustersProvider from './components/content-clusters-provider';
 import newCluster from './components/new-cluster';
 import modalRedirect from './components/modal-redirect';
 import clusterHostIpForm from './components/cluster-host-ip-form';
+import noEmergencyPassphraseBox from './components/no-emergency-passphrase-box';
+import firstEmergencyPassphraseForm from './components/first-emergency-passphrase-form';
+import clusterHostTable from './components/cluster-host-table';
+import clusterHostTableRow from './components/cluster-host-table-row';
 import manageClusterStorages from './components/manage-cluster-storages';
-import sidebarClusters from './components/sidebar-clusters';
 import contentClustersCertificate from './components/content-clusters-certificate';
 import webCertForm from './components/web-cert-form';
 import newClusterWebCert from './components/new-cluster-web-cert';
@@ -40,21 +50,42 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
+import contentClustersEmergencyPassphrase from './components/content-clusters-emergency-passphrase';
+import clusterNodesTile from './components/cluster-nodes-tile';
+import clusterSpacesTile from './components/cluster-spaces-tile';
+import clusterStoragesTile from './components/cluster-storages-tile';
+import contentClustersOverview from './components/content-clusters-overview';
+import onezoneInfoBox from './components/onezone-info-box';
+import sidebarClusters from './components/sidebar-clusters';
 import spaceStorageSynchronization from './components/space-storage-synchronization';
 import supportSizeInfo from './components/support-size-info';
+import emergencyWarningBar from './components/emergency-warning-bar';
+import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
+import registerOnezoneOffline from './components/alerts/register-onezone-offline';
+import contentClustersMembers from './components/content-clusters-members';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
 
 import guiUtils from './services/gui-utils';
+import clusterActions from './services/cluster-actions';
+import clusterModelManager from './services/cluster-model-manager';
+import onezoneGui from './services/onezone-gui';
+
+import onedata from './routes/onedata';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
 let translations = {
   tabs: {
-    clusters,
+    providers,
+    tokens,
+    spaces,
+    groups,
     users,
+    clusters,
+    harvesters,
   },
   components: {
     clusterStorageAddForm,
@@ -86,18 +117,36 @@ let translations = {
     modalRedirect,
     clusterHostIpForm,
     contentClustersNodes,
+    noEmergencyPassphraseBox,
+    firstEmergencyPassphraseForm,
+    clusterHostTable,
+    clusterHostTableRow,
     manageClusterStorages,
-    sidebarClusters,
     contentClustersCertificate,
     webCertForm,
     newClusterWebCert,
     modalConfigureWebCert,
     newClusterDns,
+    newClusterSummary,
+    newClusterWelcome,
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
+    contentClustersEmergencyPassphrase,
+    clusterNodesTile,
+    clusterSpacesTile,
+    clusterStoragesTile,
+    contentClustersOverview,
+    onezoneInfoBox,
+    sidebarClusters,
     spaceStorageSynchronization,
     supportSizeInfo,
+    emergencyWarningBar,
+    contentClustersMembers,
+    alerts: {
+      registerOnezoneOffline,
+      registerOnezoneNotCompatible,
+    },
   },
   mixins: {
     components: {
@@ -107,6 +156,12 @@ let translations = {
   },
   services: {
     guiUtils,
+    clusterActions,
+    clusterModelManager,
+    onezoneGui,
+  },
+  routes: {
+    onedata,
   },
 };
 

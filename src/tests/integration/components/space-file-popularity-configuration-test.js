@@ -21,7 +21,9 @@ describe('Integration | Component | space file popularity configuration', functi
       maxAvgOpenCountPerDay: 4,
     });
 
-    this.render(hbs `{{space-file-popularity-configuration configuration=configuration}}`);
+    this.render(hbs `
+      {{space-file-popularity-configuration configuration=configuration}}
+    `);
 
     const $spaceFilePopularityConfiguration =
       this.$('.space-file-popularity-configuration');

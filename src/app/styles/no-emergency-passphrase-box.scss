@@ -1,0 +1,32 @@
+.no-emergency-passphrase-box {
+  $-box-vertial-padding: 20px;
+  
+  .row-login-header {
+    margin-bottom: $form-group-margin-bottom;
+    .subtitle-tip {
+      font-size: 21px;
+    }
+  }
+  .row-first-button {
+    padding-top: $-box-vertial-padding;
+    text-align: center;
+    .btn {
+      width: 300px;
+      max-width: 100%;
+    }
+  }
+  .description {
+    text-align: center;
+    font-size: 16px;
+  }
+  .hostname-row {
+    padding-top: $-box-vertial-padding;
+    padding-bottom: $-box-vertial-padding;
+  }
+  .btn-back {
+    .oneicon.oneicon-arrow-right {
+      display: inline-block;
+      transform: rotate(180deg);
+    }
+  }
+}

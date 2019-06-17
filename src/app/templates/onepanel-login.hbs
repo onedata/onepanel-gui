@@ -1,0 +1,9 @@
+{{partial "emergency-bar"}}
+
+{{#login-layout withEmergencyWarningBar=emergencyWarningBarVisible}}
+  {{#if model.isEmergencyPassphraseSet}}
+    {{login-box authenticationSuccess="authenticationSuccess"}}
+  {{else}}
+    {{no-emergency-passphrase-box}}
+  {{/if}}
+{{/login-layout}}

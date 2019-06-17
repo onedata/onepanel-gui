@@ -1,0 +1,83 @@
+{{#if isOnepanelEmergency}}
+  {{#content-info
+    class=(if isUserTokenVisible "scroll-breakpoint-800" "scroll-breakpoint-600")
+    header=(tt this "header")
+    imagePath=(root-url "assets/images/cluster-members.svg")}}
+    <div class="row row-members-counter">
+      {{#promise-proxy-container proxy=membersProxy sizeClass="sm"}}
+        <p class="text-center">
+          {{tt this "membersOf"}}
+          <strong>{{cluster.name}}</strong>:
+        </p>
+        <div class="row">
+          <div class="col-xs-8 col-sm-9 col-md-7 col-centered">
+            <div class="col-xs-12 col-sm-6">
+              <ul class="info info-condensed info-gray">
+                <li class="li-spaces-count">
+                  {{tt this "directGroups"}}: <span class="direct-groups-number">{{membersProxy.groupsCount}}</span>
+                </li>
+                <li class="li-groups-count">
+                  {{tt this "directUsers"}}: <span class="direct-users-number">{{membersProxy.usersCount}}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <ul class="info info-condensed info-gray">
+                <li class="li-users-count">
+                  {{tt this "effectiveGroups"}}:
+                  <span class="effective-groups-number">
+                    {{membersProxy.effectiveGroupsCount}}
+                  </span>
+                </li>
+                <li class="li-creation-time-count">
+                  {{tt this "effectiveUsers"}}:
+                  <span class="effective-users-number">
+                    {{membersProxy.effectiveUsersCount}}
+                  </span>
+                </li>
+              </ul>
+            </div>          
+          </div>
+        </div>
+        {{#if hasNoConnectedUser}}
+          <div class="alert alert-danger text-center no-users-warning">
+            <p class="text-center"><strong>{{tt this "noConnectedUserWarningHeader"}}</strong></p>
+            <p>{{tt this "noConnectedUserWarning"}}</p>
+          </div>
+        {{/if}}
+      {{/promise-proxy-container}}
+    </div>
+    <div class="text-center">
+      {{#one-spin-button
+        class=(concat "btn btn-primary manage-via-onezone")
+        action=(action "manageViaOnezone")
+        disabled=(or membersProxy.isPending hasNoConnectedUser)}}
+        {{tt this "openInOnezone"}}
+      {{/one-spin-button}}
+    </div>
+    <div class="user-token-container {{if isUserTokenVisible "expanded"}}">
+      {{#if isUserTokenVisible}}
+        <h2 class="text-center">{{tt this "inviteUserUsingToken"}}</h2>
+        {{#promise-proxy-container proxy=userInvitationTokenProxy}}
+          <textarea
+            rows="5"
+            value={{userInvitationTokenProxy.token}}
+            readonly="readonly"
+            class="form-control invite-user-token-textarea token-textarea no-resize" />
+          <a {{action "generateAnotherToken"}}>{{tt this "generateAnotherToken"}}</a>
+          {{one-copy-button
+            class="btn btn-default btn-sm pull-right"
+            parentElementId=elementId
+            localTarget=".invite-user-token-textarea"
+            textType=(tt this "token")}}
+        {{/promise-proxy-container}}
+      {{else}}
+        <p class="text-center">
+          <a {{action "showUserToken"}}>{{tt this "inviteUserUsingToken"}}</a>
+        </p>
+      {{/if}}
+    </div>
+  {{/content-info}}
+{{else}}
+  {{content-clusters-onezone-redirect path=(concat "onedata/clusters/" cluster.id "/members") replace=true}}
+{{/if}}

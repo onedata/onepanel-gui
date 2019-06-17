@@ -6,8 +6,17 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5476 Refactoring of token/origin endpoints and unified GUI URL
+* VFS-5496 Added notification about no linked Onezone user
+* VFS-5219 Common libraries update
+* VFS-5452 Fixed not working cluster deployment GUI after SP3 changes
+* VFS-5425 Service Pack 3 for unified GUI
+* VFS-5411 Basic-auth sign-in changed to emergency passphrase
+* VFS-5377 Simple members view in emergency mode of Onepanel GUI
+* VFS-4640 Added auto-polling of space occupancy, disabled join space in emergency, changed session expired message
 * VFS-5301 Fixed disabled submit button in WebDAV storage on no POSIX mode
 * VFS-5301 Added new WebDAV configuration fields
+* VFS-4596 Major changes to support unified and standalone Onepanel GUI
 * VFS-5242 Using new async backend to show progress of saving file popularity settings
 * VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update
 * VFS-5114 Infinite-scroll list of auto-cleaning reports, file-popularity options and major refactor of space support views
@@ -26,6 +35,9 @@ CHANGELOG
 * VFS-4629 Fixed translations
 * VFS-4559 Fixed global actions display in mobile view
 * VFS-4587 Fixing lack of space occupancy bar by updating onepanel client
+* VFS-4594 UX improvements of deployment process
+* VFS-4435 New feature: adding hosts in cluster deployment table
+* VFS-4436 Added view for registering first admin user
 * VFS-4424 Improved sidebar content presentation and animation 
 * VFS-4381 Removed signature version option from S3 storage form, because we support only V4
 * VFS-4380 Added new parameters in null device form: simulated filesystem paramers and grow speed

@@ -3,7 +3,7 @@
  * 
  * @module components/cluster-dns-check-table/check-item
  * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -46,7 +46,7 @@ export default Component.extend(I18n, {
   /**
    * @virtual
    * @type {string}
-   * One of: zone, provider
+   * One of: onezone, oneprovider
    */
   onepanelServiceType: undefined,
 
@@ -171,7 +171,7 @@ export default Component.extend(I18n, {
         'onepanelServiceType',
         'subdomainDelegation',
       );
-      return onepanelServiceType === 'zone' || !subdomainDelegation ?
+      return onepanelServiceType === 'onezone' || !subdomainDelegation ?
         'ownDomain' : 'subdomain';
     }
   ),

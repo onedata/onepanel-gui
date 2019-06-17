@@ -6,7 +6,7 @@ const summary = 'summary';
 
 export default {
   steps: {
-    provider: {
+    oneprovider: {
       installation,
       ips,
       providerRegistration: 'provider registration',
@@ -15,7 +15,7 @@ export default {
       providerStorage: 'storage configuration',
       summary,
     },
-    zone: {
+    onezone: {
       installation,
       webCert,
       dns,

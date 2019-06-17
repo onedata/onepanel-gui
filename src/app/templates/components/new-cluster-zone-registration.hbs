@@ -1,16 +1,109 @@
-{{!-- TODO i18n --}}
-
-<div class="row content-row header-row no-border">
-  <h1 class="">Registration</h1>
+<div class="row content-row header-row">
+  <h1>
+    {{tt this "header"}}
+    {{#if (eq mode "form")}}
+      <div class="btn-toolbar">
+        {{#bs-button type="default" size="sm" class="zone-registration-back" onClick=(action "back")}}
+          {{one-icon icon="arrow-left"}}<span>{{tt this "back"}}</span>
+        {{/bs-button}}
+      </div>
+    {{/if}}
+  </h1>
 </div>
-<div class="row content-row no-border">
-  <p>Your software configuration has been successfully verified. 
-    Please enter your onedata provider name and optional approximate geographical location.</p>
-</div>
-<div class="content-row row">
-  {{provider-registration-form
-    mode="new"
-    excludedSubdomains=_excludedSubdomains
-    submit=(action "submit")
-  }}
-</div>
+{{#if (eq mode "token")}}
+  <div class="row row-mode-token">
+    <div class="row content-row no-border">
+      <p>
+        {{tt this "zoneTokenIntroStart"}}
+        {{#if showTokenHelp}}
+          {{tt this "zoneTokenIntroWithHelp"}}
+        {{else}}
+          {{tt this "zoneTokenIntroWithoutHelp"}}
+          &ndash; <a {{action (mut showTokenHelp) true}}>{{tt this "zoneTokenDocsLink"}}</a>.{{/if}}
+      </p>
+      {{#if showTokenHelp}}
+      <div class="row content-row no-border">
+        <p class="token-help">
+          <ol class="info info-condensed">
+            <li>
+              {{tt this "stepGoToOnezone"}}
+            </li>
+            <li>
+              {{tt this "stepSignIn"}}
+            </li>
+            <li>
+              {{tt this "stepSelect1"}}
+              <div class="inline-icon-container">
+                {{one-icon icon="cluster"}}
+              </div>
+              <strong>{{tt this "stepSelectCluster"}}</strong>
+              {{tt this "stepSelect2"}}
+            </li>
+            <li>
+              {{tt this "stepAddCluster1"}}
+              <div class="inline-icon-container">
+                {{one-icon icon="add-filled"}}
+              </div>
+              <strong>{{tt this "stepAddClusterAdd"}}</strong>
+              {{tt this "stepAddCluster2"}}
+            </li>
+            <li>
+              {{tt this "stepCopyToken"}}
+            </li>
+          </ol>
+        </p>
+      </div>
+    {{/if}}
+    </div>
+      
+    <div class="row content-row no-border">
+      <div class="col-xs-12">
+        <p>
+          <label for="zone-token-textarea">
+            {{tt this "zoneTokenPaste"}}:
+          </label>
+        </p>
+        <p>
+          <textarea
+            id="zone-token-textarea"
+            rows=5
+            value={{token}}
+            oninput={{action (mut token) value="target.value"}}
+            onkeydown={{invoke-on-enter (action "proceedToken")}}
+            placeholder={{concat (tt this "example") ": " "MDAzM2…"}}
+            disabled={{contentInfo.actionInProgress}}
+            class="form-control zone-token-textarea"
+          />
+        </p>
+      </div>
+    </div>
+    
+    <div class="row content-row no-border">
+      <div class="col-xs-12 text-center">
+        {{#one-spin-button
+          class="btn btn-primary"
+          action=(action "proceedToken")
+          disabled=proceedTokenDisabled
+        }}
+          {{tt this "proceedToken"}}
+        {{/one-spin-button}}
+      </div>
+    </div>
+  </div>
+{{else if (eq mode "form")}}
+  <div class="row row-mode-form">
+    <div class="row content-row no-border">
+      <h1 class="text-center form-title">{{tt this "registeringTo"}}</h1>
+      {{onezone-info-box onezoneInfo=onezoneInfo}}
+      <p class="text-center">{{tt this "providerFormIntro"}}</p>
+      {{provider-registration-form
+        mode="new"
+        excludedSubdomains=_excludedSubdomains
+        submit=(action "submit")
+        token=token
+        subdomainDelegationSupported=onezoneInfo.subdomainDelegationSupported
+        onezoneDomain=onezoneInfo.domain
+      }}
+    </div>
+  </div>
+{{/if}}

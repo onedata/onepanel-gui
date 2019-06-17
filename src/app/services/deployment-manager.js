@@ -1,25 +1,24 @@
 /**
- * Provides data for routes and components assoctiated with clusters tab
+ * Provides data for routes and components assoctiated with deployment of cluster
  *
- * @module services/cluster-manager
+ * @module services/deployment-manager
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Service, { inject as service } from '@ember/service';
 
 import { Promise } from 'rsvp';
-import { A } from '@ember/array';
-import { readOnly, alias } from '@ember/object/computed';
+import { get } from '@ember/object';
+import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import ClusterDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/cluster-details';
+import InstallationDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-
-const THIS_CLUSTER_ID = 'the-cluster';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import shortServiceType from 'onepanel-gui/utils/short-service-type';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -27,9 +26,12 @@ const _ROLE_COLLECTIONS = {
   workers: 'clusterWorker',
 };
 
-export default Service.extend({
+export default Service.extend(createDataProxyMixin('installationDetails'), {
+  clusterModelManager: service(),
   onepanelServer: service(),
-  onepanelServiceType: readOnly('onepanelServer.serviceType'),
+  guiUtils: service(),
+
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * Contains latest fetched ClusterDetails
@@ -39,88 +41,52 @@ export default Service.extend({
 
   /**
    * Last feched ClusterDetails
-   * @type {ClusterDetails}
+   * @type {InstallationDetails}
    */
   _defaultCache: alias('defaultCache.content'),
 
   /**
-   * Promise proxy resolves with array of promise proxies for ClusterDetails
-   * @returns {PromiseObject}
+   * @override
    */
-  getClusters() {
-    let promise = new Promise((resolve) => {
-      resolve(A([this.getDefaultRecord()]));
-    });
-    return PromiseObject.create({ promise });
-  },
+  fetchInstallationDetails() {
+    const onepanelServiceType = this.get('onepanelServiceType');
 
-  getDefaultRecord(reload = false) {
-    return this.getClusterDetails(undefined, reload);
-  },
+    let clusterStep;
 
-  // TODO: in future this should be able to get details of any cluster 
-  // in system 
-  /**
-   * @param {string} clusterId
-   * @param {boolean} [reload=false]
-   * @returns {PromiseObject}
-   */
-  getClusterDetails(clusterId, reload = false) {
-    let {
-      onepanelServiceType,
-      defaultCache,
-      _defaultCache,
-    } = this.getProperties(
-      'onepanelServiceType',
-      'defaultCache',
-      '_defaultCache'
-    );
+    return this._getThisClusterInitStep()
+      .then(step => {
+        clusterStep = step;
 
-    let promise = new Promise((resolve, reject) => {
-      if (_defaultCache && !reload) {
-        resolve(defaultCache);
-      } else {
-        let clusterStep;
+        return this.getConfiguration()
+          .then(({ data: configuration }) => {
+            return configuration;
+          })
+          .catch(() => {
+            return null;
+          });
+      })
+      .then(configuration => {
+        return this.get('clusterModelManager').getRawCurrentClusterProxy()
+          .then(currentCluster => {
+            const currentClusterId = (
+              currentCluster && get(currentCluster, 'id') || 'new'
+            );
+            const name = (configuration || null) &&
+              configuration[onepanelServiceType].name;
+            const thisCluster = ClusterInfo.create({
+              id: currentClusterId,
+            }, configuration);
 
-        let gettingStep = this._getThisClusterInitStep();
-
-        gettingStep.then(step => {
-          clusterStep = step;
-
-          let gettingConfiguration = this.getConfiguration();
-
-          return new Promise(resolveConfiguration => {
-            gettingConfiguration.then(({ data: configuration }) => {
-              resolveConfiguration(configuration);
+            const installationDetails = InstallationDetails.create({
+              name,
+              onepanelServiceType: onepanelServiceType,
+              clusterInfo: thisCluster,
+              initStep: clusterStep,
             });
 
-            gettingConfiguration.catch(() => {
-              resolveConfiguration(null);
-            });
+            return installationDetails;
           });
-
-        }).then(configuration => {
-          const name = (configuration || null) &&
-            configuration['one' + onepanelServiceType].name;
-          const thisCluster = ClusterInfo.create({
-            id: THIS_CLUSTER_ID,
-          }, configuration);
-
-          const clusterDetails = ClusterDetails.create({
-            name,
-            onepanelServiceType: onepanelServiceType,
-            clusterInfo: thisCluster,
-            initStep: clusterStep,
-          });
-
-          this.set('_defaultCache', clusterDetails);
-          resolve(defaultCache);
-        }).catch(reject);
-
-        gettingStep.catch(reject);
-      }
-    });
-    return PromiseObject.create({ promise });
+      });
   },
 
   /**
@@ -169,11 +135,10 @@ export default Service.extend({
       mainManagerHostname: cluster.managers.mainHost,
       clusterHostsInfo: clusterHostsInfoArray,
     };
-
   },
 
   /**
-   * Get a cluster configuration for current service type
+   * Get cluster deployment configuration for current service type
    * @param {boolean} [validateData] if true, make validation of cluster configuration
    * @returns {Promise} result of GET configuration request
    */
@@ -186,8 +151,8 @@ export default Service.extend({
       (validateData ? onepanelServer.requestValidData : onepanelServer.request)
       .bind(onepanelServer);
     return requestFun(
-      'one' + onepanelServiceType,
-      camelize(`get-${onepanelServiceType}-configuration`)
+      onepanelServiceType,
+      camelize(`get-${shortServiceType(onepanelServiceType)}-configuration`)
     );
   },
 
@@ -197,8 +162,8 @@ export default Service.extend({
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`get-${onepanelServiceType}-cluster-ips`)
+        onepanelServiceType,
+        camelize(`get-${shortServiceType(onepanelServiceType)}-cluster-ips`)
       )
       .then(({ data }) => data);
   },
@@ -213,8 +178,8 @@ export default Service.extend({
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        'one' + onepanelServiceType,
-        camelize(`modify-${onepanelServiceType}-cluster-ips`), {
+        onepanelServiceType,
+        camelize(`modify-${shortServiceType(onepanelServiceType)}-cluster-ips`), {
           hosts: hostsData,
         },
       )
@@ -245,7 +210,6 @@ export default Service.extend({
     });
   },
 
-  // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise} resolves with
@@ -258,7 +222,10 @@ export default Service.extend({
 
       gettingProvider.then(({ data: providerDetails }) => {
         // if details found, then the provider was registered
-        resolve({ isRegistered: !!providerDetails, providerDetails: providerDetails });
+        resolve({
+          isRegistered: !!providerDetails,
+          providerDetails: providerDetails,
+        });
       });
       gettingProvider.catch(error => {
         if (error == null || error.response == null) {
@@ -307,7 +274,7 @@ export default Service.extend({
   /**
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
-   * See `model:cluster-details CLUSTER_INIT_STEPS` for code explaination.
+   * See `model:installation-details CLUSTER_INIT_STEPS` for code explaination.
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
@@ -322,7 +289,7 @@ export default Service.extend({
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {
           // TODO VFS-3119
-          if (onepanelServiceType === 'zone') {
+          if (onepanelServiceType === 'onezone') {
             const checkIps = this._checkIsIpsConfigured();
             checkIps.then(isIpsConfigured => {
               if (isIpsConfigured) {
@@ -331,7 +298,10 @@ export default Service.extend({
                   if (dnsCheckAck) {
                     resolve(STEP.ZONE_DONE);
                   } else {
-                    resolve(STEP.ZONE_DNS);
+                    // We have no exact indicator if earlier step -
+                    // IPs configuration - has been finished, because it 
+                    // has default values which are undistinguishable from user input
+                    resolve(STEP.ZONE_IPS);
                   }
                 });
                 checkDnsCheck.catch(reject);
@@ -354,7 +324,8 @@ export default Service.extend({
                     const checkStorage = this._checkIsAnyStorage(
                       onepanelServer
                     );
-                    const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
+                    const checkDnsCheck = this
+                      ._checkIsDnsCheckAcknowledged();
                     checkDnsCheck.then(dnsCheckAck => {
                       if (dnsCheckAck) {
                         checkStorage.then(isAnyStorage => {
@@ -366,7 +337,11 @@ export default Service.extend({
                         });
                         checkStorage.catch(reject);
                       } else {
-                        resolve(STEP.PROVIDER_DNS);
+                        // We have no exact indicator if earlier step -
+                        // IPs configuration - has been finished, because it 
+                        // has default values which are undistinguishable from
+                        // user input
+                        resolve(STEP.PROVIDER_IPS);
                       }
                     });
                     checkDnsCheck.catch(reject);
@@ -391,12 +366,12 @@ export default Service.extend({
   },
 
   /**
-   * @param {boolean} [discovered=false] see discovered option in REST API
+   * @param {string} type
    * @return {Promise} resolves with Array.{ hostname: string }
    */
-  getHosts(discovered = false) {
+  getHosts(type = 'known') {
     return new Promise((resolve, reject) => {
-      let gettingHostNames = this.getHostNames(discovered);
+      let gettingHostNames = this.getHostNames(type);
 
       gettingHostNames.then(({ data: hostnames }) => {
         // TODO more info
@@ -407,21 +382,33 @@ export default Service.extend({
 
       gettingHostNames.catch(error => {
         console.error(
-          'service:cluster-manager: Getting hostnames failed'
+          'service:deployment-manager: Getting hostnames failed'
         );
         reject(error);
       });
     });
   },
 
-  getHostNames(discovered = false) {
+  /**
+   * @param {string} type one of: known, cluster
+   * @returns {Promise}
+   */
+  getHostNames() {
     let onepanelServer = this.get('onepanelServer');
-    return new Promise((resolve, reject) => {
-      let gettingClusterHosts = onepanelServer.requestValidData(
-        'onepanel',
-        'getClusterHosts', { discovered }
-      );
-      gettingClusterHosts.then(resolve, reject);
-    });
+    return onepanelServer.requestValidData(
+      'onepanel',
+      'getClusterHosts',
+    );
+  },
+
+  /**
+   * @param {string} address hostname or IP address
+   * @returns {Promise<Onepanel.KnownHost>}
+   */
+  addKnownHost(address) {
+    return this.get('onepanelServer').request(
+      'onepanel',
+      'addClusterHost', { address }
+    ).then(({ data }) => data);
   },
 });

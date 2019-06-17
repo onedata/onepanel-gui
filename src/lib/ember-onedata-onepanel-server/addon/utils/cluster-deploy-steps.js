@@ -3,11 +3,11 @@
  *
  * @module utils/cluster-deploy-steps
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-const COMMON_DEPLOY_STEPS = [
+const commonDeployStepsInitial = [
   'service_couchbase:configure',
   'service_couchbase:start',
   'service_couchbase:wait_for_init',
@@ -19,9 +19,25 @@ const COMMON_DEPLOY_STEPS = [
   'service_cluster_manager:stop',
   'service_cluster_manager:start',
   'service_cluster_manager:status',
+  // TODO: there are additional new steps AFTER worker steps, but these are very short
+  // Oneprovider Panel
+  // 'service_letsencrypt:create',
+  // 'onepanel_deployment:mark_completed',
+  // 'service_letsencrypt:disable',
+  // 'onepanel_deployment:mark_completed',
+  // Onezone Panel
+  // before
+  // 'service_onepanel:add_users'
+  // after
+  // 'service_onezone:set_up_ozp_gui',
+  // 'service_letsencrypt:create',
+  // 'onepanel_deployment:mark_completed',
+  // 'service: save',
+  // 'service_letsencrypt: disable',
+  // 'onepanel_deployment:mark_completed',
 ];
 
-const WORKER_STEPS = [
+const workerStepNames = [
   'configure',
   'setup_certs',
   'stop',
@@ -32,25 +48,27 @@ const WORKER_STEPS = [
 
 /**
  * Generate list of specific deployment steps for specific worker service
- * @param {string} type one of: "zone", "provider"
+ * @param {string} type one of: "onezone", "oneprovider"
  * @returns {Array<string>} full worker step names
  */
 function workerSteps(type) {
   // currently - just first letter
-  let typeCode = type[0];
-  return WORKER_STEPS.map(ws => `service_o${typeCode}_worker:${ws}`);
+  let typeCode = type[3];
+  return workerStepNames.map(ws => `service_o${typeCode}_worker:${ws}`);
 }
 
 /**
  * Generate list of all deployment steps for specific worker service
- * @param {string} type one of: "zone", "provider"
+ * @param {string} type one of: "onezone", "oneprovider"
  * @returns {Array<string>}
  */
 export default function clusterDeploySteps(type) {
-  return COMMON_DEPLOY_STEPS.concat(workerSteps(type));
+  const steps = commonDeployStepsInitial.concat(workerSteps(type));
+  return type === 'oneprovider' ?
+    steps.concat('service_oneprovider:set_up_service_in_onezone') : steps;
 }
 
-export const KNOWN_STEPS = COMMON_DEPLOY_STEPS.concat(
-  workerSteps('p'),
-  workerSteps('z'),
+export const KNOWN_STEPS = commonDeployStepsInitial.concat(
+  clusterDeploySteps('oneprovider'),
+  clusterDeploySteps('onezone'),
 );

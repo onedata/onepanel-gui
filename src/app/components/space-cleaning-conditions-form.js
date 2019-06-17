@@ -200,17 +200,23 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
     ].forEach((fieldName) => {
       const field = get(data, fieldName) || { enabled: false, value: 0 };
       const enabled = field.enabled;
-      const bytesValue = bytesToString(field.value, { iecFormat: true, separated: true });
+      const bytesValue = bytesToString(field.value, {
+        iecFormat: true,
+        separated: true,
+      });
       formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(bytesValue.number),
         [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) ||
-          { multiplicator: 1, name: 'B' },
+        { multiplicator: 1, name: 'B' },
       });
     });
 
     let minHoursSinceLastOpenField = get(data, 'minHoursSinceLastOpen');
-    minHoursSinceLastOpenField = minHoursSinceLastOpenField || { enabled: false, value: 0 };
+    minHoursSinceLastOpenField = minHoursSinceLastOpenField || {
+      enabled: false,
+      value: 0,
+    };
     let unit = _timeUnits[0];
     _timeUnits.forEach((u) => {
       if (minHoursSinceLastOpenField / u.multiplicator >= 1) {

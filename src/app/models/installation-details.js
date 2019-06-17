@@ -1,18 +1,15 @@
 /**
- * A complete model for Cluster entity used in panel
+ * Information about installation of cluster
  *
- * A `ClusterInfo` object should be referenced to provide basic information
- * about cluster.
- *
- * @module models/cluster-details
+ * @module models/installation-details
  * @author Jakub Liput
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import ObjectProxy from '@ember/object/proxy';
 import { computed } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import { alias, reads } from '@ember/object/computed';
 
 export const CLUSTER_INIT_STEPS = Object.freeze({
   DEPLOY: 0,
@@ -53,6 +50,8 @@ export default ObjectProxy.extend({
    */
   name: null,
 
+  type: reads('content.onepanelServiceType'),
+
   init() {
     this._super(...arguments);
     // TODO i18n or set default name in some view
@@ -66,7 +65,7 @@ export default ObjectProxy.extend({
       initStep,
       onepanelServiceType,
     } = this.getProperties('initStep', 'onepanelServiceType');
-    return onepanelServiceType === 'provider' ?
+    return onepanelServiceType === 'oneprovider' ?
       initStep >= CLUSTER_INIT_STEPS.PROVIDER_DONE :
       initStep >= CLUSTER_INIT_STEPS.ZONE_DONE;
   }),

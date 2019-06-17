@@ -1,18 +1,35 @@
 .login-box {
+  $-login-form-width: 400px;
   .login-main-title {
-    &.zone {
-      background-image: url($root-url + 'assets/images/onezone-logo.svg');
+    &.onezone {
+      background-image: url($root-url + 'images/onezone-logo.svg');
     }
-    &.provider {
-      background-image: url($root-url + 'assets/images/oneprovider-logo.svg');
+    &.oneprovider {
+      background-image: url($root-url + 'images/oneprovider-logo.svg');
       background-size: 25px;
     }
   }
   .login-logo {
-    background-image: url($root-url + 'assets/images/control-panel.svg');
+    background-image: url($root-url + 'images/control-panel.svg');
   }
   .basicauth-login-form {
-    max-width: 400px;
+    max-width: $-login-form-width;
     margin: 0 auto;
+  }
+  .login-separator {
+    max-width: $-login-form-width;
+    margin-top: $form-group-margin-bottom;
+    margin-bottom: $form-group-margin-bottom;
+  }
+  .login-section-description {
+    text-align: center;
+    margin-top: $form-group-margin-bottom;
+    font-family: 'Open Sans Semibold';
+  }
+  .resource-load-error {
+    background-color: $color-one-semiwhite;
+  }
+  .col-user-profile-icon {
+    margin-bottom: 20px;
   }
 }
