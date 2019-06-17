@@ -1,3 +1,12 @@
+/**
+ * Provides viewer and editor of QOS parameters for storage (but is pretty
+ * universal an may by used in the future for another similiar problems)
+ *
+ * @module components/qos-params-editor
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 
 /**
  * @typedef {EmberObject} QosParamRecord
@@ -69,7 +78,7 @@ export default Component.extend(I18n, {
   onChange: notImplementedIgnore,
 
   /**
-   * `qosParams` converted to an array QosParamRecord
+   * `qosParams` converted to an array of QosParamRecord
    * @type {Ember.ComputedProperty<Array<QosParamRecord>>}
    */
   paramRecords: computed('qosParams', function paramRecords() {
@@ -107,16 +116,19 @@ export default Component.extend(I18n, {
    * invalid state.
    * @type {Ember.ComputedProperty<boolean>}
    */
-  hasValuesWithoutKeys: computed('activeParamEditRecords.{key,value}', function () {
-    const activeParamEditRecords = this.get('activeParamEditRecords');
-    return Boolean(activeParamEditRecords.find(record => {
-      const {
-        key,
-        value,
-      } = getProperties(record, 'key', 'value');
-      return key === '' && value !== '';
-    }));
-  }),
+  hasValuesWithoutKeys: computed(
+    'activeParamEditRecords.{key,value}',
+    function hasValuesWithoutKeys() {
+      const activeParamEditRecords = this.get('activeParamEditRecords');
+      return Boolean(activeParamEditRecords.find(record => {
+        const {
+          key,
+          value,
+        } = getProperties(record, 'key', 'value');
+        return key === '' && value !== '';
+      }));
+    }
+  ),
 
   /**
    * If true, all records handled by editor are correct.
@@ -210,7 +222,7 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * Removed qos record permanently. Should be used only via `removeEditRecord`
+   * Removes qos record permanently. Should be used only via `removeEditRecord`
    * method
    * @param {QosParamRecord} record
    * @returns {Ember.A<QosParamRecord>} new version of qos records
@@ -327,7 +339,7 @@ export default Component.extend(I18n, {
     },
     valueChanged(record, event) {
       set(record, 'value', event.target.value);
-      // If value is empty, then some empty record may removed from the end 
+      // If value is empty, then some empty record may be removed from the end 
       this.removeLastEditRecordIfNeeded(record);
       this.notifyChange();
     },

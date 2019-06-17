@@ -81,7 +81,7 @@
         .form-control-static {
           padding: $storage-item-padding 0;
         }
-        .form-control {
+        .form-control-column .form-control {
           margin-top: $storage-item-padding * 0.33;
         }
         .form-control-column {

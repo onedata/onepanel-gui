@@ -21,7 +21,6 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { resolve } from 'rsvp';
-import { notEmpty } from 'ember-awesome-macros';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -202,7 +201,13 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  storageHasQosParameters: notEmpty('storage.qosParameters'),
+  storageHasQosParameters: computed(
+    'storage.qosParameters',
+    function storageHasQosParameters() {
+      const qosParams = this.get('storage.qosParameters');
+      return !qosParams || Boolean(get(Object.keys(qosParams), 'length'));
+    }
+  ),
 
   /**
    * @override
@@ -729,7 +734,7 @@ export default OneForm.extend(I18n, Validations, {
           let storageValue = storage[key] === undefined || storage[key] === '' ?
             null : storage[key];
           if ((storageValue === null && formData[key] === null) ||
-            (String(storageValue) === String(formData[key]) &&
+            (JSON.stringify(storageValue) === JSON.stringify(formData[key]) &&
               storageValue !== null && formData[key] !== null)) {
             delete formData[key];
           }
