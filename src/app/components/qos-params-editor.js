@@ -8,28 +8,80 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-/**
- * @typedef {EmberObject} QosParamRecord
- * @property {string} key
- * @property {string} value
- * @property {boolean} isDeleted if true, then record is treated as unavailable 
- *   (e.g. is in the middle of animation of deleting)
- * @property {boolean} disableCreateAnimation if true, animation of creating
- *   a record will not be applied to this record. Helpful at the time of first
- *   component render, when everything should be done without delays.
- */
-
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import EmberObject, { get, set, getProperties, computed, observer } from '@ember/object';
 import { A } from '@ember/array';
-import { array, raw, not, or } from 'ember-awesome-macros';
+import { array, raw, not, or, and } from 'ember-awesome-macros';
 import { later } from '@ember/runloop';
 import _ from 'lodash';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { resolve } from 'rsvp';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
+
+const QosParamRecord = EmberObject.extend({
+  /**
+   * @type {string}
+   */
+  key: '',
+
+  /**
+   * @type {string}
+   */
+  value: '',
+
+  /**
+   * @type {boolean}
+   */
+  isEditingKey: false,
+
+  /**
+   * If true, then record is treated as unavailable  (e.g. is in the middle 
+   * of animation of deleting)
+   * @type {boolean}
+   */
+  isRemoved: false,
+
+  /**
+   * If true, animation of creating a record will not be applied to this
+   * record. Helpful at the time of first component render, when everything
+   * should be done without delays.
+   * @type {boolean}
+   */
+  disableCreateAnimation: false,
+
+  /**
+   * True value means, that this record has the same key as some another record
+   * @type {boolean}
+   */
+  isDuplicate: false,
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isEmpty: and(not('key'), not('value')),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  hasValueWithoutKey: computed(
+    'key',
+    'value',
+    function hasValuesWithoutKeys() {
+      const {
+        key,
+        value,
+      } = this.getProperties('key', 'value');
+      return key === '' && value !== '';
+    }
+  ),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  hasKeyError: or('isDuplicate', 'hasValueWithoutKey'),
+});
 
 const nodeClearDelay = 500;
 
@@ -105,36 +157,10 @@ export default Component.extend(I18n, {
   activeParamEditRecords: array.rejectBy('paramEditRecords', raw('isRemoved')),
 
   /**
-   * True if there are at least two records with the same key. It is treated
-   * as an invalid state.
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  hasDuplicates: array.isAny('activeParamEditRecords', raw('isDuplicate')),
-
-  /**
-   * True if at least one record has value, but no key. It is treated as an
-   * invalid state.
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  hasValuesWithoutKeys: computed(
-    'activeParamEditRecords.{key,value}',
-    function hasValuesWithoutKeys() {
-      const activeParamEditRecords = this.get('activeParamEditRecords');
-      return Boolean(activeParamEditRecords.find(record => {
-        const {
-          key,
-          value,
-        } = getProperties(record, 'key', 'value');
-        return key === '' && value !== '';
-      }));
-    }
-  ),
-
-  /**
    * If true, all records handled by editor are correct.
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isValid: not(or('hasDuplicates', 'hasValuesWithoutKeys')),
+  isValid: not(array.isAny('activeParamEditRecords', raw('hasKeyError'))),
 
   modeObserver: observer('mode', 'isFormOpened', function modeObserver() {
     const {
@@ -146,9 +172,7 @@ export default Component.extend(I18n, {
       // of editor.
       let editRecords;
       if (mode === 'edit') {
-        editRecords = A(paramRecords.map(obj => EmberObject.create(
-          Object.assign({ isRemoved: false, disableCreateAnimation: false }, obj)
-        )));
+        editRecords = A(paramRecords.map(obj => QosParamRecord.create(obj)));
       } else {
         editRecords = A();
       }
@@ -178,10 +202,8 @@ export default Component.extend(I18n, {
       recordsArray = this.get('paramEditRecords');
     }
 
-    const newRecord = EmberObject.create({
-      key: '',
-      value: '',
-      isRemoved: false,
+    const newRecord = QosParamRecord.create({
+      isEditingKey: true,
       disableCreateAnimation: disableAnimation,
     });
     recordsArray.pushObject(newRecord);
@@ -203,7 +225,7 @@ export default Component.extend(I18n, {
 
     if (oneBeforeLastRecord &&
       get(oneBeforeLastRecord, 'key') == '' &&
-      this.isRecordEmpty(lastRecord)) {
+      get(lastRecord, 'isEmpty')) {
       this.removeEditRecord(lastRecord);
       return true;
     } else {
@@ -252,18 +274,6 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * @param {QosParamRecord} record 
-   * @returns {boolean}
-   */
-  isRecordEmpty(record) {
-    const {
-      key,
-      value,
-    } = getProperties(record, 'key', 'value');
-    return !key && !value;
-  },
-
-  /**
    * Removes all empty qos records from the end of the form except the first one,
    * that is after record with non empty key.
    * @returns {undefined}
@@ -276,7 +286,7 @@ export default Component.extend(I18n, {
       const prevRecord = editRecords.objectAt(i);
       const record = editRecords.objectAt(i + 1);
 
-      if (get(prevRecord, 'key') === '' && this.isRecordEmpty(record)) {
+      if (get(prevRecord, 'key') === '' && get(record, 'isEmpty')) {
         this.removeEditRecord(record);
       } else {
         break;
@@ -317,6 +327,16 @@ export default Component.extend(I18n, {
   },
 
   actions: {
+    keyEdit(record) {
+      const {
+        isEditingKey,
+        hasKeyError,
+        key,
+      } = getProperties(record, 'isEditingKey', 'hasKeyError', 'key');
+      if (!(isEditingKey && (hasKeyError || key === ''))) {
+        set(record, 'isEditingKey', !isEditingKey);
+      }
+    },
     keyChanged(record, key) {
       const editRecords = this.get('activeParamEditRecords');
       const editRecordsLength = get(editRecords, 'length');
@@ -333,7 +353,14 @@ export default Component.extend(I18n, {
       this.notifyChange();
       return resolve();
     },
-    inputLostFocus() {
+    inputLostFocus(fieldName, record) {
+      const {
+        hasKeyError,
+        key,
+      } = getProperties(record, 'hasKeyError', 'key');
+      if (fieldName === 'key' && !hasKeyError && key !== '') {
+        set(record, 'isEditingKey', false);
+      }
       // Empty records are preserved until focus lost
       this.removeEmptyEditRecordsFromEnd();
     },

@@ -1,8 +1,16 @@
 .qos-params-editor {
   .form-group {
+    &.has-error {
+      .qos-field {
+        border-color: $input-border; 
+      }
+    }
     .control-label {
       padding-top: 0;
       margin-bottom: 5px;
+      .form-message {
+        font-family: Open Sans;
+      }
     }
     .remove-param {
       font-weight: bold;
@@ -38,9 +46,9 @@
       }
       .remove-param {
         position: absolute;
-        top: 50%;
+        top: 0;
         right: 0;
-        transform: translateY(-50%);
+        line-height: $input-height-base;
         font-size: 230%;
       }
     }

@@ -1,4 +1,7 @@
 export default {
   header: 'QOS parameters',
-  newValueKey: 'New key-value...',
+  key: 'Key',
+  value: 'Value',
+  keyDuplicate: 'Key duplicate',
+  keyCantBeBlank: 'Key can\'t be blank',
 };
