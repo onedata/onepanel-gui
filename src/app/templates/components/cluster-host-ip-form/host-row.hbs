@@ -18,6 +18,7 @@
       {{#bs-form class="compact form-horizontal without-labels" as |form|}}
         {{#form.group
           validation=(if validationMessage "error" "success")
+          class=(if validationMessage "has-message")
         }}
           <input
             class="form-control input-host-ip"
@@ -26,7 +27,9 @@
             placeholder={{tt this "example"}}
             disabled={{isReadOnly}}
           >
-          <div class="form-message">{{validationMessage}}</div>
+          {{#if validationMessage}}
+            <div class="form-message">{{validationMessage}}</div>
+          {{/if}}
         {{/form.group}}
       {{/bs-form}}
     {{/if}}

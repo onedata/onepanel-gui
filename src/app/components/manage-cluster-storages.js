@@ -16,11 +16,13 @@ import { get, computed } from '@ember/object';
 import { invokeAction } from 'ember-invoke-action';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
+  storageActions: service(),
   spaceManager: service(),
   globalNotify: service(),
   i18n: service(),
@@ -39,6 +41,16 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {PromiseObject} spacesProxy resolves with spaces list ArrayProxy
    */
   spacesProxy: null,
+
+  /**
+   * @type {boolean}
+   */
+  storageToRemove: false,
+
+  /**
+   * @type {boolean}
+   */
+  isRemovingStorage: false,
 
   /**
    * If true, there are no storages
@@ -145,8 +157,19 @@ export default Component.extend(I18n, GlobalActions, {
    * @returns {undefined}
    */
   _updateStoragesProxy() {
-    let storageManager = this.get('storageManager');
-    this.set('storagesProxy', storageManager.getStorages(true));
+    const {
+      storageManager,
+      storagesProxy,
+    } = this.getProperties('storageManager', 'storagesProxy');
+
+    const newProxy = storageManager.getStorages(true);
+
+    // first update - initialize component storagesProxy field
+    if (!storagesProxy) {
+      this.set('storagesProxy', newProxy);
+    }
+
+    return newProxy;
   },
 
   /**
@@ -215,6 +238,31 @@ export default Component.extend(I18n, GlobalActions, {
         this.get('globalNotify').backendError(`adding "${name}" storage`, error);
       });
       return submitting;
+    },
+    submitModifyStorage(storage, storageFormData) {
+      const storageActions = this.get('storageActions');
+      const newDetails = createClusterStorageModel(storageFormData, true);
+      return storageActions.modifyStorage(storage, newDetails)
+        .then(result => this._updateStoragesProxy().then(() => result));
+    },
+    submitRemoveStorage() {
+      const {
+        storageActions,
+        storageToRemove,
+      } = this.getProperties('storageActions', 'storageToRemove');
+      this.set('isRemovingStorage', true);
+      return storageActions.removeStorage(storageToRemove)
+        .then(() => {
+          this._updateStoragesProxy();
+        })
+        .finally(() => {
+          safeExec(this, () => {
+            this.setProperties({
+              storageToRemove: null,
+              isRemovingStorage: false,
+            });
+          });
+        });
     },
   },
 });

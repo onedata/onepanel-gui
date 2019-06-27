@@ -5,15 +5,6 @@ export default [{
     tip: true,
   },
   {
-    name: 'lumaCacheTimeout',
-    type: 'number',
-    gte: 0,
-    integer: true,
-    example: 5,
-    defaultValue: 5,
-    tip: true,
-  },
-  {
     name: 'lumaApiKey',
     type: 'text',
     regex: /^[a-z0-9_]+$/,

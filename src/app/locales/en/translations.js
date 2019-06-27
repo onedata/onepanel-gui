@@ -68,6 +68,7 @@ import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator
 import spaceTabs from './mixins/components/space-tabs';
 
 import guiUtils from './services/gui-utils';
+import storageActions from './services/storage-actions';
 import clusterActions from './services/cluster-actions';
 import clusterModelManager from './services/cluster-model-manager';
 import onezoneGui from './services/onezone-gui';
@@ -156,6 +157,7 @@ let translations = {
   },
   services: {
     guiUtils,
+    storageActions,
     clusterActions,
     clusterModelManager,
     onezoneGui,

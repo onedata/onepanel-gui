@@ -4,7 +4,7 @@
  * See `REQ_HANDLER` in this file to manipulate responses
  *
  * @module services/onepanel-server-mock
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -476,7 +476,6 @@ export default OnepanelServerBase.extend(
             mountPoint: '/mnt/st1',
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',
-            lumaCacheTimeout: 10,
             lumaApiKey: 'some_storage',
           };
           this.set('__storages', this.get('__storages') || []);
@@ -819,6 +818,46 @@ export default OnepanelServerBase.extend(
         },
       };
     }),
+
+    _req_oneprovider_modifyStorage() {
+      return {
+        success: (id, storages) => {
+          // find existing storage by id
+          const storage = _.find(this.get('__storages'), { id });
+          if (storage) {
+            const storageValues = _.values(storages)[0];
+            setProperties(storage, storageValues);
+            // delete cleared (optional) fields
+            _.keys(storage)
+              .filter(key => storage[key] === null)
+              .forEach(key => delete storage[key]);
+          }
+          if (!get(storage, 'lumaEnabled')) {
+            delete storage['lumaUrl'];
+            delete storage['lumaApiKey'];
+          }
+          return _.assign({ verificationPassed: true }, storage);
+        },
+        statusCode: (id) => {
+          const storages = this.get('__storages');
+          const storage = _.find(storages, { id });
+          return storage ? 200 : 404;
+        },
+      };
+    },
+
+    _req_oneprovider_removeStorage() {
+      const storages = this.get('__storages');
+      return {
+        success: id => {
+          const storage = storages.findBy('id', id);
+          if (storage) {
+            storages.removeObject(storage);
+          }
+        },
+        statusCode: id => storages.findBy('id', id) ? 204 : 404,
+      };
+    },
 
     _req_oneprovider_getProviderConfiguration() {
       if (this.get('mockStep') > STEP.PROVIDER_DEPLOY) {

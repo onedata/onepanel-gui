@@ -12,11 +12,15 @@
       isFormOpened=addStorageOpened}}
 </div>
 <div class="row">
-  {{#loading-container isLoading=storagesLoading errorReason=storagesError}}
+  {{#loading-container
+    isLoading=(or storagesLoading spacesProxy.isPending)
+    errorReason=(or storagesError spacesProxy.reason)}}
     {{#unless noStorages}}
       {{cluster-storage-table 
         storages=storagesProxy.content 
         spaces=spacesProxy.content
+        submitModifyStorage=(action "submitModifyStorage")
+        removeStorage=(action (mut storageToRemove))
       }}
       {{#if someStorageIsLoading}}
         <div class="loading-more-row">
@@ -26,3 +30,13 @@
     {{/unless}}
   {{/loading-container}}
 </div>
+{{proceed-process-modal
+  opened=storageToRemove
+  processing=isRemovingStorage
+  close=(action (mut storageToRemove) null)
+  proceed=(action "submitRemoveStorage")
+  modalClass="remove-storage-modal"
+  modalIcon="sign-warning-rounded"
+  headerText=(tt this "removeStorageModalHeader")
+  messageText=(tt this "removeStorageModalMessage" name=storageToRemove.name)
+  proceedButtonText=(tt this "remove")}}

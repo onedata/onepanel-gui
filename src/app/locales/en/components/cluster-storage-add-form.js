@@ -20,4 +20,10 @@ export default {
   glusterfs,
   webdav,
   nulldevice,
+  storageType: 'Type',
+  save: 'Save',
+  add: 'Add',
+  cancel: 'Cancel',
+  modifyStorageModalHeader: 'Modify storage',
+  modifyStorageModalMessage: 'Are you sure you want to modify storage details? Incorrect configuration can make your data unavailable.',
 };

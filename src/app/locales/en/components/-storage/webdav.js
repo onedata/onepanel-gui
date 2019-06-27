@@ -52,9 +52,4 @@ export default {
     name: 'Insecure',
     tip: 'Defines whether storage administrator credentials (username and key) may be used by users without storage accounts to access storage in direct IO mode.',
   },
-  readonly: { name: 'Read only' },
-  storagePathType: {
-    name: 'Storage path type',
-    tip: 'Determines how the logical file paths will be mapped on the storage. "canonical" paths reflect the logical file names and directory structure, however each rename operation will require renaming the files on the storage. "flat" paths are based on unique file UUID\'s and do not require on-storage rename when logical file name is changed.',
-  },
 };
