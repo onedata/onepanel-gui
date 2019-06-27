@@ -37,12 +37,14 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
+    notEditable: true,
   },
   {
     name: 'onedataAccessToken',
     type: 'text',
     tip: true,
     optional: true,
+    notEditable: true,
   },
   {
     name: 'authorizationHeader',
@@ -87,6 +89,7 @@ export default [{
     example: '0644',
     optional: true,
     regexAllowBlank: true,
+    notEditable: true,
   },
   {
     name: 'dirMode',
@@ -97,6 +100,7 @@ export default [{
     example: '0775',
     optional: true,
     regexAllowBlank: true,
+    notEditable: true,
   },
   {
     name: 'timeout',
@@ -113,6 +117,5 @@ export default [{
     name: 'readonly',
     type: 'checkbox',
     defaultValue: false,
-    tip: true,
   },
 ];
