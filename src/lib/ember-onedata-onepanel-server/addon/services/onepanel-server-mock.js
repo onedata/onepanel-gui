@@ -60,9 +60,9 @@ const fallbackMockServiceType = 'onezone';
  */
 function getMockServiceType() {
   const url = location.toString();
-  if (/https:\/\/onezone.*9443/.test(url)) {
+  if (/https:\/\/onezone.*(9443|\/onepanel)/.test(url)) {
     return 'onezone';
-  } else if (/https:\/\/oneprovider.*9443/.test(url)) {
+  } else if (/https:\/\/oneprovider.*(9443|\/onepanel)/.test(url)) {
     return 'oneprovider';
   } else {
     const clusterMatch = url.match(new RegExp(

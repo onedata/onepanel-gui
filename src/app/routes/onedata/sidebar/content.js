@@ -10,7 +10,6 @@
 import SidebarContentRoute from 'onedata-gui-common/routes/onedata/sidebar/content';
 import { inject as service } from '@ember/service';
 import { get } from '@ember/object';
-import checkImg from 'onedata-gui-common/utils/check-img';
 import { Promise } from 'rsvp';
 
 export default SidebarContentRoute.extend({
@@ -56,24 +55,12 @@ export default SidebarContentRoute.extend({
           // another Onepanel if possible. If Onezone is not available, then
           // redirect to main page.
           if (get(onezoneGui, 'zoneDomain')) {
-            const origin = `https://${get(model, 'resource.domain')}:9443`;
-            return checkImg(`${origin}/favicon.ico`)
-              .then(isAvailable => {
-                let redirectUrl;
-                if (isAvailable) {
-                  redirectUrl = onezoneGui.getOnepanelNavUrlInOnezone({
-                    clusterId,
-                    internalRoute: `/onedata/clusters/${clusterId}`,
-                  });
-                } else {
-                  redirectUrl = onezoneGui.getUrlInOnezone(
-                    `onedata/clusters/${clusterId}/endpoint-error`
-                  );
-                }
-                return new Promise(() => {
-                  window.location = redirectUrl;
-                });
-              });
+            const redirectUrl = onezoneGui.getUrlInOnezone(
+              `onedata/clusters/${clusterId}/endpoint-error`
+            );
+            return new Promise(() => {
+              window.location = redirectUrl;
+            });
           } else {
             return this.transitionTo('onedata');
           }
