@@ -14,6 +14,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
+import $ from 'jquery';
 
 export default EmberObject.extend(
   createDataProxyMixin('isOnline'),
@@ -37,9 +38,11 @@ export default EmberObject.extend(
      */
     fetchStandaloneOrigin() {
       if (this.get('isLocal')) {
-        resolve(this.get('onepanelServer.apiOrigin'));
+        return resolve('https://' + this.get('onepanelServer.apiOrigin'));
       } else {
-        return this.fetchRemoteGuiContext().then(({ apiOrigin }) => apiOrigin);
+        return this.fetchRemoteGuiContext().then(({ apiOrigin }) =>
+          'https://' + apiOrigin
+        );
       }
     },
 
