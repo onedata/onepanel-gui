@@ -13,7 +13,10 @@ import checkImg from 'onedata-gui-common/utils/check-img';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
-import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
+import {
+  onepanelAbbrev,
+  onepanelTestImagePath,
+} from 'onedata-gui-common/utils/onedata-urls';
 import $ from 'jquery';
 
 export default EmberObject.extend(
@@ -54,7 +57,7 @@ export default EmberObject.extend(
         return resolve(true);
       } else {
         return this.get('standaloneOriginProxy').then(standaloneOrigin => {
-          return checkImg(`${standaloneOrigin}/favicon.ico`);
+          return checkImg(`${standaloneOrigin}${onepanelTestImagePath}`);
         });
       }
     },

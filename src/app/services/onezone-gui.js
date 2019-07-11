@@ -17,6 +17,7 @@ import checkImg from 'onedata-gui-common/utils/check-img';
 import {
   onepanelAbbrev,
   onezoneDefaultRootPath,
+  onezoneTestImagePath,
   getOnezoneUrl,
 } from 'onedata-gui-common/utils/onedata-urls';
 
@@ -120,7 +121,8 @@ export default Service.extend(
     fetchIsOnezoneAvailable() {
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
-        return checkImg(`${onezoneOrigin}${onezoneDefaultRootPath}/favicon.ico`);
+        return checkImg(
+          `${onezoneOrigin}${onezoneDefaultRootPath}${onezoneTestImagePath}`);
       } else {
         return resolve(false);
       }
