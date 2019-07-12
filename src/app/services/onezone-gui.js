@@ -16,7 +16,6 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import checkImg from 'onedata-gui-common/utils/check-img';
 import {
   onepanelAbbrev,
-  onezoneDefaultRootPath,
   onezoneTestImagePath,
   getOnezoneUrl,
 } from 'onedata-gui-common/utils/onedata-urls';
@@ -122,7 +121,7 @@ export default Service.extend(
       const onezoneOrigin = this.get('onezoneOrigin');
       if (onezoneOrigin) {
         return checkImg(
-          `${onezoneOrigin}${onezoneDefaultRootPath}${onezoneTestImagePath}`);
+          `${onezoneOrigin}${onezoneTestImagePath}`);
       } else {
         return resolve(false);
       }
