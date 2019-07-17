@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5599 Added support for Onepanel Proxy URL
 * VFS-3335 Added storage edition and deletion
 * VFS-5519 Fixed not visible block with service version in Safari
 * VFS-5476 Refactoring of token/origin endpoints and unified GUI URL

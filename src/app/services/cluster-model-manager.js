@@ -15,6 +15,7 @@ import _ from 'lodash';
 import { resolve } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import Cluster from 'onepanel-gui/models/cluster';
+import { getOwner } from '@ember/application';
 
 const GuiOneproviderCluster = Cluster.extend({
   name: reads('providerManager.providerDetails.name').readOnly(),
@@ -186,7 +187,10 @@ export default Service.extend(
           }
         })
         .then(cluster =>
-          cluster instanceof Cluster ? cluster : Cluster.create(cluster)
+          cluster instanceof Cluster ? cluster : Cluster.create(
+            getOwner(this).ownerInjection(),
+            cluster
+          )
         );
     },
   }
