@@ -16,6 +16,7 @@ import ResponseValidator from 'ember-onedata-onepanel-server/mixins/response-val
 import { computed } from '@ember/object';
 import { not } from '@ember/object/computed';
 import { resolve } from 'rsvp';
+import { getOwner } from '@ember/application';
 
 export default Service.extend(
   RequestErrorHandler,
@@ -62,9 +63,7 @@ export default Service.extend(
      * @returns {Object} properties: origin, clusterType, clusterId
      */
     fetchGuiContext() {
-      return new Promise((resolve, reject) =>
-        $.get('./gui-context').then(resolve, reject)
-      );
+      return getOwner(this).application.guiContextProxy;
     },
 
     /**
