@@ -18,7 +18,7 @@
       display: inline-block;
       letter-spacing: initial;
       .value {
-        font-weight: bold;
+        @include font-bold();
         color: $color-one-blue-gray;
       }
     }
@@ -158,7 +158,7 @@
       position: absolute;
       white-space: nowrap;
       font-size: 80%;
-      font-weight: bold;
+      @include font-bold();
       &.soft-quota-editor {
         top: 120%;
         bottom: initial;
