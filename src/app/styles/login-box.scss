@@ -24,7 +24,7 @@
   .login-section-description {
     text-align: center;
     margin-top: $form-group-margin-bottom;
-    font-family: 'Open Sans Semibold';
+    @include font-semibold();
   }
   .resource-load-error {
     background-color: $color-one-semiwhite;
