@@ -68,7 +68,7 @@
             id="zone-token-textarea"
             rows=5
             value={{token}}
-            oninput={{action (mut token) value="target.value"}}
+            oninput={{action "tokenChanged" value="target.value"}}
             onkeydown={{invoke-on-enter (action "proceedToken")}}
             placeholder={{concat (tt this "example") ": " "MDAzM2…"}}
             disabled={{contentInfo.actionInProgress}}
