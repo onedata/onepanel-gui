@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5650 Added "Maximum canonical object size", "File mode" and "Directory mode" options to S3 storage
 * VFS-5499 Fixed displaying errors, when oz/op-worker service is not working
 * VFS-5667 Fixed service info element placement
 * VFS-5664 Fixed pointer events handling
