@@ -21,7 +21,7 @@ export default EmberObject.extend({
    * @type {string}
    * @virtual
    */
-  name: undefined,
+  path: undefined,
 
   /**
    * Size in bytes
@@ -41,11 +41,11 @@ export default EmberObject.extend({
    * Name in format: [name] ([scaled size])
    * @type {Ember.ComputedProperty<string>}
    */
-  descriptiveName: computed('name', 'size', function descriptiveName() {
+  descriptiveName: computed('path', 'size', function descriptiveName() {
     const {
-      name,
+      path,
       size,
-    } = this.getProperties('name', 'size');
-    return `${name} (${bytesToString(size)})`;
+    } = this.getProperties('path', 'size');
+    return `${path} (${bytesToString(size)})`;
   }),
 });

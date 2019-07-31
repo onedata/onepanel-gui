@@ -14,12 +14,13 @@ import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
 import { readOnly } from '@ember/object/computed';
-import { get, computed } from '@ember/object';
+import { get, set, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
+import { InstallationStepsMap, InstallationStepsArray } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
+import { array, raw } from 'ember-awesome-macros';
 
 const {
   TaskStatus: {
@@ -27,32 +28,8 @@ const {
   },
 } = Onepanel;
 
-/**
- * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
- * for provider
- */
-const STEPS_PROVIDER = [
-  'installation',
-  'ceph',
-  'providerRegistration',
-  'ips',
-  'dns',
-  'webCert',
-  'providerStorage',
-  'summary',
-];
-
-/**
- * Order of steps in this array should be the same as in CLUSTER_INIT_STEPS
- * for zone
- */
-const STEPS_ZONE = [
-  'installation',
-  'ips',
-  'dns',
-  'webCert',
-  'summary',
-];
+const stepsOneprovider = InstallationStepsArray.filterBy('inOneprovider');
+const stepsOnezone = InstallationStepsArray.filterBy('inOnezone');
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
@@ -67,7 +44,7 @@ export default Component.extend(I18n, {
 
   onepanelServiceType: readOnly('guiUtils.serviceType'),
 
-  currentStepIndex: Number(STEP.DEPLOY),
+  currentStep: InstallationStepsMap.deploy,
 
   _isInProcess: false,
 
@@ -89,34 +66,55 @@ export default Component.extend(I18n, {
   stepData: undefined,
 
   /**
-   * @type {Ember.ComputedProperty<Array<Object>>}
+   * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  steps: computed('onepanelServiceType', 'showCephStep', function steps() {
+  allSteps: computed('onepanelServiceType', 'showCephStep', function steps() {
     const {
       onepanelServiceType,
       showCephStep,
     } = this.getProperties('onepanelServiceType', 'showCephStep');
-    let stepsIds = onepanelServiceType === 'oneprovider' ? STEPS_PROVIDER : STEPS_ZONE;
+    let stepsArray = onepanelServiceType === 'oneprovider' ?
+      stepsOneprovider : stepsOnezone;
     if (!showCephStep) {
-      stepsIds = stepsIds.filter(step => step !== 'ceph');
+      stepsArray = stepsArray.without(InstallationStepsMap.oneproviderCeph);
     }
-    return stepsIds.map(id => ({
-      id, 
-      title: this.t(`steps.${onepanelServiceType}.${id}`),
-    }));
+    stepsArray.forEach(step => set(
+      step,
+      'title',
+      this.t(`steps.${onepanelServiceType}.${get(step, 'name')}`))
+    );
+    return stepsArray;
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<InstallationStep>>}
+   */
+  steps: array.rejectBy('allSteps', raw('isHiddenStep')),
 
   /**
    * @type {Window.Location}
    */
   _location: location,
 
-  wizardIndex: computed('currentStepIndex', function () {
-    return Math.floor(this.get('currentStepIndex'));
-  }),
+  wizardIndex: computed(
+    'allSteps.[]',
+    'steps.[]',
+    'currentStep',
+    function wizardIndex() {
+      const {
+        steps,
+        currentStep,
+      } = this.getProperties('steps', 'currentStep');
+      let stepToSearch = currentStep;
+      if (steps.indexOf(stepToSearch) === -1) {
+        stepToSearch = this.getPrevStep(stepToSearch);
+      }
+      return steps.indexOf(stepToSearch);
+    }
+  ),
 
-  isAfterDeploy: computed('currentStepIndex', function getIsAfterDeploy() {
-    return this.get('currentStepIndex') > (STEP.DEPLOY + 1);
+  isAfterDeploy: computed('currentStep', function getIsAfterDeploy() {
+    return this.get('currentStep').gt(InstallationStepsMap.oneproviderRegister);
   }),
 
   /**
@@ -135,10 +133,10 @@ export default Component.extend(I18n, {
     this._super(...arguments);
     let clusterInitStep = this.get('cluster.initStep');
     this.setProperties({
-      currentStepIndex: clusterInitStep,
-      _isInProcess: clusterInitStep > STEP.DEPLOY,
+      currentStep: clusterInitStep,
+      _isInProcess: clusterInitStep.gt(InstallationStepsMap.deploy),
     });
-    if (clusterInitStep === STEP.DEPLOY) {
+    if (clusterInitStep === InstallationStepsMap.deploy) {
       this.set('isLoading', true);
       this._checkUnfinishedDeployment()
         .then(taskId => {
@@ -146,7 +144,7 @@ export default Component.extend(I18n, {
             this.setProperties({
               deploymentTaskId: taskId ? taskId : undefined,
               _isInProcess: true,
-              currentStepIndex: STEP.DEPLOYMENT_PROGRESS,
+              currentStep: InstallationStepsMap.deploymentProgress,
             });
           }
         })
@@ -170,16 +168,21 @@ export default Component.extend(I18n, {
     if (deploymentTaskId) {
       return onepanelServer.request('onepanel', 'getTaskStatus', deploymentTaskId)
         .then(({ data: { status } }) => {
+          const {
+            currentStep,
+            steps,
+          } = this.getProperties('currentStep', 'steps');
           switch (status) {
             case StatusEnum.running:
               return deploymentTaskId;
             case StatusEnum.ok:
-              if (this.get('currentStepIndex') < 1) {
+              if (currentStep.lte(InstallationStepsMap.deploymentProgress)) {
+                const afterDeployProgress = steps[steps.indexOf(currentStep) + 1];
                 cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
-                this.set('cluster.initStep', 1);
+                this.set('cluster.initStep', afterDeployProgress);
                 this.setProperties({
                   _isInProcess: true,
-                  currentStepIndex: 1,
+                  currentStep: afterDeployProgress,
                 });
               }
               return undefined;
@@ -205,55 +208,70 @@ export default Component.extend(I18n, {
    */
   _next(stepData) {
     const {
-      currentStepIndex,
+      currentStep,
       guiUtils,
       _location,
-      showCephStep,
     } = this.getProperties(
-      'currentStepIndex',
+      'currentStep',
       'guiUtils',
       '_location',
-      'showCephStep'
     );
 
     const serviceType = get(guiUtils, 'serviceType');
     const isOneprovider = serviceType === 'oneprovider';
-    const isProviderAfterRegister = isOneprovider &&
-      currentStepIndex === STEP.PROVIDER_REGISTER;
-    const isZoneAfterDeploy = !isOneprovider && [
-      STEP.DEPLOYMENT_PROGRESS,
-      STEP.ZONE_DEPLOY,
-    ].includes(currentStepIndex);
+    const isProviderAfterRegister =
+      currentStep === InstallationStepsMap.oneproviderRegister;
+    const isZoneAfterDeploy = !isOneprovider &&
+      currentStep.lte(InstallationStepsMap.deploymentProgress);
 
     if (isProviderAfterRegister || isZoneAfterDeploy) {
       // Reload whole application to fetch info about newly deployed cluster
       _location.reload();
     } else {
-      let nextStep = nextInt(currentStepIndex);
-      if (
-        isOneprovider &&
-        currentStepIndex === STEP.PROVIDER_DEPLOY &&
-        !showCephStep
-      ) {
-        // omit ceph deployment step
-        nextStep = nextInt(currentStepIndex);
-      }
+      const nextStep = this.getNextStep(currentStep);
       this.set('cluster.initStep', nextStep);
-      this.set('currentStepIndex', nextStep);
+      this.set('currentStep', nextStep);
       this.setProperties({
         stepData,
-        currentStepIndex: nextStep,
+        currentStep: nextStep,
       });
     }
   },
 
   _prev(stepData) {
-    const nextStep = prevInt(this.get('currentStepIndex'));
+    const nextStep = this.getPrevStep(this.get('currentStep'));
     this.set('cluster.initStep', nextStep);
     this.setProperties({
       stepData,
-      currentStepIndex: nextStep,
+      currentStep: nextStep,
     });
+  },
+
+  getNextStep(step) {
+    const steps = this.get('steps');
+    if (steps.indexOf(step) === -1) {
+      // fallback to the nearest visible step
+      step = this.getPrevStep(step);
+    }
+    return steps[steps.indexOf(step) + 1];
+  },
+
+  getPrevStep(step) {
+    const {
+      allSteps,
+      steps,
+    } = this.getProperties('allSteps', 'steps');
+
+    if (steps.indexOf(step) === -1) {
+      const allStepsIndex = allSteps.indexOf(step);
+      for (let i = allStepsIndex; i >= 0; i--) {
+        if (steps.indexOf(allSteps[i]) !== -1) {
+          return allSteps[i];
+        }
+      }
+    } else {
+      return steps[steps.indexOf(step) - 1];
+    }
   },
 
   actions: {
@@ -270,21 +288,3 @@ export default Component.extend(I18n, {
     },
   },
 });
-
-/**
- * Returns next integer for given number (e.g. 1 => 2; 1.3 => 2; 1.6 => 2)
- * @param {number} i
- * @returns {number} an integer
- */
-function nextInt(i) {
-  return Math.floor(i + 1);
-}
-
-/**
- * Returns prev integer for given number (e.g. 2 => 1; 3.3 => 2; 4.6 => 3)
- * @param {number} i
- * @returns {number} an integer
- */
-function prevInt(i) {
-  return Math.floor(i - 1);
-}

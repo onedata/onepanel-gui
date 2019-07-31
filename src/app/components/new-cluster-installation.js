@@ -206,14 +206,12 @@ export default Component.extend(I18n, {
       onepanelServiceType,
       deploymentManager,
       stepData,
-      changeClusterName,
     } = this.getProperties(
       'cephEnabled',
       'deploymentTaskId',
       'onepanelServiceType',
       'deploymentManager',
       'stepData',
-      'changeClusterName',
     );
 
     const hostsProxy = PromiseObject.create({
@@ -243,7 +241,6 @@ export default Component.extend(I18n, {
       const clusterDeployProcess = NewClusterDeployProcess.create(
         getOwner(this).ownerInjection(), {
           onFinish: () => this.configureFinished(),
-          changeClusterName,
         }
       );
       this.set('clusterDeployProcess', clusterDeployProcess);
@@ -460,7 +457,7 @@ export default Component.extend(I18n, {
 
     zoneOptionsValidChanged(isValid) {
       if (this.get('_zoneOptionsValid') !== isValid) {
-        scheduleOnce('afterRender', this, this.set('_zoneOptionsValid', isValid));
+        scheduleOnce('afterRender', this, 'set', '_zoneOptionsValid', isValid);
       }
     },
 

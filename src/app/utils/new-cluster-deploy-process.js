@@ -12,7 +12,7 @@
  */
 
 import { assert } from '@ember/debug';
-import EmberObject, { computed, get } from '@ember/object';
+import EmberObject, { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { camelize } from '@ember/string';
@@ -60,8 +60,6 @@ export default EmberObject.extend({
    * @returns {undefined}
    */
   onFinish: notImplementedIgnore,
-
-  changeClusterName: notImplementedIgnore,
 
   /**
    * Deployment promise (task)
@@ -169,10 +167,6 @@ export default EmberObject.extend({
    * @returns {undefined}
    */
   finished() {
-    const onezoneConfig = this.get('configuration.onezone');
-    if (onezoneConfig) {
-      this.get('changeClusterName')(get(onezoneConfig, 'name'));
-    }
     this.get('globalNotify').info('Cluster deployed successfully');
     this.get('onFinish')();
   },

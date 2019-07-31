@@ -47,7 +47,7 @@ export default EmberObject.extend({
         promise: onepanelServer
           .request('oneprovider', 'getBlockDevices', host)
           .then(({ data }) =>
-            data['block_devices']
+            data['blockDevices']
             // mounted devices should not be used as OSD device for safety reasons
             // (to avoid unintentional data lost)
             .filter(device => !get(device, 'mounted'))
@@ -86,12 +86,12 @@ export default EmberObject.extend({
         osds
           .filter(osd => get(osd, 'type') === 'bluestore')
           .forEach(osd => {
-            const osdDevicesNames = _.uniq(_.values(
+            const osdDevicesPaths = _.uniq(_.values(
               getProperties(osd, 'device', 'dbDevice')
             )).compact();
-            osdDevicesNames
-              // find device by name
-              .map(name => devices.findBy('name', name))
+            osdDevicesPaths
+              // find device by path
+              .map(path => devices.findBy('path', path))
               // remove not-found values (undefined)
               .compact()
               // map to device id
@@ -167,7 +167,7 @@ export default EmberObject.extend({
       node: this,
       id: osdIdGenerator.getNextId(),
       type: 'bluestore',
-      device: get((this.getDeviceForNewOsd() || {}), 'name'),
+      device: get((this.getDeviceForNewOsd() || {}), 'path'),
     });
 
     osds.pushObject(osd);

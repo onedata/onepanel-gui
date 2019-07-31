@@ -68,7 +68,7 @@ const usedDeviceValidator = validator(function (value, options, model) {
   if (!value) {
     return true;
   } else {
-    const deviceId = get(get(model, 'devices').findBy('name', value), 'id');
+    const deviceId = get(get(model, 'devices').findBy('path', value), 'id');
     const msg = get(this.get('model').t('deviceAlreadyUsed'), 'string');
     return get(model, 'usedDevices.' + deviceId) < 2 ? true : msg;
   }
@@ -140,12 +140,12 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       const fields = _.cloneDeep(editBluestoreFieldsDefinition);
       const deviceOptions = this.get('devices').map(device => {
         const {
-          name,
+          path,
           descriptiveName,
-        } = getProperties(device, 'name', 'descriptiveName');
+        } = getProperties(device, 'path', 'descriptiveName');
 
         return {
-          value: name,
+          value: path,
           label: descriptiveName,
         };
       });

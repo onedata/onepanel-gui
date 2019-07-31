@@ -26,7 +26,7 @@
     </div>
   </div>
 {{/if}}
-<div class="row content-row">
+<div class="row content-row no-border">
   <h1>{{tt this "clusterHosts"}}</h1>
   {{#promise-proxy-container proxy=hostsProxy}}
     {{cluster-host-table
@@ -39,7 +39,7 @@
       submitAddress=(action "submitNewHost")
       removeHost=(action "removeHost")
       blinkingHosts=newHosts
-      showCeph=true
+      showCeph=(eq onepanelServiceType "oneprovider")
     }}
     {{#if addingNewHost}}
       <div class="row row-new-host pseudo-table-row cluster-host-table-row">

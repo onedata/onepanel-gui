@@ -15,7 +15,7 @@ import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import InstallationDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
+import InstallationDetails, { InstallationStepsMap } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
@@ -285,9 +285,9 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   },
 
   /**
-   * The promise resolves with number of initial cluster deployment step, that
+   * The promise resolves with initial cluster deployment step, that
    * should be opened for this cluster.
-   * See `model:installation-details CLUSTER_INIT_STEPS` for code explaination.
+   * See `model:installation-details` for code explaination.
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
@@ -309,17 +309,17 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                 const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
                 checkDnsCheck.then(dnsCheckAck => {
                   if (dnsCheckAck) {
-                    resolve(STEP.ZONE_DONE);
+                    resolve(InstallationStepsMap.done);
                   } else {
                     // We have no exact indicator if earlier step -
                     // IPs configuration - has been finished, because it 
                     // has default values which are undistinguishable from user input
-                    resolve(STEP.ZONE_IPS);
+                    resolve(InstallationStepsMap.ips);
                   }
                 });
                 checkDnsCheck.catch(reject);
               } else {
-                resolve(STEP.ZONE_IPS);
+                resolve(InstallationStepsMap.ips);
               }
             });
             checkIps.catch(reject);
@@ -343,9 +343,9 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                       if (dnsCheckAck) {
                         checkStorage.then(isAnyStorage => {
                           if (isAnyStorage) {
-                            resolve(STEP.PROVIDER_DONE);
+                            resolve(InstallationStepsMap.done);
                           } else {
-                            resolve(STEP.PROVIDER_STORAGE_ADD);
+                            resolve(InstallationStepsMap.oneproviderStorageAdd);
                           }
                         });
                         checkStorage.catch(reject);
@@ -354,24 +354,24 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                         // IPs configuration - has been finished, because it 
                         // has default values which are undistinguishable from
                         // user input
-                        resolve(STEP.PROVIDER_IPS);
+                        resolve(InstallationStepsMap.ips);
                       }
                     });
                     checkDnsCheck.catch(reject);
                   } else {
-                    resolve(STEP.PROVIDER_IPS);
+                    resolve(InstallationStepsMap.ips);
                   }
                 });
                 checkIps.catch(reject);
 
               } else {
-                resolve(STEP.PROVIDER_REGISTER);
+                resolve(InstallationStepsMap.oneproviderRegister);
               }
             });
             checkRegister.catch(reject);
           }
         } else {
-          resolve(0);
+          resolve(InstallationStepsMap.deploy);
         }
       });
       checkConfig.catch(reject);
