@@ -12,5 +12,5 @@ export default [
     tip: true,
     notEditable: true,
   },
-  { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false, notEditable: true },
+  { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false },
 ];

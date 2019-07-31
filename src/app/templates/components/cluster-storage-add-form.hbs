@@ -5,7 +5,7 @@
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
         <div class={{layoutConfig.formInputColumns}}>
           {{#power-select
-            options=visibleStorageTypes
+            options=storageTypes
             selected=selectedStorageType
             onchange=(action "storageTypeChanged")
             searchEnabled=false
@@ -30,7 +30,7 @@
       <div class="form-group submit-group col-xs-12">
         <div class="row">
           <div class="{{layoutConfig.formSubmitColumns}}">
-            {{#one-spin-button type="submit" class="btn btn-primary" disabled=(or (not isValid) showLoadingSpinner) action=(action "submit")}}
+            {{#one-spin-button type="submit" class="btn btn-primary" disabled=(or (not isValid) showLoadingSpinner) action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
               {{tt this (if inEditionMode "save" "add")}}
             {{/one-spin-button}}
             {{#if inEditionMode}}
@@ -42,4 +42,16 @@
     {{/unless}}
   {{/bs-form}}
   {{loading-container isLoading=showLoadingSpinner}}
+  {{#if (eq mode "edit")}}
+    {{proceed-process-modal
+      opened=modifyModalVisible
+      processing=isSavingStorage
+      close=(action (mut modifyModalVisible) false)
+      proceed=(action "submit")
+      modalClass="modify-storage-modal"
+      modalIcon="sign-warning-rounded"
+      headerText=(tt this "modifyStorageModalHeader")
+      messageText=(tt this "modifyStorageModalMessage" name=storage.name)
+      proceedButtonClass="btn btn-warning proceed"}}
+  {{/if}}
 {{/promise-proxy-container}}

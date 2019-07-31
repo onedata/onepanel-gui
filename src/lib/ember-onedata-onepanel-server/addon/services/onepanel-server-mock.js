@@ -11,7 +11,7 @@
 
 import { A } from '@ember/array';
 
-import { Promise, resolve } from 'rsvp';
+import { Promise } from 'rsvp';
 import { readOnly } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { set, get, setProperties, computed } from '@ember/object';
@@ -32,6 +32,7 @@ import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'npm:onepanel';
+import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
 const {
   TaskStatus,
@@ -40,7 +41,7 @@ const {
   },
 } = Onepanel;
 
-const MOCK_USERNAME = 'mock_admin';
+const MOCK_USERNAME = 'mock_root';
 const PROVIDER_ID = 'dfhiufhqw783t462rniw39r-hq27d8gnf8';
 const PROVIDER1_ID = PROVIDER_ID;
 const PROVIDER2_ID = 'dsnu8ew3724t3643t62344e-fdfdj8h78d';
@@ -52,16 +53,22 @@ const MOCKED_SUPPORT = {
 
 const fallbackMockServiceType = 'oneprovider';
 
+/**
+ * Match using URL, because we know that this is NodeJS-based mocked backend,
+ * and we don't want to use REST calls.
+ * @returns {string} one of: onezone, oneprovider
+ */
 function getMockServiceType() {
   const url = location.toString();
-  if (/https:\/\/onezone.*9443/.test(url)) {
+  if (/https:\/\/onezone.*(9443|\/onepanel)/.test(url)) {
     return 'onezone';
-  } else if (/https:\/\/oneprovider.*9443/.test(url)) {
+  } else if (/https:\/\/oneprovider.*(9443|\/onepanel)/.test(url)) {
     return 'oneprovider';
   } else {
-    const letterMatch = url.match(new RegExp(`${location.origin}\\/o(z|p)p\\/.*`));
-    if (letterMatch) {
-      return letterMatch[1] === 'z' ? 'onezone' : 'oneprovider';
+    const clusterMatch = url.match(new RegExp(
+      `${location.origin}\\/${onepanelAbbrev}\\/(.*?)\\/.*`));
+    if (clusterMatch) {
+      return /oneprovider/.test(clusterMatch[1]) ? 'oneprovider' : 'onezone';
     } else {
       return fallbackMockServiceType;
     }
@@ -213,10 +220,14 @@ const provider1 = PlainableObject.create({
   adminEmail: 'some@example.com',
 });
 
+/**
+ * Mocked NodeJS-based environment has provider ID in its URL.
+ * @returns {Object} mocked cluster record object
+ */
 function getCurrentProviderClusterFromUrl() {
   const url = location.toString();
   const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
-  const mh = /https:\/\/.*\/opp\/(.*?)\/.*/.exec(url);
+  const mh = new RegExp(`https://.*/${onepanelAbbrev}/(.*?)/.*/`).exec(url);
   const id = me && me[1] || mh && mh[1] || 'oneprovider-1';
   return providerClusters.findBy('id', id);
 }
@@ -239,12 +250,6 @@ export default OnepanelServerBase.extend(
       return PromiseObject.create({ promise });
     }).readOnly(),
 
-    /**
-     * Set to false if want to see create cluster init options (add admin, etc.)
-     * @type {boolean}
-     */
-    adminUserPresent: true,
-
     username: MOCK_USERNAME,
 
     // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
@@ -265,6 +270,12 @@ export default OnepanelServerBase.extend(
      * @type {computed<Boolean>}
      */
     isInitialized: false,
+
+    /**
+     * Set to undefined here to see create admin account screen
+     * @type {computed}
+     */
+    currentEmergencyPassphrase: 'password',
 
     /**
      * @returns {Promise}
@@ -392,10 +403,6 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    getEmergencyOnepanelOriginProxy() {
-      return resolve(`https://${mockSubdomain}.local-onedata.org:9443`);
-    },
-
     watchTaskStatus(taskId) {
       return watchTaskStatus(this, taskId);
     },
@@ -415,11 +422,12 @@ export default OnepanelServerBase.extend(
         .then(() => ({ token: 'mock-token', username: MOCK_USERNAME }));
     },
 
-    login(username, password) {
-      console.debug(`service:onepanel-server-mock: login ${username}`);
+    login(passphrase) {
+      const currentEmergencyPassphrase = this.get('currentEmergencyPassphrase');
+      console.debug('service:onepanel-server-mock: login');
       let cookies = this.get('cookies');
       let loginCall = new Promise((resolve, reject) => {
-        if (username === 'admin' && password === 'password') {
+        if (passphrase === currentEmergencyPassphrase) {
           cookies.write('is-authenticated', 'true');
           run.next(resolve);
         } else {
@@ -679,32 +687,53 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getUser: computed(function () {
+    _req_onepanel_getCurrentUser() {
+      const isEmergency = this.get('isEmergency');
+      if (isEmergency) {
+        return {
+          statusCode: () => 404,
+        };
+      } else {
+        return {
+          success() {
+            return {
+              userId: 'usrid123',
+              username: MOCK_USERNAME,
+              clusterPrivileges: [
+                'cluster_view',
+                'cluster_update',
+                'cluster_delete',
+                'cluster_view_privileges',
+                'cluster_set_privileges',
+                'cluster_add_user',
+                'cluster_remove_user',
+                'cluster_add_group',
+                'cluster_remove_group',
+              ],
+            };
+          },
+        };
+      }
+    },
+
+    _req_onepanel_getClusterMembersSummary() {
       return {
         success() {
           return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
+            groupsCount: 1,
+            usersCount: 2,
+            effectiveGroupsCount: 3,
+            effectiveUsersCount: 4,
           };
         },
       };
-    }),
+    },
 
-    _req_onepanel_modifyUser: computed(function () {
-      return {
-        success( /* ignore password */ ) {
-          return null;
-        },
-      };
-    }),
-
-    _req_onepanel_getCurrentUser() {
+    _req_onepanel_createUserInviteToken() {
       return {
         success() {
           return {
-            userId: 'usrid123',
-            username: MOCK_USERNAME,
-            userRole: 'admin',
+            token: 'user_invitation_token_1234567890',
           };
         },
       };
@@ -801,6 +830,10 @@ export default OnepanelServerBase.extend(
             _.keys(storage)
               .filter(key => storage[key] === null)
               .forEach(key => delete storage[key]);
+          }
+          if (!get(storage, 'lumaEnabled')) {
+            delete storage['lumaUrl'];
+            delete storage['lumaApiKey'];
           }
           return _.assign({ verificationPassed: true }, storage);
         },
@@ -1207,13 +1240,6 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_addUser() {
-      return {
-        success: () => undefined,
-        statusCode: () => 204,
-      };
-    },
-
     _req_onepanel_addClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
@@ -1235,23 +1261,6 @@ export default OnepanelServerBase.extend(
         },
         statusCode: () => 204,
       };
-    },
-
-    /**
-     * Currently only unauthenticated response
-     * @returns {object}
-     */
-    _req_onepanel_getUsers() {
-      if (this.get('adminUserPresent')) {
-        return {
-          statusCode: () => 403,
-        };
-      } else {
-        return {
-          success: () => ({ usernames: [] }),
-          statusCode: () => 200,
-        };
-      }
     },
 
     _req_onepanel_getNode() {
@@ -1367,7 +1376,7 @@ export default OnepanelServerBase.extend(
         success: () => ({
           clusterId: this.get('isEmergency') ?
             (mockServiceType === 'oneprovider' ?
-              providerCluster1.id : zoneCluster.id) : this.getClusterIdFromUrl(),
+              providerCluster1.id : zoneCluster.id) : this.get('guiContext.guiMode'),
           version: '18.02.0-rc13',
           build: '2100',
           deployed: mockInitializedCluster,
@@ -1375,8 +1384,23 @@ export default OnepanelServerBase.extend(
             this.get('mockStep') > STEP.PROVIDER_REGISTER,
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
-
         }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_getEmergencyPassphraseStatus() {
+      return {
+        success: () => ({ isSet: Boolean(this.get('currentEmergencyPassphrase')) }),
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onepanel_setEmergencyPassphrase() {
+      return {
+        success: ({ newPassphrase }) => {
+          this.set('currentEmergencyPassphrase', newPassphrase);
+        },
         statusCode: () => 200,
       };
     },

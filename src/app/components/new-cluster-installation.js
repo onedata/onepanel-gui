@@ -320,7 +320,6 @@ export default Component.extend(I18n, {
       },
       onepanel: {
         interactiveDeployment: true,
-        users: [],
       },
     };
 

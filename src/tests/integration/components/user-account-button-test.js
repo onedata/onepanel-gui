@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import OnepanelServerStub from '../../helpers/onepanel-server-stub';
 import sinon from 'sinon';
@@ -11,9 +10,9 @@ import { registerService, lookupService } from '../../helpers/stub-service';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve } from 'rsvp';
 import wait from 'ember-test-helpers/wait';
+import { set } from '@ember/object';
 
 const OnepanelServer = OnepanelServerStub.extend({
-  getClusterIdFromUrl: notImplementedThrow,
   requestValidData() {
     throw new Error('hello');
   },
@@ -42,7 +41,9 @@ describe('Integration | Component | user account button', function () {
 
     let someUsername = 'some_username';
     onepanelServer.set('username', someUsername);
-    sinon.stub(onepanelServer, 'getClusterIdFromUrl').returns('cluster_id');
+    set(onepanelServer, 'guiContext', {
+      clusterId: 'cluster_id',
+    });
     sinon.stub(providerManager, 'getProviderDetailsProxy')
       .returns(PromiseObject.create({
         promise: resolve({}),

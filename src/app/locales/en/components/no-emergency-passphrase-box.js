@@ -1,9 +1,12 @@
+import ContentClustersEmergencyPassphrase from './content-clusters-emergency-passphrase';
+
 export default {
   headers: {
     first: 'New Onepanel installation',
-    create: 'Create an admin account',
+    create: 'Set Onepanel emergency passphrase',
     join: 'Join a cluster',
   },
+  createHint: ContentClustersEmergencyPassphrase.description,
   descriptions: {
     first: 'Onepanel is used to create a deployment on a cluster of nodes.',
     firstMore: 'Please ensure it is preinstalled on all nodes destined to be a ' +
@@ -18,6 +21,6 @@ export default {
   createNewCluster: 'Create a new cluster',
   joinCluster: 'Join a cluster',
   back: 'Back',
-  registerSuccess: 'Admin user registered successfully',
+  settingPassphraseSuccess: 'Emergency passphrase set successfully',
   copy: 'Copy',
 };

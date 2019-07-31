@@ -138,7 +138,7 @@ export default Component.extend(I18n, {
 
   handleProceedToken() {
     return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
-        token: this.get('token').trim(),
+        token: this.get('token'),
       })
       .catch(error => {
         this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
@@ -157,7 +157,10 @@ export default Component.extend(I18n, {
               'components.alerts.registerOnezoneNotCompatible.header'
             ),
             domain: get(onezoneInfo, 'domain'),
-            oneproviderVersion: get(guiUtils, 'guiVersion'),
+            oneproviderVersion: get(
+              guiUtils,
+              'softwareVersionDetails.serviceVersion'
+            ),
             onezoneVersion: get(onezoneInfo, 'version'),
           });
         } else if (get(onezoneInfo, 'online') === false) {
@@ -216,6 +219,10 @@ export default Component.extend(I18n, {
       } else {
         return reject();
       }
+    },
+
+    tokenChanged(token) {
+      this.set('token', token.trim());
     },
 
     back() {

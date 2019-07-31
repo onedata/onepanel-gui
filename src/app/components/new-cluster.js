@@ -80,7 +80,7 @@ export default Component.extend(I18n, {
    * If true, ceph step will be visible (only oneprovider)
    * @type {boolean}
    */
-  showCephStep: true,
+  showCephStep: false,
 
   /**
    * Data passed to initialize step component. Used to persist step state

@@ -1,31 +1,33 @@
 <div class="row content-row header-row hidden-xs">
   <h1>{{tt this "header"}}</h1>
 </div>
-{{#promise-proxy-container proxy=isDeployedProxy}}
-  {{#if isDeployedProxy.content}}
-    {{#bs-tab
-      class="row content-row only-tab-bar"
-      fade=false
-      activeId=activeTabId
-      onChange=(action "tabChange")
-      as |tab|}}
-      {{#tab.pane title=(tt this "status") elementId=(concat elementId "-status") class="min-height-100"}}
-        {{#if (eq activeTab "status")}}
-          {{cluster-ceph-status}}
-        {{/if}}
-      {{/tab.pane}}
-      {{#tab.pane title=(tt this "configuration") elementId=(concat elementId "-configuration") class="min-height-100"}}
-        {{#if (eq activeTab "configuration")}}
-          {{#promise-proxy-container proxy=configurationProxy}}
-            {{ceph-cluster-configuration config=configurationProxy}}
-          {{/promise-proxy-container}}
-        {{/if}}
-      {{/tab.pane}}
-      {{#tab.pane title=(tt this "pools") elementId=(concat elementId "-pools") class="min-height-100"}}
-        {{#if (eq activeTab "pools")}}
-          {{cluster-ceph-pools}}
-        {{/if}}
-      {{/tab.pane}}
-    {{/bs-tab}}
-  {{/if}}
-{{/promise-proxy-container}}
+<div class="row content-row">
+  {{#promise-proxy-container proxy=isDeployedProxy}}
+    {{#if isDeployedProxy.content}}
+      {{#bs-tab
+        class="only-tab-bar bs-tab-onedata bs-tab-modern"
+        fade=false
+        activeId=activeTabId
+        onChange=(action "tabChange")
+        as |tab|}}
+        {{#tab.pane title=(tt this "status") elementId=(concat elementId "-status") class="min-height-100 no-padding"}}
+          {{#if (eq activeTab "status")}}
+            {{cluster-ceph-status}}
+          {{/if}}
+        {{/tab.pane}}
+        {{#tab.pane title=(tt this "configuration") elementId=(concat elementId "-configuration") class="min-height-100 no-padding"}}
+          {{#if (eq activeTab "configuration")}}
+            {{#promise-proxy-container proxy=configurationProxy}}
+              {{ceph-cluster-configuration config=configurationProxy}}
+            {{/promise-proxy-container}}
+          {{/if}}
+        {{/tab.pane}}
+        {{#tab.pane title=(tt this "pools") elementId=(concat elementId "-pools") class="min-height-100 no-padding"}}
+          {{#if (eq activeTab "pools")}}
+            {{cluster-ceph-pools}}
+          {{/if}}
+        {{/tab.pane}}
+      {{/bs-tab}}
+    {{/if}}
+  {{/promise-proxy-container}}
+</div>

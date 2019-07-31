@@ -64,6 +64,14 @@
       @media (min-width: $screen-sm-min) {
         .form-group {
           margin: 0;
+          &.group-with-tip {
+            .toggle-form-row {
+              .control-label .one-label-tip {
+                height: $input-height-base;
+                line-height: $input-height-base;
+              }
+            }
+          }
         }
         .control-label {
           padding: $storage-item-padding 0;
@@ -84,7 +92,8 @@
           margin-top: $storage-item-padding * 0.33;
         }
         .form-control-column {
-          padding-right: 50px;
+          margin-right: 50px;
+          width: calc(75% - 50px);
         }
         .form-group-editable .one-way-toggle {
           padding-top: $padding-base-vertical;

@@ -10,7 +10,7 @@
   </span>
   <span class="one-label">{{host.hostname}}</span>
 </td>
-<td class="text-center column toggle-column" data-option="database">
+<td class="text-center column toggle-column compact" data-option="database">
   {{one-way-toggle
     checked=host.database
     update=(action "checkboxChanged")
@@ -20,7 +20,7 @@
     isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center column toggle-column" data-option="clusterWorker">
+<td class="text-center column toggle-column compact" data-option="clusterWorker">
   {{one-way-toggle
     checked=host.clusterWorker
     update=(action "checkboxChanged")
@@ -30,7 +30,7 @@
     isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center column toggle-column" data-option="clusterManager">
+<td class="text-center column toggle-column compact" data-option="clusterManager">
   {{one-way-toggle
     checked=host.clusterManager
     update=(action "checkboxChanged")
@@ -40,7 +40,7 @@
     isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center column toggle-column" data-option="primaryClusterManager">
+<td class="text-center column toggle-column compact" data-option="primaryClusterManager">
   {{one-way-toggle
     checked=isPrimaryClusterManager
     update=(action "primaryClusterManagerChanged" host.hostname)
@@ -63,7 +63,7 @@
   </td>
 {{/if}}
 {{#if removeAvailable}}
-  <td class="text-center column btn-column">
+  <td class="text-center column btn-column compact">
     <div
       class={{concat-classes "btn-remove-node" _removeHostBtnClass}}
       {{action "removeHost"}}

@@ -38,7 +38,7 @@ export default Service.extend(I18n, {
         globalNotify.info(this.t('storageModifiedSuccessfully', { name }));
         const verificationPassed = get(result, 'data.verificationPassed');
         if (verificationPassed === false) {
-          globalNotify.error(this.t('storageCheckFailed', { name }));
+          globalNotify.warningAlert(this.t('storageCheckFailed', { name }));
         }
         return result;
       })

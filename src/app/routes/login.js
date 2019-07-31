@@ -48,16 +48,16 @@ export default LoginRoute.extend({
       onepanelServer,
     } = this.getProperties('onezoneGui', 'userManager', 'onepanelServer');
 
-    const clusterIdFromUrl = onepanelServer.getClusterIdFromUrl();
+    const clusterId = get(onepanelServer, 'guiContext.clusterId');
     const isEmergency = get(onepanelServer, 'isEmergency');
     if (isEmergency) {
       const baseModel = this._super(...arguments) || {};
       return Promise.all([
-        userManager.checkAdminUserExists(),
+        userManager.checkEmergencyPassphraseIsSet(),
         onezoneGui.getCanEnterViaOnezoneProxy(),
-      ]).then(([adminUserExists, canEnterViaOnezone]) => {
+      ]).then(([isEmergencyPassphraseSet, canEnterViaOnezone]) => {
         setProperties(baseModel, {
-          adminUserExists,
+          isEmergencyPassphraseSet,
           canEnterViaOnezone,
         });
         return baseModel;
@@ -67,7 +67,7 @@ export default LoginRoute.extend({
         sessionStorage.setItem('authRedirect', '1');
         window.location =
           onezoneGui.getOnepanelNavUrlInOnezone({
-            internalRoute: `/clusters/${clusterIdFromUrl}`,
+            internalRoute: `/clusters/${clusterId}`,
             redirectType: 'redirect',
           });
       });

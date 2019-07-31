@@ -8,6 +8,7 @@ import { registerService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
+import $ from 'jquery';
 
 import FormHelper from '../../helpers/form';
 
@@ -294,8 +295,8 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
       });
       expect(
-        helper.getInput('generic_editor-lumaEnabled')
-        .find('.one-way-toggle').hasClass('checked')
+        helper.getToggleInput('generic_editor-lumaEnabled')
+        .hasClass('checked')
       ).to.be.equal(POSIX_STORAGE['lumaEnabled']);
       expect(
         helper.getToggleInput('posix_editor-readonly').hasClass('checked')
@@ -360,7 +361,12 @@ describe('Integration | Component | cluster storage add form', function () {
           .val(POSIX_STORAGE.mountPoint).change();
         return wait().then(() => {
           helper.submit();
-          expect(submitOccurred).to.be.true;
+          return wait().then(() => {
+            $('.modify-storage-modal .proceed').click();
+            return wait().then(() => {
+              expect(submitOccurred).to.be.true;
+            });
+          });
         });
       });
     });
@@ -388,7 +394,12 @@ describe('Integration | Component | cluster storage add form', function () {
       helper.getInput('luma_editor-lumaApiKey').val('').change();
       return wait().then(() => {
         helper.submit();
-        expect(submitOccurred).to.be.true;
+        return wait().then(() => {
+          $('.modify-storage-modal .proceed').click();
+          return wait().then(() => {
+            expect(submitOccurred).to.be.true;
+          });
+        });
       });
     });
   });

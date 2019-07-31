@@ -48,7 +48,7 @@ describe('Integration | Component | login box/login form container', function ()
       });
     });
 
-  it('renders only basicauth when cannot enter via Onezone',
+  it('renders Onezone button as disabled when cannot enter via Onezone',
     function () {
       const onezoneGui = lookupService(this, 'onezone-gui');
       sinon.stub(onezoneGui, 'getCanEnterViaOnezoneProxy').resolves(false);
@@ -56,10 +56,8 @@ describe('Integration | Component | login box/login form container', function ()
       this.render(hbs `{{login-box/login-form-container}}`);
 
       return wait().then(() => {
-        const $onezoneButtonContainer = this.$('.onezone-button-container');
-        expect($onezoneButtonContainer).to.not.exist;
-        const $basicauthContainer = this.$('.basicauth-login-form-container');
-        expect($basicauthContainer).to.not.have.class('hide');
+        const $onezoneButton = this.$('.btn-login-onezone');
+        expect($onezoneButton).to.have.attr('disabled');
       });
     });
 });

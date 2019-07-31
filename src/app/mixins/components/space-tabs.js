@@ -16,57 +16,55 @@ const disabledClass = 'disabled';
 
 export default Mixin.create({
   // requires i18n service
+  // requires router service
 
   selectedTab: undefined,
 
   tabOverviewClass: enabledClass,
-  tabOverviewId: computedTabId('overview'),
+  tabOverviewId: 'overview',
   tabOverviewHint: computedTabHint('overview'),
 
   tabSyncClass: enabledClass,
-  tabSyncId: computedTabId('sync'),
+  tabSyncId: 'sync',
   tabSyncHint: computedTabHint('sync'),
 
   tabPopularClass: enabledClass,
-  tabPopularId: computedTabId('popular'),
+  tabPopularId: 'popular',
   tabPopularHint: computedTabHint('popular'),
 
   tabCleanClass: computed('filePopularityConfiguration.enabled', function () {
     return this.get('filePopularityConfiguration.enabled') ? enabledClass :
       disabledClass;
   }),
-  tabCleanId: computedTabId('clean'),
+  tabCleanId: 'clean',
   tabCleanHint: computedTabHint('clean'),
 
   init() {
     this._super(...arguments);
     if (this.get('selectedTab') == null) {
-      this.set('selectedTab', this.get('tabOverviewId'));
+      this.changeTab(this.get('tabOverviewId'));
     }
+  },
+
+  changeTab(tabId) {
+    const spaceId = this.get('space.id');
+    return this.changeTabUrl(spaceId, tabId);
+  },
+
+  changeTabUrl(spaceId, tabId) {
+    return this.get('router').transitionTo({
+      queryParams: {
+        options: `space.${spaceId},tab.${tabId}`,
+      },
+    });
   },
 
   actions: {
     changeTab(tabId) {
-      const spaceId = this.get('space.id');
-      return this.get('router').transitionTo({
-        queryParams: {
-          options: `space.${spaceId},tab.${tabId}`,
-        },
-      });
+      return this.changeTab(tabId);
     },
   },
 });
-
-/**
- * Create computed property that will return an ID for tab
- * @param {string} tab one of: sync, popular, clean
- * @returns {Ember.ComputedProperty}
- */
-function computedTabId(tab) {
-  return computed('space.id', function () {
-    return `tab-${tab}-${this.get('space.id')}`;
-  });
-}
 
 /**
  * Create computed property that will return translated hint for tab

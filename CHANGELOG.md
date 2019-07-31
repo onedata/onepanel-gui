@@ -6,6 +6,21 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5549 fixed incorrect trimming of cluster registration token
+* VFS-5465 Common libraries update
+* VFS-5599 Added support for Onepanel Proxy URL
+* VFS-3335 Added storage edition and deletion
+* VFS-5519 Fixed not visible block with service version in Safari
+* VFS-5476 Refactoring of token/origin endpoints and unified GUI URL
+* VFS-5496 Added notification about no linked Onezone user
+* VFS-5219 Common libraries update
+* VFS-5452 Fixed not working cluster deployment GUI after SP3 changes
+* VFS-5425 Service Pack 3 for unified GUI
+* VFS-5411 Basic-auth sign-in changed to emergency passphrase
+* VFS-5377 Simple members view in emergency mode of Onepanel GUI
+* VFS-4640 Added auto-polling of space occupancy, disabled join space in emergency, changed session expired message
+* VFS-5301 Fixed disabled submit button in WebDAV storage on no POSIX mode
+* VFS-5301 Added new WebDAV configuration fields
 * VFS-4596 Major changes to support unified and standalone Onepanel GUI
 * VFS-5242 Using new async backend to show progress of saving file popularity settings
 * VFS-5187 Fixed some graphical issues in supported spaces view; onepanel client library update

@@ -162,8 +162,19 @@ export default Component.extend(I18n, GlobalActions, {
    * @returns {undefined}
    */
   _updateStoragesProxy() {
-    let storageManager = this.get('storageManager');
-    this.set('storagesProxy', storageManager.getStorages(true));
+    const {
+      storageManager,
+      storagesProxy,
+    } = this.getProperties('storageManager', 'storagesProxy');
+
+    const newProxy = storageManager.getStorages(true);
+
+    // first update - initialize component storagesProxy field
+    if (!storagesProxy) {
+      this.set('storagesProxy', newProxy);
+    }
+
+    return newProxy;
   },
 
   /**
@@ -237,10 +248,7 @@ export default Component.extend(I18n, GlobalActions, {
       const storageActions = this.get('storageActions');
       const newDetails = createClusterStorageModel(storageFormData, true);
       return storageActions.modifyStorage(storage, newDetails)
-        .then(result => {
-          this._updateStoragesProxy();
-          return result;
-        });
+        .then(result => this._updateStoragesProxy().then(() => result));
     },
     submitRemoveStorage() {
       const {

@@ -2,76 +2,87 @@
  * Provides data for routes and components that manipulates user details
  *
  * @module services/user-manager
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Service, { inject as service } from '@ember/service';
-
-import { Promise } from 'rsvp';
-import { A } from '@ember/array';
+import { getProperties } from '@ember/object';
 import { oneWay } from '@ember/object/computed';
 import UserDetails from 'onepanel-gui/models/user-details';
+import Onepanel from 'npm:onepanel';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+
+const {
+  EmergencyPassphraseChangeRequest,
+} = Onepanel;
 
 export default Service.extend({
   onepanelServer: service(),
   username: oneWay('onepanelServer.username'),
 
+  /**
+   * @returns {PromiseObject<models.UserDetails>}
+   */
   getCurrentUser() {
-    return this.getUserDetails(this.get('username'));
-  },
+    const onepanelServer = this.get('onepanelServer');
 
-  getUserDetails(username) {
-    let user = this.get('onepanelServer')
-      .request('onepanel', 'getCurrentUser')
-      .then(({ data }) => UserDetails.create({
-        username: username,
-        userId: data.userId,
-        userRole: data.userRole,
-      }));
-    return PromiseObject.create({ promise: user });
-  },
-
-  getUsers() {
-    let promise = new Promise(resolve => {
-      resolve(A([this.getCurrentUser()]));
-    });
-    return PromiseObject.create({ promise });
-  },
-
-  /**
-   * @returns {Promise<boolean|any>}
-   */
-  checkAdminUserExists() {
-    return this.get('onepanelServer')
-      .staticRequest('onepanel', 'getUsers', [{ role: 'admin' }])
-      .then(({ data: { usernames } }) => usernames.length > 0)
-      .catch(error => {
-        if (error.response.statusCode === 403) {
-          return true;
-        } else {
-          throw error;
-        }
+    const fetchUserPromise = onepanelServer.getCurrentUser()
+      .then(userDetails => {
+        const userBasicData = getProperties(
+          userDetails,
+          'username',
+          'userId',
+          'clusterPrivileges'
+        );
+        return UserDetails.create(userBasicData);
       });
+    
+    return PromiseObject.create({ promise: fetchUserPromise });
   },
 
   /**
-   * Create Panel user
-   * @param {string} username 
-   * @param {string} password 
-   * @param {string} userRole one of: admin, regular
-   * @returns {Promise<undefined|any>}
+   * @returns {Promise<boolean>}
    */
-  addUser(username, password, userRole) {
-    const userCreateRequest = {
-      username,
-      password,
-      userRole,
-    };
+  checkEmergencyPassphraseIsSet() {
+    const onepanelServer = this.get('onepanelServer');
 
-    return this.get('onepanelServer')
-      .staticRequest('onepanel', 'addUser', [userCreateRequest]);
+    return onepanelServer
+      .staticRequest('onepanel', 'getEmergencyPassphraseStatus')
+      .then(({ data: { isSet } }) => isSet);
+  },
+
+  /**
+   * @param {string} passphrase 
+   * @returns {Promise}
+   */
+  setFirstEmergencyPassphrase(passphrase) {
+    const onepanelServer = this.get('onepanelServer');
+
+    const requestData = EmergencyPassphraseChangeRequest.constructFromObject({
+      newPassphrase: passphrase,
+    });
+    return onepanelServer
+      .staticRequest('onepanel', 'setEmergencyPassphrase', [requestData]);
+  },
+
+  /**
+   * @param {string} currentPassphrase
+   * @param {string} newPassphrase
+   * @returns {Promise}
+   */
+  changeEmergencyPassphrase(currentPassphrase, newPassphrase) {
+    const onepanelServer = this.get('onepanelServer');
+    
+    const requestData = EmergencyPassphraseChangeRequest.constructFromObject({
+      currentPassphrase,
+      newPassphrase,
+    });
+    return onepanelServer.request(
+      'onepanel',
+      'setEmergencyPassphrase',
+      requestData
+    );
   },
 });
