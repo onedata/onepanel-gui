@@ -6,7 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
-* VFS-5549 fixed incorrect trimming of cluster registration token
+* VFS-5664 Fixed pointer events handling
+* VFS-5549 Fixed incorrect trimming of cluster registration token
 * VFS-5465 Common libraries update
 * VFS-5599 Added support for Onepanel Proxy URL
 * VFS-3335 Added storage edition and deletion
