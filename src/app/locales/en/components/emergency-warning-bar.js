@@ -1,5 +1,6 @@
 export default {
   text: 'Emergency interface',
+  servicesUnavailable: 'Onezone/Oneprovider not available',
   modal: {
     header: 'Emergency interface',
     text1: 'You are currently in the emergency Onepanel interface. It is limited to this cluster only and most of its features are disabled. You can only sign in using your Onepanel emergency passphrase. The interface is available on port 9443 and should be used for emergency situations, typically when the Onezone interface is not available.',

@@ -9,6 +9,10 @@ $one-warning-bar-height: 32px !default;
   line-height: $one-warning-bar-height;
   color: $color-one-white;
   z-index: 1002;
+
+  &.one-warning-bar-danger {
+    background-color: $color-one-danger;
+  }
   
   @include before-top-shadow($shadow-alpha: 0.1);
   

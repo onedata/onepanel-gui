@@ -1,5 +1,7 @@
 {{#one-warning-bar
   text=(tt this "text")
+  barClasses=(if workerServicesAreUnavailable "one-warning-bar-danger")
+  additionalText=(if workerServicesAreUnavailable (tt this "servicesUnavailable"))
   as |bar|
 }}
   {{#bar.modal.header}}

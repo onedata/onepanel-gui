@@ -1,5 +1,10 @@
-<div class="text-center" {{action "toggleInfoModal" true}}>
-  <span class="one-warning-bar-title">{{text}}</span>
+<div class="text-center truncate" {{action "toggleInfoModal" true}}>
+  <span class="one-warning-bar-title">
+    {{text}}
+    {{#if additionalText}}
+      <strong> ({{additionalText}})</strong>
+    {{/if}}
+  </span>
   <div class="inline-icon-container sm">
     {{one-icon icon="sign-info"}}
   </div>

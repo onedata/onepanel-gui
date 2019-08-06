@@ -255,7 +255,13 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       gettingStorages.then(({ data: { ids } }) => {
         resolve(ids != null && ids.length > 0);
       });
-      gettingStorages.catch(reject);
+      gettingStorages.catch((error) => {
+        if (error.status === 503) {
+          return resolve(true);
+        } else {
+          return reject(error);
+        }
+      });
     });
   },
 

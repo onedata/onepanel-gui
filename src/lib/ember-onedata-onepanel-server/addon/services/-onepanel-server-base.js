@@ -29,6 +29,12 @@ export default Service.extend(
      */
     _location: location,
 
+    /**
+     * False if op-worker and/or oz-worker are not available
+     * @type {boolean}
+     */
+    workerServicesAreAvailable: true,
+
     isHosted: not('isEmergency'),
 
     isEmergency: computed(function isEmergency() {
