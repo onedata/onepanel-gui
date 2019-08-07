@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5499 Fixed displaying errors, when oz/op-worker service is not working
 * VFS-5667 Fixed service info element placement
 * VFS-5664 Fixed pointer events handling
 * VFS-5549 Fixed incorrect trimming of cluster registration token

@@ -19,12 +19,6 @@ export default Component.extend({
    * @virtual
    * @type {string}
    */
-  additionalText: undefined,
-
-  /**
-   * @virtual
-   * @type {string}
-   */
   barClasses: '',
 
   actions: {

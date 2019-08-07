@@ -11,6 +11,7 @@ import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { computed } from '@ember/object';
 import { reads, not } from '@ember/object/computed';
 
 export default Component.extend(
@@ -20,19 +21,47 @@ export default Component.extend(
 
     onezoneGui: service(),
     onepanelServer: service(),
+    guiUtils: service(),
 
     /**
      * @override
      */
     i18nPrefix: 'components.emergencyWarningBar',
 
+    /**
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     onezoneOrigin: reads('onezoneGui.onezoneOrigin'),
+
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    onepanelServiceType: reads('guiUtils.serviceType'),
 
     /**
      * @type {Ember.ComputedProperty<boolean>}
      */
-    workerServicesAreUnavailable: not(
-      'onepanelServer.workerServicesAreAvailable'
+    workerIsUnavailable: not('onepanelServer.workerServicesAreAvailable'),
+
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    workerIsUnavailableText: computed(
+      'workerIsUnavailable',
+      'onepanelServiceType',
+      function workerIsUnavailableText() {
+        const {
+          workerIsUnavailable,
+          onepanelServiceType,
+        } = this.getProperties('workerIsUnavailable', 'onepanelServiceType');
+        if (workerIsUnavailable) {
+          const translationName = onepanelServiceType === 'onezone' ?
+            'onezoneUnavailable' : 'oneproviderUnavailable';
+          return this.t(translationName);
+        } else {
+          return undefined;
+        }
+      }
     ),
 
     init() {

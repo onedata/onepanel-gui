@@ -1,18 +1,40 @@
 {{#one-warning-bar
-  text=(tt this "text")
-  barClasses=(if workerServicesAreUnavailable "one-warning-bar-danger")
-  additionalText=(if workerServicesAreUnavailable (tt this "servicesUnavailable"))
+  text=(or workerIsUnavailableText (tt this "emergencyInterface"))
+  barClasses=(if workerIsUnavailable "one-warning-bar-danger")
   as |bar|
 }}
   {{#bar.modal.header}}
     <h1>
       {{one-icon icon="sign-info"}}
-      <span class="one-label">{{tt this "modal.header"}}</span>
+      <span class="one-label">{{or workerIsUnavailableText (tt this "modal.emergency.header")}}</span>
     </h1>
   {{/bar.modal.header}}
   {{#bar.modal.body}}
-    <p>{{tt this "modal.text1"}}</p>
-    <p>{{tt this "modal.text2"}}</p>
+    {{#if workerIsUnavailable}}
+      {{#if (eq onepanelServiceType "onezone")}}
+        <p>{{tt this "modal.workerMalfunction.ozMainMessage"}}</p>
+        <ul class="info info-condensed info-gray">
+          <li>{{tt this "modal.workerMalfunction.ozConsultLogs"}}</li>
+          <li>{{tt this "modal.workerMalfunction.ozVerifyRunning"}}</li>
+        </ul>
+      {{else}}
+        <p>{{tt this "modal.workerMalfunction.opMainMessage"}}</p>
+        <ol class="info info-condensed info-gray">
+          <li>
+            {{tt this "modal.workerMalfunction.opSuperiorOnezoneBeforeUrl"}}<a class="break-all" href={{onezoneOrigin}}>{{onezoneOrigin}}</a>{{tt this "modal.workerMalfunction.opSuperiorOnezoneAfterUrl"}}  
+          </li>
+          <li>{{tt this "modal.workerMalfunction.opIsNotRunning"}}
+            <ul class="info info-condensed info-gray">
+              <li>{{tt this "modal.workerMalfunction.opConsultLogs"}}</li>
+              <li>{{tt this "modal.workerMalfunction.opVerifyRunning"}}</li>
+            </ul>
+          </li>
+        </ol>
+      {{/if}}
+    {{else}}
+      <p>{{tt this "modal.emergency.text1"}}</p>
+      <p>{{tt this "modal.emergency.text2"}}</p>
+    {{/if}}
   {{/bar.modal.body}}
   {{#bar.modal.footer class="btn-toolbar"}}
     {{#bs-button
@@ -21,18 +43,20 @@
     }}
       {{tt this "modal.close"}}
     {{/bs-button}}
-    <a
-      href={{visitViaOnezoneUrl}}
-      class="btn btn-primary"
-      disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezoneUrl)}}
-    >
-      {{one-icon icon="onezone"}}
-      {{tt this "modal.openInOnezone"}}
-      {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezoneUrl))}}
-        {{#one-tooltip}}
-          {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
-        {{/one-tooltip}}
-      {{/if}}
-    </a>
+    {{#unless workerIsUnavailable}}
+      <a
+        href={{visitViaOnezoneUrl}}
+        class="btn btn-primary"
+        disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezoneUrl)}}
+      >
+        {{one-icon icon="onezone"}}
+        {{tt this "modal.emergency.openInOnezone"}}
+        {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezoneUrl))}}
+          {{#one-tooltip}}
+            {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
+          {{/one-tooltip}}
+        {{/if}}
+      </a>
+    {{/unless}}
   {{/bar.modal.footer}}
 {{/one-warning-bar}}
