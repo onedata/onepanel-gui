@@ -6,7 +6,7 @@
   {{#bar.modal.header}}
     <h1>
       {{one-icon icon="sign-info"}}
-      <span class="one-label">{{or workerIsUnavailableText (tt this "modal.emergency.header")}}</span>
+      <span class="one-label">{{if workerIsUnavailable workerIsUnavailableText (tt this "modal.emergency.header")}}</span>
     </h1>
   {{/bar.modal.header}}
   {{#bar.modal.body}}
