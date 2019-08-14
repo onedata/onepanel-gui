@@ -34,24 +34,26 @@ export default Component.extend(I18n, {
   /**
    * @type {boolean}
    */
-  isStandalone: true,
+  isCephDeployed: true,
 
   /**
+   * True if node configuration can be edited (e.g. is not blocked by any
+   * backend process).
    * @type {boolean}
    */
   allowsEdition: false,
 
-  isStandaloneObserver: observer('isStandalone', function isStandaloneObserver() {
-    const isStandalone = this.get('isStandalone');
+  isCephDeployedObserver: observer('isCephDeployed', function isCephDeployedObserver() {
+    const isCephDeployed = this.get('isCephDeployed');
     // if in create mode
-    if (!isStandalone) {
+    if (!isCephDeployed) {
       this.set('allowsEdition', true);
     }
   }),
 
   init() {
     this._super(...arguments);
-    this.isStandaloneObserver();
+    this.isCephDeployedObserver();
   },
 
   actions: {

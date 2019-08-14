@@ -41,7 +41,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {boolean}
    */
-  isStandalone: true,
+  isCephDeployed: true,
 
   /**
    * @virtual
@@ -52,9 +52,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {string}
    */
-  mode: computed('isStandalone', function mode() {
+  mode: computed('isCephDeployed', function mode() {
     // For now form is readonly in standalone mode. Edition will be implemented later.
-    return this.get('isStandalone') ? 'show' : 'create';
+    return this.get('isCephDeployed') ? 'show' : 'create';
   }),
 
   /**

@@ -95,22 +95,24 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   osd: undefined,
 
   /**
+   * @virtual
    * @type {Array<Object>}
    */
   devices: undefined,
 
   /**
+   * @virtual
    * @type {Object}
    */
   usedDevices: undefined,
 
   /**
+   * @virtual
    * @type {boolean}
    */
-  isStandalone: true,
+  isCephDeployed: true,
 
   /**
-   * @virtual optional
    * @type {boolean}
    */
   allowsEdition: false,
@@ -125,9 +127,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {string}
    */
-  mode: computed('isStandalone', function mode() {
+  mode: computed('isCephDeployed', function mode() {
     // For now form is readonly in standalone mode. Edition will be implemented later.
-    return this.get('isStandalone') ? 'show' : 'create';
+    return this.get('isCephDeployed') ? 'show' : 'create';
   }),
 
   /**
@@ -325,13 +327,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     this.prepareFields();
 
     this.osdObserver();
-    if (this.get('mode') === 'create') {
-      const device = this.get('allFieldsValues.editBluestore.device');
-      if (device) {
-        // mark field as modified to show "used device" error
-        this.changeFormValue('editBluestore.device', device);
-      }
-    }
+    this.exposeInjectedDataErrors();
   },
 
   /**
@@ -415,6 +411,25 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       path,
     };
     return config;
+  },
+
+  /**
+   * When data is injected at the beginning of the component lifecycle, then
+   * form values are recognized as not modified, so errors are not visible.
+   * Calling this method will programatically mark non-empty fields as modified
+   * to show their validation state.
+   * @returns {undefined}
+   */
+  exposeInjectedDataErrors() {
+    [
+      'editBluestore.device',
+      'editBluestore.dbDevice',
+    ].forEach(fieldName => {
+      const value = this.get(`allFieldsValues.${fieldName}`);
+      if (value) {
+        this.changeFormValue(fieldName, value);
+      }
+    });
   },
 
   /**

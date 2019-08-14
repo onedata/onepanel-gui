@@ -17,7 +17,7 @@
 
   {{ceph-cluster-configuration/main-options-form
     mainConfiguration=config.mainConfiguration
-    isStandalone=isStandalone}}
+    isCephDeployed=isCephDeployed}}
 
   <h1>{{tt this "nodes"}}</h1>
 
@@ -26,7 +26,7 @@
       {{ceph-cluster-configuration/node
         listComponent=list
         node=node
-        isStandalone=isStandalone}}
+        isCephDeployed=isCephDeployed}}
     {{/each}}
   {{/one-collapsible-list}}
 {{/promise-proxy-container}}

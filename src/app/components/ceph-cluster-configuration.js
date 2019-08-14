@@ -8,7 +8,6 @@
  */
 
 import Component from '@ember/component';
-import { computed } from '@ember/object';
 import { sort } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { next } from '@ember/runloop';
@@ -28,17 +27,9 @@ export default Component.extend(I18n, {
   config: undefined,
 
   /**
-   * One of: standalone, create
-   * @type {string}
+   * @type {boolean}
    */
-  mode: 'standalone',
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isStandalone: computed('mode', function isStandalone() {
-    return this.get('mode') !== 'create';
-  }),
+  isCephDeployed: true,
 
   /**
    * @type {Array<string>}
@@ -54,7 +45,7 @@ export default Component.extend(I18n, {
     this._super(...arguments);
 
     this.get('config.osdIdGenerator.nextIdFromBackendProxy').then(() => {
-      next(() => safeExec(this, 'expandNodesInCreateMode'));
+      next(() => safeExec(this, 'expandNodesInDeployment'));
     });
   },
 
@@ -62,8 +53,8 @@ export default Component.extend(I18n, {
    * Expands all nodes if "create" mode is active
    * @returns {undefined}
    */
-  expandNodesInCreateMode() {
-    if (this.get('mode') === 'create') {
+  expandNodesInDeployment() {
+    if (!this.get('isCephDeployed')) {
       this.$('.ceph-node-header').click();
     }
   },

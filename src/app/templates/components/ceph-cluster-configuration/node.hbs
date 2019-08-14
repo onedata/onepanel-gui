@@ -30,7 +30,7 @@
           {{#if node.managerMonitor.isEnabled}}
             {{ceph-cluster-configuration/manager-monitor-form
               managerMonitor=node.managerMonitor
-              isStandalone=isStandalone
+              isCephDeployed=isCephDeployed
               allowsEdition=allowsEdition}}
           {{/if}}
         </div>
@@ -40,12 +40,12 @@
               osd=osd
               devices=node.devices
               usedDevices=node.usedDevices
-              isStandalone=isStandalone
+              isCephDeployed=isCephDeployed
               allowsEdition=allowsEdition
               removeOsd=(action "removeOsd" osd.id)}}
           {{/each}}
         {{/promise-proxy-container}}
-        {{#if (or allowsEdit (not isStandalone))}}
+        {{#if allowsEdition}}
           <div class="row content-row add-osd-section">
             {{#bs-button class="btn" size="sm" type="info" onClick=(action "addOsd")}}
               {{one-icon icon="add-filled"}} {{tt this "addOsd"}}

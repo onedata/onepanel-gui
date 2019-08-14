@@ -37,7 +37,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {boolean}
    */
-  isStandalone: true,
+  isCephDeployed: true,
 
   /**
    * @type {Object}
@@ -56,10 +56,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  mode: computed('isStandalone', function mode() {
+  mode: computed('isCephDeployed', function mode() {
     // For now form is readonly in standalone mode because global params cannot
     // be changed after deployment. 
-    return this.get('isStandalone') ? 'show' : 'edit';
+    return this.get('isCephDeployed') ? 'show' : 'edit';
   }),
 
   /**
