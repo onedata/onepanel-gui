@@ -7,37 +7,40 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { observer, computed } from '@ember/object';
+import EmberObject, { observer } from '@ember/object';
 import { inject as service } from '@ember/service';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
-export default EmberObject.extend({
+export default EmberObject.extend(createDataProxyMixin('nextIdFromBackend'), {
   cephManager: service(),
 
   /**
-   * Next osd id. Initialized with real value by init and nextIdObserver.
+   * Next osd id. Initialized with real value by `nextIdFromBackendObserver`.
    * @type {number}
    */
   nextId: 0,
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<number>>}
-   */
-  nextIdProxy: computed(function loadingProxy() {
-    return this.get('cephManager').getNextOsdId();
-  }),
-
-  nextIdObserver: observer('nextIdProxy.content', function nextIdObserver() {
-    const fetchedNextId = this.get('nextIdProxy.content');
-    if (typeof fetchedNextId === 'number') {
-      this.set('nextId', fetchedNextId);
+  nextIdFromBackendObserver: observer(
+    'nextIdFromBackend',
+    function nextIdFromBackendObserver() {
+      const nextIdFromBackend = this.get('nextIdFromBackend');
+      if (typeof nextIdFromBackend === 'number') {
+        this.set('nextUniqeId', nextIdFromBackend);
+      }
     }
-  }),
+  ),
 
   init() {
     this._super(...arguments);
 
-    // load nextId
-    this.get('nextIdProxy');
+    this.get('nextIdFromBackendProxy');
+  },
+
+  /**
+   * @override
+   */
+  fetchNextIdFromBackend() {
+    return this.get('cephManager').getNextOsdId();
   },
 
   /**

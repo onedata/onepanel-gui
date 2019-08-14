@@ -1,20 +1,23 @@
 .cluster-ceph-status {
-  .osds-usage-container {
-    .one-collapsible-list-item-content {
-      padding: 0 $padding-large-horizontal;
-      @media (min-width: $screen-sm-min) {
-        padding: 0 $padding-large-horizontal - $padding-small-horizontal;
-      }
-    }
-  }
-
   .osd-usage {
     @media (min-width: $screen-sm-min) {
       padding: 0 $padding-small-horizontal;
+
+      &:first-child {
+        padding-left: 0;
+      }
+  
+      &:last-child {
+        padding-right: 0;
+      }
     }
   }
   
   .one-space-indicator {
     min-height: 70px;
+  }
+
+  .osds-usage-row {
+    margin: 0 $padding-large-horizontal;
   }
 }

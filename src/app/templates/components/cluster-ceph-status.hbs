@@ -3,9 +3,9 @@
     <div class="alert alert-{{alertLevel}} with-icon ceph-status">
       {{one-icon icon=statusIcon class="alert-icon"}}
       <strong class="ceph-status-message">{{statusMessage}}</strong>
-      {{#if statusProxy.messages.length}}
+      {{#if status.messages.length}}
         <ul>
-          {{#each statusProxy.messages as |message|}}
+          {{#each status.messages as |message|}}
             <li>{{message}}</li>
           {{/each}}
         </ul>
@@ -17,10 +17,10 @@
 <div class="osds-usage-container min-height-100 relative">
   <h1>{{tt this "osdsUsage"}}</h1>
   {{#promise-proxy-container proxy=osdsUsageProxy sizeClass="sm"}}
-    {{#if osdsUsage.length}}
+    {{#if osdsUsagePerHost.length}}
 
       {{#one-collapsible-list as |list|}}
-        {{#each osdsUsage as |hostOsds|}}
+        {{#each osdsUsagePerHost as |hostOsds|}}
           {{#list.item as |listItem|}}
             {{#listItem.header}}
               <span class="item-icon-container">

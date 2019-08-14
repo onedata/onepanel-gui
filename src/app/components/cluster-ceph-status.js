@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 
 const levelToAlertLevel = {
   ok: 'success',
@@ -27,71 +28,59 @@ const levelToIcon = {
   error: 'checkbox-filled-x',
 };
 
-export default Component.extend(I18n, {
-  classNames: ['cluster-ceph-status'],
+export default Component.extend(
+  I18n,
+  createDataProxyMixin('status'),
+  createDataProxyMixin('osdsUsage'), {
+    classNames: ['cluster-ceph-status'],
 
-  cephManager: service(),
+    cephManager: service(),
 
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.clusterCephStatus',
+    /**
+     * @override
+     */
+    i18nPrefix: 'components.clusterCephStatus',
 
-  /**
-   * When number of nodes is below this value, then all nodes will be expaned by
-   * default in OSDs usage section.
-   * @type {number}
-   */
-  autoexpandOsdsWhenNodesBelow: 4,
+    /**
+     * When number of nodes is below this value, then all nodes will be expaned by
+     * default in OSDs usage section.
+     * @type {number}
+     */
+    autoexpandOsdsWhenNodesBelow: 4,
 
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<Onepanel.CephStatus>>}
-   */
-  statusProxy: computed(function statusProxy() {
-    return this.get('cephManager').getStatus();
-  }),
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    statusMessage: computed('statusProxy.level', function statusMessage() {
+      const level = this.get('statusProxy.level');
+      return this.t(`statusMessages.${level}`);
+    }),
 
-  /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  statusMessage: computed('statusProxy.level', function statusMessage() {
-    const level = this.get('statusProxy.level');
-    return this.t(`statusMessages.${level}`);
-  }),
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    statusIcon: computed('statusProxy.level', function statusIcon() {
+      return levelToIcon[this.get('statusProxy.level')] || 'ceph';
+    }),
 
-  /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  statusIcon: computed('statusProxy.level', function statusIcon() {
-    return levelToIcon[this.get('statusProxy.level')] || 'ceph';
-  }),
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    alertLevel: computed('statusProxy.level', function alertLevel() {
+      return levelToAlertLevel[this.get('statusProxy.level')] || 'info';
+    }),
 
-  /**
-   * @type {Ember.ComputedProperty<string>}
-   */
-  alertLevel: computed('statusProxy.level', function alertLevel() {
-    return levelToAlertLevel[this.get('statusProxy.level')] || 'info';
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<PromiseArray<Object>>}
-   */
-  osdsUsageProxy: computed(function osdsUsage() {
-    return this.get('cephManager').getOsdsWithUsage();
-  }),
-
-  /**
-   * Array of objects used as a data source for items in OSDs usage section.
-   * @type {Ember.ComputedProperty<Array<Object>>}
-   */
-  osdsUsage: computed(
-    'osdsUsageProxy.content.{osds.[],usage}',
-    function osdsUsage() {
-      if (this.get('osdsUsageProxy.isFulfilled')) {
+    /**
+     * Array of objects used as a data source for items in OSDs usage section.
+     * @type {Ember.ComputedProperty<Array<Object>>}
+     */
+    osdsUsagePerHost: computed('osdsUsage.{osds.[],usage}', function osdsUsage() {
+      const osdsUsageData = this.get('osdsUsage');
+      if (osdsUsageData) {
         let {
           osds,
           usage,
-        } = getProperties(this.get('osdsUsageProxy.content'), 'osds', 'usage');
+        } = getProperties(osdsUsageData, 'osds', 'usage');
 
         osds = _.cloneDeep(osds);
         usage = _.cloneDeep(usage);
@@ -107,27 +96,41 @@ export default Component.extend(I18n, {
       } else {
         return [];
       }
-    }
-  ),
+    }),
 
-  init() {
-    this._super(...arguments);
+    init() {
+      this._super(...arguments);
 
-    this.get('osdsUsageProxy')
-      .then(() => next(() => safeExec(this, 'autoexpandOsds')));
-  },
+      this.get('osdsUsageProxy')
+        .then(() => next(() => safeExec(this, 'autoexpandOsds')));
+    },
 
-  /**
-   * Performs automatic expand of OSDs usage items
-   * @return {undefined}
-   */
-  autoexpandOsds() {
-    const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');
-    for (let i = 1; i < autoexpandOsdsWhenNodesBelow; i++) {
-      const ithItemSelector = `.one-collapsible-list-item:nth-child(${i})`;
-      this.$(
-        `.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`
-      ).click();
-    }
-  },
-});
+    /**
+     * @override
+     */
+    fetchStatus() {
+      return this.get('cephManager').getStatus();
+    },
+
+    /**
+     * @override
+     */
+    fetchOsdsUsage() {
+      return this.get('cephManager').getOsdsWithUsage();
+    },
+
+    /**
+     * Performs automatic expand of OSDs usage items
+     * @return {undefined}
+     */
+    autoexpandOsds() {
+      const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');
+      for (let i = 1; i < autoexpandOsdsWhenNodesBelow; i++) {
+        const ithItemSelector = `.one-collapsible-list-item:nth-child(${i})`;
+        this.$(
+          `.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`
+        ).click();
+      }
+    },
+  }
+);

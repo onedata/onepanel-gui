@@ -2,7 +2,7 @@
   <h1>{{tt this "header"}}</h1>
 </div>
 {{#promise-proxy-container proxy=isDeployedProxy}}
-  {{#if isDeployedProxy.content}}
+  {{#if isDeployed}}
     <div class="row content-row">
       {{#bs-tab
         class="only-tab-bar bs-tab-onedata bs-tab-modern"
@@ -18,7 +18,7 @@
         {{#tab.pane title=(tt this "configuration") elementId=(concat elementId "-configuration") class="min-height-100 no-padding"}}
           {{#if (eq activeTab "configuration")}}
             {{#promise-proxy-container proxy=configurationProxy}}
-              {{ceph-cluster-configuration config=configurationProxy}}
+              {{ceph-cluster-configuration config=configuration}}
             {{/promise-proxy-container}}
           {{/if}}
         {{/tab.pane}}

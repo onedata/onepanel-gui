@@ -8,8 +8,6 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
 import _ from 'lodash';
 import { getOwner } from '@ember/application';
@@ -37,206 +35,168 @@ export default Service.extend({
 
   /**
    * Returns all osds in the ceph cluster.
-   * @param {boolean} suppressNotDeployed if true, "ceph not deployed" error
-   *   will be ignored and converted to [] value
-   * @return {PromiseArray<Onepanel.CephOsd>}
+   * @return {Promise<Array<Onepanel.CephOsd>>}
    */
-  getOsds(suppressNotDeployed = false) {
-    const onepanelServer = this.get('onepanelServer');
-    let promise = onepanelServer.request('oneprovider', 'getCephOsds')
+  getOsds() {
+    return this.get('onepanelServer').request('oneprovider', 'getCephOsds')
       .then(({ data: { osds } }) => osds);
-    if (suppressNotDeployed) {
-      promise = this.suppressNotDeployed(promise, []);
-    }
-    return PromiseArray.create({ promise });
   },
 
   /**
    * Returns all managers in the ceph cluster.
-   * @return {PromiseArray<Onepanel.CephManager>}
+   * @return {Promise<Array<Onepanel.CephManager>>}
    */
   getManagers() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseArray.create({
-      promise: onepanelServer.request('oneprovider', 'getCephManagers')
-        .then(({ data: { managers } }) => managers),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephManagers')
+      .then(({ data: { managers } }) => managers);
   },
 
   /**
    * Returns all monitors in the ceph cluster.
-   * @return {PromiseArray<Onepanel.CephMonitor>}
+   * @return {Promise<Array<Onepanel.CephMonitor>>}
    */
   getMonitors() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseArray.create({
-      promise: onepanelServer.request('oneprovider', 'getCephMonitors')
-        .then(({ data: { monitors } }) => monitors),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephMonitors')
+      .then(({ data: { monitors } }) => monitors);
   },
 
   /**
    * Returns global ceph parameters
-   * @return {PromiseArray<Onepanel.CephGlobalParams>}
+   * @return {Promise<Array<Onepanel.CephGlobalParams>>}
    */
   getParams() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getCephParams')
-        .then(({ data }) => data),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephParams')
+      .then(({ data }) => data);
   },
 
   /**
    * Returns ceph cluster configuration - aggregates results from multiple
    * requests to form complex configuration object.
-   * @return {PromiseObject<Utils/Ceph/ClusterConfiguration>}
+   * @return {Promise<Utils/Ceph/ClusterConfiguration>}
    */
   getConfiguration() {
-    return PromiseObject.create({
-      promise: Promise.all([
-        this.getManagers(),
-        this.getMonitors(),
-        this.getOsds(),
-        this.getParams(),
-      ]).then(([
+    return Promise.all([
+      this.getManagers(),
+      this.getMonitors(),
+      this.getOsds(),
+      this.getParams(),
+    ]).then(([
+      managers,
+      monitors,
+      osds,
+      params,
+    ]) => {
+      const rawConfig = _.assign({}, params, {
         managers,
         monitors,
         osds,
-        params,
-      ]) => {
-        const rawConfig = _.assign({}, params, {
-          managers,
-          monitors,
-          osds,
-        });
-        const config = CephClusterConfiguration.create(
-          getOwner(this).ownerInjection()
-        );
-        config.fillIn(rawConfig);
-        return config;
-      }),
+      });
+      const config = CephClusterConfiguration.create(
+        getOwner(this).ownerInjection()
+      );
+      config.fillIn(rawConfig);
+      return config;
     });
   },
 
   /**
    * Returns Ceph cluster status
-   * @return {PromiseObject<Onepanel.CephStatus>}
+   * @return {Promise<Onepanel.CephStatus>}
    */
   getStatus() {
-    const onepanelServer = this.get('onepanelServer');
-    const proxy = PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getCephStatus')
-        .then(({ data }) => data),
-    });
+    const promise = this.get('onepanelServer')
+      .request('oneprovider', 'getCephStatus')
+      .then(({ data }) => data);
 
     // update status property with new value
-    proxy.then(status => safeExec(this, () => this.set('status.content', status)));
+    promise.then(status =>
+      safeExec(this, () => this.set('status.content', status))
+    );
 
-    return proxy;
+    return promise;
   },
 
   /**
    * Returns Ceph OSDs usage
-   * @return {PromiseObject<Object>} Object osdId -> Onepanel.DataUsage
+   * @return {Promise<Object>} Object osdId -> Onepanel.DataUsage
    */
   getOsdsUsage() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getCephUsage')
-        .then(({ data: { osds } }) => osds),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephUsage')
+      .then(({ data: { osds } }) => osds);
   },
 
   /**
    * Returns Ceph OSDs and OSDs usage
-   * @return {PromiseObject<Object>} Object with fields: osds, usage
+   * @return {Promise<Object>} Object with fields: osds, usage
    */
   getOsdsWithUsage() {
-    return PromiseObject.create({
-      promise: Promise.all([
-        get(this.getOsds(), 'promise'),
-        get(this.getOsdsUsage(), 'promise'),
-      ]).then(([osds, usage]) => ({
-        osds,
-        usage,
-      })),
-    });
+    return Promise.all([
+      this.getOsds(),
+      this.getOsdsUsage(),
+    ]).then(([osds, usage]) => ({
+      osds,
+      usage,
+    }));
   },
 
   /**
    * Returns Ceph cluster pools
-   * @return {PromiseArray<Onepanel.CephPool>}
+   * @return {Promise<Array<Onepanel.CephPool>>}
    */
   getPools() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseArray.create({
-      promise: onepanelServer.request('oneprovider', 'getCephPools')
-        .then(({ data: { pools } }) => pools),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephPools')
+      .then(({ data: { pools } }) => pools);
   },
 
   /**
    * Returns Ceph pools usage
-   * @return {PromiseObject<Object>} Object name -> Onepanel.PoolUsage
+   * @return {Promise<Object>} Object name -> Onepanel.PoolUsage
    */
   getPoolsUsage() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getCephUsage')
-        .then(({ data: { pools } }) => pools),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getCephUsage')
+      .then(({ data: { pools } }) => pools);
   },
 
   /**
    * Returns Ceph pools and pools usage
-   * @return {PromiseObject<Object>} Object with fields: pools, usage
+   * @return {Promise<Object>} RObject with fields: pools, usage
    */
   getPoolsWithUsage() {
-    return PromiseObject.create({
-      promise: Promise.all([
-        get(this.getPools(), 'promise'),
-        get(this.getPoolsUsage(), 'promise'),
-      ]).then(([pools, usage]) => ({
-        pools,
-        usage,
-      })),
-    });
+    return Promise.all([
+      this.getPools(),
+      this.getPoolsUsage(),
+    ]).then(([pools, usage]) => ({
+      pools,
+      usage,
+    }));
   },
 
   /**
    * Returns next possible Osd Id
-   * @returns {PromiseObject<number>}
+   * @returns {Promise<number>}
    */
   getNextOsdId() {
-    const onepanelServer = this.get('onepanelServer');
-    return PromiseObject.create({
-      promise: onepanelServer.request('oneprovider', 'getNextOsdId')
-        .then(({ data }) => data),
-    });
+    return this.get('onepanelServer').request('oneprovider', 'getNextOsdId')
+      .then(({ data }) => data);
   },
 
   /**
    * Checks whether embedded ceph storage can be created or not
-   * @returns {PromiseObject<boolean>} resolves to true if ceph embedded storage
+   * @returns {Promise<boolean>} resolves to true if ceph embedded storage
    *   can be created
    */
   canCreateStorage() {
     const promise = this.getOsds().then(osds => get(osds, 'length'));
-    return PromiseObject.create({
-      promise: this.suppressNotDeployed(promise, false),
-    });
+    return this.suppressNotDeployed(promise, false);
   },
 
   /**
    * Checks whether ceph has been deployed or not
-   * @returns {PromiseObject<boolean>}
+   * @returns {Promise<boolean>}
    */
   isDeployed() {
-    const promise = get(this.getParams(), 'promise').then(() => true);
-    return PromiseObject.create({
-      promise: this.suppressNotDeployed(promise, false),
-    });
+    const promise = this.getParams().then(() => true);
+    return this.suppressNotDeployed(promise, false);
   },
 
   /**

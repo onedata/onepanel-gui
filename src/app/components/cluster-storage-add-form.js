@@ -465,7 +465,9 @@ export default OneForm.extend(I18n, Validations, {
         mode === 'create' ||
         (mode === 'edit' && this.get('storage.type') === 'embeddedceph')
       ) {
-        const osdProxy = cephManager.getOsds(true);
+        const osdProxy = PromiseArray.create({
+          promise: cephManager.suppressNotDeployed(cephManager.getOsds(), []),
+        });
         if (!element) {
           this.set('cephOsdsProxy', osdProxy);
         } else {
@@ -542,10 +544,6 @@ export default OneForm.extend(I18n, Validations, {
       if (preferredType) {
         this.set('selectedStorageType', preferredType);
       }
-      // const genericFields = this.get('genericFields');
-      // debugger;
-      // const typeField = genericFields.findBy('name', 'generic.type');
-      // set(typeField, 'defaultValue', prefferedType);
     }
   },
 
