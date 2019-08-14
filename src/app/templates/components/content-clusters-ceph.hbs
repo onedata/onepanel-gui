@@ -1,9 +1,9 @@
 <div class="row content-row header-row hidden-xs">
   <h1>{{tt this "header"}}</h1>
 </div>
-<div class="row content-row">
-  {{#promise-proxy-container proxy=isDeployedProxy}}
-    {{#if isDeployedProxy.content}}
+{{#promise-proxy-container proxy=isDeployedProxy}}
+  {{#if isDeployedProxy.content}}
+    <div class="row content-row">
       {{#bs-tab
         class="only-tab-bar bs-tab-onedata bs-tab-modern"
         fade=false
@@ -28,6 +28,12 @@
           {{/if}}
         {{/tab.pane}}
       {{/bs-tab}}
-    {{/if}}
-  {{/promise-proxy-container}}
-</div>
+    </div>
+  {{else}}
+    {{#content-info
+      class="scroll-breakpoint-600 preserve-header"
+      header=(tt this "cephNotDeployed")
+      imagePath=(root-url "assets/images/resource-not-found.svg")}}
+    {{/content-info}}
+  {{/if}}
+{{/promise-proxy-container}}

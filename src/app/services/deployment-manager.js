@@ -90,17 +90,13 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               onepanelServiceType: onepanelServiceType,
               clusterInfo: thisCluster,
               initStep: clusterStep,
-              i: this.get('i'),
               hasCephDeployed,
             });
-            this.set('i', this.get('i') + 1);
 
             return installationDetails;
           });
       });
   },
-
-  i: 0,
 
   /**
    * Fetch info about deployed cluster and create ClusterHostInfo objects

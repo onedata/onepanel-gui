@@ -3,4 +3,5 @@ export default {
   status: 'Status',
   configuration: 'Configuration',
   pools: 'Pools',
+  cephNotDeployed: 'Ceph not deployed',
 };

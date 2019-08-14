@@ -104,7 +104,7 @@ export default ObjectProxy.extend({
    * @type {boolean}
    * @virtual
    */
-  hasCephDeployed: true,
+  hasCephDeployed: false,
 
   type: reads('content.onepanelServiceType'),
 

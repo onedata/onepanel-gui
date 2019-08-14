@@ -149,8 +149,8 @@ export default SecondLevelItems.extend(I18n, {
         const items = this._super(...arguments);
 
         const hasCephDeployed = get(cluster, 'installationDetails.hasCephDeployed');
-        if (hasCephDeployed && clusterType === 'oneprovider') {
-          items.push(cephItem);
+        if (!hasCephDeployed) {
+          items.removeObject(cephItem);
         }
         if (isEmergencyOnepanel) {
           items.push(emergencyPassphraseItem);
