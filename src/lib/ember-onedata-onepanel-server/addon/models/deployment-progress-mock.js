@@ -2,8 +2,8 @@
  * Mock for reading status of deploy cluster task
  *
  * @module models/deployment-progress-mock
- * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -32,12 +32,11 @@ export default EmberObject.extend({
    */
   onepanelServiceType: null,
 
-  onepaneServiceType: null,
   fakeProgress: 0,
 
-  clusterDeploySteps: computed(function () {
+  clusterDeploySteps: computed(function clusterDeploySteps() {
     return generateClusterDeploySteps(this.get('onepanelServiceType'));
-  }).readOnly(),
+  }),
 
   /**
    * Mocks getTaskStatus for cluster configuration operation.

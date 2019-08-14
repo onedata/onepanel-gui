@@ -2,8 +2,8 @@
  * Deployment step that allows ceph cluster configuration.
  * 
  * @module components/new-cluster-ceph
- * @author Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @author Michał Borzecki
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 

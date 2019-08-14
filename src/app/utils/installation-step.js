@@ -1,3 +1,12 @@
+/**
+ * Represents single deployment step.
+ * 
+ * @module utils/installation-step
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import EmberObject from '@ember/object';
 
 export default EmberObject.extend({
@@ -8,6 +17,8 @@ export default EmberObject.extend({
   name: undefined,
 
   /**
+   * True when step should not be rendered as a standalone step in deployment
+   * wizard, but is rather a passthrough between adjecent steps.
    * @virtual
    * @type {boolean}
    */
@@ -26,18 +37,22 @@ export default EmberObject.extend({
   inOnezone: true,
 
   /**
+   * True when this step is a final step of the deployment (= deployment is done).
    * @virtual
    * @type {boolean}
    */
   isFinalStep: false,
 
   /**
+   * Ordered installation steps.
    * @virtual
-   * @type {Array<string>}
+   * @type {Array<Utils.InstallationStep>}
    */
   stepsOrder: undefined,
 
   /**
+   * Returns a number of steps to pass (including this step) to access
+   * `anotherStep`. May be a negative number if `anotherStep` is before this one.
    * @param {InstallationStep} anotherStep
    * @returns {number}
    */

@@ -1,9 +1,9 @@
 /**
- * Class that node block device used by Ceph OSD.
+ * Class that represents node block device used by Ceph OSD.
  * 
  * @module utils/ceph/node-device
- * @author Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @author Michał Borzęcki
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 

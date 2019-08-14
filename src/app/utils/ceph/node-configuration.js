@@ -2,8 +2,8 @@
  * Class that represents Ceph node parameters.
  * 
  * @module utils/ceph/node-configuration
- * @author Michal Borzecki
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @author Michał Borzęcki
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 

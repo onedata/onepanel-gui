@@ -1,3 +1,12 @@
+/**
+ * Information about Ceph cluster
+ *
+ * @module components/content-cluster-ceph
+ * @author Michał Borzęcki
+ * @copyright (C) 2018-2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
