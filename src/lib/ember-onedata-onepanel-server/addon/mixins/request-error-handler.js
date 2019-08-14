@@ -27,10 +27,15 @@ export default Mixin.create({
 
   handleRequestError(error) {
     if (error && error.response && error.response.statusCode) {
-      // 401 should not be present when isInitialized - it seems that session has expired
-      if (error.response.statusCode === 401 && this.get('isInitialized') &&
+      const statusCode = error.response.statusCode;
+      
+      if (statusCode === 503) {
+        // 503 means that oz/op-worker is unavailable
+        this.set('workerServicesAreAvailable', false);
+      } else if (statusCode === 401 && this.get('isInitialized') &&
         !isLogoutResponse(error.response)
       ) {
+        // 401 should not be present when isInitialized - it seems that session has expired
         this._handleUnauhtorizedError();
       }
     }
