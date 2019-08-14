@@ -53,7 +53,7 @@ export default Component.extend(I18n, {
       const clusterDeployProcess = this.get('clusterDeployProcess');
       const rawConfig = get(clusterDeployProcess, 'configuration.ceph');
       const cephNodes = get(clusterDeployProcess, 'cephNodes');
-      const cephConfig = CephClusterConfiguration.create(
+      const cephConfig = this.get('cephConfig') || CephClusterConfiguration.create(
         getOwner(this).ownerInjection()
       );
       if (rawConfig) {

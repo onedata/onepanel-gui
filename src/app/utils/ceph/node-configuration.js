@@ -214,7 +214,8 @@ export default EmberObject.extend({
     const {
       managerMonitor,
       host,
-    } = this.getProperties('managerMonitor', 'host');
+      osds: nodeOsds,
+    } = this.getProperties('managerMonitor', 'host', 'osds');
     let {
       managers,
       monitors,
@@ -236,12 +237,13 @@ export default EmberObject.extend({
       monitorIp,
     });
 
+    nodeOsds.clear();
     osds.forEach(osdConfig => {
       const osd = CephOsdConfiguration.create({
         node: this,
       });
       osd.fillIn(osdConfig);
-      this.get('osds').pushObject(osd);
+      nodeOsds.pushObject(osd);
     });
   },
 

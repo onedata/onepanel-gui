@@ -136,15 +136,24 @@ export default EmberObject.extend({
    */
   fillIn(newConfig) {
     const {
+      nodes,
+      mainConfiguration,
+    } = this.getProperties('nodes', 'mainConfiguration');
+    const {
       managers,
       monitors,
       osds,
     } = getProperties(newConfig, 'managers', 'monitors', 'osds');
-    this.get('mainConfiguration').fillIn(newConfig);
+    mainConfiguration.fillIn(newConfig);
     const hosts = _.concat(managers, monitors, osds).mapBy('host').uniq();
     hosts.forEach(host => {
       const node = this.addNode(host);
       node.fillIn(newConfig);
+    });
+    nodes.forEach(node => {
+      if (!hosts.includes(get(node, 'host'))) {
+        nodes.removeObject(node);
+      }
     });
   },
 
