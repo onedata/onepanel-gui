@@ -30,10 +30,11 @@ export default EmberObject.extend({
   id: undefined,
 
   /**
+   * One of `filestore`, `bluestore`
    * @type {string}
    * @virtual
    */
-  type: 'bluestore',
+  type: undefined,
 
   /**
    * @type {string}

@@ -25,7 +25,7 @@ const editTypeFieldDefinition = [{
   }, {
     value: 'filestore',
   }],
-  defaultValue: 'bluestore',
+  defaultValue: 'filestore',
 }];
 
 const editBluestoreFieldsDefinition = [{

@@ -166,7 +166,7 @@ export default EmberObject.extend({
     const osd = CephOsdConfiguration.create({
       node: this,
       id: osdIdGenerator.getNextId(),
-      type: 'bluestore',
+      type: 'filestore',
       device: get((this.getDeviceForNewOsd() || {}), 'path'),
     });
 
