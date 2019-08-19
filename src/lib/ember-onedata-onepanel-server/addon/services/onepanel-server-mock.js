@@ -136,34 +136,34 @@ function _genSupportingProviders() {
   return supportingProviders;
 }
 
-function _genAutoCleaningConfiguration() {
+function _genAutoCleaningConfiguration(enabled = true) {
   return {
     minFileSize: {
-      enabled: true,
+      enabled,
       value: 10000,
     },
     maxFileSize: {
-      enabled: true,
+      enabled,
       value: 10000000,
     },
     minHoursSinceLastOpen: {
-      enabled: true,
+      enabled,
       value: 12,
     },
     maxOpenCount: {
-      enabled: true,
+      enabled,
       value: 10,
     },
     maxHourlyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 11,
     },
     maxDailyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 12,
     },
     maxMonthlyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 13,
     },
   };
@@ -1036,7 +1036,10 @@ export default OnepanelServerBase.extend(
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
           let configuration = spacesAutoCleaning.find(s => s.id === id);
           if (!configuration) {
-            configuration = { id };
+            configuration = {
+              id,
+              rules: _genAutoCleaningConfiguration(false),
+            };
             spacesAutoCleaning.push(configuration);
           }
           emberObjectMerge(configuration, data);
