@@ -475,9 +475,18 @@ export default OnepanelServerBase.extend(
             lumaUrl: 'http://localhost:9090',
             lumaApiKey: 'some_storage',
           };
+          const storageCeph = {
+            id: 'storage2_id',
+            type: 'ceph',
+            name: 'Deprecated ceph',
+            monitorHostname: 'host.name',
+            clusterName: 'cluster_name',
+            poolName: 'some_pool',
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            clusterStorageClass(storage1.type).constructFromObject(storage1)
+            clusterStorageClass(storage1.type).constructFromObject(storage1),
+            clusterStorageClass(storageCeph.type).constructFromObject(storageCeph),
           );
 
           if (mockStep === InstallationStepsMap.done) {
@@ -1171,9 +1180,7 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getCephParams: computed(function () {
       return {
-        success: () => ({
-          name: 'ceph',
-        }),
+        success: () => this.get('__cephParams').plainCopy(),
         statusCode: () => 200,
       };
     }),
@@ -1453,29 +1460,54 @@ export default OnepanelServerBase.extend(
 
     __webCert: defaultWebCert,
 
-    __configuration: PlainableObject.create({
-      cluster: {
-        databases: {
-          hosts: ['node1.example.com'],
-        },
-        managers: {
-          mainHost: 'node2.example.com',
-          hosts: ['node1.example.com', 'node2.example.com'],
-        },
-        workers: {
-          hosts: ['node2.example.com'],
-        },
-      },
-      // TODO add this only in zone mode
-      onezone: {
-        name: null,
-        domainName: window.location.hostname,
-      },
-      // TODO add this only in provider mode
-      oneprovider: {
-        name: null,
-      },
-    }),
+    __configuration: computed(
+      '__cephParams',
+      '__cephManagers',
+      '__cephMonitors',
+      '__cephOsds',
+      function __configuration() {
+        const {
+          __cephParams,
+          __cephManagers,
+          __cephMonitors,
+          __cephOsds,
+        } = this.getProperties(
+          '__cephParams',
+          '__cephManagers',
+          '__cephMonitors',
+          '__cephOsds'
+        );
+        return PlainableObject.create({
+          cluster: {
+            databases: {
+              hosts: ['node1.example.com'],
+            },
+            managers: {
+              mainHost: 'node2.example.com',
+              hosts: ['node1.example.com', 'node2.example.com'],
+            },
+            workers: {
+              hosts: ['node2.example.com'],
+            },
+          },
+          // TODO add this only in zone mode
+          onezone: {
+            name: null,
+            domainName: window.location.hostname,
+          },
+          // TODO add this only in provider mode
+          oneprovider: {
+            name: null,
+          },
+          // TODO add this only in provider mode
+          ceph: Object.assign(__cephParams.plainCopy(), {
+            managers: __cephManagers,
+            monitors: __cephMonitors,
+            osds: __cephOsds,
+          }),
+        });
+      }
+    ),
 
     __storages: undefined,
 
@@ -1488,20 +1520,24 @@ export default OnepanelServerBase.extend(
     __blockDevices: A([{
       path: 'a',
       size: 10000000000,
-      mounted: false,
+      mounted: true,
     }, {
       path: 'b',
       size: 20000000000,
-      mounted: false,
+      mounted: true,
     }, {
       path: 'c',
       size: 1073741312,
-      mounted: false,
+      mounted: true,
     }, {
       path: 'd',
       size: 1073741312,
       mounted: true,
     }]),
+
+    __cephParams: PlainableObject.create({
+      name: 'ceph',
+    }),
 
     __cephManagers: A([{
       host: 'node1.example.com',

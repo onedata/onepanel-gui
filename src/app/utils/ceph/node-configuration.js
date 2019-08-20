@@ -229,7 +229,7 @@ export default EmberObject.extend({
       managers,
       monitors,
       osds,
-    ].map(services => services.filterBy('host', host));
+    ].map(services => (services || []).filterBy('host', host));
 
     set(managerMonitor, 'isEnabled', !!get(managers.concat(monitors), 'length'));
     const monitorIp = get(monitors[0] || {}, 'ip');

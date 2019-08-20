@@ -19,11 +19,15 @@ import InstallationDetails, { InstallationStepsMap } from 'onepanel-gui/models/i
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
+import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
+import _ from 'lodash';
+import { getOwner } from '@ember/application';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
   managers: 'clusterManager',
   workers: 'clusterWorker',
+  ceph: 'ceph',
 };
 
 export default Service.extend(createDataProxyMixin('installationDetails'), {
@@ -106,8 +110,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
       let gettingConfiguration = this.getConfiguration(true);
-      gettingConfiguration.then(({ data: { cluster } }) => {
-        resolve(this._clusterConfigurationToHostsInfo(cluster));
+      gettingConfiguration.then(({ data: { cluster, ceph } }) => {
+        resolve(this._clusterConfigurationToHostsInfo(cluster, ceph));
       });
       gettingConfiguration.catch(reject);
     });
@@ -116,15 +120,25 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   /**
    * Converts response data from API about clusters to array of ``ClusterHostInfo``
    * @param {object} cluster cluster attribute of GET configuration from API
+   * @param {object|undefined} ceph ceph attribute of GET configuration from API
    * @returns {object}
    *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
    */
-  _clusterConfigurationToHostsInfo(cluster) {
-    let types = ['databases', 'managers', 'workers'];
+  _clusterConfigurationToHostsInfo(cluster, ceph) {
+    const types = ['databases', 'managers', 'workers', 'ceph'];
+    const services = _.assign({ ceph: { hosts: [] } }, cluster);
+
+    if (ceph) {
+      const cephConfiguration =
+        CephClusterConfiguration.create(getOwner(this).ownerInjection());
+      cephConfiguration.fillIn(ceph);
+      services.ceph.hosts = get(cephConfiguration, 'nodes').mapBy('host');
+    }
+
     // maps: host -> ClusterHostInfo
-    let clusterHostsInfo = {};
+    const clusterHostsInfo = {};
     types.forEach(type => {
-      cluster[type].hosts.forEach(host => {
+      services[type].hosts.forEach(host => {
         if (clusterHostsInfo[host] == null) {
           clusterHostsInfo[host] = ClusterHostInfo.create({
             hostname: host,

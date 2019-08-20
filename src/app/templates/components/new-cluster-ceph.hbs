@@ -13,7 +13,7 @@
         action=(action (if cephEnabled "nextStep" "startDeploy"))
       }}
         <span>{{tt this "deploy"}}</span>{{one-icon icon="arrow-right"}}
-        {{#unless canDeploy}}
+        {{#unless cephConfig.isValid}}
           {{one-tooltip title=(tt this "invalidConfig") placement="left"}}
         {{/unless}}
       {{/one-spin-button}}
