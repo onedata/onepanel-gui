@@ -45,7 +45,7 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? CephModify : Ceph;
     case 'cephrados':
       return modify ? CephradosModify : Cephrados;
-    case 'embeddedceph':
+    case 'localceph':
       return modify ? EmbeddedcephModify : Embeddedceph;
     case 'posix':
       return modify ? PosixModify : Posix;

@@ -181,8 +181,8 @@ export default Service.extend({
   },
 
   /**
-   * Checks whether embedded ceph storage can be created or not
-   * @returns {Promise<boolean>} resolves to true if ceph embedded storage
+   * Checks whether local ceph storage can be created or not
+   * @returns {Promise<boolean>} resolves to true if ceph local storage
    *   can be created
    */
   canCreateStorage() {

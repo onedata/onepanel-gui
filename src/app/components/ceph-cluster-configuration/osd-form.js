@@ -65,7 +65,7 @@ const validationsProto = {};
 });
 
 const usedDeviceValidator = validator(function (value, options, model) {
-  if (!value) {
+  if (!value || get(model, 'mode') === 'show') {
     return true;
   } else {
     const deviceId = get(get(model, 'devices').findBy('path', value) || {}, 'id');
