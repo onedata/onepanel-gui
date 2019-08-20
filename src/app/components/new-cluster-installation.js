@@ -486,7 +486,7 @@ export default Component.extend(I18n, {
       if (!this.get('_newHostname')) {
         return Promise.reject();
       } else {
-        const _newHostname = this.get('_newHostname');
+        const _newHostname = this.get('_newHostname').trim();
         this.set('_isSubmittingNewHost', true);
         return this.get('deploymentManager').addKnownHost(_newHostname)
           .then(knownHost => {
