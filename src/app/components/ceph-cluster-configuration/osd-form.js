@@ -68,9 +68,9 @@ const usedDeviceValidator = validator(function (value, options, model) {
   if (!value) {
     return true;
   } else {
-    const deviceId = get(get(model, 'devices').findBy('path', value), 'id');
+    const deviceId = get(get(model, 'devices').findBy('path', value) || {}, 'id');
     const msg = get(this.get('model').t('deviceAlreadyUsed'), 'string');
-    return get(model, 'usedDevices.' + deviceId) < 2 ? true : msg;
+    return (!deviceId || get(model, 'usedDevices.' + deviceId) < 2) ? true : msg;
   }
 }, {
   dependentKeys: ['model.usedDevices'],
