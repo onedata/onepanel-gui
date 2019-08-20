@@ -12,6 +12,10 @@ import { computed } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { next } from '@ember/runloop';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+
+const allowedTabs = ['status', 'configuration', 'pools'];
 
 export default Component.extend(
   createDataProxyMixin('isDeployed'),
@@ -21,6 +25,7 @@ export default Component.extend(
 
     i18n: service(),
     cephManager: service(),
+    router: service(),
 
     /**
      * @override
@@ -45,6 +50,14 @@ export default Component.extend(
       return `${elementId}-${activeTab}`;
     }),
 
+    init() {
+      this._super(...arguments);
+
+      if (!allowedTabs.includes(this.get('activeTab'))) {
+        next(() => safeExec(this, () => this.changeTab(allowedTabs[0])));
+      }
+    },
+
     /**
      * @override
      */
@@ -59,10 +72,24 @@ export default Component.extend(
       return this.get('cephManager').getConfiguration();
     },
 
+    /**
+     * @param {string} tabName
+     * @returns {undefined}
+     */
+    changeTab(tabName) {
+      if (allowedTabs.includes(tabName)) {
+        this.get('router').transitionTo({
+          queryParams: {
+            options: `tab.${tabName}`,
+          },
+        });
+      }
+    },
+
     actions: {
       tabChange(tabId) {
         const tab = tabId.split('-')[1];
-        this.set('activeTab', tab);
+        this.changeTab(tab);
       },
     },
   }
