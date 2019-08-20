@@ -5,7 +5,7 @@
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
         <div class={{layoutConfig.formInputColumns}}>
           {{#power-select
-            options=storageTypes
+            options=visibleStorageTypes
             selected=selectedStorageType
             onchange=(action "storageTypeChanged")
             searchEnabled=false
@@ -17,7 +17,6 @@
         </div>
       {{/form.group}}
     {{/if}}
-    
     {{one-form-fields
       bsForm=form
       fields=currentFields

@@ -226,9 +226,9 @@ export default OneForm.extend(I18n, Validations, {
   storageTypes: computed(() => storageTypes.map(type => _.assign({}, type))),
 
   /**
-   * @type {Ember.ComputedProperty<Object>}
+   * @type {Object}
    */
-  selectedStorageType: reads('storageTypes.firstObject'),
+  selectedStorageType: undefined,
 
   /**
    * @override
@@ -404,13 +404,11 @@ export default OneForm.extend(I18n, Validations, {
     'storageTypes.[]',
     'cephOsdsProxy.length',
     function visibleStorageTypes() {
-      let visibleTypes = this.get('storageTypes');
-
-      // if no osds are present, remove embeddedceph storage type
+      // Remove ceph storage, because it is deprecated
+      let visibleTypes = this.get('storageTypes').rejectBy('id', 'ceph');
+      // If no osds are present, remove embeddedceph storage type
       if (!this.get('cephOsdsProxy.length')) {
-        visibleTypes = storageTypes.filter(
-          storageType => get(storageType, 'id') !== 'embeddedceph'
-        );
+        visibleTypes = visibleTypes.rejectBy('id', 'embeddedceph');
       }
 
       return visibleTypes;
@@ -522,6 +520,12 @@ export default OneForm.extend(I18n, Validations, {
     if (storage) {
       this._fillInForm();
     } else {
+      // It is set here, instead next to the field definition due to Ember bug.
+      // When `reads` computed property is overriden with custom value (so the
+      // data binding is lost), then Ember still notifies about data change of
+      // property on each modification of key provided to `reads`. Property itself
+      // does not change, but observers are triggered.
+      this.set('selectedStorageType', reads('visibleStorageTypes.firstObject'));
       this.resetFormValues();
     }
     this.cephOsdFetch();
