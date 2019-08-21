@@ -520,12 +520,14 @@ export default OneForm.extend(I18n, Validations, {
     if (storage) {
       this._fillInForm();
     } else {
-      // It is set here, instead next to the field definition due to Ember bug.
-      // When `reads` computed property is overriden with custom value (so the
-      // data binding is lost), then Ember still notifies about data change of
-      // property on each modification of key provided to `reads`. Property itself
-      // does not change, but observers are triggered.
-      this.set('selectedStorageType', reads('visibleStorageTypes.firstObject'));
+      if (!this.get('selectedStorageType')) {
+        // It is set here, instead next to the field definition due to Ember bug.
+        // When `reads` computed property is overriden with custom value (so the
+        // data binding is lost), then Ember still notifies about data change of
+        // property on each modification of key provided to `reads`. Property itself
+        // does not change, but observers are triggered.
+        this.set('selectedStorageType', reads('visibleStorageTypes.firstObject'));
+      }
       this.resetFormValues();
     }
     this.cephOsdFetch();

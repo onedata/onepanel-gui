@@ -22,6 +22,10 @@ const CephManager = Service.extend({
       promise: resolve([]),
     });
   },
+  
+  suppressNotDeployed(promise) {
+    return promise;
+  },
 });
 
 class ClusterStorageAddHelper extends FormHelper {
