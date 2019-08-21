@@ -1,5 +1,5 @@
 /**
- * Provides form for showing, creating and modifying osd settings.
+ * Provides form for showing and creating osd settings.
  * 
  * @module components/ceph-cluster-configuration/osd-form
  * @author Michał Borzęcki
@@ -16,8 +16,9 @@ import { union } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import _ from 'lodash';
 import { validator } from 'ember-cp-validations';
+import { conditional, raw } from 'ember-awesome-macros';
 
-const editTypeFieldDefinition = [{
+const editTypeFieldsDefinition = [{
   name: 'type',
   type: 'radio-group',
   options: [{
@@ -54,7 +55,7 @@ const allPrefixes = [
 
 const validationsProto = {};
 [
-  { prefix: 'editType', fields: editTypeFieldDefinition },
+  { prefix: 'editType', fields: editTypeFieldsDefinition },
   { prefix: 'editBluestore', fields: editBluestoreFieldsDefinition },
   { prefix: 'editFilestore', fields: editFilestoreFieldsDefinition },
 ].forEach(({ prefix, fields }) => {
@@ -73,7 +74,7 @@ const usedDeviceValidator = validator(function (value, options, model) {
     return (!deviceId || get(model, 'usedDevices.' + deviceId) < 2) ? true : msg;
   }
 }, {
-  dependentKeys: ['model.usedDevices'],
+  dependentKeys: ['model.{usedDevices,mode}'],
 });
 [
   'allFieldsValues.editBluestore.device',
@@ -127,35 +128,39 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {string}
    */
-  mode: computed('isCephDeployed', function mode() {
-    // For now form is readonly in standalone mode. Edition will be implemented later.
-    return this.get('isCephDeployed') ? 'show' : 'create';
-  }),
+  mode: conditional('isCephDeployed', raw('show'), raw('edit')),
 
   /**
    * Bluestore edit fields with devices converted to device dropdown options.
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
   filledEditBluestoreFieldsDefinition: computed(
-    'devices.[]',
+    'devices.@each.{mounted,path}',
     function filledEditBluestoreFieldsDefinition() {
       const fields = _.cloneDeep(editBluestoreFieldsDefinition);
-      const deviceOptions = this.get('devices').map(device => {
-        const {
-          path,
-          descriptiveName,
-        } = getProperties(device, 'path', 'descriptiveName');
+      const deviceOptions = this.get('devices')
+        // Mounted devices should not be used as OSD device for safety reasons
+        // (to avoid unintentional data lost).
+        .rejectBy('mounted')
+        .map(device => {
+          const {
+            path,
+            descriptiveName,
+          } = getProperties(device, 'path', 'descriptiveName');
 
-        return {
-          value: path,
-          label: descriptiveName,
-        };
-      });
+          return {
+            value: path,
+            label: descriptiveName,
+          };
+        });
       fields.forEach(field =>
         set(field, 'options', deviceOptions.slice(0))
       );
       const dbDeviceField = fields.findBy('name', 'dbDevice');
       get(dbDeviceField, 'options').unshift({
+        // 0 because power-select internally tries to treat value as an object
+        // (access its' properties), so undefined and null are triggering
+        // exceptions.
         value: 0,
         label: ' ',
       });
@@ -167,7 +172,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
   editTypeFields: computed(function editTypeFields() {
-    return editTypeFieldDefinition.map(f =>
+    return editTypeFieldsDefinition.map(f =>
       this.prepareField(f, 'editType')
     );
   }),
@@ -196,8 +201,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  staticTypeFields: computed(function editTypeFields() {
-    return editTypeFieldDefinition.map(f =>
+  staticTypeFields: computed(function staticTypeFields() {
+    return editTypeFieldsDefinition.map(f =>
       this.prepareField(f, 'staticType', true)
     );
   }),
@@ -253,7 +258,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     function currentFieldsPrefix() {
       const mode = this.get('mode');
       const prefixes = [];
-      if (mode === 'edit' || mode === 'create') {
+      if (mode === 'edit') {
         prefixes.push('editType');
         const type = this.get('allFieldsValues.editType.type');
         prefixes.push(type === 'bluestore' ? 'editBluestore' : 'editFilestore');
@@ -285,9 +290,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   osdObserver: observer('osd', 'mode', 'allFields', function osdObserver() {
     const {
       osd,
-      mode,
       allFields,
-    } = this.getProperties('osd', 'mode', 'allFields');
+    } = this.getProperties('osd', 'allFields');
     [
       ['Type', ['type']],
       ['Bluestore', ['device', 'dbDevice']],
@@ -303,15 +307,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
           this.translateStaticValue(osdFieldName, value)
         );
 
-        if (value !== undefined || mode !== 'create') {
-          const field = allFields.findBy(
-            'name',
-            `edit${prefix}.${osdFieldName}`
-          );
-          set(field, 'defaultValue', value);
-          if (!get(field, 'changed')) {
-            this.set(`allFieldsValues.edit${prefix}.${osdFieldName}`, value);
-          }
+        const field = allFields.findBy(
+          'name',
+          `edit${prefix}.${osdFieldName}`
+        );
+        set(field, 'defaultValue', value);
+        if (!get(field, 'changed')) {
+          this.set(`allFieldsValues.edit${prefix}.${osdFieldName}`, value);
         }
       });
     });
@@ -407,7 +409,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       id: this.get('osd.id'),
       type,
       device,
-      dbDevice,
+      dbDevice: dbDevice === 0 ? undefined : dbDevice,
       path,
     };
     return config;
@@ -444,6 +446,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     inputChanged(fieldName, value) {
       this.changeFormValue(fieldName, value);
       this.applyChange();
+      if (fieldName === 'editType.type') {
+        this.exposeInjectedDataErrors();
+      }
     },
 
     focusOut(field) {

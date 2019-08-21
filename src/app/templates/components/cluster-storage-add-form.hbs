@@ -29,11 +29,20 @@
       <div class="form-group submit-group col-xs-12">
         <div class="row">
           <div class="{{layoutConfig.formSubmitColumns}}">
-            {{#one-spin-button type="submit" class="btn btn-primary" disabled=(or (not isValid) showLoadingSpinner) action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
+            {{#one-spin-button
+              type="submit"
+              class="btn btn-primary"
+              disabled=(or (not isValid) showLoadingSpinner)
+              action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
               {{tt this (if inEditionMode "save" "add")}}
             {{/one-spin-button}}
             {{#if inEditionMode}}
-              <button class="btn btn-warning cancel-storage-form-btn" disabled={{showLoadingSpinner}} {{action cancel}}>{{tt this "cancel"}}</button>
+              <button
+                class="btn btn-warning cancel-storage-form-btn"
+                disabled={{showLoadingSpinner}}
+                {{action cancel}}>
+                {{tt this "cancel"}}
+              </button>
             {{/if}}
           </div>
         </div>

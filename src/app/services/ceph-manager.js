@@ -159,7 +159,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph pools and pools usage
-   * @return {Promise<Object>} RObject with fields: pools, usage
+   * @return {Promise<Object>} Object with fields: pools, usage
    */
   getPoolsWithUsage() {
     return Promise.all([

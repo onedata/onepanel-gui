@@ -11,28 +11,34 @@ import Component from '@ember/component';
 import { get, set, observer } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
 import { getOwner } from '@ember/application';
 import _ from 'lodash';
 
 export default Component.extend(I18n, {
+  classNames: ['new-cluster-ceph'],
+
   /**
    * @override
    */
   i18nPrefix: 'components.newClusterCeph',
 
   /**
+   * @virtual
    * @type {function}
    */
   nextStep: notImplementedThrow,
 
   /**
+   * @virtual
    * @type {function}
    */
   prevStep: notImplementedThrow,
 
   /**
+   * @virtual
    * @type {Utils/NewClusterDeployProcess}
    */
   stepData: undefined,
@@ -47,9 +53,9 @@ export default Component.extend(I18n, {
    */
   cephConfig: undefined,
 
-  cephConfigObserver: observer(
+  cephConfigModifier: observer(
     'clusterDeployProcess.{cephNodes,configuration.ceph}',
-    function cephConfigObserver() {
+    function cephConfigModifier() {
       const clusterDeployProcess = this.get('clusterDeployProcess');
       const rawConfig = get(clusterDeployProcess, 'configuration.ceph');
       const cephNodes = get(clusterDeployProcess, 'cephNodes');
@@ -60,8 +66,10 @@ export default Component.extend(I18n, {
         cephConfig.fillIn(rawConfig);
       }
       const nodesInConfig = get(cephConfig, 'nodes').mapBy('host');
+      // Remove nodes, that was removed from ceph cluster
       _.difference(nodesInConfig, cephNodes)
         .forEach(node => cephConfig.removeNodeByHost(node));
+      // Add nodes, that was added to ceph cluster
       _.difference(cephNodes, nodesInConfig)
         .forEach(node => cephConfig.addNode(node));
       this.set('cephConfig', cephConfig);
@@ -70,8 +78,16 @@ export default Component.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    this.cephConfigObserver();
+    this.cephConfigModifier();
     this.set('clusterDeployProcess.onFinish', () => this.get('nextStep')());
+  },
+
+  willDestroyElement() {
+    try {
+      this.set('clusterDeployProcess.onFinish', notImplementedIgnore);
+    } finally {
+      this._super(...arguments);
+    }
   },
 
   actions: {

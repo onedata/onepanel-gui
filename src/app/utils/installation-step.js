@@ -53,7 +53,7 @@ export default EmberObject.extend({
   /**
    * Returns a number of steps to pass (including this step) to access
    * `anotherStep`. May be a negative number if `anotherStep` is before this one.
-   * @param {InstallationStep} anotherStep
+   * @param {Utils.InstallationStep} anotherStep
    * @returns {number}
    */
   stepsDelta(anotherStep) {
@@ -63,7 +63,7 @@ export default EmberObject.extend({
   },
 
   /**
-   * @param {InstallationStep} anotherStep
+   * @param {Utils.InstallationStep} anotherStep
    * @returns {boolean}
    */
   lt(anotherStep) {
@@ -71,7 +71,7 @@ export default EmberObject.extend({
   },
 
   /**
-   * @param {InstallationStep} anotherStep
+   * @param {Utils.InstallationStep} anotherStep
    * @returns {boolean}
    */
   lte(anotherStep) {
@@ -79,7 +79,7 @@ export default EmberObject.extend({
   },
 
   /**
-   * @param {InstallationStep} anotherStep
+   * @param {Utils.InstallationStep} anotherStep
    * @returns {boolean}
    */
   gt(anotherStep) {
@@ -87,7 +87,7 @@ export default EmberObject.extend({
   },
 
   /**
-   * @param {InstallationStep} anotherStep
+   * @param {Utils.InstallationStep} anotherStep
    * @returns {boolean}
    */
   gte(anotherStep) {

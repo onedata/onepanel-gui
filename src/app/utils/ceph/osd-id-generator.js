@@ -25,7 +25,7 @@ export default EmberObject.extend(createDataProxyMixin('nextIdFromBackend'), {
     function nextIdFromBackendObserver() {
       const nextIdFromBackend = this.get('nextIdFromBackend');
       if (typeof nextIdFromBackend === 'number') {
-        this.set('nextUniqeId', nextIdFromBackend);
+        this.set('nextId', nextIdFromBackend);
       }
     }
   ),
@@ -47,8 +47,6 @@ export default EmberObject.extend(createDataProxyMixin('nextIdFromBackend'), {
    * @returns {number}
    */
   getNextId() {
-    const nextId = this.get('nextId');
-    this.set('nextId', nextId + 1);
-    return nextId;
+    return this.incrementProperty('nextId') - 1;
   },
 });

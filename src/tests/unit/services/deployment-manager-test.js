@@ -22,6 +22,7 @@ describe('Unit | Service | deployment manager', function () {
 
   beforeEach(function () {
     registerService(this, 'cephManager', Service);
+    registerService(this, 'i18n', Service);
     registerService(this, 'onepanelServer', onepanelServerStub);
     registerService(this, 'clusterModelManager', ClusterModelManagerStub);
     registerService(this, 'guiUtils', GuiUtils);

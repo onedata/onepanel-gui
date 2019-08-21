@@ -6,7 +6,6 @@ import hbs from 'htmlbars-inline-precompile';
 import _ from 'lodash';
 import { registerService } from '../../helpers/stub-service';
 import Service from '@ember/service';
-import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
 import $ from 'jquery';
 
@@ -18,11 +17,9 @@ import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
 
 const CephManager = Service.extend({
   getOsds() {
-    return PromiseArray.create({
-      promise: resolve([]),
-    });
+    return resolve([]);
   },
-  
+
   suppressNotDeployed(promise) {
     return promise;
   },

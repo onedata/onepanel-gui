@@ -26,6 +26,9 @@ export default Component.extend(I18n, {
   guiUtils: service(),
   onepanelServer: service(),
 
+  /**
+   * @override
+   */
   i18nPrefix: 'components.newClusterDeployProgress',
   
   /**
@@ -99,7 +102,7 @@ export default Component.extend(I18n, {
       if (isDone) {
         return 1;
       } else {
-        return get(doneSteps, 'length') / totalStepsNumber;
+        return Math.min(get(doneSteps, 'length') / totalStepsNumber, 1);
       }
     }
   ),

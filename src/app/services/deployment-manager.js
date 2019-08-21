@@ -19,9 +19,10 @@ import InstallationDetails, { InstallationStepsMap } from 'onepanel-gui/models/i
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
-import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
+import { extractHostsFromCephConfiguration } from 'onepanel-gui/utils/ceph/cluster-configuration';
 import _ from 'lodash';
 import { getOwner } from '@ember/application';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -30,12 +31,21 @@ const _ROLE_COLLECTIONS = {
   ceph: 'ceph',
 };
 
-export default Service.extend(createDataProxyMixin('installationDetails'), {
+export default Service.extend(I18n, createDataProxyMixin('installationDetails'), {
   clusterModelManager: service(),
   onepanelServer: service(),
   guiUtils: service(),
   cephManager: service(),
+  i18n: service(),
 
+  /**
+   * @override
+   */
+  i18nPrefix: 'services.deploymentManager',
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
   onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
@@ -89,13 +99,15 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               id: currentClusterId,
             }, configuration);
 
-            const installationDetails = InstallationDetails.create({
-              name,
-              onepanelServiceType: onepanelServiceType,
-              clusterInfo: thisCluster,
-              initStep: clusterStep,
-              hasCephDeployed,
-            });
+            const installationDetails = InstallationDetails.create(
+              getOwner(this).ownerInjection(), {
+                name: name || this.t('newClusterName'),
+                onepanelServiceType: onepanelServiceType,
+                clusterInfo: thisCluster,
+                initStep: clusterStep,
+                hasCephDeployed,
+              }
+            );
 
             return installationDetails;
           });
@@ -126,14 +138,11 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    */
   _clusterConfigurationToHostsInfo(cluster, ceph) {
     const types = ['databases', 'managers', 'workers', 'ceph'];
-    const services = _.assign({ ceph: { hosts: [] } }, cluster);
-
-    if (ceph) {
-      const cephConfiguration =
-        CephClusterConfiguration.create(getOwner(this).ownerInjection());
-      cephConfiguration.fillIn(ceph);
-      services.ceph.hosts = get(cephConfiguration, 'nodes').mapBy('host');
-    }
+    const services = _.assign({
+      ceph: {
+        hosts: extractHostsFromCephConfiguration(ceph),
+      },
+    }, cluster);
 
     // maps: host -> ClusterHostInfo
     const clusterHostsInfo = {};
@@ -381,7 +390,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                 checkIps.catch(reject);
 
               } else {
-                resolve(InstallationStepsMap.oneproviderRegister);
+                resolve(InstallationStepsMap.oneproviderRegistration);
               }
             });
             checkRegister.catch(reject);

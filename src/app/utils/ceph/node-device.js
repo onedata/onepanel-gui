@@ -1,5 +1,5 @@
 /**
- * Class that represents node block device used by Ceph OSD.
+ * Class that represents node block device which can be used by Ceph OSD.
  * 
  * @module utils/ceph/node-device
  * @author Michał Borzęcki
@@ -29,6 +29,12 @@ export default EmberObject.extend({
    * @virtual
    */
   size: 0,
+
+  /**
+   * @type {boolean}
+   * @virtual
+   */
+  mounted: false,
 
   /**
    * @type {Ember.ComputedProperty<string>}

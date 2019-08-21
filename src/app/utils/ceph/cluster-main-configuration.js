@@ -43,10 +43,6 @@ export default EmberObject.extend({
    * @returns {Object}
    */
   toRawConfig() {
-    const name = this.get('name');
-    const config = {
-      name,
-    };
-    return config;
+    return this.getProperties('name');
   },
 });

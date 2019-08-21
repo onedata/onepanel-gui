@@ -10,10 +10,12 @@
 import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import EmberObject, { computed, get, set, observer } from '@ember/object';
+import { union } from '@ember/object/computed';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
+import { conditional, raw, equal } from 'ember-awesome-macros';
 
-const editFieldDefinition = [{
+const editFieldsDefinition = [{
   name: 'monitorIp',
   type: 'text',
   regex: /^\d+\.\d+\.\d+\.\d+/,
@@ -24,7 +26,7 @@ const editFieldDefinition = [{
 
 const allPrefixes = ['edit', 'static'];
 
-const validationsProto = editFieldDefinition.reduce((proto, field) => {
+const validationsProto = editFieldsDefinition.reduce((proto, field) => {
   proto[`allFieldsValues.edit.${field.name}`] = createFieldValidator(field);
   return proto;
 }, {});
@@ -52,16 +54,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {string}
    */
-  mode: computed('isCephDeployed', function mode() {
-    // For now form is readonly in standalone mode. Edition will be implemented later.
-    return this.get('isCephDeployed') ? 'show' : 'create';
-  }),
+  mode: conditional('isCephDeployed', raw('show'), raw('edit')),
 
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
   fieldsSource: computed(function fieldsSource() {
-    return editFieldDefinition.map(field =>
+    return editFieldsDefinition.map(field =>
       Object.assign({}, field, { label: this.t(`fields.${field.name}.label`) })
     );
   }),
@@ -90,13 +89,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  allFields: computed('editFields', 'staticFields', function allFields() {
-    const {
-      editFields,
-      staticFields,
-    } = this.getProperties('editFields', 'staticFields');
-    return editFields.concat(staticFields);
-  }),
+  allFields: union('editFields', 'staticFields'),
 
   /**
    * @type {Ember.ComputedProperty<EmberObject>}
@@ -110,10 +103,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<string>>}
    */
-  currentFieldsPrefix: computed('mode', function currentFieldsPrefix() {
-    const mode = this.get('mode');
-    return ['edit', 'create'].includes(mode) ? ['edit'] : ['static'];
-  }),
+  currentFieldsPrefix: conditional(
+    equal('mode', raw('edit')),
+    raw(['edit']),
+    raw(['static']),
+  ),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -134,9 +128,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     function managerMonitorObserver() {
       const {
         managerMonitor,
-        mode,
         allFields,
-      } = this.getProperties('managerMonitor', 'mode', 'allFields');
+      } = this.getProperties('managerMonitor', 'allFields');
       // Working with array because there may be more fields in the future.
       ['monitorIp'].forEach(fieldName => {
         const value = get(managerMonitor, fieldName);
@@ -145,12 +138,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
         set(staticField, 'defaultValue', value);
         this.set(`allFieldsValues.static.${fieldName}`, value);
 
-        if (value !== undefined || mode !== 'create') {
-          const field = allFields.findBy('name', `edit.${fieldName}`);
-          set(field, 'defaultValue', value);
-          if (!get(field, 'changed')) {
-            this.set(`allFieldsValues.edit.${fieldName}`, value);
-          }
+        const field = allFields.findBy('name', `edit.${fieldName}`);
+        set(field, 'defaultValue', value);
+        if (!get(field, 'changed')) {
+          this.set(`allFieldsValues.edit.${fieldName}`, value);
         }
       });
       this.recalculateErrors();
@@ -167,11 +158,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @returns {Object}
    */
   constructConfig() {
-    const monitorIp = this.get('allFieldsValues.edit.monitorIp') || undefined;
-    const config = {
-      monitorIp,
+    return {
+      monitorIp: this.get('allFieldsValues.edit.monitorIp') || undefined,
     };
-    return config;
   },
 
   /**

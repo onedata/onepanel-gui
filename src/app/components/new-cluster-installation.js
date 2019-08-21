@@ -15,7 +15,7 @@ import Component from '@ember/component';
 import { A } from '@ember/array';
 import { assert } from '@ember/debug';
 import { inject as service } from '@ember/service';
-import { Promise } from 'rsvp';
+import { Promise, reject } from 'rsvp';
 import { readOnly, sort, and } from '@ember/object/computed';
 import { scheduleOnce, later } from '@ember/runloop';
 import { observer, computed, get, set, getProperties, setProperties } from '@ember/object';
@@ -26,6 +26,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import NewClusterDeployProcess from 'onepanel-gui/utils/new-cluster-deploy-process';
 import { getOwner } from '@ember/application';
+import { array, raw } from 'ember-awesome-macros';
 
 function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
@@ -44,6 +45,7 @@ export default Component.extend(I18n, {
 
   /**
    * Notifies about ceph selection change
+   * @virtual
    * @type {function}
    * @param {boolean} cephEnabled
    * @returns {undefined}
@@ -51,11 +53,10 @@ export default Component.extend(I18n, {
   cephChanged: notImplementedIgnore,
 
   /**
+   * @virtual
    * @type {Utils/NewClusterDeployProcess}
    */
   stepData: undefined,
-
-  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   /**
    * @virtual optional
@@ -77,6 +78,11 @@ export default Component.extend(I18n, {
    * @type {Utils/NewClusterDeployProcess}
    */
   clusterDeployProcess: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
 
   hosts: readOnly('hostsProxy.content'),
 
@@ -182,10 +188,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  cephEnabled: computed('hosts.@each.ceph', function cephEnabled() {
-    const hosts = this.get('hosts');
-    return hosts ? hosts.isAny('ceph') : false;
-  }),
+  cephEnabled: array.isAny('hosts', raw('ceph')),
 
   addingNewHostChanged: observer('addingNewHost', function () {
     if (!this.get('addingNewHost')) {
@@ -273,9 +276,9 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * Create an object of cluster deployment configuration using onepanel lib
-   * @param {string} serviceType one of: oneprovider, onezone
-   * @return {Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration}
+   * Create an object of cluster deployment configuration compatible with 
+   * Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration
+   * @returns {Object}
    */
   createConfiguration() {
     let {
@@ -476,7 +479,7 @@ export default Component.extend(I18n, {
         clusterDeployProcess,
       } = this.getProperties('canDeploy', 'clusterDeployProcess');
       if (canDeploy !== true) {
-        return new Promise((_, reject) => reject());
+        return reject();
       }
       this.updateClusterDeployProcess();
       return clusterDeployProcess.startDeploy();

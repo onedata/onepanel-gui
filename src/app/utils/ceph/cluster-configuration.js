@@ -10,10 +10,23 @@
 import EmberObject, { computed, get, getProperties } from '@ember/object';
 import { A } from '@ember/array';
 import { getOwner } from '@ember/application';
-import cephOsdIdGenerator from 'onepanel-gui/utils/ceph/osd-id-generator';
+import CephOsdIdGenerator from 'onepanel-gui/utils/ceph/osd-id-generator';
 import _ from 'lodash';
 import CephNodeConfiguration from 'onepanel-gui/utils/ceph/node-configuration';
 import CephClusterMainConfiguration from 'onepanel-gui/utils/ceph/cluster-main-configuration';
+import { and, array, raw } from 'ember-awesome-macros';
+
+export function extractHostsFromCephConfiguration(configuration) {
+  const {
+    managers,
+    monitors,
+    osds,
+  } = getProperties(configuration || {}, 'managers', 'monitors', 'osds');
+
+  return _.concat(managers || [], monitors || [], osds || [])
+    .mapBy('host')
+    .uniq();
+}
 
 export default EmberObject.extend({
   /**
@@ -33,62 +46,38 @@ export default EmberObject.extend({
    * List of Ceph cluster nodes.
    * @type {Ember.ComputedProperty<Array<Utils/Ceph/NodeConfiguration>>}
    */
-  nodes: computed(function nodes() {
-    return A();
-  }),
+  nodes: computed(() => A()),
 
   /**
    * Is true if there is at least one OSD service available in
    * cluster configuration.
    * @type {Ember.ComputedProperty<boolean>}
    */
-  hasOsd: computed('nodes.@each.hasOsd', function hasOsd() {
-    return this.get('nodes').isAny('hasOsd');
-  }),
+  hasOsd: array.isAny('nodes', raw('hasOsd')),
 
   /**
    * Is true if there is at least one manager & monitor services available in
    * cluster configuration.
    * @type {Ember.ComputedProperty<boolean>}
    */
-  hasManagerMonitor: computed(
-    'nodes.@each.hasManagerMonitor',
-    function hasManagerMonitor() {
-      return this.get('nodes').isAny('hasManagerMonitor');
-    }
-  ),
+  hasManagerMonitor: array.isAny('nodes', raw('hasManagerMonitor')),
 
   /**
    * If true, whole Ceph cluster configuration has valid values.
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isValid: computed(
+  isValid: and(
+    array.isEvery('nodes', raw('isValid')),
     'hasOsd',
     'hasManagerMonitor',
-    'nodes.@each.isValid',
     'mainConfiguration.isValid',
-    function isValid() {
-      const {
-        nodes,
-        hasOsd,
-        hasManagerMonitor,
-        mainConfiguration,
-      } = this.getProperties(
-        'nodes',
-        'hasOsd',
-        'hasManagerMonitor',
-        'mainConfiguration'
-      );
-      return nodes.every(node => get(node, 'isValid')) && hasOsd && hasManagerMonitor &&
-        get(mainConfiguration, 'isValid');
-    }
   ),
 
   init() {
     this._super(...arguments);
     this.set(
       'osdIdGenerator',
-      cephOsdIdGenerator.create(getOwner(this).ownerInjection())
+      CephOsdIdGenerator.create(getOwner(this).ownerInjection())
     );
   },
 
@@ -139,15 +128,10 @@ export default EmberObject.extend({
       nodes,
       mainConfiguration,
     } = this.getProperties('nodes', 'mainConfiguration');
-    const {
-      managers,
-      monitors,
-      osds,
-    } = getProperties(newConfig, 'managers', 'monitors', 'osds');
+
     mainConfiguration.fillIn(newConfig);
-    const hosts = _.concat(managers || [], monitors || [], osds || [])
-      .mapBy('host')
-      .uniq();
+    
+    const hosts = extractHostsFromCephConfiguration(newConfig);
     hosts.forEach(host => {
       const node = this.addNode(host);
       node.fillIn(newConfig);

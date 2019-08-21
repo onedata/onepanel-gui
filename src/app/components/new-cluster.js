@@ -40,10 +40,14 @@ export default Component.extend(I18n, {
   providerManager: service(),
   guiUtils: service(),
 
+  /**
+   * @override
+   */
   i18nPrefix: 'components.newCluster',
 
-  onepanelServiceType: readOnly('guiUtils.serviceType'),
-
+  /**
+   * @type {Utils.InstallationStep}
+   */
   currentStep: InstallationStepsMap.deploy,
 
   _isInProcess: false,
@@ -66,9 +70,14 @@ export default Component.extend(I18n, {
   stepData: undefined,
 
   /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  onepanelServiceType: readOnly('guiUtils.serviceType'),
+
+  /**
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  allSteps: computed('onepanelServiceType', 'showCephStep', function steps() {
+  steps: computed('onepanelServiceType', 'showCephStep', function steps() {
     const {
       onepanelServiceType,
       showCephStep,
@@ -89,7 +98,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  steps: array.rejectBy('allSteps', raw('isHiddenStep')),
+  visibleSteps: array.rejectBy('steps', raw('isHiddenStep')),
 
   /**
    * @type {Window.Location}
@@ -97,24 +106,24 @@ export default Component.extend(I18n, {
   _location: location,
 
   wizardIndex: computed(
-    'allSteps.[]',
     'steps.[]',
+    'visibleSteps.[]',
     'currentStep',
     function wizardIndex() {
       const {
-        steps,
+        visibleSteps,
         currentStep,
-      } = this.getProperties('steps', 'currentStep');
+      } = this.getProperties('visibleSteps', 'currentStep');
       let stepToSearch = currentStep;
-      if (steps.indexOf(stepToSearch) === -1) {
+      if (visibleSteps.indexOf(stepToSearch) === -1) {
         stepToSearch = this.getPrevStep(stepToSearch);
       }
-      return steps.indexOf(stepToSearch);
+      return visibleSteps.indexOf(stepToSearch);
     }
   ),
 
   isAfterDeploy: computed('currentStep', function getIsAfterDeploy() {
-    return this.get('currentStep').gt(InstallationStepsMap.oneproviderRegister);
+    return this.get('currentStep').gt(InstallationStepsMap.oneproviderRegistration);
   }),
 
   /**
@@ -168,16 +177,13 @@ export default Component.extend(I18n, {
     if (deploymentTaskId) {
       return onepanelServer.request('onepanel', 'getTaskStatus', deploymentTaskId)
         .then(({ data: { status } }) => {
-          const {
-            currentStep,
-            steps,
-          } = this.getProperties('currentStep', 'steps');
+          const currentStep = this.get('currentStep');
           switch (status) {
             case StatusEnum.running:
               return deploymentTaskId;
             case StatusEnum.ok:
               if (currentStep.lte(InstallationStepsMap.deploymentProgress)) {
-                const afterDeployProgress = steps[steps.indexOf(currentStep) + 1];
+                const afterDeployProgress = this.getNextStep(currentStep);
                 cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
                 this.set('cluster.initStep', afterDeployProgress);
                 this.setProperties({
@@ -219,18 +225,17 @@ export default Component.extend(I18n, {
 
     const serviceType = get(guiUtils, 'serviceType');
     const isOneprovider = serviceType === 'oneprovider';
-    const isProviderAfterRegister =
-      currentStep === InstallationStepsMap.oneproviderRegister;
-    const isZoneAfterDeploy = !isOneprovider &&
+    const isOneproviderAfterRegister =
+      currentStep === InstallationStepsMap.oneproviderRegistration;
+    const isOnezoneAfterDeploy = !isOneprovider &&
       currentStep.lte(InstallationStepsMap.deploymentProgress);
 
-    if (isProviderAfterRegister || isZoneAfterDeploy) {
+    if (isOneproviderAfterRegister || isOnezoneAfterDeploy) {
       // Reload whole application to fetch info about newly deployed cluster
       _location.reload();
     } else {
       const nextStep = this.getNextStep(currentStep);
       this.set('cluster.initStep', nextStep);
-      this.set('currentStep', nextStep);
       this.setProperties({
         stepData,
         currentStep: nextStep,
@@ -238,39 +243,57 @@ export default Component.extend(I18n, {
     }
   },
 
+  /**
+   * Go to the previous deployment step
+   * @param {any} stepData data that will be passed to the previous step
+   * @returns {undefined}
+   */
   _prev(stepData) {
-    const nextStep = this.getPrevStep(this.get('currentStep'));
-    this.set('cluster.initStep', nextStep);
+    const prevStep = this.getPrevStep(this.get('currentStep'));
+    this.set('cluster.initStep', prevStep);
     this.setProperties({
       stepData,
-      currentStep: nextStep,
+      currentStep: prevStep,
     });
   },
 
+  /**
+   * Returns step, that is a next step for passed one. Ignores hidden steps.
+   * @param {Utils.InstallationStep} step
+   * @returns {Utils.InstallationStep}
+   */
   getNextStep(step) {
-    const steps = this.get('steps');
-    if (steps.indexOf(step) === -1) {
-      // fallback to the nearest visible step
+    const visibleSteps = this.get('visibleSteps');
+    if (visibleSteps.indexOf(step) === -1) {
+      // If passed step is hidden, then fallback to the nearest previous visible
+      // step
       step = this.getPrevStep(step);
     }
-    return steps[steps.indexOf(step) + 1];
+    return visibleSteps[visibleSteps.indexOf(step) + 1];
   },
 
+  /**
+   * Returns step, that is a previous step for passed one. Ignores hidden steps.
+   * @param {Utils.InstallationStep} step
+   * @returns {Utils.InstallationStep}
+   */
   getPrevStep(step) {
     const {
-      allSteps,
       steps,
-    } = this.getProperties('allSteps', 'steps');
+      visibleSteps,
+    } = this.getProperties('steps', 'visibleSteps');
 
-    if (steps.indexOf(step) === -1) {
-      const allStepsIndex = allSteps.indexOf(step);
-      for (let i = allStepsIndex; i >= 0; i--) {
-        if (steps.indexOf(allSteps[i]) !== -1) {
-          return allSteps[i];
+    // If passed step is not a visible step...
+    if (visibleSteps.indexOf(step) === -1) {
+      const stepsIndex = steps.indexOf(step);
+      // then find the closest previous step, which is visible
+      for (let i = stepsIndex; i >= 0; i--) {
+        if (visibleSteps.indexOf(steps[i]) !== -1) {
+          return steps[i];
         }
       }
     } else {
-      return steps[steps.indexOf(step) - 1];
+      return visibleSteps[visibleSteps.indexOf(step) - 1];
     }
   },
 

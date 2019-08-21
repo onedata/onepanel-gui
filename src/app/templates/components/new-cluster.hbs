@@ -5,8 +5,8 @@
     {{new-cluster-welcome start=(action (mut _isInProcess))}}
 
   {{else}}
-  
-    {{#one-wizard steps=steps currentIndex=wizardIndex as |w|}}
+
+    {{#one-wizard steps=visibleSteps currentIndex=wizardIndex as |w|}}
       {{#if (eq w.step.name "deploy")}}
         {{new-cluster-installation
           nextStep=(action "next")
@@ -25,7 +25,7 @@
           nextStep=(action "next")
           providerDetailsProxy=providerDetailsProxy
         }}
-      {{else if (eq w.step.name "oneproviderRegister")}}
+      {{else if (eq w.step.name "oneproviderRegistration")}}
         {{new-cluster-zone-registration
           nextStep=(action "next")
         }}

@@ -17,11 +17,10 @@ import { invokeAction } from 'ember-invoke-action';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-
+import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 export default Component.extend(I18n, GlobalActions, {
-  navigationState: service(),
   storageManager: service(),
   storageActions: service(),
   spaceManager: service(),
@@ -44,6 +43,13 @@ export default Component.extend(I18n, GlobalActions, {
   spacesProxy: null,
 
   /**
+   * Name of the storage type, which should be passed to the
+   * ClusterStorageAddForm. If valid, will open create form at component load.
+   * @virtual
+   */
+  createStorageFormTypeName: undefined,
+
+  /**
    * @type {boolean}
    */
   storageToRemove: false,
@@ -64,6 +70,22 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {computed.boolean}
    */
   addStorageOpened: oneWay('noStorages'),
+
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  createStorageFormType: computed(
+    'createStorageFormTypeName',
+    function createStorageFormType() {
+      const createStorageFormTypeName = this.get('createStorageFormTypeName');
+      if (createStorageFormTypeName) {
+        const storage = storageTypes.findBy('id', createStorageFormTypeName);
+        if (storage) {
+          return storage;
+        }
+      }
+    }
+  ),
 
   /**
    * If true, render additional finish button that will invoke "nextStep" action
@@ -151,8 +173,7 @@ export default Component.extend(I18n, GlobalActions, {
     this._super(...arguments);
     this._updateStoragesProxy();
     this._updateSpacesProxy(true);
-    const queryParams = this.get('navigationState.queryParams');
-    if (get(queryParams, 'create_storage_form')) {
+    if (this.get('createStorageFormType')) {
       this.set('addStorageOpened', true);
     }
   },

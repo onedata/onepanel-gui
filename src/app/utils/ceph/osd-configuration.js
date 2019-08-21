@@ -39,18 +39,21 @@ export default EmberObject.extend({
   /**
    * @type {string}
    * @virtual
+   * Only when type is `bluestore`
    */
   device: undefined,
 
   /**
    * @type {string}
    * @virtual
+   * Only when type is `bluestore`
    */
   dbDevice: undefined,
 
   /**
    * @type {string}
    * @virtual
+   * Only when type is `filestore`
    */
   path: undefined,
 
@@ -72,16 +75,14 @@ export default EmberObject.extend({
       osdFields.forEach(fieldName => {
         const newValue = get(newConfig, fieldName);
         if (this.get(fieldName) !== newValue) {
-          set(propsToChange, fieldName, newValue);
+          propsToChange[fieldName] = newValue;
         }
       });
     }
     if (isValid !== undefined && this.get('isValid') !== isValid) {
-      set(propsToChange, 'isValid', isValid);
+      propsToChange.isValid = isValid;
     }
-    if (get(Object.keys(propsToChange), 'length') > 0) {
-      this.setProperties(propsToChange);
-    }
+    this.setProperties(propsToChange);
   },
 
   /**

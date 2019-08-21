@@ -20,6 +20,7 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import Onepanel from 'npm:onepanel';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   ProviderConfiguration,
@@ -31,11 +32,17 @@ const {
 
 const cookieDeploymentTaskId = 'deploymentTaskId';
 
-export default EmberObject.extend({
+export default EmberObject.extend(I18n, {
   globalNotify: service(),
   guiUtils: service(),
   onepanelServer: service(),
   cookies: service(),
+  i18n: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'utils.newClusterDeployProcess',
 
   /**
    * Configuration object. It should be suitable for
@@ -48,7 +55,8 @@ export default EmberObject.extend({
   /**
    * Array of hostnames where ceph will be placed. Can be used as an additional
    * property to list ceph nodes without deep understanding of ceph config structure.
-   * Should be updated every time list of ceph nodes changes.
+   * Should be updated every time list of ceph nodes changes. Used only in
+   * Oneprovider Panel.
    * @type {Array<string>}
    */
   cephNodes: Object.freeze([]),
@@ -89,7 +97,7 @@ export default EmberObject.extend({
   watchExistingDeploy(taskId) {
     const task = watchTaskStatus(this.get('onepanelServer'), taskId);
     this.set('deploymentPromise', task);
-    this.watchDeployStatus(task);
+    this.watchDeployStatus();
   },
 
   /**
@@ -127,20 +135,20 @@ export default EmberObject.extend({
     start.then(({ task }) => {
       this.storeTask(task.taskId);
       this.set('deploymentPromise', task);
-      this.watchDeployStatus(task);
+      this.watchDeployStatus();
     });
     start.catch(error => {
-      globalNotify.backendError('deployment start', error);
+      globalNotify.backendError(this.t('startingDeployment'), error);
     });
     return start;
   },
 
   /**
-   * Bind on events of deployment task. 
-   * @param {jQuery.Promise} task
+   * Bind on events of deployment task.
    * @returns {undefined}
    */
-  watchDeployStatus(task) {
+  watchDeployStatus() {
+    const task = this.get('deploymentPromise');
     task.done(taskStatus => {
       this.clearStoredTask();
       if (taskStatus.status === StatusEnum.ok) {
@@ -159,7 +167,10 @@ export default EmberObject.extend({
    * @returns {undefined}
    */
   failed(taskStatus) {
-    this.get('globalNotify').backendError('cluster deployment', taskStatus.error);
+    this.get('globalNotify').backendError(
+      this.t('clusterDeployment'),
+      taskStatus.error
+    );
   },
 
   /**
@@ -167,7 +178,7 @@ export default EmberObject.extend({
    * @returns {undefined}
    */
   finished() {
-    this.get('globalNotify').info('Cluster deployed successfully');
+    this.get('globalNotify').info(this.t('clusterDeploySuccess'));
     this.get('onFinish')();
   },
 

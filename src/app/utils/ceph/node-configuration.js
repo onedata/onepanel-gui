@@ -47,11 +47,7 @@ export default EmberObject.extend({
         promise: onepanelServer
           .request('oneprovider', 'getBlockDevices', host)
           .then(({ data }) =>
-            data['blockDevices']
-            // mounted devices should not be used as OSD device for safety reasons
-            // (to avoid unintentional data lost)
-            .filter(device => !get(device, 'mounted'))
-            .map(device => CephNodeDevice.create(device))
+            data['blockDevices'].map(device => CephNodeDevice.create(device))
           ),
       });
     } else {
@@ -139,9 +135,7 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<Ember.A<Utils/Ceph/OsdConfiguration>>}
    */
-  osds: computed(function osds() {
-    return A();
-  }),
+  osds: computed(() => A()),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -189,7 +183,7 @@ export default EmberObject.extend({
 
   /**
    * Returns device that can be proposed for new OSD. If all devices are already
-   * used, undefined is returned.
+   * used, first device is returned.
    * @returns {Object|undefined}
    */
   getDeviceForNewOsd() {
@@ -200,8 +194,9 @@ export default EmberObject.extend({
     if (!get(devices, 'isFulfilled')) {
       return undefined;
     } else {
-      return devices.filter(dev => get(usedDevices, get(dev, 'id')) === 0)[0] ||
-        devices.objectAt(0);
+      return devices
+        .rejectBy('mounted')
+        .filter(dev => get(usedDevices, get(dev, 'id')) === 0)[0] || devices.objectAt(0);
     }
   },
 

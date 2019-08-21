@@ -250,12 +250,11 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
-    // see STEP import for more info
-    // mockStep: Number(STEP.ZONE_IPS),
-    // NOTE: below: first step of deployment
+    // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
+    // deployment step. See more in models/installation-details.
+    //
     // mockStep: InstallationStepsMap.deploy,
-    // mockStep: InstallationStepsMap.oneproviderRegister,
+    // mockStep: InstallationStepsMap.oneproviderRegistration,
     // mockStep: InstallationStepsMap.dns,
     mockStep: InstallationStepsMap.done,
 
@@ -266,6 +265,10 @@ export default OnepanelServerBase.extend(
      */
     isInitialized: false,
 
+    /**
+     * Uncomment to force emergency mode
+     * @type {boolean}
+     */
     isEmergency: true,
 
     /**
@@ -457,7 +460,7 @@ export default OnepanelServerBase.extend(
           dnsCheckAcknowledged: mockStep.gt(InstallationStepsMap.dns),
         });
 
-        if (mockStep.gt(InstallationStepsMap.oneproviderRegister)) {
+        if (mockStep.gt(InstallationStepsMap.oneproviderRegistration)) {
           this.set('__provider', provider1);
         }
         if (mockStep.gt(InstallationStepsMap.webCert)) {
@@ -746,7 +749,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_configureProvider() {
-      this.set('mockStep', InstallationStepsMap.oneproviderRegister);
+      this.set('mockStep', InstallationStepsMap.oneproviderRegistration);
       return {
         success: (data) => {
           let __provider = this.get('__provider') ||
@@ -1385,7 +1388,7 @@ export default OnepanelServerBase.extend(
           build: '2100',
           deployed: mockInitializedCluster,
           isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
-            this.get('mockStep').gt(InstallationStepsMap.oneproviderRegister),
+            this.get('mockStep').gt(InstallationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
         }),
@@ -1477,7 +1480,7 @@ export default OnepanelServerBase.extend(
           '__cephMonitors',
           '__cephOsds'
         );
-        return PlainableObject.create({
+        const configuration = {
           cluster: {
             databases: {
               hosts: ['node1.example.com'],
@@ -1490,22 +1493,27 @@ export default OnepanelServerBase.extend(
               hosts: ['node2.example.com'],
             },
           },
-          // TODO add this only in zone mode
-          onezone: {
-            name: null,
-            domainName: window.location.hostname,
-          },
-          // TODO add this only in provider mode
-          oneprovider: {
-            name: null,
-          },
-          // TODO add this only in provider mode
-          ceph: Object.assign(__cephParams.plainCopy(), {
-            managers: __cephManagers,
-            monitors: __cephMonitors,
-            osds: __cephOsds,
-          }),
-        });
+        };
+        if (mockServiceType === 'oneprovider') {
+          Object.assign(configuration, {
+            oneprovider: {
+              name: null,
+            },
+            ceph: Object.assign(__cephParams.plainCopy(), {
+              managers: __cephManagers,
+              monitors: __cephMonitors,
+              osds: __cephOsds,
+            }),
+          });
+        } else {
+          Object.assign(configuration, {
+            onezone: {
+              name: null,
+              domainName: window.location.hostname,
+            },
+          });
+        }
+        return PlainableObject.create(configuration);
       }
     ),
 
@@ -1520,15 +1528,15 @@ export default OnepanelServerBase.extend(
     __blockDevices: A([{
       path: 'a',
       size: 10000000000,
-      mounted: true,
+      mounted: false,
     }, {
       path: 'b',
       size: 20000000000,
-      mounted: true,
+      mounted: false,
     }, {
       path: 'c',
       size: 1073741312,
-      mounted: true,
+      mounted: false,
     }, {
       path: 'd',
       size: 1073741312,

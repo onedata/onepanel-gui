@@ -112,7 +112,6 @@ export default OneForm.extend(I18n, Validations, {
   ],
 
   i18n: service(),
-  navigationState: service(),
   cephManager: service(),
 
   /**
@@ -246,15 +245,15 @@ export default OneForm.extend(I18n, Validations, {
       if (mode === 'show') {
         return ['meta', 'type_static', 'generic_static']
           .concat(lumaPrefixVisible ? ['luma_static'] : [])
-          .concat([selectedStorageType.id + '_static']);
+          .concat(selectedStorageType ? [selectedStorageType.id + '_static'] : []);
       } else if (mode === 'edit') {
         return ['meta', 'type_static', 'generic_editor']
           .concat(lumaPrefixVisible ? ['luma_editor'] : [])
-          .concat([selectedStorageType.id + '_editor']);
+          .concat(selectedStorageType ? [selectedStorageType.id + '_editor'] : []);
       } else {
         return ['meta', 'generic']
           .concat(lumaPrefixVisible ? ['luma'] : [])
-          .concat([selectedStorageType.id]);
+          .concat(selectedStorageType ? [selectedStorageType.id] : []);
       }
     }
   ),
@@ -415,9 +414,6 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
-  /**
-   * @type {Ember.ComputedProperty<number>}
-   */
   osdsNumberObserver: observer(
     'cephOsdsProxy.length',
     function osdsNumberObserver() {
@@ -487,10 +483,6 @@ export default OneForm.extend(I18n, Validations, {
 
     const storage = this.get('storage');
 
-    if (this.get('selectedStorageType') == null) {
-      this.set('selectedStorageType',
-        this.get('storageTypes.firstObject'));
-    }
     this.set('genericFields', GENERIC_FIELDS.map(fields =>
       EmberObject.create(fields)));
     this.get('genericFields').forEach(field => {
@@ -535,24 +527,14 @@ export default OneForm.extend(I18n, Validations, {
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
-        if (!storage) {
-          this.selectPreferredStorageType();
-        }
       }));
   },
 
-  selectPreferredStorageType() {
-    const prefferedTypeId =
-      this.get('navigationState.queryParams.create_storage_form_type');
-    if (prefferedTypeId) {
-      const visibleStorageTypes = this.get('visibleStorageTypes');
-      const preferredType = visibleStorageTypes.findBy('id', prefferedTypeId);
-      if (preferredType) {
-        this.set('selectedStorageType', preferredType);
-      }
-    }
-  },
-
+  /**
+   * Puts information about osds into form fields (sets default values for
+   * some fields).
+   * @returns {undefined}
+   */
   introduceCephOsds() {
     const {
       cephOsdsProxy,

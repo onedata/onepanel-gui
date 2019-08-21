@@ -45,14 +45,12 @@ export default EmberObject.extend({
     const propsToChange = {};
     const newMonitorIp = get(newConfig, 'monitorIp');
     if (this.get('monitorIp') !== newMonitorIp) {
-      set(propsToChange, 'monitorIp', newMonitorIp);
+      propsToChange.monitorIp = newMonitorIp;
     }
     if (isValid !== undefined && this.get('isValid') !== isValid) {
-      set(propsToChange, 'isValid', isValid);
+      propsToChange.isValid = isValid;
     }
-    if (get(Object.keys(propsToChange), 'length') > 0) {
-      this.setProperties(propsToChange);
-    }
+    this.setProperties(propsToChange);
   },
 
   /**

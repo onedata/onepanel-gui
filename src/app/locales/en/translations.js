@@ -77,8 +77,11 @@ import storageActions from './services/storage-actions';
 import clusterActions from './services/cluster-actions';
 import clusterModelManager from './services/cluster-model-manager';
 import onezoneGui from './services/onezone-gui';
+import deploymentManager from './services/deployment-manager';
 
 import onedata from './routes/onedata';
+
+import newClusterDeployProcess from './utils/new-cluster-deploy-process';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -171,9 +174,13 @@ let translations = {
     clusterActions,
     clusterModelManager,
     onezoneGui,
+    deploymentManager,
   },
   routes: {
     onedata,
+  },
+  utils: {
+    newClusterDeployProcess,
   },
 };
 
