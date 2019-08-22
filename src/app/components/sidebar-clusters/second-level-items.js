@@ -110,6 +110,7 @@ export default SecondLevelItems.extend(I18n, {
     'providerItem',
     'storagesItem',
     'spacesItem',
+    'guiSettingsItem',
     'membersItem',
     function clusterSecondLevelItems() {
       const {
