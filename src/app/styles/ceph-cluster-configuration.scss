@@ -4,6 +4,9 @@
       border: 0;
     }
   }
+  .one-collapsible-list-item-content.opened {
+    overflow: visible;
+  }
   .main-options-form {
     .form {
       $label-width: 110px;

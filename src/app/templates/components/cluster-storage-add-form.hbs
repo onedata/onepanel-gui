@@ -1,5 +1,5 @@
 {{#promise-proxy-container proxy=cephOsdsProxy}}
-  {{#bs-form submitOnEnter=false class=(concat "form-horizontal " (if (eq mode "show") "form-static" "")) as |form|}}
+  {{#bs-form submitOnEnter=false class=(concat "form-horizontal row " (if (eq mode "show") "form-static" "")) as |form|}}
     {{#if (eq mode "create")}}
       {{#form.group}}
         <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
