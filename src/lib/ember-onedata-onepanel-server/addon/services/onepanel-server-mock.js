@@ -1333,6 +1333,36 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onezone_getSignInNotification() {
+      return {
+        success: () => ({ text: this.get('__signInNotification' )}),
+      };
+    },
+
+    _req_onezone_setSignInNotification() {
+      return {
+        success: ({ text }) => {
+          this.set('__signInNotification', text);
+        },
+        statusCode: () => 200,
+      };
+    },
+
+    _req_onezone_getPrivacyPolicy() {
+      return {
+        success: () => ({ content: this.get('__privacyPolicy' )}),
+      };
+    },
+
+    _req_onezone_setPrivacyPolicy() {
+      return {
+        success: ({ content }) => {
+          this.set('__privacyPolicy', content);
+        },
+        statusCode: () => 200,
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
 
     __remoteProviders: computed('__provider', function __remoteProviders() {
@@ -1415,6 +1445,10 @@ export default OnepanelServerBase.extend(
     __spacesFilePopularity: A([]),
 
     __spacesAutoCleaning: A([]),
+
+    __signInNotification: '',
+
+    __privacyPolicy: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p><!-- <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button> -->',
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

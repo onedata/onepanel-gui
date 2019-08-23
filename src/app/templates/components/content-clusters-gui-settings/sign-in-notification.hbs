@@ -1,0 +1,17 @@
+<p>{{tt this "description"}}</p>
+<p>
+  <textarea
+    rows="4"
+    value={{signInNotification}}
+    oninput={{action "notificationChanged" value="target.value"}}
+    disabled={{isSaving}}
+    class="form-control sign-in-notification-input no-resize"></textarea>
+</p>
+<p>
+  {{#one-spin-button
+    class=(concat "btn btn-primary btn-save pull-right")
+    action=(action "save")}}
+    {{tt this "save"}}
+  {{/one-spin-button}}
+</p>
+{{yield}}

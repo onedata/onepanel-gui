@@ -2,6 +2,12 @@
   <h1>{{tt this "header"}}</h1>
 </div>
 <div class="row content-row">
-  {{!-- {{wysiwig-editor value=value onChange=(action (mut value))}} --}}
-  {{!-- {{safeValue}} --}}
+  {{#bs-tab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|}}
+    {{#tab.pane title=(tt this "tabs.signInNotification.header")}}
+      {{content-clusters-gui-settings/sign-in-notification}}
+    {{/tab.pane}}
+    {{#tab.pane title=(tt this "tabs.privacyPolicy.header")}}
+      {{content-clusters-gui-settings/privacy-policy}}
+    {{/tab.pane}}
+  {{/bs-tab}}
 </div>

@@ -73,6 +73,7 @@ import storageActions from './services/storage-actions';
 import clusterActions from './services/cluster-actions';
 import clusterModelManager from './services/cluster-model-manager';
 import onezoneGui from './services/onezone-gui';
+import guiSettingsActions from './services/gui-settings-actions';
 
 import onedata from './routes/onedata';
 
@@ -163,6 +164,7 @@ let translations = {
     clusterActions,
     clusterModelManager,
     onezoneGui,
+    guiSettingsActions,
   },
   routes: {
     onedata,
