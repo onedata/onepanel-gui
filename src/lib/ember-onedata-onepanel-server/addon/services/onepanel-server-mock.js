@@ -256,6 +256,7 @@ export default OnepanelServerBase.extend(
     // mockStep: InstallationStepsMap.deploy,
     // mockStep: InstallationStepsMap.oneproviderRegistration,
     // mockStep: InstallationStepsMap.dns,
+    // mockStep: InstallationStepsMap.oneproviderStorageAdd,
     mockStep: InstallationStepsMap.done,
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
@@ -908,10 +909,13 @@ export default OnepanelServerBase.extend(
       }),
 
     _req_oneprovider_getProviderSpaces() {
-      if (this.get('mockInitializedCluster')) {
-        // TODO use Object.keys if available
-        let spaces = this.get('__spaces');
-        let spaceIds = spaces.map(s => s.id);
+      const {
+        mockInitializedCluster,
+        mockStep,
+        __spaces,
+      } = this.getProperties('mockInitializedCluster', 'mockStep', '__spaces');
+      if (mockStep.gt(InstallationStepsMap.oneproviderRegistration)) {
+        const spaceIds = mockInitializedCluster ? __spaces.mapBy('id') : [];
         return {
           success: () => ({
             ids: spaceIds,
