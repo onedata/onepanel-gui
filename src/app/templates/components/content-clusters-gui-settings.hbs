@@ -2,11 +2,19 @@
   <h1>{{tt this "header"}}</h1>
 </div>
 <div class="row content-row">
-  {{#bs-tab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|}}
-    {{#tab.pane title=(tt this "tabs.signInNotification.header")}}
+  {{#bs-tab
+    class="only-tab-bar bs-tab-onedata bs-tab-modern"
+    activeId=activeTabId
+    onChange=(action "tabChange")
+    as |tab|}}
+    {{#tab.pane
+      title=(tt this "tabs.signInNotification.header")
+      elementId=(concat elementId "-signInNotification")}}
       {{content-clusters-gui-settings/sign-in-notification}}
     {{/tab.pane}}
-    {{#tab.pane title=(tt this "tabs.privacyPolicy.header")}}
+    {{#tab.pane
+      title=(tt this "tabs.privacyPolicy.header")
+      elementId=(concat elementId "-privacyPolicy")}}
       {{content-clusters-gui-settings/privacy-policy}}
     {{/tab.pane}}
   {{/bs-tab}}
