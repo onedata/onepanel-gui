@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-5703 Fixed validation of space auto-cleaning form
+* VFS-5702 Minimized number of requests related to cluster configuration
 * VFS-5499 Fixed displaying errors, when oz/op-worker service is not working
 * VFS-5667 Fixed service info element placement
 * VFS-5664 Fixed pointer events handling
