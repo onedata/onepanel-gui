@@ -1,6 +1,6 @@
 {{#promise-proxy-container proxy=savedPrivacyPolicyProxy}}
   <p>{{tt this "description"}}</p>
-  {{wysiwig-editor value=privacyPolicy onChange=(action "privacyPolicyChanged")}}
+  {{wysiwig-editor mode="edit" content=privacyPolicy onChange=(action "privacyPolicyChanged")}}
   <p>
     {{#one-spin-button
       class=(concat "btn btn-primary btn-save pull-right")
