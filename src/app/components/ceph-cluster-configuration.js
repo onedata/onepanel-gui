@@ -43,10 +43,8 @@ export default Component.extend(I18n, {
 
   init() {
     this._super(...arguments);
-
-    this.get('config.osdIdGenerator.nextIdFromBackendProxy').then(() => {
-      next(() => safeExec(this, 'expandNodesInDeployment'));
-    });
+    
+    next(() => safeExec(this, 'expandNodesInDeployment'));
   },
 
   /**

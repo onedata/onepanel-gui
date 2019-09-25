@@ -1206,13 +1206,6 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getNextOsdId: computed(function () {
-      return {
-        success: () => _.max(this.get('__cephOsds').mapBy('id')) + 1,
-        statusCode: () => 200,
-      };
-    }),
-
     // TODO: maybe implement real 
     _req_oneprovider_modifyProviderClusterIps() {
       return {
@@ -1561,14 +1554,23 @@ export default OnepanelServerBase.extend(
 
     __cephOsds: A([{
       id: 1,
+      uuid: '65b7d1ff-6133-40be-bb4f-acdb7163ec3b',
       host: 'node1.example.com',
-      type: 'bluestore',
+      type: 'blockdevice',
       device: 'c',
     }, {
       id: 2,
+      uuid: 'a77610ee-732b-43f5-be73-de54f21081db',
       host: 'node1.example.com',
-      type: 'bluestore',
+      type: 'blockdevice',
       device: 'b',
+    }, {
+      id: 3,
+      uuid: '610c7eb0-3117-4873-9e60-cd0d48aa419d',
+      host: 'node1.example.com',
+      type: 'loopdevice',
+      path: '/var/lib/ceph/loopdevices/osd-610c7eb0-3117-4873-9e60-cd0d48aa419d.loop',
+      size: 3 * 1024 * 1024 * 1024,
     }]),
 
     __cephOsdUsage: Object.freeze({
@@ -1581,6 +1583,11 @@ export default OnepanelServerBase.extend(
         total: 100000000,
         used: 75000000,
         available: 25000000,
+      },
+      3: {
+        total: 3 * 1024 * 1024 * 1024,
+        used: 1024 * 1024 * 1024,
+        available: 2 * 1024 * 1024 * 1024,
       },
     }),
 

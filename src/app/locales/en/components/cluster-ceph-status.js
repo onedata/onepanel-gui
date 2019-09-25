@@ -1,6 +1,6 @@
 export default {
-  bluestore: 'BlueStore',
-  filestore: 'FileStore',
+  blockdevice: 'Block device',
+  loopdevice: 'Loop device',
   osdsUsage: 'OSDs usage',
   noOsds: 'This Ceph cluster has no configured OSDs.',
   statusMessages: {

@@ -35,14 +35,14 @@
           {{/if}}
         </div>
         {{#promise-proxy-container proxy=node.devices}}
-          {{#each node.osds key="id" as |osd|}}
+          {{#each node.osds key="uuid" as |osd|}}
             {{ceph-cluster-configuration/osd-form
               osd=osd
               devices=node.devices
               usedDevices=node.usedDevices
               isCephDeployed=isCephDeployed
               allowsEdition=allowsEdition
-              removeOsd=(action "removeOsd" osd.id)}}
+              removeOsd=(action "removeOsd" osd.uuid)}}
           {{/each}}
         {{/promise-proxy-container}}
         {{#if allowsEdition}}

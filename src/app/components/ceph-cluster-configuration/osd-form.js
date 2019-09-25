@@ -17,47 +17,48 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 import _ from 'lodash';
 import { validator } from 'ember-cp-validations';
 import { conditional, raw } from 'ember-awesome-macros';
+import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 
 const editTypeFieldsDefinition = [{
   name: 'type',
   type: 'radio-group',
   options: [{
-    value: 'bluestore',
+    value: 'blockdevice',
   }, {
-    value: 'filestore',
+    value: 'loopdevice',
   }],
-  defaultValue: 'filestore',
+  defaultValue: 'loopdevice',
 }];
 
-const editBluestoreFieldsDefinition = [{
+const editBlockdeviceFieldsDefinition = [{
   name: 'device',
   type: 'dropdown',
-}, {
-  name: 'dbDevice',
-  type: 'dropdown',
-  optional: true,
 }];
 
-const editFilestoreFieldsDefinition = [{
+const editLoopdeviceFieldsDefinition = [{
   name: 'path',
   type: 'text',
-  optional: true,
+  regex: /^.*[^/]+$/,
+}, {
+  name: 'size',
+  type: 'capacity',
+  gt: 0,
 }];
 
 const allPrefixes = [
   'editType',
   'staticType',
-  'editBluestore',
-  'staticBluestore',
-  'editFilestore',
-  'staticFilestore',
+  'editBlockdevice',
+  'staticBlockdevice',
+  'editLoopdevice',
+  'staticLoopdevice',
 ];
 
 const validationsProto = {};
 [
   { prefix: 'editType', fields: editTypeFieldsDefinition },
-  { prefix: 'editBluestore', fields: editBluestoreFieldsDefinition },
-  { prefix: 'editFilestore', fields: editFilestoreFieldsDefinition },
+  { prefix: 'editBlockdevice', fields: editBlockdeviceFieldsDefinition },
+  { prefix: 'editLoopdevice', fields: editLoopdeviceFieldsDefinition },
 ].forEach(({ prefix, fields }) => {
   fields.reduce((proto, field) => {
     proto[`allFieldsValues.${prefix}.${field.name}`] = createFieldValidator(field);
@@ -76,10 +77,7 @@ const usedDeviceValidator = validator(function (value, options, model) {
 }, {
   dependentKeys: ['model.{usedDevices,mode}'],
 });
-[
-  'allFieldsValues.editBluestore.device',
-  'allFieldsValues.editBluestore.dbDevice',
-].forEach(field => validationsProto[field].push(usedDeviceValidator));
+validationsProto['allFieldsValues.editBlockdevice.device'].push(usedDeviceValidator);
 
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['row', 'content-row', 'osd-section'],
@@ -131,13 +129,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   mode: conditional('isCephDeployed', raw('show'), raw('edit')),
 
   /**
-   * Bluestore edit fields with devices converted to device dropdown options.
+   * Blockdevice edit fields with devices converted to device dropdown options.
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  filledEditBluestoreFieldsDefinition: computed(
+  filledEditBlockdeviceFieldsDefinition: computed(
     'devices.@each.{mounted,path}',
-    function filledEditBluestoreFieldsDefinition() {
-      const fields = _.cloneDeep(editBluestoreFieldsDefinition);
+    function filledEditBlockdeviceFieldsDefinition() {
+      const fields = _.cloneDeep(editBlockdeviceFieldsDefinition);
       const deviceOptions = this.get('devices')
         // Mounted devices should not be used as OSD device for safety reasons
         // (to avoid unintentional data lost).
@@ -156,14 +154,6 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       fields.forEach(field =>
         set(field, 'options', deviceOptions.slice(0))
       );
-      const dbDeviceField = fields.findBy('name', 'dbDevice');
-      get(dbDeviceField, 'options').unshift({
-        // 0 because power-select internally tries to treat value as an object
-        // (access its' properties), so undefined and null are triggering
-        // exceptions.
-        value: 0,
-        label: ' ',
-      });
       return fields;
     }
   ),
@@ -180,11 +170,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  editBluestoreFields: computed(
-    'filledEditBluestoreFieldsDefinition',
-    function editBluestoreFields() {
-      return this.get('filledEditBluestoreFieldsDefinition').map(f =>
-        this.prepareField(f, 'editBluestore')
+  editBlockdeviceFields: computed(
+    'filledEditBlockdeviceFieldsDefinition',
+    function editBlockdeviceFields() {
+      return this.get('filledEditBlockdeviceFieldsDefinition').map(f =>
+        this.prepareField(f, 'editBlockdevice')
       );
     }
   ),
@@ -192,9 +182,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  editFilestoreFields: computed(function editFilestoreFields() {
-    return editFilestoreFieldsDefinition.map(f =>
-      this.prepareField(f, 'editFilestore')
+  editLoopdeviceFields: computed(function editLoopdeviceFields() {
+    return editLoopdeviceFieldsDefinition.map(f =>
+      this.prepareField(f, 'editLoopdevice')
     );
   }),
 
@@ -210,18 +200,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  staticBluestoreFields: computed(function staticBluestoreFields() {
-    return editBluestoreFieldsDefinition.map(f =>
-      this.prepareField(f, 'staticBluestore', true)
+  staticBlockdeviceFields: computed(function staticBlockdeviceFields() {
+    return editBlockdeviceFieldsDefinition.map(f =>
+      this.prepareField(f, 'staticBlockdevice', true)
     );
   }),
 
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  staticFilestoreFields: computed(function staticFilestoreFields() {
-    return editFilestoreFieldsDefinition.map(f =>
-      this.prepareField(f, 'staticFilestore', true)
+  staticLoopdeviceFields: computed(function staticLoopdeviceFields() {
+    return editLoopdeviceFieldsDefinition.map(f =>
+      this.prepareField(f, 'staticLoopdevice', true)
     );
   }),
 
@@ -230,11 +220,11 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   allFields: union(
     'editTypeFields',
-    'editBluestoreFields',
-    'editFilestoreFields',
+    'editBlockdeviceFields',
+    'editLoopdeviceFields',
     'staticTypeFields',
-    'staticBluestoreFields',
-    'staticFilestoreFields'
+    'staticBlockdeviceFields',
+    'staticLoopdeviceFields'
   ),
 
   /**
@@ -261,13 +251,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       if (mode === 'edit') {
         prefixes.push('editType');
         const type = this.get('allFieldsValues.editType.type');
-        prefixes.push(type === 'bluestore' ? 'editBluestore' : 'editFilestore');
+        prefixes.push(type === 'blockdevice' ? 'editBlockdevice' : 'editLoopdevice');
       } else {
         prefixes.push('staticType');
         const type = this.get('allFieldsValues.staticType.type');
         prefixes.push(
-          type === get(this.t('fields.type.options.bluestore'), 'string') ?
-          'staticBluestore' : 'staticFilestore'
+          type === get(this.t('fields.type.options.blockdevice'), 'string') ?
+          'staticBlockdevice' : 'staticLoopdevice'
         );
       }
       return prefixes;
@@ -275,15 +265,13 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   ),
 
   /**
-   * True if form values are valid. device and dbDevice fields are not taken
-   * into account (are checked by internal config mechanisms).
+   * True if form values are valid. device field is not taken
+   * into account (is checked by internal config mechanisms).
    * @type {Ember.ComputedProperty<boolean>}
    */
   isFormValid: computed('errors', function isFormValid() {
-    const errors = this.get('errors').filter(error => ![
-      'allFieldsValues.editBluestore.device',
-      'allFieldsValues.editBluestore.dbDevice',
-    ].includes(get(error, 'attribute')));
+    const errors = this.get('errors')
+      .rejectBy('attribute', 'allFieldsValues.editBlockdevice.device');
     return get(errors, 'length') === 0;
   }),
 
@@ -294,8 +282,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     } = this.getProperties('osd', 'allFields');
     [
       ['Type', ['type']],
-      ['Bluestore', ['device', 'dbDevice']],
-      ['Filestore', ['path']],
+      ['Blockdevice', ['device']],
+      ['Loopdevice', ['path', 'size']],
     ].forEach(([prefix, osdFieldNames]) => {
       osdFieldNames.forEach(osdFieldName => {
         const value = get(osd, osdFieldName);
@@ -317,6 +305,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
         }
       });
     });
+
     this.recalculateErrors();
   }),
 
@@ -375,6 +364,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       switch (fieldName) {
         case 'type':
           return get(this.t(`fields.type.options.${value}`), 'string');
+        case 'size':
+          return typeof value === 'number' ? bytesToString(value) : undefined;
         default:
           return value;
       }
@@ -390,27 +381,28 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   constructConfig() {
     const {
       editType,
-      editBluestore,
-      editFilestore,
+      editBlockdevice,
+      editLoopdevice,
     } = getProperties(
       this.get('allFieldsValues'),
       'editType',
-      'editBluestore',
-      'editFilestore'
+      'editBlockdevice',
+      'editLoopdevice'
     );
     const type = get(editType, 'type');
+    const device = get(editBlockdevice, 'device');
     const {
-      device,
-      dbDevice,
-    } = getProperties(editBluestore, 'device', 'dbDevice');
-    const path = get(editFilestore, 'path');
+      path,
+      size,
+    } = getProperties(editLoopdevice, 'path', 'size');
 
     const config = {
       id: this.get('osd.id'),
+      uuid: this.get('osd.uuid'),
       type,
       device,
-      dbDevice: dbDevice === 0 ? undefined : dbDevice,
       path,
+      size,
     };
     return config;
   },
@@ -424,8 +416,9 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   exposeInjectedDataErrors() {
     [
-      'editBluestore.device',
-      'editBluestore.dbDevice',
+      'editBlockdevice.device',
+      'editLoopdevice.path',
+      'editLoopdevice.size',
     ].forEach(fieldName => {
       const value = this.get(`allFieldsValues.${fieldName}`);
       if (value) {

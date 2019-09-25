@@ -63,7 +63,7 @@ const cephSteps = [
   'service_ceph_mgr:wait_for_init',
   'service_ceph_mgr:register',
   'service_ceph_osd:create',
-  'service_ceph_osd:prepare_filestore_dir',
+  'service_ceph_osd:prepare_loopdevice',
   'service_ceph_osd:mkfs',
   'service_ceph_osd:update_keyring',
   'service_ceph_osd:mark_deployed',

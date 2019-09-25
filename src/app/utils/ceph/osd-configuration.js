@@ -7,14 +7,15 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { set, get } from '@ember/object';
+import EmberObject, { set, get, setProperties } from '@ember/object';
 
 const osdFields = [
   'id',
+  'uuid',
   'type',
   'device',
-  'dbDevice',
   'path',
+  'size',
 ];
 
 export default EmberObject.extend({
@@ -30,7 +31,12 @@ export default EmberObject.extend({
   id: undefined,
 
   /**
-   * One of `filestore`, `bluestore`
+   * @type {string}
+   */
+  uuid: undefined,
+
+  /**
+   * One of `loopdevice`, `blockdevice`
    * @type {string}
    * @virtual
    */
@@ -39,23 +45,23 @@ export default EmberObject.extend({
   /**
    * @type {string}
    * @virtual
-   * Only when type is `bluestore`
+   * Only when type is `blockdevice`
    */
   device: undefined,
 
   /**
    * @type {string}
    * @virtual
-   * Only when type is `bluestore`
-   */
-  dbDevice: undefined,
-
-  /**
-   * @type {string}
-   * @virtual
-   * Only when type is `filestore`
+   * Only when type is `loopdevice`
    */
   path: undefined,
+
+  /**
+   * @type {number}
+   * @virtual
+   * Only when type is `loopdevice`
+   */
+  size: undefined,
 
   /**
    * If true then osd config is valid
@@ -93,27 +99,27 @@ export default EmberObject.extend({
   toRawConfig() {
     const {
       id,
+      uuid,
       type,
       device,
-      dbDevice,
       path,
+      size,
     } = this.getProperties(...osdFields);
     const config = {
       id,
+      uuid,
       host: this.get('node.host'),
       type,
     };
     switch (type) {
-      case 'bluestore':
+      case 'blockdevice':
         set(config, 'device', device);
-        if (dbDevice) {
-          set(config, 'dbDevice', dbDevice);
-        }
         break;
-      case 'filestore':
-        if (path) {
-          set(config, 'path', path);
-        }
+      case 'loopdevice':
+        setProperties(config, {
+          path,
+          size,
+        });
         break;
     }
     return config;

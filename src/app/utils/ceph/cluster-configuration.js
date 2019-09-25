@@ -10,7 +10,6 @@
 import EmberObject, { computed, get, getProperties } from '@ember/object';
 import { A } from '@ember/array';
 import { getOwner } from '@ember/application';
-import CephOsdIdGenerator from 'onepanel-gui/utils/ceph/osd-id-generator';
 import _ from 'lodash';
 import CephNodeConfiguration from 'onepanel-gui/utils/ceph/node-configuration';
 import CephClusterMainConfiguration from 'onepanel-gui/utils/ceph/cluster-main-configuration';
@@ -36,11 +35,6 @@ export default EmberObject.extend({
   mainConfiguration: computed(function mainConfiguration() {
     return CephClusterMainConfiguration.create();
   }),
-
-  /**
-   * @type {Utils/Ceph/OsdIdGenerator}
-   */
-  osdIdGenerator: undefined,
 
   /**
    * List of Ceph cluster nodes.
@@ -73,31 +67,19 @@ export default EmberObject.extend({
     'mainConfiguration.isValid',
   ),
 
-  init() {
-    this._super(...arguments);
-    this.set(
-      'osdIdGenerator',
-      CephOsdIdGenerator.create(getOwner(this).ownerInjection())
-    );
-  },
-
   /**
    * Creates new cluster node and adds it to the configuration.
    * @param {string} host 
    * @returns {Utils/Ceph/NodeConfiguration}
    */
   addNode(host) {
-    const {
-      nodes,
-      osdIdGenerator,
-    } = this.getProperties('nodes', 'osdIdGenerator');
+    const nodes = this.get('nodes');
     const existingNode = nodes.findBy('host', host);
     if (existingNode) {
       return existingNode;
     } else {
       const node = CephNodeConfiguration.create(getOwner(this).ownerInjection(), {
         host,
-        osdIdGenerator,
       });
       nodes.pushObject(node);
       return node;

@@ -25,18 +25,18 @@ export default {
       type: {
         label: 'Type',
         options: {
-          bluestore: 'BlueStore',
-          filestore: 'FileStore',
+          blockdevice: 'Block device',
+          loopdevice: 'Loop device',
         },
       },
       device: {
         label: 'Device',
       },
-      dbDevice: {
-        label: 'Database device',
-      },
       path: {
         label: 'Path',
+      },
+      size: {
+        label: 'Size',
       },
     },
     deviceAlreadyUsed: 'Device used by another OSD',

@@ -16,6 +16,7 @@ import _ from 'lodash';
 import CephManagerMonitorConfiguration from 'onepanel-gui/utils/ceph/manager-monitor-configuration';
 import CephOsdConfiguration from 'onepanel-gui/utils/ceph/osd-configuration';
 import CephNodeDevice from 'onepanel-gui/utils/ceph/node-device';
+import { v4 as uuid } from 'ember-uuid';
 
 export default EmberObject.extend({
   onepanelServer: service(),
@@ -26,12 +27,6 @@ export default EmberObject.extend({
    * @virtual
    */
   host: undefined,
-
-  /**
-   * @type {Utils/Ceph/OsdIdGenerator}
-   * @virtual
-   */
-  osdIdGenerator: undefined,
 
   /**
    * @type {Ember.ComputedProperty<PromiseArray<Utils/Ceph/NodeDevice>>}
@@ -64,7 +59,7 @@ export default EmberObject.extend({
    */
   usedDevices: computed(
     'devices.{[],isFulfilled}',
-    'osds.@each.{type,device,dbDevice}',
+    'osds.@each.{type,device}',
     function usedDevices() {
       const {
         osds,
@@ -80,21 +75,18 @@ export default EmberObject.extend({
           .forEach(id => set(used, id, 0));
 
         osds
-          .filter(osd => get(osd, 'type') === 'bluestore')
-          .forEach(osd => {
-            const osdDevicesPaths = _.uniq(_.values(
-              getProperties(osd, 'device', 'dbDevice')
-            )).compact();
-            osdDevicesPaths
-              // find device by path
-              .map(path => devices.findBy('path', path))
-              // remove not-found values (undefined)
-              .compact()
-              // map to device id
-              .mapBy('id')
-              // increment proper field in `used` object
-              .forEach(id => set(used, id, get(used, id) + 1));
-          });
+          .filterBy('type', 'blockdevice')
+          .mapBy('device')
+          .compact()
+          // find device by path
+          .map(path => devices.findBy('path', path))
+          // remove not-found values (undefined)
+          .compact()
+          // map to device id
+          .mapBy('id')
+          // increment proper field in `used` object
+          .forEach(id => set(used, id, get(used, id) + 1));
+        
         return used;
       }
     }
@@ -152,16 +144,15 @@ export default EmberObject.extend({
    * @returns {Utils/Ceph/OsdConfiguration}
    */
   addOsd() {
-    const {
-      osdIdGenerator,
-      osds,
-    } = this.getProperties('osdIdGenerator', 'osds');
+    const osds = this.get('osds');
 
+    const osdUuid = uuid();
     const osd = CephOsdConfiguration.create({
       node: this,
-      id: osdIdGenerator.getNextId(),
-      type: 'filestore',
+      uuid: osdUuid,
+      type: 'loopdevice',
       device: get((this.getDeviceForNewOsd() || {}), 'path'),
+      path: `/var/lib/ceph/loopdevices/osd-${osdUuid}.loop`,
     });
 
     osds.pushObject(osd);
@@ -169,12 +160,12 @@ export default EmberObject.extend({
   },
 
   /**
-   * Removes OSD by id.
-   * @param {number} id 
+   * Removes OSD by uuid.
+   * @param {string} uuid 
    */
-  removeOsd(id) {
+  removeOsd(uuid) {
     const osds = this.get('osds');
-    const osdToRemove = osds.findBy('id', id);
+    const osdToRemove = osds.findBy('uuid', uuid);
     if (osdToRemove) {
       set(osdToRemove, 'node', undefined);
       osds.removeObject(osdToRemove);

@@ -38,7 +38,7 @@ export default {
       add_mon_to_config: 'registering {{service}} in config file',
       setup_initial_member: 'registering {{service}} in config file',
       add_monitors: 'storing {{service}} configuration',
-      prepare_filestore_dir: 'preparing {{service}} directory',
+      prepare_loopdevice: 'preparing {{service}} loop device',
       partition_bluestore_devices: 'partitioning storage for {{service}}',
       mark_deployed: 'finalizing {{service}} deployment',
       create_pool: 'creating {{service}} pool',

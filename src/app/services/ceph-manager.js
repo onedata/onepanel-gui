@@ -172,15 +172,6 @@ export default Service.extend({
   },
 
   /**
-   * Returns next possible Osd Id
-   * @returns {Promise<number>}
-   */
-  getNextOsdId() {
-    return this.get('onepanelServer').request('oneprovider', 'getNextOsdId')
-      .then(({ data }) => data);
-  },
-
-  /**
    * Checks whether local ceph storage can be created or not
    * @returns {Promise<boolean>} resolves to true if ceph local storage
    *   can be created
