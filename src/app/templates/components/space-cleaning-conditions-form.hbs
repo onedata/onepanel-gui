@@ -33,7 +33,10 @@
 {{#bs-form class=(concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")) as |form|}}
   {{#each sourceFieldNames as |fieldName|}}
     {{#form.group 
-      class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
+      class=(concat-classes
+        (concat fieldName "Group")
+        (if (and (get formData (concat fieldName "Enabled")) (get formFieldsErrors fieldName)) "has-error")
+      )
     }}
       <div class="toggle-column">
         {{one-checkbox 
