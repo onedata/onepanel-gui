@@ -1336,31 +1336,16 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getSignInNotification() {
+    _req_onezone_getGuiMessage() {
       return {
-        success: () => ({ text: this.get('__signInNotification' )}),
+        success: (id) => this.get('__guiMessages', id),
       };
     },
 
-    _req_onezone_setSignInNotification() {
+    _req_onezone_modifyGuiMessage() {
       return {
-        success: ({ text }) => {
-          this.set('__signInNotification', text);
-        },
-        statusCode: () => 200,
-      };
-    },
-
-    _req_onezone_getPrivacyPolicy() {
-      return {
-        success: () => ({ content: this.get('__privacyPolicy' )}),
-      };
-    },
-
-    _req_onezone_setPrivacyPolicy() {
-      return {
-        success: ({ content }) => {
-          this.set('__privacyPolicy', content);
+        success: (id, message) => {
+          this.set('__guiMessages', id, message);
         },
         statusCode: () => 200,
       };
@@ -1449,9 +1434,20 @@ export default OnepanelServerBase.extend(
 
     __spacesAutoCleaning: A([]),
 
-    __signInNotification: '',
-
-    __privacyPolicy: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p><!-- <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button> -->',
+    __guiMessages: computed(() => ({
+      signin_notification: {
+        enabled: false,
+        content: '',
+      },
+      privacy_policy: {
+        enabled: true,
+        content: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p><!-- <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button> -->',
+      },
+      cookie_consent_notification: {
+        enabled: true,
+        content: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy]',
+      },
+    })),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

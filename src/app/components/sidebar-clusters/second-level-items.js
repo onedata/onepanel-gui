@@ -18,6 +18,7 @@ export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
   memberManager: service(),
+  guiSettingsManager: service(),
   onepanelServer: service(),
 
   /**
@@ -39,6 +40,11 @@ export default SecondLevelItems.extend(I18n, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   hasNoConnectedUser: reads('memberManager.hasNoConnectedUser'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  guiSettingsValid: reads('guiSettingsManager.guiSettingsValid'),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -91,6 +97,16 @@ export default SecondLevelItems.extend(I18n, {
       id: 'emergency-passphrase',
       label: this.t('emergencyPassphrase'),
       icon: 'key',
+    };
+  }),
+
+  guiSettingsItem: computed('guiSettingsValid', function guiSettingsItem() {
+    return {
+      id: 'gui-settings',
+      label: this.t('guiSettings'),
+      icon: 'view-grid',
+      warningMessage: this.get('guiSettingsValid') === false ?
+        this.t('guiSettingsWarning') : undefined,
     };
   }),
 

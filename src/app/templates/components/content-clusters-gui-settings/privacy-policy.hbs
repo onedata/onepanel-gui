@@ -1,10 +1,21 @@
-{{#promise-proxy-container proxy=savedPrivacyPolicyProxy}}
-  <p>{{tt this "description"}}</p>
-  {{wysiwig-editor mode="edit" content=privacyPolicy onChange=(action "privacyPolicyChanged")}}
+{{#promise-proxy-container proxy=savedMessageProxy}}
+  {{#if (and isEnabled (not content))}}
+    <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
+  {{/if}}
+  <p class="subheader-text">{{tt this "description"}}</p>
+  <p>
+    <label for="privacy-policy-enabled" class="align-left">{{tt this "privacyPolicyEnabled"}}:</label>
+    {{one-way-toggle
+      inputId="privacy-policy-enabled"
+      checked=isEnabled
+      update=(action "isEnabledChanged")}}
+  </p>
+  {{wysiwig-editor mode="edit" content=content onChange=(action "contentChanged")}}
   <p>
     {{#one-spin-button
       class=(concat "btn btn-primary btn-save pull-right")
-      action=(action "save")}}
+      action=(action "save")
+      disabled=(not isModified)}}
       {{tt this "save"}}
     {{/one-spin-button}}
   </p>

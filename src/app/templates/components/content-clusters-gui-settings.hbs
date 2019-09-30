@@ -17,5 +17,10 @@
       elementId=(concat elementId "-privacyPolicy")}}
       {{content-clusters-gui-settings/privacy-policy}}
     {{/tab.pane}}
+    {{#tab.pane
+      title=(tt this "tabs.cookieConsentNotification.header")
+      elementId=(concat elementId "-cookieConsentNotification")}}
+      {{content-clusters-gui-settings/cookie-consent-notification}}
+    {{/tab.pane}}
   {{/bs-tab}}
 </div>

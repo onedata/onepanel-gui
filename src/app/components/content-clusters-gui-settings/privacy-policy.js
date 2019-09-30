@@ -1,58 +1,29 @@
-import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
-import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-settings/gui-message-editor-base';
+import { reads } from '@ember/object/computed';
 
-export default Component.extend(
-  I18n,
-  createDataProxyMixin('savedPrivacyPolicy'), {
-    classNames: ['gui-settings-privacy-policy'],
+export default GuiMessageEditorBase.extend(I18n, {
+  classNames: ['gui-settings-privacy-policy'],
 
-    i18n: service(),
-    guiSettingsActions: service(),
+  i18n: service(),
+  guiSettingsActions: service(),
+  guiSettingsManager: service(),
 
-    /**
-     * @override
-     */
-    i18nPrefix: 'components.contentClustersGuiSettings.tabs.privacyPolicy',
+  /**
+   * @override
+   */
+  savedMessageProxy: reads('guiSettingsManager.privacyPolicyProxy'),
 
-    /**
-     * Contains privacy policy content visible in editor.
-     * @type {string}
-     */
-    privacyPolicy: '',
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.contentClustersGuiSettings.tabs.privacyPolicy',
 
-    /**
-     * @type {boolean}
-     */
-    isSaving: false,
-
-    init() {
-      this._super(...arguments);
-
-      this.get('savedPrivacyPolicyProxy')
-        .then(content => safeExec(this, () => this.set('privacyPolicy', content)));
-    },
-
-    /**
-     * @override
-     */
-    fetchSavedPrivacyPolicy() {
-      return this.get('guiSettingsActions').getPrivacyPolicy();
-    },
-
-    actions: {
-      privacyPolicyChanged(content) {
-        this.set('privacyPolicy', content);
-      },
-      save() {
-        const {
-          guiSettingsActions,
-          privacyPolicy,
-        } = this.getProperties('guiSettingsActions', 'privacyPolicy');
-        return guiSettingsActions.savePrivacyPolicy(privacyPolicy);
-      },
-    },
-  }
-);
+  /**
+   * @override
+   */
+  save(message) {
+    return this.get('guiSettingsActions').setPrivacyPolicy(message);
+  },
+});

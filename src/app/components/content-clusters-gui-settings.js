@@ -5,7 +5,7 @@ import { computed } from '@ember/object';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
-const allowedTabs = ['signInNotification', 'privacyPolicy'];
+const allowedTabs = ['signInNotification', 'privacyPolicy', 'cookieConsentNotification'];
 
 export default Component.extend(I18n, {
   classNames: ['content-clusters-gui-settings'],

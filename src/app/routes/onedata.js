@@ -16,6 +16,7 @@ export default OnedataRoute.extend(I18n, {
   clusterModelManager: service(),
   onepanelServer: service(),
   deploymentManager: service(),
+  guiSettingsManager: service(),
   onepanelConfiguration: service(),
   onezoneGui: service(),
 
@@ -39,6 +40,7 @@ export default OnedataRoute.extend(I18n, {
     return Promise.all([
       this._super(...arguments),
       this.get('deploymentManager').getInstallationDetailsProxy(),
+      this.get('guiSettingsManager').getGuiSettingsProxy(),
     ]).then(([model, installDetails]) => {
       if (isEmergency) {
         const items = get(model, 'mainMenuItems');

@@ -1,47 +1,127 @@
 import Service, { inject as service } from '@ember/service';
 import DOMPurify from 'npm:dompurify';
+import { resolve } from 'rsvp';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { and, or, not } from 'ember-awesome-macros';
 
-export default Service.extend({
+/**
+ * @typedef {Object} GuiMessage
+ * @property {boolean} enabled
+ * @property {string} content content with/without html tags (specific for each
+ * message).
+ */
+
+export default Service.extend(
+  createDataProxyMixin('signInNotification'),
+  createDataProxyMixin('privacyPolicy'),
+  createDataProxyMixin('cookieConsentNotification'),
+  createDataProxyMixin('guiSettings'), {
+    
   onepanelServer: service(),
+  guiUtils: service(),
 
   /**
-   * Returns promise, which resolves to sign-in notification text.
-   * @returns {Promise<string>}
+   * @type {Ember.ComputedProperty<boolean>}
    */
-  getSignInNotification() {
-    return this.get('onepanelServer')
-      .staticRequest('onezone', 'getSignInNotification')
-      .then(({ data: { text } }) => text);
+  guiSettingsValid: and(
+    or(not('signInNotification.enabled'), 'signInNotification.content'),
+    or(not('privacyPolicy.enabled'), 'privacyPolicy.content'),
+    or(not('cookieConsentNotification.enabled'), 'cookieConsentNotification.content'),
+  ),
+
+  /**
+   * @override
+   */
+  fetchGuiSettings() {
+    const {
+      signInNotificationProxy,
+      privacyPolicyProxy,
+      cookieConsentNotificationProxy,
+    } = this.getProperties(
+      'cookieConsentNotificationProxy',
+      'privacyPolicyProxy',
+      'cookieConsentNotificationProxy'
+    );
+
+    return Promise.all([
+      signInNotificationProxy,
+      privacyPolicyProxy,
+      cookieConsentNotificationProxy,
+    ]);
   },
 
   /**
-   * Saves new sign-in notification text.
-   * @param {string} signInNotification
+   * @override
+   */
+  fetchSignInNotification() {
+    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
+      .staticRequest('onezone', 'getGuiMessage', 'signin_notification')
+      .then(({ data: { enabled, content } }) => ({
+        enabled,
+        content: DOMPurify.sanitize(content, { ALLOWED_TAGS: ['#text'] }),
+      })) : resolve();
+  },
+
+  /**
+   * Saves new sign-in notification config.
+   * @param {GuiMessage} message
    * @returns {Promise}
    */
-  saveSignInNotification(signInNotification) {
+  setSignInNotification({ enabled, content }) {
     return this.get('onepanelServer')
-      .request('onezone', 'setSignInNotification', { text: signInNotification });
+      .request('onezone', 'modifyGuiMessage', 'signin_notification', {
+        enabled,
+        content: DOMPurify.sanitize(content, { ALLOWED_TAGS: ['#text'] }),
+      });
   },
 
   /**
-   * Returns promise, which resolves to privacy policy content.
-   * @returns {Promise<string>}
+   * @override
    */
-  getPrivacyPolicy() {
-    return this.get('onepanelServer')
-      .staticRequest('onezone', 'getPrivacyPolicy')
-      .then(({ data: { content } }) => DOMPurify.sanitize(content));
+  fetchPrivacyPolicy() {
+    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
+      .staticRequest('onezone', 'getGuiMessage', 'privacy_policy')
+      .then(({ data: { enabled, content } }) => ({
+        enabled,
+        content: DOMPurify.sanitize(content),
+      })) : resolve();
   },
 
   /**
-   * Saves new privacy policy content.
-   * @param {string} privacyPolicy
+   * Saves new privacy policy message config.
+   * @param {GuiMessage} message
    * @returns {Promise}
    */
-  savePrivacyPolicy(privacyPolicy) {
-    const content = DOMPurify.sanitize(privacyPolicy);
+  setPrivacyPolicy({ enabled, content }) {
     return this.get('onepanelServer')
-      .request('onezone', 'setPrivacyPolicy', { content });
+      .request('onezone', 'setGuiMessage', 'privacy_policy', {
+        enabled,
+        content: DOMPurify.sanitize(content),
+      });
+  },
+
+  /**
+   * @override
+   */
+  fetchCookieConsentNotification() {
+    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
+      .staticRequest('onezone', 'getGuiMessage', 'cookie_consent_notification')
+      .then(({ data: { enabled, content } }) => ({
+        enabled,
+        content: DOMPurify.sanitize(content, { ALLOWED_TAGS: ['#text'] }),
+      })) : resolve();
+  },
+
+  /**
+   * Saves new cookie consent notification config.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  setCookieConsentNotification({ enabled, content }) {
+    return this.get('onepanelServer')
+      .request('onezone', 'setGuiMessage', 'cookie_consent_notification', {
+        enabled,
+        content: DOMPurify.sanitize(content, { ALLOWED_TAGS: ['#text'] }),
+      });
   },
 });

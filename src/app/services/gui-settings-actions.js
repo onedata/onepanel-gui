@@ -12,25 +12,25 @@ export default Service.extend(I18n, {
   i18nPrefix: 'services.guiSettingsActions',
 
   /**
-   * Returns promise, which resolves to sign-in notification text.
-   * @returns {Promise<string>}
+   * Returns promise, which resolves to sign-in notification message
+   * @returns {Promise<GuiMessage>}
    */
   getSignInNotification() {
     return this.get('guiSettingsManager').getSignInNotification();
   },
 
   /**
-   * Saves new sign-in notification text.
-   * @param {string} signInNotification
+   * Saves new sign-in notification.
+   * @param {GuiMessage} message
    * @returns {Promise}
    */
-  saveSignInNotification(signInNotification) {
+  setSignInNotification(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .saveSignInNotification(signInNotification)
+      .setSignInNotification(message)
       .then(
         result => {
           globalNotify.success(this.t('signInNotificationSaveSuccess'));
@@ -45,7 +45,7 @@ export default Service.extend(I18n, {
 
   /**
    * Returns promise, which resolves to privacy policy.
-   * @returns {Promise<string>}
+   * @returns {Promise<GuiMessage>}
    */
   getPrivacyPolicy() {
     return this.get('guiSettingsManager').getPrivacyPolicy();
@@ -53,16 +53,16 @@ export default Service.extend(I18n, {
 
   /**
    * Saves new privacy policy content.
-   * @param {string} privacyPolicy
+   * @param {GuiMessage} message
    * @returns {Promise}
    */
-  savePrivacyPolicy(privacyPolicy) {
+  setPrivacyPolicy(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .savePrivacyPolicy(privacyPolicy)
+      .savePrivacyPolicy(message)
       .then(
         result => {
           globalNotify.success(this.t('privacyPolicySaveSuccess'));
@@ -70,6 +70,38 @@ export default Service.extend(I18n, {
         },
         error => {
           globalNotify.backendError(this.t('savingPrivacyPolicy', error));
+          throw error;
+        }
+      );
+  },
+
+  /**
+   * Returns promise, which resolves to cookie consent notification
+   * @returns {Promise<GuiMessage>}
+   */
+  getCookieConsentNotification() {
+    return this.get('guiSettingsManager').getCookieConsentNotification();
+  },
+
+  /**
+   * Saves new cookie consent notification.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  setCookieConsentNotification(message) {
+    const {
+      guiSettingsManager,
+      globalNotify,
+    } = this.getProperties('guiSettingsManager', 'globalNotify');
+    return guiSettingsManager
+      .setCookieConsentNotification(message)
+      .then(
+        result => {
+          globalNotify.success(this.t('cookieConsentNotificationSaveSuccess'));
+          return result;
+        },
+        error => {
+          globalNotify.backendError(this.t('savingCookieConsentNotification', error));
           throw error;
         }
       );
