@@ -6,21 +6,75 @@
     class="only-tab-bar bs-tab-onedata bs-tab-modern"
     activeId=activeTabId
     onChange=(action "tabChange")
+    customTabs=true
     as |tab|}}
-    {{#tab.pane
-      title=(tt this "tabs.signInNotification.header")
-      elementId=(concat elementId "-signInNotification")}}
-      {{content-clusters-gui-settings/sign-in-notification}}
-    {{/tab.pane}}
-    {{#tab.pane
-      title=(tt this "tabs.privacyPolicy.header")
-      elementId=(concat elementId "-privacyPolicy")}}
-      {{content-clusters-gui-settings/privacy-policy}}
-    {{/tab.pane}}
-    {{#tab.pane
-      title=(tt this "tabs.cookieConsentNotification.header")
-      elementId=(concat elementId "-cookieConsentNotification")}}
-      {{content-clusters-gui-settings/cookie-consent-notification}}
-    {{/tab.pane}}
+    {{#bs-nav type="tabs" as |nav|}}
+      {{#nav.item class="sign-in-notification-item" active=(eq tab.activeId (concat elementId "-signInNotification"))}}
+        <a
+          class="nav-link"
+          role="tab" {{action tab.select (concat elementId "-signInNotification")}}>
+          {{tt this "tabs.signInNotification.header"}}
+          {{#if guiSettingsManager.signInNotificationEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.signInNotification.emptyContentWarning")
+                triggerElement=".sign-in-notification-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+      {{#nav.item class="privacy-policy-item" active=(eq tab.activeId (concat elementId "-privacyPolicy"))}}
+        <a href={{concat "#" tabSyncId}}
+          class="nav-link"
+          role="tab" {{action tab.select (concat elementId "-privacyPolicy")}}>
+          {{tt this "tabs.privacyPolicy.header"}}
+          {{#if guiSettingsManager.privacyPolicyEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.privacyPolicy.emptyContentWarning")
+                triggerElement=".privacy-policy-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+      {{#nav.item class="cookie-consent-notification-item" active=(eq tab.activeId (concat elementId "-cookieConsentNotification"))}}
+        <a class="nav-link" role="tab" {{action tab.select (concat elementId "-cookieConsentNotification")}}>
+          {{tt this "tabs.cookieConsentNotification.header"}}
+          {{#if guiSettingsManager.cookieConsentNotificationEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.cookieConsentNotification.emptyContentWarning")
+                triggerElement=".cookie-consent-notification-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+    {{/bs-nav}}
+    <div class="tab-content">
+      {{#tab.pane
+        title=(tt this "tabs.signInNotification.header")
+        elementId=(concat elementId "-signInNotification")}}
+        {{content-clusters-gui-settings/sign-in-notification}}
+      {{/tab.pane}}
+      {{#tab.pane
+        title=(tt this "tabs.privacyPolicy.header")
+        elementId=(concat elementId "-privacyPolicy")}}
+        {{content-clusters-gui-settings/privacy-policy}}
+      {{/tab.pane}}
+      {{#tab.pane
+        title=(tt this "tabs.cookieConsentNotification.header")
+        elementId=(concat elementId "-cookieConsentNotification")}}
+        {{content-clusters-gui-settings/cookie-consent-notification}}
+      {{/tab.pane}}
+    </div>
   {{/bs-tab}}
 </div>

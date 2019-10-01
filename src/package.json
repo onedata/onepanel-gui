@@ -91,7 +91,7 @@
     "insert-text-at-cursor": "0.3.0",
     "jquery.scrollto": "2.1.2",
     "loader.js": "4.6.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#67fcfab81838640b041597cc89bf29118552162d",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#3019a32d60f1f0e0db990ec090983202f66ae88d",
     "perfect-scrollbar": "0.8.1",
     "round10": "1.0.3",
     "sass": "1.17.0",

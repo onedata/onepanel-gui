@@ -105,7 +105,7 @@ export default SecondLevelItems.extend(I18n, {
       id: 'gui-settings',
       label: this.t('guiSettings'),
       icon: 'view-grid',
-      warningMessage: this.get('guiSettingsValid') === false ?
+      warningMessage: !this.get('guiSettingsValid') ?
         this.t('guiSettingsWarning') : undefined,
     };
   }),

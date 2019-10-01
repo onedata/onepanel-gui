@@ -1,5 +1,5 @@
 {{#promise-proxy-container proxy=savedMessageProxy}}
-  {{#if (and isEnabled (not content))}}
+  {{#if (and isEnabled (not body))}}
     <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>
@@ -10,7 +10,11 @@
       checked=isEnabled
       update=(action "isEnabledChanged")}}
   </p>
-  {{wysiwig-editor mode="edit" content=content onChange=(action "contentChanged")}}
+  {{wysiwig-editor
+    mode="edit"
+    content=body
+    disabled=(or isSaving (not isEnabled))
+    onChange=(action "bodyChanged")}}
   <p>
     {{#one-spin-button
       class=(concat "btn btn-primary btn-save pull-right")

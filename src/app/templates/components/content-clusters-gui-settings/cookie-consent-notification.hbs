@@ -1,5 +1,5 @@
 {{#promise-proxy-container proxy=savedMessageProxy}}
-  {{#if (and isEnabled (not content))}}
+  {{#if (and isEnabled (not body))}}
     <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>
@@ -14,8 +14,8 @@
   <p>
     <textarea
       rows="4"
-      value={{content}}
-      oninput={{action "contentChanged" value="target.value"}}
+      value={{body}}
+      oninput={{action "bodyChanged" value="target.value"}}
       disabled={{or isSaving (not isEnabled)}}
       class="form-control cookie-consent-notification-input no-resize"></textarea>
   </p>

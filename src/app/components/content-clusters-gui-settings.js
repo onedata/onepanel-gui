@@ -12,6 +12,7 @@ export default Component.extend(I18n, {
 
   i18n: service(),
   router: service(),
+  guiSettingsManager: service(),
 
   /**
    * @override

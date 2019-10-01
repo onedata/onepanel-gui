@@ -1,5 +1,4 @@
 import Component from '@ember/component';
-import { set } from '@ember/object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { or, notEqual } from 'ember-awesome-macros';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
@@ -11,10 +10,10 @@ export default Component.extend({
   isEnabled: true,
 
   /**
-   * Contains privacy policy content visible in editor.
+   * Contains GUI message content visible in editor.
    * @type {string}
    */
-  content: '',
+  body: '',
 
   /**
    * @type {PromiseProxy<GuiMessage>}
@@ -26,7 +25,7 @@ export default Component.extend({
    */
   isModified: or(
     notEqual('isEnabled', 'savedMessageProxy.content.enabled'),
-    notEqual('content', 'savedMessageProxy.content.content')
+    notEqual('body', 'savedMessageProxy.content.body')
   ),
 
   /**
@@ -38,10 +37,11 @@ export default Component.extend({
     this._super(...arguments);
 
     this.get('savedMessageProxy')
-      .then(({ enabled, content }) => safeExec(this, () => this.setProperties({
-        isEnabled: enabled,
-        content,
-      })));
+      .then(({ enabled, body }) => safeExec(this, () => {
+        this.setProperties({
+          isEnabled: enabled,
+          body,
+        });}));
   },
 
   /**
@@ -57,28 +57,24 @@ export default Component.extend({
     isEnabledChanged(isEnabled) {
       this.set('isEnabled', isEnabled);
     },
-    contentChanged(content) {
-      this.set('content', content);
+    bodyChanged(body) {
+      this.set('body', body);
     },
     save() {
       const {
         isEnabled,
-        content,
-        savedMessageProxy,
+        body,
       } = this.getProperties(
         'isEnabled',
-        'content',
-        'savedMessageProxy'
+        'body',
       );
       
       const message = {
         enabled: isEnabled,
-        content,
+        body,
       };
       
-      return this.save(message).then(() =>
-        safeExec(this, () => set(savedMessageProxy, 'content', message))
-      );
+      return this.save(message);
     },
   },
 });

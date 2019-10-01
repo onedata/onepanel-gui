@@ -18,7 +18,7 @@ export default GuiMessageEditorBase.extend(I18n, {
     /**
    * @override
    */
-  savedMessageProxy: reads('guiSettingsManager.cookieConsentNotificationProxy'),
+  savedMessageProxy: reads('guiSettingsManager.signInNotificationProxy'),
 
   /**
    * @override

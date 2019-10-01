@@ -62,7 +62,7 @@ export default Service.extend(I18n, {
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .savePrivacyPolicy(message)
+      .setPrivacyPolicy(message)
       .then(
         result => {
           globalNotify.success(this.t('privacyPolicySaveSuccess'));
