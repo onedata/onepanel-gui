@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification
 * VFS-5703 Fixed validation of space auto-cleaning form
 * VFS-5702 Minimized number of requests related to cluster configuration
 * VFS-5499 Fixed displaying errors, when oz/op-worker service is not working
