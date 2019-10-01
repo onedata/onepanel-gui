@@ -1,3 +1,12 @@
+/**
+ * Provides actions specific for GUI settings.
+ * 
+ * @module services/gui-settings-actions
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Service, { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
@@ -10,14 +19,6 @@ export default Service.extend(I18n, {
    * @override
    */
   i18nPrefix: 'services.guiSettingsActions',
-
-  /**
-   * Returns promise, which resolves to sign-in notification message
-   * @returns {Promise<GuiMessage>}
-   */
-  getSignInNotification() {
-    return this.get('guiSettingsManager').getSignInNotification();
-  },
 
   /**
    * Saves new sign-in notification.
@@ -44,14 +45,6 @@ export default Service.extend(I18n, {
   },
 
   /**
-   * Returns promise, which resolves to privacy policy.
-   * @returns {Promise<GuiMessage>}
-   */
-  getPrivacyPolicy() {
-    return this.get('guiSettingsManager').getPrivacyPolicy();
-  },
-
-  /**
    * Saves new privacy policy content.
    * @param {GuiMessage} message
    * @returns {Promise}
@@ -73,14 +66,6 @@ export default Service.extend(I18n, {
           throw error;
         }
       );
-  },
-
-  /**
-   * Returns promise, which resolves to cookie consent notification
-   * @returns {Promise<GuiMessage>}
-   */
-  getCookieConsentNotification() {
-    return this.get('guiSettingsManager').getCookieConsentNotification();
   },
 
   /**

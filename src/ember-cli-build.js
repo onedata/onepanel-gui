@@ -87,5 +87,6 @@ module.exports = function (defaults) {
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
   NODE_ASSETS.forEach(path => app.import(`node_modules/${path}`));
+
   return app.toTree();
 };

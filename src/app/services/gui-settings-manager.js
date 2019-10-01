@@ -1,9 +1,14 @@
 import Service, { inject as service } from '@ember/service';
 import DOMPurify from 'npm:dompurify';
 import { resolve } from 'rsvp';
-import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { and, not } from 'ember-awesome-macros';
-import { setProperties } from '@ember/object';
+/**
+ * Provides GUI settings management functions.
+ * 
+ * @module services/gui-settings-manager
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 
 /**
  * @typedef {Object} GuiMessage
@@ -11,6 +16,10 @@ import { setProperties } from '@ember/object';
  * @property {string} body content with/without html tags (specific for each
  * message).
  */
+
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { and, not } from 'ember-awesome-macros';
+import { setProperties } from '@ember/object';
 
 export default Service.extend(
   createDataProxyMixin('signInNotification'),
@@ -79,12 +88,16 @@ export default Service.extend(
    * @override
    */
   fetchSignInNotification() {
-    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
-      .request('onezone', 'getGuiMessage', 'signin_notification')
-      .then(({ data: { enabled, body } }) => ({
-        enabled,
-        body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
-      })) : resolve();
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('onezone', 'getGuiMessage', 'signin_notification')
+        .then(({ data: { enabled, body } }) => ({
+          enabled,
+          body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
+        }));
+    } else {
+      return resolve();
+    }
   },
 
   /**
@@ -109,12 +122,16 @@ export default Service.extend(
    * @override
    */
   fetchPrivacyPolicy() {
-    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
-      .request('onezone', 'getGuiMessage', 'privacy_policy')
-      .then(({ data: { enabled, body } }) => ({
-        enabled,
-        body: DOMPurify.sanitize(body),
-      })) : resolve();
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('onezone', 'getGuiMessage', 'privacy_policy')
+        .then(({ data: { enabled, body } }) => ({
+          enabled,
+          body: DOMPurify.sanitize(body),
+        }));
+    } else {
+      return resolve();
+    }
   },
 
   /**
@@ -139,12 +156,16 @@ export default Service.extend(
    * @override
    */
   fetchCookieConsentNotification() {
-    return this.get('guiUtils.serviceType') === 'onezone' ? this.get('onepanelServer')
-      .request('onezone', 'getGuiMessage', 'cookie_consent_notification')
-      .then(({ data: { enabled, body } }) => ({
-        enabled,
-        body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
-      })) : resolve();
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('onezone', 'getGuiMessage', 'cookie_consent_notification')
+        .then(({ data: { enabled, body } }) => ({
+          enabled,
+          body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
+        }));
+    } else {
+      return resolve();
+    }
   },
 
   /**

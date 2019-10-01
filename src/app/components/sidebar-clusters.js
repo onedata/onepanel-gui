@@ -18,6 +18,7 @@ export default SidebarClusters.extend({
 
   guiUtils: service(),
   dnsManager: service(),
+  guiSettingsManager: service(),
 
   /**
    * @virtual
@@ -38,5 +39,7 @@ export default SidebarClusters.extend({
     // because of bug in ember observers/computed in service
     this.get('dnsManager.dnsValid');
     this.get('dnsManager.dnsCheckProxy.isRejected');
+
+    this.get('guiSettingsManager').getGuiSettingsProxy();
   },
 });

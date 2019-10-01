@@ -9,7 +9,10 @@
       inputId="cookie-consent-notification-enabled"
       checked=isEnabled
       update=(action "isEnabledChanged")}}
-    <button class="btn btn-sm btn-default pull-right" {{action "insertPrivacyPolicyLink"}} disabled={{or isSaving (not isEnabled)}}>{{tt this "insertPrivacyPolicyLink"}}</button>
+    <button class="btn btn-sm btn-default pull-right" {{action "insertPrivacyPolicyLink"}} disabled={{or isSaving (not isEnabled)}}>
+      {{one-icon icon="text-link"}}
+      {{tt this "insertPrivacyPolicyLink"}}
+    </button>
   </p>
   <p>
     <textarea

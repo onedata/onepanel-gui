@@ -1,3 +1,13 @@
+/**
+ * A component that allows to configure Onezone GUI. Especially GUI messages like
+ * sign-in notification, privacy policy content and cookie consent notification.
+ * 
+ * @module components/content-clusters-gui-settings
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
@@ -35,6 +45,27 @@ export default Component.extend(I18n, {
       activeTab,
     } = this.getProperties('elementId', 'activeTab');
     return `${elementId}-${activeTab}`;
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  signInNotificationTabId:  computed('elementId', function signInNotificationTabId() {
+    return this.get('elementId') + '-signInNotification';
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  privacyPolicyTabId: computed('elementId', function privacyPolicyTabId() {
+    return this.get('elementId') + '-privacyPolicy';
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  cookieConsentNotificationTabId:  computed('elementId', function cookieConsentNotificationTabId() {
+    return this.get('elementId') + '-cookieConsentNotification';
   }),
 
   init() {

@@ -1,3 +1,13 @@
+/**
+ * Extended version of GuiMessageEditorBase component that allows to modify
+ * sign-in notification. It allows only to input text without HTML tags.
+ * 
+ * @module components/content-clusters-gui-settings/sign-in-notification
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-settings/gui-message-editor-base';

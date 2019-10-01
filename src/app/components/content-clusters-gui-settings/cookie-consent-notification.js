@@ -1,3 +1,14 @@
+/**
+ * Extended version of GuiMessageEditorBase component that allows to modify
+ * cookie consent notification. It allows only to input text, bbcode-like tag
+ * ([privacy-policy]) and no HTML.
+ * 
+ * @module components/content-clusters-gui-settings/cookie-consent-notification
+ * @author Michał Borzęcki
+ * @copyright (C) 2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -24,6 +35,7 @@ export default GuiMessageEditorBase.extend(I18n, {
   savedMessageProxy: reads('guiSettingsManager.cookieConsentNotificationProxy'),
 
   /**
+   * Editor element
    * @type {HTMLTextAreaElement}
    */
   textareaElement: undefined,
