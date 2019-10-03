@@ -47,17 +47,25 @@ export default Component.extend({
   init() {
     this._super(...arguments);
 
+    this.fillWithSavedMessageContent();
+  },
+
+  /**
+   * @return {undefined}
+   */
+  fillWithSavedMessageContent() {
     this.get('savedMessageProxy')
       .then(({ enabled, body }) => safeExec(this, () => {
         this.setProperties({
           isEnabled: enabled,
           body,
-        });}));
+        });
+      }));
   },
 
   /**
    * To implement
-   * @abstract
+   * @virtual
    * @returns {Promise}
    */
   save() {
@@ -79,13 +87,13 @@ export default Component.extend({
         'isEnabled',
         'body',
       );
-      
+
       const message = {
         enabled: isEnabled,
         body,
       };
-      
-      return this.save(message);
+
+      return this.save(message).then(() => this.fillWithSavedMessageContent());
     },
   },
 });

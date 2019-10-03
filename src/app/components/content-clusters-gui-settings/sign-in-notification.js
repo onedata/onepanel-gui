@@ -14,7 +14,7 @@ import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-s
 import { reads } from '@ember/object/computed';
 
 export default GuiMessageEditorBase.extend(I18n, {
-  classNames: ['gui-settings-sign-in-notification'],
+  classNames: ['sign-in-notification'],
 
   i18n: service(),
   guiSettingsActions: service(),
@@ -25,7 +25,7 @@ export default GuiMessageEditorBase.extend(I18n, {
    */
   i18nPrefix: 'components.contentClustersGuiSettings.tabs.signInNotification',
 
-    /**
+  /**
    * @override
    */
   savedMessageProxy: reads('guiSettingsManager.signInNotificationProxy'),
@@ -34,6 +34,6 @@ export default GuiMessageEditorBase.extend(I18n, {
    * @override
    */
   save(message) {
-    return this.get('guiSettingsActions').setSignInNotification(message);
+    return this.get('guiSettingsActions').saveSignInNotification(message);
   },
 });

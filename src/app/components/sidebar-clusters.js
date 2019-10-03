@@ -39,7 +39,5 @@ export default SidebarClusters.extend({
     // because of bug in ember observers/computed in service
     this.get('dnsManager.dnsValid');
     this.get('dnsManager.dnsCheckProxy.isRejected');
-
-    this.get('guiSettingsManager').getGuiSettingsProxy();
   },
 });

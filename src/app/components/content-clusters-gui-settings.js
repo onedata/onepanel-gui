@@ -40,17 +40,13 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<string>}
    */
   activeTabId: computed('elementId', 'activeTab', function activeTabId() {
-    const {
-      elementId,
-      activeTab,
-    } = this.getProperties('elementId', 'activeTab');
-    return `${elementId}-${activeTab}`;
+    return this.get(this.get('activeTab') + 'TabId');
   }),
 
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  signInNotificationTabId:  computed('elementId', function signInNotificationTabId() {
+  signInNotificationTabId: computed('elementId', function signInNotificationTabId() {
     return this.get('elementId') + '-signInNotification';
   }),
 
@@ -64,7 +60,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  cookieConsentNotificationTabId:  computed('elementId', function cookieConsentNotificationTabId() {
+  cookieConsentNotificationTabId: computed('elementId', function cookieConsentNotificationTabId() {
     return this.get('elementId') + '-cookieConsentNotification';
   }),
 

@@ -1443,7 +1443,7 @@ export default OnepanelServerBase.extend(
       },
       privacy_policy: {
         enabled: true,
-        body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p><!-- <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button> -->',
+        body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
       },
       cookie_consent_notification: {
         enabled: true,

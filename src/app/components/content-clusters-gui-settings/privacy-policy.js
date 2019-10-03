@@ -14,7 +14,7 @@ import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-s
 import { reads } from '@ember/object/computed';
 
 export default GuiMessageEditorBase.extend(I18n, {
-  classNames: ['gui-settings-privacy-policy'],
+  classNames: ['privacy-policy'],
 
   i18n: service(),
   guiSettingsActions: service(),
@@ -34,6 +34,6 @@ export default GuiMessageEditorBase.extend(I18n, {
    * @override
    */
   save(message) {
-    return this.get('guiSettingsActions').setPrivacyPolicy(message);
+    return this.get('guiSettingsActions').savePrivacyPolicy(message);
   },
 });

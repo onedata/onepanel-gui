@@ -25,13 +25,13 @@ export default Service.extend(I18n, {
    * @param {GuiMessage} message
    * @returns {Promise}
    */
-  setSignInNotification(message) {
+  saveSignInNotification(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .setSignInNotification(message)
+      .saveSignInNotification(message)
       .then(
         result => {
           globalNotify.success(this.t('signInNotificationSaveSuccess'));
@@ -49,13 +49,13 @@ export default Service.extend(I18n, {
    * @param {GuiMessage} message
    * @returns {Promise}
    */
-  setPrivacyPolicy(message) {
+  savePrivacyPolicy(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .setPrivacyPolicy(message)
+      .savePrivacyPolicy(message)
       .then(
         result => {
           globalNotify.success(this.t('privacyPolicySaveSuccess'));
@@ -73,13 +73,13 @@ export default Service.extend(I18n, {
    * @param {GuiMessage} message
    * @returns {Promise}
    */
-  setCookieConsentNotification(message) {
+  saveCookieConsentNotification(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .setCookieConsentNotification(message)
+      .saveCookieConsentNotification(message)
       .then(
         result => {
           globalNotify.success(this.t('cookieConsentNotificationSaveSuccess'));

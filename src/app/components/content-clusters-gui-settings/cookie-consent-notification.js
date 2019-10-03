@@ -18,7 +18,7 @@ import { reads } from '@ember/object/computed';
 import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-settings/gui-message-editor-base';
 
 export default GuiMessageEditorBase.extend(I18n, {
-  classNames: ['gui-settings-cookie-consent-notification'],
+  classNames: ['cookie-consent-notification'],
 
   i18n: service(),
   guiSettingsActions: service(),
@@ -55,7 +55,7 @@ export default GuiMessageEditorBase.extend(I18n, {
    * @override
    */
   save(message) {
-    return this.get('guiSettingsActions').setCookieConsentNotification(message);
+    return this.get('guiSettingsActions').saveCookieConsentNotification(message);
   },
 
   actions: {
