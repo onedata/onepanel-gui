@@ -1,5 +1,4 @@
 import Service, { inject as service } from '@ember/service';
-import DOMPurify from 'npm:dompurify';
 import { resolve } from 'rsvp';
 /**
  * Provides GUI settings management functions.
@@ -91,10 +90,7 @@ export default Service.extend(
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
           .request('onezone', 'getGuiMessage', 'signin_notification')
-          .then(({ data: { enabled, body } }) => ({
-            enabled,
-            body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
-          }));
+          .then(({ data }) => data);
       } else {
         return resolve();
       }
@@ -108,7 +104,7 @@ export default Service.extend(
     saveSignInNotification({ enabled, body }) {
       const message = {
         enabled,
-        body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
+        body,
       };
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'signin_notification', message)
@@ -125,10 +121,7 @@ export default Service.extend(
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
           .request('onezone', 'getGuiMessage', 'privacy_policy')
-          .then(({ data: { enabled, body } }) => ({
-            enabled,
-            body: DOMPurify.sanitize(body),
-          }));
+          .then(({ data }) => data);
       } else {
         return resolve();
       }
@@ -142,7 +135,7 @@ export default Service.extend(
     savePrivacyPolicy({ enabled, body }) {
       const message = {
         enabled,
-        body: DOMPurify.sanitize(body),
+        body,
       };
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'privacy_policy', message)
@@ -159,10 +152,7 @@ export default Service.extend(
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
           .request('onezone', 'getGuiMessage', 'cookie_consent_notification')
-          .then(({ data: { enabled, body } }) => ({
-            enabled,
-            body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
-          }));
+          .then(({ data }) => data);
       } else {
         return resolve();
       }
@@ -176,7 +166,7 @@ export default Service.extend(
     saveCookieConsentNotification({ enabled, body }) {
       const message = {
         enabled,
-        body: DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }),
+        body,
       };
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'cookie_consent_notification', message)
