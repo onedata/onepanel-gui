@@ -101,11 +101,7 @@ export default Service.extend(
      * @param {GuiMessage} message
      * @returns {Promise}
      */
-    saveSignInNotification({ enabled, body }) {
-      const message = {
-        enabled,
-        body,
-      };
+    saveSignInNotification(message) {
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'signin_notification', message)
         .then(result => {
@@ -132,11 +128,7 @@ export default Service.extend(
      * @param {GuiMessage} message
      * @returns {Promise}
      */
-    savePrivacyPolicy({ enabled, body }) {
-      const message = {
-        enabled,
-        body,
-      };
+    savePrivacyPolicy(message) {
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'privacy_policy', message)
         .then(result => {
@@ -163,11 +155,7 @@ export default Service.extend(
      * @param {GuiMessage} message
      * @returns {Promise}
      */
-    saveCookieConsentNotification({ enabled, body }) {
-      const message = {
-        enabled,
-        body,
-      };
+    saveCookieConsentNotification(message) {
       return this.get('onepanelServer')
         .request('onezone', 'modifyGuiMessage', 'cookie_consent_notification', message)
         .then(result => {
