@@ -1336,6 +1336,23 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onezone_getGuiMessage() {
+      return {
+        success: (id) => {
+          return this.get(`__guiMessages.${id}`);
+        },
+      };
+    },
+
+    _req_onezone_modifyGuiMessage() {
+      return {
+        success: (id, message) => {
+          this.set(`__guiMessages.${id}`, message);
+        },
+        statusCode: () => 200,
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
 
     __remoteProviders: computed('__provider', function __remoteProviders() {
@@ -1418,6 +1435,21 @@ export default OnepanelServerBase.extend(
     __spacesFilePopularity: A([]),
 
     __spacesAutoCleaning: A([]),
+
+    __guiMessages: computed(() => ({
+      signin_notification: {
+        enabled: false,
+        body: '',
+      },
+      privacy_policy: {
+        enabled: true,
+        body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
+      },
+      cookie_consent_notification: {
+        enabled: true,
+        body: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy]',
+      },
+    })),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

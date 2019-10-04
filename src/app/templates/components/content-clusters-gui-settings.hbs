@@ -1,0 +1,74 @@
+<div class="row content-row header-row hidden-xs">
+  <h1>{{tt this "header"}}</h1>
+</div>
+<div class="row content-row">
+  {{#bs-tab
+    class="only-tab-bar bs-tab-onedata bs-tab-modern"
+    activeId=activeTabId
+    onChange=(action "tabChange")
+    customTabs=true
+    as |tab|}}
+    {{#bs-nav type="tabs" as |nav|}}
+      {{#nav.item class="sign-in-notification-item" active=(eq tab.activeId signInNotificationTabId)}}
+        <a
+          class="nav-link"
+          role="tab" {{action tab.select signInNotificationTabId}}>
+          {{tt this "tabs.signInNotification.header"}}
+          {{#if guiSettingsManager.signInNotificationEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.signInNotification.emptyContentTabWarning")
+                triggerElement=".sign-in-notification-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+      {{#nav.item class="privacy-policy-item" active=(eq tab.activeId privacyPolicyTabId)}}
+        <a href={{concat "#" tabSyncId}}
+          class="nav-link"
+          role="tab" {{action tab.select privacyPolicyTabId}}>
+          {{tt this "tabs.privacyPolicy.header"}}
+          {{#if guiSettingsManager.privacyPolicyEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.privacyPolicy.emptyContentTabWarning")
+                triggerElement=".privacy-policy-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+      {{#nav.item class="cookie-consent-notification-item" active=(eq tab.activeId cookieConsentNotificationTabId)}}
+        <a class="nav-link" role="tab" {{action tab.select cookieConsentNotificationTabId}}>
+          {{tt this "tabs.cookieConsentNotification.header"}}
+          {{#if guiSettingsManager.cookieConsentNotificationEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.cookieConsentNotification.emptyContentTabWarning")
+                triggerElement=".cookie-consent-notification-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
+    {{/bs-nav}}
+    <div class="tab-content">
+      {{#tab.pane elementId=signInNotificationTabId}}
+        {{content-clusters-gui-settings/sign-in-notification}}
+      {{/tab.pane}}
+      {{#tab.pane elementId=privacyPolicyTabId}}
+        {{content-clusters-gui-settings/privacy-policy}}
+      {{/tab.pane}}
+      {{#tab.pane elementId=cookieConsentNotificationTabId}}
+        {{content-clusters-gui-settings/cookie-consent-notification}}
+      {{/tab.pane}}
+    </div>
+  {{/bs-tab}}
+</div>
