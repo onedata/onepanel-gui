@@ -10,7 +10,7 @@
     background-color: $color-one-light-blue;
     border-radius: 100%;
     line-height: $-circle-size;
-    font-family: 'Open Sans Semibold';
+    @include font-semibold();
     font-size: 40px;
     white-space: nowrap;
     .one-icon {

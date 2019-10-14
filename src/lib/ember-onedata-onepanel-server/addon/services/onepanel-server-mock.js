@@ -60,9 +60,9 @@ const fallbackMockServiceType = 'oneprovider';
  */
 function getMockServiceType() {
   const url = location.toString();
-  if (/https:\/\/onezone.*9443/.test(url)) {
+  if (/https:\/\/onezone.*(9443|\/onepanel)/.test(url)) {
     return 'onezone';
-  } else if (/https:\/\/oneprovider.*9443/.test(url)) {
+  } else if (/https:\/\/oneprovider.*(9443|\/onepanel)/.test(url)) {
     return 'oneprovider';
   } else {
     const clusterMatch = url.match(new RegExp(
@@ -136,34 +136,34 @@ function _genSupportingProviders() {
   return supportingProviders;
 }
 
-function _genAutoCleaningConfiguration() {
+function _genAutoCleaningConfiguration(enabled = true) {
   return {
     minFileSize: {
-      enabled: true,
+      enabled,
       value: 10000,
     },
     maxFileSize: {
-      enabled: true,
+      enabled,
       value: 10000000,
     },
     minHoursSinceLastOpen: {
-      enabled: true,
+      enabled,
       value: 12,
     },
     maxOpenCount: {
-      enabled: true,
+      enabled,
       value: 10,
     },
     maxHourlyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 11,
     },
     maxDailyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 12,
     },
     maxMonthlyMovingAverage: {
-      enabled: true,
+      enabled,
       value: 13,
     },
   };
@@ -1041,7 +1041,10 @@ export default OnepanelServerBase.extend(
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
           let configuration = spacesAutoCleaning.find(s => s.id === id);
           if (!configuration) {
-            configuration = { id };
+            configuration = {
+              id,
+              rules: _genAutoCleaningConfiguration(false),
+            };
             spacesAutoCleaning.push(configuration);
           }
           emberObjectMerge(configuration, data);
@@ -1338,6 +1341,23 @@ export default OnepanelServerBase.extend(
       };
     },
 
+    _req_onezone_getGuiMessage() {
+      return {
+        success: (id) => {
+          return this.get(`__guiMessages.${id}`);
+        },
+      };
+    },
+
+    _req_onezone_modifyGuiMessage() {
+      return {
+        success: (id, message) => {
+          this.set(`__guiMessages.${id}`, message);
+        },
+        statusCode: () => 200,
+      };
+    },
+
     // -- MOCKED RESOURCE STORE --
 
     __remoteProviders: computed('__provider', function __remoteProviders() {
@@ -1420,6 +1440,21 @@ export default OnepanelServerBase.extend(
     __spacesFilePopularity: A([]),
 
     __spacesAutoCleaning: A([]),
+
+    __guiMessages: computed(() => ({
+      signin_notification: {
+        enabled: false,
+        body: '',
+      },
+      privacy_policy: {
+        enabled: true,
+        body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
+      },
+      cookie_consent_notification: {
+        enabled: true,
+        body: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy]',
+      },
+    })),
   });
 
 function computedResourceGetHandler(storeProperty, defaultData) {

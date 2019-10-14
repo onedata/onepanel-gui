@@ -1,3 +1,5 @@
+const posixRegexp = /^[0-7][0-7][0-7][0-7]?$/;
+
 export default [{
     name: 'endpoint',
     type: 'text',
@@ -20,6 +22,7 @@ export default [{
       { value: 'none', label: 'none' },
       { value: 'basic', label: 'basic' },
       { value: 'token', label: 'token' },
+      { value: 'oauth2', label: 'OAuth2' },
     ],
     tip: true,
   },
@@ -28,6 +31,20 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
+  },
+  {
+    name: 'oauth2IdP',
+    type: 'text',
+    tip: true,
+    optional: true,
+    notEditable: true,
+  },
+  {
+    name: 'onedataAccessToken',
+    type: 'text',
+    tip: true,
+    optional: true,
+    notEditable: true,
   },
   {
     name: 'authorizationHeader',
@@ -62,19 +79,43 @@ export default [{
     gte: 0,
     tip: true,
     example: 1048576,
-  }, {
+  },
+  {
+    name: 'fileMode',
+    tip: true,
+    type: 'text',
+    regex: posixRegexp,
+    regexMessage: 'This field should be octal POSIX permissions',
+    example: '0644',
+    optional: true,
+    regexAllowBlank: true,
+    notEditable: true,
+  },
+  {
+    name: 'dirMode',
+    tip: true,
+    type: 'text',
+    regex: posixRegexp,
+    regexMessage: 'This field should be octal POSIX permissions',
+    example: '0775',
+    optional: true,
+    regexAllowBlank: true,
+    notEditable: true,
+  },
+  {
     name: 'timeout',
     type: 'number',
     optional: true,
-  }, {
+  },
+  {
     name: 'insecure',
     type: 'checkbox',
     defaultValue: false,
     tip: true,
-  }, {
+  },
+  {
     name: 'readonly',
     type: 'checkbox',
     defaultValue: false,
-    tip: true,
   },
 ];

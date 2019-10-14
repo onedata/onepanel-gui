@@ -51,13 +51,14 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   fetchInstallationDetails() {
     const onepanelServiceType = this.get('onepanelServiceType');
 
+    const clusterConfigurationPromise = this.getClusterConfiguration();
     let clusterStep;
 
-    return this._getThisClusterInitStep()
+    return this._getThisClusterInitStep(clusterConfigurationPromise)
       .then(step => {
         clusterStep = step;
 
-        return this.getConfiguration()
+        return clusterConfigurationPromise
           .then(({ data: configuration }) => {
             return configuration;
           })
@@ -96,7 +97,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    */
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this.getConfiguration(true);
+      let gettingConfiguration = this.getClusterConfiguration(true);
       gettingConfiguration.then(({ data: { cluster } }) => {
         resolve(this._clusterConfigurationToHostsInfo(cluster));
       });
@@ -139,11 +140,12 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * Get cluster deployment configuration for current service type
-   * @param {boolean} [validateData] if true, make validation of cluster configuration
+   * @param {boolean} [validateData=false] if true, make validation of cluster
+   *   configuration
    * @returns {Promise} result of GET configuration request
    */
-  getConfiguration(validateData) {
-    let {
+  getClusterConfiguration(validateData = false) {
+    const {
       onepanelServer,
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
@@ -187,14 +189,14 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   },
 
   /**
+   * @param {Promise} clusterConfigurationPromise
    * @returns {Promise}
    */
-  _checkIsConfigurationDone() {
+  _checkIsConfigurationDone(clusterConfigurationPromise) {
     return new Promise((resolve, reject) => {
-      let gettingConfiguration = this.getConfiguration();
-      gettingConfiguration.then(({ data }) => resolve(!!data));
+      clusterConfigurationPromise.then(({ data }) => resolve(!!data));
 
-      gettingConfiguration.catch(error => {
+      clusterConfigurationPromise.catch(error => {
         if (error == null || error.response == null) {
           reject(error);
         } else {
@@ -255,7 +257,13 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       gettingStorages.then(({ data: { ids } }) => {
         resolve(ids != null && ids.length > 0);
       });
-      gettingStorages.catch(reject);
+      gettingStorages.catch((error) => {
+        if (error.status === 503) {
+          return resolve(true);
+        } else {
+          return reject(error);
+        }
+      });
     });
   },
 
@@ -275,16 +283,17 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * The promise resolves with number of initial cluster deployment step, that
    * should be opened for this cluster.
    * See `model:installation-details CLUSTER_INIT_STEPS` for code explaination.
+   * @param {Promise} clusterConfigurationPromise
    * @returns {Promise}
    */
-  _getThisClusterInitStep() {
+  _getThisClusterInitStep(clusterConfigurationPromise) {
     let {
       onepanelServer,
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
 
     return new Promise((resolve, reject) => {
-      const checkConfig = this._checkIsConfigurationDone(onepanelServer);
+      const checkConfig = this._checkIsConfigurationDone(clusterConfigurationPromise);
 
       checkConfig.then(isConfigurationDone => {
         if (isConfigurationDone) {

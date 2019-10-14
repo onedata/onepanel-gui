@@ -48,7 +48,7 @@
       }
 
       &:first-child {
-        font-weight: bold;
+        @include font-bold();
         padding-right: 70px;
         text-align: left;
         .item-icon-container {

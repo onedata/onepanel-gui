@@ -6,7 +6,6 @@ const defineSassColors = require('./lib/onedata-gui-common/addon/utils/define-sa
 const defineSassBreakpoints = require(
   './lib/onedata-gui-common/addon/utils/define-sass-breakpoints'
 );
-const writeAppConfig = require('./lib/onedata-gui-common/addon/utils/write-app-config');
 const colors = require('./lib/onedata-gui-common/addon/colors').default;
 const breakpointValues =
   require('./lib/onedata-gui-common/addon/breakpoint-values').default;
@@ -53,8 +52,6 @@ module.exports = function (defaults) {
       useCustomCSS: true,
     },
   });
-
-  writeAppConfig(app);
 
   defineSassColors(app, colors);
   defineSassBreakpoints(app, breakpointValues);

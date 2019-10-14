@@ -8,37 +8,70 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { computed } from '@ember/object';
+import EmberObject from '@ember/object';
 import checkImg from 'onedata-gui-common/utils/check-img';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { resolve } from 'rsvp';
+import { resolve, reject } from 'rsvp';
+import { inject as service } from '@ember/service';
+import {
+  onepanelAbbrev,
+  onepanelTestImagePath,
+} from 'onedata-gui-common/utils/onedata-urls';
+import $ from 'jquery';
 
-export default EmberObject.extend(createDataProxyMixin('isOnline'), {
-  /**
-   * @virtual
-   * @type {string|ComputedProperty<string>}
-   */
-  domain: undefined,
+export default EmberObject.extend(
+  createDataProxyMixin('isOnline'),
+  createDataProxyMixin('standaloneOrigin'), {
+    onepanelServer: service(),
 
-  /**
-   * @virtual
-   * @type {boolean}
-   */
-  isLocal: undefined,
+    /**
+     * @virtual
+     * @type {string|ComputedProperty<string>}
+     */
+    domain: undefined,
 
-  standaloneOrigin: computed('domain', function standaloneOrigin() {
-    return `https://${this.get('domain')}:9443`;
-  }),
+    /**
+     * @virtual
+     * @type {boolean}
+     */
+    isLocal: undefined,
 
-  /**
-   * @override
-   */
-  fetchIsOnline() {
-    if (this.get('isLocal')) {
-      return resolve(true);
-    } else {
-      const origin = this.get('standaloneOrigin');
-      return checkImg(`${origin}/favicon.ico`);
-    }
-  },
-});
+    /**
+     * @override
+     */
+    fetchStandaloneOrigin() {
+      if (this.get('isLocal')) {
+        return resolve('https://' + this.get('onepanelServer.apiOrigin'));
+      } else {
+        return this.fetchRemoteGuiContext().then(({ apiOrigin }) =>
+          'https://' + apiOrigin
+        );
+      }
+    },
+
+    /**
+     * @override
+     */
+    fetchIsOnline() {
+      if (this.get('isLocal')) {
+        return resolve(true);
+      } else {
+        return this.get('standaloneOriginProxy').then(standaloneOrigin => {
+          return checkImg(`${standaloneOrigin}${onepanelTestImagePath}`);
+        });
+      }
+    },
+
+    fetchRemoteGuiContext() {
+      if (this.get('onepanelServer.isEmergency')) {
+        return reject(
+          'model:cluster#fetchStandaloneOrigin: cannot fetch gui context for remote cluster in emergency mode'
+        );
+      } else {
+        const guiContextPath =
+          `${location.origin}/${onepanelAbbrev}/${this.get('id')}/gui-context`;
+        return resolve($.get(guiContextPath));
+      }
+    },
+  }
+);
