@@ -12,13 +12,14 @@ import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 
-const zoneAspects = new Set([
+const onezoneAspects = new Set([
   'overview',
   'nodes',
   'dns',
   'certificate',
   'emergency-passphrase',
   'members',
+  'gui-settings',
 ]);
 
 export default AspectRoute.extend({
@@ -53,7 +54,7 @@ export default AspectRoute.extend({
       const contentModel = this.modelFor('onedata.sidebar.content');
       if (get(contentModel, 'resource.isNotDeployed')) {
         this.transitionTo('onedata.sidebar.content.aspect', 'installation');
-      } else if (onepanelServiceType === 'onezone' && !zoneAspects.has(aspectId)) {
+      } else if (onepanelServiceType === 'onezone' && !onezoneAspects.has(aspectId)) {
         this.transitionTo('onedata.sidebar.content.aspect', 'overview');
       }
     }

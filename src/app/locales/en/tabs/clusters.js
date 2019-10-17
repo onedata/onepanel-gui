@@ -13,6 +13,7 @@ export default {
     storages: 'Storages',
     spaces: 'Spaces',
     members: 'Members',
+    guiSettings: 'GUI settings',
     notFound: 'Cluster not found',
     installation: 'Installation',
   },

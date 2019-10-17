@@ -19,6 +19,7 @@ export default SecondLevelItems.extend(I18n, {
   webCertManager: service(),
   cephManager: service(),
   memberManager: service(),
+  guiSettingsManager: service(),
   onepanelServer: service(),
 
   /**
@@ -40,6 +41,11 @@ export default SecondLevelItems.extend(I18n, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   hasNoConnectedUser: reads('memberManager.hasNoConnectedUser'),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  guiSettingsValid: reads('guiSettingsManager.guiSettingsValid'),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -109,6 +115,19 @@ export default SecondLevelItems.extend(I18n, {
     };
   }),
 
+  guiSettingsItem: computed('guiSettingsValid', function guiSettingsItem() {
+    return {
+      id: 'gui-settings',
+      label: this.t('guiSettings'),
+      icon: 'view-grid',
+      warningMessage: !this.get('guiSettingsValid') ?
+        this.t('guiSettingsWarning') : undefined,
+    };
+  }),
+
+  /**
+   * @override
+   */
   clusterSecondLevelItems: computed(
     'isNotDeployedCluster',
     'isLocalCluster',
@@ -124,6 +143,7 @@ export default SecondLevelItems.extend(I18n, {
     'cephItem',
     'storagesItem',
     'spacesItem',
+    'guiSettingsItem',
     'membersItem',
     function clusterSecondLevelItems() {
       const {

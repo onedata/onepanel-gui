@@ -4,5 +4,6 @@ export default {
     webCertWarning: 'Some problems with your web certificate have been detected',
     cephWarning: 'Some problems with your Ceph cluster have been detected',
     noConnectedUserWarning: 'This cluster does not have any linked Onezone user',
+    guiSettingsWarning: 'Some problems with your GUI settings have been detected',
   },
 };
