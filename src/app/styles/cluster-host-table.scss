@@ -16,6 +16,7 @@
     }
     .btn-column {
       width: 70px;
+      vertical-align: middle;
     }
   }
 
@@ -89,17 +90,8 @@
   }
   
   .btn-remove-node {
-    .oneicon {
+    &.remove-icon {
       font-size: 2em;
-      color: $main-text-color;
-      &:hover {
-        color: $color-one-red;
-      }
-    }
-    &.disabled {
-      opacity: 0.2;
-      cursor: not-allowed;
-      pointer-events: none;
     }
   }
 }

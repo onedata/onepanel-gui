@@ -38,16 +38,7 @@
       margin-bottom: 0;
     }
   }
-  .remove-osd {
-    position: relative;
-    top: 6px;
-    margin-left: $padding-xs-horizontal;
-    font-size: 1.7em;
-    color: $color-one-light-gray;
-    &:hover {
-      color: darken($color-one-light-gray, 15%);
-    }
-  }
+
   @media (min-width: $screen-sm-min) {
     .osd-form, .manager-monitor-form {
       &.mode-edit {
