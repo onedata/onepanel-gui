@@ -30,7 +30,7 @@ import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import { InstallationStepsMap } from 'onepanel-gui/models/installation-details';
+import { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'npm:onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
@@ -253,11 +253,11 @@ export default OnepanelServerBase.extend(
     // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
     // deployment step. See more in models/installation-details.
     //
-    // mockStep: InstallationStepsMap.deploy,
-    // mockStep: InstallationStepsMap.oneproviderRegistration,
-    // mockStep: InstallationStepsMap.dns,
-    // mockStep: InstallationStepsMap.oneproviderStorageAdd,
-    mockStep: InstallationStepsMap.done,
+    mockStep: installationStepsMap.deploy,
+    // mockStep: installationStepsMap.oneproviderRegistration,
+    // mockStep: installationStepsMap.dns,
+    // mockStep: installationStepsMap.oneproviderStorageAdd,
+    // mockStep: installationStepsMap.done,
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
 
@@ -458,18 +458,18 @@ export default OnepanelServerBase.extend(
         this.set('__dnsCheckConfiguration', {
           dnsServers: ['8.8.8.8', '192.168.1.10'],
           builtInDnsServer: true,
-          dnsCheckAcknowledged: mockStep.gt(InstallationStepsMap.dns),
+          dnsCheckAcknowledged: mockStep.gt(installationStepsMap.dns),
         });
 
-        if (mockStep.gt(InstallationStepsMap.oneproviderRegistration)) {
+        if (mockStep.gt(installationStepsMap.oneproviderRegistration)) {
           this.set('__provider', provider1);
         }
-        if (mockStep.gt(InstallationStepsMap.webCert)) {
+        if (mockStep.gt(installationStepsMap.webCert)) {
           // TODO: deprecated __provider.letsEncryptEnabled
           this.set('__provider.letsEncryptEnabled', defaultLetsEncryptDeployed);
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
-        if (mockStep.gt(InstallationStepsMap.oneproviderStorageAdd)) {
+        if (mockStep.gt(installationStepsMap.oneproviderStorageAdd)) {
           let storage1 = {
             id: 'storage1_verylongid',
             type: 'posix',
@@ -493,7 +493,7 @@ export default OnepanelServerBase.extend(
             clusterStorageClass(storageCeph.type).constructFromObject(storageCeph),
           );
 
-          if (mockStep === InstallationStepsMap.done) {
+          if (mockStep === installationStepsMap.done) {
             const spaces = this.get('__spaces');
             const spacesFilePopularity = this.get('__spacesFilePopularity');
             const spacesAutoCleaning = this.get('__spacesAutoCleaning');
@@ -584,14 +584,14 @@ export default OnepanelServerBase.extend(
         this.set('__dnsCheckConfiguration', {
           dnsServers: ['8.8.8.8', '192.168.1.10'],
           builtInDnsServer: false,
-          dnsCheckAcknowledged: mockStep.gt(InstallationStepsMap.dns),
+          dnsCheckAcknowledged: mockStep.gt(installationStepsMap.dns),
         });
 
-        if (mockStep.gt(InstallationStepsMap.webCert)) {
+        if (mockStep.gt(installationStepsMap.webCert)) {
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
 
-        if (mockStep.gt(InstallationStepsMap.dns)) {
+        if (mockStep.gt(installationStepsMap.dns)) {
           this.set('__zonePolicies', {
             subdomainDelegation: false,
           });
@@ -750,7 +750,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_configureProvider() {
-      this.set('mockStep', InstallationStepsMap.oneproviderRegistration);
+      this.set('mockStep', installationStepsMap.oneproviderRegistration);
       return {
         success: (data) => {
           let __provider = this.get('__provider') ||
@@ -869,7 +869,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_getProviderConfiguration() {
-      if (this.get('mockStep').gt(InstallationStepsMap.deploy)) {
+      if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
         };
@@ -914,7 +914,7 @@ export default OnepanelServerBase.extend(
         mockStep,
         __spaces,
       } = this.getProperties('mockInitializedCluster', 'mockStep', '__spaces');
-      if (mockStep.gt(InstallationStepsMap.oneproviderRegistration)) {
+      if (mockStep.gt(installationStepsMap.oneproviderRegistration)) {
         const spaceIds = mockInitializedCluster ? __spaces.mapBy('id') : [];
         return {
           success: () => ({
@@ -1091,7 +1091,7 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_onezone_configureZone() {
-      this.set('mockStep', InstallationStepsMap.ips);
+      this.set('mockStep', installationStepsMap.ips);
       return {
         success: () => null,
         taskId: 'configure',
@@ -1099,7 +1099,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onezone_getZoneConfiguration() {
-      if (this.get('mockStep').gt(InstallationStepsMap.deploy)) {
+      if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
         };
@@ -1223,7 +1223,7 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_getProviderClusterIps() {
       return {
         success: () => ({
-          isConfigured: this.get('mockStep').gt(InstallationStepsMap.ips),
+          isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
           hosts: {
             'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
@@ -1235,7 +1235,7 @@ export default OnepanelServerBase.extend(
     _req_onezone_getZoneClusterIps() {
       return {
         success: () => ({
-          isConfigured: this.get('mockStep').gt(InstallationStepsMap.ips),
+          isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
           hosts: {
             'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
@@ -1385,7 +1385,7 @@ export default OnepanelServerBase.extend(
           build: '2100',
           deployed: mockInitializedCluster,
           isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
-            this.get('mockStep').gt(InstallationStepsMap.oneproviderRegistration),
+            this.get('mockStep').gt(installationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
         }),
@@ -1569,7 +1569,7 @@ export default OnepanelServerBase.extend(
       uuid: '610c7eb0-3117-4873-9e60-cd0d48aa419d',
       host: 'node1.example.com',
       type: 'loopdevice',
-      path: '/var/lib/ceph/loopdevices/osd-610c7eb0-3117-4873-9e60-cd0d48aa419d.loop',
+      path: '/volumes/persistence/ceph-loopdevices/osd-610c7eb0-3117-4873-9e60-cd0d48aa419d.loop',
       size: 3 * 1024 * 1024 * 1024,
     }]),
 

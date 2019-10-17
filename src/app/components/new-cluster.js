@@ -17,7 +17,7 @@ import { readOnly } from '@ember/object/computed';
 import { get, set, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
 import { invokeAction } from 'ember-invoke-action';
-import { InstallationStepsMap, InstallationStepsArray } from 'onepanel-gui/models/installation-details';
+import { installationStepsMap, installationStepsArray } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 import { array, raw } from 'ember-awesome-macros';
@@ -28,8 +28,8 @@ const {
   },
 } = Onepanel;
 
-const stepsOneprovider = InstallationStepsArray.filterBy('inOneprovider');
-const stepsOnezone = InstallationStepsArray.filterBy('inOnezone');
+const stepsOneprovider = installationStepsArray.filterBy('inOneprovider');
+const stepsOnezone = installationStepsArray.filterBy('inOnezone');
 
 const COOKIE_DEPLOYMENT_TASK_ID = 'deploymentTaskId';
 
@@ -48,7 +48,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Utils.InstallationStep}
    */
-  currentStep: InstallationStepsMap.deploy,
+  currentStep: installationStepsMap.deploy,
 
   _isInProcess: false,
 
@@ -85,7 +85,7 @@ export default Component.extend(I18n, {
     let stepsArray = onepanelServiceType === 'oneprovider' ?
       stepsOneprovider : stepsOnezone;
     if (!showCephStep) {
-      stepsArray = stepsArray.without(InstallationStepsMap.oneproviderCeph);
+      stepsArray = stepsArray.without(installationStepsMap.oneproviderCeph);
     }
     stepsArray.forEach(step => set(
       step,
@@ -122,8 +122,8 @@ export default Component.extend(I18n, {
     }
   ),
 
-  isAfterDeploy: computed('currentStep', function getIsAfterDeploy() {
-    return this.get('currentStep').gt(InstallationStepsMap.oneproviderRegistration);
+  isAfterDeploy: computed('currentStep', function isAfterDeploy() {
+    return this.get('currentStep').gt(installationStepsMap.oneproviderRegistration);
   }),
 
   /**
@@ -143,9 +143,9 @@ export default Component.extend(I18n, {
     let clusterInitStep = this.get('cluster.initStep');
     this.setProperties({
       currentStep: clusterInitStep,
-      _isInProcess: clusterInitStep.gt(InstallationStepsMap.deploy),
+      _isInProcess: clusterInitStep.gt(installationStepsMap.deploy),
     });
-    if (clusterInitStep === InstallationStepsMap.deploy) {
+    if (clusterInitStep === installationStepsMap.deploy) {
       this.set('isLoading', true);
       this._checkUnfinishedDeployment()
         .then(taskId => {
@@ -153,7 +153,7 @@ export default Component.extend(I18n, {
             this.setProperties({
               deploymentTaskId: taskId ? taskId : undefined,
               _isInProcess: true,
-              currentStep: InstallationStepsMap.deploymentProgress,
+              currentStep: installationStepsMap.deploymentProgress,
             });
           }
         })
@@ -182,7 +182,7 @@ export default Component.extend(I18n, {
             case StatusEnum.running:
               return deploymentTaskId;
             case StatusEnum.ok:
-              if (currentStep.lte(InstallationStepsMap.deploymentProgress)) {
+              if (currentStep.lte(installationStepsMap.deploymentProgress)) {
                 const afterDeployProgress = this.getNextStep(currentStep);
                 cookies.clear(COOKIE_DEPLOYMENT_TASK_ID);
                 this.set('cluster.initStep', afterDeployProgress);
@@ -226,9 +226,9 @@ export default Component.extend(I18n, {
     const serviceType = get(guiUtils, 'serviceType');
     const isOneprovider = serviceType === 'oneprovider';
     const isOneproviderAfterRegister =
-      currentStep === InstallationStepsMap.oneproviderRegistration;
+      currentStep === installationStepsMap.oneproviderRegistration;
     const isOnezoneAfterDeploy = !isOneprovider &&
-      currentStep.lte(InstallationStepsMap.deploymentProgress);
+      currentStep.lte(installationStepsMap.deploymentProgress);
 
     if (isOneproviderAfterRegister || isOnezoneAfterDeploy) {
       // Reload whole application to fetch info about newly deployed cluster
@@ -264,7 +264,7 @@ export default Component.extend(I18n, {
    */
   getNextStep(step) {
     const visibleSteps = this.get('visibleSteps');
-    if (visibleSteps.indexOf(step) === -1) {
+    if (!visibleSteps.includes(step)) {
       // If passed step is hidden, then fallback to the nearest previous visible
       // step
       step = this.getPrevStep(step);
@@ -284,7 +284,7 @@ export default Component.extend(I18n, {
     } = this.getProperties('steps', 'visibleSteps');
 
     // If passed step is not a visible step...
-    if (visibleSteps.indexOf(step) === -1) {
+    if (!visibleSteps.includes(step)) {
       const stepsIndex = steps.indexOf(step);
       // then find the closest previous step, which is visible
       for (let i = stepsIndex; i >= 0; i--) {

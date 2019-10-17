@@ -18,7 +18,7 @@ import { conditional, raw, equal } from 'ember-awesome-macros';
 const editFieldsDefinition = [{
   name: 'name',
   type: 'text',
-  cssClass: 'form-group-sm',
+  // cssClass: 'form-group-sm',
 }];
 
 const allPrefixes = ['edit', 'static'];
@@ -63,7 +63,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  fieldsSource: computed(function fieldsSource() {
+  editFieldsSource: computed(function editFieldsSource() {
     return editFieldsDefinition.map(field =>
       Object.assign({}, field, { label: this.t(`fields.${field.name}.label`) })
     );
@@ -72,8 +72,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  editFields: computed('fieldsSource', function editFields() {
-    return this.get('fieldsSource').map(field => EmberObject.create(
+  editFields: computed('editFieldsSource', function editFields() {
+    return this.get('editFieldsSource').map(field => EmberObject.create(
       Object.assign({}, field, { name: 'edit.' + get(field, 'name') })
     ));
   }),
@@ -81,8 +81,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  staticFields: computed('fieldsSource', function editFields() {
-    return this.get('fieldsSource').map(field => EmberObject.create(
+  staticFields: computed('editFieldsSource', function staticFields() {
+    return this.get('editFieldsSource').map(field => EmberObject.create(
       Object.assign({}, field, {
         name: 'static.' + get(field, 'name'),
         type: 'static',
@@ -99,7 +99,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @type {Ember.ComputedProperty<EmberObject>}
    */
   allFieldsValues: computed('allFields', function allFieldsValues() {
-    const values = EmberObject.create({});
+    const values = EmberObject.create();
     allPrefixes.forEach(prefix => values.set(prefix, EmberObject.create()));
     return values;
   }),
@@ -117,7 +117,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     'mainConfiguration',
     'mode',
     'allFields',
-    function managerMonitorObserver() {
+    function mainConfigurationObserver() {
       const {
         mainConfiguration,
         allFields,

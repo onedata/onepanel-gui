@@ -18,6 +18,11 @@ import _ from 'lodash';
 import { validator } from 'ember-cp-validations';
 import { conditional, raw } from 'ember-awesome-macros';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import config from 'ember-get-config';
+
+const {
+  layoutConfig: globalLayoutConfig,
+} = config;
 
 const editTypeFieldsDefinition = [{
   name: 'type',
@@ -28,21 +33,25 @@ const editTypeFieldsDefinition = [{
     value: 'loopdevice',
   }],
   defaultValue: 'loopdevice',
+  tip: true,
 }];
 
 const editBlockdeviceFieldsDefinition = [{
   name: 'device',
   type: 'dropdown',
+  tip: true,
 }];
 
 const editLoopdeviceFieldsDefinition = [{
   name: 'path',
   type: 'text',
-  regex: /^.*[^/]+$/,
+  regex: /^\/.*[^/]$/,
+  tip: true,
 }, {
   name: 'size',
   type: 'capacity',
   gt: 0,
+  tip: true,
 }];
 
 const allPrefixes = [
@@ -71,8 +80,11 @@ const usedDeviceValidator = validator(function (value, options, model) {
     return true;
   } else {
     const deviceId = get(get(model, 'devices').findBy('path', value) || {}, 'id');
-    const msg = get(this.get('model').t('deviceAlreadyUsed'), 'string');
-    return (!deviceId || get(model, 'usedDevices.' + deviceId) < 2) ? true : msg;
+    if (!deviceId || get(model, 'usedDevices.' + deviceId) < 2) {
+      return true;
+    } else {
+      return get(this.get('model').t('deviceAlreadyUsed'), 'string');
+    }
   }
 }, {
   dependentKeys: ['model.{usedDevices,mode}'],
@@ -80,12 +92,18 @@ const usedDeviceValidator = validator(function (value, options, model) {
 validationsProto['allFieldsValues.editBlockdevice.device'].push(usedDeviceValidator);
 
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
-  classNames: ['row', 'content-row', 'osd-section'],
+  classNames: ['row', 'content-row', 'osd-form'],
+  classNameBindings: ['modeClass'],
 
   /**
    * @override
    */
   i18nPrefix: 'components.cephClusterConfiguration.osdForm',
+
+  /**
+   * @type {Object}
+   */
+  showLayoutConfig: undefined,
 
   /**
    * @virtual
@@ -124,9 +142,27 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   removeOsd: notImplementedThrow,
 
   /**
-   * @type {string}
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  layoutConfig: computed('mode', 'editLayoutConfig', function layoutConfig() {
+    const {
+      mode,
+      showLayoutConfig,
+    } = this.getProperties('mode', 'showLayoutConfig');
+    return mode === 'show' ? showLayoutConfig : globalLayoutConfig;
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
    */
   mode: conditional('isCephDeployed', raw('show'), raw('edit')),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  modeClass: computed('mode', function modeClass() {
+    return 'mode-' + this.get('mode');
+  }),
 
   /**
    * Blockdevice edit fields with devices converted to device dropdown options.
@@ -137,9 +173,6 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     function filledEditBlockdeviceFieldsDefinition() {
       const fields = _.cloneDeep(editBlockdeviceFieldsDefinition);
       const deviceOptions = this.get('devices')
-        // Mounted devices should not be used as OSD device for safety reasons
-        // (to avoid unintentional data lost).
-        .rejectBy('mounted')
         .map(device => {
           const {
             path,
@@ -231,7 +264,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @type {Ember.ComputedProperty<EmberObject>}
    */
   allFieldsValues: computed('allFields', function allFieldsValues() {
-    const values = EmberObject.create({});
+    const values = EmberObject.create();
     allPrefixes.forEach(prefix => values.set(prefix, EmberObject.create()));
     this.get('allFields').forEach(field =>
       set(values, get(field, 'name'), get(field, 'defaultValue'))
@@ -276,6 +309,22 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   }),
 
   osdObserver: observer('osd', 'mode', 'allFields', function osdObserver() {
+    this.reassignOsdValuesToFields();
+  }),
+
+  usedDevicesObserver: observer('usedDevices', function usedDevicesObserver() {
+    this.recalculateErrors();
+  }),
+
+  init() {
+    this._super(...arguments);
+    this.prepareFields();
+
+    this.osdObserver();
+    this.exposeInjectedDataErrors();
+  },
+
+  reassignOsdValuesToFields() {
     const {
       osd,
       allFields,
@@ -307,18 +356,6 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     });
 
     this.recalculateErrors();
-  }),
-
-  usedDevicesObserver: observer('usedDevices', function usedDevicesObserver() {
-    this.recalculateErrors();
-  }),
-
-  init() {
-    this._super(...arguments);
-    this.prepareFields();
-
-    this.osdObserver();
-    this.exposeInjectedDataErrors();
   },
 
   /**
@@ -332,13 +369,15 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
     const {
       type,
       name,
-    } = getProperties(field, 'type', 'name');
+      tip,
+    } = getProperties(field, 'type', 'name', 'tip');
 
     field = Object.assign({}, field, {
       name: `${prefix}.${name}`,
       label: this.t(`fields.${name}.label`),
       type: isStatic ? 'static' : type,
       cssClass: 'form-group-sm',
+      tip: (tip && !isStatic) ? this.t(`fields.${name}.tip`) : undefined,
     });
     if ((type === 'radio-group' || type === 'dropdown') && !isStatic) {
       set(field, 'options', get(field, 'options').map(option => {
@@ -380,11 +419,15 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    */
   constructConfig() {
     const {
+      allFieldsValues,
+      osd,
+    } = this.getProperties('allFieldsValues', 'osd');
+    const {
       editType,
       editBlockdevice,
       editLoopdevice,
     } = getProperties(
-      this.get('allFieldsValues'),
+      allFieldsValues,
       'editType',
       'editBlockdevice',
       'editLoopdevice'
@@ -395,10 +438,14 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       path,
       size,
     } = getProperties(editLoopdevice, 'path', 'size');
+    const {
+      id,
+      uuid,
+    } = getProperties(osd, 'id', 'uuid');
 
     const config = {
-      id: this.get('osd.id'),
-      uuid: this.get('osd.uuid'),
+      id,
+      uuid,
       type,
       device,
       path,

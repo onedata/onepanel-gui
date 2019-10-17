@@ -15,14 +15,13 @@ import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import InstallationDetails, { InstallationStepsMap } from 'onepanel-gui/models/installation-details';
+import InstallationDetails, { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import { extractHostsFromCephConfiguration } from 'onepanel-gui/utils/ceph/cluster-configuration';
 import _ from 'lodash';
 import { getOwner } from '@ember/application';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -31,17 +30,12 @@ const _ROLE_COLLECTIONS = {
   ceph: 'ceph',
 };
 
-export default Service.extend(I18n, createDataProxyMixin('installationDetails'), {
+export default Service.extend(createDataProxyMixin('installationDetails'), {
   clusterModelManager: service(),
   onepanelServer: service(),
   guiUtils: service(),
   cephManager: service(),
   i18n: service(),
-
-  /**
-   * @override
-   */
-  i18nPrefix: 'services.deploymentManager',
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -101,7 +95,7 @@ export default Service.extend(I18n, createDataProxyMixin('installationDetails'),
 
             const installationDetails = InstallationDetails.create(
               getOwner(this).ownerInjection(), {
-                name: name || this.t('newClusterName'),
+                name,
                 onepanelServiceType: onepanelServiceType,
                 clusterInfo: thisCluster,
                 initStep: clusterStep,
@@ -334,17 +328,17 @@ export default Service.extend(I18n, createDataProxyMixin('installationDetails'),
                 const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
                 checkDnsCheck.then(dnsCheckAck => {
                   if (dnsCheckAck) {
-                    resolve(InstallationStepsMap.done);
+                    resolve(installationStepsMap.done);
                   } else {
                     // We have no exact indicator if earlier step -
                     // IPs configuration - has been finished, because it 
                     // has default values which are undistinguishable from user input
-                    resolve(InstallationStepsMap.ips);
+                    resolve(installationStepsMap.ips);
                   }
                 });
                 checkDnsCheck.catch(reject);
               } else {
-                resolve(InstallationStepsMap.ips);
+                resolve(installationStepsMap.ips);
               }
             });
             checkIps.catch(reject);
@@ -368,9 +362,9 @@ export default Service.extend(I18n, createDataProxyMixin('installationDetails'),
                       if (dnsCheckAck) {
                         checkStorage.then(isAnyStorage => {
                           if (isAnyStorage) {
-                            resolve(InstallationStepsMap.done);
+                            resolve(installationStepsMap.done);
                           } else {
-                            resolve(InstallationStepsMap.oneproviderStorageAdd);
+                            resolve(installationStepsMap.oneproviderStorageAdd);
                           }
                         });
                         checkStorage.catch(reject);
@@ -379,24 +373,24 @@ export default Service.extend(I18n, createDataProxyMixin('installationDetails'),
                         // IPs configuration - has been finished, because it 
                         // has default values which are undistinguishable from
                         // user input
-                        resolve(InstallationStepsMap.ips);
+                        resolve(installationStepsMap.ips);
                       }
                     });
                     checkDnsCheck.catch(reject);
                   } else {
-                    resolve(InstallationStepsMap.ips);
+                    resolve(installationStepsMap.ips);
                   }
                 });
                 checkIps.catch(reject);
 
               } else {
-                resolve(InstallationStepsMap.oneproviderRegistration);
+                resolve(installationStepsMap.oneproviderRegistration);
               }
             });
             checkRegister.catch(reject);
           }
         } else {
-          resolve(InstallationStepsMap.deploy);
+          resolve(installationStepsMap.deploy);
         }
       });
       checkConfig.catch(reject);

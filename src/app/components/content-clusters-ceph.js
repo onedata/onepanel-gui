@@ -8,7 +8,7 @@
  */
 
 import Component from '@ember/component';
-import { computed } from '@ember/object';
+import { computed, observer } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
@@ -50,9 +50,17 @@ export default Component.extend(
       return `${elementId}-${activeTab}`;
     }),
 
+    activeTabObserver: observer('activeTab', function () {
+      this.redirectItTabIsNotCorrect();
+    }),
+
     init() {
       this._super(...arguments);
 
+      this.activeTabObserver();
+    },
+
+    redirectItTabIsNotCorrect() {
       if (!allowedTabs.includes(this.get('activeTab'))) {
         next(() => safeExec(this, () => this.changeTab(allowedTabs[0])));
       }

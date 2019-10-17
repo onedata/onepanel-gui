@@ -1,23 +1,29 @@
 .cluster-ceph-status {
-  .osd-usage {
-    @media (min-width: $screen-sm-min) {
-      padding: 0 $padding-small-horizontal;
+  .osds-usage-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0 $padding-large-horizontal;
+  }
 
-      &:first-child {
-        padding-left: 0;
-      }
-  
-      &:last-child {
-        padding-right: 0;
-      }
+  .osd-usage {
+    width: calc(33.33333333% - #{$padding-small-horizontal});
+    margin-bottom: $padding-base-vertical;
+  }
+
+  @media (max-width: $screen-sm-max) {
+    .osd-usage {
+      width: calc(50% - #{$padding-small-horizontal})
+    }
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .osd-usage {
+      width: 100%;
     }
   }
   
   .one-space-indicator {
     min-height: 70px;
-  }
-
-  .osds-usage-row {
-    margin: 0 $padding-large-horizontal;
   }
 }

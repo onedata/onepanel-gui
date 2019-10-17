@@ -43,11 +43,11 @@ export default Component.extend(I18n, GlobalActions, {
   spacesProxy: null,
 
   /**
-   * Name of the storage type, which should be passed to the
+   * Id of the storage type, which should be passed to the
    * ClusterStorageAddForm. If valid, will open create form at component load.
    * @virtual
    */
-  createStorageFormTypeName: undefined,
+  createStorageFormTypeId: undefined,
 
   /**
    * @type {boolean}
@@ -75,11 +75,11 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {Ember.ComputedProperty<Object>}
    */
   createStorageFormType: computed(
-    'createStorageFormTypeName',
+    'createStorageFormTypeID',
     function createStorageFormType() {
-      const createStorageFormTypeName = this.get('createStorageFormTypeName');
-      if (createStorageFormTypeName) {
-        const storage = storageTypes.findBy('id', createStorageFormTypeName);
+      const createStorageFormTypeId = this.get('createStorageFormTypeId');
+      if (createStorageFormTypeId) {
+        const storage = storageTypes.findBy('id', createStorageFormTypeId);
         if (storage) {
           return storage;
         }

@@ -10,7 +10,7 @@ export default {
       deploy,
       oneproviderCeph: 'ceph configuration',
       ips,
-      oneproviderRegistration: 'provider registration',
+      oneproviderRegistration: 'Oneprovider registration',
       webCert,
       dns,
       oneproviderStorageAdd: 'storage configuration',

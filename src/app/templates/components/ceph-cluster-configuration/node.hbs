@@ -1,4 +1,4 @@
-{{#listComponent.item class="ceph-node" as |listItem|}}
+{{#listComponent.item class="ceph-node collapse-large" as |listItem|}}
   {{#listItem.header class="ceph-node-header"}}
     <span class="item-icon-container">
       {{one-icon class="item-icon" icon="node"}}
@@ -17,28 +17,30 @@
     <div class="item-table">
       <div class="item-table-content-cell">
         <div class="row content-row manager-monitor-section">
-          <label for={{concat elementId  "-manager-and-monitor"}} class="inline-label">
+          <label for={{managerAndMonitorToggleId}} class="inline-label">
             <strong>{{tt this "managerAndMonitor"}}</strong>
           </label>
           {{one-way-toggle
-            class=(concat "form-control manager-and-monitor")
-            inputId=(concat elementId  "-manager-and-monitor")
+            class="form-control manager-and-monitor"
+            inputId=managerAndMonitorToggleId
             checked=node.managerMonitor.isEnabled
             update=(action "toggleManagerMonitor")
             isReadOnly=(not allowsEdition)
           }}
           {{#if node.managerMonitor.isEnabled}}
             {{ceph-cluster-configuration/manager-monitor-form
+              showLayoutConfig=showFormLayoutConfig
               managerMonitor=node.managerMonitor
               isCephDeployed=isCephDeployed
               allowsEdition=allowsEdition}}
           {{/if}}
         </div>
-        {{#promise-proxy-container proxy=node.devices}}
+        {{#promise-proxy-container proxy=node.devicesProxy}}
           {{#each node.osds key="uuid" as |osd|}}
             {{ceph-cluster-configuration/osd-form
+              showLayoutConfig=showFormLayoutConfig
               osd=osd
-              devices=node.devices
+              devices=node.notMountedDevices
               usedDevices=node.usedDevices
               isCephDeployed=isCephDeployed
               allowsEdition=allowsEdition

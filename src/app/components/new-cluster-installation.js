@@ -54,7 +54,7 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {Utils/NewClusterDeployProcess}
+   * @type {Object}
    */
   stepData: undefined,
 
@@ -231,17 +231,18 @@ export default Component.extend(I18n, {
       this.set('_zoneOptionsValid', true);
     }
 
-    if (stepData) {
-      set(stepData, 'onFinish', () => this.configureFinished());
-      this.set('clusterDeployProcess', stepData);
+    let clusterDeployProcess = stepData && get(stepData, 'clusterDeployProcess');
+    if (clusterDeployProcess) {
+      set(clusterDeployProcess, 'onFinish', () => this.configureFinished());
+      this.set('clusterDeployProcess', clusterDeployProcess);
       hostsProxy.then(() => {
         this.extractConfiguration(
-          get(stepData, 'configuration'),
-          get(stepData, 'cephNodes')
+          get(clusterDeployProcess, 'configuration'),
+          get(clusterDeployProcess, 'cephNodes')
         );
       });
     } else {
-      const clusterDeployProcess = NewClusterDeployProcess.create(
+      clusterDeployProcess = NewClusterDeployProcess.create(
         getOwner(this).ownerInjection(), {
           onFinish: () => this.configureFinished(),
         }
@@ -470,7 +471,7 @@ export default Component.extend(I18n, {
         nextStep,
       } = this.getProperties('clusterDeployProcess', 'nextStep');
       this.updateClusterDeployProcess();
-      nextStep(clusterDeployProcess);
+      nextStep({ clusterDeployProcess });
     },
 
     startDeploy() {

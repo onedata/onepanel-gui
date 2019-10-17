@@ -9,7 +9,12 @@
   }
   .main-options-form {
     .form {
-      $label-width: 110px;
+      $label-width: 140px;
+      margin-top: $padding-small-vertical;
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
       
       @media (min-width: $screen-sm-min) {
         max-width: 600px;
@@ -29,7 +34,6 @@
   }
   .ceph-node {
     .form {
-      max-width: 400px;
       margin-top: $content-row-vertical-padding;
       margin-bottom: 0;
     }
@@ -42,6 +46,20 @@
     color: $color-one-light-gray;
     &:hover {
       color: darken($color-one-light-gray, 15%);
+    }
+  }
+  @media (min-width: $screen-sm-min) {
+    .osd-form, .manager-monitor-form {
+      &.mode-edit {
+        .form {
+          max-width: 500px;
+        }
+      }
+      &.mode-show {
+        .form-group-static {
+          margin-bottom: 0;
+        }
+      }
     }
   }
 }

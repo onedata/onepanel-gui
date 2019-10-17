@@ -97,7 +97,7 @@ export default EmberObject.extend({
     if (node) {
       nodes.removeObject(node);
     }
-    return !!node;
+    return Boolean(node);
   },
 
   /**

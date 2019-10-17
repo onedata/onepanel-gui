@@ -11,7 +11,7 @@ import EmberObject, { set, get } from '@ember/object';
 
 export default EmberObject.extend({
   /**
-   * @type {Utils/Ceph/CephNodeConfiguration}
+   * @type {Utils/Ceph/NodeConfiguration}
    * @virtual
    */
   node: undefined,

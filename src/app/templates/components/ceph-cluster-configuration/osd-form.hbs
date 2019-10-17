@@ -1,9 +1,12 @@
 <strong>{{tt this "objectStorageDaemon"}}</strong>
 {{#if allowsEdition}}
-  {{#one-icon icon="checkbox-filled-x" class="remove-osd" click=(action removeOsd)}}{{/one-icon}}
+  {{#one-icon icon="checkbox-filled-x" class="remove-osd" click=(action removeOsd)}}
+    {{one-tooltip title=(tt this "removeOsd")}}
+  {{/one-icon}}
 {{/if}}
 {{#bs-form submitOnEnter=false class="form-horizontal clearfix" as |form|}}
   {{one-form-fields
+    layoutConfig=layoutConfig
     bsForm=form
     fields=currentFields
     formValues=formValues

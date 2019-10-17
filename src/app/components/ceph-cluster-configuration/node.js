@@ -9,7 +9,7 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { observer } from '@ember/object';
+import { observer, computed } from '@ember/object';
 
 export default Component.extend(I18n, {
   tagName: '',
@@ -27,7 +27,7 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {Utils/Ceph/CephNodeConfiguration}
+   * @type {Utils/Ceph/NodeConfiguration}
    */
   node: undefined,
 
@@ -42,6 +42,21 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   allowsEdition: false,
+
+  /**
+   * @type {Object}
+   */
+  showFormLayoutConfig: Object.freeze({
+    formLabelColumns: 'col-xs-12 col-sm-3 col-md-2',
+    formInputColumns: 'col-xs-12 col-sm-9 col-md-10',
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  managerAndMonitorToggleId: computed('elementId', function managerAndMonitorToggleId() {
+    return this.get('elementId') + '-manager-and-monitor';
+  }),
 
   isCephDeployedObserver: observer('isCephDeployed', function isCephDeployedObserver() {
     const isCephDeployed = this.get('isCephDeployed');

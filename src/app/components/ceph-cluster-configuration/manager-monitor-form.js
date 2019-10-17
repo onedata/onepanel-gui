@@ -9,11 +9,16 @@
 
 import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import EmberObject, { computed, get, set, observer } from '@ember/object';
+import EmberObject, { computed, get, set, observer, getProperties } from '@ember/object';
 import { union } from '@ember/object/computed';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { conditional, raw, equal } from 'ember-awesome-macros';
+import config from 'ember-get-config';
+
+const {
+  layoutConfig: globalLayoutConfig,
+} = config;
 
 const editFieldsDefinition = [{
   name: 'monitorIp',
@@ -22,6 +27,7 @@ const editFieldsDefinition = [{
   regexAllowBlank: true,
   optional: true,
   cssClass: 'form-group-sm',
+  tip: true,
 }];
 
 const allPrefixes = ['edit', 'static'];
@@ -33,7 +39,7 @@ const validationsProto = editFieldsDefinition.reduce((proto, field) => {
 
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['manager-monitor-form'],
-  classNameBindings: ['shouldBeHidden:hide'],
+  classNameBindings: ['modeClass', 'shouldBeHidden:hide'],
 
   /**
    * @override
@@ -52,24 +58,46 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   managerMonitor: undefined,
 
   /**
-   * @type {string}
+   * @type {Ember.ComputedProperty<string>}
    */
   mode: conditional('isCephDeployed', raw('show'), raw('edit')),
 
+  modeClass: computed('mode', function modeClass() {
+    return 'mode-' + this.get('mode');
+  }),
+  
   /**
-   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   * @type {Ember.ComputedProperty<Object>}
    */
-  fieldsSource: computed(function fieldsSource() {
-    return editFieldsDefinition.map(field =>
-      Object.assign({}, field, { label: this.t(`fields.${field.name}.label`) })
-    );
+  layoutConfig: computed('mode', 'editLayoutConfig', function layoutConfig() {
+    const {
+      mode,
+      showLayoutConfig,
+    } = this.getProperties('mode', 'showLayoutConfig');
+    return mode === 'show' ? showLayoutConfig : globalLayoutConfig;
   }),
 
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  editFields: computed('fieldsSource', function editFields() {
-    return this.get('fieldsSource').map(field => EmberObject.create(
+  editFieldsSource: computed(function editFieldsSource() {
+    return editFieldsDefinition.map(field => {
+      const {
+        name,
+        tip,
+      } = getProperties(field, 'name', 'tip');
+      return Object.assign({}, field, {
+        label: this.t(`fields.${name}.label`),
+        tip: tip ? this.t(`fields.${name}.tip`) : undefined,
+      });
+    });
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<FieldType>>}
+   */
+  editFields: computed('editFieldsSource', function editFields() {
+    return this.get('editFieldsSource').map(field => EmberObject.create(
       Object.assign({}, field, { name: 'edit.' + get(field, 'name') })
     ));
   }),
@@ -77,11 +105,12 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<Array<FieldType>>}
    */
-  staticFields: computed('fieldsSource', function editFields() {
-    return this.get('fieldsSource').map(field => EmberObject.create(
+  staticFields: computed('editFieldsSource', function staticFields() {
+    return this.get('editFieldsSource').map(field => EmberObject.create(
       Object.assign({}, field, {
         name: 'static.' + get(field, 'name'),
         type: 'static',
+        tip: undefined,
       })
     ));
   }),
@@ -95,7 +124,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
    * @type {Ember.ComputedProperty<EmberObject>}
    */
   allFieldsValues: computed('allFields', function allFieldsValues() {
-    const values = EmberObject.create({});
+    const values = EmberObject.create();
     allPrefixes.forEach(prefix => values.set(prefix, EmberObject.create()));
     return values;
   }),

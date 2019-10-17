@@ -58,7 +58,7 @@ export default EmberObject.extend({
       status: (fakeProgress >= totalSteps) ?
         StatusEnum.ok : StatusEnum.running,
       steps: clusterDeploySteps.slice(0, fakeProgress),
-      totalSteps: totalSteps,
+      totalSteps,
     });
   },
 });

@@ -75,9 +75,7 @@ import spaceTabs from './mixins/components/space-tabs';
 import guiUtils from './services/gui-utils';
 import storageActions from './services/storage-actions';
 import clusterActions from './services/cluster-actions';
-import clusterModelManager from './services/cluster-model-manager';
 import onezoneGui from './services/onezone-gui';
-import deploymentManager from './services/deployment-manager';
 
 import onedata from './routes/onedata';
 
@@ -172,9 +170,7 @@ let translations = {
     guiUtils,
     storageActions,
     clusterActions,
-    clusterModelManager,
     onezoneGui,
-    deploymentManager,
   },
   routes: {
     onedata,

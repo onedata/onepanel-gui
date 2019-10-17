@@ -16,14 +16,17 @@ export default {
     fields: {
       monitorIp: {
         label: 'Monitor IP',
+        tip: 'MonitorTip',
       },
     },
   },
   osdForm: {
     objectStorageDaemon: 'Object Storage Daemon (OSD)',
+    removeOsd: 'Remove OSD',
     fields: {
       type: {
         label: 'Type',
+        tip: 'typeType',
         options: {
           blockdevice: 'Block device',
           loopdevice: 'Loop device',
@@ -31,12 +34,15 @@ export default {
       },
       device: {
         label: 'Device',
+        tip: 'DeviceTip',
       },
       path: {
         label: 'Path',
+        tip: 'pathTip',
       },
       size: {
         label: 'Size',
+        tip: 'sizeTip',
       },
     },
     deviceAlreadyUsed: 'Device used by another OSD',

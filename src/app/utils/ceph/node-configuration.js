@@ -17,6 +17,9 @@ import CephManagerMonitorConfiguration from 'onepanel-gui/utils/ceph/manager-mon
 import CephOsdConfiguration from 'onepanel-gui/utils/ceph/osd-configuration';
 import CephNodeDevice from 'onepanel-gui/utils/ceph/node-device';
 import { v4 as uuid } from 'ember-uuid';
+import { isPresent } from '@ember/utils';
+import { reject } from 'rsvp';
+import { array, raw } from 'ember-awesome-macros';
 
 export default EmberObject.extend({
   onepanelServer: service(),
@@ -31,7 +34,7 @@ export default EmberObject.extend({
   /**
    * @type {Ember.ComputedProperty<PromiseArray<Utils/Ceph/NodeDevice>>}
    */
-  devices: computed('host', function devices() {
+  devicesProxy: computed('host', function devicesProxy() {
     const {
       host,
       onepanelServer,
@@ -42,35 +45,39 @@ export default EmberObject.extend({
         promise: onepanelServer
           .request('oneprovider', 'getBlockDevices', host)
           .then(({ data }) =>
-            data['blockDevices'].map(device => CephNodeDevice.create(device))
+            data.blockDevices.map(device => CephNodeDevice.create(device))
           ),
       });
     } else {
       return PromiseArray.create({
-        // infinite loading
-        promise: new Promise(() => {}),
+        promise: reject(),
       });
     }
   }),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Utils/Ceph/NodeDevice>>}
+   */
+  notMountedDevices: array.rejectBy('devicesProxy', raw('mounted')),
 
   /**
    * Mapping: deviceId -> number of usages in unique osds
    * @type {object}
    */
   usedDevices: computed(
-    'devices.{[],isFulfilled}',
+    'devicesProxy.{[],isFulfilled}',
     'osds.@each.{type,device}',
     function usedDevices() {
       const {
         osds,
-        devices,
-      } = this.getProperties('osds', 'devices');
-      if (!get(devices, 'isFulfilled')) {
+        devicesProxy,
+      } = this.getProperties('osds', 'devicesProxy');
+      if (!get(devicesProxy, 'isFulfilled')) {
         return {};
       } else {
         // initial object: deviceId -> 0
         const used = {};
-        devices
+        devicesProxy
           .mapBy('id')
           .forEach(id => set(used, id, 0));
 
@@ -79,7 +86,7 @@ export default EmberObject.extend({
           .mapBy('device')
           .compact()
           // find device by path
-          .map(path => devices.findBy('path', path))
+          .map(path => devicesProxy.findBy('path', path))
           // remove not-found values (undefined)
           .compact()
           // map to device id
@@ -152,7 +159,9 @@ export default EmberObject.extend({
       uuid: osdUuid,
       type: 'loopdevice',
       device: get((this.getDeviceForNewOsd() || {}), 'path'),
-      path: `/var/lib/ceph/loopdevices/osd-${osdUuid}.loop`,
+      path: `/volumes/persistence/ceph-loopdevices/osd-${osdUuid}.loop`,
+      // size is not set, so osd configuration is invalid
+      isValid: false,
     });
 
     osds.pushObject(osd);
@@ -180,14 +189,14 @@ export default EmberObject.extend({
   getDeviceForNewOsd() {
     const {
       usedDevices,
-      devices,
-    } = this.getProperties('usedDevices', 'devices');
-    if (!get(devices, 'isFulfilled')) {
+      notMountedDevices,
+    } = this.getProperties('usedDevices', 'notMountedDevices');
+    if (!isPresent(notMountedDevices)) {
       return undefined;
     } else {
-      return devices
-        .rejectBy('mounted')
-        .filter(dev => get(usedDevices, get(dev, 'id')) === 0)[0] || devices.objectAt(0);
+      return notMountedDevices
+        .filter(dev => get(usedDevices, get(dev, 'id')) === 0)[0] ||
+        notMountedDevices.objectAt(0);
     }
   },
 
@@ -202,29 +211,29 @@ export default EmberObject.extend({
       host,
       osds: nodeOsds,
     } = this.getProperties('managerMonitor', 'host', 'osds');
-    let {
+    const {
       managers,
       monitors,
       osds,
     } = getProperties(newConfig, 'managers', 'monitors', 'osds');
-    [
-      managers,
-      monitors,
-      osds,
+    const [
+      newNodeManagers,
+      newNodeMonitors,
+      newNodeOsds,
     ] = [
       managers,
       monitors,
       osds,
     ].map(services => (services || []).filterBy('host', host));
 
-    set(managerMonitor, 'isEnabled', !!get(managers.concat(monitors), 'length'));
-    const monitorIp = get(monitors[0] || {}, 'ip');
+    set(managerMonitor, 'isEnabled', isPresent(newNodeManagers.concat(newNodeMonitors)));
+    const monitorIp = get(newNodeMonitors[0] || {}, 'ip');
     managerMonitor.fillIn({
       monitorIp,
     });
 
     nodeOsds.clear();
-    osds.forEach(osdConfig => {
+    newNodeOsds.forEach(osdConfig => {
       const osd = CephOsdConfiguration.create({
         node: this,
       });

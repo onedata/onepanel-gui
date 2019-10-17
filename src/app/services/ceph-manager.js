@@ -11,20 +11,18 @@ import Service, { inject as service } from '@ember/service';
 import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
 import _ from 'lodash';
 import { getOwner } from '@ember/application';
-import { get, computed } from '@ember/object';
-import ObjectProxy from '@ember/object/proxy';
+import { get } from '@ember/object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { hash as promiseHash } from 'rsvp';
 
 export default Service.extend({
   onepanelServer: service(),
 
   /**
-   * Is filled with content on service init
-   * @type {ObjectProxy<Onepanel.CephStatus>}
+   * Is filled with content on service init and each getStatus() call
+   * @type {Onepanel.CephStatus}
    */
-  status: computed(function status() {
-    return ObjectProxy.create();
-  }),
+  lastStatus: undefined,
 
   init() {
     this._super(...arguments);
@@ -110,7 +108,7 @@ export default Service.extend({
 
     // update status property with new value
     promise.then(status =>
-      safeExec(this, () => this.set('status.content', status))
+      safeExec(this, () => this.set('lastStatus', status))
     );
 
     return promise;
@@ -130,13 +128,10 @@ export default Service.extend({
    * @return {Promise<Object>} Object with fields: osds, usage
    */
   getOsdsWithUsage() {
-    return Promise.all([
-      this.getOsds(),
-      this.getOsdsUsage(),
-    ]).then(([osds, usage]) => ({
-      osds,
-      usage,
-    }));
+    return promiseHash({
+      osds: this.getOsds(),
+      usage: this.getOsdsUsage(),
+    });
   },
 
   /**
@@ -162,13 +157,10 @@ export default Service.extend({
    * @return {Promise<Object>} Object with fields: pools, usage
    */
   getPoolsWithUsage() {
-    return Promise.all([
-      this.getPools(),
-      this.getPoolsUsage(),
-    ]).then(([pools, usage]) => ({
-      pools,
-      usage,
-    }));
+    return promiseHash({
+      pools: this.getPools(),
+      usage: this.getPoolsUsage(),
+    });
   },
 
   /**
@@ -178,7 +170,7 @@ export default Service.extend({
    */
   canCreateStorage() {
     const promise = this.getOsds().then(osds => get(osds, 'length'));
-    return this.suppressNotDeployed(promise, false);
+    return this.suppressNotDeployed(promise, false).then(result => Boolean(result));
   },
 
   /**
@@ -187,7 +179,7 @@ export default Service.extend({
    */
   isDeployed() {
     const promise = this.getParams().then(() => true);
-    return this.suppressNotDeployed(promise, false);
+    return this.suppressNotDeployed(promise, false).then(result => Boolean(result));
   },
 
   /**

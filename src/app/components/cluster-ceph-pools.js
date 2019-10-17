@@ -14,6 +14,11 @@ import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
+import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { resolve } from 'rsvp';
+import $ from 'jquery';
 
 export default Component.extend(
   I18n,
@@ -22,11 +27,23 @@ export default Component.extend(
     classNames: ['cluster-ceph-pools'],
 
     cephManager: service(),
+    storageManager: service(),
+    globalNotify: service(),
 
     /**
      * @override
      */
     i18nPrefix: 'components.clusterCephPools',
+
+    /**
+     * @type {boolean}
+     */
+    addStorageOpened: false,
+
+    /**
+     * @type {Object}
+     */
+    createStorageFormType: storageTypes.findBy('id', 'localceph'),
 
     /**
      * @type {Ember.ComputedProperty<Array<Object>>}
@@ -81,6 +98,32 @@ export default Component.extend(
      */
     fetchCanCreatePool() {
       return this.get('cephManager').canCreateStorage();
+    },
+
+    actions: {
+      toggleAddStorageForm() {
+        this.toggleProperty('addStorageOpened');
+      },
+      submitAddStorage(storageFormData) {
+        const {
+          storageManager,
+          globalNotify,
+        } = this.getProperties('storageManager', 'globalNotify');
+
+        return storageManager.createStorage(
+          createClusterStorageModel(storageFormData)
+        ).then(() => 
+          safeExec(this, () => {
+            this.set('addStorageOpened', false);
+            $('.col-content').scrollTop(0);
+            return this.updatePoolsWithUsageProxy();
+          }) || resolve()
+        ).then(() =>
+          globalNotify.success(this.t('storageCreateSuccess'))
+        ).catch(error =>
+          globalNotify.backendError(this.t('creatingStorage'), error)
+        );
+      },
     },
   }
 );

@@ -80,8 +80,8 @@ export default SecondLevelItems.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Object>}
    */
-  cephItem: computed('cephManager.status.level', function cephItem() {
-    const cephStatusLevel = this.get('cephManager.status.level');
+  cephItem: computed('cephManager.lastStatus.level', function cephItem() {
+    const cephStatusLevel = this.get('cephManager.lastStatus.level');
     return {
       id: 'ceph',
       label: this.t('ceph'),
@@ -146,11 +146,11 @@ export default SecondLevelItems.extend(I18n, {
       if (isNotDeployedCluster || !isLocalCluster || !clusterType) {
         return [];
       } else {
-        const items = this._super(...arguments);
+        let items = this._super(...arguments);
 
         const hasCephDeployed = get(cluster, 'installationDetails.hasCephDeployed');
         if (!hasCephDeployed) {
-          items.removeObject(cephItem);
+          items = items.without(cephItem);
         }
         if (isEmergencyOnepanel) {
           items.push(emergencyPassphraseItem);

@@ -12,7 +12,7 @@ import { get, set } from '@ember/object';
 import { alias, reads } from '@ember/object/computed';
 import InstallationStep from 'onepanel-gui/utils/installation-step';
 
-export const InstallationStepsArray = Object.freeze([
+export const installationStepsArray = Object.freeze([
   InstallationStep.create({
     name: 'deploy',
   }),
@@ -47,11 +47,11 @@ export const InstallationStepsArray = Object.freeze([
   }),
 ]);
 
-InstallationStepsArray
-  .forEach(step => set(step, 'stepsOrder', InstallationStepsArray));
+installationStepsArray
+  .forEach(step => set(step, 'stepsOrder', installationStepsArray));
 
-export const InstallationStepsMap = Object.freeze(
-  InstallationStepsArray.reduce((map, step) => {
+export const installationStepsMap = Object.freeze(
+  installationStepsArray.reduce((map, step) => {
     map[get(step, 'name')] = step;
     return map;
   }, {})
@@ -74,7 +74,7 @@ export default ObjectProxy.extend({
   /**
    * @type {InstallationStep}
    */
-  initStep: InstallationStepsMap.deploy,
+  initStep: installationStepsMap.deploy,
 
   /**
    * @type {string|null}
@@ -88,14 +88,6 @@ export default ObjectProxy.extend({
   hasCephDeployed: false,
 
   type: reads('content.onepanelServiceType'),
-
-  init() {
-    this._super(...arguments);
-    // TODO i18n or set default name in some view
-    if (this.get('name') == null) {
-      this.set('name', 'New cluster');
-    }
-  },
 
   /**
    * @type {Ember.ComputedProperty<boolean>}

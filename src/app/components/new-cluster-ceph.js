@@ -9,7 +9,7 @@
 
 import Component from '@ember/component';
 import { get, set, observer } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -39,14 +39,14 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {Utils/NewClusterDeployProcess}
+   * @type {Object}
    */
   stepData: undefined,
 
   /**
    * @type {Ember.ComputedProperty<Utils/NewClusterDeployProcess>}
    */
-  clusterDeployProcess: alias('stepData'),
+  clusterDeployProcess: reads('stepData.clusterDeployProcess'),
 
   /**
    * @type {Ember.ComputedProperty<Utils/Ceph/ClusterConfiguration>}
@@ -98,7 +98,7 @@ export default Component.extend(I18n, {
         cephConfig,
       } = this.getProperties('prevStep', 'clusterDeployProcess', 'cephConfig');
       set(clusterDeployProcess, 'configuration.ceph', cephConfig.toRawConfig());
-      prevStep(clusterDeployProcess);
+      prevStep({ clusterDeployProcess });
     },
     startDeploy() {
       const cephConfig = this.get('cephConfig').toRawConfig();
