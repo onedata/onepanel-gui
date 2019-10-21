@@ -253,11 +253,11 @@ export default OnepanelServerBase.extend(
     // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
     // deployment step. See more in models/installation-details.
     //
-    mockStep: installationStepsMap.deploy,
+    // mockStep: installationStepsMap.deploy,
     // mockStep: installationStepsMap.oneproviderRegistration,
     // mockStep: installationStepsMap.dns,
     // mockStep: installationStepsMap.oneproviderStorageAdd,
-    // mockStep: installationStepsMap.done,
+    mockStep: installationStepsMap.done,
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
 

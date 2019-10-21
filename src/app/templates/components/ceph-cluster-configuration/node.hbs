@@ -19,6 +19,8 @@
         <div class="row content-row manager-monitor-section">
           <label for={{managerAndMonitorToggleId}} class="inline-label">
             <strong>{{tt this "managerAndMonitor"}}</strong>
+            <span class="space"></span>
+            {{one-label-tip title=(tt this "managerAndMonitorTip")}}
           </label>
           {{one-way-toggle
             class="form-control manager-and-monitor"

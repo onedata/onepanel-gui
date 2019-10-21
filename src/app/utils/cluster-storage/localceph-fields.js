@@ -2,6 +2,7 @@ export default [
   {
     name: 'copiesNumber',
     type: 'number',
+    tip: true,
     defaultValue: 1,
     gte: 1,
     lte: {
@@ -12,6 +13,7 @@ export default [
   {
     name: 'minCopiesNumber',
     type: 'number',
+    tip: true,
     defaultValue: 1,
     gte: 1,
     lte: {
