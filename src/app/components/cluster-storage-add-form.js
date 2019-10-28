@@ -457,12 +457,10 @@ export default OneForm.extend(I18n, Validations, {
       storage,
       storageTypes,
       selectedStorageType,
-      cephOsdsProxy,
     } = this.getProperties(
       'storage',
       'storageTypes',
       'selectedStorageType',
-      'cephOsdsProxy',
     );
 
     const genericFields = GENERIC_FIELDS.map(field => EmberObject.create(field));
@@ -500,7 +498,7 @@ export default OneForm.extend(I18n, Validations, {
     }
     this.fetchCephOsds();
     this.osdsNumberObserver();
-    cephOsdsProxy
+    this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
         // Select default (first) storage type if it is still empty

@@ -2,18 +2,20 @@
   .osds-usage-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 0 $padding-large-horizontal;
+    margin-left: $padding-large-horizontal;
+    padding: $content-row-vertical-padding 0;
   }
 
   .osd-usage {
-    width: calc(33.33333333% - #{$padding-small-horizontal});
+    width: calc(33.33333333% - #{$padding-large-horizontal});
+    min-width: 0;
     margin-bottom: $padding-base-vertical;
+    margin-right: $padding-large-horizontal;
   }
 
   @media (max-width: $screen-sm-max) {
     .osd-usage {
-      width: calc(50% - #{$padding-small-horizontal})
+      width: calc(50% - #{$padding-large-horizontal})
     }
   }
 
