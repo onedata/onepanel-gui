@@ -18,7 +18,6 @@ import { conditional, raw, equal } from 'ember-awesome-macros';
 const editFieldsDefinition = [{
   name: 'name',
   type: 'text',
-  // cssClass: 'form-group-sm',
 }];
 
 const allPrefixes = ['edit', 'static'];
