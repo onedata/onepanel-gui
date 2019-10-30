@@ -1,53 +1,66 @@
-{{#bs-form submitOnEnter=false class=(concat "form-horizontal " (if (eq mode "show") "form-static" "")) as |form|}}
-  {{#if (eq mode "create")}}
-    {{#form.group}}
-      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
-      <div class={{layoutConfig.formInputColumns}}>
-        {{#power-select
-          options=storageTypes
-          selected=selectedStorageType
-          onchange=(action "storageTypeChanged")
-          searchEnabled=false
-          renderInPlace=true
-          as |storageType|
-        }}
-          {{storageType.name}}
-        {{/power-select}}
-      </div>
-    {{/form.group}}
-  {{/if}}
-  
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-    layoutConfig=layoutConfig}}
-  {{#unless (eq mode "show")}}
-    <div class="form-group submit-group col-xs-12">
-      <div class="row">
-        <div class="{{layoutConfig.formSubmitColumns}}">
-          {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
-            {{tt this (if inEditionMode "save" "add")}}
-          {{/one-spin-button}}
-          {{#if inEditionMode}}
-            <button class="btn btn-warning cancel-storage-form-btn" {{action cancel}}>{{tt this "cancel"}}</button>
-          {{/if}}
+{{#promise-proxy-container proxy=cephOsdsProxy}}
+  {{#bs-form submitOnEnter=false class=(concat "form-horizontal row " (if (eq mode "show") "form-static" "")) as |form|}}
+    {{#if (eq mode "create")}}
+      {{#form.group}}
+        <label class={{concat "control-label " layoutConfig.formLabelColumns}}>Storage type:</label>
+        <div class={{layoutConfig.formInputColumns}}>
+          {{#power-select
+            options=visibleStorageTypes
+            selected=selectedStorageType
+            onchange=(action "storageTypeChanged")
+            searchEnabled=false
+            renderInPlace=true
+            disabled=disableStorageTypeSelector
+            as |storageType|
+          }}
+            {{storageType.name}}
+          {{/power-select}}
+        </div>
+      {{/form.group}}
+    {{/if}}
+    {{one-form-fields
+      bsForm=form
+      fields=currentFields
+      formValues=formValues
+      inputChanged=(action "inputChanged")
+      onFocusOut=(action "focusOut")
+      layoutConfig=layoutConfig
+      disabled=showLoadingSpinner}}
+    {{#unless (eq mode "show")}}
+      <div class="form-group submit-group col-xs-12">
+        <div class="row">
+          <div class="{{layoutConfig.formSubmitColumns}}">
+            {{#one-spin-button
+              type="submit"
+              class="btn btn-primary"
+              disabled=(or (not isValid) showLoadingSpinner)
+              action=(action (if (eq mode "create") "submit" "showModifyModal"))}}
+              {{tt this (if inEditionMode "save" "add")}}
+            {{/one-spin-button}}
+            {{#if inEditionMode}}
+              <button
+                class="btn btn-warning cancel-storage-form-btn"
+                disabled={{showLoadingSpinner}}
+                {{action cancel}}>
+                {{tt this "cancel"}}
+              </button>
+            {{/if}}
+          </div>
         </div>
       </div>
-    </div>
-  {{/unless}}
-{{/bs-form}}
-{{#if (eq mode "edit")}}
-  {{proceed-process-modal
-    opened=modifyModalVisible
-    processing=isSavingStorage
-    close=(action (mut modifyModalVisible) false)
-    proceed=(action "submit")
-    modalClass="modify-storage-modal"
-    modalIcon="sign-warning-rounded"
-    headerText=(tt this "modifyStorageModalHeader")
-    messageText=(tt this "modifyStorageModalMessage" name=storage.name)
-    proceedButtonClass="btn btn-warning proceed"}}
-{{/if}}
+    {{/unless}}
+  {{/bs-form}}
+  {{loading-container isLoading=showLoadingSpinner}}
+  {{#if (eq mode "edit")}}
+    {{proceed-process-modal
+      opened=modifyModalVisible
+      processing=isSavingStorage
+      close=(action (mut modifyModalVisible) false)
+      proceed=(action "submit")
+      modalClass="modify-storage-modal"
+      modalIcon="sign-warning-rounded"
+      headerText=(tt this "modifyStorageModalHeader")
+      messageText=(tt this "modifyStorageModalMessage" name=storage.name)
+      proceedButtonClass="btn btn-warning proceed"}}
+  {{/if}}
+{{/promise-proxy-container}}

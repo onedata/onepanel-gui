@@ -6,33 +6,41 @@
 
   {{else}}
 
-    {{#one-wizard steps=steps currentIndex=wizardIndex as |w|}}
-      {{#if (eq w.step.id "installation")}}
+    {{#one-wizard steps=visibleSteps currentIndex=wizardIndex as |w|}}
+      {{#if (eq w.step.name "deploy")}}
         {{new-cluster-installation
           nextStep=(action "next")
+          stepData=stepData
           deploymentTaskId=deploymentTaskId
+          cephChanged=(action (mut showCephStep))
         }}
-      {{else if (eq w.step.id "ips")}}
+      {{else if (eq w.step.name "oneproviderCeph")}}
+        {{new-cluster-ceph
+          nextStep=(action "next")
+          prevStep=(action "prev")
+          stepData=stepData
+        }}
+      {{else if (eq w.step.name "ips")}}
         {{new-cluster-ips
           nextStep=(action "next")
           providerDetailsProxy=providerDetailsProxy
         }}
-      {{else if (eq w.step.id "providerRegistration")}}
+      {{else if (eq w.step.name "oneproviderRegistration")}}
         {{new-cluster-zone-registration
           nextStep=(action "next")
         }}
-      {{else if (eq w.step.id "dns")}}
+      {{else if (eq w.step.name "dns")}}
         {{new-cluster-dns
           nextStep=(action "next")
           prevStep=(action "prev")
         }}
-      {{else if (eq w.step.id "webCert")}}
+      {{else if (eq w.step.name "webCert")}}
         {{new-cluster-web-cert
           nextStep=(action "next")
         }}
-      {{else if (eq w.step.id "providerStorage")}}
+      {{else if (eq w.step.name "oneproviderStorageAdd")}}
         {{manage-cluster-storages nextStep=(action "next")}}
-      {{else if (eq w.step.id "summary")}}
+      {{else if (eq w.step.name "done")}}
         {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}
       {{/if}}
     {{/one-wizard}}

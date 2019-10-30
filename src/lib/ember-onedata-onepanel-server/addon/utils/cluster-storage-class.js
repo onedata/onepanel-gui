@@ -1,3 +1,13 @@
+/**
+ * Exports function, that maps storageType to corresponding class from
+ * Onepanel JS client.
+ *
+ * @module utils/cluster-storage-class
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Onepanel from 'npm:onepanel';
 
 const {
@@ -9,6 +19,8 @@ const {
   CephModify,
   Cephrados,
   CephradosModify,
+  Localceph,
+  LocalcephModify,
   Swift,
   SwiftModify,
   Glusterfs,
@@ -19,6 +31,12 @@ const {
   NulldeviceModify,
 } = Onepanel;
 
+/**
+ * @param {string} storageType 
+ * @param {boolean} [modify=false] if true, class for storage edition will be
+ *   returned
+ * @returns {Object} class for given storageType
+ */
 function clusterStorageClass(storageType, modify = false) {
   switch (storageType) {
     case 's3':
@@ -27,6 +45,8 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? CephModify : Ceph;
     case 'cephrados':
       return modify ? CephradosModify : Cephrados;
+    case 'localceph':
+      return modify ? LocalcephModify : Localceph;
     case 'posix':
       return modify ? PosixModify : Posix;
     case 'swift':

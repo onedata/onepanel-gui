@@ -50,26 +50,36 @@
     isReadOnly=isReadOnly
   }}
 </td>
+{{#if showCeph}}
+  <td class="text-center column toggle-column" data-option="ceph">
+    {{one-way-toggle
+      checked=host.ceph
+      update=(action "checkboxChanged")
+      hostHostname=host.hostname
+      hostOption="ceph"
+      dataOption="ceph"
+      isReadOnly=isReadOnly
+    }}
+  </td>
+{{/if}}
 {{#if removeAvailable}}
   <td class="text-center column btn-column compact">
-    <div
-      class={{concat-classes "btn-remove-node" _removeHostBtnClass}}
-      {{action "removeHost"}}
-    >
+    <div>
       {{#if isMobile}}
         {{#one-spin-button
           class="btn btn-sm btn-danger"
+          action=(action "removeHost")
+          disabled=isRemoveHostBtnDisabled
+          class="btn-remove-node"
         }}
           {{t "components.clusterHostTableRow.removeBtn"}}
         {{/one-spin-button}}
       {{else}}
-        {{one-icon icon="checkbox-filled-x"}}
-        {{one-tooltip
-          title=(t "components.clusterHostTableRow.removeBtn")
-          placement="top"
-          arrowPlacement="right"
-          triggerEvents="hover"
-        }}
+        {{remove-icon
+          tooltipText=(t "components.clusterHostTableRow.removeBtn")
+          onClick=(action "removeHost")
+          isDisabled=isRemoveHostBtnDisabled
+          class="btn-remove-node"}}
       {{/if}}
     </div>
   </td>
