@@ -11,7 +11,7 @@
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, observer } from '@ember/object';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
@@ -64,25 +64,41 @@ export default Component.extend(I18n, {
     return this.get('elementId') + '-cookieConsentNotification';
   }),
 
+  activeTabObserver: observer('activeTab', function () {
+    this.redirectIfTabIsNotCorrect();
+  }),
+
   init() {
     this._super(...arguments);
 
+    this.activeTabObserver();
+  },
+
+  redirectIfTabIsNotCorrect() {
     if (!allowedTabs.includes(this.get('activeTab'))) {
-      next(() => safeExec(this, () => this.changeTab(allowedTabs[0])));
+      next(() => safeExec(this, () => this.changeTab(allowedTabs[0], true)));
     }
   },
 
   /**
    * @param {string} tabName
+   * @param {boolean} replaceHistoryEntry
    * @returns {undefined}
    */
-  changeTab(tabName) {
+  changeTab(tabName, replaceHistoryEntry = false) {
     if (allowedTabs.includes(tabName)) {
-      this.get('router').transitionTo({
+      const router = this.get('router');
+      const transitionParams = {
         queryParams: {
           options: `tab.${tabName}`,
         },
-      });
+      };
+
+      if (replaceHistoryEntry) {
+        router.replaceWith(transitionParams);
+      } else {
+        router.transitionTo(transitionParams);
+      }
     }
   },
 
