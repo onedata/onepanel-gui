@@ -148,11 +148,11 @@ export default Component.extend(I18n, {
     const config = _.assign({}, layoutConfig);
     if (whileEdition) {
       _.assign(config, {
-        formLabelColumns: 'col-xs-12 col-sm-3 text-left',
-        formInputColumns: 'col-xs-12 col-sm-9',
-        formToggleLabelColumns: 'col-xs-9 col-sm-3 text-left',
-        formToggleInputColumns: 'col-xs-3 col-sm-9 text-xs-right',
-        formSubmitColumns: 'col-xs-12 col-sm-9 col-sm-offset-3 text-xs-center',
+        formLabelColumns: 'col-xs-12 col-sm-4 text-left',
+        formInputColumns: 'col-xs-12 col-sm-8',
+        formToggleLabelColumns: 'col-xs-9 col-sm-4 text-left',
+        formToggleInputColumns: 'col-xs-3 col-sm-8 text-xs-right',
+        formSubmitColumns: 'col-xs-12 col-sm-8 col-sm-offset-4 text-xs-center',
       });
     }
     return config;

@@ -5,12 +5,12 @@
   }
   .id-edition-label .clipboard-line-label {
     @media (min-width: $screen-sm-min) {
-      width: 25%;
+      width: 33.333333%;
     }
   }
   .cluster-storage-add-form {
-    padding: $storage-item-padding;
     padding-top: 0;
+    margin: 0 22px;
 
     &.form-static {
       padding-bottom: 0;
@@ -21,12 +21,13 @@
       padding: 0;
       border-bottom: 0;
 
-      .row {
+      .row:not(.nested-row) {
         margin: 0;
         transition: none;
       }
 
       .form-group-static {
+        margin: 0;
         .one-label-tip {
           display: none;
         }
@@ -39,7 +40,7 @@
 
       &.form-static {
         .form-group-static {
-          .row {
+          > .row {
             padding: $content-row-vertical-padding 0;
           }
           .form-control-static, .control-label {
@@ -80,7 +81,7 @@
           margin: 0;
           text-align: left;
         }
-        .one-label-tip {
+        .form-field-right-addon {
           right: 40px;
           top: $storage-item-padding * 0.33;
           transform: translateX(1.5em);
@@ -89,12 +90,12 @@
         .form-control-static {
           padding: $storage-item-padding 0;
         }
-        .form-control {
+        .form-control-column .form-control {
           margin-top: $storage-item-padding * 0.33;
         }
         .form-control-column {
           margin-right: 50px;
-          width: calc(75% - 50px);
+          width: calc(66.666666% - 50px);
         }
         .form-group-editable .one-way-toggle {
           padding-top: $padding-base-vertical;
@@ -125,6 +126,16 @@
             }
           }
         }
+      }
+    }
+    .qos-params-editor {
+      @media (min-width: $screen-sm-min) {
+        .label-column {
+          padding: 8px $padding-small-horizontal 8px 0;
+        }
+      }
+      .one-inline-editor .one-label {
+        padding-left: 0;
       }
     }
   }
