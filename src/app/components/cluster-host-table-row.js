@@ -2,7 +2,7 @@
  * Single row of cluster hosts table
  * 
  * @module components/cluster-host-table-row
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -48,6 +48,12 @@ export default Component.extend({
    */
   isMobile: undefined,
 
+  /**
+   * @type {boolean}
+   * @virtual
+   */
+  showCeph: false,
+
   removeAvailable: computed('removeHost', function () {
     return this.get('removeHost') !== notImplementedReject;
   }),
@@ -72,18 +78,24 @@ export default Component.extend({
    */
   _removeDisabled: false,
 
-  _removeHostBtnClass: computed('isThisHost.{isSettled,content}', function () {
-    const isThisHost = this.get('isThisHost');
-    if (get(isThisHost, 'isSettled')) {
-      if (get(isThisHost, 'isRejected')) {
-        return 'disabled';
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isRemoveHostBtnDisabled: computed(
+    'isThisHost.{isSettled,content}',
+    function isRemoveHostBtnDisabled() {
+      const isThisHost = this.get('isThisHost');
+      if (get(isThisHost, 'isSettled')) {
+        if (get(isThisHost, 'isRejected')) {
+          return true;
+        } else {
+          return Boolean(get(isThisHost, 'content'));
+        }
       } else {
-        return get(isThisHost, 'content') ? 'disabled' : '';
+        return true;
       }
-    } else {
-      return 'disabled';
     }
-  }),
+  ),
 
   /**
    * True if this row represents current host

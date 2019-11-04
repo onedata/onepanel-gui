@@ -12,6 +12,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -27,16 +28,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   guiUtils: service(),
 
   i18nPrefix: 'components.contentClustersNodes',
-
-  /**
-   * @override
-   * @type {PromiseObject<ProviderDetails>}
-   */
-  providerDetailsProxy: computed(function providerDetailsProxy() {
-    if (this.get('guiUtils.serviceType') === 'oneprovider') {
-      return this.get('providerManager').getProviderDetailsProxy();
-    }
-  }),
 
   /**
    * Resolves with EmberArray of ClusterHostInfo.
@@ -59,6 +50,21 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   _ipsFormData: undefined,
 
   _origIpsFormData: undefined,
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
+  onepanelServiceType: reads('guiUtils.serviceType'),
+
+  /**
+   * @override
+   * @type {PromiseObject<ProviderDetails>}
+   */
+  providerDetailsProxy: computed(function providerDetailsProxy() {
+    if (this.get('onepanelServiceType') === 'oneprovider') {
+      return this.get('providerManager').getProviderDetailsProxy();
+    }
+  }),
 
   init() {
     this._super(...arguments);

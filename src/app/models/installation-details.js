@@ -2,32 +2,60 @@
  * Information about installation of cluster
  *
  * @module models/installation-details
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import ObjectProxy from '@ember/object/proxy';
-import { computed } from '@ember/object';
+import { get, set } from '@ember/object';
 import { alias, reads } from '@ember/object/computed';
+import InstallationStep from 'onepanel-gui/utils/installation-step';
 
-export const CLUSTER_INIT_STEPS = Object.freeze({
-  DEPLOY: 0,
-  // pseudo-step: should be always between DEPLOY and DEPLOY + 1
-  DEPLOYMENT_PROGRESS: 0.5,
-  ZONE_DEPLOY: 0,
-  ZONE_IPS: 1,
-  ZONE_DNS: 2,
-  ZONE_WEB_CERT: 3,
-  ZONE_DONE: 4,
-  PROVIDER_DEPLOY: 0,
-  PROVIDER_REGISTER: 1,
-  PROVIDER_IPS: 2,
-  PROVIDER_DNS: 3,
-  PROVIDER_WEB_CERT: 4,
-  PROVIDER_STORAGE_ADD: 5,
-  PROVIDER_DONE: 6,
-});
+export const installationStepsArray = Object.freeze([
+  InstallationStep.create({
+    name: 'deploy',
+  }),
+  InstallationStep.create({
+    name: 'oneproviderCeph',
+    inOnezone: false,
+  }),
+  InstallationStep.create({
+    name: 'deploymentProgress',
+    isHiddenStep: true,
+  }),
+  InstallationStep.create({
+    name: 'oneproviderRegistration',
+    inOnezone: false,
+  }),
+  InstallationStep.create({
+    name: 'ips',
+  }),
+  InstallationStep.create({
+    name: 'dns',
+  }),
+  InstallationStep.create({
+    name: 'webCert',
+  }),
+  InstallationStep.create({
+    name: 'oneproviderStorageAdd',
+    inOnezone: false,
+  }),
+  InstallationStep.create({
+    name: 'done',
+    isFinalStep: true,
+  }),
+]);
+
+installationStepsArray
+  .forEach(step => set(step, 'stepsOrder', installationStepsArray));
+
+export const installationStepsMap = Object.freeze(
+  installationStepsArray.reduce((map, step) => {
+    map[get(step, 'name')] = step;
+    return map;
+  }, {})
+);
 
 export default ObjectProxy.extend({
   content: alias('clusterInfo'),
@@ -43,30 +71,26 @@ export default ObjectProxy.extend({
    */
   clusterInfo: null,
 
-  initStep: CLUSTER_INIT_STEPS.DEPLOY,
+  /**
+   * @type {InstallationStep}
+   */
+  initStep: installationStepsMap.deploy,
 
   /**
    * @type {string|null}
    */
   name: null,
 
+  /**
+   * @type {boolean}
+   * @virtual
+   */
+  hasCephDeployed: false,
+
   type: reads('content.onepanelServiceType'),
 
-  init() {
-    this._super(...arguments);
-    // TODO i18n or set default name in some view
-    if (this.get('name') == null) {
-      this.set('name', 'New cluster');
-    }
-  },
-
-  isInitialized: computed('initStep', 'onepanelServiceType', function () {
-    let {
-      initStep,
-      onepanelServiceType,
-    } = this.getProperties('initStep', 'onepanelServiceType');
-    return onepanelServiceType === 'oneprovider' ?
-      initStep >= CLUSTER_INIT_STEPS.PROVIDER_DONE :
-      initStep >= CLUSTER_INIT_STEPS.ZONE_DONE;
-  }),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isInitialized: reads('initStep.isFinalStep'),
 });

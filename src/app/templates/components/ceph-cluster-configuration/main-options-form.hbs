@@ -1,0 +1,10 @@
+{{#bs-form submitOnEnter=false class="form-horizontal clearfix" as |form|}}
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+    layoutConfig=layoutConfig
+  }}
+{{/bs-form}}

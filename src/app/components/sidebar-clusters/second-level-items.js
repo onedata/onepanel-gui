@@ -10,13 +10,14 @@
 
 import SecondLevelItems from 'onedata-gui-common/components/sidebar-clusters/second-level-items';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),
   webCertManager: service(),
+  cephManager: service(),
   memberManager: service(),
   guiSettingsManager: service(),
   onepanelServer: service(),
@@ -82,6 +83,20 @@ export default SecondLevelItems.extend(I18n, {
     };
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  cephItem: computed('cephManager.lastStatus.level', function cephItem() {
+    const cephStatusLevel = this.get('cephManager.lastStatus.level');
+    return {
+      id: 'ceph',
+      label: this.t('ceph'),
+      icon: 'ceph',
+      warningMessage: (cephStatusLevel && cephStatusLevel !== 'ok') ?
+        this.t('cephWarning') : undefined,
+    };
+  }),
+
   membersItem: computed('hasNoConnectedUser', function membersItem() {
     return {
       id: 'members',
@@ -116,6 +131,7 @@ export default SecondLevelItems.extend(I18n, {
   clusterSecondLevelItems: computed(
     'isNotDeployedCluster',
     'isLocalCluster',
+    'cluster.installationDetails.hasCephDeployed',
     'isEmergencyOnepanel',
     'clusterType',
     'dnsItem',
@@ -124,6 +140,7 @@ export default SecondLevelItems.extend(I18n, {
     'nodesItem',
     'overviewItem',
     'providerItem',
+    'cephItem',
     'storagesItem',
     'spacesItem',
     'guiSettingsItem',
@@ -134,18 +151,27 @@ export default SecondLevelItems.extend(I18n, {
         isLocalCluster,
         isEmergencyOnepanel,
         emergencyPassphraseItem,
+        cephItem,
         clusterType,
+        cluster,
       } = this.getProperties(
         'isNotDeployedCluster',
         'isLocalCluster',
         'isEmergencyOnepanel',
         'emergencyPassphraseItem',
-        'clusterType'
+        'cephItem',
+        'clusterType',
+        'cluster'
       );
       if (isNotDeployedCluster || !isLocalCluster || !clusterType) {
         return [];
       } else {
-        const items = this._super(...arguments);
+        let items = this._super(...arguments);
+
+        const hasCephDeployed = get(cluster, 'installationDetails.hasCephDeployed');
+        if (!hasCephDeployed) {
+          items = items.without(cephItem);
+        }
         if (isEmergencyOnepanel) {
           items.push(emergencyPassphraseItem);
         }

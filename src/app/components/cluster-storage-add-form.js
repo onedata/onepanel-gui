@@ -11,7 +11,7 @@
 import { run } from '@ember/runloop';
 
 import EmberObject, { observer, computed, set, get } from '@ember/object';
-import { reads, equal, union } from '@ember/object/computed';
+import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { invoke } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
@@ -20,7 +20,9 @@ import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
+import { promise, raw, writable } from 'ember-awesome-macros';
 
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
@@ -33,14 +35,43 @@ const {
   layoutConfig,
 } = config;
 
+/**
+ * Analyzes all field validators dependencies (dependent fields) and replaces
+ * prefixes in their names according to given values.
+ * @param {FieldType} field
+ * @param {string} prefix
+ * @param {string} newPrefix
+ * @returns {FieldType}
+ */
+function replaceDependencyPrefix(field, prefix, newPrefix) {
+  ['lt', 'lte', 'gt', 'gte'].forEach(validatorName => {
+    const validator = get(field, validatorName);
+    if (validator && typeof validator === 'object') {
+      const propertyName = get(validator, 'property');
+      if (_.startsWith(propertyName, prefix + '.')) {
+        const prefixlessPropertyName =
+          propertyName.substring(get(prefix, 'length') + 1);
+        set(validator, 'property', `${newPrefix}.${prefixlessPropertyName}`);
+      }
+    }
+  });
+  return field;
+}
+
 function createValidations(storageTypes, genericFields, lumaFields) {
   const validations = {};
   storageTypes.forEach(type => {
     type.fields.forEach(field => {
       const validator = createFieldValidator(field);
-      validations['allFieldsValues.' + type.id + '.' + field.name] = validator;
-      validations['allFieldsValues.' + type.id + '_editor.' + field.name] =
-        validator;
+      const prefixedField = replaceDependencyPrefix(
+        _.cloneDeep(field),
+        type.id,
+        type.id + '_editor'
+      );
+      const editorValidator = createFieldValidator(field);
+      validations['allFieldsValues.' + type.id + '.' + prefixedField.name] = validator;
+      validations['allFieldsValues.' + type.id + '_editor.' + prefixedField.name] =
+        editorValidator;
     });
   });
   genericFields.forEach(field => {
@@ -68,6 +99,7 @@ const storagePathTypeDefaults = {
   nulldevice: 'canonical',
   ceph: 'flat',
   cephrados: 'flat',
+  localceph: 'flat',
   s3: 'flat',
   swift: 'flat',
   webdav: 'canonical',
@@ -75,9 +107,13 @@ const storagePathTypeDefaults = {
 
 export default OneForm.extend(I18n, Validations, {
   classNames: ['cluster-storage-add-form'],
-  classNameBindings: ['inShowMode:form-static'],
+  classNameBindings: [
+    'inShowMode:form-static',
+    'showLoadingSpinner:is-loading',
+  ],
 
   i18n: service(),
+  cephManager: service(),
 
   /**
    * @override
@@ -109,6 +145,11 @@ export default OneForm.extend(I18n, Validations, {
    * @type {boolean}
    */
   isFormOpened: false,
+
+  /**
+   * @type {boolean}
+   */
+  disableStorageTypeSelector: false,
 
   /**
    * Called when user clicks "Cancel" button in edit mode
@@ -159,6 +200,12 @@ export default OneForm.extend(I18n, Validations, {
   layoutConfig,
 
   /**
+   * If true, shows loading spinner on top of the form (overlay)
+   * @type {boolean}
+   */
+  showLoadingSpinner: false,
+
+  /**
    * @type {boolean}
    */
   modifyModalVisible: false,
@@ -194,9 +241,9 @@ export default OneForm.extend(I18n, Validations, {
   storageTypes: computed(() => storageTypes.map(type => _.assign({}, type))),
 
   /**
-   * @type {Ember.ComputedProperty<Object>}
+   * @type {Object}
    */
-  selectedStorageType: reads('storageTypes.firstObject'),
+  selectedStorageType: undefined,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -223,17 +270,17 @@ export default OneForm.extend(I18n, Validations, {
         lumaPrefixVisible,
       } = this.getProperties('selectedStorageType', 'mode', 'lumaPrefixVisible');
       if (mode === 'show') {
-        return ['type_static', 'generic_static']
+        return ['meta', 'type_static', 'generic_static']
           .concat(lumaPrefixVisible ? ['luma_static'] : [])
-          .concat([selectedStorageType.id + '_static']);
+          .concat(selectedStorageType ? [selectedStorageType.id + '_static'] : []);
       } else if (mode === 'edit') {
-        return ['type_static', 'generic_editor']
+        return ['meta', 'type_static', 'generic_editor']
           .concat(lumaPrefixVisible ? ['luma_editor'] : [])
-          .concat([selectedStorageType.id + '_editor']);
+          .concat(selectedStorageType ? [selectedStorageType.id + '_editor'] : []);
       } else {
-        return ['generic']
+        return ['meta', 'generic']
           .concat(lumaPrefixVisible ? ['luma'] : [])
-          .concat([selectedStorageType.id]);
+          .concat(selectedStorageType ? [selectedStorageType.id] : []);
       }
     }
   ),
@@ -293,6 +340,7 @@ export default OneForm.extend(I18n, Validations, {
       } = this.getProperties('storageTypes', 'allFields');
       const values = EmberObject.create();
       [
+        'meta',
         'type_static',
         'generic',
         'generic_static',
@@ -376,6 +424,40 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
+   * Will be set in init()
+   * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
+   */
+  cephOsdsProxy: writable(promise.array(raw(resolve([])))),
+
+  /**
+   * @type {Ember.ComputedProperty<Array<Object>>}
+   */
+  visibleStorageTypes: computed(
+    'storageTypes.[]',
+    'cephOsdsProxy.length',
+    function visibleStorageTypes() {
+      // Remove ceph storage, because it is deprecated
+      let visibleTypes = this.get('storageTypes').rejectBy('id', 'ceph');
+      // If no osds are present, remove localceph storage type
+      if (!this.get('cephOsdsProxy.length')) {
+        visibleTypes = visibleTypes.rejectBy('id', 'localceph');
+      }
+
+      return visibleTypes;
+    }
+  ),
+
+  osdsNumberObserver: observer(
+    'cephOsdsProxy.length',
+    function osdsNumberObserver() {
+      this.set(
+        'allFieldsValues.meta.osdsNumber',
+        this.get('cephOsdsProxy.length') || 1
+      );
+    }
+  ),
+
+  /**
    * Resets field if form visibility changes (clears validation errors)
    */
   isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
@@ -399,31 +481,41 @@ export default OneForm.extend(I18n, Validations, {
       areQosParamsValid: true,
       editedQosParams: undefined,
     });
+    this.fetchCephOsds();
   }),
 
   init() {
     this._super(...arguments);
-    if (this.get('selectedStorageType') == null) {
-      this.set('selectedStorageType',
-        this.get('storageTypes.firstObject'));
-    }
-    this.set('genericFields', GENERIC_FIELDS.map(fields =>
-      EmberObject.create(fields)));
-    this.get('genericFields').forEach(field => {
+
+    const {
+      storage,
+      storageTypes,
+      selectedStorageType,
+    } = this.getProperties(
+      'storage',
+      'storageTypes',
+      'selectedStorageType',
+    );
+
+    const genericFields = GENERIC_FIELDS.map(field => EmberObject.create(field));
+    genericFields.forEach(field => {
       field.set('name', 'generic.' + field.get('name'));
       field.set('originPrefix', 'generic');
     });
-    this.set('lumaFields', LUMA_FIELDS.map(fields =>
-      EmberObject.create(fields)));
-    this.get('lumaFields').forEach(field => {
+    const lumaFields = LUMA_FIELDS.map(field => EmberObject.create(field));
+    lumaFields.forEach(field => {
       field.set('name', 'luma.' + field.get('name'));
       field.set('originPrefix', 'luma');
     });
-    this.get('storageTypes').forEach(type =>
+    this.setProperties({
+      genericFields,
+      lumaFields,
+    });
+    storageTypes.forEach(type =>
       type.fields = type.fields.map(field =>
         EmberObject.create(field))
     );
-    this.get('storageTypes').forEach(type =>
+    storageTypes.forEach(type =>
       type.fields.forEach(field => {
         field.set('name', type.id + '.' + field.get('name'));
         field.set('originPrefix', type.id);
@@ -433,12 +525,75 @@ export default OneForm.extend(I18n, Validations, {
     this._addFieldsLabels();
     this._generateStaticFields();
     this._generateEditorFields();
-
-    if (this.get('storage')) {
+    if (storage) {
       this._fillInForm();
-    } else {
-      this.resetFormValues();
+    } else if (selectedStorageType) {
+      this.selectedStorageTypeObserver();
     }
+    this.fetchCephOsds();
+    this.osdsNumberObserver();
+    this.get('cephOsdsProxy')
+      .then(() => safeExec(this, () => {
+        this.introduceCephOsds();
+        // Select default (first) storage type if it is still empty
+        if (!this.get('selectedStorageType')) {
+          this.set(
+            'selectedStorageType',
+            this.get('visibleStorageTypes.firstObject')
+          );
+        }
+      }));
+  },
+
+  fetchCephOsds() {
+    const {
+      mode,
+      cephManager,
+      element,
+    } = this.getProperties('mode', 'cephManager', 'element');
+    if (mode === 'show') {
+      this.set('showLoadingSpinner', false);
+    } else {
+      if (
+        mode === 'create' ||
+        (mode === 'edit' && this.get('storage.type') === 'localceph')
+      ) {
+        const osdProxy = PromiseArray.create({
+          promise: cephManager.suppressNotDeployed(cephManager.getOsds(), []),
+        });
+        if (!element) {
+          this.set('cephOsdsProxy', osdProxy);
+        } else {
+          this.set('showLoadingSpinner', true);
+          osdProxy
+            .finally(() =>
+              safeExec(this, () => this.setProperties({
+                cephOsdsProxy: osdProxy,
+                showLoadingSpinner: false,
+              }))
+            );
+        }
+      }
+    }
+  },
+
+  /**
+   * Puts information about osds into form fields (sets default values for
+   * some fields).
+   * @returns {undefined}
+   */
+  introduceCephOsds() {
+    const {
+      cephOsdsProxy,
+      allFields,
+      allFieldsValues,
+    } = this.getProperties('cephOsdsProxy', 'allFields', 'allFieldsValues');
+    const osdsNumber = get(cephOsdsProxy, 'length') || 1;
+    const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
+
+    const copiesNumberField = allFields.findBy('name', 'localceph.copiesNumber');
+    set(copiesNumberField, 'defaultValue', defaultPoolSize);
+    set(allFieldsValues, 'localceph.copiesNumber', defaultPoolSize);
   },
 
   /**
