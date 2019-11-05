@@ -60,11 +60,14 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  cookieConsentNotificationTabId: computed('elementId', function cookieConsentNotificationTabId() {
-    return this.get('elementId') + '-cookieConsentNotification';
-  }),
+  cookieConsentNotificationTabId: computed(
+    'elementId',
+    function cookieConsentNotificationTabId() {
+      return this.get('elementId') + '-cookieConsentNotification';
+    }
+  ),
 
-  activeTabObserver: observer('activeTab', function () {
+  activeTabObserver: observer('activeTab', function activeTabObserver() {
     this.redirectIfTabIsNotCorrect();
   }),
 
