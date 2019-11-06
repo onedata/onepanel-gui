@@ -17,6 +17,7 @@ import EmberObject, {
   observer,
   computed,
   get,
+  getProperties,
 } from '@ember/object';
 import { Promise } from 'rsvp';
 import { invokeAction } from 'ember-invoke-action';
@@ -148,16 +149,15 @@ export default OneFormSimple.extend(Validations, {
         sizeUnit,
         storageImport,
         storageUpdate,
-        mountInRoot,
         _importEnabled,
-      } = this.get('formValues.main').getProperties(
+      } = getProperties(
+        this.get('formValues.main'),
         'name',
         'token',
         'size',
         'sizeUnit',
         'storageImport',
         'storageUpdate',
-        'mountInRoot',
         '_importEnabled'
       );
 
@@ -172,15 +172,14 @@ export default OneFormSimple.extend(Validations, {
         };
       }
 
-      let storageId = this.get('_selectedStorage.id');
+      const storageId = this.get('_selectedStorage.id');
 
-      let submitting = invokeAction(this, 'submitSupportSpace', {
+      const submitting = invokeAction(this, 'submitSupportSpace', {
         token,
         size,
         storageId,
         storageImport,
         storageUpdate,
-        mountInRoot,
       });
 
       submitting.catch(error => {

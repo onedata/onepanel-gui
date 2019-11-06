@@ -137,7 +137,6 @@ export default Service.extend({
    * @param {number} supportSpaceData.size
    * @param {string} supportSpaceData.storageId
    * @param {string} supportSpaceData.token
-   * @param {boolean} [supportSpaceData.mountInRoot=undefined]
    * @returns {Promise}
    */
   supportSpace(supportSpaceData) {

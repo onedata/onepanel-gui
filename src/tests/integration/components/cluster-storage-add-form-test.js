@@ -45,6 +45,7 @@ const POSIX_STORAGE = {
   type: 'posix',
   id: 'storage1_verylongid',
   storagePathType: 'flat',
+  mountInRoot: true,
   mountPoint: '/mnt/st1',
   lumaEnabled: true,
   lumaUrl: 'http://some.url.com',
@@ -86,6 +87,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.contain(POSIX_STORAGE[fieldName.split('-').pop()]);
       });
       [
+        'generic_static-mountInRoot',
         'generic_static-lumaEnabled',
         'posix_static-readonly',
       ].forEach((fieldName) => {
@@ -104,7 +106,9 @@ describe('Integration | Component | cluster storage add form', function () {
         Object.keys(PosixFields).length + 2;
 
       this.set('selectedStorageType', POSIX_TYPE);
-      this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+      this.render(hbs `
+        {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+      `);
 
       return wait().then(() => {
         const helper = new ClusterStorageAddHelper(this.$());
@@ -119,6 +123,7 @@ describe('Integration | Component | cluster storage add form', function () {
           expect(helper.getInput(fieldName)).to.match('input');
         });
         [
+          'generic-mountInRoot',
           'generic-lumaEnabled',
           'posix-readonly',
         ].forEach(fieldName => {
@@ -140,6 +145,7 @@ describe('Integration | Component | cluster storage add form', function () {
         submitOccurred = true;
         expect(formData).to.have.property('name');
         expect(formData.name).to.be.equal('some name');
+        expect(formData.mountInRoot).to.be.false;
         expect(formData).to.have.property('lumaEnabled');
         expect(formData.lumaEnabled).to.be.false;
         expect(formData).to.have.property('mountPoint');
@@ -199,7 +205,9 @@ describe('Integration | Component | cluster storage add form', function () {
 
   it('[create] resets fields values after storage type change', function () {
     this.set('selectedStorageType', POSIX_TYPE);
-    this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+    this.render(hbs `
+      {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+    `);
 
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
@@ -228,7 +236,9 @@ describe('Integration | Component | cluster storage add form', function () {
     function () {
 
       this.set('selectedStorageType', POSIX_TYPE);
-      this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+      this.render(hbs `
+        {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+      `);
 
       return wait().then(() => {
         const helper = new ClusterStorageAddHelper(this.$());
@@ -261,7 +271,8 @@ describe('Integration | Component | cluster storage add form', function () {
         return wait().then(() => {
           this.set('isFormOpened', true);
           return wait().then(() => {
-            expect(helper.getInput('generic-name').val()).to.be.empty;
+            expect(helper.getInput('generic-name').val())
+              .to.be.empty;
             expect(this.$('[class*="field-luma"]'))
               .to.have.length(0);
           });
@@ -295,13 +306,19 @@ describe('Integration | Component | cluster storage add form', function () {
         expect(helper.getInput(fieldName).val())
           .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
       });
-      expect(
-        helper.getToggleInput('generic_editor-lumaEnabled')
-        .hasClass('checked')
-      ).to.be.equal(POSIX_STORAGE['lumaEnabled']);
-      expect(
-        helper.getToggleInput('posix_editor-readonly').hasClass('checked')
-      ).to.be.equal(POSIX_STORAGE['readonly']);
+      [{
+        input: 'generic_editor-mountInRoot',
+        field: 'mountInRoot',
+      }, {
+        input: 'generic_editor-lumaEnabled',
+        field: 'lumaEnabled',
+      }, {
+        input: 'posix_editor-readonly',
+        field: 'readonly',
+      }].forEach(({ input, field }) => {
+        expect(helper.getToggleInput(input).hasClass('checked'))
+          .to.be.equal(POSIX_STORAGE[field]);
+      });
     });
   });
 

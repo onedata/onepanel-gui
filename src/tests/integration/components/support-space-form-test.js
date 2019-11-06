@@ -51,7 +51,6 @@ describe('Integration | Component | support space form', function () {
           token: 'some_token',
           size: '100',
           sizeUnit: 'mib',
-          mountInRoot: false,
           _importEnabled: false,
         }));
       };
@@ -111,7 +110,6 @@ describe('Integration | Component | support space form', function () {
     helper.getInput('main-token').val('some token').change();
     helper.getInput('main-size').val(sizeToInput.toString()).change();
     helper.getInput('main-sizeUnit-' + unit).click();
-    helper.getToggleInput('main-mountInRoot').click();
     wait().then(() => {
       helper.submit();
       wait().then(() => {

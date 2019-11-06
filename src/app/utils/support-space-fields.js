@@ -18,11 +18,6 @@ export default [{
     ],
   },
   {
-    name: 'mountInRoot',
-    type: 'checkbox',
-    optional: true,
-  },
-  {
     name: '_importEnabled',
     type: 'checkbox',
     tip: 'Configure import files from storage',
