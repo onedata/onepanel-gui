@@ -14,6 +14,7 @@ import { union } from '@ember/object/computed';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { conditional, raw, equal } from 'ember-awesome-macros';
+import { inject as service } from '@ember/service';
 
 const editFieldsDefinition = [{
   name: 'name',
@@ -29,6 +30,8 @@ const validationsProto = editFieldsDefinition.reduce((proto, field) => {
 
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['main-options-form'],
+
+  i18n: service(),
 
   /**
    * @override

@@ -10,7 +10,7 @@
       {{#one-spin-button
         class="btn btn-sm btn-primary btn-deploy-cluster btn-ceph-proceed"
         disabled=(not cephConfig.isValid)
-        action=(action "startDeploy")
+        action=(action "checkBlockDevicesAndStartDeploy")
       }}
         <span>{{tt this "deploy"}}</span>{{one-icon icon="arrow-right"}}
         {{#unless cephConfig.isValid}}
@@ -25,6 +25,26 @@
     config=cephConfig
     isCephDeployed=false}}
 </div>
+{{#proceed-process-modal
+  opened=warnAboutBlockDevicesVisible
+  close=(action "closeBlockDevicesWarn")
+  proceed=(action "startDeploy")
+  modalClass="proceed-modal block-device-format-warning-modal"
+  headerText=(tt this "blockDeviceFormatWarn.header")
+  messageText=(tt this "blockDeviceFormatWarn.message")
+  proceedButtonText=(tt this "blockDeviceFormatWarn.proceedButton")
+  proceedButtonClass="btn btn-warning proceed"}}
+  <p class="message">{{tt this "blockDeviceFormatWarn.message"}}</p>
+  <ul>
+    {{#each-in usedBlockDevices as |host devices|}}
+      <li class="node">
+        <strong><span class="host">{{host}}</span>:</strong>
+        <span class="devices">{{join ", " (map-by "path" devices)}}</span>
+      </li>
+    {{/each-in}}
+  </ul>
+  <p>{{tt this "blockDeviceFormatWarn.areYouSure"}}</p>
+{{/proceed-process-modal}}
 {{#if clusterDeployProcess.deploymentPromise}}
   {{new-cluster-deploy-progress deploymentPromise=clusterDeployProcess.deploymentPromise}}
 {{/if}}

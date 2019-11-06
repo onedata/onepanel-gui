@@ -15,6 +15,7 @@ import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { conditional, raw, equal } from 'ember-awesome-macros';
 import config from 'ember-get-config';
+import { inject as service } from '@ember/service';
 
 const {
   layoutConfig: globalLayoutConfig,
@@ -41,6 +42,8 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['manager-monitor-form'],
   classNameBindings: ['modeClass', 'shouldBeHidden:hide'],
 
+  i18n: service(),
+
   /**
    * @override
    */
@@ -65,7 +68,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   modeClass: computed('mode', function modeClass() {
     return 'mode-' + this.get('mode');
   }),
-  
+
   /**
    * @type {Ember.ComputedProperty<Object>}
    */
@@ -141,14 +144,18 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  shouldBeHidden: computed('mode', 'managerMonitor.monitorIp', function shouldBeHidden() {
-    const {
-      mode,
-      managerMonitor,
-    } = this.getProperties('mode', 'managerMonitor');
-    // is in 'show' mode and all field are empty
-    return mode === 'show' && !get(managerMonitor, 'monitorIp');
-  }),
+  shouldBeHidden: computed(
+    'mode',
+    'managerMonitor.monitorIp',
+    function shouldBeHidden() {
+      const {
+        mode,
+        managerMonitor,
+      } = this.getProperties('mode', 'managerMonitor');
+      // is in 'show' mode and all field are empty
+      return mode === 'show' && !get(managerMonitor, 'monitorIp');
+    }
+  ),
 
   managerMonitorObserver: observer(
     'managerMonitor',
