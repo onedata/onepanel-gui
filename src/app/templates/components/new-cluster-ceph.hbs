@@ -31,13 +31,13 @@
   proceed=(action "startDeploy")
   modalClass="proceed-modal block-device-format-warning-modal"
   headerText=(tt this "blockDeviceFormatWarn.header")
-  messageText=(tt this "blockDeviceFormatWarn.message")
+  modalIcon="sign-warning-rounded"
   proceedButtonText=(tt this "blockDeviceFormatWarn.proceedButton")
   proceedButtonClass="btn btn-warning proceed"}}
   <p class="message">{{tt this "blockDeviceFormatWarn.message"}}</p>
-  <ul>
+  <ul class="info info-gray info-condensed">
     {{#each-in usedBlockDevices as |host devices|}}
-      <li class="node">
+      <li class="node break-all">
         <strong><span class="host">{{host}}</span>:</strong>
         <span class="devices">{{join ", " (map-by "path" devices)}}</span>
       </li>

@@ -32,6 +32,7 @@ describe('Integration | Component | new cluster ceph', function () {
           }],
         },
       });
+
     this.set('stepData', {
       clusterDeployProcess: {
         cephNodes: ['example.com'],
@@ -83,12 +84,13 @@ describe('Integration | Component | new cluster ceph', function () {
           const $modal = $('.block-device-format-warning-modal.in');
           const $proceedBtn = $modal.find('.proceed');
           expect($modal).to.exist;
-          expect($modal.find('h1').text().trim()).to.equal('Warning');
+          expect($modal.find('.modal-header').text()).to.contain('Warning');
+          expect($modal.find('.modal-header .one-icon'))
+            .to.have.class('oneicon-sign-warning-rounded');
           expect($modal.find('.message').text().trim()).to.equal(
-            'Creating OSDs will erase all data on the following block devices:'
+            'Creating Object Storage Deamons will erase all data on the following block devices:'
           );
           expect($modal.find('.node')).to.have.length(1);
-          console.log($modal.find('.node').eq(0).text());
           expect($modal.find('.node').eq(0).text())
             .to.match(/^[\s]*example.com:[\s]*a,[\s]*b[\s]*$/);
           expect($proceedBtn.text().trim()).to.equal('Deploy');

@@ -5,8 +5,8 @@ export default {
   invalidConfig: 'Configuration is invalid.',
   blockDeviceFormatWarn: {
     header: 'Warning',
-    message: 'Creating OSDs will erase all data on the following block devices:',
-    areYouSure: 'Are you sure?',
+    message: 'Creating Object Storage Deamons will erase all data on the following block devices:',
+    areYouSure: 'Do you want to proceed the deployment?',
     proceedButton: 'Deploy',
   },
 };

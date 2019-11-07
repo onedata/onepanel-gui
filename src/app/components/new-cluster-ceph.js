@@ -63,7 +63,7 @@ export default Component.extend(I18n, {
   warnAboutBlockDevicesVisible: false,
 
   /**
-   * Mapping cephNodeHost: string -> usedBlockDevices: Array<Utils/Ceph/NodeDevice>.
+   * Mapping cephNodeHost: string -> arrayOfBlockDevices: Array<Utils/Ceph/NodeDevice>.
    * If some host has block device osds, then devices assigned to those osds will
    * be listed in arrayOfBlockDevices.
    * @type {Object}
