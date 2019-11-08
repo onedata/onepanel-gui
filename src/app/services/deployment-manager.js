@@ -9,7 +9,7 @@
 
 import Service, { inject as service } from '@ember/service';
 
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
@@ -69,7 +69,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     return this._getThisClusterInitStep(clusterConfigurationPromise)
       .then(step => {
         clusterStep = step;
-        return cephManager.isDeployed();
+        return onepanelServiceType === 'oneprovider' ?
+          cephManager.isDeployed() : resolve(false);
       })
       .then(hasCeph => {
         hasCephDeployed = hasCeph;
