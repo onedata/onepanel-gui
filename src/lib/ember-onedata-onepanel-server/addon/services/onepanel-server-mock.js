@@ -1151,67 +1151,107 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_oneprovider_getCephStatus: computed(function () {
-      return {
-        success: () => ({
-          level: 'warning',
-          messages: [
-            'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',
-          ],
-        }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({
+            level: 'warning',
+            messages: [
+              'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',
+            ],
+          }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephUsage: computed(function () {
-      return {
-        success: () => ({
-          osds: this.get('__cephOsdUsage'),
-          pools: this.get('__cephPoolsUsage'),
-        }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({
+            osds: this.get('__cephOsdUsage'),
+            pools: this.get('__cephPoolsUsage'),
+          }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephManagers: computed(function () {
-      return {
-        success: () => ({ managers: this.get('__cephManagers').toArray() }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ managers: this.get('__cephManagers').toArray() }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephMonitors: computed(function () {
-      return {
-        success: () => ({ monitors: this.get('__cephMonitors').toArray() }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ monitors: this.get('__cephMonitors').toArray() }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephOsds: computed(function () {
-      return {
-        success: () => ({ osds: this.get('__cephOsds').toArray() }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ osds: this.get('__cephOsds').toArray() }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephParams: computed(function () {
-      return {
-        success: () => this.get('__cephParams').plainCopy(),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => this.get('__cephParams').plainCopy(),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getCephPools: computed(function () {
-      return {
-        success: () => ({ pools: this.get('__cephPools').toArray() }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ pools: this.get('__cephPools').toArray() }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     _req_oneprovider_getBlockDevices: computed(function () {
-      return {
-        success: () => ({ blockDevices: this.get('__blockDevices').toArray() }),
-        statusCode: () => 200,
-      };
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ blockDevices: this.get('__blockDevices').toArray() }),
+          statusCode: () => 200,
+        },
+      });
     }),
 
     // TODO: maybe implement real 
@@ -1671,6 +1711,14 @@ function computedResourceGetHandler(storeProperty, defaultData) {
     };
   });
 }
+
+function serviceTypeDependentResponse({ onezone, oneprovider }) {
+  if (mockServiceType === 'onezone') {
+    return onezone;
+  } else {
+    return oneprovider;
+  }
+} 
 
 // TODO: not used now, but may be used in future
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {

@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5890 Removed Ceph related requests from Onezone Onepanel
 * VFS-5493 Added QOS parameters to storages
 * VFS-5020 Added Ceph cluster deployment and management
 * VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification

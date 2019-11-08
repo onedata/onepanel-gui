@@ -17,6 +17,7 @@ import { hash as promiseHash } from 'rsvp';
 
 export default Service.extend({
   onepanelServer: service(),
+  guiUtils: service(),
 
   /**
    * Is filled with content on service init and each getStatus() call
@@ -27,8 +28,10 @@ export default Service.extend({
   init() {
     this._super(...arguments);
     
-    // initialize status property with actual status
-    this.getStatus();
+    if (this.get('guiUtils.serviceType') === 'oneprovider') {
+      // initialize status property with actual status
+      this.getStatus();
+    }
   },
 
   /**
