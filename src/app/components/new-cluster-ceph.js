@@ -65,7 +65,7 @@ export default Component.extend(I18n, {
   /**
    * Mapping cephNodeHost: string -> arrayOfBlockDevices: Array<Utils/Ceph/NodeDevice>.
    * If some host has block device osds, then devices assigned to those osds will
-   * be listed in arrayOfBlockDevices.
+   * be listed in arrayOfBlockDevices. Otherwise there is no cephNodeHost key at all.
    * @type {Object}
    */
   usedBlockDevices: computed(
@@ -145,6 +145,16 @@ export default Component.extend(I18n, {
     this.set('warnAboutBlockDevicesVisible', false);
   },
 
+  /**
+   * @returns {Promise} resolves after deployment process start
+   */
+  startDeploy() {
+    this.dumpCephConfigToDeployProcess();
+    return this.get('clusterDeployProcess').startDeploy().finally(() => {
+      this.closeBlockDevicesWarn();
+    });
+  },
+
   actions: {
     prevStep() {
       const {
@@ -160,17 +170,14 @@ export default Component.extend(I18n, {
         this.set('warnAboutBlockDevicesVisible', true);
         return resolve();
       } else {
-        return this.send('startDeploy');
+        return this.startDeploy();
       }
     },
     closeBlockDevicesWarn() {
       this.closeBlockDevicesWarn();
     },
     startDeploy() {
-      this.dumpCephConfigToDeployProcess();
-      return this.get('clusterDeployProcess').startDeploy().finally(() => {
-        this.closeBlockDevicesWarn();
-      });
+      return this.startDeploy();
     },
   },
 });

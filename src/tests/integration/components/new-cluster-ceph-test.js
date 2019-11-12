@@ -126,7 +126,7 @@ describe('Integration | Component | new cluster ceph', function () {
   });
 
   it(
-    'allows to close "block device warning" modal shown before deploy',
+    'allows to cancel deployment start in block device warning modal',
     function () {
       const startDeploySpy = sinon.spy(
         this.get('stepData.clusterDeployProcess'),

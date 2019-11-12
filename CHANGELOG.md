@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5878 Added warning modal about clearing OSD devices on Ceph deploy
 * VFS-5020 Added Ceph cluster deployment and management
 * VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification
 * VFS-5703 Fixed validation of space auto-cleaning form
