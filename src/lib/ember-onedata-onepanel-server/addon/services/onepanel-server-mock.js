@@ -12,7 +12,7 @@
 import { A } from '@ember/array';
 
 import { Promise } from 'rsvp';
-import { readOnly } from '@ember/object/computed';
+import { readOnly, reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { set, get, setProperties, computed } from '@ember/object';
 import { run } from '@ember/runloop';
@@ -30,7 +30,7 @@ import emberObjectMerge from 'onedata-gui-common/utils/ember-object-merge';
 import _ from 'lodash';
 import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
+import { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'npm:onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
@@ -51,7 +51,7 @@ const MOCKED_SUPPORT = {
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
 
-const fallbackMockServiceType = 'onezone';
+const fallbackMockServiceType = 'oneprovider';
 
 /**
  * Match using URL, because we know that this is NodeJS-based mocked backend,
@@ -232,8 +232,6 @@ function getCurrentProviderClusterFromUrl() {
   return providerClusters.findBy('id', id);
 }
 
-const isOneprovider = (mockServiceType === 'oneprovider');
-
 export default OnepanelServerBase.extend(
   SpaceSyncStatsMock,
   SpaceCleaningMock,
@@ -252,24 +250,27 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    // NOTE: for testing purposes set eg. STEP.PROVIDER_WEB_CERT,
-    // see STEP import for more info
-    // mockStep: Number(STEP.ZONE_IPS),
-    // NOTE: below: first step of deployment
-    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DEPLOY : STEP.ZONE_DEPLOY),
-    // mockStep: Number(isOneprovider ? STEP.PROVIDER_REGISTER : STEP.ZONE_DEPLOY),
-    // mockStep: Number(isOneprovider ? STEP.PROVIDER_DNS : STEP.ZONE_DNS),
-    mockStep: Number(isOneprovider ? STEP.PROVIDER_DONE : STEP.ZONE_DONE),
+    // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
+    // deployment step. See more in models/installation-details.
+    //
+    // mockStep: installationStepsMap.deploy,
+    // mockStep: installationStepsMap.oneproviderRegistration,
+    // mockStep: installationStepsMap.dns,
+    // mockStep: installationStepsMap.oneproviderStorageAdd,
+    mockStep: installationStepsMap.done,
 
-    mockInitializedCluster: computed.gte(
-      'mockStep',
-      mockServiceType === 'oneprovider' ? STEP.PROVIDER_DONE : STEP.ZONE_DONE
-    ),
+    mockInitializedCluster: reads('mockStep.isFinalStep'),
 
     /**
      * @type {computed<Boolean>}
      */
     isInitialized: false,
+
+    /**
+     * Uncomment to force emergency mode
+     * @type {boolean}
+     */
+    isEmergency: true,
 
     /**
      * Set to undefined here to see create admin account screen
@@ -457,18 +458,18 @@ export default OnepanelServerBase.extend(
         this.set('__dnsCheckConfiguration', {
           dnsServers: ['8.8.8.8', '192.168.1.10'],
           builtInDnsServer: true,
-          dnsCheckAcknowledged: mockStep > STEP.PROVIDER_DNS,
+          dnsCheckAcknowledged: mockStep.gt(installationStepsMap.dns),
         });
 
-        if (mockStep > STEP.PROVIDER_REGISTER) {
+        if (mockStep.gt(installationStepsMap.oneproviderRegistration)) {
           this.set('__provider', provider1);
         }
-        if (mockStep > STEP.PROVIDER_WEB_CERT) {
+        if (mockStep.gt(installationStepsMap.webCert)) {
           // TODO: deprecated __provider.letsEncryptEnabled
           this.set('__provider.letsEncryptEnabled', defaultLetsEncryptDeployed);
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
-        if (mockStep > STEP.PROVIDER_STORAGE_ADD) {
+        if (mockStep.gt(installationStepsMap.oneproviderStorageAdd)) {
           let storage1 = {
             id: 'storage1_verylongid',
             type: 'posix',
@@ -478,12 +479,21 @@ export default OnepanelServerBase.extend(
             lumaUrl: 'http://localhost:9090',
             lumaApiKey: 'some_storage',
           };
+          const storageCeph = {
+            id: 'storage2_id',
+            type: 'ceph',
+            name: 'Deprecated ceph',
+            monitorHostname: 'host.name',
+            clusterName: 'cluster_name',
+            poolName: 'some_pool',
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            clusterStorageClass(storage1.type).constructFromObject(storage1)
+            clusterStorageClass(storage1.type).constructFromObject(storage1),
+            clusterStorageClass(storageCeph.type).constructFromObject(storageCeph),
           );
 
-          if (mockStep >= STEP.PROVIDER_DONE) {
+          if (mockStep === installationStepsMap.done) {
             const spaces = this.get('__spaces');
             const spacesFilePopularity = this.get('__spacesFilePopularity');
             const spacesAutoCleaning = this.get('__spacesAutoCleaning');
@@ -574,14 +584,14 @@ export default OnepanelServerBase.extend(
         this.set('__dnsCheckConfiguration', {
           dnsServers: ['8.8.8.8', '192.168.1.10'],
           builtInDnsServer: false,
-          dnsCheckAcknowledged: mockStep > STEP.ZONE_DNS,
+          dnsCheckAcknowledged: mockStep.gt(installationStepsMap.dns),
         });
 
-        if (mockStep > STEP.ZONE_WEB_CERT) {
+        if (mockStep.gt(installationStepsMap.webCert)) {
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
 
-        if (mockStep > STEP.ZONE_DNS) {
+        if (mockStep.gt(installationStepsMap.dns)) {
           this.set('__zonePolicies', {
             subdomainDelegation: false,
           });
@@ -655,10 +665,9 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onepanel_getClusterHosts: computed(function () {
-      const __clusterHosts = _.clone(this.get('__clusterHosts'));
       return {
-        success() {
-          return __clusterHosts;
+        success: () => {
+          return _.clone(this.get('__clusterHosts'));
         },
       };
     }),
@@ -741,7 +750,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_configureProvider() {
-      this.incrementProperty('mockStep');
+      this.set('mockStep', installationStepsMap.oneproviderRegistration);
       return {
         success: (data) => {
           let __provider = this.get('__provider') ||
@@ -860,7 +869,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_oneprovider_getProviderConfiguration() {
-      if (this.get('mockStep') > STEP.PROVIDER_DEPLOY) {
+      if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
         };
@@ -900,10 +909,13 @@ export default OnepanelServerBase.extend(
       }),
 
     _req_oneprovider_getProviderSpaces() {
-      if (this.get('mockInitializedCluster')) {
-        // TODO use Object.keys if available
-        let spaces = this.get('__spaces');
-        let spaceIds = spaces.map(s => s.id);
+      const {
+        mockInitializedCluster,
+        mockStep,
+        __spaces,
+      } = this.getProperties('mockInitializedCluster', 'mockStep', '__spaces');
+      if (mockStep.gt(installationStepsMap.oneproviderRegistration)) {
+        const spaceIds = mockInitializedCluster ? __spaces.mapBy('id') : [];
         return {
           success: () => ({
             ids: spaceIds,
@@ -1082,7 +1094,7 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_onezone_configureZone() {
-      this.incrementProperty('mockStep');
+      this.set('mockStep', installationStepsMap.ips);
       return {
         success: () => null,
         taskId: 'configure',
@@ -1090,7 +1102,7 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onezone_getZoneConfiguration() {
-      if (this.get('mockStep') >= STEP.ZONE_DEPLOY + 1) {
+      if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
         };
@@ -1133,6 +1145,110 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_getCephStatus: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({
+            level: 'warning',
+            messages: [
+              'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',
+            ],
+          }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephUsage: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({
+            osds: this.get('__cephOsdUsage'),
+            pools: this.get('__cephPoolsUsage'),
+          }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephManagers: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ managers: this.get('__cephManagers').toArray() }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephMonitors: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ monitors: this.get('__cephMonitors').toArray() }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephOsds: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ osds: this.get('__cephOsds').toArray() }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephParams: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => this.get('__cephParams').plainCopy(),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getCephPools: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ pools: this.get('__cephPools').toArray() }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
+    _req_oneprovider_getBlockDevices: computed(function () {
+      return serviceTypeDependentResponse({
+        onezone: {
+          statusCode: () => 406,
+        },
+        oneprovider: {
+          success: () => ({ blockDevices: this.get('__blockDevices').toArray() }),
+          statusCode: () => 200,
+        },
+      });
+    }),
+
     // TODO: maybe implement real 
     _req_oneprovider_modifyProviderClusterIps() {
       return {
@@ -1150,7 +1266,7 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_getProviderClusterIps() {
       return {
         success: () => ({
-          isConfigured: this.get('mockStep') > STEP.PROVIDER_IPS,
+          isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
           hosts: {
             'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
@@ -1162,7 +1278,7 @@ export default OnepanelServerBase.extend(
     _req_onezone_getZoneClusterIps() {
       return {
         success: () => ({
-          isConfigured: this.get('mockStep') > STEP.ZONE_IPS,
+          isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
           hosts: {
             'node2.example.com': '127.0.0.1',
             'node3.example.com': '192.168.0.4',
@@ -1312,7 +1428,7 @@ export default OnepanelServerBase.extend(
           build: '2100',
           deployed: mockInitializedCluster,
           isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
-            this.get('mockStep') > STEP.PROVIDER_REGISTER,
+            this.get('mockStep').gt(installationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
         }),
@@ -1404,29 +1520,59 @@ export default OnepanelServerBase.extend(
 
     __webCert: defaultWebCert,
 
-    __configuration: PlainableObject.create({
-      cluster: {
-        databases: {
-          hosts: ['node1.example.com'],
-        },
-        managers: {
-          mainHost: 'node2.example.com',
-          hosts: ['node1.example.com', 'node2.example.com'],
-        },
-        workers: {
-          hosts: ['node2.example.com'],
-        },
-      },
-      // TODO add this only in zone mode
-      onezone: {
-        name: null,
-        domainName: window.location.hostname,
-      },
-      // TODO add this only in provider mode
-      oneprovider: {
-        name: null,
-      },
-    }),
+    __configuration: computed(
+      '__cephParams',
+      '__cephManagers',
+      '__cephMonitors',
+      '__cephOsds',
+      function __configuration() {
+        const {
+          __cephParams,
+          __cephManagers,
+          __cephMonitors,
+          __cephOsds,
+        } = this.getProperties(
+          '__cephParams',
+          '__cephManagers',
+          '__cephMonitors',
+          '__cephOsds'
+        );
+        const configuration = {
+          cluster: {
+            databases: {
+              hosts: ['node1.example.com'],
+            },
+            managers: {
+              mainHost: 'node2.example.com',
+              hosts: ['node1.example.com', 'node2.example.com'],
+            },
+            workers: {
+              hosts: ['node2.example.com'],
+            },
+          },
+        };
+        if (mockServiceType === 'oneprovider') {
+          Object.assign(configuration, {
+            oneprovider: {
+              name: null,
+            },
+            ceph: Object.assign(__cephParams.plainCopy(), {
+              managers: __cephManagers,
+              monitors: __cephMonitors,
+              osds: __cephOsds,
+            }),
+          });
+        } else {
+          Object.assign(configuration, {
+            onezone: {
+              name: null,
+              domainName: window.location.hostname,
+            },
+          });
+        }
+        return PlainableObject.create(configuration);
+      }
+    ),
 
     __storages: undefined,
 
@@ -1435,6 +1581,96 @@ export default OnepanelServerBase.extend(
     __spacesFilePopularity: A([]),
 
     __spacesAutoCleaning: A([]),
+
+    __blockDevices: A([{
+      path: 'a',
+      size: 10000000000,
+      mounted: false,
+    }, {
+      path: 'b',
+      size: 20000000000,
+      mounted: false,
+    }, {
+      path: 'c',
+      size: 1073741312,
+      mounted: false,
+    }, {
+      path: 'd',
+      size: 1073741312,
+      mounted: true,
+    }]),
+
+    __cephParams: PlainableObject.create({
+      name: 'ceph',
+    }),
+
+    __cephManagers: A([{
+      host: 'node1.example.com',
+    }]),
+
+    __cephMonitors: A([{
+      host: 'node1.example.com',
+    }]),
+
+    __cephOsds: A([{
+      id: 1,
+      uuid: '65b7d1ff-6133-40be-bb4f-acdb7163ec3b',
+      host: 'node1.example.com',
+      type: 'blockdevice',
+      device: 'c',
+    }, {
+      id: 2,
+      uuid: 'a77610ee-732b-43f5-be73-de54f21081db',
+      host: 'node1.example.com',
+      type: 'blockdevice',
+      device: 'b',
+    }, {
+      id: 3,
+      uuid: '610c7eb0-3117-4873-9e60-cd0d48aa419d',
+      host: 'node1.example.com',
+      type: 'loopdevice',
+      path: '/volumes/persistence/ceph-loopdevices/osd-610c7eb0-3117-4873-9e60-cd0d48aa419d.loop',
+      size: 3 * 1024 * 1024 * 1024,
+    }]),
+
+    __cephOsdUsage: Object.freeze({
+      1: {
+        total: 1000000,
+        used: 500000,
+        available: 500000,
+      },
+      2: {
+        total: 100000000,
+        used: 75000000,
+        available: 25000000,
+      },
+      3: {
+        total: 3 * 1024 * 1024 * 1024,
+        used: 1024 * 1024 * 1024,
+        available: 2 * 1024 * 1024 * 1024,
+      },
+    }),
+
+    __cephPools: A([{
+      name: 'pool1',
+      copiesNumber: 1,
+      minCopiesNumber: 1,
+    }, {
+      name: 'pool2',
+      copiesNumber: 2,
+      minCopiesNumber: 1,
+    }]),
+
+    __cephPoolsUsage: Object.freeze({
+      pool1: {
+        used: 500000,
+        maxAvailable: 5000000,
+      },
+      pool2: {
+        used: 75000000,
+        maxAvailable: 250000000,
+      },
+    }),
 
     __guiMessages: computed(() => ({
       signin_notification: {
@@ -1470,6 +1706,14 @@ function computedResourceGetHandler(storeProperty, defaultData) {
     };
   });
 }
+
+function serviceTypeDependentResponse({ onezone, oneprovider }) {
+  if (mockServiceType === 'onezone') {
+    return onezone;
+  } else {
+    return oneprovider;
+  }
+} 
 
 // TODO: not used now, but may be used in future
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {

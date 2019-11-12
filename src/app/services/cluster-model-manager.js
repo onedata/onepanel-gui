@@ -37,7 +37,6 @@ export default Service.extend(
     onepanelConfiguration: service(),
     providerManager: service(),
     deploymentManager: service(),
-    i18n: service(),
 
     /**
      * @override
@@ -91,10 +90,8 @@ export default Service.extend(
      */
     getNotDeployedCluster() {
       const type = this.get('guiUtils.serviceType');
-      const i18n = this.get('i18n');
       return {
         id: 'new-cluster',
-        name: i18n.t('services.clusterModelManager.newCluster'),
         domain: location.hostname,
         type,
         isLocal: true,
@@ -137,6 +134,7 @@ export default Service.extend(
             installationDetailsProxy =
               deploymentManager.getInstallationDetailsProxy();
             return installationDetailsProxy.then(installationDetails => {
+              set(cluster, 'installationDetails', installationDetails);
               set(
                 cluster,
                 'isNotDeployed',
@@ -154,6 +152,7 @@ export default Service.extend(
                 deploymentManager.getInstallationDetailsProxy();
               return installationDetailsProxy
                 .then(installationDetails => {
+                  set(cluster, 'installationDetails', installationDetails);
                   set(cluster, 'name', get(installationDetails, 'name'));
                   set(
                     cluster,

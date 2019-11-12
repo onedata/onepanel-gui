@@ -10,6 +10,8 @@ import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import { resolve } from 'rsvp';
+import Service from '@ember/service';
+import { registerService, lookupService } from '../../helpers/stub-service';
 
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
@@ -22,14 +24,13 @@ describe('Integration | Component | storage item', function () {
   });
 
   beforeEach(function () {
-    this.register('service:provider-manager', ProviderManagerStub);
-    this.inject.service('provider-manager', { as: 'providerManager' });
-    this.register('service:i18n', I18nStub);
-    this.inject.service('i18n', { as: 'i18n' });
+    registerService(this, 'provider-manager', ProviderManagerStub);
+    registerService(this, 'i18n', I18nStub);
+    registerService(this, 'ceph-manager', Service);
   });
 
   it('renders storage name', function (done) {
-    let name = 'Storage One';
+    const name = 'Storage One';
     this.set('storages', [PromiseObject.create({
       promise: resolve({
         id: 'storage1',
@@ -56,9 +57,9 @@ describe('Integration | Component | storage item', function () {
   });
 
   it('shows total support size', function (done) {
-    let providerManager = this.container.lookup('service:providerManager');
-    let providerId = providerManager.get('__providerDetails.id');
-    let storageId = 'storage1';
+    const providerManager = lookupService(this, 'providerManager');
+    const providerId = providerManager.get('__providerDetails.id');
+    const storageId = 'storage1';
 
     this.set('storages', [PromiseObject.create({
       promise: resolve({
@@ -92,7 +93,7 @@ describe('Integration | Component | storage item', function () {
       }),
     ]);
 
-    let totalSupport = 400000;
+    const totalSupport = 400000;
 
     this.render(hbs `
     {{#one-collapsible-list as |list|}}
@@ -105,7 +106,7 @@ describe('Integration | Component | storage item', function () {
     `);
 
     wait().then(() => {
-      let header = this.$('.support-size');
+      const header = this.$('.support-size');
       expect(header).to.contain(b2s(totalSupport));
       done();
     });

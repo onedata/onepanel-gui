@@ -2,35 +2,44 @@
  * Provides data for routes and components assoctiated with deployment of cluster
  *
  * @module services/deployment-manager
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Service, { inject as service } from '@ember/service';
 
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import InstallationDetails, { CLUSTER_INIT_STEPS as STEP } from 'onepanel-gui/models/installation-details';
+import InstallationDetails, { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
+import { extractHostsFromCephConfiguration } from 'onepanel-gui/utils/ceph/cluster-configuration';
+import _ from 'lodash';
+import { getOwner } from '@ember/application';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
   managers: 'clusterManager',
   workers: 'clusterWorker',
+  ceph: 'ceph',
 };
 
 export default Service.extend(createDataProxyMixin('installationDetails'), {
   clusterModelManager: service(),
   onepanelServer: service(),
   guiUtils: service(),
+  cephManager: service(),
+  i18n: service(),
 
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
   onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
@@ -49,14 +58,22 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @override
    */
   fetchInstallationDetails() {
-    const onepanelServiceType = this.get('onepanelServiceType');
+    const {
+      onepanelServiceType,
+      cephManager,
+    } = this.getProperties('onepanelServiceType', 'cephManager');
 
     const clusterConfigurationPromise = this.getClusterConfiguration();
-    let clusterStep;
+    let clusterStep, hasCephDeployed;
 
     return this._getThisClusterInitStep(clusterConfigurationPromise)
       .then(step => {
         clusterStep = step;
+        return onepanelServiceType === 'oneprovider' ?
+          cephManager.isDeployed() : resolve(false);
+      })
+      .then(hasCeph => {
+        hasCephDeployed = hasCeph;
 
         return clusterConfigurationPromise
           .then(({ data: configuration }) => {
@@ -78,12 +95,15 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               id: currentClusterId,
             }, configuration);
 
-            const installationDetails = InstallationDetails.create({
-              name,
-              onepanelServiceType: onepanelServiceType,
-              clusterInfo: thisCluster,
-              initStep: clusterStep,
-            });
+            const installationDetails = InstallationDetails.create(
+              getOwner(this).ownerInjection(), {
+                name,
+                onepanelServiceType: onepanelServiceType,
+                clusterInfo: thisCluster,
+                initStep: clusterStep,
+                hasCephDeployed,
+              }
+            );
 
             return installationDetails;
           });
@@ -98,8 +118,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   getClusterHostsInfo() {
     return new Promise((resolve, reject) => {
       let gettingConfiguration = this.getClusterConfiguration(true);
-      gettingConfiguration.then(({ data: { cluster } }) => {
-        resolve(this._clusterConfigurationToHostsInfo(cluster));
+      gettingConfiguration.then(({ data: { cluster, ceph } }) => {
+        resolve(this._clusterConfigurationToHostsInfo(cluster, ceph));
       });
       gettingConfiguration.catch(reject);
     });
@@ -108,15 +128,22 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   /**
    * Converts response data from API about clusters to array of ``ClusterHostInfo``
    * @param {object} cluster cluster attribute of GET configuration from API
+   * @param {object|undefined} ceph ceph attribute of GET configuration from API
    * @returns {object}
    *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
    */
-  _clusterConfigurationToHostsInfo(cluster) {
-    let types = ['databases', 'managers', 'workers'];
+  _clusterConfigurationToHostsInfo(cluster, ceph) {
+    const types = ['databases', 'managers', 'workers', 'ceph'];
+    const services = _.assign({
+      ceph: {
+        hosts: extractHostsFromCephConfiguration(ceph),
+      },
+    }, cluster);
+
     // maps: host -> ClusterHostInfo
-    let clusterHostsInfo = {};
+    const clusterHostsInfo = {};
     types.forEach(type => {
-      cluster[type].hosts.forEach(host => {
+      services[type].hosts.forEach(host => {
         if (clusterHostsInfo[host] == null) {
           clusterHostsInfo[host] = ClusterHostInfo.create({
             hostname: host,
@@ -280,9 +307,9 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   },
 
   /**
-   * The promise resolves with number of initial cluster deployment step, that
+   * The promise resolves with initial cluster deployment step, that
    * should be opened for this cluster.
-   * See `model:installation-details CLUSTER_INIT_STEPS` for code explaination.
+   * See `model:installation-details` for code explaination.
    * @param {Promise} clusterConfigurationPromise
    * @returns {Promise}
    */
@@ -305,17 +332,17 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                 const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
                 checkDnsCheck.then(dnsCheckAck => {
                   if (dnsCheckAck) {
-                    resolve(STEP.ZONE_DONE);
+                    resolve(installationStepsMap.done);
                   } else {
                     // We have no exact indicator if earlier step -
                     // IPs configuration - has been finished, because it 
                     // has default values which are undistinguishable from user input
-                    resolve(STEP.ZONE_IPS);
+                    resolve(installationStepsMap.ips);
                   }
                 });
                 checkDnsCheck.catch(reject);
               } else {
-                resolve(STEP.ZONE_IPS);
+                resolve(installationStepsMap.ips);
               }
             });
             checkIps.catch(reject);
@@ -339,9 +366,9 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                       if (dnsCheckAck) {
                         checkStorage.then(isAnyStorage => {
                           if (isAnyStorage) {
-                            resolve(STEP.PROVIDER_DONE);
+                            resolve(installationStepsMap.done);
                           } else {
-                            resolve(STEP.PROVIDER_STORAGE_ADD);
+                            resolve(installationStepsMap.oneproviderStorageAdd);
                           }
                         });
                         checkStorage.catch(reject);
@@ -350,24 +377,24 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                         // IPs configuration - has been finished, because it 
                         // has default values which are undistinguishable from
                         // user input
-                        resolve(STEP.PROVIDER_IPS);
+                        resolve(installationStepsMap.ips);
                       }
                     });
                     checkDnsCheck.catch(reject);
                   } else {
-                    resolve(STEP.PROVIDER_IPS);
+                    resolve(installationStepsMap.ips);
                   }
                 });
                 checkIps.catch(reject);
 
               } else {
-                resolve(STEP.PROVIDER_REGISTER);
+                resolve(installationStepsMap.oneproviderRegistration);
               }
             });
             checkRegister.catch(reject);
           }
         } else {
-          resolve(0);
+          resolve(installationStepsMap.deploy);
         }
       });
       checkConfig.catch(reject);

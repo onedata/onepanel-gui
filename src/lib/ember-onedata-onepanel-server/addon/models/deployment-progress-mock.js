@@ -2,12 +2,12 @@
  * Mock for reading status of deploy cluster task
  *
  * @module models/deployment-progress-mock
- * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { computed } from '@ember/object';
+import EmberObject, { computed, get } from '@ember/object';
 
 import Onepanel from 'npm:onepanel';
 import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
@@ -23,7 +23,7 @@ const {
  * How many steps should be done in one progress state fetch
  * @type {number}
  */
-const PROGRESS_SPEED = 4;
+const PROGRESS_SPEED = 8;
 
 export default EmberObject.extend({
   /**
@@ -32,12 +32,11 @@ export default EmberObject.extend({
    */
   onepanelServiceType: null,
 
-  onepaneServiceType: null,
   fakeProgress: 0,
 
-  clusterDeploySteps: computed(function () {
+  clusterDeploySteps: computed(function clusterDeploySteps() {
     return generateClusterDeploySteps(this.get('onepanelServiceType'));
-  }).readOnly(),
+  }),
 
   /**
    * Mocks getTaskStatus for cluster configuration operation.
@@ -47,13 +46,19 @@ export default EmberObject.extend({
    * @returns {Onepanel.TaskStatus}
    */
   getTaskStatusConfiguration() {
-    let clusterDeploySteps = this.get('clusterDeploySteps');
-    let fakeProgress = this.get('fakeProgress');
+    const {
+      clusterDeploySteps,
+      fakeProgress,
+    } = this.getProperties('clusterDeploySteps', 'fakeProgress');
+    const totalSteps = get(clusterDeploySteps, 'length');
+
     this.incrementProperty('fakeProgress', PROGRESS_SPEED);
+
     return TaskStatus.constructFromObject({
-      status: (fakeProgress >= clusterDeploySteps.length) ?
+      status: (fakeProgress >= totalSteps) ?
         StatusEnum.ok : StatusEnum.running,
       steps: clusterDeploySteps.slice(0, fakeProgress),
+      totalSteps,
     });
   },
 });

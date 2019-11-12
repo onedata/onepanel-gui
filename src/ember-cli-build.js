@@ -82,6 +82,7 @@ module.exports = function (defaults) {
     'jquery.scrollto/jquery.scrollTo.min.js',
     'input-tokenizer/tokenizer.min.js',
     'basictable/basictable.css',
+    'perfect-scrollbar/css/perfect-scrollbar.css',
   ];
 
   BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
