@@ -7,8 +7,8 @@ export default {
       'require modification for rename operations, canonical paths resemble ' +
       'POSIX-style directory structure reflecting the logical space directory tree.',
   },
-  mountInRoot: {
-    name: 'Mount in root',
+  importExistingData: {
+    name: 'Import existing data',
     tip: 'Some tip', // FIXME change tip
   },
   lumaEnabled: {

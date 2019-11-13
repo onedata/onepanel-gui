@@ -1,4 +1,4 @@
-import EmberObject from '@ember/object';
+import EmberObject, { set } from '@ember/object';
 import { expect } from 'chai';
 import {
   describe,
@@ -11,13 +11,13 @@ import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import Ember from 'ember';
 import sinon from 'sinon';
-import Service from '@ember/service';
-import { Promise } from 'rsvp';
-
-import storageManagerStub from '../../helpers/storage-manager-stub';
+import { reject } from 'rsvp';
+import StorageManagerStub from '../../helpers/storage-manager-stub';
+import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { registerService, lookupService } from '../../helpers/stub-service';
+import { click, fillIn } from 'ember-native-dom-helpers';
 
 const UNITS = {
   mib: Math.pow(1024, 2),
@@ -37,21 +37,22 @@ class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
   }
 }
 
+class StorageSelectHelper extends EmberPowerSelectHelper {
+  constructor() {
+    super('.form .form-group:first-child .ember-basic-dropdown');
+  }
+}
+
 describe('Integration | Component | support space form', function () {
   setupComponentTest('support-space-form', {
     integration: true,
 
     setup() {
       this.prepareAllFields = function () {
-        this.set('_selectedStorage', {
-          name: 'POSIX',
-          id: 'posix',
-        });
         this.set('formValues', EmberObject.create({
           token: 'some_token',
           size: '100',
           sizeUnit: 'mib',
-          _importEnabled: false,
         }));
       };
 
@@ -71,8 +72,38 @@ describe('Integration | Component | support space form', function () {
   });
 
   beforeEach(function () {
-    this.register('service:storage-manager', storageManagerStub);
-    this.inject.service('storage-manager', { as: 'storageManager' });
+    registerService(this, 'storage-manager', StorageManagerStub);
+    registerService(this, 'space-manager', SpaceManagerStub);
+    const storageManager = lookupService(this, 'storage-manager');
+    const spaceManager = lookupService(this, 'space-manager');
+
+    set(storageManager, '__storages', {
+      storage1: {
+        id: 'storage1',
+        name: 'Storage1',
+        importExistingData: false,
+      },
+      storage2: {
+        id: 'storage2',
+        name: 'Storage2',
+        importExistingData: true,
+      },
+      storage3: {
+        id: 'storage3',
+        name: 'Storage3',
+        importExistingData: true,
+      },
+    });
+
+    set(spaceManager, '__spaces', [{
+      id: 'space1',
+      name: 'Space1',
+      storageId: 'storage3',
+    }, {
+      id: 'space2',
+      name: 'Space2',
+      storageId: 'storage1',
+    }]);
 
     // TODO make some common helper for disabling global exception handling
     this.originalException = Ember.Test.adapter.exception;
@@ -84,152 +115,197 @@ describe('Integration | Component | support space form', function () {
     Ember.Logger.error = this.originalLoggerError;
   });
 
-  it('submits size multiplicated by chosen unit', function (done) {
-    let sizeToInput = 30;
-    let unit = 'tib';
-    let sizeOutput = sizeToInput * UNITS[unit];
+  it(
+    'does not disable storages with importExistingData equal to false',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
 
-    let submitInvoked = false;
-    this.on('submitSupportSpace', function (supportSpaceData) {
-      let { size } = supportSpaceData;
-      expect(size).to.equal(sizeOutput);
-      submitInvoked = true;
-      return Promise.resolve();
-    });
+      let storagesSelectHelper;
+      return wait()
+        .then(() => {
+          storagesSelectHelper = new StorageSelectHelper();
+          return storagesSelectHelper.open();
+        })
+        .then(() => {
+          const firstStorageItem = storagesSelectHelper.getNthItem(1);
+          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
+          expect(firstStorageItem.querySelector('.used-for-import')).to.be.null;
+        });
+    }
+  );
+
+  it(
+    'does not disable storages without support, but with importExistingData equal to true',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
+
+      let storagesSelectHelper;
+      return wait()
+        .then(() => {
+          storagesSelectHelper = new StorageSelectHelper();
+          return storagesSelectHelper.open();
+        })
+        .then(() => {
+          const firstStorageItem = storagesSelectHelper.getNthItem(2);
+          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
+          expect(firstStorageItem.querySelector('.used-for-import')).to.be.null;
+        });
+    }
+  );
+
+  it(
+    'disables storages with support and importExistingData equal to true',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
+
+      let storagesSelectHelper;
+      return wait()
+        .then(() => {
+          storagesSelectHelper = new StorageSelectHelper();
+          return storagesSelectHelper.open();
+        })
+        .then(() => {
+          const firstStorageItem = storagesSelectHelper.getNthItem(3);
+          expect(firstStorageItem.getAttribute('aria-disabled')).to.equal('true');
+          expect(firstStorageItem.querySelector('.used-for-import').innerText)
+            .to.equal('(used for import)');
+        });
+    }
+  );
+
+  it(
+    'renders disabled import toggle',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
+
+      return wait()
+        .then(() => {
+          const helper = new SupportSpaceFormHelper(this.$());
+          expect(helper.getToggleInput('main-_importEnabled'))
+            .to.have.class('disabled');
+        });
+    }
+  );
+
+  it('submits size multiplicated by chosen unit', function () {
+    const sizeToInput = 30;
+    const unit = 'tib';
+    const sizeOutput = sizeToInput * UNITS[unit];
+    const submitStub = sinon.stub().resolves();
+    this.on('submit', submitStub);
     this.prepareAllFields();
+
     this.render(hbs `
       {{support-space-form
-        submitSupportSpace=(action "submitSupportSpace")
-        _selectedStorage=_selectedStorage
+        submitSupportSpace=(action "submit")
       }}
     `);
 
-    let helper = new SupportSpaceFormHelper(this.$());
-
-    // TODO ensure that a storage is selected
-    helper.getInput('main-token').val('some token').change();
-    helper.getInput('main-size').val(sizeToInput.toString()).change();
-    helper.getInput('main-sizeUnit-' + unit).click();
-    wait().then(() => {
-      helper.submit();
-      wait().then(() => {
-        expect(submitInvoked).to.be.true;
-        done();
+    let helper;
+    return wait()
+      .then(() => {
+        helper = new SupportSpaceFormHelper(this.$());
+        return fillIn(helper.getInput('main-token')[0], 'some token');
+      })
+      .then(() => fillIn(helper.getInput('main-size')[0], sizeToInput.toString()))
+      .then(() => click(helper.getInput('main-sizeUnit-' + unit)[0]))
+      .then(() => helper.submit())
+      .then(() => {
+        expect(submitStub).to.be.calledOnce;
+        expect(submitStub).to.be.calledWith(sinon.match.has('size', sizeOutput));
       });
-    });
   });
 
-  it('shows a global error notify when submit fails', function (done) {
-    registerService(this, 'global-notify', Service.extend({
-      backendError() {},
-    }));
+  it('shows a global error notify when submit fails', function () {
     const globalNotify = lookupService(this, 'global-notify');
     const backendError = sinon.spy(globalNotify, 'backendError');
     this.prepareAllFields();
 
     const EXPECTED_ERROR = 'some error';
     this.expectException(EXPECTED_ERROR);
-    this.on('submitSupportSpace', function () {
-      return Promise.reject(EXPECTED_ERROR);
-    });
+    this.on('submit', sinon.stub().returns(reject(EXPECTED_ERROR)));
 
     this.render(hbs `
       {{support-space-form
-        submitSupportSpace=(action "submitSupportSpace")
-        _selectedStorage=_selectedStorage
+        submitSupportSpace=(action "submit")
         values=formValues
       }}
     `);
 
-    this.$('button[type=submit]').click();
-
-    wait().then(() => {
-      expect(backendError).to.be.calledOnce;
-      done();
-    });
+    return wait()
+      .then(() => click('button[type=submit]'))
+      .then(() => expect(backendError).to.be.calledOnce);
   });
 
-  it('hides import form by default', function (done) {
-    this.render(hbs `
-      {{support-space-form}}
-    `);
+  it(
+    'hides import form for storages with importExistingData equal to false',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
 
-    wait().then(() => {
-      expect(
-        this.$('.import-configuration-section').parents('.collapse-hidden')
-      ).to.exist;
-      done();
-    });
-  });
-
-  it('shows import form on import toggle change', function (done) {
-    this.render(hbs `
-      {{support-space-form}}
-    `);
-
-    let helper = new SupportSpaceFormHelper(this.$());
-    helper.getToggleInput('main-_importEnabled').click();
-
-    wait().then(() => {
-      expect(
-        this.$('.import-configuration-section').parents('.collapse-hidden')
-      ).to.not.exist;
-      done();
-    });
-  });
-
-  it('reacts to invalid data in import form', function (done) {
-    this.prepareAllFields();
-    this.render(hbs `
-      {{support-space-form
-        _selectedStorage=_selectedStorage
-        values=formValues
-      }}
-    `);
-
-    let helper = new SupportSpaceFormHelper(this.$());
-
-    helper.getToggleInput('main-_importEnabled').click();
-    wait().then(() => {
-      helper.getInput('import_generic-maxDepth').val('incorrect').change();
-      wait().then(() => {
-        expect(this.$('button[type=submit]')).to.be.disabled;
-        done();
+      return wait().then(() => {
+        expect(
+          this.$('.import-configuration-section').parents('.collapse-hidden')
+        ).to.exist;
       });
     });
+
+  it(
+    'shows import form for storages with importExistingData equal to true',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
+
+      return wait()
+        .then(() => selectStorageWithImport(this))
+        .then(() => {
+          expect(
+            this.$('.import-configuration-section').parents('.collapse-hidden')
+          ).to.not.exist;
+        });
+    }
+  );
+
+  it('reacts to invalid data in import form', function () {
+    this.prepareAllFields();
+
+    this.render(hbs `{{support-space-form values=formValues}}`);
+
+    return wait()
+      .then(() => selectStorageWithImport(this))
+      .then(() => {
+        const helper = new SupportSpaceFormHelper(this.$());
+        fillIn(helper.getInput('import_generic-maxDepth')[0], 'incorrect');
+      })
+      .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
   });
 
-  it('submits data from import form', function (done) {
-    let submitInvoked = false;
-    let submitDataCorrect = false;
-
+  it('submits data from import form', function () {
+    const submitStub = sinon.stub().resolves();
     this.prepareAllFields();
-    this.on('submitSupportSpace', function (supportSpaceData) {
-      submitDataCorrect =
-        supportSpaceData.storageUpdate.strategy !== 'no_update';
-      submitInvoked = true;
-      return new Promise(resolve => resolve());
-    });
+    this.on('submit', submitStub);
 
     this.render(hbs `
       {{support-space-form
-        submitSupportSpace=(action "submitSupportSpace")
-        _selectedStorage=_selectedStorage
+        submitSupportSpace=(action "submit")
         values=formValues
       }}
     `);
 
-    let helper = new SupportSpaceFormHelper(this.$());
-    let powerSelectHelper = new UpdateStrategySelectHelper();
-
-    helper.getToggleInput('main-_importEnabled').click();
-    powerSelectHelper.selectOption(2, () => {
-      helper.submit();
-      wait().then(() => {
-        expect(submitInvoked).to.be.true;
-        expect(submitDataCorrect).to.be.true;
-        done();
+    return wait()
+      .then(() => selectStorageWithImport(this))
+      .then(() => {
+        return new UpdateStrategySelectHelper().selectOption(2);
+      })
+      .then(() => new SupportSpaceFormHelper(this.$()).submit())
+      .then(() => {
+        expect(submitStub).to.be.calledOnce;
+        expect(submitStub).to.be.calledWith(
+          sinon.match.hasNested('storageUpdate.strategy', 'simple_scan')
+        );
       });
-    });
   });
 });
+
+function selectStorageWithImport(testCase) {
+  const storagesHelper = new StorageSelectHelper(testCase.$());
+  return storagesHelper.selectOption(2);
+}

@@ -474,7 +474,7 @@ export default OnepanelServerBase.extend(
             id: 'storage1_verylongid',
             type: 'posix',
             name: 'Some storage',
-            mountInRoot: true,
+            importExistingData: true,
             mountPoint: '/mnt/st1',
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',
@@ -1718,7 +1718,7 @@ function serviceTypeDependentResponse({ onezone, oneprovider }) {
   } else {
     return oneprovider;
   }
-} 
+}
 
 // TODO: not used now, but may be used in future
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {

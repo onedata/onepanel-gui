@@ -20,7 +20,7 @@ export default [{
   {
     name: '_importEnabled',
     type: 'checkbox',
+    disabled: true,
     tip: 'Configure import files from storage',
-    optional: true,
   },
 ];

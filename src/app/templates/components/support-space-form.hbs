@@ -8,15 +8,18 @@
     <div class={{layoutConfig.formInputColumns}}>
       {{#power-select
         loadingMessage="Loading..."
-        options=allStoragesProxy
-        selected=_selectedStorage
+        options=allStoragesItemsProxy
+        selected=selectedStorageItem
         onchange=(action "storageChanged")
         searchEnabled=false
         renderInPlace=true
         placeholder="Select a storage..."
-        as |storage|
+        as |storageItem|
       }}
-        {{storage.name}}
+        {{storageItem.storage.name}}
+        {{#if storageItem.disabled}}
+          <small class="used-for-import">{{tt this "storageUsedForImport"}}</small>
+        {{/if}}
       {{/power-select}}
     </div>
   {{/form.group}}

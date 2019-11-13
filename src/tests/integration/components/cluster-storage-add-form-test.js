@@ -45,7 +45,7 @@ const POSIX_STORAGE = {
   type: 'posix',
   id: 'storage1_verylongid',
   storagePathType: 'flat',
-  mountInRoot: true,
+  importExistingData: true,
   mountPoint: '/mnt/st1',
   lumaEnabled: true,
   lumaUrl: 'http://some.url.com',
@@ -87,7 +87,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.contain(POSIX_STORAGE[fieldName.split('-').pop()]);
       });
       [
-        'generic_static-mountInRoot',
+        'generic_static-importExistingData',
         'generic_static-lumaEnabled',
         'posix_static-readonly',
       ].forEach((fieldName) => {
@@ -123,7 +123,7 @@ describe('Integration | Component | cluster storage add form', function () {
           expect(helper.getInput(fieldName)).to.match('input');
         });
         [
-          'generic-mountInRoot',
+          'generic-importExistingData',
           'generic-lumaEnabled',
           'posix-readonly',
         ].forEach(fieldName => {
@@ -145,7 +145,7 @@ describe('Integration | Component | cluster storage add form', function () {
         submitOccurred = true;
         expect(formData).to.have.property('name');
         expect(formData.name).to.be.equal('some name');
-        expect(formData.mountInRoot).to.be.false;
+        expect(formData.importExistingData).to.be.false;
         expect(formData).to.have.property('lumaEnabled');
         expect(formData.lumaEnabled).to.be.false;
         expect(formData).to.have.property('mountPoint');
@@ -307,8 +307,8 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
       });
       [{
-        input: 'generic_editor-mountInRoot',
-        field: 'mountInRoot',
+        input: 'generic_editor-importExistingData',
+        field: 'importExistingData',
       }, {
         input: 'generic_editor-lumaEnabled',
         field: 'lumaEnabled',

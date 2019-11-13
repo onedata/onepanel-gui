@@ -27,6 +27,8 @@ import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -41,12 +43,18 @@ FORM_FIELDS.forEach(field =>
 
 const Validations = buildValidations(VALIDATIONS_PROTO);
 
-export default OneFormSimple.extend(Validations, {
+export default OneFormSimple.extend(I18n, Validations, {
   classNames: 'support-space-form',
 
   i18n: service(),
   storageManager: service(),
+  spaceManager: service(),
   globalNotify: service(),
+
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.supportSpaceForm',
 
   fields: computed(() => FORM_FIELDS).readOnly(),
 
@@ -61,11 +69,18 @@ export default OneFormSimple.extend(Validations, {
   isFormOpened: false,
 
   /**
-   * @type PromiseObject.Array.StorageDetails
+   * PromiseObject with array of objects:
+   * ```
+   * {
+   *   disabled: boolean, // true if cannot be used for support
+   *   storage: StorageDetails,
+   * }
+   * ```
+   * @type {PromiseObject<Array<Object>>}
    */
-  allStoragesProxy: null,
+  allStoragesItemsProxy: null,
 
-  _selectedStorage: null,
+  selectedStorageItem: null,
   values: EmberObject.create({
     token: '',
     size: '',
@@ -87,13 +102,20 @@ export default OneFormSimple.extend(Validations, {
   }),
 
   // TODO change to ember-cp-validations  
-  canSubmit: computed('_selectedStorage', 'isValid', function () {
-    let {
-      _selectedStorage,
+  canSubmit: computed('selectedStorageItem', 'isValid', function () {
+    const {
+      selectedStorageItem,
       isValid,
-    } = this.getProperties('_selectedStorage', 'isValid');
-    return _selectedStorage != null && isValid;
+    } = this.getProperties('selectedStorageItem', 'isValid');
+    return selectedStorageItem && isValid;
   }),
+
+  selectedStorageObserver: observer(
+    'selectedStorageItem',
+    function selectedStorageObserver() {
+      this.recalculateImportAvailability();
+    }
+  ),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -106,38 +128,65 @@ export default OneFormSimple.extend(Validations, {
 
   init() {
     // labels for fields must be declared before OneFormSimple initialization
-    let i18n = this.get('i18n');
     FORM_FIELDS.forEach(f => {
       if (!f.label) {
-        f.label = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
+        f.label = this.t(`fields.${f.name}`);
       }
     });
     this._super(...arguments);
-    if (this.get('allStoragesProxy') == null) {
-      this._initStoragesProxy();
+    if (this.get('allStoragesItemsProxy') == null) {
+      this.initStoragesProxy();
     }
-    // first storage is default selected storage
-    this.get('allStoragesProxy').then((storages) => {
-      if (storages.length > 0) {
-        this.set('_selectedStorage', storages[0]);
+    // first enabled storage is default selected storage
+    this.get('allStoragesItemsProxy').then((storages) => {
+      const enabledStoragesItems = storages.rejectBy('disabled');
+      if (enabledStoragesItems.length > 0) {
+        safeExec(this, 'set', 'selectedStorageItem', enabledStoragesItems[0]);
       }
-      return storages;
     });
   },
 
-  _initStoragesProxy() {
-    let allStoragesPromise = new Promise((resolve, reject) => {
-      let storagesPromise = this.get('storageManager').getStorages()
-        .get('promise');
-      storagesPromise.then(storages => {
-        Promise.all(storages.toArray()).then(resolve, reject);
+  initStoragesProxy() {
+    const {
+      storageManager,
+      spaceManager,
+    } = this.getProperties('storageManager', 'spaceManager');
+
+    const storagesPromise = storageManager.getStorages()
+      .then(list => Promise.all(list.toArray()));
+    const spacesPromise = spaceManager.getSpaces()
+      .then(list => Promise.all(list.toArray()));
+
+    const storagesProxyPromise = Promise.all([storagesPromise, spacesPromise])
+      .then(([storages, spaces]) => {
+        const supportingStoragesIds = spaces.mapBy('storageId').compact();
+
+        return storages.map(storage => {
+          const {
+            id,
+            importExistingData,
+          } = getProperties(storage, 'id', 'importExistingData');
+          const disabled = importExistingData &&
+            supportingStoragesIds.includes(id);
+
+          return {
+            storage,
+            disabled,
+          };
+        });
       });
-      storagesPromise.catch(reject);
-    });
 
     this.set(
-      'allStoragesProxy',
-      PromiseObject.create({ promise: allStoragesPromise })
+      'allStoragesItemsProxy',
+      PromiseObject.create({ promise: storagesProxyPromise })
+    );
+  },
+
+  recalculateImportAvailability() {
+    this.send(
+      'inputChanged',
+      'main._importEnabled',
+      this.get('selectedStorageItem.storage.importExistingData'),
     );
   },
 
@@ -172,7 +221,7 @@ export default OneFormSimple.extend(Validations, {
         };
       }
 
-      const storageId = this.get('_selectedStorage.id');
+      const storageId = this.get('selectedStorageItem.storage.id');
 
       const submitting = invokeAction(this, 'submitSupportSpace', {
         token,
@@ -188,8 +237,8 @@ export default OneFormSimple.extend(Validations, {
 
       return submitting;
     },
-    storageChanged(storage) {
-      this.set('_selectedStorage', storage);
+    storageChanged(storageItem) {
+      this.set('selectedStorageItem', storageItem);
     },
     importFormChanged(importFormValues, areValuesValid) {
       this.set('_isImportUpdateFormValid', areValuesValid);

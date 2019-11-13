@@ -13,7 +13,7 @@ export default [
     notEditable: true,
   },
   {
-    name: 'mountInRoot',
+    name: 'importExistingData',
     type: 'checkbox',
     defaultValue: false,
     tip: true,
