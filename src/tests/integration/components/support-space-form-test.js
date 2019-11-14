@@ -181,7 +181,7 @@ describe('Integration | Component | support space form', function () {
       return wait()
         .then(() => {
           const helper = new SupportSpaceFormHelper(this.$());
-          expect(helper.getToggleInput('main-_importEnabled'))
+          expect(helper.getToggleInput('main-importEnabled'))
             .to.have.class('disabled');
         });
     }
