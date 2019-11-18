@@ -2,13 +2,13 @@
  * Deployment step that allows ceph cluster configuration.
  * 
  * @module components/new-cluster-ceph
- * @author Michał Borzecki
+ * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
-import { get, set, observer } from '@ember/object';
+import { get, set, observer, computed, getProperties } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
@@ -16,9 +16,13 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import CephClusterConfiguration from 'onepanel-gui/utils/ceph/cluster-configuration';
 import { getOwner } from '@ember/application';
 import _ from 'lodash';
+import { inject as service } from '@ember/service';
+import { resolve } from 'rsvp';
 
 export default Component.extend(I18n, {
   classNames: ['new-cluster-ceph'],
+
+  i18n: service(),
 
   /**
    * @override
@@ -52,6 +56,45 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<Utils/Ceph/ClusterConfiguration>}
    */
   cephConfig: undefined,
+
+  /**
+   * @type {boolean}
+   */
+  warnAboutBlockDevicesVisible: false,
+
+  /**
+   * Mapping cephNodeHost: string -> arrayOfBlockDevices: Array<Utils/Ceph/NodeDevice>.
+   * If some host has block device osds, then devices assigned to those osds will
+   * be listed in arrayOfBlockDevices. Otherwise there is no cephNodeHost key at all.
+   * @type {Object}
+   */
+  usedBlockDevices: computed(
+    'cephConfig.nodes.@each.usedDevices',
+    function usedBlockDevices() {
+      const nodes = this.get('cephConfig.nodes');
+      const usedDevices = {};
+
+      nodes.forEach(node => {
+        const {
+          usedDevices: usedNodeDevicesMapping,
+          devicesProxy: nodeDevices,
+          host: nodeHost,
+        } = getProperties(node, 'usedDevices', 'devicesProxy', 'host');
+
+        const allNodeDevicesIds = Object.keys(usedNodeDevicesMapping);
+        const usedNodeDevicesIds =
+          allNodeDevicesIds.filter(id => usedNodeDevicesMapping[id] > 0);
+        const usedNodeDevices = nodeDevices
+          .filter(dev => usedNodeDevicesIds.includes(get(dev, 'id')));
+
+        if (get(usedNodeDevices, 'length')) {
+          usedDevices[nodeHost] = usedNodeDevices;
+        }
+      });
+
+      return usedDevices;
+    }
+  ),
 
   cephConfigModifier: observer(
     'clusterDeployProcess.{cephNodes,configuration.ceph}',
@@ -90,21 +133,51 @@ export default Component.extend(I18n, {
     }
   },
 
+  dumpCephConfigToDeployProcess() {
+    const {
+      clusterDeployProcess,
+      cephConfig,
+    } = this.getProperties('clusterDeployProcess', 'cephConfig');
+    set(clusterDeployProcess, 'configuration.ceph', cephConfig.toRawConfig());
+  },
+
+  closeBlockDevicesWarn() {
+    this.set('warnAboutBlockDevicesVisible', false);
+  },
+
+  /**
+   * @returns {Promise} resolves after deployment process start
+   */
+  startDeploy() {
+    this.dumpCephConfigToDeployProcess();
+    return this.get('clusterDeployProcess').startDeploy().finally(() => {
+      this.closeBlockDevicesWarn();
+    });
+  },
+
   actions: {
     prevStep() {
       const {
         prevStep,
         clusterDeployProcess,
-        cephConfig,
-      } = this.getProperties('prevStep', 'clusterDeployProcess', 'cephConfig');
-      set(clusterDeployProcess, 'configuration.ceph', cephConfig.toRawConfig());
+      } = this.getProperties('prevStep', 'clusterDeployProcess');
+
+      this.dumpCephConfigToDeployProcess();
       prevStep({ clusterDeployProcess });
     },
+    checkBlockDevicesAndStartDeploy() {
+      if (get(Object.keys(this.get('usedBlockDevices')), 'length') > 0) {
+        this.set('warnAboutBlockDevicesVisible', true);
+        return resolve();
+      } else {
+        return this.startDeploy();
+      }
+    },
+    closeBlockDevicesWarn() {
+      this.closeBlockDevicesWarn();
+    },
     startDeploy() {
-      const cephConfig = this.get('cephConfig').toRawConfig();
-      const clusterDeployProcess = this.get('clusterDeployProcess');
-      set(clusterDeployProcess, 'configuration.ceph', cephConfig);
-      return this.get('clusterDeployProcess').startDeploy();
+      return this.startDeploy();
     },
   },
 });
