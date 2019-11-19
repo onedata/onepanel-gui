@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5871 Moved option "Mount in root" from space support to "Imported storage" in storage
 * VFS-5890 Removed Ceph related requests from Onezone Onepanel
 * VFS-5493 Added QOS parameters to storages
 * VFS-5020 Added Ceph cluster deployment and management
