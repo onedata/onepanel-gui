@@ -14,6 +14,7 @@ import { reads } from '@ember/object/computed';
 import {
   observer,
   get,
+  set,
   getProperties,
 } from '@ember/object';
 import { Promise } from 'rsvp';
@@ -85,10 +86,19 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
    */
   allStoragesItemsProxy: null,
 
+  /**
+   * @type {Object} The same as in array allStoragesItemsProxy
+   */
   selectedStorageItem: null,
 
+  /**
+   * @type {boolean}
+   */
   isImportUpdateFormValid: false,
 
+  /**
+   * @override
+   */
   values: Object.freeze({
     token: '',
     size: '',
@@ -96,13 +106,22 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     importEnabled: false,
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   importEnabled: reads('formValues.main.importEnabled'),
 
+  /**
+   * @override
+   */
   isValid: and(
     isEmpty('errors'),
     or(not('importEnabled'), 'isImportUpdateFormValid')
   ),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   canSubmit: and('selectedStorageItem', 'isValid'),
 
   selectedStorageObserver: observer(
@@ -111,6 +130,15 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       this.recalculateImportAvailability();
     }
   ),
+
+  importEnabledTipSetter: observer('importEnabled', function importEnabledTipSetter() {
+    const importEnabled = this.get('importEnabled');
+    const importEnabledField = this.getField('main.importEnabled');
+    const tipTranslationKey =
+      `fields.importEnabled.tip${importEnabled ? 'Enabled' : 'Disabled' }`;
+    const tip = this.t(tipTranslationKey);
+    set(importEnabledField, 'tip', tip);
+  }),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -125,7 +153,10 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     // labels for fields must be declared before OneFormSimple initialization
     FORM_FIELDS.forEach(f => {
       if (!f.label) {
-        f.label = this.t(`fields.${f.name}`);
+        f.label = this.t(`fields.${f.name}.name`);
+      }
+      if (f.tip) {
+        f.tip = this.t(`fields.${f.name}.tip`);
       }
     });
     this._super(...arguments);
@@ -133,6 +164,8 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     if (this.get('allStoragesItemsProxy') == null) {
       this.initStoragesProxy();
     }
+
+    this.importEnabledTipSetter();
 
     // first enabled storage is default selected storage
     this.get('allStoragesItemsProxy').then((storages) => {
@@ -158,19 +191,21 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       .then(([storages, spaces]) => {
         const supportingStoragesIds = spaces.mapBy('storageId').compact();
 
-        return storages.map(storage => {
-          const {
-            id,
-            importExistingData,
-          } = getProperties(storage, 'id', 'importExistingData');
-          const disabled = importExistingData &&
-            supportingStoragesIds.includes(id);
+        return storages
+          .map(storage => {
+            const {
+              id,
+              importedStorage,
+            } = getProperties(storage, 'id', 'importedStorage');
+            const disabled = importedStorage &&
+              supportingStoragesIds.includes(id);
 
-          return {
-            storage,
-            disabled,
-          };
-        });
+            return {
+              storage,
+              disabled,
+            };
+          })
+          .sortBy('name', 'disabled');
       });
 
     this.set(
@@ -183,7 +218,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     this.send(
       'inputChanged',
       'main.importEnabled',
-      this.get('selectedStorageItem.storage.importExistingData') || false,
+      this.get('selectedStorageItem.storage.importedStorage') || false,
     );
   },
 

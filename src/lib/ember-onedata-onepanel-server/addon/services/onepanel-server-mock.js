@@ -474,7 +474,7 @@ export default OnepanelServerBase.extend(
             id: 'storage1_verylongid',
             type: 'posix',
             name: 'Some storage',
-            importExistingData: true,
+            importedStorage: true,
             mountPoint: '/mnt/st1',
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',

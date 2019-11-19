@@ -81,17 +81,17 @@ describe('Integration | Component | support space form', function () {
       storage1: {
         id: 'storage1',
         name: 'Storage1',
-        importExistingData: false,
+        importedStorage: false,
       },
       storage2: {
         id: 'storage2',
         name: 'Storage2',
-        importExistingData: true,
+        importedStorage: true,
       },
       storage3: {
         id: 'storage3',
         name: 'Storage3',
-        importExistingData: true,
+        importedStorage: true,
       },
     });
 
@@ -116,7 +116,7 @@ describe('Integration | Component | support space form', function () {
   });
 
   it(
-    'does not disable storages with importExistingData equal to false',
+    'does not disable storages with importedStorage equals false',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
@@ -127,15 +127,17 @@ describe('Integration | Component | support space form', function () {
           return storagesSelectHelper.open();
         })
         .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthItem(1);
+          const firstStorageItem = storagesSelectHelper.getNthOption(1);
           expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
-          expect(firstStorageItem.querySelector('.used-for-import')).to.be.null;
+          expect(firstStorageItem.querySelector('.imported-used-storage'))
+            .to.be.null;
+          expect(firstStorageItem.querySelector('.imported-storage')).to.be.null;
         });
     }
   );
 
   it(
-    'does not disable storages without support, but with importExistingData equal to true',
+    'does not disable storages without support, but with importedStorage equals true',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
@@ -146,15 +148,18 @@ describe('Integration | Component | support space form', function () {
           return storagesSelectHelper.open();
         })
         .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthItem(2);
+          const firstStorageItem = storagesSelectHelper.getNthOption(2);
           expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
-          expect(firstStorageItem.querySelector('.used-for-import')).to.be.null;
+          expect(firstStorageItem.querySelector('.imported-used-storage'))
+            .to.be.null;
+          expect(firstStorageItem.querySelector('.imported-storage').innerText)
+            .to.equal('(import-enabled)');
         });
     }
   );
 
   it(
-    'disables storages with support and importExistingData equal to true',
+    'disables storages with support and importedStorage equals true',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
@@ -165,27 +170,24 @@ describe('Integration | Component | support space form', function () {
           return storagesSelectHelper.open();
         })
         .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthItem(3);
+          const firstStorageItem = storagesSelectHelper.getNthOption(3);
           expect(firstStorageItem.getAttribute('aria-disabled')).to.equal('true');
-          expect(firstStorageItem.querySelector('.used-for-import').innerText)
-            .to.equal('(used for import)');
+          expect(firstStorageItem.querySelector('.imported-used-storage').innerText)
+            .to.equal('(import-enabled, already in use)');
         });
     }
   );
 
-  it(
-    'renders disabled import toggle',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+  it('renders disabled import toggle', function () {
+    this.render(hbs `{{support-space-form}}`);
 
-      return wait()
-        .then(() => {
-          const helper = new SupportSpaceFormHelper(this.$());
-          expect(helper.getToggleInput('main-importEnabled'))
-            .to.have.class('disabled');
-        });
-    }
-  );
+    return wait()
+      .then(() => {
+        const helper = new SupportSpaceFormHelper(this.$());
+        expect(helper.getToggleInput('main-importEnabled'))
+          .to.have.class('disabled');
+      });
+  });
 
   it('submits size multiplicated by chosen unit', function () {
     const sizeToInput = 30;
@@ -238,7 +240,7 @@ describe('Integration | Component | support space form', function () {
   });
 
   it(
-    'hides import form for storages with importExistingData equal to false',
+    'hides import form for storages with importedStorage equals false',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
@@ -247,10 +249,11 @@ describe('Integration | Component | support space form', function () {
           this.$('.import-configuration-section').parents('.collapse-hidden')
         ).to.exist;
       });
-    });
+    }
+  );
 
   it(
-    'shows import form for storages with importExistingData equal to true',
+    'shows import form for storages with importedStorage equals true',
     function () {
       this.render(hbs `{{support-space-form}}`);
 

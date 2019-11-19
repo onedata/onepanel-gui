@@ -13,7 +13,7 @@ export default [
     notEditable: true,
   },
   {
-    name: 'importExistingData',
+    name: 'importedStorage',
     type: 'checkbox',
     defaultValue: false,
     tip: true,

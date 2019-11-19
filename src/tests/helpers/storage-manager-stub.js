@@ -5,9 +5,6 @@ import { Promise } from 'rsvp';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
-// TODO this service stub is probably faulty, because there were problems
-// using it in manage-cluster-storages-test
-
 export default Service.extend({
   /**
    * Add storages here in tests (key: storage id, value: storage object)

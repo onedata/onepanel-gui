@@ -7,18 +7,20 @@
     </label>
     <div class={{layoutConfig.formInputColumns}}>
       {{#power-select
-        loadingMessage="Loading..."
+        loadingMessage=(tt this "storageSelectLoading")
         options=allStoragesItemsProxy
         selected=selectedStorageItem
         onchange=(action "storageChanged")
         searchEnabled=false
         renderInPlace=true
-        placeholder="Select a storage..."
+        placeholder=(tt this "storageSelectPlaceholder")
         as |storageItem|
       }}
         {{storageItem.storage.name}}
         {{#if storageItem.disabled}}
-          <small class="used-for-import">{{tt this "storageUsedForImport"}}</small>
+          <small class="imported-used-storage">{{tt this "storageImportedAndUsed"}}</small>
+        {{else if storageItem.storage.importedStorage}}
+          <small class="imported-storage">{{tt this "storageImported"}}</small>
         {{/if}}
       {{/power-select}}
     </div>
@@ -47,7 +49,7 @@
         action=(action "submit")
         disabled=(not canSubmit)
       }}
-        Support space
+        {{tt this "submitButton"}}
       {{/one-spin-button}}
     </div>
   </div>

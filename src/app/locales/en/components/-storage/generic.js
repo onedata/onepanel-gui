@@ -7,9 +7,9 @@ export default {
       'require modification for rename operations, canonical paths resemble ' +
       'POSIX-style directory structure reflecting the logical space directory tree.',
   },
-  importExistingData: {
-    name: 'Import existing data',
-    tip: 'Some tip', // FIXME change tip
+  importedStorage: {
+    name: 'Imported storage',
+    tip: 'Indicates that the existing data on this storage is intended for import. Actual data import will happen when the storage is used to support a space. Only one space can be supported by such storage.',
   },
   lumaEnabled: {
     name: 'LUMA enabled',
