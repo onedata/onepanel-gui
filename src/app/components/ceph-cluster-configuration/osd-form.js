@@ -19,6 +19,7 @@ import { validator } from 'ember-cp-validations';
 import { conditional, raw } from 'ember-awesome-macros';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
 import config from 'ember-get-config';
+import { inject as service } from '@ember/service';
 
 const {
   layoutConfig: globalLayoutConfig,
@@ -94,6 +95,8 @@ validationsProto['allFieldsValues.editBlockdevice.device'].push(usedDeviceValida
 export default OneForm.extend(I18n, buildValidations(validationsProto), {
   classNames: ['row', 'content-row', 'osd-form'],
   classNameBindings: ['modeClass'],
+
+  i18n: service(),
 
   /**
    * @override
