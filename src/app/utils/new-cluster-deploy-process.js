@@ -85,7 +85,7 @@ export default EmberObject.extend(I18n, {
    * @type {Ember.ComputedProperty<object>}
    */
   configurationClass: computed('onepanelServiceType', function configurationClass() {
-    return this.get('onepanelServiceType') === 'zone' ?
+    return this.get('onepanelServiceType') === 'onezone' ?
       ZoneConfiguration : ProviderConfiguration;
   }),
 
