@@ -8,6 +8,8 @@ import { registerService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import { resolve } from 'rsvp';
 import $ from 'jquery';
+import { click } from 'ember-native-dom-helpers';
+import sinon from 'sinon';
 
 import FormHelper from '../../helpers/form';
 
@@ -429,11 +431,11 @@ describe('Integration | Component | cluster storage add form', function () {
         mode: 'edit',
       });
       this.render(hbs `
-      {{cluster-storage-add-form
-        storage=storage 
-        mode=mode
-        submit=submit}}
-    `);
+        {{cluster-storage-add-form
+          storage=storage 
+          mode=mode
+          submit=submit}}
+      `);
 
       return wait().then(() => {
         let helper = new ClusterStorageAddHelper(this.$());
@@ -453,4 +455,98 @@ describe('Integration | Component | cluster storage add form', function () {
       });
     }
   );
+
+  it(
+    '[create] does not disable "Imported storage" regardless the storageHasSupport value',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageHasSupport=true
+          storage=storage 
+          mode="create"}}
+      `);
+
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.not.have.class('disabled');
+      });
+    }
+  );
+
+  it(
+    '[edit] does not disable "Imported storage" when storageHasSupport is false',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageHasSupport=false
+          storage=storage 
+          mode="edit"}}
+      `);
+
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.not.have.class('disabled');
+      });
+    }
+  );
+
+  it('[edit] disables "Imported storage" when storageHasSupport is true', function () {
+    this.set('storage', POSIX_STORAGE);
+    this.render(hbs `
+        {{cluster-storage-add-form
+          storageHasSupport=true
+          storage=storage 
+          mode="edit"}}
+      `);
+
+    return wait().then(() => {
+      const helper = new ClusterStorageAddHelper(this.$());
+      expect(helper.getToggleInput('generic_editor-importedStorage'))
+        .to.have.class('disabled');
+    });
+  });
+
+  it('[edit] disabling "Imported storage" restores its\' original value', function () {
+    this.set('storage', POSIX_STORAGE);
+    this.set('storageHasSupport', false);
+    const submitStub = sinon.stub().resolves();
+    this.on('submit', submitStub);
+    this.render(hbs `
+        {{cluster-storage-add-form
+          storageHasSupport=storageHasSupport
+          storage=storage 
+          mode="edit"
+          submit=(action "submit")}}
+      `);
+
+    let helper;
+    return wait()
+      .then(() => {
+        helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.have.class('checked');
+        return click(helper.getToggleInput('generic_editor-importedStorage')[0]);
+      })
+      .then(() => {
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.not.have.class('checked');
+        this.set('storageHasSupport', true);
+        return wait();
+      })
+      .then(() => {
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.have.class('checked');
+        return helper.submit();
+      })
+      .then(() => click($('.modify-storage-modal .proceed')[0]))
+      .then(() => {
+        expect(submitStub).to.be.calledWith(
+          sinon.match(formData => formData.importedStorage === undefined)
+        );
+      });
+  });
 });
