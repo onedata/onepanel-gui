@@ -136,27 +136,24 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it(
-    'does not disable storages without support, but with importedStorage equals true',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+  it('does not disable storage without support and with importedStorage', function () {
+    this.render(hbs `{{support-space-form}}`);
 
-      let storagesSelectHelper;
-      return wait()
-        .then(() => {
-          storagesSelectHelper = new StorageSelectHelper();
-          return storagesSelectHelper.open();
-        })
-        .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthOption(2);
-          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
-          expect(firstStorageItem.querySelector('.imported-used-storage'))
-            .to.be.null;
-          expect(firstStorageItem.querySelector('.imported-storage').innerText)
-            .to.equal('(import-enabled)');
-        });
-    }
-  );
+    let storagesSelectHelper;
+    return wait()
+      .then(() => {
+        storagesSelectHelper = new StorageSelectHelper();
+        return storagesSelectHelper.open();
+      })
+      .then(() => {
+        const firstStorageItem = storagesSelectHelper.getNthOption(2);
+        expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
+        expect(firstStorageItem.querySelector('.imported-used-storage'))
+          .to.be.null;
+        expect(firstStorageItem.querySelector('.imported-storage').innerText)
+          .to.equal('(import-enabled)');
+      });
+  });
 
   it(
     'disables storages with support and importedStorage equals true',
@@ -239,33 +236,27 @@ describe('Integration | Component | support space form', function () {
       .then(() => expect(backendError).to.be.calledOnce);
   });
 
-  it(
-    'hides import form for storages with importedStorage equals false',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+  it('hides import form when selected storage is not imported', function () {
+    this.render(hbs `{{support-space-form}}`);
 
-      return wait().then(() => {
+    return wait().then(() => {
+      expect(
+        this.$('.import-configuration-section').parents('.collapse-hidden')
+      ).to.exist;
+    });
+  });
+
+  it('shows import form when selected storage is imported', function () {
+    this.render(hbs `{{support-space-form}}`);
+
+    return wait()
+      .then(() => selectStorageWithImport(this))
+      .then(() => {
         expect(
           this.$('.import-configuration-section').parents('.collapse-hidden')
-        ).to.exist;
+        ).to.not.exist;
       });
-    }
-  );
-
-  it(
-    'shows import form for storages with importedStorage equals true',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
-
-      return wait()
-        .then(() => selectStorageWithImport(this))
-        .then(() => {
-          expect(
-            this.$('.import-configuration-section').parents('.collapse-hidden')
-          ).to.not.exist;
-        });
-    }
-  );
+  });
 
   it('reacts to invalid data in import form', function () {
     this.prepareAllFields();

@@ -152,7 +152,7 @@ export default OneForm.extend(I18n, Validations, {
    * @virtual optional
    * @type {boolean}
    */
-  storageHasSupport: false,
+  storageProvidesSupport: false,
 
   /**
    * @type {boolean}
@@ -482,20 +482,20 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
-  storageHasSupportObserver: observer(
-    'storageHasSupport',
-    function storageHasSupportObserver() {
+  storageProvidesSupportObserver: observer(
+    'storageProvidesSupport',
+    function storageProvidesSupportObserver() {
       const importedStorageEditField =
         this.getField('generic_editor.importedStorage');
-      const storageHasSupport = this.get('storageHasSupport');
+      const storageProvidesSupport = this.get('storageProvidesSupport');
       const defaultImportedStorageValue = this.get('storage.importedStorage');
       const changedImportedStorageValue =
         this.get('allFieldsValues.generic_editor.importedStorage');
 
-      set(importedStorageEditField, 'disabled', storageHasSupport);
+      set(importedStorageEditField, 'disabled', storageProvidesSupport);
 
-      // Reset importedStorage value when storageHasSupport changed during edition 
-      if (storageHasSupport &&
+      // Reset importedStorage value when storageProvidesSupport changed during edition 
+      if (storageProvidesSupport &&
         changedImportedStorageValue !== defaultImportedStorageValue
       ) {
         this.send(
@@ -564,7 +564,7 @@ export default OneForm.extend(I18n, Validations, {
     }
     this.fetchCephOsds();
     this.osdsNumberObserver();
-    this.storageHasSupportObserver();
+    this.storageProvidesSupportObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();

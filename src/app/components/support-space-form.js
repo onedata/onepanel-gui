@@ -79,6 +79,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
    * ```
    * {
    *   disabled: boolean, // true if cannot be used for support
+   *   isImportedAndUsed: boolean,
    *   storage: StorageDetails,
    * }
    * ```
@@ -197,12 +198,13 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
               id,
               importedStorage,
             } = getProperties(storage, 'id', 'importedStorage');
-            const disabled = importedStorage &&
+            const isImportedAndUsed = importedStorage &&
               supportingStoragesIds.includes(id);
 
             return {
               storage,
-              disabled,
+              isImportedAndUsed,
+              disabled: isImportedAndUsed,
             };
           })
           .sortBy('name', 'disabled');

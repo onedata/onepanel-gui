@@ -17,7 +17,7 @@
         as |storageItem|
       }}
         {{storageItem.storage.name}}
-        {{#if storageItem.disabled}}
+        {{#if storageItem.isImportedAndUsed}}
           <small class="imported-used-storage">{{tt this "storageImportedAndUsed"}}</small>
         {{else if storageItem.storage.importedStorage}}
           <small class="imported-storage">{{tt this "storageImported"}}</small>

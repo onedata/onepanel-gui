@@ -457,12 +457,12 @@ describe('Integration | Component | cluster storage add form', function () {
   );
 
   it(
-    '[create] does not disable "Imported storage" regardless the storageHasSupport value',
+    '[create] does not disable "Imported storage" regardless the storageProvidesSupport value',
     function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storageHasSupport=true
+          storageProvidesSupport=true
           storage=storage 
           mode="create"}}
       `);
@@ -476,12 +476,12 @@ describe('Integration | Component | cluster storage add form', function () {
   );
 
   it(
-    '[edit] does not disable "Imported storage" when storageHasSupport is false',
+    '[edit] does not disable "Imported storage" when storageProvidesSupport is false',
     function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storageHasSupport=false
+          storageProvidesSupport=false
           storage=storage 
           mode="edit"}}
       `);
@@ -494,59 +494,64 @@ describe('Integration | Component | cluster storage add form', function () {
     }
   );
 
-  it('[edit] disables "Imported storage" when storageHasSupport is true', function () {
-    this.set('storage', POSIX_STORAGE);
-    this.render(hbs `
+  it('[edit] disables "Imported storage" when storageProvidesSupport is true',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
         {{cluster-storage-add-form
-          storageHasSupport=true
+          storageProvidesSupport=true
           storage=storage 
           mode="edit"}}
       `);
 
-    return wait().then(() => {
-      const helper = new ClusterStorageAddHelper(this.$());
-      expect(helper.getToggleInput('generic_editor-importedStorage'))
-        .to.have.class('disabled');
-    });
-  });
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.have.class('disabled');
+      });
+    }
+  );
 
-  it('[edit] disabling "Imported storage" restores its\' original value', function () {
-    this.set('storage', POSIX_STORAGE);
-    this.set('storageHasSupport', false);
-    const submitStub = sinon.stub().resolves();
-    this.on('submit', submitStub);
-    this.render(hbs `
+  it(
+    '[edit] restores "Imported storage" field original value when this field has been disabled',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.set('storageProvidesSupport', false);
+      const submitStub = sinon.stub().resolves();
+      this.on('submit', submitStub);
+      this.render(hbs `
         {{cluster-storage-add-form
-          storageHasSupport=storageHasSupport
+          storageProvidesSupport=storageProvidesSupport
           storage=storage 
           mode="edit"
           submit=(action "submit")}}
       `);
 
-    let helper;
-    return wait()
-      .then(() => {
-        helper = new ClusterStorageAddHelper(this.$());
-        expect(helper.getToggleInput('generic_editor-importedStorage'))
-          .to.have.class('checked');
-        return click(helper.getToggleInput('generic_editor-importedStorage')[0]);
-      })
-      .then(() => {
-        expect(helper.getToggleInput('generic_editor-importedStorage'))
-          .to.not.have.class('checked');
-        this.set('storageHasSupport', true);
-        return wait();
-      })
-      .then(() => {
-        expect(helper.getToggleInput('generic_editor-importedStorage'))
-          .to.have.class('checked');
-        return helper.submit();
-      })
-      .then(() => click($('.modify-storage-modal .proceed')[0]))
-      .then(() => {
-        expect(submitStub).to.be.calledWith(
-          sinon.match(formData => formData.importedStorage === undefined)
-        );
-      });
-  });
+      let helper;
+      return wait()
+        .then(() => {
+          helper = new ClusterStorageAddHelper(this.$());
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.have.class('checked');
+          return click(helper.getToggleInput('generic_editor-importedStorage')[0]);
+        })
+        .then(() => {
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.not.have.class('checked');
+          this.set('storageProvidesSupport', true);
+          return wait();
+        })
+        .then(() => {
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.have.class('checked');
+          return helper.submit();
+        })
+        .then(() => click($('.modify-storage-modal .proceed')[0]))
+        .then(() => {
+          expect(submitStub).to.be.calledWith(
+            sinon.match(formData => formData.importedStorage === undefined)
+          );
+        });
+    }
+  );
 });
