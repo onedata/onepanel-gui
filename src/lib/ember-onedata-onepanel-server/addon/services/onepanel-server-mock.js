@@ -1718,7 +1718,7 @@ function serviceTypeDependentResponse({ onezone, oneprovider }) {
   } else {
     return oneprovider;
   }
-} 
+}
 
 // TODO: not used now, but may be used in future
 // function computedResourceSetHandler(storeProperty, defaultData = {}) {

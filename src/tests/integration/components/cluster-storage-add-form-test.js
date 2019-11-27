@@ -104,7 +104,9 @@ describe('Integration | Component | cluster storage add form', function () {
         Object.keys(PosixFields).length + 2;
 
       this.set('selectedStorageType', POSIX_TYPE);
-      this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+      this.render(hbs `
+        {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+      `);
 
       return wait().then(() => {
         const helper = new ClusterStorageAddHelper(this.$());
@@ -177,16 +179,14 @@ describe('Integration | Component | cluster storage add form', function () {
     const lumaSelector = '[class*="field-luma"]';
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
-      const lumaEnabledToggle = helper.getToggleInput('generic-lumaEnabled');
-
       let lumaFields = this.$(lumaSelector);
       expect(lumaFields).to.have.length(0);
-      lumaEnabledToggle.click();
+      helper.getToggleInput('generic-lumaEnabled').click();
       return wait().then(() => {
         lumaFields = this.$(lumaSelector);
         expect(lumaFields).to.have.length(2);
         expect(lumaFields.parents('.form-group')).to.have.class('fadeIn');
-        lumaEnabledToggle.click();
+        helper.getToggleInput('generic-lumaEnabled').click();
         return wait().then(() => {
           lumaFields = this.$(lumaSelector);
           expect(lumaFields).to.have.length(2);
@@ -199,7 +199,9 @@ describe('Integration | Component | cluster storage add form', function () {
 
   it('[create] resets fields values after storage type change', function () {
     this.set('selectedStorageType', POSIX_TYPE);
-    this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+    this.render(hbs `
+      {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+    `);
 
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
@@ -228,7 +230,9 @@ describe('Integration | Component | cluster storage add form', function () {
     function () {
 
       this.set('selectedStorageType', POSIX_TYPE);
-      this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
+      this.render(hbs `
+        {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+      `);
 
       return wait().then(() => {
         const helper = new ClusterStorageAddHelper(this.$());
@@ -261,7 +265,8 @@ describe('Integration | Component | cluster storage add form', function () {
         return wait().then(() => {
           this.set('isFormOpened', true);
           return wait().then(() => {
-            expect(helper.getInput('generic-name').val()).to.be.empty;
+            expect(helper.getInput('generic-name').val())
+              .to.be.empty;
             expect(this.$('[class*="field-luma"]'))
               .to.have.length(0);
           });
