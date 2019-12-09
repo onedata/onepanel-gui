@@ -12,13 +12,6 @@
       }}
     </div>
     <div class="row content-row">
-      <strong class="property-label">{{tt this "mountInRoot"}}:</strong>
-      {{one-way-toggle checked=space.mountInRoot
-        isReadOnly=true
-        class="space-mountInRoot"
-      }}
-    </div>
-    <div class="row content-row">
       {{#promise-proxy-container proxy=_storage}}
         <strong class="property-label">{{tt this "storage"}}:</strong>
         <span class="one-label space-provider-storage">{{_storage.name}}</span>

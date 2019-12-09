@@ -8,6 +8,8 @@ import { registerService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import { resolve } from 'rsvp';
 import $ from 'jquery';
+import { click } from 'ember-native-dom-helpers';
+import sinon from 'sinon';
 
 import FormHelper from '../../helpers/form';
 
@@ -45,6 +47,7 @@ const POSIX_STORAGE = {
   type: 'posix',
   id: 'storage1_verylongid',
   storagePathType: 'flat',
+  importedStorage: true,
   mountPoint: '/mnt/st1',
   lumaEnabled: true,
   lumaUrl: 'http://some.url.com',
@@ -86,6 +89,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.contain(POSIX_STORAGE[fieldName.split('-').pop()]);
       });
       [
+        'generic_static-importedStorage',
         'generic_static-lumaEnabled',
         'posix_static-readonly',
       ].forEach((fieldName) => {
@@ -121,6 +125,7 @@ describe('Integration | Component | cluster storage add form', function () {
           expect(helper.getInput(fieldName)).to.match('input');
         });
         [
+          'generic-importedStorage',
           'generic-lumaEnabled',
           'posix-readonly',
         ].forEach(fieldName => {
@@ -142,6 +147,7 @@ describe('Integration | Component | cluster storage add form', function () {
         submitOccurred = true;
         expect(formData).to.have.property('name');
         expect(formData.name).to.be.equal('some name');
+        expect(formData.importedStorage).to.be.false;
         expect(formData).to.have.property('lumaEnabled');
         expect(formData.lumaEnabled).to.be.false;
         expect(formData).to.have.property('mountPoint');
@@ -300,13 +306,19 @@ describe('Integration | Component | cluster storage add form', function () {
         expect(helper.getInput(fieldName).val())
           .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
       });
-      expect(
-        helper.getToggleInput('generic_editor-lumaEnabled')
-        .hasClass('checked')
-      ).to.be.equal(POSIX_STORAGE['lumaEnabled']);
-      expect(
-        helper.getToggleInput('posix_editor-readonly').hasClass('checked')
-      ).to.be.equal(POSIX_STORAGE['readonly']);
+      [{
+        input: 'generic_editor-importedStorage',
+        field: 'importedStorage',
+      }, {
+        input: 'generic_editor-lumaEnabled',
+        field: 'lumaEnabled',
+      }, {
+        input: 'posix_editor-readonly',
+        field: 'readonly',
+      }].forEach(({ input, field }) => {
+        expect(helper.getToggleInput(input).hasClass('checked'))
+          .to.be.equal(POSIX_STORAGE[field]);
+      });
     });
   });
 
@@ -417,11 +429,11 @@ describe('Integration | Component | cluster storage add form', function () {
         mode: 'edit',
       });
       this.render(hbs `
-      {{cluster-storage-add-form
-        storage=storage 
-        mode=mode
-        submit=submit}}
-    `);
+        {{cluster-storage-add-form
+          storage=storage 
+          mode=mode
+          submit=submit}}
+      `);
 
       return wait().then(() => {
         let helper = new ClusterStorageAddHelper(this.$());
@@ -439,6 +451,105 @@ describe('Integration | Component | cluster storage add form', function () {
           });
         });
       });
+    }
+  );
+
+  it(
+    '[create] does not disable "Imported storage" regardless the storageProvidesSupport value',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageProvidesSupport=true
+          storage=storage 
+          mode="create"}}
+      `);
+
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.not.have.class('disabled');
+      });
+    }
+  );
+
+  it(
+    '[edit] does not disable "Imported storage" when storageProvidesSupport is false',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageProvidesSupport=false
+          storage=storage 
+          mode="edit"}}
+      `);
+
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.not.have.class('disabled');
+      });
+    }
+  );
+
+  it('[edit] disables "Imported storage" when storageProvidesSupport is true',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageProvidesSupport=true
+          storage=storage 
+          mode="edit"}}
+      `);
+
+      return wait().then(() => {
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(helper.getToggleInput('generic_editor-importedStorage'))
+          .to.have.class('disabled');
+      });
+    }
+  );
+
+  it(
+    '[edit] restores "Imported storage" field original value when this field has been disabled',
+    function () {
+      this.set('storage', POSIX_STORAGE);
+      this.set('storageProvidesSupport', false);
+      const submitStub = sinon.stub().resolves();
+      this.on('submit', submitStub);
+      this.render(hbs `
+        {{cluster-storage-add-form
+          storageProvidesSupport=storageProvidesSupport
+          storage=storage 
+          mode="edit"
+          submit=(action "submit")}}
+      `);
+
+      let helper;
+      return wait()
+        .then(() => {
+          helper = new ClusterStorageAddHelper(this.$());
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.have.class('checked');
+          return click(helper.getToggleInput('generic_editor-importedStorage')[0]);
+        })
+        .then(() => {
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.not.have.class('checked');
+          this.set('storageProvidesSupport', true);
+          return wait();
+        })
+        .then(() => {
+          expect(helper.getToggleInput('generic_editor-importedStorage'))
+            .to.have.class('checked');
+          return helper.submit();
+        })
+        .then(() => click($('.modify-storage-modal .proceed')[0]))
+        .then(() => {
+          expect(submitStub).to.be.calledWith(
+            sinon.match(formData => formData.importedStorage === undefined)
+          );
+        });
     }
   );
 });

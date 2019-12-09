@@ -474,6 +474,7 @@ export default OnepanelServerBase.extend(
             id: 'storage1_verylongid',
             type: 'posix',
             name: 'Some storage',
+            importedStorage: true,
             mountPoint: '/mnt/st1',
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',
@@ -506,7 +507,6 @@ export default OnepanelServerBase.extend(
               id: 'space1_verylongid',
               name: 'Space One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One',
               storageId: storage1.id,
-              mountInRoot: true,
               spaceOccupancy: 800000000,
               storageImport: {
                 strategy: 'no_import',

@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-5897 New backend error handlers
+* VFS-5871 Moved option "Mount in root" from space support to "Imported storage" in storage
 * VFS-5916 Fixed sending Onezone configuration on deploy
 * VFS-5878 Added warning modal about clearing OSD devices on Ceph deploy
 * VFS-5890 Removed Ceph related requests from Onezone Onepanel

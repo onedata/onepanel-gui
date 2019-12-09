@@ -31,11 +31,6 @@ export default EmberObject.extend({
   storageId: null,
 
   /**
-   * @type {boolean}
-   */
-  mountInRoot: null,
-
-  /**
    * Maps: provider id (string) -> support size (number)
    * @type {object}
    */
