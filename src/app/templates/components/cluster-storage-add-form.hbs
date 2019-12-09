@@ -18,6 +18,7 @@
         </div>
       {{/form.group}}
     {{/if}}
+
     {{one-form-fields
       bsForm=form
       fields=currentFields
@@ -26,6 +27,15 @@
       onFocusOut=(action "focusOut")
       layoutConfig=layoutConfig
       disabled=showLoadingSpinner}}
+    {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
+      {{qos-params-editor
+        mode=mode
+        qosParams=storage.qosParameters
+        isFormOpened=isFormOpened
+        class=(concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static"))
+        onChange=(action "qosParamsChanged")
+        layoutConfig=layoutConfig}}
+    {{/unless}}
     {{#unless (eq mode "show")}}
       <div class="form-group submit-group col-xs-12">
         <div class="row">

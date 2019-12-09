@@ -99,9 +99,9 @@ describe('Integration | Component | cluster storage add form', function () {
 
   it('[create] renders fields for POSIX storage type if "posix" is selected',
     function () {
-      // +1 because of 'type' field
+      // +2 because of 'type' field and empty qos parameter field
       const totalFields = Object.keys(GenericFields).length +
-        Object.keys(PosixFields).length + 1;
+        Object.keys(PosixFields).length + 2;
 
       this.set('selectedStorageType', POSIX_TYPE);
       this.render(hbs `{{cluster-storage-add-form selectedStorageType=selectedStorageType}}`);
@@ -280,9 +280,9 @@ describe('Integration | Component | cluster storage add form', function () {
 
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
-      // +2 because of 'type' field and submit button row
+      // +3 because of 'type' field, qos field and submit button row
       expect(this.$('.form-group')).to.have.length(
-        GenericFields.length + PosixFields.length + LumaFields.length + 2
+        GenericFields.length + PosixFields.length + LumaFields.length + 3
       );
       expect(helper.getInput('type_static-type').text()).to.contain('POSIX');
       [

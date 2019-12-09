@@ -478,6 +478,11 @@ export default OnepanelServerBase.extend(
             lumaEnabled: true,
             lumaUrl: 'http://localhost:9090',
             lumaApiKey: 'some_storage',
+            qosParameters: {
+              param1: 'abc',
+              param2: 'def',
+              param3: '123',
+            },
           };
           const storageCeph = {
             id: 'storage2_id',
