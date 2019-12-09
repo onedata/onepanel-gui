@@ -93,7 +93,7 @@
     "jquery-datetimepicker": "2.5.21",
     "jquery.scrollto": "2.1.2",
     "loader.js": "4.6.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#66834c66879a2ca16d977ebcf9478f0ec605d433",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#1626b2f843754471ba652c41d06955a17e96ac45",
     "perfect-scrollbar": "1.4.0",
     "round10": "1.0.3",
     "sass": "1.17.0",
