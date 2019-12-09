@@ -6,7 +6,6 @@ export default {
   storageUpdate,
   id: 'Id',
   name: 'Name',
-  mountInRoot: 'Mount in root',
   storage: 'This provider storage',
   supportSizeThis: {
     spaceSupportOnThisProvider: 'Space support on this provider',

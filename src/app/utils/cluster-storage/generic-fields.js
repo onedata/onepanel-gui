@@ -12,5 +12,11 @@ export default [
     tip: true,
     notEditable: true,
   },
+  {
+    name: 'importedStorage',
+    type: 'checkbox',
+    defaultValue: false,
+    tip: true,
+  },
   { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false },
 ];

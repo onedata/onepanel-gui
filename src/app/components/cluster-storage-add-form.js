@@ -69,7 +69,8 @@ function createValidations(storageTypes, genericFields, lumaFields) {
         type.id + '_editor'
       );
       const editorValidator = createFieldValidator(field);
-      validations['allFieldsValues.' + type.id + '.' + prefixedField.name] = validator;
+      validations['allFieldsValues.' + type.id + '.' + prefixedField.name] =
+        validator;
       validations['allFieldsValues.' + type.id + '_editor.' + prefixedField.name] =
         editorValidator;
     });
@@ -145,6 +146,13 @@ export default OneForm.extend(I18n, Validations, {
    * @type {boolean}
    */
   isFormOpened: false,
+
+  /**
+   * If true, then edited storage already supports some spaces.
+   * @virtual optional
+   * @type {boolean}
+   */
+  storageProvidesSupport: false,
 
   /**
    * @type {boolean}
@@ -402,9 +410,8 @@ export default OneForm.extend(I18n, Validations, {
         // If luma has been enabled but luma fields are invalid, then the whole
         // form is invalid
         if (lumaEnabledByEdition) {
-          const lumaErrors = errors.filter(error => _.startsWith(
-            get(error, 'attribute'),
-            'allFieldsValues.luma_editor.')
+          const lumaErrors = errors.filter(error =>
+            _.startsWith(get(error, 'attribute'), 'allFieldsValues.luma_editor.')
           );
           if (get(lumaErrors, 'length')) {
             return false;
@@ -475,6 +482,31 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  storageProvidesSupportObserver: observer(
+    'storageProvidesSupport',
+    function storageProvidesSupportObserver() {
+      const importedStorageEditField =
+        this.getField('generic_editor.importedStorage');
+      const storageProvidesSupport = this.get('storageProvidesSupport');
+      const defaultImportedStorageValue = this.get('storage.importedStorage');
+      const changedImportedStorageValue =
+        this.get('allFieldsValues.generic_editor.importedStorage');
+
+      set(importedStorageEditField, 'disabled', storageProvidesSupport);
+
+      // Reset importedStorage value when storageProvidesSupport changed during edition 
+      if (storageProvidesSupport &&
+        changedImportedStorageValue !== defaultImportedStorageValue
+      ) {
+        this.send(
+          'inputChanged',
+          'generic_editor.importedStorage',
+          defaultImportedStorageValue
+        );
+      }
+    }
+  ),
+
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
     this.setProperties({
@@ -532,6 +564,7 @@ export default OneForm.extend(I18n, Validations, {
     }
     this.fetchCephOsds();
     this.osdsNumberObserver();
+    this.storageProvidesSupportObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
@@ -822,7 +855,7 @@ export default OneForm.extend(I18n, Validations, {
         lumaEnabledByEdition,
       } = this.getProperties('inEditionMode', 'lumaEnabledByEdition');
       const formValue = this.get('formValues.' + get(field, 'name'));
-      
+
       const isLumaEditorField =
         _.startsWith(get(field, 'name'), 'luma_editor.') && lumaEnabledByEdition;
 

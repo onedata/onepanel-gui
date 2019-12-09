@@ -9,89 +9,136 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { isEmpty } from '@ember/utils';
-
 import { inject as service } from '@ember/service';
-import { oneWay } from '@ember/object/computed';
-import EmberObject, {
+import { reads } from '@ember/object/computed';
+import {
   observer,
-  computed,
   get,
+  set,
+  getProperties,
 } from '@ember/object';
 import { Promise } from 'rsvp';
-import { invokeAction } from 'ember-invoke-action';
 import _ from 'lodash';
 
 import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
-
+import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { and, or, not, isEmpty } from 'ember-awesome-macros';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const UNITS = _.find(FORM_FIELDS, { name: 'sizeUnit' }).options;
 
-const VALIDATIONS_PROTO = {};
-
+const valdiationsProto = {};
 FORM_FIELDS.forEach(field =>
-  VALIDATIONS_PROTO[`allFieldsValues.main.${field.name}`] =
+  valdiationsProto[`allFieldsValues.main.${field.name}`] =
   createFieldValidator(field)
 );
 
-const Validations = buildValidations(VALIDATIONS_PROTO);
-
-export default OneFormSimple.extend(Validations, {
-  classNames: 'support-space-form',
+export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
+  classNames: ['support-space-form'],
 
   i18n: service(),
   storageManager: service(),
+  spaceManager: service(),
   globalNotify: service(),
 
-  fields: computed(() => FORM_FIELDS).readOnly(),
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.supportSpaceForm',
 
-  _importEnabled: oneWay('formValues.main._importEnabled'),
-
+  /**
+   * @override
+   */
   submitButton: false,
+
+  /**
+   * @override
+   */
+  fields: Object.freeze(FORM_FIELDS),
+
+  /**
+   * @virtual
+   * @type {Function}
+   */
+  submitSupportSpace: notImplementedReject,
 
   /**
    * If true, form is visible to user
    * @type {boolean}
+   * @virtual
    */
   isFormOpened: false,
 
   /**
-   * @type PromiseObject.Array.StorageDetails
+   * PromiseObject with array of objects:
+   * ```
+   * {
+   *   disabled: boolean, // true if cannot be used for support
+   *   isImportedAndUsed: boolean,
+   *   storage: StorageDetails,
+   * }
+   * ```
+   * @type {PromiseObject<Array<Object>>}
    */
-  allStoragesProxy: null,
+  allStoragesItemsProxy: null,
 
-  _selectedStorage: null,
-  values: EmberObject.create({
+  /**
+   * @type {Object} The same as in array allStoragesItemsProxy
+   */
+  selectedStorageItem: null,
+
+  /**
+   * @type {boolean}
+   */
+  isImportUpdateFormValid: false,
+
+  /**
+   * @override
+   */
+  values: Object.freeze({
     token: '',
     size: '',
     sizeUnit: 'mib',
-    _importEnabled: false,
+    importEnabled: false,
   }),
 
-  _isImportUpdateFormValid: false,
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  importEnabled: reads('formValues.main.importEnabled'),
 
-  isValid: computed('errors', '_isImportUpdateFormValid', function () {
-    let {
-      errors,
-      _importEnabled,
-      _isImportUpdateFormValid,
-    } = this.getProperties('errors', '_importEnabled',
-      '_isImportUpdateFormValid');
-    return isEmpty(errors) &&
-      (_importEnabled ? _isImportUpdateFormValid : true);
-  }),
+  /**
+   * @override
+   */
+  isValid: and(
+    isEmpty('errors'),
+    or(not('importEnabled'), 'isImportUpdateFormValid')
+  ),
 
-  // TODO change to ember-cp-validations  
-  canSubmit: computed('_selectedStorage', 'isValid', function () {
-    let {
-      _selectedStorage,
-      isValid,
-    } = this.getProperties('_selectedStorage', 'isValid');
-    return _selectedStorage != null && isValid;
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  canSubmit: and('selectedStorageItem', 'isValid'),
+
+  selectedStorageObserver: observer(
+    'selectedStorageItem',
+    function selectedStorageObserver() {
+      this.recalculateImportAvailability();
+    }
+  ),
+
+  importEnabledTipSetter: observer('importEnabled', function importEnabledTipSetter() {
+    const importEnabled = this.get('importEnabled');
+    const importEnabledField = this.getField('main.importEnabled');
+    const tipTranslationKey =
+      `fields.importEnabled.tip${importEnabled ? 'Enabled' : 'Disabled' }`;
+    const tip = this.t(tipTranslationKey);
+    set(importEnabledField, 'tip', tip);
   }),
 
   /**
@@ -105,65 +152,109 @@ export default OneFormSimple.extend(Validations, {
 
   init() {
     // labels for fields must be declared before OneFormSimple initialization
-    let i18n = this.get('i18n');
     FORM_FIELDS.forEach(f => {
       if (!f.label) {
-        f.label = i18n.t(`components.supportSpaceForm.fields.${f.name}`);
+        f.label = this.t(`fields.${f.name}.name`);
+      }
+      if (f.tip) {
+        f.tip = this.t(`fields.${f.name}.tip`);
       }
     });
     this._super(...arguments);
-    if (this.get('allStoragesProxy') == null) {
-      this._initStoragesProxy();
+
+    if (this.get('allStoragesItemsProxy') == null) {
+      this.initStoragesProxy();
     }
-    // first storage is default selected storage
-    this.get('allStoragesProxy').then((storages) => {
-      if (storages.length > 0) {
-        this.set('_selectedStorage', storages[0]);
+
+    this.importEnabledTipSetter();
+
+    // first enabled storage is default selected storage
+    this.get('allStoragesItemsProxy').then((storages) => {
+      const enabledStoragesItems = storages.rejectBy('disabled');
+      if (enabledStoragesItems.length > 0) {
+        safeExec(this, 'set', 'selectedStorageItem', enabledStoragesItems[0]);
       }
-      return storages;
     });
   },
 
-  _initStoragesProxy() {
-    let allStoragesPromise = new Promise((resolve, reject) => {
-      let storagesPromise = this.get('storageManager').getStorages()
-        .get('promise');
-      storagesPromise.then(storages => {
-        Promise.all(storages.toArray()).then(resolve, reject);
+  initStoragesProxy() {
+    const {
+      storageManager,
+      spaceManager,
+    } = this.getProperties('storageManager', 'spaceManager');
+
+    const storagesPromise = storageManager.getStorages()
+      .then(list => Promise.all(list.toArray()));
+    const spacesPromise = spaceManager.getSpaces()
+      .then(list => Promise.all(list.toArray()));
+
+    const storagesProxyPromise = Promise.all([storagesPromise, spacesPromise])
+      .then(([storages, spaces]) => {
+        const supportingStoragesIds = spaces.mapBy('storageId').compact();
+
+        return storages
+          .map(storage => {
+            const {
+              id,
+              importedStorage,
+            } = getProperties(storage, 'id', 'importedStorage');
+            const isImportedAndUsed = importedStorage &&
+              supportingStoragesIds.includes(id);
+
+            return {
+              storage,
+              isImportedAndUsed,
+              disabled: isImportedAndUsed,
+            };
+          })
+          .sortBy('name', 'disabled');
       });
-      storagesPromise.catch(reject);
-    });
 
     this.set(
-      'allStoragesProxy',
-      PromiseObject.create({ promise: allStoragesPromise })
+      'allStoragesItemsProxy',
+      PromiseObject.create({ promise: storagesProxyPromise })
+    );
+  },
+
+  recalculateImportAvailability() {
+    this.send(
+      'inputChanged',
+      'main.importEnabled',
+      this.get('selectedStorageItem.storage.importedStorage') || false,
     );
   },
 
   actions: {
     submit() {
+      const {
+        submitSupportSpace,
+        globalNotify,
+      } = this.getProperties(
+        'submitSupportSpace',
+        'globalNotify'
+      );
+
       let {
         token,
         size,
         sizeUnit,
         storageImport,
         storageUpdate,
-        mountInRoot,
-        _importEnabled,
-      } = this.get('formValues.main').getProperties(
+        importEnabled,
+      } = getProperties(
+        this.get('formValues.main'),
         'name',
         'token',
         'size',
         'sizeUnit',
         'storageImport',
         'storageUpdate',
-        'mountInRoot',
-        '_importEnabled'
+        'importEnabled'
       );
 
       size = size * _.find(UNITS, { value: sizeUnit })._multiplicator;
 
-      if (!_importEnabled) {
+      if (!importEnabled) {
         storageImport = {
           strategy: 'no_import',
         };
@@ -172,30 +263,26 @@ export default OneFormSimple.extend(Validations, {
         };
       }
 
-      let storageId = this.get('_selectedStorage.id');
+      const storageId = this.get('selectedStorageItem.storage.id');
 
-      let submitting = invokeAction(this, 'submitSupportSpace', {
+      return submitSupportSpace({
         token,
         size,
         storageId,
         storageImport,
         storageUpdate,
-        mountInRoot,
+      }).catch(error => {
+        globalNotify.backendError('space supporting', error);
+        throw error;
       });
-
-      submitting.catch(error => {
-        this.get('globalNotify').backendError('space supporting', error);
-      });
-
-      return submitting;
     },
-    storageChanged(storage) {
-      this.set('_selectedStorage', storage);
+    storageChanged(storageItem) {
+      this.set('selectedStorageItem', storageItem);
     },
     importFormChanged(importFormValues, areValuesValid) {
-      this.set('_isImportUpdateFormValid', areValuesValid);
+      this.set('isImportUpdateFormValid', areValuesValid);
       if (areValuesValid) {
-        let formValues = this.get('formValues.main');
+        const formValues = this.get('formValues.main');
         Object.keys(importFormValues).forEach(key => {
           formValues.set(key, get(importFormValues, key));
         });

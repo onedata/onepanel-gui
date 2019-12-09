@@ -38,6 +38,7 @@
           mode=(if whileEdition "edit" "show")
           isFormOpened=true
           storage=storage
+          storageProvidesSupport=(contains storage.id (map-by "storageId" spaces))
           layoutConfig=formLayoutConfig}}
       </div>
       {{!-- TODO: maybe a placeholder when not loaded --}}
