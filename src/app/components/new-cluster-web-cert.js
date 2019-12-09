@@ -12,9 +12,7 @@ import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
 import { default as EmberObject, computed, trySet, get } from '@ember/object';
-import { camelize } from '@ember/string';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 
@@ -51,12 +49,6 @@ export default Component.extend(I18n, {
   formValues: undefined,
 
   /**
-   * True if the "Let's Encrypt Limit Error" has occured on current view
-   * @type {boolean}
-   */
-  _limitErrorOccured: false,
-
-  /**
    * PromiseObject for requesting certificate data
    * @type {Promise}
    */
@@ -75,19 +67,6 @@ export default Component.extend(I18n, {
    * @type {Location}
    */
   _location: window.location,
-
-  /**
-   * True if the last Let's Encrypt has ended with known error
-   * that says the Let's Encrypt is unavailable in this moment.
-   * @type {boolean}
-   */
-  _lockLetsEncrypt: reads('_limitErrorOccured'),
-
-  /**
-   * True if the "Let's Encrypt Domain Error" has occured on current view
-   * @type {boolean}
-   */
-  _authorizationErrorOccured: false,
 
   /**
    * Set to true if the location has been changed to show that location
@@ -188,24 +167,7 @@ export default Component.extend(I18n, {
         letsEncrypt: enabled,
       })
       .catch(error => {
-        const errorType = getSpecialLetsEncryptError(error);
-        if (errorType) {
-          this.set(`_${camelize(errorType + 'ErrorOccured')}`, true);
-          if (this.get('_lockLetsEncrypt')) {
-            this.set('formValues.letsEncrypt', false);
-          }
-          error = {
-            message: this.t('letsEncrypt.' + camelize(errorType + 'ErrorInfo')),
-          };
-        } else {
-          this.setProperties({
-            _authorizationErrorOccured: false,
-            _limitErrorOccured: false,
-            _lockLetsEncrypt: false,
-          });
-        }
-        const message = this.t('certificateGeneration');
-        globalNotify.backendError(message, error);
+        globalNotify.backendError(this.t('certificateGeneration'), error);
         throw error;
       })
       .then(() => {
