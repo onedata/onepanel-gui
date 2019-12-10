@@ -185,16 +185,14 @@ describe('Integration | Component | cluster storage add form', function () {
     const lumaSelector = '[class*="field-luma"]';
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
-      const lumaEnabledToggle = helper.getToggleInput('generic-lumaEnabled');
-
       let lumaFields = this.$(lumaSelector);
       expect(lumaFields).to.have.length(0);
-      lumaEnabledToggle.click();
+      helper.getToggleInput('generic-lumaEnabled').click();
       return wait().then(() => {
         lumaFields = this.$(lumaSelector);
         expect(lumaFields).to.have.length(2);
         expect(lumaFields.parents('.form-group')).to.have.class('fadeIn');
-        lumaEnabledToggle.click();
+        helper.getToggleInput('generic-lumaEnabled').click();
         return wait().then(() => {
           lumaFields = this.$(lumaSelector);
           expect(lumaFields).to.have.length(2);

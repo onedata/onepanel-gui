@@ -27,20 +27,6 @@
   {{/promise-proxy-container}}
 </div>
 
-{{#if _limitErrorOccured}}
-  <div class="alert alert-warning fade in">
-    {{tt this "letsEncrypt.limitErrorInfo"}}
-  </div>
-{{/if}}
-
-{{#if _authorizationErrorOccured}}
-  <div class="alert alert-warning fade in">
-    {{tt this "letsEncrypt.authorizationErrorInfoP1"}}
-    <a href={{_redirectUrl}}>{{_redirectUrl}}</a>
-    {{tt this "letsEncrypt.authorizationErrorInfoP2"}}
-  </div>
-{{/if}}
-
 <div class="row">
   {{#bs-form
     submitOnEnter=false
@@ -52,7 +38,7 @@
       fields=formFields
       formValues=formValues
       inputChanged=(action "changeFormValue")
-      disabled=(or isWorking _lockLetsEncrypt)
+      disabled=isWorking
     }}
   {{/bs-form}}
 </div>
