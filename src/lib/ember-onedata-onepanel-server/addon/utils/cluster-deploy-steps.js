@@ -2,7 +2,7 @@
  * Generate known step names of cluster deployment process
  *
  * @module utils/cluster-deploy-steps
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -46,6 +46,36 @@ const workerStepNames = [
   'status',
 ];
 
+const cephSteps = [
+  'service_ceph:initialize_config',
+  'service_ceph:create_admin_keyring',
+  'service_ceph:register_host',
+  'service_ceph:extend_cluster',
+  'service_ceph_mon:add_monitors',
+  'service_ceph_mon:setup_initial_member',
+  'service_ceph_mon:mkfs',
+  'service_ceph_mon:add_mon_to_config',
+  'service_ceph_mon:start',
+  'service_ceph_mon:wait_for_init',
+  'service_ceph_mon:register',
+  'service_ceph_mgr:create_mgr_auth',
+  'service_ceph_mgr:start',
+  'service_ceph_mgr:wait_for_init',
+  'service_ceph_mgr:register',
+  'service_ceph_osd:create',
+  'service_ceph_osd:prepare_loopdevice',
+  'service_ceph_osd:mkfs',
+  'service_ceph_osd:update_keyring',
+  'service_ceph_osd:mark_deployed',
+  'service_ceph_osd:start',
+  'service_ceph_osd:create',
+  'service_ceph_osd:partition_bluestore_devices',
+  'service_ceph_osd:mkfs',
+  'service_ceph_osd:update_keyring',
+  'service_ceph_osd:mark_deployed',
+  'service_ceph_osd:start',
+];
+
 /**
  * Generate list of specific deployment steps for specific worker service
  * @param {string} type one of: "onezone", "oneprovider"
@@ -53,8 +83,14 @@ const workerStepNames = [
  */
 function workerSteps(type) {
   // currently - just first letter
-  let typeCode = type[3];
-  return workerStepNames.map(ws => `service_o${typeCode}_worker:${ws}`);
+  const typeCode = type[3];
+  const steps = workerStepNames.map(ws => `service_o${typeCode}_worker:${ws}`);
+
+  if (type === 'oneprovider') {
+    steps.push(...cephSteps);
+  }
+
+  return steps;
 }
 
 /**

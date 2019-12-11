@@ -1,0 +1,51 @@
+<div class="row content-row header-row">
+  <h1>{{tt this "cephConfiguration"}}
+    <div class="btn-toolbar">
+      {{#bs-button
+        class="btn btn-sm btn-default btn-ceph-back"
+        onClick=(action "prevStep")
+      }}
+        {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
+      {{/bs-button}}
+      {{#one-spin-button
+        class="btn btn-sm btn-primary btn-deploy-cluster btn-ceph-proceed"
+        disabled=(not cephConfig.isValid)
+        action=(action "checkBlockDevicesAndStartDeploy")
+      }}
+        <span>{{tt this "deploy"}}</span>{{one-icon icon="arrow-right"}}
+        {{#unless cephConfig.isValid}}
+          {{one-tooltip title=(tt this "invalidConfig") placement="left"}}
+        {{/unless}}
+      {{/one-spin-button}}
+    </div>
+  </h1>
+</div>
+<div class="row content-row no-border">
+  {{ceph-cluster-configuration
+    config=cephConfig
+    isCephDeployed=false}}
+</div>
+{{#proceed-process-modal
+  opened=warnAboutBlockDevicesVisible
+  close=(action "closeBlockDevicesWarn")
+  proceed=(action "startDeploy")
+  modalClass="proceed-modal block-device-format-warning-modal"
+  headerText=(tt this "blockDeviceFormatWarn.header")
+  modalIcon="sign-warning-rounded"
+  proceedButtonText=(tt this "blockDeviceFormatWarn.proceedButton")
+  proceedButtonClass="btn btn-warning proceed"
+}}
+  <p class="message">{{tt this "blockDeviceFormatWarn.message"}}</p>
+  <ul class="info info-gray info-condensed">
+    {{#each-in usedBlockDevices as |host devices|}}
+      <li class="node break-all">
+        <strong><span class="host">{{host}}</span>:</strong>
+        <span class="devices">{{join ", " (map-by "path" devices)}}</span>
+      </li>
+    {{/each-in}}
+  </ul>
+  <p>{{tt this "blockDeviceFormatWarn.areYouSure"}}</p>
+{{/proceed-process-modal}}
+{{#if clusterDeployProcess.deploymentPromise}}
+  {{new-cluster-deploy-progress deploymentPromise=clusterDeployProcess.deploymentPromise}}
+{{/if}}

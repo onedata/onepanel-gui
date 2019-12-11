@@ -1,0 +1,31 @@
+.cluster-ceph-status {
+  .osds-usage-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: $padding-large-horizontal;
+    padding: $content-row-vertical-padding 0;
+  }
+
+  .osd-usage {
+    width: calc(33.33333333% - #{$padding-large-horizontal});
+    min-width: 0;
+    margin-bottom: $padding-base-vertical;
+    margin-right: $padding-large-horizontal;
+  }
+
+  @media (max-width: $screen-sm-max) {
+    .osd-usage {
+      width: calc(50% - #{$padding-large-horizontal})
+    }
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .osd-usage {
+      width: 100%;
+    }
+  }
+  
+  .one-space-indicator {
+    min-height: 70px;
+  }
+}

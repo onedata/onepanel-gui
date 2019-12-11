@@ -50,6 +50,11 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
+import newClusterCeph from './components/new-cluster-ceph';
+import cephClusterConfiguration from './components/ceph-cluster-configuration';
+import clusterCephStatus from './components/cluster-ceph-status';
+import clusterCephPools from './components/cluster-ceph-pools';
+import contentClustersCeph from './components/content-clusters-ceph';
 import contentClustersEmergencyPassphrase from './components/content-clusters-emergency-passphrase';
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
@@ -63,6 +68,8 @@ import emergencyWarningBar from './components/emergency-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
 import contentClustersMembers from './components/content-clusters-members';
+import contentClustersGuiSettings from './components/content-clusters-gui-settings';
+import qosParamsEditor from './components/qos-params-editor';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -70,10 +77,12 @@ import spaceTabs from './mixins/components/space-tabs';
 import guiUtils from './services/gui-utils';
 import storageActions from './services/storage-actions';
 import clusterActions from './services/cluster-actions';
-import clusterModelManager from './services/cluster-model-manager';
 import onezoneGui from './services/onezone-gui';
+import guiSettingsActions from './services/gui-settings-actions';
 
 import onedata from './routes/onedata';
+
+import newClusterDeployProcess from './utils/new-cluster-deploy-process';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -133,6 +142,11 @@ let translations = {
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
+    newClusterCeph,
+    cephClusterConfiguration,
+    clusterCephStatus,
+    clusterCephPools,
+    contentClustersCeph,
     contentClustersEmergencyPassphrase,
     clusterNodesTile,
     clusterSpacesTile,
@@ -144,6 +158,8 @@ let translations = {
     supportSizeInfo,
     emergencyWarningBar,
     contentClustersMembers,
+    contentClustersGuiSettings,    
+    qosParamsEditor,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,
@@ -159,11 +175,14 @@ let translations = {
     guiUtils,
     storageActions,
     clusterActions,
-    clusterModelManager,
     onezoneGui,
+    guiSettingsActions,
   },
   routes: {
     onedata,
+  },
+  utils: {
+    newClusterDeployProcess,
   },
 };
 

@@ -1,0 +1,34 @@
+{{#promise-proxy-container proxy=savedMessageProxy}}
+  {{#if (and isEnabled (not body))}}
+    <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
+  {{/if}}
+  <p class="subheader-text">{{tt this "description"}}</p>
+  <p class="clearfix">
+    <label for="cookie-consent-notification-enabled" class="align-left">{{tt this "cookieConsentNotificationEnabled"}}:</label>
+    {{one-way-toggle
+      inputId="cookie-consent-notification-enabled"
+      checked=isEnabled
+      update=(action "isEnabledChanged")}}
+    <button class="btn btn-sm btn-default pull-right" {{action "insertPrivacyPolicyLink"}} disabled={{or isSaving (not isEnabled)}}>
+      {{one-icon icon="text-link"}}
+      {{tt this "insertPrivacyPolicyLink"}}
+    </button>
+  </p>
+  <p>
+    <textarea
+      rows="4"
+      value={{body}}
+      oninput={{action "bodyChanged" value="target.value"}}
+      disabled={{or isSaving (not isEnabled)}}
+      class="form-control cookie-consent-notification-input no-resize"></textarea>
+  </p>
+  <p>
+    {{#one-spin-button
+      class=(concat "btn btn-primary btn-save pull-right")
+      action=(action "save")
+      disabled=(not isModified)}}
+      {{tt this "save"}}
+    {{/one-spin-button}}
+  </p>
+{{/promise-proxy-container}}
+{{yield}}

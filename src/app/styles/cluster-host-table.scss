@@ -9,13 +9,14 @@
       padding: $table-cell-padding * 0.75 $table-cell-padding;
     }
     .toggle-column {
-      width: 15%;
+      width: 12%;
       .one-way-toggle {
         font-size: 1.2em;
       }
     }
     .btn-column {
       width: 70px;
+      vertical-align: middle;
     }
   }
 
@@ -89,17 +90,8 @@
   }
   
   .btn-remove-node {
-    .oneicon {
+    &.remove-icon {
       font-size: 2em;
-      color: $main-text-color;
-      &:hover {
-        color: $color-one-red;
-      }
-    }
-    &.disabled {
-      opacity: 0.2;
-      cursor: not-allowed;
-      pointer-events: none;
     }
   }
 }

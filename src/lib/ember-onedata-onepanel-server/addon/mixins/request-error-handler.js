@@ -11,11 +11,17 @@ import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
 import { sessionExpiredKey } from 'onedata-gui-common/components/login-box';
 import { get } from '@ember/object';
+import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
 
 function isLogoutResponse(response) {
   return response && response.req.method === 'DELETE' &&
     response.req.url.match(/\/session$/) && true;
 }
+
+const workerUnavailableErrors = [
+  'serviceUnavailable',
+  'noConnectionToOnezone',
+];
 
 export default Mixin.create({
   session: service(),
@@ -25,15 +31,17 @@ export default Mixin.create({
    */
   _sessionStorage: sessionStorage,
 
-  handleRequestError(error) {
-    if (error && error.response && error.response.statusCode) {
-      const statusCode = error.response.statusCode;
-      
-      if (statusCode === 503) {
-        // 503 means that oz/op-worker is unavailable
+  handleRequestError(errorResponse) {
+    if (errorResponse && errorResponse.response && errorResponse.response.statusCode) {
+      const statusCode = errorResponse.response.statusCode;
+      const body = errorResponse.response.body;
+      const error = body && extractNestedError(body.error);
+      const noConnectionError = workerUnavailableErrors.includes((error || {}).id);
+
+      if ((statusCode === 503 && !body) || noConnectionError) {
         this.set('workerServicesAreAvailable', false);
       } else if (statusCode === 401 && this.get('isInitialized') &&
-        !isLogoutResponse(error.response)
+        !isLogoutResponse(errorResponse.response)
       ) {
         // 401 should not be present when isInitialized - it seems that session has expired
         this._handleUnauhtorizedError();

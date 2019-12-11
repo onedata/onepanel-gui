@@ -1,18 +1,27 @@
-<h1>{{t "components.newClusterDeployProgress.deploying"}}</h1>
-{{#bs-progress as |p|}}
-  {{#if step}}
-    {{p.bar
-      value=progress minValue=0 maxValue=1 showLabel=false
-      type="primary" animate=true
-    }}
-  {{else}}
-    {{p.bar
-      value=1 minValue=0 maxValue=1 showLabel=false
-      type="unknown" class="progress-bar-striped active"
-    }}
-  {{/if}}
-{{/bs-progress}}
-<p>
-  <strong>{{t "components.newClusterDeployProgress.stage"}}:</strong>
-  {{stepText}}
-</p>
+{{#bs-modal
+  id="cluster-deploy-progress"
+  open=deploymentPromise
+  keyboard=false
+  backdropClose=false
+  as |modal|}}
+  {{#modal.body class="new-cluster-deploy-progress"}}
+    <h1>{{t "components.newClusterDeployProgress.deploying"}}</h1>
+    {{#bs-progress as |p|}}
+      {{#if step}}
+        {{p.bar
+          value=progress minValue=0 maxValue=1 showLabel=false
+          type="primary" animate=true
+        }}
+      {{else}}
+        {{p.bar
+          value=1 minValue=0 maxValue=1 showLabel=false
+          type="unknown" class="progress-bar-striped active"
+        }}
+      {{/if}}
+    {{/bs-progress}}
+    <p>
+      <strong>{{t "components.newClusterDeployProgress.stage"}}:</strong>
+      {{stepText}}
+    </p>
+  {{/modal.body}}
+{{/bs-modal}}

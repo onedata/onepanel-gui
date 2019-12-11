@@ -137,7 +137,6 @@ export default Component.extend(
      * @param {string} supportSpaceData.storageId
      * @param {string} supportSpaceData.token
      * @param {number} supportSpaceData.size
-     * @param {boolean} supportSpaceData.mountInRoot
      * @returns {Promise.<any>} SpaceManager.supportSpace promise
      */
     supportSpace(supportSpaceData) {

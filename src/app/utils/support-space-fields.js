@@ -1,8 +1,7 @@
-// TODO: translate (i18n should be used, so maybe create function for export)
 export default [{
     name: 'token',
     type: 'text',
-    tip: 'Globally unique identifier assigned by Onezone',
+    tip: true,
     example: 'MDAxNWxvY...',
   },
   { name: 'size', type: 'number', gt: 0, example: '100' },
@@ -18,14 +17,8 @@ export default [{
     ],
   },
   {
-    name: 'mountInRoot',
+    name: 'importEnabled',
     type: 'checkbox',
-    optional: true,
-  },
-  {
-    name: '_importEnabled',
-    type: 'checkbox',
-    tip: 'Configure import files from storage',
-    optional: true,
+    disabled: true,
   },
 ];

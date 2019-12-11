@@ -1,26 +1,27 @@
-const installation = 'cluster installation';
+const deploy = 'cluster installation';
 const webCert = 'certificate setup';
 const dns = 'DNS setup';
 const ips = 'cluster IP adresses';
-const summary = 'summary';
+const done = 'summary';
 
 export default {
   steps: {
     oneprovider: {
-      installation,
+      deploy,
+      oneproviderCeph: 'ceph configuration',
       ips,
-      providerRegistration: 'provider registration',
+      oneproviderRegistration: 'Oneprovider registration',
       webCert,
       dns,
-      providerStorage: 'storage configuration',
-      summary,
+      oneproviderStorageAdd: 'storage configuration',
+      done,
     },
     onezone: {
-      installation,
+      deploy,
       webCert,
       dns,
       ips,
-      summary,
+      done,
     },
   },
 };

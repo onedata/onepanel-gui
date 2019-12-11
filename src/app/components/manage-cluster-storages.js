@@ -2,8 +2,8 @@
  * Storage management for cluster - can be used both in wizard and after cluster deployment
  *
  * @module components/manage-cluster-storages
- * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -17,7 +17,7 @@ import { invokeAction } from 'ember-invoke-action';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-
+import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 export default Component.extend(I18n, GlobalActions, {
@@ -43,6 +43,13 @@ export default Component.extend(I18n, GlobalActions, {
   spacesProxy: null,
 
   /**
+   * Id of the storage type, which should be passed to the
+   * ClusterStorageAddForm. If valid, will open create form at component load.
+   * @virtual
+   */
+  createStorageFormTypeId: undefined,
+
+  /**
    * @type {boolean}
    */
   storageToRemove: false,
@@ -63,6 +70,22 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {computed.boolean}
    */
   addStorageOpened: oneWay('noStorages'),
+
+  /**
+   * @type {Ember.ComputedProperty<Object>}
+   */
+  createStorageFormType: computed(
+    'createStorageFormTypeID',
+    function createStorageFormType() {
+      const createStorageFormTypeId = this.get('createStorageFormTypeId');
+      if (createStorageFormTypeId) {
+        const storage = storageTypes.findBy('id', createStorageFormTypeId);
+        if (storage) {
+          return storage;
+        }
+      }
+    }
+  ),
 
   /**
    * If true, render additional finish button that will invoke "nextStep" action
@@ -150,6 +173,9 @@ export default Component.extend(I18n, GlobalActions, {
     this._super(...arguments);
     this._updateStoragesProxy();
     this._updateSpacesProxy(true);
+    if (this.get('createStorageFormType')) {
+      this.set('addStorageOpened', true);
+    }
   },
 
   /**

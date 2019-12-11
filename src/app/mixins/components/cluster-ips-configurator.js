@@ -108,8 +108,10 @@ export default Mixin.create({
       PromiseObject.create({
         promise: this.get('deploymentManager').getClusterIps()
           .then(({ hosts }) => {
-            this.prepareHosts(hosts);
-            this.set('_ipsFormData', hosts);
+            safeExec(this, () => {
+              this.prepareHosts(hosts);
+              this.set('_ipsFormData', hosts);
+            });
             return hosts;
           }),
       }),

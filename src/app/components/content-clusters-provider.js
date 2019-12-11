@@ -11,12 +11,11 @@ import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { next } from '@ember/runloop';
-import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
-import getSpecialLetsEncryptError from 'onepanel-gui/utils/get-special-lets-encrypt-error';
-import { camelize } from '@ember/string';
+import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { Promise } from 'rsvp';
@@ -270,29 +269,26 @@ export default Component.extend(
         );
         this.set('_submitting', true);
         return providerManager.modifyProvider(modifyProviderData)
-          .catch(error => {
-            const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
-            if (subdomainReservedMsg) {
+          .catch(errorResponse => {
+            const nestedError = extractNestedError(
+              get(errorResponse, 'response.body.error')
+            );
+            const isSubdomainReservedError = nestedError &&
+              get(nestedError, 'id') === 'badValueIdentifierOccupied' &&
+              get(nestedError, 'details.key') === 'subdomain';
+            if (isSubdomainReservedError) {
               safeExec(
                 this,
                 'set',
                 '_excludedSubdomains',
                 _excludedSubdomains.concat(data.subdomain)
               );
-              error = { error: error.error, message: subdomainReservedMsg };
-            } else {
-              const letsEncryptError = getSpecialLetsEncryptError(error);
-              if (letsEncryptError) {
-                error = {
-                  error: error.error,
-                  message: this.t(
-                    'letsEncrypt.' + camelize(letsEncryptError + 'ErrorInfo')
-                  ),
-                };
-              }
             }
-            globalNotify.backendError(this.t('providerDataModification'), error);
-            throw error;
+            globalNotify.backendError(
+              this.t('providerDataModification'),
+              errorResponse
+            );
+            throw errorResponse;
           })
           .then(() => {
             globalNotify.info(this.t('modifySuccess'));

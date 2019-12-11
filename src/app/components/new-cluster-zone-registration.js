@@ -14,7 +14,7 @@ import Component from '@ember/component';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import { invokeAction } from 'ember-invoke-action';
-import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reserved-error-msg';
+import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { get } from '@ember/object';
@@ -198,16 +198,22 @@ export default Component.extend(I18n, {
         invokeAction(this, 'nextStep');
         this.get('clusterModelManager').updateCurrentClusterProxy();
       });
-      submitting.catch(error => {
-        const subdomainReservedMsg = getSubdomainReservedErrorMsg(error);
-        if (subdomainReservedMsg) {
-          this.set('_excludedSubdomains', _excludedSubdomains.concat(
-            providerData.subdomain));
-          error = { error: error.error, message: subdomainReservedMsg };
+      submitting.catch(errorResponse => {
+        const nestedError = extractNestedError(
+          get(errorResponse, 'response.body.error')
+        );
+        const isSubdomainReservedError = nestedError &&
+          get(nestedError, 'id') === 'badValueIdentifierOccupied' &&
+          get(nestedError, 'details.key') === 'subdomain';
+        if (isSubdomainReservedError) {
+          this.set(
+            '_excludedSubdomains',
+            _excludedSubdomains.concat(providerData.subdomain)
+          );
         }
         this.get('globalNotify').backendError(
           'provider registration',
-          error
+          errorResponse
         );
       });
       return submitting;

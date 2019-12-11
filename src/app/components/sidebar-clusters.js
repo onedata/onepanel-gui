@@ -18,6 +18,7 @@ export default SidebarClusters.extend({
 
   guiUtils: service(),
   dnsManager: service(),
+  guiSettingsManager: service(),
 
   /**
    * @virtual
