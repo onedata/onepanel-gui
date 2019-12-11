@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5650 Added "Maximum canonical object size", "File mode" and "Directory mode" options to S3 storage
 * VFS-5897 New backend error handlers
 * VFS-5871 Moved option "Mount in root" from space support to "Imported storage" in storage
 * VFS-5916 Fixed sending Onezone configuration on deploy
