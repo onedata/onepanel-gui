@@ -14,6 +14,7 @@ import { inject as service } from '@ember/service';
 import { computed, observer } from '@ember/object';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-state';
 
 const allowedTabs = ['signInNotification', 'privacyPolicy', 'cookieConsentNotification'];
 
@@ -84,16 +85,16 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * @param {string} tabName
+   * @param {string} tab
    * @param {boolean} replaceHistoryEntry
    * @returns {undefined}
    */
-  changeTab(tabName, replaceHistoryEntry = false) {
-    if (allowedTabs.includes(tabName)) {
+  changeTab(tab, replaceHistoryEntry = false) {
+    if (allowedTabs.includes(tab)) {
       const router = this.get('router');
       const transitionParams = {
         queryParams: {
-          options: `tab.${tabName}`,
+          options: serializeAspectOptions({ tab }),
         },
       };
 
