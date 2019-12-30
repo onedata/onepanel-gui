@@ -11,12 +11,13 @@
 import { reads } from '@ember/object/computed';
 import Component from '@ember/component';
 import { computed, get, observer } from '@ember/object';
-import { inject } from '@ember/service';
-import { Promise } from 'rsvp';
+import { inject as service } from '@ember/service';
+import { resolve, reject } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { getOwner } from '@ember/application';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 const {
   SpaceAutoCleaningConfiguration,
@@ -26,10 +27,12 @@ const BLANK_AUTO_CLEANING = {
   enabled: false,
 };
 
-export default Component.extend({
-  media: inject(),
-  spaceManager: inject(),
-  globalNotify: inject(),
+export default Component.extend(I18n, {
+  media: service(),
+  spaceManager: service(),
+  globalNotify: service(),
+
+  i18nPrefix: 'components.spaceAutoCleaning',
 
   classNames: ['space-auto-cleaning'],
 
@@ -162,6 +165,21 @@ export default Component.extend({
     }
   },
 
+  handleConfigureSpaceAutoCleaning(...args) {
+    const {
+      configureSpaceAutoCleaning,
+      globalNotify,
+    } = this.getProperties('configureSpaceAutoCleaning', 'globalNotify');
+    return configureSpaceAutoCleaning(...args)
+      .catch((error) => {
+        globalNotify.backendError(
+          this.t('configuringAutoCleaning'),
+          error
+        );
+        throw error;
+      });
+  },
+
   enabledSettings() {
     let autoCleaningConfiguration = this.get('autoCleaningConfiguration');
     if (autoCleaningConfiguration == null) {
@@ -176,21 +194,16 @@ export default Component.extend({
 
   actions: {
     toggleCleaning() {
-      const {
-        configureSpaceAutoCleaning,
-        isCleanEnabled,
-      } = this.getProperties('configureSpaceAutoCleaning', 'isCleanEnabled');
-      const newCleanEnabled = !isCleanEnabled;
+      const newCleanEnabled = !this.get('isCleanEnabled');
       const configureReq = Object.assign({},
         this.enabledSettings(), { enabled: newCleanEnabled }
       );
-      return configureSpaceAutoCleaning(configureReq);
+      return this.handleConfigureSpaceAutoCleaning(configureReq);
     },
 
     barValuesChanged(values) {
-      let configureSpaceAutoCleaning = this.get('configureSpaceAutoCleaning');
-      let settings = this.get('autoCleaningConfiguration');
-      let changedValues = {};
+      const settings = this.get('autoCleaningConfiguration');
+      const changedValues = {};
       ['target', 'threshold'].forEach((fieldName) => {
         const value = values[fieldName];
         if (value != null) {
@@ -201,18 +214,15 @@ export default Component.extend({
         }
       });
       return Object.keys(changedValues).length > 0 ?
-        configureSpaceAutoCleaning(changedValues) : Promise.resolve();
+        this.handleConfigureSpaceAutoCleaning(changedValues) : resolve();
     },
 
     fileConditionsChanged(values) {
-      let {
-        configureSpaceAutoCleaning,
-        autoCleaningConfiguration,
-      } = this.getProperties('configureSpaceAutoCleaning', 'autoCleaningConfiguration');
+      const autoCleaningConfiguration = this.get('autoCleaningConfiguration');
       if (autoCleaningConfiguration && get(autoCleaningConfiguration, 'enabled')) {
-        return configureSpaceAutoCleaning({ rules: values });
+        return this.handleConfigureSpaceAutoCleaning({ rules: values });
       } else {
-        return Promise.reject();
+        return reject();
       }
     },
 
@@ -226,15 +236,21 @@ export default Component.extend({
         spaceManager,
         globalNotify,
         spaceId,
-      } = this.getProperties('spaceManager', 'globalNotify', 'spaceId');
+        spaceAutoCleaningStatusUpdater,
+      } = this.getProperties(
+        'spaceManager',
+        'globalNotify',
+        'spaceId',
+        'spaceAutoCleaningStatusUpdater'
+      );
       return spaceManager.startCleaning(spaceId)
         .then(() => {
           // only a side effect
-          this.get('spaceAutoCleaningStatusUpdater').updateData();
+          spaceAutoCleaningStatusUpdater.updateData();
         })
         .catch(error => {
           globalNotify.backendError(
-            'manually starting space cleaning',
+            this.t('manuallyStartingCleaning'),
             error
           );
           throw error;
