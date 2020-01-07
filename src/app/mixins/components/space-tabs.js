@@ -16,7 +16,7 @@ const disabledClass = 'disabled';
 
 export default Mixin.create({
   // requires i18n service
-  // requires router service
+  // requires navigationState service
 
   selectedTab: undefined,
 
@@ -39,24 +39,11 @@ export default Mixin.create({
   tabCleanId: 'clean',
   tabCleanHint: computedTabHint('clean'),
 
-  init() {
-    this._super(...arguments);
-    if (this.get('selectedTab') == null) {
-      this.changeTab(this.get('tabOverviewId'));
-    }
-  },
-
   changeTab(tabId) {
-    const spaceId = this.get('space.id');
-    return this.changeTabUrl(spaceId, tabId);
-  },
-
-  changeTabUrl(spaceId, tabId) {
-    return this.get('router').transitionTo({
-      queryParams: {
-        options: `space.${spaceId},tab.${tabId}`,
-      },
-    });
+    return this.get('navigationState')
+      .setAspectOptions({
+        tab: tabId,
+      });
   },
 
   actions: {

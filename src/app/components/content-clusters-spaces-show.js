@@ -21,7 +21,7 @@ export default Component.extend(
     onepanelServer: service(),
     spaceManager: service(),
     storageManager: service(),
-    router: service(),
+    navigationState: service(),
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesShow',
@@ -85,7 +85,10 @@ export default Component.extend(
     },
 
     goToSpacesList() {
-      return this.get('router').transitionTo({ queryParams: { options: '' } });
+      return this.get('navigationState').setAspectOptions({
+        space: null,
+        tab: null,
+      });
     },
 
     fetchFilePopularityConfiguration() {

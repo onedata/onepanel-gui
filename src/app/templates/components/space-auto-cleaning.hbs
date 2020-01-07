@@ -1,10 +1,10 @@
 <div class="row content-row no-border">
   <h1>
     <label for="cleaning-enabled">
-      {{t "components.spaceAutoCleaning.enableAutoCleaning"}}
+      {{tt this "enableAutoCleaning"}}
     </label>
     {{one-label-tip
-      title=(t "components.spaceAutoCleaning.headerHint")
+      title=(tt this "headerHint")
       placement="top"
     }}
     {{one-way-toggle inputId="cleaning-enabled"
@@ -22,9 +22,9 @@
     <div class="bar-cell cell">
       <div class="row content-row no-border no-padding-top">
         <h1 class="cleaning-boundaries-header">
-          <label>{{t "components.spaceAutoCleaning.cleaningBoundaries"}}</label>
+          <label>{{tt this "cleaningBoundaries"}}</label>
           {{one-label-tip
-            title=(t "components.spaceAutoCleaning.boundariesHint")
+            title=(tt this "boundariesHint")
             placement="top"
           }}
         </h1>
@@ -33,7 +33,7 @@
         {{#loading-container
           isLoading=spaceAutoCleaningStatusUpdater.isInitializing
           errorReason=spaceAutoCleaningStatusUpdater.error
-          customErrorMessage=(t "components.spaceAutoCleaning.statusLoadError")
+          customErrorMessage=(tt this "statusLoadError")
         }}
           <div class="row content-row no-border no-padding-bottom">
             {{space-cleaning-bar-chart
@@ -45,7 +45,7 @@
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
             {{one-label-tip
-              title=(t "components.spaceAutoCleaning.startCleaningHint")
+              title=(tt this "startCleaningHint")
               class="clean-now-tip hidden-xs"
               placement="top"
               arrowPlacement="left"
@@ -55,7 +55,7 @@
               class="btn btn-sm btn-primary btn-clean-now"
               disabled=(not startNowEnabled)
             }}
-            {{t "components.spaceAutoCleaning.startCleaning"}}
+            {{tt this "startCleaning"}}
             {{/one-spin-button}}
           </div>
         {{/loading-container}}
@@ -67,7 +67,7 @@
       <h1>
         <label>{{t "components.spaceCleaningReports.cleaningReports"}}</label>
         {{one-label-tip
-          title=(t "components.spaceAutoCleaning.reportsHint")
+          title=(tt this "reportsHint")
           placement="top"
         }}
       </h1>
@@ -76,7 +76,7 @@
       {{#loading-container
         isLoading=spaceAutoCleaningReportsUpdater.isInitializing
         errorReason=spaceAutoCleaningReportsUpdater.error
-        customErrorMessage=(t "components.spaceAutoCleaning.reportsLoadError")
+        customErrorMessage=(tt this "reportsLoadError")
       }}
         {{space-cleaning-reports
           spaceId=spaceId

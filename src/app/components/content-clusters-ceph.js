@@ -25,7 +25,7 @@ export default Component.extend(
 
     i18n: service(),
     cephManager: service(),
-    router: service(),
+    navigationState: service(),
 
     /**
      * @override
@@ -81,15 +81,13 @@ export default Component.extend(
     },
 
     /**
-     * @param {string} tabName
+     * @param {string} tab
      * @returns {undefined}
      */
-    changeTab(tabName) {
-      if (allowedTabs.includes(tabName)) {
-        this.get('router').transitionTo({
-          queryParams: {
-            options: `tab.${tabName}`,
-          },
+    changeTab(tab) {
+      if (allowedTabs.includes(tab)) {
+        this.get('navigationState').setAspectOptions({
+          tab: tab,
         });
       }
     },
