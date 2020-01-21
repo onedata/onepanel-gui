@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6024 Removed default space and default Oneprovider features
 * VFS-6041 Added info about deprecation of Ceph storage
 * VFS-5875 Fixed navigation in GUI settings aspect and updated DOMPurify
 * VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification
