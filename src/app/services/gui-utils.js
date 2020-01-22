@@ -145,4 +145,15 @@ export default GuiUtils.extend(
         }
       }
     },
+
+    /**
+     * @override
+     */
+    getAfterLogoutRedirectUrl() {
+      if (this.get('onepanelServer.isHosted')) {
+        return this.get('onezoneGui.onezoneGuiUrl');
+      } else {
+        return this._super(...arguments);
+      }
+    },
   });
