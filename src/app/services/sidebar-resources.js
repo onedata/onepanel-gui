@@ -26,6 +26,7 @@ export default SidebarResources.extend({
     switch (type) {
       case 'providers':
       case 'spaces':
+      case 'shares':
       case 'groups':
       case 'tokens':
       case 'harvesters':

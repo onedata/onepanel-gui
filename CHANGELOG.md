@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5988 Added shares sidebar entry
 * VFS-5781 Updated common libs
 * VFS-5650 Added "Maximum canonical object size", "File mode" and "Directory mode" options to S3 storage
 * VFS-5897 New backend error handlers
