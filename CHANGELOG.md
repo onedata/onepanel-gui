@@ -7,6 +7,9 @@ CHANGELOG
 ### Latest changes
 
 * VFS-5988 Added shares sidebar entry
+* VFS-6056 Added resetting navigation state on logout
+* VFS-6024 Removed default space and default Oneprovider features
+* VFS-6041 Added info about deprecation of Ceph storage
 * VFS-5781 Updated common libs
 * VFS-5650 Added "Maximum canonical object size", "File mode" and "Directory mode" options to S3 storage
 * VFS-5897 New backend error handlers

@@ -20,11 +20,6 @@ import NULLDEVICE_FIELDS from 'onepanel-gui/utils/cluster-storage/nulldevice-fie
 import LOCALCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/localceph-fields';
 
 export default [{
-    id: 'ceph',
-    name: 'Ceph',
-    fields: CEPH_FIELDS,
-  },
-  {
     id: 'cephrados',
     name: 'Ceph RADOS',
     fields: CEPHRADOS_FIELDS,
@@ -58,5 +53,9 @@ export default [{
     id: 'nulldevice',
     name: 'Null Device',
     fields: NULLDEVICE_FIELDS,
+  }, {
+    id: 'ceph',
+    name: 'Ceph (deprecated)',
+    fields: CEPH_FIELDS,
   },
 ];
