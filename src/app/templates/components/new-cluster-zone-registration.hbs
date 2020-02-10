@@ -68,8 +68,8 @@
             id="zone-token-textarea"
             rows=5
             value={{token}}
-            oninput={{action "tokenChanged" value="target.value"}}
-            onkeydown={{invoke-on-enter (action "proceedToken")}}
+            oninput={{action (mut token) value="target.value"}}
+            onkeydown={{if trimmedToken (invoke-on-enter (action "proceedToken"))}}
             placeholder={{concat (tt this "example") ": " "MDAzM2…"}}
             disabled={{contentInfo.actionInProgress}}
             class="form-control zone-token-textarea"
@@ -100,7 +100,7 @@
         mode="new"
         excludedSubdomains=_excludedSubdomains
         submit=(action "submit")
-        token=token
+        token=trimmedToken
         subdomainDelegationSupported=onezoneInfo.subdomainDelegationSupported
         onezoneDomain=onezoneInfo.domain
       }}
