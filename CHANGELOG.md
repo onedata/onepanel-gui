@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6109 Added trimming to token inputs
 * VFS-6056 Added resetting navigation state on logout
 * VFS-6024 Removed default space and default Oneprovider features
 * VFS-6041 Added info about deprecation of Ceph storage
