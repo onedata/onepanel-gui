@@ -18,6 +18,8 @@ import getSubdomainReservedErrorMsg from 'onepanel-gui/utils/get-subdomain-reser
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { get } from '@ember/object';
+import trimToken from 'onedata-gui-common/utils/trim-token';
+import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
 
 const {
   ProviderRegisterRequest,
@@ -40,7 +42,7 @@ export default Component.extend(I18n, {
   /**
    * @type {ComputedProperty<boolean>}
    */
-  proceedTokenDisabled: not('token'),
+  proceedTokenDisabled: not('trimmedToken'),
 
   /**
    * Subdomains that are reserved and cannot be used
@@ -71,6 +73,11 @@ export default Component.extend(I18n, {
    * @type {Onepanel.OnezoneInfo}
    */
   onezoneInfo: undefined,
+
+  /**
+   * @type {ComputedProperty<String>}
+   */
+  trimmedToken: computedPipe('token', trimToken),
 
   /**
    * @param {Ember.Object} providerData data from provider registration form
@@ -138,7 +145,7 @@ export default Component.extend(I18n, {
 
   handleProceedToken() {
     return this.get('onepanelServer').request('oneprovider', 'getOnezoneInfo', {
-        token: this.get('token'),
+        token: this.get('trimmedToken'),
       })
       .catch(error => {
         this.get('globalNotify').backendError(this.t('gettingOnezoneInfo'), error);
@@ -219,10 +226,6 @@ export default Component.extend(I18n, {
       } else {
         return reject();
       }
-    },
-
-    tokenChanged(token) {
-      this.set('token', token.trim());
     },
 
     back() {
