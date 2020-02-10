@@ -26,7 +26,7 @@ import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
-
+import trimToken from 'onedata-gui-common/utils/trim-token';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const UNITS = _.find(FORM_FIELDS, { name: 'sizeUnit' }).options;
@@ -175,7 +175,7 @@ export default OneFormSimple.extend(Validations, {
       let storageId = this.get('_selectedStorage.id');
 
       let submitting = invokeAction(this, 'submitSupportSpace', {
-        token,
+        token: trimToken(token),
         size,
         storageId,
         storageImport,
