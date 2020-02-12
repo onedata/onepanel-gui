@@ -27,6 +27,7 @@ import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { and, or, not, isEmpty } from 'ember-awesome-macros';
+import trimToken from 'onedata-gui-common/utils/trim-token';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
@@ -266,7 +267,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       const storageId = this.get('selectedStorageItem.storage.id');
 
       return submitSupportSpace({
-        token,
+        token: trimToken(token),
         size,
         storageId,
         storageImport,
