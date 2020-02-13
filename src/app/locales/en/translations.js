@@ -3,6 +3,7 @@ import clusters from './tabs/clusters';
 import tokens from './tabs/tokens';
 import spaces from './tabs/spaces';
 import groups from './tabs/groups';
+import shares from './tabs/shares';
 import harvesters from './tabs/harvesters';
 import users from './tabs/users';
 
@@ -92,6 +93,7 @@ let translations = {
     providers,
     tokens,
     spaces,
+    shares,
     groups,
     users,
     clusters,
@@ -158,7 +160,7 @@ let translations = {
     supportSizeInfo,
     emergencyWarningBar,
     contentClustersMembers,
-    contentClustersGuiSettings,    
+    contentClustersGuiSettings,
     qosParamsEditor,
     alerts: {
       registerOnezoneOffline,
