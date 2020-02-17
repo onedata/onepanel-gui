@@ -36,6 +36,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   guiUtils: service(),
   cephManager: service(),
   i18n: service(),
+  onepanelConfiguration: service(),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -61,12 +62,12 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     const {
       onepanelServiceType,
       cephManager,
-    } = this.getProperties('onepanelServiceType', 'cephManager');
+      clusterModelManager,
+    } = this.getProperties('onepanelServiceType', 'cephManager', 'clusterModelManager');
 
-    const clusterConfigurationPromise = this.getClusterConfiguration();
     let clusterStep, hasCephDeployed;
 
-    return this._getThisClusterInitStep(clusterConfigurationPromise)
+    return this._getThisClusterInitStep()
       .then(step => {
         clusterStep = step;
         return onepanelServiceType === 'oneprovider' ?
@@ -75,16 +76,12 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       .then(hasCeph => {
         hasCephDeployed = hasCeph;
 
-        return clusterConfigurationPromise
-          .then(({ data: configuration }) => {
-            return configuration;
-          })
-          .catch(() => {
-            return null;
-          });
+        return this.getClusterConfiguration()
+          .then(({ data: configuration }) => configuration)
+          .catch(() => null);
       })
       .then(configuration => {
-        return this.get('clusterModelManager').getRawCurrentClusterProxy()
+        return clusterModelManager.getRawCurrentClusterProxy()
           .then(currentCluster => {
             const currentClusterId = (
               currentCluster && get(currentCluster, 'id') || 'new'
@@ -116,13 +113,10 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
    */
   getClusterHostsInfo() {
-    return new Promise((resolve, reject) => {
-      let gettingConfiguration = this.getClusterConfiguration(true);
-      gettingConfiguration.then(({ data: { cluster, ceph } }) => {
-        resolve(this._clusterConfigurationToHostsInfo(cluster, ceph));
-      });
-      gettingConfiguration.catch(reject);
-    });
+    return this.getClusterConfiguration(true)
+      .then(({ data: { cluster, ceph } }) =>
+        this._clusterConfigurationToHostsInfo(cluster, ceph)
+      );
   },
 
   /**
@@ -175,7 +169,10 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     const {
       onepanelServer,
       onepanelServiceType,
-    } = this.getProperties('onepanelServer', 'onepanelServiceType');
+    } = this.getProperties(
+      'onepanelServer',
+      'onepanelServiceType'
+    );
     let requestFun =
       (validateData ? onepanelServer.requestValidData : onepanelServer.request)
       .bind(onepanelServer);
@@ -216,93 +213,46 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   },
 
   /**
-   * @param {Promise} clusterConfigurationPromise
-   * @returns {Promise}
-   */
-  _checkIsConfigurationDone(clusterConfigurationPromise) {
-    return new Promise((resolve, reject) => {
-      clusterConfigurationPromise.then(({ data }) => resolve(!!data));
-
-      clusterConfigurationPromise.catch(error => {
-        if (error == null || error.response == null) {
-          reject(error);
-        } else {
-          let statusCode = error.response.statusCode;
-          if (statusCode === 404) {
-            // no configuration found - user didn't started the deployment
-            resolve(false);
-          } else {
-            reject(error);
-          }
-        }
-      });
-    });
-  },
-
-  /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise} resolves with
    *  `{ isRegistered: boolean, [providerDetails]: <provider details object if avail.> }`
    */
   _checkIsProviderRegistered(onepanelServer) {
-    return new Promise((resolve, reject) => {
-      let gettingProvider = onepanelServer.request('oneprovider',
-        'getProvider');
-
-      gettingProvider.then(({ data: providerDetails }) => {
-        // if details found, then the provider was registered
-        resolve({
-          isRegistered: !!providerDetails,
-          providerDetails: providerDetails,
-        });
-      });
-      gettingProvider.catch(error => {
-        if (error == null || error.response == null) {
-          reject(error);
-        } else {
-          let statusCode = error.response.statusCode;
-          if (statusCode === 404) {
-            // not registered yet, maybe not deployed yet
-            resolve(false);
-          } else {
-            reject(error);
-          }
-        }
-      });
-    });
+    const isRegistered = this.get('onepanelConfiguration.isRegistered');
+    if (isRegistered) {
+      return onepanelServer.request('oneprovider', 'getProvider')
+        .then(({ data: providerDetails }) => ({
+          isRegistered,
+          providerDetails,
+        }));
+    } else {
+      return resolve({ isRegistered });
+    }
   },
 
-  // TODO allow only in provider mode  
   /**
    * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
    */
   _checkIsAnyStorage(onepanelServer) {
-    return new Promise((resolve, reject) => {
-      let gettingStorages = onepanelServer.request('oneprovider', 'getStorages');
-
-      gettingStorages.then(({ data: { ids } }) => {
-        resolve(ids != null && ids.length > 0);
-      });
-      gettingStorages.catch((error) => {
-        if (error.status === 503) {
-          return resolve(true);
+    return onepanelServer.request('oneprovider', 'getStorages')
+      .then(({ data: { ids } }) => ids != null && ids.length > 0)
+      .catch((error) => {
+        if (error && error.status === 503) {
+          return true;
         } else {
-          return reject(error);
+          throw error;
         }
       });
-    });
   },
 
   _checkIsIpsConfigured() {
-    return this.getClusterIps()
-      .then(({ isConfigured }) => isConfigured);
+    return this.getClusterIps().then(({ isConfigured }) => isConfigured);
   },
 
   _checkIsDnsCheckAcknowledged() {
-    const onepanelServer = this.get('onepanelServer');
-
-    return onepanelServer.request('onepanel', 'getDnsCheckConfiguration')
+    return this.get('onepanelServer')
+      .request('onepanel', 'getDnsCheckConfiguration')
       .then(({ data }) => data.dnsCheckAcknowledged);
   },
 
@@ -313,92 +263,76 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @param {Promise} clusterConfigurationPromise
    * @returns {Promise}
    */
-  _getThisClusterInitStep(clusterConfigurationPromise) {
+  _getThisClusterInitStep() {
     let {
       onepanelServer,
       onepanelServiceType,
-    } = this.getProperties('onepanelServer', 'onepanelServiceType');
+      onepanelConfiguration,
+    } = this.getProperties(
+      'onepanelServer',
+      'onepanelServiceType',
+      'onepanelConfiguration'
+    );
 
-    return new Promise((resolve, reject) => {
-      const checkConfig = this._checkIsConfigurationDone(clusterConfigurationPromise);
+    const isConfigurationDone = get(onepanelConfiguration, 'deployed');
 
-      checkConfig.then(isConfigurationDone => {
-        if (isConfigurationDone) {
-          // TODO VFS-3119
-          if (onepanelServiceType === 'onezone') {
-            const checkIps = this._checkIsIpsConfigured();
-            checkIps.then(isIpsConfigured => {
+    if (isConfigurationDone) {
+      if (onepanelServiceType === 'onezone') {
+        return this._checkIsIpsConfigured().then(isIpsConfigured => {
+          if (isIpsConfigured) {
+            return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
+              if (dnsCheckAck) {
+                return resolve(installationStepsMap.done);
+              } else {
+                // We have no exact indicator if earlier step -
+                // IPs configuration - has been finished, because it 
+                // has default values which are undistinguishable from user input
+                return resolve(installationStepsMap.ips);
+              }
+            });
+          } else {
+            return resolve(installationStepsMap.ips);
+          }
+        });
+      } else {
+        return this._checkIsProviderRegistered(onepanelServer).then(({
+          isRegistered: isProviderRegistered,
+        }) => {
+          if (isProviderRegistered) {
+            return this._checkIsIpsConfigured().then(isIpsConfigured => {
               if (isIpsConfigured) {
-                const checkDnsCheck = this._checkIsDnsCheckAcknowledged();
-                checkDnsCheck.then(dnsCheckAck => {
+                return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
                   if (dnsCheckAck) {
-                    resolve(installationStepsMap.done);
+                    return this._checkIsAnyStorage(onepanelServer)
+                      .then(isAnyStorage => {
+                        if (isAnyStorage) {
+                          return resolve(installationStepsMap.done);
+                        } else {
+                          return resolve(
+                            installationStepsMap.oneproviderStorageAdd
+                          );
+                        }
+                      });
                   } else {
                     // We have no exact indicator if earlier step -
                     // IPs configuration - has been finished, because it 
-                    // has default values which are undistinguishable from user input
-                    resolve(installationStepsMap.ips);
+                    // has default values which are undistinguishable from
+                    // user input
+                    return resolve(installationStepsMap.ips);
                   }
                 });
-                checkDnsCheck.catch(reject);
               } else {
-                resolve(installationStepsMap.ips);
+                return resolve(installationStepsMap.ips);
               }
             });
-            checkIps.catch(reject);
           } else {
-            const checkRegister = this._checkIsProviderRegistered(
-              onepanelServer
-            );
-            checkRegister.then(({
-              isRegistered: isProviderRegistered,
-            }) => {
-              if (isProviderRegistered) {
-                const checkIps = this._checkIsIpsConfigured();
-                checkIps.then(isIpsConfigured => {
-                  if (isIpsConfigured) {
-                    const checkStorage = this._checkIsAnyStorage(
-                      onepanelServer
-                    );
-                    const checkDnsCheck = this
-                      ._checkIsDnsCheckAcknowledged();
-                    checkDnsCheck.then(dnsCheckAck => {
-                      if (dnsCheckAck) {
-                        checkStorage.then(isAnyStorage => {
-                          if (isAnyStorage) {
-                            resolve(installationStepsMap.done);
-                          } else {
-                            resolve(installationStepsMap.oneproviderStorageAdd);
-                          }
-                        });
-                        checkStorage.catch(reject);
-                      } else {
-                        // We have no exact indicator if earlier step -
-                        // IPs configuration - has been finished, because it 
-                        // has default values which are undistinguishable from
-                        // user input
-                        resolve(installationStepsMap.ips);
-                      }
-                    });
-                    checkDnsCheck.catch(reject);
-                  } else {
-                    resolve(installationStepsMap.ips);
-                  }
-                });
-                checkIps.catch(reject);
-
-              } else {
-                resolve(installationStepsMap.oneproviderRegistration);
-              }
-            });
-            checkRegister.catch(reject);
+            return resolve(installationStepsMap.oneproviderRegistration);
           }
-        } else {
-          resolve(installationStepsMap.deploy);
-        }
-      });
-      checkConfig.catch(reject);
-    });
+        });
+      }
+    } else {
+      return resolve(installationStepsMap.deploy);
+    }
   },
 
   /**
@@ -406,22 +340,15 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @return {Promise} resolves with Array.{ hostname: string }
    */
   getHosts(type = 'known') {
-    return new Promise((resolve, reject) => {
-      let gettingHostNames = this.getHostNames(type);
-
-      gettingHostNames.then(({ data: hostnames }) => {
-        // TODO more info
-        resolve(hostnames.map(hostname => ({
-          hostname,
-        })));
-      });
-
-      gettingHostNames.catch(error => {
-        console.error(
-          'service:deployment-manager: Getting hostnames failed'
-        );
-        reject(error);
-      });
+    return this.getHostNames(type).then(({ data: hostnames }) => {
+      return hostnames.map(hostname => ({
+        hostname,
+      }));
+    }).catch(error => {
+      console.error(
+        'service:deployment-manager: Getting hostnames failed'
+      );
+      throw error;
     });
   },
 
@@ -430,8 +357,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @returns {Promise}
    */
   getHostNames() {
-    let onepanelServer = this.get('onepanelServer');
-    return onepanelServer.requestValidData(
+    return this.get('onepanelServer').requestValidData(
       'onepanel',
       'getClusterHosts',
     );
