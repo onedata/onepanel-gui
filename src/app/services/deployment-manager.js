@@ -9,7 +9,7 @@
 
 import Service, { inject as service } from '@ember/service';
 
-import { Promise, resolve } from 'rsvp';
+import { resolve } from 'rsvp';
 import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
@@ -214,24 +214,6 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * @param {OnepanelServer} onepanelServer
-   * @returns {Promise} resolves with
-   *  `{ isRegistered: boolean, [providerDetails]: <provider details object if avail.> }`
-   */
-  _checkIsProviderRegistered(onepanelServer) {
-    const isRegistered = this.get('onepanelConfiguration.isRegistered');
-    if (isRegistered) {
-      return onepanelServer.request('oneprovider', 'getProvider')
-        .then(({ data: providerDetails }) => ({
-          isRegistered,
-          providerDetails,
-        }));
-    } else {
-      return resolve({ isRegistered });
-    }
-  },
-
-  /**
-   * @param {OnepanelServer} onepanelServer
    * @returns {Promise}
    */
   _checkIsAnyStorage(onepanelServer) {
@@ -295,40 +277,37 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
           }
         });
       } else {
-        return this._checkIsProviderRegistered(onepanelServer).then(({
-          isRegistered: isProviderRegistered,
-        }) => {
-          if (isProviderRegistered) {
-            return this._checkIsIpsConfigured().then(isIpsConfigured => {
-              if (isIpsConfigured) {
-                return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
-                  if (dnsCheckAck) {
-                    return this._checkIsAnyStorage(onepanelServer)
-                      .then(isAnyStorage => {
-                        if (isAnyStorage) {
-                          return resolve(installationStepsMap.done);
-                        } else {
-                          return resolve(
-                            installationStepsMap.oneproviderStorageAdd
-                          );
-                        }
-                      });
-                  } else {
-                    // We have no exact indicator if earlier step -
-                    // IPs configuration - has been finished, because it 
-                    // has default values which are undistinguishable from
-                    // user input
-                    return resolve(installationStepsMap.ips);
-                  }
-                });
-              } else {
-                return resolve(installationStepsMap.ips);
-              }
-            });
-          } else {
-            return resolve(installationStepsMap.oneproviderRegistration);
-          }
-        });
+        const isProviderRegistered = this.get('onepanelConfiguration.isRegistered');
+        if (isProviderRegistered) {
+          return this._checkIsIpsConfigured().then(isIpsConfigured => {
+            if (isIpsConfigured) {
+              return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
+                if (dnsCheckAck) {
+                  return this._checkIsAnyStorage(onepanelServer)
+                    .then(isAnyStorage => {
+                      if (isAnyStorage) {
+                        return resolve(installationStepsMap.done);
+                      } else {
+                        return resolve(
+                          installationStepsMap.oneproviderStorageAdd
+                        );
+                      }
+                    });
+                } else {
+                  // We have no exact indicator if earlier step -
+                  // IPs configuration - has been finished, because it 
+                  // has default values which are undistinguishable from
+                  // user input
+                  return resolve(installationStepsMap.ips);
+                }
+              });
+            } else {
+              return resolve(installationStepsMap.ips);
+            }
+          });
+        } else {
+          return resolve(installationStepsMap.oneproviderRegistration);
+        }
       }
     } else {
       return resolve(installationStepsMap.deploy);

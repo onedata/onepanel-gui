@@ -12,7 +12,9 @@ const ClusterModelManagerStub = Service.extend({
   getCurrentClusterProxy: notImplementedReject,
 });
 
-const GuiUtils = Service.extend({});
+const GuiUtils = Service.extend();
+
+const OnepanelConfiguration = Service.extend();
 
 describe('Unit | Service | deployment manager', function () {
   setupTest('service:deployment-manager', {
@@ -26,6 +28,7 @@ describe('Unit | Service | deployment manager', function () {
     registerService(this, 'onepanelServer', onepanelServerStub);
     registerService(this, 'clusterModelManager', ClusterModelManagerStub);
     registerService(this, 'guiUtils', GuiUtils);
+    registerService(this, 'onepanelConfiguration', OnepanelConfiguration);
 
     sinon.stub(
       lookupService(this, 'clusterModelManager'),
