@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5767 Updated common libs
 * VFS-5988 Added shares sidebar entry
 * VFS-6109 Added trimming to token inputs
 * VFS-6056 Added resetting navigation state on logout
