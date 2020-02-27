@@ -90,6 +90,9 @@ import onedataCommonTranslations from './onedata-gui-common';
 
 let translations = {
   tabs: {
+    undefined: {
+      menuItem: '',
+    },
     providers,
     tokens,
     spaces,
