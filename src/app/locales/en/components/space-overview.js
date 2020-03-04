@@ -6,7 +6,7 @@ export default {
   storageUpdate,
   id: 'Id',
   name: 'Name',
-  storage: 'This provider storage',
+  storage: 'Assigned storage',
   supportSizeThis: {
     spaceSupportOnThisProvider: 'Space support on this provider',
     modifyingSpaceSupportSize: 'modifying space support size',
