@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6176 Updated common libs
 * VFS-6115 Fixed common issues for embedded Oneprovider GUI Service Pack 1
 * VFS-5767 Fixed not working deployment view after Oneprovider deregistration
 * VFS-5767 Updated common libs
