@@ -9,7 +9,7 @@
 
 import { inject as service } from '@ember/service';
 import SidebarClusters from 'onedata-gui-common/components/sidebar-clusters';
-import layout from 'onedata-gui-common/templates/components/two-level-sidebar';
+import layout from 'onedata-gui-common/templates/components/one-sidebar';
 
 export default SidebarClusters.extend({
   layout,
