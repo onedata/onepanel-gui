@@ -6,6 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-5899 Updated common libs
+* VFS-6145 Updated common libs
 * VFS-5929 Updated common libs
 * VFS-6176 Updated common libs
 * VFS-6115 Fixed common issues for embedded Oneprovider GUI Service Pack 1
