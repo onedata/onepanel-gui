@@ -10,7 +10,8 @@
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import ClusterActions from 'onedata-gui-common/services/cluster-actions';
-import { equal } from '@ember/object/computed';
+import { equal, collect } from '@ember/object/computed';
+import { conditional, raw } from 'ember-awesome-macros';
 
 export default ClusterActions.extend({
   onezoneGui: service(),
@@ -30,14 +31,11 @@ export default ClusterActions.extend({
   /**
    * @override
    */
-  buttons: computed('btnAdd', 'btnJoin', 'isDeployed', function buttons() {
-    const {
-      isDeployed,
-      btnAdd,
-      btnJoin,
-    } = this.getProperties('isDeployed', 'btnAdd', 'btnJoin');
-    return isDeployed ? [btnAdd, btnJoin] : [];
-  }),
+  buttons: conditional(
+    'isDeployed',
+    collect('btnAdd'),
+    raw([])
+  ),
 
   /**
    * @override
@@ -62,33 +60,6 @@ export default ClusterActions.extend({
       tip: isEmergency ? this.t('btnAdd.viaOnezoneHint') : this.t('btnAdd.hint'),
       class: 'add-cluster-btn',
       action: this.get('addAction'),
-      disabled: isEmergency,
-    };
-  }),
-
-  /**
-   * @override
-   */
-  joinAction: computed(function addAction() {
-    const {
-      _window,
-      onezoneGui,
-    } = this.getProperties('_window', 'onezoneGui');
-    return () =>
-      _window.location = onezoneGui.getUrlInOnezone('onedata/clusters/join');
-  }),
-
-  /**
-   * @override
-   */
-  btnJoin: computed('joinAction', function btnJoin() {
-    const isEmergency = this.get('onepanelServer.isEmergency');
-    return {
-      icon: 'join-plug',
-      title: this.t('btnJoin.title'),
-      tip: isEmergency ? this.t('btnAdd.viaOnezoneHint') : this.t('btnJoin.hint'),
-      class: 'join-cluster-btn',
-      action: this.get('joinAction'),
       disabled: isEmergency,
     };
   }),
