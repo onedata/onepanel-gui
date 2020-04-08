@@ -128,7 +128,7 @@ describe('Integration | Component | support space form', function () {
         })
         .then(() => {
           const firstStorageItem = storagesSelectHelper.getNthOption(1);
-          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
+          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
           expect(firstStorageItem.querySelector('.imported-used-storage'))
             .to.be.null;
           expect(firstStorageItem.querySelector('.imported-storage')).to.be.null;
@@ -147,7 +147,7 @@ describe('Integration | Component | support space form', function () {
       })
       .then(() => {
         const firstStorageItem = storagesSelectHelper.getNthOption(2);
-        expect(firstStorageItem.getAttribute('aria-disabled')).to.be.falsy;
+        expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
         expect(firstStorageItem.querySelector('.imported-used-storage'))
           .to.be.null;
         expect(firstStorageItem.querySelector('.imported-storage').innerText)

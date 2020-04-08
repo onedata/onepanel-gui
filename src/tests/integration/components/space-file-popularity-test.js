@@ -31,6 +31,6 @@ describe('Integration | Component | space file popularity', function () {
     this.render(hbs `
       {{space-file-popularity filePopularityConfiguration=filePopularityConfiguration}}
     `);
-    expect(this.$('.file-popularity-example-query')).to.not.exists;
+    expect(this.$('.file-popularity-example-query')).to.not.exist;
   });
 });
