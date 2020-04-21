@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6299 Fixed page reload after certificate generation
 * VFS-5899 Updated common libs
 * VFS-6145 Updated common libs
 * VFS-5929 Updated common libs
