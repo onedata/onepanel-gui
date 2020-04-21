@@ -124,7 +124,7 @@ export default Component.extend(I18n, GlobalActions, {
               .then(provider => provider && get(provider, 'domain'));
             break;
           case 'onezone':
-            promise = this.get('deploymentManager').getConfiguration()
+            promise = this.get('deploymentManager').getClusterConfiguration()
               .then(({ data: cluster }) =>
                 cluster && get(cluster, 'onezone.domainName')
               );

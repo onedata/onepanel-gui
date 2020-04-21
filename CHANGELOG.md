@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6299 Fixed page reload after certificate generation
 * VFS-6109 Added trimming to token inputs
 * VFS-6056 Added resetting navigation state on logout
 * VFS-6024 Removed default space and default Oneprovider features
