@@ -31,7 +31,7 @@ const GuiUtils = Service.extend({
 });
 
 const DeploymentManager = Service.extend({
-  getConfiguration() {
+  getClusterConfiguration() {
     return Promise.resolve({
       data: {
         onezone: {
