@@ -493,10 +493,19 @@ export default OnepanelServerBase.extend(
             clusterName: 'cluster_name',
             poolName: 'some_pool',
           };
+          const storageCephRados = {
+            id: 'storage3_id',
+            type: 'cephrados',
+            name: 'Ceph RADOS',
+            monitorHostname: 'host.name',
+            clusterName: 'cluster_name',
+            poolName: 'some_pool',
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            clusterStorageClass(storage1.type).constructFromObject(storage1),
-            clusterStorageClass(storageCeph.type).constructFromObject(storageCeph),
+            ...[storage1, storageCeph, storageCephRados].map(storage =>
+              clusterStorageClass(storage.type).constructFromObject(storage)
+            )
           );
 
           if (mockStep === installationStepsMap.done) {
@@ -618,7 +627,8 @@ export default OnepanelServerBase.extend(
     },
 
     progressMock: computed(function progressMock() {
-      return DeploymentProgressMock.create({ onepanelServiceType: mockServiceType });
+      return DeploymentProgressMock
+        .create({ onepanelServiceType: mockServiceType });
     }),
 
     /// mocked request handlers - override to change server behaviour
@@ -1013,9 +1023,8 @@ export default OnepanelServerBase.extend(
               )
             );
           } else if (popEnabled === false) {
-            let autoCleaningConfiguration = this.get('__spacesAutoCleaning').find(s =>
-              s.id === id
-            );
+            let autoCleaningConfiguration =
+              this.get('__spacesAutoCleaning').find(s => s.id === id);
             autoCleaningConfiguration = autoCleaningConfiguration || {};
             set(autoCleaningConfiguration, 'enabled', false);
           }
@@ -1248,7 +1257,9 @@ export default OnepanelServerBase.extend(
           statusCode: () => 406,
         },
         oneprovider: {
-          success: () => ({ blockDevices: this.get('__blockDevices').toArray() }),
+          success: () => ({
+            blockDevices: this.get('__blockDevices').toArray(),
+          }),
           statusCode: () => 200,
         },
       });
@@ -1427,8 +1438,11 @@ export default OnepanelServerBase.extend(
       return {
         success: () => ({
           clusterId: this.get('isEmergency') ?
-            (mockServiceType === 'oneprovider' ?
-              providerCluster1.id : zoneCluster.id) : this.get('guiContext.guiMode'),
+            (
+              mockServiceType === 'oneprovider' ?
+              providerCluster1.id :
+              zoneCluster.id
+            ) : this.get('guiContext.guiMode'),
           version: '18.02.0-rc13',
           build: '2100',
           deployed: mockInitializedCluster,
