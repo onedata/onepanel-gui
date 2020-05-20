@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6324 Updated common libs
 * VFS-5980 Unified Oneprovider GUI Service Pack 2
 * VFS-6299 Fixed page reload after certificate generation
 * VFS-5899 Updated common libs
