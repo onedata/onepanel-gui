@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6343 Changed cease support modal to Onezone version
 * VFS-6323 Updated common libs
 * VFS-6324 Updated common libs
 * VFS-5980 Unified Oneprovider GUI Service Pack 2

@@ -145,9 +145,9 @@ export default Service.extend({
     return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
   },
 
-  revokeSpaceSupport(spaceId) {
-    let onepanelServer = this.get('onepanelServer');
-    return onepanelServer.request('oneprovider', 'revokeSpaceSupport', spaceId);
+  ceaseOneproviderSupport(space) {
+    return this.get('onepanelServer')
+      .request('oneprovider', 'revokeSpaceSupport', get(space, 'id'));
   },
 
   /**

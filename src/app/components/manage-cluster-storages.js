@@ -19,6 +19,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
+import computedT from 'onedata-gui-common/utils/computed-t';
 
 export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
@@ -31,6 +32,11 @@ export default Component.extend(I18n, GlobalActions, {
    * @override
    */
   i18nPrefix: 'components.manageClusterStorages',
+
+  /**
+   * @override
+   */
+  globalActionsTitle: computedT('storages'),
 
   /**
    * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy

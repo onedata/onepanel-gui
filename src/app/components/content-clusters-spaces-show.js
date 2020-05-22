@@ -21,7 +21,6 @@ export default Component.extend(
     onepanelServer: service(),
     spaceManager: service(),
     storageManager: service(),
-    navigationState: service(),
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesShow',
@@ -54,8 +53,7 @@ export default Component.extend(
         const startRevokeSpace = this.get('startRevokeSpace');
         const space = this.get('space');
         return {
-          action: () => startRevokeSpace(space)
-            .then(confirmed => confirmed && this.goToSpacesList.bind(this)()),
+          action: () => startRevokeSpace(space),
           title: this.t('revokeSpaceSupport'),
           icon: 'remove',
           class: 'btn-revoke-space-support',
@@ -82,13 +80,6 @@ export default Component.extend(
       });
       this.updateAutoCleaningConfigurationProxy();
       this.updateFilePopularityConfigurationProxy();
-    },
-
-    goToSpacesList() {
-      return this.get('navigationState').setAspectOptions({
-        space: null,
-        tab: null,
-      });
     },
 
     fetchFilePopularityConfiguration() {
