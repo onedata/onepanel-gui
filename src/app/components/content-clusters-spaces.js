@@ -14,7 +14,6 @@ import { get, computed } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import { resolve, reject, defer } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
@@ -28,6 +27,7 @@ export default Component.extend(
     providerManager: service(),
     globalNotify: service(),
     i18n: service(),
+    navigationState: service(),
 
     /**
      * @override
@@ -39,12 +39,6 @@ export default Component.extend(
     selectedTab: undefined,
 
     spaceToRevoke: undefined,
-
-    /**
-     * Used to confirm proceeding with deployment if DNS setup is not valid
-     * @type {RSVP.Deferred}
-     */
-    confirmRevokeDefer: null,
 
     // TODO: please forgive me for this code, it's because of lack of good cacheing
     selectedSpaceProxy: computed('selectedSpaceId', function selectedSpaceProxy() {
@@ -66,33 +60,6 @@ export default Component.extend(
       this.updateSpacesProxy();
     },
 
-    _modifySpace(id, data) {
-      return this.get('spaceManager').modifySpaceDetails(id, data);
-    },
-
-    revokeSpace() {
-      const {
-        spaceToRevoke: space,
-        globalNotify,
-      } = this.getProperties('spaceToRevoke', 'globalNotify');
-      try {
-        const spaceName = get(space, 'name');
-        return this.get('spaceManager').revokeSpaceSupport(get(space, 'id'))
-          .then(() => {
-            globalNotify.info(this.t('revokeSuccess', { spaceName }));
-          })
-          .catch(error => {
-            globalNotify.backendError(this.t('revocationAction'), error);
-            throw error;
-          })
-          .finally(() => {
-            this.updateSpacesProxy();
-          });
-      } catch (error) {
-        return reject(error);
-      }
-    },
-
     /**
      * @override
      */
@@ -107,21 +74,30 @@ export default Component.extend(
       return this.get('spaceManager').getSpaces();
     },
 
+    modifySpace(id, data) {
+      return this.get('spaceManager').modifySpaceDetails(id, data);
+    },
+
+    showSpacesList() {
+      return this.get('navigationState').setAspectOptions({
+        space: null,
+        tab: null,
+      });
+    },
+
     actions: {
       startRevokeSpace(space) {
         this.set('spaceToRevoke', space);
-        return this.set('confirmRevokeDefer', defer()).promise;
       },
       modifySpace(space, data) {
         const globalNotify = this.get('globalNotify');
         let spaceName = get(space, 'name');
         let spaceId = get(space, 'id');
-        return this._modifySpace(spaceId, data)
+        return this.modifySpace(spaceId, data)
           .then(() => {
             globalNotify.info(this.t('configurationChanged', { spaceName }));
           })
           .catch(error => {
-            // TODO: handle error on higher levels to produce better message
             globalNotify.backendError(
               this.t('configurationAction', { spaceName }),
               error
@@ -129,12 +105,14 @@ export default Component.extend(
             throw error;
           });
       },
-      confirmRevokeModal(confirmed) {
-        const action = confirmed ? this.revokeSpace() : resolve();
-        return action.finally(() => {
-          safeExec(this, 'set', 'spaceToRevoke', null);
-          this.get('confirmRevokeDefer').resolve(confirmed);
-        });
+      closeCeaseSupportModal({ confirmed, success } = {}) {
+        safeExec(this, 'set', 'spaceToRevoke', null);
+        if (confirmed) {
+          if (success) {
+            this.showSpacesList();
+          }
+          this.updateSpacesProxy();
+        }
       },
       updateSpacesProxy() {
         return this.updateSpacesProxy();

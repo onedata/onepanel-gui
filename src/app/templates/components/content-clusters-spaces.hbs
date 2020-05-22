@@ -20,15 +20,11 @@
   }}
 {{/if}}
 
-{{#proceed-process-modal
-  opened=spaceToRevoke
-  close=(action "confirmRevokeModal" false)
-  proceed=(action "confirmRevokeModal" true)
-  modalIcon="sign-warning-rounded"
-  headerText=(tt this "revokeSupportTitle")
-  cancelButtonText=(tt this "revokeSupportCancel")
-  proceedButtonText=(tt this "revokeSupportProceed")
-}}
-  <p>{{tt this "revokeSupportMsg" spaceName=spaceToRevoke.name}}</p>
-  <p>{{tt this "revokeSupportQuestion"}}</p>
-{{/proceed-process-modal}}
+{{#render-later triggerRender=spaceToRevoke}}
+  {{cease-oneprovider-support-modal
+    opened=spaceToRevoke
+    provider=provider
+    space=spaceToRevoke
+    close=(action "closeCeaseSupportModal")
+  }}
+{{/render-later}}

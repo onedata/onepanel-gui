@@ -19,6 +19,7 @@ import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { Promise } from 'rsvp';
+import computedT from 'onedata-gui-common/utils/computed-t';
 
 export default Component.extend(
   I18n,
@@ -37,6 +38,11 @@ export default Component.extend(
      * @override
      */
     i18nPrefix: 'components.contentClustersProvider',
+
+    /**
+     * @override
+     */
+    globalActionsTitle: computedT('globalActionsTitle'),
 
     /**
      * @virtual

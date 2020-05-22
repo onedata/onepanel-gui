@@ -9,6 +9,7 @@ export default {
   providerDeregistration: 'provider deregistration',
   modifySuccess: 'Provider data has been modified',
   deregisterSuccess: 'Provider has been deregistered',
+  globalActionsTitle: 'Provider',
   formTitles: {
     show: 'Registered to',
     edit: 'Modify registered provider details',
