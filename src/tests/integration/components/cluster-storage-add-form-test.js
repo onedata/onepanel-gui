@@ -49,7 +49,7 @@ const POSIX_STORAGE = {
   storagePathType: 'flat',
   importedStorage: true,
   mountPoint: '/mnt/st1',
-  lumaEnabled: true,
+  lumaFeed: 'external',
   lumaUrl: 'http://some.url.com',
   lumaApiKey: 'someapikey',
   timeout: 20,
@@ -80,6 +80,7 @@ describe('Integration | Component | cluster storage add form', function () {
       expect(helper.getInput('type_static-type').text()).to.contain('POSIX');
       [
         'generic_static-name',
+        'generic_static-lumaFeed',
         'luma_static-lumaUrl',
         'luma_static-lumaApiKey',
         'posix_static-mountPoint',
@@ -90,7 +91,6 @@ describe('Integration | Component | cluster storage add form', function () {
       });
       [
         'generic_static-importedStorage',
-        'generic_static-lumaEnabled',
         'posix_static-readonly',
       ].forEach((fieldName) => {
         expect(
@@ -124,9 +124,10 @@ describe('Integration | Component | cluster storage add form', function () {
           expect(helper.getInput(fieldName)).to.exist;
           expect(helper.getInput(fieldName)).to.match('input');
         });
+        expect(helper.getInput('generic-lumaFeed').find('input[type="radio"]'))
+          .to.have.length(3);
         [
           'generic-importedStorage',
-          'generic-lumaEnabled',
           'posix-readonly',
         ].forEach(fieldName => {
           expect(helper.getToggleInput(fieldName)).to.exist;
@@ -148,8 +149,8 @@ describe('Integration | Component | cluster storage add form', function () {
         expect(formData).to.have.property('name');
         expect(formData.name).to.be.equal('some name');
         expect(formData.importedStorage).to.be.false;
-        expect(formData).to.have.property('lumaEnabled');
-        expect(formData.lumaEnabled).to.be.false;
+        expect(formData).to.have.property('lumaFeed');
+        expect(formData.lumaFeed).to.equal('auto');
         expect(formData).to.have.property('mountPoint');
         expect(formData.mountPoint).to.be.equal('/mnt/st1');
         expect(formData).to.not.have.property('timeout');
@@ -187,12 +188,14 @@ describe('Integration | Component | cluster storage add form', function () {
       const helper = new ClusterStorageAddHelper(this.$());
       let lumaFields = this.$(lumaSelector);
       expect(lumaFields).to.have.length(0);
-      helper.getToggleInput('generic-lumaEnabled').click();
+      helper.getInput('generic-lumaFeed')
+        .find('.field-generic-lumaFeed-external').click();
       return wait().then(() => {
         lumaFields = this.$(lumaSelector);
         expect(lumaFields).to.have.length(2);
         expect(lumaFields.parents('.form-group')).to.have.class('fadeIn');
-        helper.getToggleInput('generic-lumaEnabled').click();
+        helper.getInput('generic-lumaFeed')
+          .find('.field-generic-lumaFeed-local').click();
         return wait().then(() => {
           lumaFields = this.$(lumaSelector);
           expect(lumaFields).to.have.length(2);
@@ -213,13 +216,15 @@ describe('Integration | Component | cluster storage add form', function () {
       const helper = new ClusterStorageAddHelper(this.$());
 
       helper.getInput('generic-name').val('sometext').change();
-      helper.getToggleInput('generic-lumaEnabled').click();
+      helper.getInput('generic-lumaFeed')
+        .find('.field-generic-lumaFeed-external').click();
       return wait().then(() => {
         helper.getInput('luma-lumaUrl').val('sometext2').change();
         return wait().then(() => {
           this.set('selectedStorageType', S3_TYPE);
           return wait().then(() => {
-            helper.getToggleInput('generic-lumaEnabled').click();
+            helper.getInput('generic-lumaFeed')
+              .find('.field-generic-lumaFeed-external').click();
             return wait().then(() => {
               expect(helper.getInput('generic-name').val())
                 .to.be.empty;
@@ -265,7 +270,8 @@ describe('Integration | Component | cluster storage add form', function () {
       const helper = new ClusterStorageAddHelper(this.$());
 
       helper.getInput('generic-name').val('name').change();
-      helper.getToggleInput('generic-lumaEnabled').click();
+      helper.getInput('generic-lumaFeed')
+        .find('.field-generic-lumaFeed-external').click();
       return wait().then(() => {
         this.set('isFormOpened', false);
         return wait().then(() => {
@@ -306,12 +312,13 @@ describe('Integration | Component | cluster storage add form', function () {
         expect(helper.getInput(fieldName).val())
           .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
       });
+      expect(
+        helper.getInput('generic_editor-lumaFeed')
+        .find('.field-generic_editor-lumaFeed-external')
+      ).to.have.prop('checked', true);
       [{
         input: 'generic_editor-importedStorage',
         field: 'importedStorage',
-      }, {
-        input: 'generic_editor-lumaEnabled',
-        field: 'lumaEnabled',
       }, {
         input: 'posix_editor-readonly',
         field: 'readonly',
@@ -332,9 +339,11 @@ describe('Integration | Component | cluster storage add form', function () {
 
     return wait().then(() => {
       const helper = new ClusterStorageAddHelper(this.$());
-      helper.getToggleInput('generic_editor-lumaEnabled').click();
+      helper.getInput('generic_editor-lumaFeed')
+        .find('.field-generic_editor-lumaFeed-external').click();
       return wait().then(() => {
-        helper.getToggleInput('generic_editor-lumaEnabled').click();
+        helper.getInput('generic_editor-lumaFeed')
+          .find('.field-generic_editor-lumaFeed-external').click();
         return wait().then(() => {
           expect(helper.getInput('type_static-type').text())
             .to.contain('POSIX');
