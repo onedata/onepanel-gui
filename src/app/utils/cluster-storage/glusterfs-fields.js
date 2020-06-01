@@ -15,5 +15,4 @@ export default [
   { name: 'mountPoint', type: 'text', optional: true },
   { name: 'xlatorOptions', type: 'text', optional: true },
   { name: 'timeout', type: 'number', optional: true },
-  { name: 'insecure', type: 'checkbox', optional: true },
 ];

@@ -6,5 +6,4 @@ export default {
   mountPoint: { name: 'Relative mountpoint in volume' },
   xlatorOptions: { name: 'Custom client translator options' },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
 };

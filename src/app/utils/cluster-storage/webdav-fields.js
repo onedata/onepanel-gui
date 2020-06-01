@@ -107,10 +107,4 @@ export default [{
     type: 'number',
     optional: true,
   },
-  {
-    name: 'insecure',
-    type: 'checkbox',
-    defaultValue: false,
-    tip: true,
-  },
 ];

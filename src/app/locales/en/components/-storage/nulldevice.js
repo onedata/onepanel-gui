@@ -39,5 +39,4 @@ export default {
       'while 100.0 will increase it by 100 files per second.',
   },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
 };

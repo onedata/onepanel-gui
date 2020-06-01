@@ -6,5 +6,4 @@ export default {
   tenantName: { name: 'Tenant name' },
   blockSize: { name: 'Block size' },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
 };

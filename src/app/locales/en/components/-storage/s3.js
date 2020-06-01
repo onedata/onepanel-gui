@@ -20,5 +20,4 @@ export default {
     tip: 'Defines the directory mode which directories imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
   },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
 };
