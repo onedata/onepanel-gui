@@ -113,9 +113,4 @@ export default [{
     defaultValue: false,
     tip: true,
   },
-  {
-    name: 'readonly',
-    type: 'checkbox',
-    defaultValue: false,
-  },
 ];

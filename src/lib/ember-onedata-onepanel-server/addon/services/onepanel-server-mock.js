@@ -479,6 +479,7 @@ export default OnepanelServerBase.extend(
             lumaFeed: 'external',
             lumaUrl: 'http://localhost:9090',
             lumaApiKey: 'some_storage',
+            skipStorageDetection: true,
             qosParameters: {
               param1: 'abc',
               param2: 'def',

@@ -6,5 +6,4 @@ export default [
   { name: 'poolName', type: 'text' },
   { name: 'timeout', type: 'number', optional: true },
   { name: 'insecure', type: 'checkbox', optional: true },
-  { name: 'readonly', type: 'checkbox', optional: true },
 ];

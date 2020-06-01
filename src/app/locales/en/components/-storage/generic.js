@@ -7,6 +7,10 @@ export default {
       'require modification for rename operations, canonical paths resemble ' +
       'POSIX-style directory structure reflecting the logical space directory tree.',
   },
+  skipStorageDetection: {
+    name: 'Skip storage detection',
+    tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option should be enabled on readonly storages.',
+  },
   importedStorage: {
     name: 'Imported storage',
     tip: 'Indicates that the existing data on this storage is intended for import. Actual data import will happen when the storage is used to support a space. Only one space can be supported by such storage.',

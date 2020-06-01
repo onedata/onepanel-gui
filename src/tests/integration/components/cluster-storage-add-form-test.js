@@ -53,7 +53,7 @@ const POSIX_STORAGE = {
   lumaUrl: 'http://some.url.com',
   lumaApiKey: 'someapikey',
   timeout: 20,
-  readonly: true,
+  skipStorageDetection: true,
   name: 'Some storage',
 };
 
@@ -91,7 +91,7 @@ describe('Integration | Component | cluster storage add form', function () {
       });
       [
         'generic_static-importedStorage',
-        'posix_static-readonly',
+        'generic_static-skipStorageDetection',
       ].forEach((fieldName) => {
         expect(
           helper.getInput(fieldName).find('.one-way-toggle')
@@ -128,7 +128,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.have.length(3);
         [
           'generic-importedStorage',
-          'posix-readonly',
+          'generic-skipStorageDetection',
         ].forEach(fieldName => {
           expect(helper.getToggleInput(fieldName)).to.exist;
           expect(helper.getToggleInput(fieldName).find('input')).to.exist;
@@ -154,7 +154,7 @@ describe('Integration | Component | cluster storage add form', function () {
         expect(formData).to.have.property('mountPoint');
         expect(formData.mountPoint).to.be.equal('/mnt/st1');
         expect(formData).to.not.have.property('timeout');
-        expect(formData).to.not.have.property('readonly');
+        expect(formData).to.not.have.property('skipStorageDetection');
         return Promise.resolve();
       },
     });
@@ -320,8 +320,8 @@ describe('Integration | Component | cluster storage add form', function () {
         input: 'generic_editor-importedStorage',
         field: 'importedStorage',
       }, {
-        input: 'posix_editor-readonly',
-        field: 'readonly',
+        input: 'generic_editor-skipStorageDetection',
+        field: 'skipStorageDetection',
       }].forEach(({ input, field }) => {
         expect(helper.getToggleInput(input).hasClass('checked'))
           .to.be.equal(POSIX_STORAGE[field]);

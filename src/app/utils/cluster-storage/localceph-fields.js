@@ -1,5 +1,4 @@
-export default [
-  {
+export default [{
     name: 'copiesNumber',
     type: 'number',
     tip: true,
@@ -31,10 +30,5 @@ export default [
     type: 'checkbox',
     optional: true,
     defaultValue: true,
-  },
-  {
-    name: 'readonly',
-    type: 'checkbox',
-    optional: true,
   },
 ];

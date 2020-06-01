@@ -11,5 +11,4 @@ export default {
   },
   timeout: { name: 'Timeout [ms]' },
   insecure: { name: 'Insecure' },
-  readonly: { name: 'Read only' },
 };

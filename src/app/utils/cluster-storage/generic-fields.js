@@ -13,6 +13,12 @@ export default [
     notEditable: true,
   },
   {
+    name: 'skipStorageDetection',
+    type: 'checkbox',
+    optional: true,
+    tip: true,
+  },
+  {
     name: 'importedStorage',
     type: 'checkbox',
     defaultValue: false,

@@ -49,10 +49,4 @@ export default [{
   optional: true,
   defaultValue: true,
   disabled: true,
-}, {
-  name: 'readonly',
-  type: 'checkbox',
-  optional: true,
-  defaultValue: true,
-  disabled: true,
 }];

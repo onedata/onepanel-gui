@@ -1,7 +1,6 @@
 const posixRegexp = /^[0-7][0-7][0-7][0-7]?$/;
 
-export default [
-  {
+export default [{
     name: 'accessKey',
     type: 'text',
   },
@@ -60,11 +59,6 @@ export default [
   },
   {
     name: 'insecure',
-    type: 'checkbox',
-    optional: true,
-  },
-  {
-    name: 'readonly',
     type: 'checkbox',
     optional: true,
   },
