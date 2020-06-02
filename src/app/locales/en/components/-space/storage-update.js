@@ -6,7 +6,7 @@ export default {
   },
   maxDepth: {
     name: 'Max depth',
-    tip: 'Maximum depth of filesystem tree that will be traversed during storage synchronization. By default it is unlimited.',
+    tip: 'Maximum depth of filesystem tree that will be traversed during storage import. By default it is unlimited.',
   },
   scanInterval: {
     name: 'Scan interval [s]',
@@ -22,6 +22,6 @@ export default {
   },
   syncAcl: {
     name: 'Synchronize ACL',
-    tip: 'Enables synchronization of NFSv4 ACLs.',
+    tip: 'Enables import of NFSv4 ACLs.',
   },
 };

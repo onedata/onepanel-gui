@@ -1,7 +1,7 @@
 <div class="row no-border">
   <div class="col-xs-12">
     {{#one-collapsible-list as |list|}}
-      {{#list.item closeEventName=(concat elementId "-synchronization-config:close") as |listItem|}}
+      {{#list.item closeEventName=(concat elementId "-import-config:close") as |listItem|}}
         {{#listItem.header
           class="hoverable"
         }}
@@ -14,7 +14,7 @@
           {{tt this (concat "storageUpdate.strategies." space.storageUpdate.strategy)}}
         {{/listItem.header}}
         {{#listItem.content}}
-          {{partial "components/space-storage-synchronization/configuration-form"}}
+          {{partial "components/space-storage-import/configuration-form"}}
         {{/listItem.content}}
       {{/list.item}}
     {{/one-collapsible-list}}

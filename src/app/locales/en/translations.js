@@ -63,7 +63,7 @@ import clusterStoragesTile from './components/cluster-storages-tile';
 import contentClustersOverview from './components/content-clusters-overview';
 import onezoneInfoBox from './components/onezone-info-box';
 import sidebarClusters from './components/sidebar-clusters';
-import spaceStorageSynchronization from './components/space-storage-synchronization';
+import spaceStorageImport from './components/space-storage-import';
 import supportSizeInfo from './components/support-size-info';
 import emergencyWarningBar from './components/emergency-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
@@ -159,7 +159,7 @@ let translations = {
     contentClustersOverview,
     onezoneInfoBox,
     sidebarClusters,
-    spaceStorageSynchronization,
+    spaceStorageImport,
     supportSizeInfo,
     emergencyWarningBar,
     contentClustersMembers,

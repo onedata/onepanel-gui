@@ -1,8 +1,8 @@
 /**
- * Space storage synchronization statistics container
- * Mainly used in space storage synchronization tab
+ * Space storage import statistics container
+ * Mainly used in space storage import tab
  *
- * @module components/space-storage-synchronization
+ * @module components/space-storage-import
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -19,7 +19,7 @@ export default Component.extend(I18n, {
   eventsBus: service(),
 
   /** @override */
-  i18nPrefix: 'components.spaceStorageSynchronization',
+  i18nPrefix: 'components.spaceStorageImport',
 
   /**
    * Callback to notify change of `syncInterval`
@@ -88,7 +88,7 @@ export default Component.extend(I18n, {
     modifySpace(...args) {
       return this.get('modifySpace')(...args)
         .then(() => this.get('eventsBus').trigger(
-          this.elementId + '-synchronization-config:close'
+          this.elementId + '-import-config:close'
         ));
     },
   },

@@ -36,7 +36,7 @@ export default Component.extend(
     _updatedSpaceOccupancy: undefined,
 
     /**
-     * If true, this space has synchronization import enabled
+     * If true, this space has storage import enabled
      *
      * That means, the view should be enriched with sync statuses and statistics
      * @type {computed.boolean}

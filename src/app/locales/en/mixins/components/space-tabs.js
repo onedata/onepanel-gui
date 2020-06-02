@@ -7,10 +7,10 @@ export default {
       },
     },
     sync: {
-      title: 'Storage synchronization',
+      title: 'Storage import',
       hints: {
-        enabled: 'Show statistics of synchronization with storage for this space',
-        disabled: 'This space has storage synchronization disabled. These settings can only be changed when granting support, and only if the assigned storage is marked as "imported storage".',
+        enabled: 'Show statistics of storage import for this space',
+        disabled: 'This space has storage import disabled. These settings can only be changed when granting support, and only if the assigned storage is marked as "imported storage".',
       },
     },
     popular: {

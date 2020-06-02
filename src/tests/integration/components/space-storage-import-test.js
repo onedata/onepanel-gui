@@ -6,8 +6,8 @@ import wait from 'ember-test-helpers/wait';
 
 import sinon from 'sinon';
 
-describe('Integration | Component | space storage synchronization', function () {
-  setupComponentTest('space-storage-synchronization', {
+describe('Integration | Component | space storage import', function () {
+  setupComponentTest('space-storage-import', {
     integration: true,
   });
 
@@ -16,7 +16,7 @@ describe('Integration | Component | space storage synchronization', function () 
       const syncIntervalChanged = sinon.spy();
       this.on('syncIntervalChanged', syncIntervalChanged);
 
-      this.render(hbs `{{space-storage-synchronization
+      this.render(hbs `{{space-storage-import
         importEnabled=true
         syncIntervalChanged=(action "syncIntervalChanged")
       }}`);

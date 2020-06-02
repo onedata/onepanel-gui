@@ -68,7 +68,7 @@
           {{/tab.pane}}
           {{#tab.pane elementId=tabSyncId}}
             {{#if (and (eq tabSyncClass "enabled") (eq tab.activeId tabSyncId))}}
-              {{space-storage-synchronization
+              {{space-storage-import
                 importEnabled=space.importEnabled
                 syncInterval=syncInterval
                 statsFrozen=statsFrozen

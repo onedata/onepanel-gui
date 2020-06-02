@@ -194,7 +194,7 @@ export default Service.extend({
   },
 
   /**
-   * Get all known statistics for space synchronization needed to display
+   * Get all known statistics for space import needed to display
    * all charts
    *
    * @param {*} spaceId 

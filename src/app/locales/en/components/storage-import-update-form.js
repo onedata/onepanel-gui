@@ -6,6 +6,6 @@ export default {
   storageUpdate,
   importConfiguration: 'Import configuration',
   updateConfiguration: 'Update configuration',
-  submitNew: 'Start synchronization',
+  submitNew: 'Start import',
   submitModify: 'Save configuration',
 };

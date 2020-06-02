@@ -7,7 +7,7 @@ export default {
   minute: 'Minute',
   hour: 'Hour',
   day: 'Day',
-  syncFormHeader: 'Configure storage synchronization',
+  syncFormHeader: 'Configure storage import',
   syncDone: 'Import done',
-  syncDoneHint: 'Synchronization is done, live statistics are disabled',
+  syncDoneHint: 'Import is done, live statistics are disabled',
 };
