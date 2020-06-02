@@ -12,7 +12,7 @@ import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { computed } from '@ember/object';
-import { or } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {
@@ -70,7 +70,7 @@ export default Component.extend(I18n, {
    */
   space: undefined,
 
-  importConfigurationOpen: or('importEnabled', 'importConfigurationEdition'),
+  importConfigurationOpen: reads('importEnabled'),
 
   /**
    * True if import is enabled in configuration
@@ -83,8 +83,6 @@ export default Component.extend(I18n, {
       return !!strategy && strategy !== 'no_import';
     }
   ),
-
-  importConfigurationEdition: false,
 
   actions: {
     modifySpace(...args) {

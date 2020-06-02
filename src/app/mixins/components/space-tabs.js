@@ -10,6 +10,7 @@
 import { computed } from '@ember/object';
 import Mixin from '@ember/object/mixin';
 import { camelize } from '@ember/string';
+import { conditional, raw } from 'ember-awesome-macros';
 
 const enabledClass = 'enabled';
 const disabledClass = 'disabled';
@@ -24,7 +25,11 @@ export default Mixin.create({
   tabOverviewId: 'overview',
   tabOverviewHint: computedTabHint('overview'),
 
-  tabSyncClass: enabledClass,
+  tabSyncClass: conditional(
+    'space.importEnabled',
+    raw(enabledClass),
+    raw(disabledClass)
+  ),
   tabSyncId: 'sync',
   tabSyncHint: computedTabHint('sync'),
 
@@ -32,10 +37,11 @@ export default Mixin.create({
   tabPopularId: 'popular',
   tabPopularHint: computedTabHint('popular'),
 
-  tabCleanClass: computed('filePopularityConfiguration.enabled', function () {
-    return this.get('filePopularityConfiguration.enabled') ? enabledClass :
-      disabledClass;
-  }),
+  tabCleanClass: conditional(
+    'filePopularityConfiguration.enabled',
+    raw(enabledClass),
+    raw(disabledClass)
+  ),
   tabCleanId: 'clean',
   tabCleanHint: computedTabHint('clean'),
 

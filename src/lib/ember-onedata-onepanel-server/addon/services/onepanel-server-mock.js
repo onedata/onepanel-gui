@@ -500,6 +500,7 @@ export default OnepanelServerBase.extend(
             monitorHostname: 'host.name',
             clusterName: 'cluster_name',
             poolName: 'some_pool',
+            importedStorage: true,
           };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(

@@ -10,7 +10,7 @@ export default {
       title: 'Storage synchronization',
       hints: {
         enabled: 'Show statistics of synchronization with storage for this space',
-        disabled: 'Storage synchronization is not enabled, you can enable it in space options',
+        disabled: 'This space has storage synchronization disabled. These settings can only be changed when granting support, and only if the assigned storage is marked as "imported storage".',
       },
     },
     popular: {
