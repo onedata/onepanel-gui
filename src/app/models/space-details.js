@@ -13,6 +13,7 @@
  */
 
 import EmberObject, { computed, get } from '@ember/object';
+import { conditional, raw, writable } from 'ember-awesome-macros';
 
 export default EmberObject.extend({
   /**
@@ -55,6 +56,20 @@ export default EmberObject.extend({
     let strategy = this.get('storageUpdate.strategy');
     return strategy != null && strategy !== 'no_update';
   }),
+
+  /**
+   * One of 'continuous', 'initial', null
+   * @type {ComputedProperty<String|null>}
+   */
+  importMode: writable(conditional(
+    'updateEnabled',
+    raw('continuous'),
+    conditional(
+      'importEnabled',
+      raw('initial'),
+      raw(null),
+    )
+  )),
 
   /**
    * Space size.

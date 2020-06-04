@@ -17,24 +17,18 @@
         <span class="one-label space-provider-storage">{{_storage.name}}</span>
       {{/promise-proxy-container}}
     </div>
-    {{#if space.importEnabled}}
+    {{#if space.importMode}}
       <div class="row content-row space-import">
-        <strong class="property-label">{{tt this "storageImport.importStrategy"}}:</strong>
-        <span class="one-label space-import-strategy">{{importStrategyLabel}}</span>
+        <strong class="property-label">{{tt this "storageImportMode"}}:</strong>
+        <span class="one-label storage-import-mode">
+          {{tt this (
+            concat "storageImport.generic.importMode.options." space.importMode ".name"
+          )}}
+        </span>
         {{#each importProperties as |property|}}
           <div class="row content-row nested-row">
-            <strong class="property-label">{{t (concat i18nPrefix ".storageImport." property ".name")}}:</strong>
-            <span class="one-label space-import-{{property}}">{{get space.storageImport property}}</span>
-          </div>
-        {{/each}}
-      </div>
-      <div class="row content-row space-update">
-        <strong class="property-label">{{tt this "storageUpdate.updateStrategy"}}:</strong>
-        <span class="one-label space-update-strategy">{{updateStrategyLabel}}</span>
-        {{#each updateProperties as |property|}}
-          <div class="row content-row nested-row">
-            <strong class="property-label">{{t (concat i18nPrefix ".storageUpdate." property ".name")}}:</strong>
-            <span class="one-label space-update-{{property}}">{{get space.storageUpdate property}}</span>
+            <strong class="property-label">{{property.label}}:</strong>
+            <span class="one-label space-import-{{property.name}}">{{property.value}}</span>
           </div>
         {{/each}}
       </div>

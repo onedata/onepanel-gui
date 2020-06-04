@@ -3,40 +3,12 @@ import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-
-import FormHelper from '../../helpers/form';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
-import StorageImportFormLocales from 'onepanel-gui/locales/en/components/storage-import-update-form';
-
-class StorageImportUpdateFormHelper extends FormHelper {
-  constructor($template) {
-    super($template, '.storage-import-update-form');
-  }
-}
-
-class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.update-configuration-section .ember-basic-dropdown');
-  }
-}
-
-const SIMPLE_SCAN_NAME =
-  StorageImportFormLocales.storageImport.strategies.simple_scan;
+import { click, fillIn } from 'ember-native-dom-helpers';
+import sinon from 'sinon';
 
 describe('Integration | Component | storage import update form', function () {
   setupComponentTest('storage-import-update-form', {
     integration: true,
-
-    setup() {
-      this.prepareAllFields = function () {
-        this.set('defaultValues', {
-          storageImport: {
-            strategy: 'simple_scan',
-            maxDepth: 5,
-          },
-        });
-      };
-    },
   });
 
   it('hides submit button if neccessary', function () {
@@ -46,104 +18,203 @@ describe('Integration | Component | storage import update form', function () {
       }}
     `);
 
-    expect(this.$('button[type=submit]')).to.not.exist;
+    return wait().then(() => expect(this.$('button[type=submit]')).to.not.exist);
   });
 
-  it('makes import fields static for \'edit\' mode', function () {
-    this.prepareAllFields();
+  it(
+    'does not show any continuous import fields if import mode is initial',
+    function () {
+      this.render(hbs `{{storage-import-update-form}}`);
 
-    this.render(hbs `
-      {{storage-import-update-form
-        defaultValues=defaultValues
-        mode="edit"
-      }}
-    `);
+      return wait().then(() => checkContinuousFieldsNotExist(this));
+    }
+  );
 
-    expect(this.$('.one-form-field-static .field-import-strategy').text())
-      .to.equal(SIMPLE_SCAN_NAME);
-    expect(this.$('.one-form-field-static.field-import_generic-maxDepth').text()
-        .trim())
-      .to.equal(this.get('defaultValues.storageImport.maxDepth').toString());
-  });
+  it(
+    'shows continuous import fields if update strategy is selected on init',
+    function () {
+      const space = {
+        storageImport: {
+          strategy: 'simple_scan',
+        },
+        storageUpdate: {
+          strategy: 'simple_scan',
+        },
+      };
 
-  it('does not show any update fields if update strategy is not selected', function () {
-    this.render(hbs `
-      {{storage-import-update-form}}
-    `);
+      this.set('space', space);
 
-    expect(this.$('.update-configuration-section input')).to.not.exist;
-  });
+      this.render(hbs `
+        {{storage-import-update-form
+          defaultValues=space
+        }}
+      `);
 
-  it('shows update fields if update strategy is selected on init', function () {
-    const space = {
-      storageImport: {
-        strategy: 'simple_scan',
-      },
-      storageUpdate: {
-        strategy: 'simple_scan',
-      },
-    };
+      return wait().then(() => checkContinuousFieldsExist(this));
+    }
+  );
 
-    this.set('space', space);
-
-    this.render(hbs `
-      {{storage-import-update-form
-        defaultValues=space
-      }}
-    `);
-
-    return wait().then(() => {
-      expect(this.$('.update-configuration-section input')).to.exist;
-    });
-  });
-
-  it('shows fields on update strategy change', function (done) {
+  it('shows continuous import fields on import mode change', function () {
     this.render(hbs `
       {{storage-import-update-form}}
     `);
 
-    let helper = new StorageImportUpdateFormHelper(this.$());
-    let powerSelectHelper = new UpdateStrategySelectHelper();
-    powerSelectHelper.selectOption(2, () => {
-      expect(helper.getInput('update_generic-maxDepth')).to.exist;
-      expect(helper.getInput('update_generic-scanInterval')).to.exist;
-      expect(helper.getToggleInput('update_generic-writeOnce')).to.exist;
-      expect(helper.getToggleInput('update_generic-deleteEnable')).to.exist;
-      done();
-    });
+    return wait()
+      .then(() => click('.field-generic-importMode-continuous'))
+      .then(() => checkContinuousFieldsExist(this));
   });
 
-  it('clears inputs on update strategy change', function (done) {
-    this.render(hbs `
-      {{storage-import-update-form}}
-    `);
-
-    let helper = new StorageImportUpdateFormHelper(this.$());
-    let powerSelectHelper = new UpdateStrategySelectHelper();
-    powerSelectHelper.selectOption(2, () => {
-      helper.getInput('update_generic-maxDepth').val('123').change();
-      powerSelectHelper.selectOption(1, () => {
-        powerSelectHelper.selectOption(2, () => {
-          expect(
-              helper.getInput('update_generic-maxDepth').val()).to.be
-            .empty;
-          done();
-        });
-      });
-    });
-  });
-
-  it('disables submit button when data is incorrect', function (done) {
+  it('disables submit button when data is incorrect', function () {
     this.render(hbs `
       {{storage-import-update-form mode="new"}}
     `);
 
-    let helper = new StorageImportUpdateFormHelper(this.$());
-
-    helper.getInput('import_generic-maxDepth').val('bad input').change();
-    wait().then(() => {
-      expect(this.$('button[type=submit]')).to.be.disabled;
-      done();
-    });
+    return wait()
+      .then(() => fillIn('.field-generic-maxDepth', 'bad value'))
+      .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
   });
+
+  it(
+    'notifies about form data modification in "new" mode ("initial" import)',
+    function () {
+      const changedSpy = sinon.spy();
+      this.set('changedSpy', changedSpy);
+      this.render(hbs `
+      {{storage-import-update-form mode="new" valuesChanged=changedSpy}}
+    `);
+
+      let correctData;
+      return wait()
+        .then(() => fillInWholeForm().then(data => correctData = data))
+        .then(() => click('.field-generic-importMode-initial'))
+        .then(() => {
+          delete correctData.storageUpdate;
+          correctData.storageUpdate = {
+            strategy: 'no_update',
+          };
+          const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
+          expect(lastValues).to.deep.equal(correctData);
+          expect(lastValuesAreValid).to.be.true;
+        });
+    }
+  );
+
+  it(
+    'notifies about form data modification in "new" mode ("continuous" import)',
+    function () {
+      const changedSpy = sinon.spy();
+      this.set('changedSpy', changedSpy);
+      this.render(hbs `
+      {{storage-import-update-form mode="new" valuesChanged=changedSpy}}
+    `);
+
+      return wait()
+        .then(() => fillInWholeForm())
+        .then(correctData => {
+          const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
+          expect(lastValues).to.deep.equal(correctData);
+          expect(lastValuesAreValid).to.be.true;
+        });
+    }
+  );
+
+  it(
+    'does not send storageImport section in "edit" mode ("continuous" import)',
+    function () {
+      const submitSpy = sinon.spy();
+      this.set('submitSpy', submitSpy);
+      this.render(hbs `
+        {{storage-import-update-form mode="edit" submit=submitSpy}}
+      `);
+
+      let correctData;
+      return wait()
+        .then(() => fillInWholeForm().then(data => correctData = data))
+        .then(() => click('.submit-import'))
+        .then(() => {
+          delete correctData.storageImport;
+          expect(submitSpy.lastCall.args[0]).to.deep.equal(correctData);
+        });
+    }
+  );
+
+  it(
+    'prefers update config over import config, when both are different in "edit" mode default values',
+    function () {
+      const exampleConfig = {
+        storageImport: {
+          strategy: 'simple_scan',
+          maxDepth: '10',
+          syncAcl: false,
+        },
+        storageUpdate: {
+          strategy: 'simple_scan',
+          maxDepth: '11',
+          syncAcl: true,
+          scanInterval: '20',
+          writeOnce: true,
+          deleteEnable: true,
+        },
+      };
+      this.set('exampleConfig', exampleConfig);
+      this.render(hbs `
+        {{storage-import-update-form mode="edit" defaultValues=exampleConfig}}
+      `);
+
+      return wait()
+        .then(() => {
+          expect(this.$('.field-generic-importMode-continuous'))
+            .to.have.prop('checked', true);
+          expect(this.$('.field-generic-maxDepth').val()).to.equal('11');
+          expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
+          expect(this.$('.field-continuous-scanInterval')).to.have.value('20');
+          expect(this.$('.toggle-field-continuous-writeOnce'))
+            .to.have.class('checked');
+          expect(this.$('.toggle-field-continuous-deleteEnable'))
+            .to.have.class('checked');
+        });
+    }
+  );
 });
+
+const continuousFieldsSelectors = [
+  '.field-continuous-scanInterval',
+  '.toggle-field-continuous-writeOnce',
+  '.toggle-field-continuous-deleteEnable',
+];
+
+function checkContinuousFieldsExist(testCase) {
+  continuousFieldsSelectors.forEach(selector =>
+    expect(testCase.$(selector)).to.exist
+  );
+}
+
+function checkContinuousFieldsNotExist(testCase) {
+  continuousFieldsSelectors.forEach(selector =>
+    expect(testCase.$(selector)).to.not.exist
+  );
+}
+
+function fillInWholeForm() {
+  return click('.field-generic-importMode-continuous')
+    .then(() => fillIn('.field-generic-maxDepth', '10'))
+    .then(() => click('.toggle-field-generic-syncAcl'))
+    .then(() => fillIn('.field-continuous-scanInterval', '20'))
+    .then(() => click('.toggle-field-continuous-writeOnce'))
+    .then(() => click('.toggle-field-continuous-deleteEnable'))
+    .then(() => ({
+      storageImport: {
+        strategy: 'simple_scan',
+        maxDepth: '10',
+        syncAcl: true,
+      },
+      storageUpdate: {
+        strategy: 'simple_scan',
+        maxDepth: '10',
+        syncAcl: true,
+        scanInterval: '20',
+        writeOnce: true,
+        deleteEnable: true,
+      },
+    }));
+}

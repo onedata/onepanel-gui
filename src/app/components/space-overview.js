@@ -9,26 +9,13 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { computed, get } from '@ember/object';
+import { computed, get, getProperties } from '@ember/object';
 import _ from 'lodash';
 import spaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';
 import { inject as service } from '@ember/service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import Looper from 'onedata-gui-common/utils/looper';
-
-/**
- * Space's `storageImport` properties that shouldn't be listed as generic
- * properties (can be handled separately)
- * @type {Array.string}
- */
-const SKIPPED_IMPORT_PROPERTIES = ['strategy'];
-
-/**
- * Space's `storageUpdate` properties that shouldn't be listed as generic
- * properties (can be handled separately)
- * @type {Array.string}
- */
-const SKIPPED_UPDATE_PROPERTIES = ['strategy'];
+import { fields as importFields } from 'onepanel-gui/components/storage-import-update-form';
 
 export default Component.extend(I18n, spaceItemSupports, {
   i18nPrefix: 'components.spaceOverview',
@@ -61,23 +48,9 @@ export default Component.extend(I18n, spaceItemSupports, {
    */
   spaceUpdater: undefined,
 
-  importStrategyLabel: computed('space.storageImport.strategy', function () {
-    let i18n = this.get('i18n');
-    const i18nPrefix = this.get('i18nPrefix');
-    let strategy = this.get('space.storageImport.strategy');
-    return i18n.t(`${i18nPrefix}.storageImport.strategies.${strategy}`);
-  }),
-
-  updateStrategyLabel: computed('space.storageUpdate.strategy', function () {
-    let i18n = this.get('i18n');
-    const i18nPrefix = this.get('i18nPrefix');
-    let strategy = this.get('space.storageUpdate.strategy');
-    return i18n.t(`${i18nPrefix}.storageUpdate.strategies.${strategy}`);
-  }),
-
   /**
-   * List of specific non-empty, type-specific storage import properties
-   * @type {Array}
+   * List of storage import properties ready to show in template
+   * @type {ComputedProperty<Array<{ name: string, label: string, value: any }>>}
    */
   importProperties: computed('space.{storageImport,content}', function () {
     let space = this.get('space');
@@ -85,30 +58,34 @@ export default Component.extend(I18n, spaceItemSupports, {
     if (space != null && space.content != null) {
       space = space.get('content');
     }
-    let storageImport = get(space, 'storageImport');
-    return storageImport != null ?
-      Object.keys(storageImport).filter(p =>
-        get(storageImport, p) != null && !_.includes(
-          SKIPPED_IMPORT_PROPERTIES, p)
-      ) : [];
-  }),
 
-  /**
-   * List of specific non-empty, type-specific storage update properties
-   * @type {Array}
-   */
-  updateProperties: computed('space.{storageUpdate,content}', function () {
-    let space = this.get('space');
-    // support for ObjectProxy
-    if (space != null && space.content != null) {
-      space = space.get('content');
+    const {
+      storageImport,
+      storageUpdate,
+      importMode,
+    } = getProperties(space, 'storageImport', 'storageUpdate', 'importMode');
+    if (!importMode) {
+      return [];
+    } else {
+      const importConfig = importMode === 'continuous' ?
+        Object.assign({}, storageImport, storageUpdate) : storageImport;
+      const properties = [];
+      (importMode === 'continuous' ? ['generic', 'continuous'] : ['generic'])
+      .forEach(namespace => {
+        const newProps = importFields[namespace]
+          .mapBy('name')
+          .filter(name => importConfig[name] !== undefined)
+          .map(name => {
+            return {
+              name,
+              label: this.t(`storageImport.${namespace}.${name}.name`),
+              value: importConfig[name],
+            };
+          });
+        properties.push(...newProps);
+      });
+      return properties;
     }
-    let storageUpdate = get(space, 'storageUpdate');
-    return storageUpdate != null ?
-      Object.keys(storageUpdate).filter(p =>
-        get(storageUpdate, p) != null && !_.includes(
-          SKIPPED_UPDATE_PROPERTIES, p)
-      ) : [];
   }),
 
   /**

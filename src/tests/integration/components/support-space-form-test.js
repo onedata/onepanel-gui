@@ -31,12 +31,6 @@ class SupportSpaceFormHelper extends FormHelper {
   }
 }
 
-class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.update-configuration-section .ember-basic-dropdown');
-  }
-}
-
 class StorageSelectHelper extends EmberPowerSelectHelper {
   constructor() {
     super('.form .form-group:first-child .ember-basic-dropdown');
@@ -265,10 +259,7 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        const helper = new SupportSpaceFormHelper(this.$());
-        fillIn(helper.getInput('import_generic-maxDepth')[0], 'incorrect');
-      })
+      .then(() => fillIn('.field-generic-maxDepth', 'bad value'))
       .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
   });
 
@@ -286,9 +277,7 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        return new UpdateStrategySelectHelper().selectOption(2);
-      })
+      .then(() => click('.field-generic-importMode-continuous'))
       .then(() => new SupportSpaceFormHelper(this.$()).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;

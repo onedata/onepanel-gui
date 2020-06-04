@@ -8,10 +8,8 @@
           <div class="item-icon-container">
             {{one-icon class="item-icon" icon="settings"}}
           </div>
-          <strong>{{tt this "storageImport.importStrategy"}}:</strong>
-          {{tt this (concat "storageImport.strategies." space.storageImport.strategy)}},
-          <strong>{{tt this "storageUpdate.updateStrategy"}}:</strong>
-          {{tt this (concat "storageUpdate.strategies." space.storageUpdate.strategy)}}
+          <strong>{{tt this "storageImport.generic.importMode.name"}}:</strong>
+          {{tt this (concat "storageImport.generic.importMode.options." space.importMode ".name")}}
         {{/listItem.header}}
         {{#listItem.content}}
           {{partial "components/space-storage-import/configuration-form"}}

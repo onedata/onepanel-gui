@@ -14,7 +14,7 @@ export default {
       },
     },
     popular: {
-      title: 'File-popularity',
+      title: 'File popularity',
       hints: {
         enabled: 'Configure file popularity feature for this space',
         // popular tab is never in disabled state
