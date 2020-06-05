@@ -1,5 +1,5 @@
 /**
- * A form component for import/update configuration of storage.
+ * A form component for import configuration of storage.
  * It can work in two modes (mode property):
  * - new - intended to be a part of the support space form. It doesn't have 
  * a header and a submit button.
@@ -23,7 +23,7 @@
  * }
  * ```
  *
- * @module components/storage-import-update-form
+ * @module components/storage-import-form
  * @author Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -112,14 +112,14 @@ const Validations = buildValidations(createValidations(
 ));
 
 export default OneForm.extend(I18n, Validations, {
-  classNames: ['storage-import-update-form'],
+  classNames: ['storage-import-form'],
 
   i18n: service(),
 
   /**
    * @override
    */
-  i18nPrefix: 'components.storageImportUpdateForm',
+  i18nPrefix: 'components.storageImportForm',
 
   /**
    * If true, form is visible to user
@@ -189,9 +189,11 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {ComputedProperty<Array<FieldType>>}
    */
-  genericFields: computed(() => GENERIC_FIELDS.map(field => EmberObject.create(field, {
-    name: `generic.${field.name}`,
-  }))),
+  genericFields: computed(() => GENERIC_FIELDS.map(field =>
+    EmberObject.create(field, {
+      name: `generic.${field.name}`,
+    })
+  )),
 
   /**
    * @type {ComputedProperty<Array<FieldType>>}
@@ -299,46 +301,45 @@ export default OneForm.extend(I18n, Validations, {
       'defaultValues'
     );
 
-    this.resetFormValues(['generic', 'continuous']);
+    if (defaultValues) {
+      const isUpdateEnabled =
+        get(defaultValues, 'storageUpdate.strategy') === 'simple_scan';
 
-    if (!defaultValues) {
-      return;
+      const importModeField = genericFields.findBy('name', 'generic.importMode');
+      set(importModeField,
+        'defaultValue',
+        isUpdateEnabled ? 'continuous' : 'initial'
+      );
+
+      genericFields
+        .without(importModeField)
+        .forEach(field => {
+          const fieldName = get(field, 'name');
+          const value = get(
+            defaultValues,
+            `storage${isUpdateEnabled ? 'Update' : 'Import'}.${this.cutOffPrefix(fieldName)}`
+          );
+          set(field, 'defaultValue', value);
+        });
+
+      continuousFields
+        .forEach(field => {
+          const fieldName = get(field, 'name');
+          const value = get(
+            defaultValues,
+            `storageUpdate.${this.cutOffPrefix(fieldName)}`
+          );
+          set(field, 'defaultValue', value);
+        });
     }
 
-    const isUpdateEnabled =
-      get(defaultValues, 'storageUpdate.strategy') === 'simple_scan';
-
-    this.set(
-      'allFieldsValues.generic.importMode',
-      isUpdateEnabled ? 'continuous' : 'initial'
-    );
-
-    genericFields
-      .rejectBy('name', 'generic.importMode')
-      .mapBy('name')
-      .forEach(genericFieldName => {
-        const value = get(
-          defaultValues,
-          `storage${isUpdateEnabled ? 'Update' : 'Import'}.${this.cutOffPrefix(genericFieldName)}`
-        );
-        this.set(`allFieldsValues.${genericFieldName}`, value);
-      });
-
-    continuousFields
-      .mapBy('name')
-      .forEach(continuousFieldName => {
-        const value = get(
-          defaultValues,
-          `storageUpdate.${this.cutOffPrefix(continuousFieldName)}`
-        );
-        this.set(`allFieldsValues.${continuousFieldName}`, value);
-      });
+    this.resetFormValues(['generic', 'continuous']);
 
     this.triggerValuesChanged();
   },
 
   getValues() {
-    let {
+    const {
       selectedImportMode,
       formValues,
       currentFields,
@@ -384,7 +385,13 @@ export default OneForm.extend(I18n, Validations, {
       allFields,
       selectedImportMode,
       mode,
-    } = this.getProperties('allFields', 'selectedImportMode', 'mode');
+      valuesChanged,
+    } = this.getProperties(
+      'allFields',
+      'selectedImportMode',
+      'mode',
+      'valuesChanged'
+    );
 
     const genericFieldsWithoutMode = allFields
       .filter(field => get(field, 'name').startsWith('generic.'))
@@ -399,7 +406,7 @@ export default OneForm.extend(I18n, Validations, {
       genericFieldsWithoutMode.setEach('disabled', false);
     }
 
-    return this.get('valuesChanged')(this.getValues(), this.get('isValid'));
+    return valuesChanged(this.getValues(), this.get('isValid'));
   },
 
   actions: {

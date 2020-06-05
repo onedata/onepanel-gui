@@ -15,7 +15,7 @@ import spaceItemSupports from 'onepanel-gui/mixins/components/space-item-support
 import { inject as service } from '@ember/service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import Looper from 'onedata-gui-common/utils/looper';
-import { fields as importFields } from 'onepanel-gui/components/storage-import-update-form';
+import { fields as importFields } from 'onepanel-gui/components/storage-import-form';
 
 export default Component.extend(I18n, spaceItemSupports, {
   i18nPrefix: 'components.spaceOverview',

@@ -6,14 +6,14 @@ import wait from 'ember-test-helpers/wait';
 import { click, fillIn } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 
-describe('Integration | Component | storage import update form', function () {
-  setupComponentTest('storage-import-update-form', {
+describe('Integration | Component | storage import form', function () {
+  setupComponentTest('storage-import-form', {
     integration: true,
   });
 
   it('hides submit button if neccessary', function () {
     this.render(hbs `
-      {{storage-import-update-form
+      {{storage-import-form
         showSubmitButton=false
       }}
     `);
@@ -24,7 +24,7 @@ describe('Integration | Component | storage import update form', function () {
   it(
     'does not show any continuous import fields if import mode is initial',
     function () {
-      this.render(hbs `{{storage-import-update-form}}`);
+      this.render(hbs `{{storage-import-form}}`);
 
       return wait().then(() => checkContinuousFieldsNotExist(this));
     }
@@ -45,7 +45,7 @@ describe('Integration | Component | storage import update form', function () {
       this.set('space', space);
 
       this.render(hbs `
-        {{storage-import-update-form
+        {{storage-import-form
           defaultValues=space
         }}
       `);
@@ -56,7 +56,7 @@ describe('Integration | Component | storage import update form', function () {
 
   it('shows continuous import fields on import mode change', function () {
     this.render(hbs `
-      {{storage-import-update-form}}
+      {{storage-import-form}}
     `);
 
     return wait()
@@ -66,7 +66,7 @@ describe('Integration | Component | storage import update form', function () {
 
   it('disables submit button when data is incorrect', function () {
     this.render(hbs `
-      {{storage-import-update-form mode="new"}}
+      {{storage-import-form mode="new"}}
     `);
 
     return wait()
@@ -80,7 +80,7 @@ describe('Integration | Component | storage import update form', function () {
       const changedSpy = sinon.spy();
       this.set('changedSpy', changedSpy);
       this.render(hbs `
-      {{storage-import-update-form mode="new" valuesChanged=changedSpy}}
+      {{storage-import-form mode="new" valuesChanged=changedSpy}}
     `);
 
       let correctData;
@@ -105,7 +105,7 @@ describe('Integration | Component | storage import update form', function () {
       const changedSpy = sinon.spy();
       this.set('changedSpy', changedSpy);
       this.render(hbs `
-      {{storage-import-update-form mode="new" valuesChanged=changedSpy}}
+      {{storage-import-form mode="new" valuesChanged=changedSpy}}
     `);
 
       return wait()
@@ -124,7 +124,7 @@ describe('Integration | Component | storage import update form', function () {
       const submitSpy = sinon.spy();
       this.set('submitSpy', submitSpy);
       this.render(hbs `
-        {{storage-import-update-form mode="edit" submit=submitSpy}}
+        {{storage-import-form mode="edit" submit=submitSpy}}
       `);
 
       let correctData;
@@ -158,7 +158,7 @@ describe('Integration | Component | storage import update form', function () {
       };
       this.set('exampleConfig', exampleConfig);
       this.render(hbs `
-        {{storage-import-update-form mode="edit" defaultValues=exampleConfig}}
+        {{storage-import-form mode="edit" defaultValues=exampleConfig}}
       `);
 
       return wait()

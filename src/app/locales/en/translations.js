@@ -12,7 +12,7 @@ import supportSpaceForm from './components/support-space-form';
 import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import clusterSpacesTable from './components/cluster-spaces-table';
-import storageImportUpdateForm from './components/storage-import-update-form';
+import storageImportForm from './components/storage-import-form';
 import spaceStatusIcons from './components/space-status-icons';
 import loginBox from './components/login-box';
 import providerRegistrationForm from './components/provider-registration-form';
@@ -108,7 +108,7 @@ let translations = {
     storageItem,
     clusterSpacesTable,
     clusterSpacesTableItem,
-    storageImportUpdateForm,
+    storageImportForm,
     spaceStatusIcons,
     loginBox,
     providerRegistrationForm,
