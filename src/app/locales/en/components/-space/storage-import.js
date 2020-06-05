@@ -2,6 +2,7 @@ export default {
   generic: {
     importMode: {
       name: 'Import mode',
+      tip: 'Indicates if the data on the storage should be imported into the space once (<strong>initial</strong>) or periodically (<strong>continuous</strong>). Only <strong>continuous</strong> mode guarantees data integrity if direct modifications on the storage are to be made during the space lifecycle.',
       options: {
         initial: {
           name: 'initial',
