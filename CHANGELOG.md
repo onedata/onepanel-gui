@@ -31,7 +31,7 @@ CHANGELOG
 * VFS-5916 Fixed sending Onezone configuration on deploy
 * VFS-5878 Added warning modal about clearing OSD devices on Ceph deploy
 * VFS-5890 Removed Ceph related requests from Onezone Onepanel
-* VFS-5493 Added QOS parameters to storages
+* VFS-5493 Added QoS parameters to storages
 * VFS-5020 Added Ceph cluster deployment and management
 * VFS-5875 Fixed navigation in GUI settings aspect and updated DOMPurify
 * VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification
