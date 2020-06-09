@@ -35,13 +35,13 @@
             </a>
             {{one-tooltip triggerEvents="hover" title=tabOverviewHint}}
           {{/nav.item}}
-          {{#nav.item class=tabSyncClass active=(eq tab.activeId tabSyncId)}}
-            <a href={{concat "#" tabSyncId}}
+          {{#nav.item class=tabImportClass active=(eq tab.activeId tabImportId)}}
+            <a href={{concat "#" tabImportId}}
               class="nav-link"
-              role="tab" {{action tab.select tabSyncId}}>
-              {{t "mixins.components.spaceTabs.tabs.sync.title"}}
+              role="tab" {{action tab.select tabImportId}}>
+              {{t "mixins.components.spaceTabs.tabs.import.title"}}
             </a>
-            {{one-tooltip triggerEvents="hover" title=tabSyncHint}}
+            {{one-tooltip triggerEvents="hover" title=tabImportHint}}
           {{/nav.item}}
           {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
             <a href={{concat "#" tabPopularId}} class="nav-link" role="tab" {{action tab.select tabPopularId}}>
@@ -66,17 +66,17 @@
               }}
             {{/if}}
           {{/tab.pane}}
-          {{#tab.pane elementId=tabSyncId}}
-            {{#if (and (eq tabSyncClass "enabled") (eq tab.activeId tabSyncId))}}
+          {{#tab.pane elementId=tabImportId}}
+            {{#if (and (eq tabImportClass "enabled") (eq tab.activeId tabImportId))}}
               {{space-storage-import
                 importEnabled=space.importEnabled
-                syncInterval=syncInterval
+                importInterval=importInterval
                 statsFrozen=statsFrozen
                 timeStats=timeStats
                 timeStatsError=timeStatsError
                 timeStatsLoading=timeStatsLoading
                 space=space
-                syncIntervalChanged=(action "onSyncIntervalChange")
+                importIntervalChanged=(action "onimportIntervalChange")
                 modifySpace=(action "modifySpace")
               }}
             {{/if}}

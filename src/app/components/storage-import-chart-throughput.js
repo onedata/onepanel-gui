@@ -1,7 +1,7 @@
 /**
  * A chart component for a space import/update throughput statistics.
  *
- * @module components/space-sync-chart-throughput
+ * @module components/storage-import-chart-throughput
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -13,18 +13,18 @@ import { computed } from '@ember/object';
 
 import _ from 'lodash';
 
-import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
+import StorageImportChartBase from 'onepanel-gui/components/storage-import-chart-base';
 import axisLabels from 'onedata-gui-common/utils/chartist/axis-labels';
 import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import centerLineChart from 'onedata-gui-common/utils/chartist/center-line-chart';
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 
-export default SpaceSyncChartBase.extend({
-  classNames: ['space-sync-chart-throughput'],
+export default StorageImportChartBase.extend({
+  classNames: ['storage-import-chart-throughput'],
 
   /**
-   * @implements SpaceSyncChartDataValidator
+   * @implements StorageImportChartDataValidator
    */
   usedMetrics: Object.freeze(['insertCount', 'updateCount', 'deleteCount']),
 

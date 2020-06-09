@@ -11,13 +11,13 @@ import Component from '@ember/component';
 import { readOnly } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
-import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-throw';
 
 export default Component.extend(
-  SpaceItemSyncStats,
+  SpaceItemImportStats,
   createDataProxyMixin('filePopularityConfiguration'),
   createDataProxyMixin('autoCleaningConfiguration'),
   I18n, {
@@ -82,7 +82,7 @@ export default Component.extend(
     /**
      * If true, this space has storage import enabled
      *
-     * That means, the view should be enriched with sync statuses and statistics
+     * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
     _importActive: readOnly('space.importEnabled'),
@@ -100,8 +100,8 @@ export default Component.extend(
       'importConfigurationOpen',
       function _importButtonTip() {
         return this.get('importConfigurationOpen') ?
-          this.t('cancelSyncConfig') :
-          this.t('syncConfig');
+          this.t('cancelImportConfig') :
+          this.t('importConfig');
       }
     ),
 

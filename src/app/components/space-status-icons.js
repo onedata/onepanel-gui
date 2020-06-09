@@ -33,13 +33,13 @@ export default Component.extend({
    * To inject.
    * @type {Onepanel.SpaceSyncStats}
    */
-  syncStats: null,
+  importStats: null,
 
   importEnabled: readOnly('space.importEnabled'),
   updateEnabled: readOnly('space.updateEnabled'),
 
-  importStatus: readOnly('syncStats.importStatus'),
-  updateStatus: readOnly('syncStats.updateStatus'),
+  importStatus: readOnly('importStats.importStatus'),
+  updateStatus: readOnly('importStats.updateStatus'),
 
   _noStatus: computed('importEnabled', 'updateEnabled', function () {
     return !this.get('importEnabled') && !this.get('updateEnabled');

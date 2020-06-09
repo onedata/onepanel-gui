@@ -23,8 +23,8 @@ const {
   SpaceSupportRequest,
 } = Onepanel;
 
-const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
-const DEFAULT_SYNC_STATS_PERIOD = 'minute';
+const IMPORT_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
+const DEFAULT_IMPORT_STATS_PERIOD = 'minute';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -151,11 +151,11 @@ export default Service.extend({
   },
 
   /**
-   * Fetch current sync (import/update) statistics with given configuration
+   * Fetch current import (import/update) statistics with given configuration
    *
    * There are more high-level methods that should be considered to use:
-   * - getSyncStatusOnly
-   * - getSyncAllStats
+   * - getImportStatusOnly
+   * - getImportAllStats
    *
    * @param {string} spaceId 
    * @param {string} period one of: minute, hour, day
@@ -163,14 +163,14 @@ export default Service.extend({
    *  updateCount, deleteCount
    * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderSpaceSyncStats results
    */
-  getSyncStats(spaceId, period, metrics) {
+  getImportStats(spaceId, period, metrics) {
     // convert metrics to special-format string that holds an array
     if (Array.isArray(metrics)) {
       metrics = metrics.join(',');
     }
     return new Promise((resolve, reject) => {
       let onepanelServer = this.get('onepanelServer');
-      let gettingSyncStats = onepanelServer.request(
+      let gettingImportStats = onepanelServer.request(
         'oneprovider',
         'getProviderSpaceSyncStats',
         spaceId, {
@@ -179,18 +179,18 @@ export default Service.extend({
         }
       );
 
-      gettingSyncStats.then(({ data }) => resolve(data));
-      gettingSyncStats.catch(reject);
+      gettingImportStats.then(({ data }) => resolve(data));
+      gettingImportStats.catch(reject);
     });
   },
 
   /**
-   * Helper method to get only status of sync without statistics for charts
+   * Helper method to get only status of import without statistics for charts
    * @param {string} spaceId
    * @returns {Promise<object>}
    */
-  getSyncStatusOnly(spaceId) {
-    return this.getSyncStats(spaceId);
+  getImportStatusOnly(spaceId) {
+    return this.getImportStats(spaceId);
   },
 
   /**
@@ -201,8 +201,8 @@ export default Service.extend({
    * @param {string} [period] one of: minute, hour, day (like in Onepanel.SyncStats)
    * @returns {Promise<object>}
    */
-  getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
-    return this.getSyncStats(spaceId, period, SYNC_METRICS);
+  getImportAllStats(spaceId, period = DEFAULT_IMPORT_STATS_PERIOD) {
+    return this.getImportStats(spaceId, period, IMPORT_METRICS);
   },
 
   /**

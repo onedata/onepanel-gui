@@ -13,7 +13,7 @@
         {{/listItem.header}}
         {{#listItem.content}}
           <div class="row content-row row-medium{{if (not importConfigurationOpen) " row-hidden"}}">
-            <h1 class="form-title">{{tt this "syncFormHeader"}}</h1>
+            <h1 class="form-title">{{tt this "importFormHeader"}}</h1>
             {{storage-import-form
               class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
               defaultValues=space
@@ -31,19 +31,19 @@
 <div class="row row-time-stats-charts">
   {{#bs-button-group
     class="btn-group-floating btn-group-3-btns"
-    value=syncInterval
+    value=importInterval
     type="radio"
-    onChange=syncIntervalChanged as |bg|
+    onChange=importIntervalChanged as |bg|
   }}
-    {{#bg.button type="default" class="btn-sm btn-sync-interval-minute" value="minute"}}
+    {{#bg.button type="default" class="btn-sm btn-import-interval-minute" value="minute"}}
       {{tt this "minute"}}
       {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
     {{/bg.button}}
-    {{#bg.button type="default" class="btn-sm btn-sync-interval-hour" value="hour"}}
+    {{#bg.button type="default" class="btn-sm btn-import-interval-hour" value="hour"}}
       {{tt this "hour"}}
       {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
     {{/bg.button}}
-    {{#bg.button type="default" class="btn-sm btn-sync-interval-day" value="day"}}
+    {{#bg.button type="default" class="btn-sm btn-import-interval-day" value="day"}}
       {{tt this "day"}}
       {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
     {{/bg.button}}
@@ -51,11 +51,11 @@
   {{#if statsFrozen}}
     <div class="tab-info-floating one-info-label">
       <span>
-        <label>{{tt this "syncDone"}}</label>
+        <label>{{tt this "importDone"}}</label>
         {{one-icon icon="checkbox-filled"}}
       </span>
       {{one-tooltip
-        title=(tt this "syncDoneHint")
+        title=(tt this "importDoneHint")
         placement="bottom"
       }}
     </div>
@@ -63,21 +63,21 @@
   
   {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
     <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-operations
+      {{storage-import-chart-operations
         timeStats=timeStats
-        timeUnit=syncInterval
+        timeUnit=importInterval
       }}
     </div>
     <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-queue
+      {{storage-import-chart-queue
         timeStats=timeStats
-        timeUnit=syncInterval
+        timeUnit=importInterval
       }}
     </div>
     <div class="col-xs-12 item-table-cell item-table-content-cell">
-      {{space-sync-chart-throughput
+      {{storage-import-chart-throughput
         timeStats=timeStats
-        timeUnit=syncInterval
+        timeUnit=importInterval
       }}
     </div>
   {{/loading-container}}

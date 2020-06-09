@@ -9,8 +9,8 @@
 </div>
 <div class="row content-row chart-row has-border">
   <div class="scrollable-row">
-    {{#if syncChartDataError}}
-      {{resource-load-error reason=syncChartDataError}}
+    {{#if importChartDataError}}
+      {{resource-load-error reason=importChartDataError}}
     {{else}}
       {{chartist-chart data=chartData options=chartOptions type="line" class="hide-middle-x-labels"}}
     {{/if}}

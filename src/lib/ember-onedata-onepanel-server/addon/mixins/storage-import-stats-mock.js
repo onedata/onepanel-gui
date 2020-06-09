@@ -1,7 +1,7 @@
 /**
- * Mocks live statistics and status changes for space sync 
+ * Mocks live statistics and status changes for storage import
  *
- * @module mixins/space-sync-stats-mock
+ * @module mixins/storage-import-stats-mock
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -128,7 +128,7 @@ export default Mixin.create({
     this.set('statusChangeTimerId', statusChangeTimerId);
   },
 
-  generateSpaceSyncStats(space, period, metrics) {
+  generateStorageImportStats(space, period, metrics) {
     if (typeof metrics === 'string') {
       metrics = metrics.split(',');
     }

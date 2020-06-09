@@ -1,13 +1,13 @@
 {{#status-toolbar as |toolbar|}}
   {{toolbar.icon
     icon="space-import"
-    status=syncStats.importStatus
+    status=importStats.importStatus
     hint=_importHint
     enabled=importEnabled
   }}
   {{toolbar.icon
     icon="update"
-    status=syncStats.updateStatus
+    status=importStats.updateStatus
     hint=_updateHint
     enabled=updateEnabled
   }}

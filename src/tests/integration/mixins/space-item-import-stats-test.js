@@ -4,7 +4,7 @@ import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
-import SpaceItemSyncStatsMixin from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemImportStatsMixin from 'onepanel-gui/mixins/components/space-item-import-stats';
 import SpaceManagerStub from '../../helpers/space-manager-stub';
 import wait from 'ember-test-helpers/wait';
 
@@ -20,19 +20,19 @@ const SPACE_ONLY_IMPORT = EmberObject.create({
   updateEnabled: false,
 });
 
-describe('Integration | Mixin | components/space item sync stats', function () {
-  setupTest('mixin:components/space-item-sync-stats', {
+describe('Integration | Mixin | components/space item import stats', function () {
+  setupTest('mixin:components/space-item-import-stats', {
     integration: true,
     subject(objectContent = {}) {
-      let SpaceItemSyncStats = EmberObject.extend(
-        SpaceItemSyncStatsMixin,
+      let SpaceItemImportStats = EmberObject.extend(
+        SpaceItemImportStatsMixin,
         objectContent
       );
       this.register(
-        'test-container:space-item-sync-stats-object',
-        SpaceItemSyncStats
+        'test-container:space-item-import-stats-object',
+        SpaceItemImportStats
       );
-      return getOwner(this).lookup('test-container:space-item-sync-stats-object');
+      return getOwner(this).lookup('test-container:space-item-import-stats-object');
     },
   });
 
@@ -51,15 +51,15 @@ describe('Integration | Mixin | components/space item sync stats', function () {
 
   it('statsFrozen is false after fetching only statuses with import done',
     function (done) {
-      const syncStats = {
+      const importStats = {
         importStatus: 'done',
       };
-      this.spaceManagerResolve('getSyncStatusOnly', syncStats);
+      this.spaceManagerResolve('getImportStatusOnly', importStats);
       let subject = this.subject({
         space: SPACE_ONLY_IMPORT,
       });
 
-      subject.fetchStatusSyncStats();
+      subject.fetchStatusImportStats();
 
       wait().then(() => {
         expect(subject.get('statsFrozen')).to.be.false;
@@ -68,16 +68,16 @@ describe('Integration | Mixin | components/space item sync stats', function () {
     });
 
   it('statsFrozen is true after fetching all stats with import done', function (done) {
-    const syncStats = {
+    const importStats = {
       importStatus: 'done',
       stats: FAKE_STATS_1,
     };
-    this.spaceManagerResolve('getSyncAllStats', syncStats);
+    this.spaceManagerResolve('getImportAllStats', importStats);
     let subject = this.subject({
       space: SPACE_ONLY_IMPORT,
     });
 
-    subject.fetchAllSyncStats();
+    subject.fetchAllImportStats();
 
     wait().then(() => {
       expect(subject.get('statsFrozen')).to.be.true;
@@ -87,16 +87,16 @@ describe('Integration | Mixin | components/space item sync stats', function () {
 
   it('statsFrozen is false after fetching all stats with import inProgress',
     function (done) {
-      const syncStats = {
+      const importStats = {
         importStatus: 'inProgress',
         stats: FAKE_STATS_1,
       };
-      this.spaceManagerResolve('getSyncAllStats', syncStats);
+      this.spaceManagerResolve('getImportAllStats', importStats);
       let subject = this.subject({
         space: SPACE_ONLY_IMPORT,
       });
 
-      subject.fetchAllSyncStats();
+      subject.fetchAllImportStats();
 
       wait().then(() => {
         expect(subject.get('statsFrozen')).to.be.false;

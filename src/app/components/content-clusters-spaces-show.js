@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
-import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { get, computed } from '@ember/object';
@@ -10,7 +10,7 @@ import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 
 export default Component.extend(
-  SpaceItemSyncStats,
+  SpaceItemImportStats,
   SpaceTabs,
   I18n,
   GlobalActions,
@@ -38,7 +38,7 @@ export default Component.extend(
     /**
      * If true, this space has storage import enabled
      *
-     * That means, the view should be enriched with sync statuses and statistics
+     * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
     _importActive: reads('space.importEnabled'),

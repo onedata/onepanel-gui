@@ -1,12 +1,12 @@
 import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import SpaceSyncStatsMockMixin from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
+import StorageImportStatsMockMixin from 'ember-onedata-onepanel-server/mixins/storage-import-stats-mock';
 
-describe('Unit | Mixin | space sync stats mock', function () {
+describe('Unit | Mixin | storage import stats mock', function () {
   it('generates mock stats on init', function () {
-    let SpaceSyncStatsMockObject = EmberObject.extend(SpaceSyncStatsMockMixin);
-    let subject = SpaceSyncStatsMockObject.create();
+    let StorageImportStatsMockObject = EmberObject.extend(StorageImportStatsMockMixin);
+    let subject = StorageImportStatsMockObject.create();
 
     let allStats = subject.get('allStats');
 

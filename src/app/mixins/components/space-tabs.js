@@ -25,13 +25,13 @@ export default Mixin.create({
   tabOverviewId: 'overview',
   tabOverviewHint: computedTabHint('overview'),
 
-  tabSyncClass: conditional(
+  tabImportClass: conditional(
     'space.importEnabled',
     raw(enabledClass),
     raw(disabledClass)
   ),
-  tabSyncId: 'sync',
-  tabSyncHint: computedTabHint('sync'),
+  tabImportId: 'import',
+  tabImportHint: computedTabHint('import'),
 
   tabPopularClass: enabledClass,
   tabPopularId: 'popular',
@@ -61,7 +61,7 @@ export default Mixin.create({
 
 /**
  * Create computed property that will return translated hint for tab
- * @param {string} tab one of: sync, popular, clean
+ * @param {string} tab one of: import, popular, clean
  * @returns {Ember.ComputedProperty}
  */
 function computedTabHint(tab) {

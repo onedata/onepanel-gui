@@ -6,7 +6,7 @@ export default {
         enabled: 'Show basic information and support of the space',
       },
     },
-    sync: {
+    import: {
       title: 'Storage import',
       hints: {
         enabled: 'Show statistics of storage import for this space',

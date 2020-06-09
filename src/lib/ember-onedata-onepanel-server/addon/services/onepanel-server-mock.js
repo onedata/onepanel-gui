@@ -22,7 +22,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'onedata-gui-common/mixins/plainable';
-import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
+import StorageImportStatsMock from 'ember-onedata-onepanel-server/mixins/storage-import-stats-mock';
 import SpaceCleaningMock from 'ember-onedata-onepanel-server/mixins/space-cleaning-mock';
 import SpaceCleaningReportsMock from 'ember-onedata-onepanel-server/mixins/space-cleaning-reports-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
@@ -233,7 +233,7 @@ function getCurrentProviderClusterFromUrl() {
 }
 
 export default OnepanelServerBase.extend(
-  SpaceSyncStatsMock,
+  StorageImportStatsMock,
   SpaceCleaningMock,
   SpaceCleaningReportsMock, {
     cookies: service(),
@@ -963,7 +963,7 @@ export default OnepanelServerBase.extend(
       return {
         success: (spaceId, { period, metrics }) => {
           let space = _.find(this.get('__spaces', s => s.id === spaceId));
-          return this.generateSpaceSyncStats(space, period, metrics);
+          return this.generateStorageImportStats(space, period, metrics);
         },
       };
     }),

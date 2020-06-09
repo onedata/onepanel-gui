@@ -11,21 +11,21 @@ describe('Integration | Component | space storage import', function () {
     integration: true,
   });
 
-  it('invokes syncIntervalChanged injected function on syncInterval change',
+  it('invokes importIntervalChanged injected function on importInterval change',
     function (done) {
-      const syncIntervalChanged = sinon.spy();
-      this.on('syncIntervalChanged', syncIntervalChanged);
+      const importIntervalChanged = sinon.spy();
+      this.on('importIntervalChanged', importIntervalChanged);
 
       this.render(hbs `{{space-storage-import
         importEnabled=true
-        syncIntervalChanged=(action "syncIntervalChanged")
+        importIntervalChanged=(action "importIntervalChanged")
       }}`);
 
-      this.$('.btn-sync-interval-day').click();
+      this.$('.btn-import-interval-day').click();
 
       wait().then(() => {
-        expect(syncIntervalChanged).to.be.calledOnce;
-        expect(syncIntervalChanged).to.be.calledWith('day');
+        expect(importIntervalChanged).to.be.calledOnce;
+        expect(importIntervalChanged).to.be.calledWith('day');
         done();
       });
     });

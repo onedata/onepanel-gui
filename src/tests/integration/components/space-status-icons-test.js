@@ -22,12 +22,12 @@ describe('Integration | Component | space status icons', function () {
         importEnabled: true,
         updateEnabled: false,
       }));
-      this.set('syncStats', {
+      this.set('importStats', {
         importStatus: 'done',
       });
 
       this.render(hbs `
-      {{space-status-icons space=space syncStats=syncStats}}
+      {{space-status-icons space=space importStats=importStats}}
       `);
 
       expect(this.$('.oneicon-space-import')).to.be.visible;
@@ -40,13 +40,13 @@ describe('Integration | Component | space status icons', function () {
       importEnabled: true,
       updateEnabled: true,
     }));
-    this.set('syncStats', {
+    this.set('importStats', {
       importStatus: 'done',
       updateStatus: 'done',
     });
 
     this.render(hbs `
-    {{space-status-icons space=space syncStats=syncStats}}
+    {{space-status-icons space=space importStats=importStats}}
     `);
 
     expect(this.$('.oneicon-space-import')).to.be.visible;
@@ -60,7 +60,7 @@ describe('Integration | Component | space status icons', function () {
     }));
 
     this.render(hbs `
-    {{space-status-icons space=space syncStats=syncStats}}
+    {{space-status-icons space=space importStats=importStats}}
     `);
     expect(this.$('.space-status-icons')).to.be.hidden;
   });

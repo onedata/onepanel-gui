@@ -28,7 +28,7 @@ export default {
     },
     writeOnce: {
       name: 'Write once',
-      tip: 'Flag determining that synchronized storage will be treated as immutable (only creations and deletions of files on storage will be detected).',
+      tip: 'Flag determining that imported storage will be treated as immutable (only creations and deletions of files on storage will be detected).',
     },
     deleteEnable: {
       name: 'Delete enabled',

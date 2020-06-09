@@ -1,8 +1,8 @@
 /**
- * A base component for all space import/update sync statistics charts.
+ * A base component for all space import/update import statistics charts.
  * Needs timeStats (chart data), lastUpdateTime and timeUnit to be injected.
  *
- * @module components/space-sync-chart-base
+ * @module components/storage-import-chart-base
  * @author Michal Borzecki, Jakub Liput
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -15,10 +15,10 @@ import { computed } from '@ember/object';
 import moment from 'moment';
 import _ from 'lodash';
 
-import SpaceSyncChartDataValidator from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';
+import StorageImportChartDataValidator from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
-export default Component.extend(SpaceSyncChartDataValidator, {
-  classNames: ['space-sync-chart-base'],
+export default Component.extend(StorageImportChartDataValidator, {
+  classNames: ['storage-import-chart-base'],
 
   /**
    * To inject.

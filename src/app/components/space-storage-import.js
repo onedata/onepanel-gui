@@ -11,7 +11,7 @@
 import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { bool } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {
@@ -21,43 +21,43 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.spaceStorageImport',
 
   /**
-   * Callback to notify change of `syncInterval`
-   * Invoked with `syncInterval` arg (see `syncIterval` property)
+   * Callback to notify change of `importInterval`
+   * Invoked with `importInterval` arg (see `importIterval` property)
    * @virtual
    * @type {Function}
    */
-  syncIntervalChanged: notImplementedWarn,
+  importIntervalChanged: notImplementedWarn,
 
   /**
-   * See `mixins/components/space-item-sync-stats`
+   * See `mixins/components/space-item-import-stats`
    * @virtual 
    * @type {string}
    */
-  syncInterval: undefined,
+  importInterval: undefined,
 
   /**
-   * See `mixins/components/space-item-sync-stats`
+   * See `mixins/components/space-item-import-stats`
    * @virtual
    * @type {boolean}
    */
   timeStatsLoading: undefined,
 
   /**
-   * See `mixins/components/space-item-sync-stats`
+   * See `mixins/components/space-item-import-stats`
    * @virtual
    * @type {boolean}
    */
   statsFrozen: undefined,
 
   /**
-   * See `mixins/components/space-item-sync-stats`
+   * See `mixins/components/space-item-import-stats`
    * @virtual
    * @type {string}
    */
   timeStatsError: undefined,
 
   /**
-   * See `mixins/components/space-item-sync-stats`
+   * See `mixins/components/space-item-import-stats`
    * @virtual
    * @type {Array<object>}
    */
@@ -72,7 +72,7 @@ export default Component.extend(I18n, {
   /**
    * @type {ComputedProperty<boolean>}
    */
-  importConfigurationOpen: bool('space.importMode'),
+  importConfigurationOpen: reads('space.importEnabled'),
 
   actions: {
     modifySpace(...args) {
