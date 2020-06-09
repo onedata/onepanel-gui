@@ -17,6 +17,11 @@ export default {
   },
   lumaFeed: {
     name: 'LUMA feed',
-    tip: 'Determines the way in which Local User Mapping database (LUMA DB) will be filled.<br><strong>auto</strong> - User mappings will be determined by automatic algorithm<br><strong>local</strong> - User mappings should be directly set in LUMA DB by space administrator using REST API.<br><strong>external</strong> - External, 3rd party service will be queried for user mappings.',
+    tip: `
+      <p class="text-center">Determines the way in which Local User Mapping database (LUMA DB) will be filled.</p>
+      <p class="text-left"><strong>auto</strong> ‐ User mappings will be determined by automatic algorithm.</p>
+      <p class="text-left"><strong>local</strong> ‐ User mappings should be directly set in LUMA DB by space administrator using REST API.</p>
+      <p class="text-left"><strong>external</strong> ‐ External, 3rd party service will be queried for user mappings.</p>
+    `,
   },
 };
