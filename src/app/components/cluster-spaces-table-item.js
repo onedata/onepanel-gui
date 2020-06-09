@@ -16,8 +16,6 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-throw';
 
-const I18N_PREFIX = 'components.clusterSpacesTableItem.';
-
 export default Component.extend(
   SpaceItemSyncStats,
   createDataProxyMixin('filePopularityConfiguration'),
@@ -29,7 +27,6 @@ export default Component.extend(
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
-
     storageManager: service(),
     onepanelServer: service(),
 
@@ -90,18 +87,23 @@ export default Component.extend(
      */
     _importActive: readOnly('space.importEnabled'),
 
-    _importButtonActionName: computed('importConfigurationOpen', function () {
-      return this.get('importConfigurationOpen') ?
-        'endImportConfiguration' :
-        'startImportConfiguration';
-    }),
+    _importButtonActionName: computed(
+      'importConfigurationOpen',
+      function _importButtonActionName() {
+        return this.get('importConfigurationOpen') ?
+          'endImportConfiguration' :
+          'startImportConfiguration';
+      }
+    ),
 
-    _importButtonTip: computed('importConfigurationOpen', function () {
-      let i18n = this.get('i18n');
-      return this.get('importConfigurationOpen') ?
-        i18n.t(I18N_PREFIX + 'cancelSyncConfig') :
-        i18n.t(I18N_PREFIX + 'syncConfig');
-    }),
+    _importButtonTip: computed(
+      'importConfigurationOpen',
+      function _importButtonTip() {
+        return this.get('importConfigurationOpen') ?
+          this.t('cancelSyncConfig') :
+          this.t('syncConfig');
+      }
+    ),
 
     /**
      * Which tab should be shown for space details

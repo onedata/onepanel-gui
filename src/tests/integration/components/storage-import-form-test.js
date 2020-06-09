@@ -5,6 +5,38 @@ import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import { click, fillIn } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
+import _ from 'lodash';
+
+const exampleFormValues = {
+  storageImport: {
+    strategy: 'simple_scan',
+    maxDepth: '10',
+    syncAcl: true,
+  },
+  storageUpdate: {
+    strategy: 'simple_scan',
+    maxDepth: '10',
+    syncAcl: true,
+    scanInterval: '20',
+    writeOnce: true,
+    deleteEnable: true,
+  },
+};
+
+function fillInWholeForm() {
+  return click('.field-generic-importMode-continuous')
+    .then(() => fillIn(
+      '.field-generic-maxDepth',
+      exampleFormValues.storageUpdate.maxDepth
+    ))
+    .then(() => click('.toggle-field-generic-syncAcl'))
+    .then(() => fillIn(
+      '.field-continuous-scanInterval',
+      exampleFormValues.storageUpdate.scanInterval
+    ))
+    .then(() => click('.toggle-field-continuous-writeOnce'))
+    .then(() => click('.toggle-field-continuous-deleteEnable'));
+}
 
 describe('Integration | Component | storage import form', function () {
   setupComponentTest('storage-import-form', {
@@ -83,11 +115,11 @@ describe('Integration | Component | storage import form', function () {
       {{storage-import-form mode="new" valuesChanged=changedSpy}}
     `);
 
-      let correctData;
       return wait()
-        .then(() => fillInWholeForm().then(data => correctData = data))
+        .then(() => fillInWholeForm())
         .then(() => click('.field-generic-importMode-initial'))
         .then(() => {
+          const correctData = _.cloneDeep(exampleFormValues);
           delete correctData.storageUpdate;
           correctData.storageUpdate = {
             strategy: 'no_update',
@@ -110,9 +142,9 @@ describe('Integration | Component | storage import form', function () {
 
       return wait()
         .then(() => fillInWholeForm())
-        .then(correctData => {
+        .then(() => {
           const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
-          expect(lastValues).to.deep.equal(correctData);
+          expect(lastValues).to.deep.equal(exampleFormValues);
           expect(lastValuesAreValid).to.be.true;
         });
     }
@@ -127,11 +159,11 @@ describe('Integration | Component | storage import form', function () {
         {{storage-import-form mode="edit" submit=submitSpy}}
       `);
 
-      let correctData;
       return wait()
-        .then(() => fillInWholeForm().then(data => correctData = data))
+        .then(() => fillInWholeForm())
         .then(() => click('.submit-import'))
         .then(() => {
+          const correctData = _.cloneDeep(exampleFormValues);
           delete correctData.storageImport;
           expect(submitSpy.lastCall.args[0]).to.deep.equal(correctData);
         });
@@ -193,28 +225,4 @@ function checkContinuousFieldsNotExist(testCase) {
   continuousFieldsSelectors.forEach(selector =>
     expect(testCase.$(selector)).to.not.exist
   );
-}
-
-function fillInWholeForm() {
-  return click('.field-generic-importMode-continuous')
-    .then(() => fillIn('.field-generic-maxDepth', '10'))
-    .then(() => click('.toggle-field-generic-syncAcl'))
-    .then(() => fillIn('.field-continuous-scanInterval', '20'))
-    .then(() => click('.toggle-field-continuous-writeOnce'))
-    .then(() => click('.toggle-field-continuous-deleteEnable'))
-    .then(() => ({
-      storageImport: {
-        strategy: 'simple_scan',
-        maxDepth: '10',
-        syncAcl: true,
-      },
-      storageUpdate: {
-        strategy: 'simple_scan',
-        maxDepth: '10',
-        syncAcl: true,
-        scanInterval: '20',
-        writeOnce: true,
-        deleteEnable: true,
-      },
-    }));
 }

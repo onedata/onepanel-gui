@@ -11,8 +11,7 @@
 import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { computed } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { bool } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {
@@ -70,26 +69,20 @@ export default Component.extend(I18n, {
    */
   space: undefined,
 
-  importConfigurationOpen: reads('importEnabled'),
-
   /**
-   * True if import is enabled in configuration
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
-  importEnabled: computed(
-    'space.importConfiguration.strategy',
-    function importEnabled() {
-      const strategy = this.get('space.importConfiguration.strategy');
-      return !!strategy && strategy !== 'no_import';
-    }
-  ),
+  importConfigurationOpen: bool('space.importMode'),
 
   actions: {
     modifySpace(...args) {
-      return this.get('modifySpace')(...args)
-        .then(() => this.get('eventsBus').trigger(
-          this.elementId + '-import-config:close'
-        ));
+      const {
+        modifySpace,
+        eventsBus,
+        elementId,
+      } = this.getProperties('modifySpace', 'eventsBus', 'elementId');
+      return modifySpace(...args)
+        .then(() => eventsBus.trigger(`${elementId}-import-config:close`));
     },
   },
 });

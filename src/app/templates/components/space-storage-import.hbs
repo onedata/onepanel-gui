@@ -12,7 +12,16 @@
           {{tt this (concat "storageImport.generic.importMode.options." space.importMode ".name")}}
         {{/listItem.header}}
         {{#listItem.content}}
-          {{partial "components/space-storage-import/configuration-form"}}
+          <div class="row content-row row-medium{{if (not importConfigurationOpen) " row-hidden"}}">
+            <h1 class="form-title">{{tt this "syncFormHeader"}}</h1>
+            {{storage-import-form
+              class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
+              defaultValues=space
+              mode="edit"
+              isFormOpened=importConfigurationOpen
+              submit=(action "modifySpace")
+            }}
+          </div>
         {{/listItem.content}}
       {{/list.item}}
     {{/one-collapsible-list}}

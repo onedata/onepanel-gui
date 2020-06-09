@@ -6,7 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
-* VFS-6330 Changed look of the storage import form
+* VFS-6330 Renamed "space synchronization" to "storage import", removed storage import strategies
 * VFS-6381 Fixed build process
 * VFS-6343 Changed cease support modal to Onezone version
 * VFS-6323 Updated common libs

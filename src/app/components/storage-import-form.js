@@ -46,7 +46,7 @@ import { next } from '@ember/runloop';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
-const GENERIC_FIELDS = [{
+const genericFields = [{
     name: 'importMode',
     type: 'radio-group',
     options: [{
@@ -69,7 +69,7 @@ const GENERIC_FIELDS = [{
   },
 ];
 
-const CONTINUOUS_FIELDS = [{
+const continuousFields = [{
     name: 'scanInterval',
     type: 'number',
     gt: 0,
@@ -88,11 +88,6 @@ const CONTINUOUS_FIELDS = [{
   },
 ];
 
-export const fields = {
-  generic: GENERIC_FIELDS,
-  continuous: CONTINUOUS_FIELDS,
-};
-
 function createValidations(genericFields, continuousFields) {
   let validations = {};
   genericFields.forEach(field => {
@@ -107,9 +102,14 @@ function createValidations(genericFields, continuousFields) {
 }
 
 const Validations = buildValidations(createValidations(
-  GENERIC_FIELDS,
-  CONTINUOUS_FIELDS
+  genericFields,
+  continuousFields
 ));
+
+export const fields = {
+  generic: genericFields,
+  continuous: continuousFields,
+};
 
 export default OneForm.extend(I18n, Validations, {
   classNames: ['storage-import-form'],
@@ -189,7 +189,7 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {ComputedProperty<Array<FieldType>>}
    */
-  genericFields: computed(() => GENERIC_FIELDS.map(field =>
+  genericFields: computed(() => genericFields.map(field =>
     EmberObject.create(field, {
       name: `generic.${field.name}`,
     })
@@ -198,7 +198,7 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {ComputedProperty<Array<FieldType>>}
    */
-  continuousFields: computed(() => CONTINUOUS_FIELDS.map(field =>
+  continuousFields: computed(() => continuousFields.map(field =>
     EmberObject.create(field, {
       name: `continuous.${field.name}`,
     })
