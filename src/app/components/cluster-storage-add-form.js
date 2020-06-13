@@ -10,7 +10,7 @@
 
 import { run } from '@ember/runloop';
 
-import EmberObject, { observer, computed, set, get } from '@ember/object';
+import EmberObject, { observer, computed, set, get, setProperties } from '@ember/object';
 import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { invoke } from 'ember-invoke-action';
@@ -105,6 +105,10 @@ const storagePathTypeDefaults = {
   swift: 'flat',
   webdav: 'canonical',
 };
+
+const storagesWithImport = [
+  'posix',
+];
 
 export default OneForm.extend(I18n, Validations, {
   classNames: ['cluster-storage-add-form'],
@@ -454,6 +458,17 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  /**
+   * @returns {ComputedProperty<boolean>}
+   */
+  storageSupportsImport: computed(
+    'selectedStorageType.id',
+    function storageSupportsImport() {
+      const storageTypeName = this.get('selectedStorageType.id');
+      return storagesWithImport.includes(storageTypeName);
+    }
+  ),
+
   osdsNumberObserver: observer(
     'cephOsdsProxy.length',
     function osdsNumberObserver() {
@@ -482,26 +497,31 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
-  storageProvidesSupportObserver: observer(
+  importedStorageDisabler: observer(
     'storageProvidesSupport',
-    function storageProvidesSupportObserver() {
-      const importedStorageEditField =
-        this.getField('generic_editor.importedStorage');
-      const storageProvidesSupport = this.get('storageProvidesSupport');
-      const defaultImportedStorageValue = this.get('storage.importedStorage');
-      const changedImportedStorageValue =
-        this.get('allFieldsValues.generic_editor.importedStorage');
+    'storageSupportsImport',
+    function importedStorageDisabler() {
+      const {
+        storageProvidesSupport,
+        storageSupportsImport,
+      } = this.getProperties('storageProvidesSupport', 'storageSupportsImport');
 
-      set(importedStorageEditField, 'disabled', storageProvidesSupport);
-
-      // Reset importedStorage value when storageProvidesSupport changed during edition 
-      if (storageProvidesSupport &&
-        changedImportedStorageValue !== defaultImportedStorageValue
-      ) {
-        this.send(
-          'inputChanged',
-          'generic_editor.importedStorage',
-          defaultImportedStorageValue
+      this.enableImportedStorageField(storageSupportsImport, 'generic');
+      this.enableImportedStorageField(
+        !storageProvidesSupport && storageSupportsImport,
+        'generic_editor',
+        storageSupportsImport ?
+        (storageProvidesSupport ? 'hasSupport' : 'enabled') : 'disabled'
+      );
+      if (!storageSupportsImport) {
+        this.set('allFieldsValues.generic.importedStorage', false);
+      }
+      if (storageProvidesSupport) {
+        const defaultImportedStorageEditValue =
+          this.get('storage.importedStorage') || false;
+        this.set(
+          'allFieldsValues.generic_editor.importedStorage',
+          defaultImportedStorageEditValue
         );
       }
     }
@@ -564,7 +584,7 @@ export default OneForm.extend(I18n, Validations, {
     }
     this.fetchCephOsds();
     this.osdsNumberObserver();
-    this.storageProvidesSupportObserver();
+    this.importedStorageDisabler();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
@@ -829,6 +849,25 @@ export default OneForm.extend(I18n, Validations, {
     if (isVisible && !inEditionMode) {
       this.resetFormValues(['luma']);
     }
+  },
+
+  /**
+   * @param {boolean} enable 
+   * @param {String} prefix 
+   * @param {String} [tipName]
+   */
+  enableImportedStorageField(enable, prefix, tipName = undefined) {
+    const importedStorageField =
+      this.getField(`${prefix}.importedStorage`);
+    if (!tipName) {
+      tipName = enable ? 'enabled' : 'disabled';
+    }
+    setProperties(importedStorageField, {
+      disabled: !enable,
+      tip: this.t(
+        `generic.importedStorage.tip.${tipName}`
+      ),
+    });
   },
 
   actions: {

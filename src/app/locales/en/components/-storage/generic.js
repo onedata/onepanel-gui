@@ -1,3 +1,6 @@
+const importedStorageEnabledTip =
+  'Indicates that the existing data on this storage is intended for import. Actual data import will happen when the storage is used to support a space. Only one space can be supported by such storage.';
+
 export default {
   name: { name: 'Storage name' },
   storagePathType: {
@@ -9,7 +12,11 @@ export default {
   },
   importedStorage: {
     name: 'Imported storage',
-    tip: 'Indicates that the existing data on this storage is intended for import. Actual data import will happen when the storage is used to support a space. Only one space can be supported by such storage.',
+    tip: {
+      enabled: importedStorageEnabledTip,
+      disabled: 'Choosen storage type does not support data import.',
+      hasSupport: `${importedStorageEnabledTip} <strong>This option is editable only for storages which do not support any space.</strong>`,
+    },
   },
   lumaEnabled: {
     name: 'LUMA enabled',
