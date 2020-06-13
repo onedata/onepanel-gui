@@ -8,8 +8,7 @@
           <div class="item-icon-container">
             {{one-icon class="item-icon" icon="settings"}}
           </div>
-          <strong>{{tt this "storageImport.generic.importMode.name"}}:</strong>
-          {{tt this (concat "storageImport.generic.importMode.options." space.importMode ".name")}}
+          <strong>{{tt this "configurationCollapse"}}</strong>
         {{/listItem.header}}
         {{#listItem.content}}
           <div class="row content-row row-medium{{if (not importConfigurationOpen) " row-hidden"}}">
@@ -48,7 +47,7 @@
       {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
     {{/bg.button}}
   {{/bs-button-group}}
-  {{#if statsFrozen}}
+  {{!-- {{#if statsFrozen}}
     <div class="tab-info-floating one-info-label">
       <span>
         <label>{{tt this "importDone"}}</label>
@@ -59,7 +58,7 @@
         placement="bottom"
       }}
     </div>
-  {{/if}}
+  {{/if}} --}}
   
   {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
     <div class="col-xs-12 item-table-cell item-table-content-cell">

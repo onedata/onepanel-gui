@@ -2,7 +2,7 @@ import storageImport from './-space/storage-import';
 
 export default {
   storageImport,
-  storageImportMode: 'Storage import mode',
+  storageImportSection: 'Storage import',
   id: 'Id',
   name: 'Name',
   storage: 'Assigned storage',

@@ -62,15 +62,26 @@ export default Component.extend(I18n, spaceItemSupports, {
     const {
       storageImport,
       storageUpdate,
-      importMode,
-    } = getProperties(space, 'storageImport', 'storageUpdate', 'importMode');
-    if (!importMode) {
+      importEnabled,
+      continuousImportEnabled,
+    } = getProperties(
+      space,
+      'storageImport',
+      'storageUpdate',
+      'importEnabled',
+      'continuousImportEnabled'
+    );
+    if (!importEnabled) {
       return [];
     } else {
-      const importConfig = importMode === 'continuous' ?
-        Object.assign({}, storageImport, storageUpdate) : storageImport;
+      const importConfig = Object.assign({},
+        storageImport,
+        continuousImportEnabled ? storageUpdate : {}, {
+          continuousImport: continuousImportEnabled,
+        }
+      );
       const properties = [];
-      (importMode === 'continuous' ? ['generic', 'continuous'] : ['generic'])
+      (continuousImportEnabled ? ['generic', 'continuous'] : ['generic'])
       .forEach(namespace => {
         const newProps = importFields[namespace]
           .mapBy('name')

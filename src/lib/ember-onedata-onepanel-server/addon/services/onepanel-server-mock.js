@@ -552,12 +552,7 @@ export default OnepanelServerBase.extend(
                 syncAcl: true,
               },
               storageUpdate: {
-                strategy: 'simple_scan',
-                maxDepth: 3,
-                scanInterval: 1000,
-                writeOnce: false,
-                deleteEnable: false,
-                syncAcl: true,
+                strategy: 'no_update',
               },
               supportingProviders: _genSupportingProviders(),
             });

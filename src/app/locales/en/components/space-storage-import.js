@@ -2,6 +2,7 @@ import storageImport from './-space/storage-import';
 
 export default {
   storageImport,
+  configurationCollapse: 'Storage import configuration',
   minute: 'Minute',
   hour: 'Hour',
   day: 'Day',

@@ -1,17 +1,5 @@
 export default {
   generic: {
-    importMode: {
-      name: 'Import mode',
-      tip: 'Indicates if the data on the storage should be imported into the space once (<strong>initial</strong>) or periodically (<strong>continuous</strong>). Only <strong>continuous</strong> mode guarantees data integrity if direct modifications on the storage are to be made during the space lifecycle.',
-      options: {
-        initial: {
-          name: 'initial',
-        },
-        continuous: {
-          name: 'continuous',
-        },
-      },
-    },
     maxDepth: {
       name: 'Max depth',
       tip: 'Maximum depth of filesystem tree that will be traversed during storage import. By default it is unlimited.',
@@ -19,6 +7,10 @@ export default {
     syncAcl: {
       name: 'Synchronize ACL',
       tip: 'Enables import of NFSv4 ACLs.',
+    },
+    continuousImport: {
+      name: 'Continuous import',
+      tip: 'Indicates if the data on the storage should be imported into the space periodically. Only continuous import guarantees data integrity if direct modifications on the storage are to be made during the space lifecycle.',
     },
   },
   continuous: {

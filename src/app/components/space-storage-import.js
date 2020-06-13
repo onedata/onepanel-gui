@@ -45,13 +45,6 @@ export default Component.extend(I18n, {
   /**
    * See `mixins/components/space-item-import-stats`
    * @virtual
-   * @type {boolean}
-   */
-  statsFrozen: undefined,
-
-  /**
-   * See `mixins/components/space-item-import-stats`
-   * @virtual
    * @type {string}
    */
   timeStatsError: undefined,

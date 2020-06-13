@@ -24,18 +24,13 @@ const exampleFormValues = {
 };
 
 function fillInWholeForm() {
-  return click('.field-generic-importMode-continuous')
-    .then(() => fillIn(
-      '.field-generic-maxDepth',
-      exampleFormValues.storageUpdate.maxDepth
-    ))
+  return fillIn('.field-generic-maxDepth', exampleFormValues.storageUpdate.maxDepth)
     .then(() => click('.toggle-field-generic-syncAcl'))
     .then(() => fillIn(
       '.field-continuous-scanInterval',
       exampleFormValues.storageUpdate.scanInterval
     ))
-    .then(() => click('.toggle-field-continuous-writeOnce'))
-    .then(() => click('.toggle-field-continuous-deleteEnable'));
+    .then(() => click('.toggle-field-continuous-writeOnce'));
 }
 
 describe('Integration | Component | storage import form', function () {
@@ -54,11 +49,13 @@ describe('Integration | Component | storage import form', function () {
   });
 
   it(
-    'does not show any continuous import fields if import mode is initial',
+    'does not show any continuous import fields if continuous import is disabled',
     function () {
       this.render(hbs `{{storage-import-form}}`);
 
-      return wait().then(() => checkContinuousFieldsNotExist(this));
+      return wait()
+        .then(() => click('.toggle-field-generic-continuousImport'))
+        .then(() => checkContinuousFieldsNotExist(this));
     }
   );
 
@@ -86,13 +83,12 @@ describe('Integration | Component | storage import form', function () {
     }
   );
 
-  it('shows continuous import fields on import mode change', function () {
+  it('shows continuous import fields if continuous import is enabled', function () {
     this.render(hbs `
       {{storage-import-form}}
     `);
 
     return wait()
-      .then(() => click('.field-generic-importMode-continuous'))
       .then(() => checkContinuousFieldsExist(this));
   });
 
@@ -117,7 +113,7 @@ describe('Integration | Component | storage import form', function () {
 
       return wait()
         .then(() => fillInWholeForm())
-        .then(() => click('.field-generic-importMode-initial'))
+        .then(() => click('.toggle-field-generic-continuousImport'))
         .then(() => {
           const correctData = _.cloneDeep(exampleFormValues);
           delete correctData.storageUpdate;
@@ -151,7 +147,31 @@ describe('Integration | Component | storage import form', function () {
   );
 
   it(
-    'does not send storageImport section in "edit" mode ("continuous" import)',
+    'fills in "continuous"-only fields with default values after "continuous" mode turned on in "edit" mode',
+    function () {
+      const submitSpy = sinon.spy();
+      this.setProperties({
+        submitSpy,
+        defaultValues: {},
+      });
+      this.render(hbs `
+        {{storage-import-form mode="edit" submit=submitSpy defaultValues=defaultValues}}
+      `);
+
+      return wait()
+        .then(() => click('.toggle-field-generic-continuousImport'))
+        .then(() => {
+          expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
+          expect(this.$('.toggle-field-continuous-writeOnce'))
+            .to.not.have.class('checked');
+          expect(this.$('.toggle-field-continuous-deleteEnable'))
+            .to.have.class('checked');
+        });
+    }
+  );
+
+  it(
+    'does not send storageImport request section in "edit" mode ("continuous" import)',
     function () {
       const submitSpy = sinon.spy();
       this.set('submitSpy', submitSpy);
@@ -195,8 +215,8 @@ describe('Integration | Component | storage import form', function () {
 
       return wait()
         .then(() => {
-          expect(this.$('.field-generic-importMode-continuous'))
-            .to.have.prop('checked', true);
+          expect(this.$('.toggle-field-generic-continuousImport'))
+            .to.have.class('checked');
           expect(this.$('.field-generic-maxDepth').val()).to.equal('11');
           expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
           expect(this.$('.field-continuous-scanInterval')).to.have.value('20');

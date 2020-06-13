@@ -17,14 +17,9 @@
         <span class="one-label space-provider-storage">{{_storage.name}}</span>
       {{/promise-proxy-container}}
     </div>
-    {{#if space.importMode}}
+    {{#if space.importEnabled}}
       <div class="row content-row storage-import">
-        <strong class="property-label">{{tt this "storageImportMode"}}:</strong>
-        <span class="one-label storage-import-mode">
-          {{tt this (
-            concat "storageImport.generic.importMode.options." space.importMode ".name"
-          )}}
-        </span>
+        <strong class="property-label">{{tt this "storageImportSection"}}:</strong>
         {{#each importProperties as |property|}}
           <div class="row content-row nested-row">
             <strong class="property-label">{{property.label}}:</strong>

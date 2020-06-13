@@ -11,7 +11,6 @@ import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
 import { computed, observer, get } from '@ember/object';
 import { readOnly, equal, not } from '@ember/object/computed';
-import { isEmpty } from '@ember/utils';
 import _ from 'lodash';
 import moment from 'moment';
 import Looper from 'onedata-gui-common/utils/looper';
@@ -136,14 +135,6 @@ export default Mixin.create({
    */
   timeStatsLoading: true,
 
-  /**
-   * If true, statistics are not updated live, but only archival ones are
-   * presented. There should be also clear information about that.
-   * It is set to true on full stats update when import is done (without update).
-   * @type {boolean}
-   */
-  statsFrozen: false,
-
   init() {
     this._super(...arguments);
 
@@ -238,46 +229,23 @@ export default Mixin.create({
   },
 
   fetchAllImportStats() {
-    const importInterval = this.get('importInterval');
+    const {
+      importInterval,
+      spaceManager,
+    } = this.getProperties('importInterval', 'spaceManager');
+    const spaceId = this.get('space.id');
 
-    const importStatsPromise =
-      this.get('spaceManager').getImportAllStats(
-        this.get('space.id'),
-        importInterval
-      );
-
-    return importStatsPromise.then(newImportStats => {
-        let freezeStats = false;
-        if (newImportStats &&
-          this.get('space.updateEnabled') === false &&
-          !isEmpty(get(newImportStats, 'stats')) &&
-          this.get('space.importEnabled') &&
-          get(newImportStats, 'importStatus') === 'done') {
-          freezeStats = true;
-          safeExec(this, 'set', 'statsFrozen', true);
-        }
-
-        this.setProperties({
-          lastStatsUpdateTime: Date.now(),
-          _importStats: newImportStats,
-          timeStatsError: null,
-        });
-
-        return {
-          freezeStats,
-        };
-      })
-      .catch(error => {
-        this.setProperties({
-          timeStatsError: error,
-        });
-      })
-      .finally(() => {
-        this.setProperties({
-          timeStatsLoading: false,
-          _lastImportStatusRefresh: Date.now(),
-        });
-      });
+    return spaceManager.getImportAllStats(spaceId, importInterval)
+      .then(newImportStats => safeExec(this, () => this.setProperties({
+        lastStatsUpdateTime: Date.now(),
+        _importStats: newImportStats,
+        timeStatsError: null,
+      })))
+      .catch(error => safeExec(this, () => this.set('timeStatsError', error)))
+      .finally(() => safeExec(this, () => this.setProperties({
+        timeStatsLoading: false,
+        _lastImportStatusRefresh: Date.now(),
+      })));
   },
 
   /**
@@ -290,22 +258,10 @@ export default Mixin.create({
     return selectedTab && selectedTab === 'import';
   }),
 
-  updateReenabled: observer('space.storageUpdate.strategy', function updateReenabled() {
-    if (this.get('space.storageUpdate.strategy') !== 'no_update') {
-      this.fetchAllImportStats()
-        .then(({ freezeStats }) => {
-          if (!freezeStats) {
-            safeExec(this, 'set', 'statsFrozen', false);
-          }
-        });
-    }
-  }),
-
   reconfigureImportWatchers: observer(
     '_importActive',
     'importInterval',
     '_importChartStatsWatcher',
-    'statsFrozen',
     'importTabActive',
     function () {
       const {
@@ -313,7 +269,6 @@ export default Mixin.create({
         importInterval,
         _importChartStatsWatcher,
         _importStatusWatcher,
-        statsFrozen,
         importStatusRefreshTime,
         importTabActive,
       } = this.getProperties(
@@ -321,7 +276,6 @@ export default Mixin.create({
         'importInterval',
         '_importChartStatsWatcher',
         '_importStatusWatcher',
-        'statsFrozen',
         'importStatusRefreshTime',
         'importTabActive',
       );
@@ -330,7 +284,7 @@ export default Mixin.create({
         _importStatusWatcher.set('interval', importStatusRefreshTime);
       }
 
-      if (importTabActive && _importActive && !statsFrozen) {
+      if (importTabActive && _importActive) {
         _importChartStatsWatcher.set('interval', WATCHER_INTERVAL[importInterval]);
       } else {
         _importChartStatsWatcher.stop();
@@ -351,7 +305,6 @@ export default Mixin.create({
           _prevImportInterval: currentimportInterval,
           timeStatsLoading: true,
           timeStatsError: null,
-          statsFrozen: false,
         });
       }
     },

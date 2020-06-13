@@ -277,12 +277,12 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => click('.field-generic-importMode-continuous'))
+      .then(() => click('.toggle-field-generic-continuousImport'))
       .then(() => new SupportSpaceFormHelper(this.$()).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
         expect(submitStub).to.be.calledWith(
-          sinon.match.hasNested('storageUpdate.strategy', 'simple_scan')
+          sinon.match.hasNested('storageUpdate.strategy', 'no_update')
         );
       });
   });
