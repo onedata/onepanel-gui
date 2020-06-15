@@ -12,6 +12,13 @@
   {{#if showSubmitButton}}
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
+        <p class="small">
+          {{tt this (if
+            continuousImportEnabled
+            "continuousImportEnabledDesc"
+            "continuousImportDisabledDesc"
+          )}}
+        </p>
         {{#one-spin-button
           type="submit"
           class="btn btn-primary submit-import"

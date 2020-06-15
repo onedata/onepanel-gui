@@ -48,45 +48,39 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 const genericFields = [{
-    name: 'maxDepth',
-    type: 'number',
-    gte: 1,
-    optional: true,
-    example: '3',
-  },
-  {
-    name: 'syncAcl',
-    type: 'checkbox',
-    defaultValue: false,
-    optional: true,
-  },
-  {
-    name: 'continuousImport',
-    type: 'checkbox',
-    defaultValue: true,
-  },
-];
+  name: 'continuousImport',
+  type: 'checkbox',
+  defaultValue: true,
+}, {
+  name: 'maxDepth',
+  type: 'number',
+  gte: 1,
+  optional: true,
+  example: '3',
+}, {
+  name: 'syncAcl',
+  type: 'checkbox',
+  defaultValue: false,
+  optional: true,
+}];
 
 const continuousFields = [{
-    name: 'scanInterval',
-    type: 'number',
-    gt: 0,
-    example: '1000',
-    defaultValue: '60',
-  },
-  {
-    name: 'writeOnce',
-    type: 'checkbox',
-    defaultValue: false,
-    optional: true,
-  },
-  {
-    name: 'deleteEnable',
-    type: 'checkbox',
-    defaultValue: true,
-    optional: true,
-  },
-];
+  name: 'scanInterval',
+  type: 'number',
+  gt: 0,
+  example: '1000',
+  defaultValue: '60',
+}, {
+  name: 'writeOnce',
+  type: 'checkbox',
+  defaultValue: false,
+  optional: true,
+}, {
+  name: 'deleteEnable',
+  type: 'checkbox',
+  defaultValue: true,
+  optional: true,
+}];
 
 function createValidations(genericFields, continuousFields) {
   let validations = {};
