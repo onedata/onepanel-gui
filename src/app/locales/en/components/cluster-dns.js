@@ -1,6 +1,6 @@
 export default {
-  documentation: 'documentation',
-  intro: 'This page is intended to check the DNS configuration of your cluster. To learn more, please see the',
+  documentation: 'DNS setup',
+  intro: 'This page is intended to check the DNS configuration of your cluster.',
   onezoneBuiltInServer: {
     header: 'Onezone built-in DNS server',
     useToggleLabel: 'Use built-in DNS server',
@@ -11,7 +11,7 @@ export default {
   subdomainDelegation: {
     header: 'Subdomain Delegation',
     useToggleLabel: 'Enable Subdomain Delegation',
-    text: 'Subdomain Delegation allows issuing subdomains in your domain for the providers registering in this Onezone service (e.g. provider.{{onezoneDomain}}). To learn more, please see the ',
+    text: 'Subdomain Delegation allows issuing subdomains in your domain for the providers registering in this Onezone service (e.g. provider.{{onezoneDomain}}).',
     wrongDomain: 'You need a proper domain to enable Subdomain Delegation.',
     noBuiltInDnsServer: 'Built-in DNS server must be enabled first.',
     togglingSubdomainDelegation: 'toggling subdomain delegation',

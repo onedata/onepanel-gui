@@ -50,9 +50,10 @@
 {{else}}
   <div class="alert alert-warning fade in">
     {{tt this "manualWarning"}}
-    <a href={{one-doc-url "administering_onedata/ssl_certificate_management.html"}}>
-      {{tt this "certDocsLink"}}
-    </a>
+    {{one-doc-see-more
+      linkName=(tt this "certDocsLink")
+      docPath="administering_onedata/ssl_certificate_management.html"
+    }}
   </div>
 {{/if}}
 
