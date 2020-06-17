@@ -3,7 +3,6 @@
   "dependencies": {
     "animate.css": "3.5.2",
     "chartist": "0.11.0", 
-    "spin.js": "2.3.2", 
-    "webui-popover": "1.2.8"
+    "spin.js": "2.3.2"
   }
 }
