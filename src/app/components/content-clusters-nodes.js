@@ -10,12 +10,10 @@
 import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
-import { Promise } from 'rsvp';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { promise } from 'ember-awesome-macros';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
@@ -29,11 +27,18 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
 
   i18nPrefix: 'components.contentClustersNodes',
 
+  clusterHostsInfoProxy: promise.object(computed(function clusterHostsInfoProxy() {
+    return this.get('deploymentManager').getClusterHostsInfo();
+  })),
+
   /**
    * Resolves with EmberArray of ClusterHostInfo.
    * @type {PromiseObject.Array.ClusterHostInfo} hostsProxy
    */
-  hostsProxy: null,
+  hostsProxy: promise.object(computed(function hostsProxy() {
+    return this.get('clusterHostsInfoProxy')
+      .then(({ clusterHostsInfo }) => clusterHostsInfo);
+  })),
 
   /**
    * Hostname of primary cluster manager
@@ -68,30 +73,11 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
 
   init() {
     this._super(...arguments);
-    let resolveClusterHosts, rejectClusterHosts;
 
-    let clusterHostsPromise = new Promise((resolve, reject) => {
-      resolveClusterHosts = resolve;
-      rejectClusterHosts = reject;
-    });
-
-    let gettingHostsInfo = this.get('deploymentManager').getClusterHostsInfo();
-
-    gettingHostsInfo.then(({ mainManagerHostname, clusterHostsInfo }) => {
-      resolveClusterHosts(clusterHostsInfo);
-      this.set('primaryClusterManager', mainManagerHostname);
-    });
-
-    gettingHostsInfo.catch(error => {
-      rejectClusterHosts(error);
-    });
-
-    this.set(
-      'hostsProxy',
-      PromiseObject.create({
-        promise: clusterHostsPromise,
-      })
-    );
+    this.get('clusterHostsInfoProxy')
+      .then(({ mainManagerHostname }) => {
+        this.set('primaryClusterManager', mainManagerHostname);
+      });
   },
 
   /**
