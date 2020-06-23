@@ -32,15 +32,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   })),
 
   /**
-   * Resolves with EmberArray of ClusterHostInfo.
-   * @type {PromiseObject.Array.ClusterHostInfo} hostsProxy
-   */
-  hostsProxy: promise.object(computed(function hostsProxy() {
-    return this.get('clusterHostsInfoProxy')
-      .then(({ clusterHostsInfo }) => clusterHostsInfo);
-  })),
-
-  /**
    * Hostname of primary cluster manager
    * @type {string}
    */
