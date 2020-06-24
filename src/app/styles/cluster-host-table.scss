@@ -6,7 +6,7 @@
     .column {
       // toggles are a little bigger than a normal text 
       // so padding must be smaller to preserve row height
-      padding: $table-cell-padding * 0.75 $table-cell-padding;
+      padding: $table-cell-padding * 0.75 $table-cell-padding * 0.75;
     }
     .toggle-column {
       width: 12%;

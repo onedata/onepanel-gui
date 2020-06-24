@@ -37,6 +37,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         hosts[hostname] = '';
       }
     }
+    return hosts;
   },
 
   _startSetup() {

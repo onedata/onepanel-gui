@@ -16,6 +16,8 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import { promise } from 'ember-awesome-macros';
+import _ from 'lodash';
 
 export default Mixin.create({
   guiUtils: service(),
@@ -51,12 +53,6 @@ export default Mixin.create({
   subdomainDelegation: reads('providerDetailsProxy.content.subdomainDelegation'),
 
   /**
-   * Initialized on init
-   * @type {PromiseObject<Object>}
-   */
-  hostsIpsProxy: undefined,
-
-  /**
    * @type {boolean}
    */
   _hostsIpsFormValid: false,
@@ -82,6 +78,19 @@ export default Mixin.create({
     return promise ? PromiseObject.create({ promise }) : undefined;
   }),
 
+  hostsIpsProxy: promise.object(computed(function hostsIpsProxy() {
+    return this.get('deploymentManager').getClusterIps().then(({ hosts }) => {
+      return this.prepareHosts(_.cloneDeep(hosts));
+    });
+  })),
+
+  init() {
+    this._super(...arguments);
+    this.get('hostsIpsProxy').then(hostsIps => {
+      safeExec(this, 'set', '_ipsFormData', hostsIps);
+    });
+  },
+
   _startSetup() {
     return this.get('deploymentManager')
       .modifyClusterIps(this.get('_ipsFormData'))
@@ -96,26 +105,12 @@ export default Mixin.create({
   },
 
   /**
-   * @virtual optional
-   * @type {Function} `(hosts: Object) => any`
+   * @virtual
+   * @param {Object} hosts
+   * @returns {Object}
    */
-  prepareHosts( /* hosts */ ) {},
-
-  init() {
-    this._super(...arguments);
-    this.set(
-      'hostsIpsProxy',
-      PromiseObject.create({
-        promise: this.get('deploymentManager').getClusterIps()
-          .then(({ hosts }) => {
-            safeExec(this, () => {
-              this.prepareHosts(hosts);
-              this.set('_ipsFormData', hosts);
-            });
-            return hosts;
-          }),
-      }),
-    );
+  prepareHosts(hosts) {
+    return hosts;
   },
 
   actions: {
