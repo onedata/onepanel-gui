@@ -4,7 +4,10 @@
   </h1>
   <p>
     {{tt this "configurationText"}}
-    <a href={{one-doc-url "administering_onedata/file_popularity[the-popularity-function].html"}}>{{tt this "configurationTextDoc"}}</a>.
+    {{one-doc-see-more
+      linkName=(tt this "configurationTextDoc")
+      docPath="administering_onedata/file_popularity[the-popularity-function].html"
+    }}
   </p>
   {{#bs-form class="space-file-popularity-configuration-form" as |form|}}
     {{#each sourceFieldNames as |fieldName|}}

@@ -6,7 +6,7 @@ export default {
   forceRenewCertBtn: 'Force renewal now',
   renewCertBtn: 'Renew certificate',
   toRenewIt: 'To renew it, you can:',
-  toRenewLi1: 'install a new certificate manually (see:',
+  toRenewLi1: 'install a new certificate manually',
   toRenewLi2: 'enable Let\'s Encrypt for automatic renewal',
   autoRenewalLetsEncrypt: 'It will be renewed automatically using the Let\'s Encrypt service. Alternatively, you can force renewal with button below.',
   wrongDomainCommon: 'The installed certificate does not match the domain of the cluster.',

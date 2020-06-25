@@ -68,6 +68,17 @@ export default BasicTable.extend(I18n, {
     this.get('allValidChanged')(this.get('allValid'));
   }),
 
+  observeHosts: observer('hosts.[]', function observeHosts() {
+    const hostsArray = _.map(
+      this.get('hosts'),
+      (ip, hostname) => ({ hostname, ip })
+    );
+
+    this.set('_hostsData', A(
+      _.sortBy(hostsArray, ['hostname'])
+    ));
+  }),
+
   /**
    * We do not want to change `_hostsData` reference because it leads
    * to rows re-render and thus corrupting the basic table.
@@ -91,15 +102,7 @@ export default BasicTable.extend(I18n, {
   init() {
     this._super(...arguments);
 
-    const hostsArray = _.map(
-      this.get('hosts'),
-      (ip, hostname) => ({ hostname, ip })
-    );
-
-    this.set('_hostsData', A(
-      _.sortBy(hostsArray, ['hostname'])
-    ));
-
+    this.observeHosts();
     this.observeAllValid();
   },
 

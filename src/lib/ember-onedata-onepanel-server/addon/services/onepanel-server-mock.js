@@ -1435,10 +1435,13 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onepanel_getConfiguration() {
-      const mockInitializedCluster = this.get('mockInitializedCluster');
+      const {
+        mockStep,
+        isEmergency,
+      } = this.getProperties('mockStep', 'isEmergency');
       return {
         success: () => ({
-          clusterId: this.get('isEmergency') ?
+          clusterId: isEmergency ?
             (
               mockServiceType === 'oneprovider' ?
               providerCluster1.id :
@@ -1446,9 +1449,9 @@ export default OnepanelServerBase.extend(
             ) : this.get('guiContext.guiMode'),
           version: '18.02.0-rc13',
           build: '2100',
-          deployed: mockInitializedCluster,
+          deployed: mockStep.gt(installationStepsMap.deploy),
           isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
-            this.get('mockStep').gt(installationStepsMap.oneproviderRegistration),
+            mockStep.gt(installationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
         }),

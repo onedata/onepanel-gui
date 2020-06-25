@@ -1,7 +1,10 @@
 <div class="row content-row no-border row-dns-intro">
   <div class="inner-row-content">
     {{tt this "intro"}}
-    <a href={{one-doc-url "administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"}}>{{tt this "documentation"}}</a>.
+    {{one-doc-see-more
+      linkName=(tt this "documentation")
+      docPath="administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"
+    }}
   </div>
 </div>
 
@@ -59,7 +62,10 @@
             "subdomainDelegation.text"
             onezoneDomain=domainProxy.content
           }}
-          <a href={{one-doc-url "administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"}}>{{tt this "documentation"}}</a>.
+          {{one-doc-see-more
+            linkName=(tt this "documentation")
+            docPath="administering_onedata/onezone_tutorial[dns-records-setup-for-subdomain-delegation].html"
+          }}
         </div>
         <div class="form-group">
           <div class="row toggle-form-row">
