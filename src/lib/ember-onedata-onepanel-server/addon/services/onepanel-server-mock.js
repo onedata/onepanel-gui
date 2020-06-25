@@ -476,9 +476,10 @@ export default OnepanelServerBase.extend(
             name: 'Some storage',
             importedStorage: true,
             mountPoint: '/mnt/st1',
-            lumaEnabled: true,
-            lumaUrl: 'http://localhost:9090',
-            lumaApiKey: 'some_storage',
+            lumaFeed: 'external',
+            lumaFeedUrl: 'http://localhost:9090',
+            lumaFeedApiKey: 'some_storage',
+            skipStorageDetection: true,
             qosParameters: {
               param1: 'abc',
               param2: 'def',
@@ -856,9 +857,9 @@ export default OnepanelServerBase.extend(
               .filter(key => storage[key] === null)
               .forEach(key => delete storage[key]);
           }
-          if (!get(storage, 'lumaEnabled')) {
-            delete storage['lumaUrl'];
-            delete storage['lumaApiKey'];
+          if (get(storage, 'lumaFeed') !== 'external') {
+            delete storage['lumaFeedUrl'];
+            delete storage['lumaFeedApiKey'];
           }
           return _.assign({ verificationPassed: true }, storage);
         },

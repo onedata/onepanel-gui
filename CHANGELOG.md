@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6352 Changed LUMA-related options in the storage form
 * VFS-6344 Updated common libs
 * VFS-6381 Fixed build process
 * VFS-6343 Changed cease support modal to Onezone version

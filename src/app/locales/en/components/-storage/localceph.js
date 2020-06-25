@@ -10,6 +10,4 @@ export default {
     lteMessage: 'This field must be less than or equal to the number of copies',
   },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
-  readonly: { name: 'Read only' },
 };

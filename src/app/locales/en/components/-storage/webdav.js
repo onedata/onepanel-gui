@@ -21,7 +21,7 @@ export default {
   },
   onedataAccessToken: {
     name: 'Onedata access token',
-    tip: 'When registering storage in "insecure" mode with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
+    tip: 'When registering storage with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
   },
   authorizationHeader: {
     name: 'Authorization header',
@@ -48,9 +48,4 @@ export default {
     tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".  Default: 0775.',
   },
   timeout: { name: 'Timeout [ms]' },
-  insecure: {
-    name: 'Insecure',
-    tip: 'Defines whether storage administrator credentials (username and key) may be used by users without storage accounts to access storage in direct IO mode.',
-  },
-  readonly: { name: 'Read only' },
 };

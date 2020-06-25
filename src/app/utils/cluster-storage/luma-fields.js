@@ -1,11 +1,11 @@
 export default [{
-    name: 'lumaUrl',
+    name: 'lumaFeedUrl',
     type: 'text',
     example: 'http://localhost:9090',
     tip: true,
   },
   {
-    name: 'lumaApiKey',
+    name: 'lumaFeedApiKey',
     type: 'text',
     regex: /^[a-z0-9_]+$/,
     regexAllowBlank: true,
