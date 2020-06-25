@@ -29,6 +29,7 @@
       disabled=showLoadingSpinner}}
     {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
       {{qos-params-editor
+        showHeader=true
         mode=mode
         qosParams=storage.qosParameters
         isFormOpened=isFormOpened
