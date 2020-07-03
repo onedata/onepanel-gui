@@ -472,10 +472,10 @@ export default OnepanelServerBase.extend(
         if (mockStep.gt(installationStepsMap.oneproviderStorageAdd)) {
           let storage1 = {
             id: 'storage1_verylongid',
-            type: 'xrootd',
+            type: 'posix',
             name: 'Some storage',
             importedStorage: true,
-            url: 'root://xd//sds',
+            mountPoint: '/mnt/st1',
             lumaFeed: 'external',
             lumaFeedUrl: 'http://localhost:9090',
             lumaFeedApiKey: 'some_storage',
