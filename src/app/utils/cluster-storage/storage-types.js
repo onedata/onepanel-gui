@@ -16,6 +16,7 @@ import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
 import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-fields';
 import WEBDAV_FIELDS from 'onepanel-gui/utils/cluster-storage/webdav-fields';
+import XROOTD_FIELDS from 'onepanel-gui/utils/cluster-storage/xrootd-fields';
 import NULLDEVICE_FIELDS from 'onepanel-gui/utils/cluster-storage/nulldevice-fields';
 import LOCALCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/localceph-fields';
 
@@ -49,7 +50,13 @@ export default [{
     id: 'webdav',
     name: 'WebDAV',
     fields: WEBDAV_FIELDS,
-  }, {
+  },
+  {
+    id: 'xrootd',
+    name: 'XRootD',
+    fields: XROOTD_FIELDS,
+  },
+  {
     id: 'nulldevice',
     name: 'Null Device',
     fields: NULLDEVICE_FIELDS,

@@ -103,6 +103,7 @@ const storagePathTypeDefaults = {
   localceph: 'flat',
   s3: 'flat',
   swift: 'flat',
+  xrootd: 'canonical',
   webdav: 'canonical',
 };
 
