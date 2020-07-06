@@ -27,6 +27,8 @@ const {
   GlusterfsModify,
   Webdav,
   WebdavModify,
+  XRootD,
+  XRootDModify,
   Nulldevice,
   NulldeviceModify,
 } = Onepanel;
@@ -53,6 +55,8 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? SwiftModify : Swift;
     case 'glusterfs':
       return modify ? GlusterfsModify : Glusterfs;
+    case 'xrootd':
+      return modify ? XRootDModify : XRootD;
     case 'webdav':
       return modify ? WebdavModify : Webdav;
     case 'nulldevice':
