@@ -23,7 +23,7 @@ import _ from 'lodash';
 import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
-import FORM_FIELDS from 'onepanel-gui/utils/support-space-fields';
+import formFields from 'onepanel-gui/utils/support-space-fields';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { and, or, not, isEmpty } from 'ember-awesome-macros';
@@ -31,10 +31,10 @@ import trimToken from 'onedata-gui-common/utils/trim-token';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
-const UNITS = _.find(FORM_FIELDS, { name: 'sizeUnit' }).options;
+const units = _.find(formFields, { name: 'sizeUnit' }).options;
 
 const valdiationsProto = {};
-FORM_FIELDS.forEach(field =>
+formFields.forEach(field =>
   valdiationsProto[`allFieldsValues.main.${field.name}`] =
   createFieldValidator(field)
 );
@@ -59,8 +59,9 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
 
   /**
    * @override
+   * Initialized in init method
    */
-  fields: Object.freeze(FORM_FIELDS),
+  fields: undefined,
 
   /**
    * @virtual
@@ -153,7 +154,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
 
   init() {
     // labels for fields must be declared before OneFormSimple initialization
-    FORM_FIELDS.forEach(f => {
+    formFields.forEach(f => {
       if (!f.label) {
         f.label = this.t(`fields.${f.name}.name`);
       }
@@ -161,7 +162,10 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         f.tip = this.t(`fields.${f.name}.tip`);
       }
     });
+    this.set('fields', _.cloneDeep(formFields));
     this._super(...arguments);
+
+    this.selectedStorageObserver();
 
     if (this.get('allStoragesItemsProxy') == null) {
       this.initStoragesProxy();
@@ -218,10 +222,15 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   },
 
   recalculateImportAvailability() {
+    const fields = this.get('fields');
+    const importField = fields.findBy('name', 'importEnabled');
+    const isImportedStorage = this.get('selectedStorageItem.storage.importedStorage');
+    importField.disabled = !isImportedStorage;
+    this.notifyPropertyChange('fields');
     this.send(
       'inputChanged',
       'main.importEnabled',
-      this.get('selectedStorageItem.storage.importedStorage') || false,
+      isImportedStorage,
     );
   },
 
@@ -253,7 +262,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         'importEnabled'
       );
 
-      size = size * _.find(UNITS, { value: sizeUnit })._multiplicator;
+      size = size * _.find(units, { value: sizeUnit })._multiplicator;
 
       if (!importEnabled) {
         storageImport = {

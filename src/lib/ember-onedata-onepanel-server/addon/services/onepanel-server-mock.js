@@ -470,12 +470,28 @@ export default OnepanelServerBase.extend(
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
         if (mockStep.gt(installationStepsMap.oneproviderStorageAdd)) {
-          let storage1 = {
+          const storage1 = {
             id: 'storage1_verylongid',
             type: 'posix',
             name: 'Some storage',
             importedStorage: true,
             mountPoint: '/mnt/st1',
+            lumaFeed: 'external',
+            lumaFeedUrl: 'http://localhost:9090',
+            lumaFeedApiKey: 'some_storage',
+            skipStorageDetection: true,
+            qosParameters: {
+              param1: 'abc',
+              param2: 'def',
+              param3: '123',
+            },
+          };
+          const storage2 = {
+            id: 'storage2_verylongid',
+            type: 'posix',
+            name: 'Some storage 2',
+            importedStorage: true,
+            mountPoint: '/mnt/st2',
             lumaFeed: 'external',
             lumaFeedUrl: 'http://localhost:9090',
             lumaFeedApiKey: 'some_storage',
@@ -504,7 +520,7 @@ export default OnepanelServerBase.extend(
           };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            ...[storage1, storageCeph, storageCephRados].map(storage =>
+            ...[storage1, storageCeph, storageCephRados, storage2].map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );

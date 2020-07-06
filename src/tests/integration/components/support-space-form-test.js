@@ -175,14 +175,35 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it('renders disabled import toggle', function () {
+  it('renders unchecked disabled import toggle if storage is not imported',
+    function () {
+      this.render(hbs `{{support-space-form}}`);
+
+      return wait()
+        .then(() => {
+          const helper = new SupportSpaceFormHelper(this.$());
+          expect(helper.getToggleInput('main-importEnabled'))
+            .to.have.class('disabled');
+          expect(helper.getToggleInput('main-importEnabled'))
+            .to.not.have.class('checked');
+        });
+    }
+  );
+
+  it('renders checked non-disabled import toggle if storage is imported', function () {
     this.render(hbs `{{support-space-form}}`);
 
     return wait()
+      .then(() => selectStorageWithImport(this))
       .then(() => {
-        const helper = new SupportSpaceFormHelper(this.$());
-        expect(helper.getToggleInput('main-importEnabled'))
-          .to.have.class('disabled');
+        return wait()
+          .then(() => {
+            const helper = new SupportSpaceFormHelper(this.$());
+            expect(helper.getToggleInput('main-importEnabled'))
+              .to.not.have.class('disabled');
+            expect(helper.getToggleInput('main-importEnabled'))
+              .to.have.class('checked');
+          });
       });
   });
 
