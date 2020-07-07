@@ -19,6 +19,5 @@ export default [{
   {
     name: 'importEnabled',
     type: 'checkbox',
-    disabled: true,
   },
 ];
