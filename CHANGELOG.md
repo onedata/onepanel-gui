@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6521 Added HTTP storage helper
 * VFS-6454 Added XRootD storage helper
 * VFS-6498 Allow to change import toggle in space when storage is import-enabled
 * VFS-6437 Updated Onepanel JS client
