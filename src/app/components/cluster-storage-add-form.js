@@ -104,6 +104,7 @@ const storagePathTypeDefaults = {
   s3: 'flat',
   swift: 'flat',
   xrootd: 'canonical',
+  http: 'canonical',
   webdav: 'canonical',
 };
 

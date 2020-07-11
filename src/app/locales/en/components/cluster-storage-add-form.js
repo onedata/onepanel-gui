@@ -9,6 +9,7 @@ import swift from './cluster-storage-add-form/swift';
 import glusterfs from './cluster-storage-add-form/glusterfs';
 import xrootd from './cluster-storage-add-form/xrootd';
 import webdav from './cluster-storage-add-form/webdav';
+import http from './cluster-storage-add-form/http';
 import nulldevice from './cluster-storage-add-form/nulldevice';
 
 export default {
@@ -23,6 +24,7 @@ export default {
   glusterfs,
   xrootd,
   webdav,
+  http,
   nulldevice,
   storageType: 'Type',
   save: 'Save',

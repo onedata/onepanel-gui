@@ -27,6 +27,8 @@ const {
   GlusterfsModify,
   Webdav,
   WebdavModify,
+  HTTP,
+  HTTPModify,
   XRootD,
   XRootDModify,
   Nulldevice,
@@ -59,6 +61,8 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? XRootDModify : XRootD;
     case 'webdav':
       return modify ? WebdavModify : Webdav;
+    case 'http':
+      return modify ? HTTPModify : HTTP;
     case 'nulldevice':
       return modify ? NulldeviceModify : Nulldevice;
     default:
