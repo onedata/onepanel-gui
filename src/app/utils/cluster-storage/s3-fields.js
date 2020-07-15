@@ -22,6 +22,7 @@ export default [{
     type: 'number',
     optional: true,
     tip: true,
+    example: '10485760',
     notEditable: true,
   },
   {
