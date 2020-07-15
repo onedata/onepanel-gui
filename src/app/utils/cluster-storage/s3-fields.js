@@ -38,7 +38,7 @@ export default [{
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
-    example: '0644',
+    example: '0664',
     optional: true,
     regexAllowBlank: true,
   },
