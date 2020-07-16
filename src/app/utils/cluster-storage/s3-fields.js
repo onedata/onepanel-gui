@@ -22,6 +22,7 @@ export default [{
     type: 'number',
     optional: true,
     tip: true,
+    example: '10485760',
     notEditable: true,
   },
   {
@@ -38,7 +39,7 @@ export default [{
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
-    example: '0644',
+    example: '0664',
     optional: true,
     regexAllowBlank: true,
   },

@@ -33,7 +33,7 @@ export default {
   },
   fileMode: {
     name: 'File mode',
-    tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0644". Default: 0664.',
+    tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664". Default: 0664.',
   },
   timeout: { name: 'Timeout [ms]' },
 };
