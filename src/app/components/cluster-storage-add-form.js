@@ -10,7 +10,7 @@
 
 import { run } from '@ember/runloop';
 
-import EmberObject, { observer, computed, set, get } from '@ember/object';
+import EmberObject, { observer, computed, set, get, setProperties } from '@ember/object';
 import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { invoke } from 'ember-invoke-action';
@@ -23,7 +23,6 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
 import { promise, raw, writable } from 'ember-awesome-macros';
-
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
@@ -509,6 +508,25 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  importedStorageObserver: observer(
+    'formValues.generic.importedStorage',
+    function importedStorageObserver() {
+      const isImportedStorage = this.get('formValues.generic.importedStorage');
+      const readonlyField = this.get('allFields').findBy('name', 'generic.readonly');
+      setProperties(readonlyField, {
+        disabled: !isImportedStorage,
+        lockHint: isImportedStorage ? null : this.t('cannotReadonlyNotImported'),
+      });
+      set(readonlyField, 'disabled', !isImportedStorage);
+      if (!isImportedStorage) {
+        this.send(
+          'inputChanged',
+          'generic.readonly',
+          false,
+        );
+      }
+    }),
+
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
     this.setProperties({
@@ -567,6 +585,7 @@ export default OneForm.extend(I18n, Validations, {
     this.fetchCephOsds();
     this.osdsNumberObserver();
     this.storageProvidesSupportObserver();
+    this.importedStorageObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
