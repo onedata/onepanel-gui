@@ -54,6 +54,7 @@ const POSIX_STORAGE = {
   lumaFeedApiKey: 'someapikey',
   timeout: 20,
   skipStorageDetection: true,
+  readonly: true,
   name: 'Some storage',
 };
 
@@ -91,6 +92,7 @@ describe('Integration | Component | cluster storage add form', function () {
       });
       [
         'generic_static-importedStorage',
+        'generic_static-readonly',
         'generic_static-skipStorageDetection',
       ].forEach((fieldName) => {
         expect(
@@ -128,6 +130,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.have.length(3);
         [
           'generic-importedStorage',
+          'generic-readonly',
           'generic-skipStorageDetection',
         ].forEach(fieldName => {
           expect(helper.getToggleInput(fieldName)).to.exist;

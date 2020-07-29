@@ -480,6 +480,7 @@ export default OnepanelServerBase.extend(
             lumaFeedUrl: 'http://localhost:9090',
             lumaFeedApiKey: 'some_storage',
             skipStorageDetection: true,
+            readonly: true,
             qosParameters: {
               param1: 'abc',
               param2: 'def',
@@ -496,6 +497,7 @@ export default OnepanelServerBase.extend(
             lumaFeedUrl: 'http://localhost:9090',
             lumaFeedApiKey: 'some_storage',
             skipStorageDetection: true,
+            readonly: false,
             qosParameters: {
               param1: 'abc',
               param2: 'def',
