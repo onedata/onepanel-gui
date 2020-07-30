@@ -32,5 +32,5 @@ export default {
   cancel: 'Cancel',
   modifyStorageModalHeader: 'Modify storage',
   modifyStorageModalMessage: 'Are you sure you want to modify storage details? Incorrect configuration can make your data unavailable.',
-  cannotReadonlyNotImported: 'Storage cannot be configured as readonly because it is not an imported storage.',
+  cannotReadonlyNotImported: 'This option is available only for imported storages.',
 };

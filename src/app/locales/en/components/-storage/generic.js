@@ -13,7 +13,7 @@ export default {
   },
   readonly: {
     name: 'Readonly',
-    tip: 'Defines whether storage is readonly. If enabled, it is not possible to write, modify or delete data on the storage. Such storage can only be used to import data into space.',
+    tip: 'Defines whether the storage is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage. Such storage can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
   },
   importedStorage: {
     name: 'Imported storage',
