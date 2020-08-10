@@ -516,9 +516,9 @@ export default OneForm.extend(I18n, Validations, {
       if (mode === 'show') {
         return;
       }
-      const group = mode === 'edit' ? 'generic_editor' : 'generic';
-      const isImportedStorage = this.get(`formValues.${group}.importedStorage`);
-      const readonlyField = this.get('allFields').findBy('name', `${group}.readonly`);
+      const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+      const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
+      const readonlyField = this.get('allFields').findBy('name', `${prefix}.readonly`);
       setProperties(readonlyField, {
         disabled: !isImportedStorage,
         lockHint: isImportedStorage ? null : this.t('cannotReadonlyNotImported'),
@@ -527,7 +527,7 @@ export default OneForm.extend(I18n, Validations, {
       if (!isImportedStorage) {
         this.send(
           'inputChanged',
-          `${group}.readonly`,
+          `${prefix}.readonly`,
           false,
         );
       }
