@@ -26,10 +26,11 @@ export default {
   webdav,
   http,
   nulldevice,
-  storageType: 'Type',
+  storageType: 'Storage type',
   save: 'Save',
   add: 'Add',
   cancel: 'Cancel',
   modifyStorageModalHeader: 'Modify storage',
   modifyStorageModalMessage: 'Are you sure you want to modify storage details? Incorrect configuration can make your data unavailable.',
+  cannotReadonlyNotImported: 'This option is available only for imported storages.',
 };

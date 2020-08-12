@@ -11,6 +11,10 @@ export default {
     name: 'Skip storage detection',
     tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option should be enabled on readonly storages.',
   },
+  readonly: {
+    name: 'Readonly',
+    tip: 'Defines whether the storage is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage. Such storage can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
+  },
   importedStorage: {
     name: 'Imported storage',
     tip: 'Indicates that the existing data on this storage is intended for import. Actual data import will happen when the storage is used to support a space. Only one space can be supported by such storage.',

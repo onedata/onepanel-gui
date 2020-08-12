@@ -10,7 +10,7 @@
 
 import { run } from '@ember/runloop';
 
-import EmberObject, { observer, computed, set, get } from '@ember/object';
+import EmberObject, { observer, computed, set, get, setProperties } from '@ember/object';
 import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { invoke } from 'ember-invoke-action';
@@ -508,6 +508,31 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  importedStorageObserver: observer(
+    'formValues.generic.importedStorage',
+    'formValues.generic_editor.importedStorage',
+    function importedStorageObserver() {
+      const mode = this.get('mode');
+      if (mode === 'show') {
+        return;
+      }
+      const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+      const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
+      const isReadonly = this.get(`formValues.${prefix}.readonly`);
+      const readonlyField = this.getField(`${prefix}.readonly`);
+      setProperties(readonlyField, {
+        disabled: !isImportedStorage,
+        lockHint: isImportedStorage ? null : this.t('cannotReadonlyNotImported'),
+      });
+      if (!isImportedStorage && isReadonly) {
+        this.send(
+          'inputChanged',
+          `${prefix}.readonly`,
+          false,
+        );
+      }
+    }),
+
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
     this.setProperties({
@@ -566,6 +591,7 @@ export default OneForm.extend(I18n, Validations, {
     this.fetchCephOsds();
     this.osdsNumberObserver();
     this.storageProvidesSupportObserver();
+    this.importedStorageObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
