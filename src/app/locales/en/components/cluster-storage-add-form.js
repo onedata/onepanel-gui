@@ -26,7 +26,7 @@ export default {
   webdav,
   http,
   nulldevice,
-  storageType: 'Type',
+  storageType: 'Storage type',
   save: 'Save',
   add: 'Add',
   cancel: 'Cancel',

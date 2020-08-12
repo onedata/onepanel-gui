@@ -10,12 +10,11 @@ import { resolve } from 'rsvp';
 import $ from 'jquery';
 import { click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
-
 import FormHelper from '../../helpers/form';
-
 import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
+import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 
 const CephManager = Service.extend({
   getOsds() {
@@ -33,9 +32,20 @@ class ClusterStorageAddHelper extends FormHelper {
   }
 }
 
+class StorageTypeSelectHelper extends EmberPowerSelectHelper {
+  constructor() {
+    super('.storage-type-select-group');
+  }
+}
+
 const POSIX_TYPE = {
   id: 'posix',
   name: 'POSIX',
+};
+
+const CEPH_RADOS_TYPE = {
+  id: 'cephrados',
+  name: 'Ceph RADOS',
 };
 
 const S3_TYPE = {
@@ -308,6 +318,71 @@ describe('Integration | Component | cluster storage add form', function () {
           const helper = new ClusterStorageAddHelper(this.$());
           expect(helper.getToggleInput('generic_editor-importedStorage'))
             .to.not.have.class('disabled');
+        });
+      }
+    );
+
+    it(
+      'sets Readonly toggle to false after setting imported storage to false',
+      function () {
+        this.set('storage', POSIX_STORAGE);
+        this.render(hbs `
+          {{cluster-storage-add-form
+            storageProvidesSupport=true
+            storage=storage 
+            mode="create"
+          }}
+        `);
+
+        let helper;
+        return wait()
+          .then(() => {
+            helper = new ClusterStorageAddHelper(this.$());
+            expect(helper.getToggleInput('generic-importedStorage'), 'imported initial')
+              .to.not.have.class('checked');
+            return click(helper.getToggleInput('generic-importedStorage')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-readonly'), 'readonly after imported')
+              .to.not.have.class('checked');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-readonly'), 'readonly after toggle')
+              .to.have.class('checked');
+            return click(helper.getToggleInput('generic-importedStorage')[0]);
+          })
+          .then(() => {
+            expect(
+              helper.getToggleInput('generic-readonly'),
+              'readonly after import disable'
+            ).to.not.have.class('checked');
+          });
+      }
+    );
+
+    // test against a strange bug that occured when automatically changed readonly toggle
+    it(
+      'does not block name input by validation after immediate storage type change',
+      function () {
+        this.set('selectedStorageType', CEPH_RADOS_TYPE);
+
+        this.render(hbs `
+          {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+        `);
+
+        let helper;
+        let select;
+        return wait().then(() => {
+          helper = new ClusterStorageAddHelper(this.$());
+          select = new StorageTypeSelectHelper();
+          this.set('selectedStorageType', POSIX_TYPE);
+          return new Promise(resolve => select.selectOption(2, resolve));
+        }).then(() => {
+          helper.getInput('generic-name').val('hello').change();
+          return wait();
+        }).then(() => {
+          expect(this.$('.has-error'), 'error indicator').to.not.exist;
         });
       }
     );
