@@ -6,9 +6,9 @@
   {{#bs-tab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|}}
     {{#tab.pane title=(tt this "tabServices")}}
       <div class="row content-row">
-        {{#promise-proxy-container proxy=hostsProxy}}
+        {{#promise-proxy-container proxy=clusterHostsInfoProxy}}
           {{cluster-host-table
-            hosts=hostsProxy.content
+            hosts=clusterHostsInfoProxy.clusterHostsInfo
             primaryClusterManager=primaryClusterManager
             isReadOnly=true
             showCeph=(eq onepanelServiceType "oneprovider")
@@ -56,7 +56,7 @@
         </h1>
       </div>
       <div class="row content-row">
-        {{#promise-proxy-container proxy=hostsProxy}}
+        {{#promise-proxy-container proxy=clusterHostsInfoProxy}}
           {{cluster-host-ip-form
             hosts=_ipsFormData
             hostDataChanged=(action "hostsIpsDataChanged")

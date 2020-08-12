@@ -470,15 +470,32 @@ export default OnepanelServerBase.extend(
           this.set('__webCert.letsEncrypt', defaultLetsEncryptDeployed);
         }
         if (mockStep.gt(installationStepsMap.oneproviderStorageAdd)) {
-          let storage1 = {
+          const storage1 = {
             id: 'storage1_verylongid',
             type: 'posix',
             name: 'Some storage',
             importedStorage: true,
             mountPoint: '/mnt/st1',
-            lumaEnabled: true,
-            lumaUrl: 'http://localhost:9090',
-            lumaApiKey: 'some_storage',
+            lumaFeed: 'external',
+            lumaFeedUrl: 'http://localhost:9090',
+            lumaFeedApiKey: 'some_storage',
+            skipStorageDetection: true,
+            qosParameters: {
+              param1: 'abc',
+              param2: 'def',
+              param3: '123',
+            },
+          };
+          const storage2 = {
+            id: 'storage2_verylongid',
+            type: 'posix',
+            name: 'Some storage 2',
+            importedStorage: true,
+            mountPoint: '/mnt/st2',
+            lumaFeed: 'external',
+            lumaFeedUrl: 'http://localhost:9090',
+            lumaFeedApiKey: 'some_storage',
+            skipStorageDetection: true,
             qosParameters: {
               param1: 'abc',
               param2: 'def',
@@ -504,7 +521,7 @@ export default OnepanelServerBase.extend(
           };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            ...[storage1, storageCeph, storageCephRados].map(storage =>
+            ...[storage1, storageCeph, storageCephRados, storage2].map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );
@@ -852,9 +869,9 @@ export default OnepanelServerBase.extend(
               .filter(key => storage[key] === null)
               .forEach(key => delete storage[key]);
           }
-          if (!get(storage, 'lumaEnabled')) {
-            delete storage['lumaUrl'];
-            delete storage['lumaApiKey'];
+          if (get(storage, 'lumaFeed') !== 'external') {
+            delete storage['lumaFeedUrl'];
+            delete storage['lumaFeedApiKey'];
           }
           return _.assign({ verificationPassed: true }, storage);
         },
@@ -1430,10 +1447,13 @@ export default OnepanelServerBase.extend(
     },
 
     _req_onepanel_getConfiguration() {
-      const mockInitializedCluster = this.get('mockInitializedCluster');
+      const {
+        mockStep,
+        isEmergency,
+      } = this.getProperties('mockStep', 'isEmergency');
       return {
         success: () => ({
-          clusterId: this.get('isEmergency') ?
+          clusterId: isEmergency ?
             (
               mockServiceType === 'oneprovider' ?
               providerCluster1.id :
@@ -1441,9 +1461,9 @@ export default OnepanelServerBase.extend(
             ) : this.get('guiContext.guiMode'),
           version: '18.02.0-rc13',
           build: '2100',
-          deployed: mockInitializedCluster,
+          deployed: mockStep.gt(installationStepsMap.deploy),
           isRegistered: (mockServiceType === 'oneprovider' || undefined) &&
-            this.get('mockStep').gt(installationStepsMap.oneproviderRegistration),
+            mockStep.gt(installationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
         }),

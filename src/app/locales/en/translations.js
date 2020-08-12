@@ -70,7 +70,6 @@ import registerOnezoneNotCompatible from './components/alerts/register-onezone-n
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
 import contentClustersMembers from './components/content-clusters-members';
 import contentClustersGuiSettings from './components/content-clusters-gui-settings';
-import qosParamsEditor from './components/qos-params-editor';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -164,7 +163,6 @@ let translations = {
     emergencyWarningBar,
     contentClustersMembers,
     contentClustersGuiSettings,
-    qosParamsEditor,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,

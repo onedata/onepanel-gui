@@ -7,7 +7,7 @@ export default {
   certificateGeneration: 'certificate setup',
   generationSuccess: 'The certificate has been obtained and installed successfully',
   redirectInfo: 'When the new certificate has been installed, the page will be reloaded with the new domain.',
-  manualWarning: 'You will have to manually obtain and set up proper TLS certificates, instructions can be found here:',
+  manualWarning: 'You will have to manually obtain and set up proper TLS certificates.',
   certDocsLink,
   text: {
     intro: {

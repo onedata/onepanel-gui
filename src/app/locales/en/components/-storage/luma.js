@@ -1,13 +1,10 @@
 export default {
-  lumaUrl: {
-    name: 'LUMA URL',
-    tip: 'The URL of your LUMA instance, must be reachable from all ' +
-      'Oneprovider nodes.',
+  lumaFeedUrl: {
+    name: 'External LUMA feed URL',
+    tip: 'URL of external feed for LUMA DB, must be reachable from all Oneprovider nodes.',
   },
-  lumaApiKey: {
-    name: 'LUMA API key',
-    tip: 'Optional, arbitrary alphanumeric string that serves as authorization ' +
-      'in requests to LUMA. If not specified, no authorization headers will ' +
-      'be sent.',
+  lumaFeedApiKey: {
+    name: 'External LUMA feed API key',
+    tip: 'Optional, arbitrary alphanumeric string that serves as authorization in requests to external feed for LUMA DB. If not specified, no authorization headers will be sent.',
   },
 };

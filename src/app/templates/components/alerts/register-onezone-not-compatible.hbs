@@ -4,7 +4,13 @@
   {{tt this "textNotCompatible2" onezoneVersion=onezoneVersion}}
 </p>
 <p>
-  {{tt this "textDocs1"}}
-  <a href={{one-doc-url "compatibility_reference.html"}}>{{tt this "documentation"}}</a>
-  {{tt this "textDocs2"}}
+  {{#one-doc-see-more}}
+    <a
+      class="documentation-link"
+      href={{one-doc-url "compatibility_reference.html"}}
+      target="_blank"
+    >
+      {{tt this "compatibilityReference"}}
+    </a>
+  {{/one-doc-see-more}}
 </p>

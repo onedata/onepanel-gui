@@ -7,7 +7,9 @@ import posix from './cluster-storage-add-form/posix';
 import s3 from './cluster-storage-add-form/s3';
 import swift from './cluster-storage-add-form/swift';
 import glusterfs from './cluster-storage-add-form/glusterfs';
+import xrootd from './cluster-storage-add-form/xrootd';
 import webdav from './cluster-storage-add-form/webdav';
+import http from './cluster-storage-add-form/http';
 import nulldevice from './cluster-storage-add-form/nulldevice';
 
 export default {
@@ -20,7 +22,9 @@ export default {
   s3,
   swift,
   glusterfs,
+  xrootd,
   webdav,
+  http,
   nulldevice,
   storageType: 'Type',
   save: 'Save',

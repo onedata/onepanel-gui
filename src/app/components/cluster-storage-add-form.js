@@ -103,6 +103,8 @@ const storagePathTypeDefaults = {
   localceph: 'flat',
   s3: 'flat',
   swift: 'flat',
+  xrootd: 'canonical',
+  http: 'canonical',
   webdav: 'canonical',
 };
 
@@ -373,17 +375,17 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
-   * Is true if luma has been enabled by user interaction
+   * Is true if luma feed has been changed to "external" by user interaction
    * @type {Ember.ComputedProperty<boolean>}
    */
-  lumaEnabledByEdition: computed(
-    'allFieldsValues.generic_editor.lumaEnabled',
-    function lumaEnabledByEdition() {
-      const lumaEnabledValue =
-        this.get('allFieldsValues.generic_editor.lumaEnabled');
-      const lumaEnabledField =
-        this.get('allFields').findBy('name', 'generic_editor.lumaEnabled');
-      return lumaEnabledValue && get(lumaEnabledField, 'changed');
+  lumaExternalByEdition: computed(
+    'allFieldsValues.generic_editor.lumaFeed',
+    function lumaExternalByEdition() {
+      const lumaFeedValue =
+        this.get('allFieldsValues.generic_editor.lumaFeed');
+      const lumaFeedField =
+        this.get('allFields').findBy('name', 'generic_editor.lumaFeed');
+      return lumaFeedValue === 'external' && get(lumaFeedField, 'changed');
     }
   ),
 
@@ -393,27 +395,27 @@ export default OneForm.extend(I18n, Validations, {
   isValid: computed(
     'errors.[]',
     'inEditionMode',
-    'lumaEnabledByEdition',
+    'lumaExternalByEdition',
     'areQosParamsValid',
     function isValid() {
       const {
         areQosParamsValid,
         errors,
         inEditionMode,
-        lumaEnabledByEdition,
+        lumaExternalByEdition,
       } = this.getProperties(
         'areQosParamsValid',
         'errors',
         'inEditionMode',
-        'lumaEnabledByEdition'
+        'lumaExternalByEdition'
       );
 
       if (!areQosParamsValid) {
         return false;
       } else if (inEditionMode) {
-        // If luma has been enabled but luma fields are invalid, then the whole
+        // If luma feed is "external" but luma fields are invalid, then the whole
         // form is invalid
-        if (lumaEnabledByEdition) {
+        if (lumaExternalByEdition) {
           const lumaErrors = errors.filter(error =>
             _.startsWith(get(error, 'attribute'), 'allFieldsValues.luma_editor.')
           );
@@ -773,7 +775,7 @@ export default OneForm.extend(I18n, Validations, {
     const storageType = storageTypes.findBy('id', get(storage, 'type'));
     this.send('storageTypeChanged', storageType);
 
-    this._toggleLumaPrefix(!!storage['lumaEnabled'], false);
+    this._toggleLumaPrefix(storage['lumaFeed'] === 'external', false);
 
     ['generic', 'luma', get(storageType, 'id')].forEach(prefix => {
       _.keys(allFieldsValues[prefix]).forEach(fieldName => {
@@ -877,9 +879,9 @@ export default OneForm.extend(I18n, Validations, {
 
     inputChanged(fieldName, value) {
       this.changeFormValue(fieldName, value);
-      if (fieldName === 'generic.lumaEnabled' ||
-        fieldName === 'generic_editor.lumaEnabled') {
-        this._toggleLumaPrefix(value);
+      if (fieldName === 'generic.lumaFeed' ||
+        fieldName === 'generic_editor.lumaFeed') {
+        this._toggleLumaPrefix(value === 'external');
       }
     },
 
@@ -891,12 +893,12 @@ export default OneForm.extend(I18n, Validations, {
     focusOut(field) {
       const {
         inEditionMode,
-        lumaEnabledByEdition,
-      } = this.getProperties('inEditionMode', 'lumaEnabledByEdition');
+        lumaExternalByEdition,
+      } = this.getProperties('inEditionMode', 'lumaExternalByEdition');
       const formValue = this.get('formValues.' + get(field, 'name'));
 
       const isLumaEditorField =
-        _.startsWith(get(field, 'name'), 'luma_editor.') && lumaEnabledByEdition;
+        _.startsWith(get(field, 'name'), 'luma_editor.') && lumaExternalByEdition;
 
       // do not allow validation for not modified fields in edition mode
       if (

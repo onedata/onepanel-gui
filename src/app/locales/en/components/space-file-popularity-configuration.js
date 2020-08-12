@@ -1,6 +1,6 @@
 export default {
-  configurationText: 'The file popularity mechanism creates a view index which can be queried to fetch the least popular files. The following parameters are used to configure the popularity function, which is used to sort the view. Detailed information on the popularity function can be found in',
-  configurationTextDoc: 'documentation',
+  configurationText: 'The file popularity mechanism creates a view index which can be queried to fetch the least popular files. The following parameters are used to configure the popularity function, which is used to sort the view.',
+  configurationTextDoc: 'file popularity',
   lastOpenHourWeight: 'Last open hour weight ',
   lastOpenHourWeightHint: 'Weight of lastOpenHour parameter taken to calculate the value of the popularity function.',
   avgOpenCountPerDayWeight: 'Average open count per day',

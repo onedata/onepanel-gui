@@ -7,6 +7,14 @@ CHANGELOG
 ### Latest changes
 
 * VFS-6330 Redesigned storage import (formerly space synchronization) configuration
+* VFS-6625 S3 storage credentials made optional
+* VFS-6536 Changed default fileMode for S3, HTTP and Webdav storages
+* VFS-6521 Added HTTP storage helper
+* VFS-6454 Added XRootD storage helper
+* VFS-6498 Allow to change import toggle in space when storage is import-enabled
+* VFS-6437 Updated Onepanel JS client
+* VFS-6352 Changed LUMA-related options in the storage form
+* VFS-6344 Updated common libs
 * VFS-6381 Fixed build process
 * VFS-6343 Changed cease support modal to Onezone version
 * VFS-6323 Updated common libs
@@ -32,7 +40,7 @@ CHANGELOG
 * VFS-5916 Fixed sending Onezone configuration on deploy
 * VFS-5878 Added warning modal about clearing OSD devices on Ceph deploy
 * VFS-5890 Removed Ceph related requests from Onezone Onepanel
-* VFS-5493 Added QOS parameters to storages
+* VFS-5493 Added QoS parameters to storages
 * VFS-5020 Added Ceph cluster deployment and management
 * VFS-5875 Fixed navigation in GUI settings aspect and updated DOMPurify
 * VFS-1891 Added setting privacy policy, cookie consent notification and sign-in notification

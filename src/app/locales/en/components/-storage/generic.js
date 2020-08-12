@@ -10,6 +10,10 @@ export default {
       'require modification for rename operations, canonical paths resemble ' +
       'POSIX-style directory structure reflecting the logical space directory tree.',
   },
+  skipStorageDetection: {
+    name: 'Skip storage detection',
+    tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option should be enabled on readonly storages.',
+  },
   importedStorage: {
     name: 'Imported storage',
     tip: {
@@ -18,12 +22,13 @@ export default {
       hasSupport: `${importedStorageEnabledTip} <strong>This option is editable only for storages which do not support any space.</strong>`,
     },
   },
-  lumaEnabled: {
-    name: 'LUMA enabled',
-    tip: 'LUMA allows to map onedata user credentials into storage credentials' +
-      ' and vice versa. If enabled, provided LUMA service will be used to resolve' +
-      ' the mappings during operations on storage. If disabled, some random' +
-      ' credentials (e.g. uid and gid on POSIX storage) will be generated for' +
-      ' every user.',
+  lumaFeed: {
+    name: 'LUMA feed',
+    tip: `
+      <p class="text-center">Determines the way in which Local User Mapping database (LUMA DB) will be filled.</p>
+      <p class="text-left"><strong>auto</strong> ‐ User mappings will be determined by automatic algorithm.</p>
+      <p class="text-left"><strong>local</strong> ‐ User mappings should be directly set in LUMA DB by space administrator using REST API.</p>
+      <p class="text-left"><strong>external</strong> ‐ External, 3rd party service will be queried for user mappings.</p>
+    `,
   },
 };

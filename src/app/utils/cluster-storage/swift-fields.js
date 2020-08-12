@@ -1,11 +1,26 @@
-export default [
-  { name: 'username', type: 'text' },
-  { name: 'password', type: 'password' },
-  { name: 'authUrl', type: 'text' },
-  { name: 'containerName', type: 'text' },
-  { name: 'tenantName', type: 'text' },
-  { name: 'blockSize', type: 'number', optional: true, notEditable: true },
-  { name: 'timeout', type: 'number', optional: true },
-  { name: 'insecure', type: 'checkbox', optional: true },
-  { name: 'readonly', type: 'checkbox', optional: true },
-];
+export default [{
+  name: 'username',
+  type: 'text',
+}, {
+  name: 'password',
+  type: 'password',
+}, {
+  name: 'authUrl',
+  type: 'text',
+}, {
+  name: 'containerName',
+  type: 'text',
+}, {
+  name: 'tenantName',
+  type: 'text',
+}, {
+  name: 'blockSize',
+  type: 'number',
+  optional: true,
+  example: '10485760',
+  notEditable: true,
+}, {
+  name: 'timeout',
+  type: 'number',
+  optional: true,
+}];

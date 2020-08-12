@@ -13,13 +13,11 @@ export default {
   },
   fileMode: {
     name: 'File mode',
-    tip: 'Defines the file permissions, which files imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0644".',
+    tip: 'Defines the file permissions, which files imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
   },
   dirMode: {
     name: 'Directory mode',
     tip: 'Defines the directory mode which directories imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
   },
   timeout: { name: 'Timeout [ms]' },
-  insecure: { name: 'Insecure' },
-  readonly: { name: 'Read only' },
 };

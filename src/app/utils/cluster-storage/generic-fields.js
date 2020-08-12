@@ -13,10 +13,26 @@ export default [
     notEditable: true,
   },
   {
+    name: 'skipStorageDetection',
+    type: 'checkbox',
+    optional: true,
+    tip: true,
+  },
+  {
     name: 'importedStorage',
     type: 'checkbox',
     defaultValue: false,
     tip: true,
   },
-  { name: 'lumaEnabled', type: 'checkbox', tip: true, defaultValue: false },
+  {
+    name: 'lumaFeed',
+    type: 'radio-group',
+    options: [
+      { value: 'auto', label: 'auto' },
+      { value: 'local', label: 'local' },
+      { value: 'external', label: 'external' },
+    ],
+    tip: true,
+    defaultValue: 'auto',
+  },
 ];
