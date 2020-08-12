@@ -27,7 +27,7 @@
         </a>
       {{/nav.item}}
       {{#nav.item class="privacy-policy-item" active=(eq tab.activeId privacyPolicyTabId)}}
-        <a href={{concat "#" tabImportId}}
+        <a
           class="nav-link"
           role="tab" {{action tab.select privacyPolicyTabId}}>
           {{tt this "tabs.privacyPolicy.header"}}
