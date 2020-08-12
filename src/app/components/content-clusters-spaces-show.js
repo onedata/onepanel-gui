@@ -22,6 +22,7 @@ export default Component.extend(
     onepanelServer: service(),
     spaceManager: service(),
     storageManager: service(),
+    globalNotify: service(),
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesShow',
@@ -164,7 +165,7 @@ export default Component.extend(
           spaceManager,
           globalNotify,
         } = this.getProperties('spaceManager', 'globalNotify');
-        return spaceManager.stopImportScan(spaceId)
+        return spaceManager.startImportScan(spaceId)
           // refresh stats to see difference in import status
           .then(() => safeExec(this, 'fetchAllImportStats'))
           .then(() => {

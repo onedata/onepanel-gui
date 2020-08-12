@@ -48,20 +48,22 @@
     {{/bg.button}}
   {{/bs-button-group}}
   
-  <div class="tab-info-floating one-info-label">
+  <div class="tab-info-floating">
     {{#if importIsPending}}
       {{#one-spin-button
         class="btn btn-sm btn-danger"
         action=stopScan
       }}
-        {{tt this "stopScan"}}
+        {{one-icon icon="cancelled"}}
+        <span class="text">{{tt this "stopScan"}}</span>
       {{/one-spin-button}}
     {{else}}
       {{#one-spin-button
         class="btn btn-sm btn-success"
         action=startScan
       }}
-        {{tt this "startScan"}}
+        {{one-icon icon="play"}}
+        <span class="text">{{tt this "startScan"}}</span>
       {{/one-spin-button}}
     {{/if}}
   </div>
