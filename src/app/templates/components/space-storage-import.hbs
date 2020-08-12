@@ -47,18 +47,24 @@
       {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
     {{/bg.button}}
   {{/bs-button-group}}
-  {{!-- {{#if statsFrozen}}
-    <div class="tab-info-floating one-info-label">
-      <span>
-        <label>{{tt this "importDone"}}</label>
-        {{one-icon icon="checkbox-filled"}}
-      </span>
-      {{one-tooltip
-        title=(tt this "importDoneHint")
-        placement="bottom"
+  
+  <div class="tab-info-floating one-info-label">
+    {{#if importIsPending}}
+      {{#one-spin-button
+        class="btn btn-sm btn-danger"
+        action=stopScan
       }}
-    </div>
-  {{/if}} --}}
+        {{tt this "stopScan"}}
+      {{/one-spin-button}}
+    {{else}}
+      {{#one-spin-button
+        class="btn btn-sm btn-success"
+        action=startScan
+      }}
+        {{tt this "startScan"}}
+      {{/one-spin-button}}
+    {{/if}}
+  </div>
   
   {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
     <div class="col-xs-12 item-table-cell item-table-content-cell">

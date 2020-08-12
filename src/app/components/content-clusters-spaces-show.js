@@ -8,6 +8,7 @@ import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
   SpaceItemImportStats,
@@ -139,6 +140,40 @@ export default Component.extend(
         const spaceManager = this.get('spaceManager');
         return this.get('modifySpace')(data)
           .then(() => spaceManager.updateSpaceDetailsCache(spaceId));
+      },
+      stopImportScan() {
+        const spaceId = this.get('space.id');
+        const {
+          spaceManager,
+          globalNotify,
+        } = this.getProperties('spaceManager', 'globalNotify');
+        return spaceManager.stopImportScan(spaceId)
+          // refresh stats to see difference in import status
+          .then(() => safeExec(this, 'fetchAllImportStats'))
+          .then(() => {
+            globalNotify.info(this.t('importScanStoppedSuccess'));
+          })
+          .catch(error => {
+            globalNotify.backendError(this.t('importScanStopOperation'), error);
+            throw error;
+          });
+      },
+      startImportScan() {
+        const spaceId = this.get('space.id');
+        const {
+          spaceManager,
+          globalNotify,
+        } = this.getProperties('spaceManager', 'globalNotify');
+        return spaceManager.stopImportScan(spaceId)
+          // refresh stats to see difference in import status
+          .then(() => safeExec(this, 'fetchAllImportStats'))
+          .then(() => {
+            globalNotify.info(this.t('importScanStartedSuccess'));
+          })
+          .catch(error => {
+            globalNotify.backendError(this.t('importScanStartOperation'), error);
+            throw error;
+          });
       },
     },
   });

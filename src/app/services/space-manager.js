@@ -286,4 +286,27 @@ export default Service.extend({
     ).then(({ data }) => data);
   },
 
+  /**
+   * @param {String} spaceId 
+   * @returns {Promise}
+   */
+  stopImportScan(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'stop_storage_import_scan',
+      spaceId,
+    );
+  },
+
+  /**
+   * @param {String} spaceId 
+   * @returns {Promise}
+   */
+  startImportScan(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'start_storage_import_scan',
+      spaceId,
+    );
+  },
 });

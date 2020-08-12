@@ -10,6 +10,7 @@
 
 import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
+import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
@@ -63,9 +64,27 @@ export default Component.extend(I18n, {
   space: undefined,
 
   /**
+   * @virtual
+   * @type {boolean}
+   */
+  importIsPending: undefined,
+
+  /**
    * @type {ComputedProperty<boolean>}
    */
   importConfigurationOpen: reads('space.importEnabled'),
+
+  /**
+   * @virtual
+   * @type {Function}
+   */
+  stopScan: notImplementedReject,
+
+  /**
+   * @virtual
+   * @type {Function}
+   */
+  startScan: notImplementedReject,
 
   actions: {
     modifySpace(...args) {

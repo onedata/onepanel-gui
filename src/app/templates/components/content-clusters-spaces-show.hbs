@@ -72,11 +72,17 @@
                 importEnabled=space.importEnabled
                 importInterval=importInterval
                 timeStats=timeStats
+                importIsPending=(or
+                  (eq _importStats.importStatus "inProgress")
+                  (eq _importStats.updateStatus "inProgress")
+                )
                 timeStatsError=timeStatsError
                 timeStatsLoading=timeStatsLoading
                 space=space
                 importIntervalChanged=(action "onimportIntervalChange")
                 modifySpace=(action "modifySpace")
+                stopScan=(action "stopImportScan")
+                startScan=(action "startImportScan")
               }}
             {{/if}}
           {{/tab.pane}}
