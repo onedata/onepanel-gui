@@ -25,6 +25,12 @@ export default [
     tip: true,
   },
   {
+    name: 'readonly',
+    type: 'checkbox',
+    optional: true,
+    tip: true,
+  },
+  {
     name: 'lumaFeed',
     type: 'radio-group',
     options: [

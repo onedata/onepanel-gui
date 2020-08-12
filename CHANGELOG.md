@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6612 Added readonly toggle to storage creation form
 * VFS-6625 S3 storage credentials made optional
 * VFS-6536 Changed default fileMode for S3, HTTP and Webdav storages
 * VFS-6521 Added HTTP storage helper
