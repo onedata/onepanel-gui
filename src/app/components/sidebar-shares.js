@@ -7,8 +7,8 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import contentClustersOnezoneRedirect from 'onepanel-gui/components/content-clusters-onezone-redirect';
+import contentClustersOnepanelRedirect from 'onepanel-gui/components/content-clusters-onepanel-redirect';
 
-export default contentClustersOnezoneRedirect.extend({
+export default contentClustersOnepanelRedirect.extend({
   path: 'onedata/shares',
 });
