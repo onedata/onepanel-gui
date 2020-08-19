@@ -20,6 +20,7 @@ const onezoneAspects = new Set([
   'emergency-passphrase',
   'members',
   'gui-settings',
+  'redirect',
 ]);
 
 export default AspectRoute.extend({
