@@ -38,7 +38,7 @@ export default Mixin.create({
    *
    * This property is updated automatically by some interval watchers
    *
-   * @type {Onepanel.SpaceSyncStats}
+   * @type {Onepanel.AutoStorageImportStats}
    */
   _importStats: null,
 
@@ -50,7 +50,7 @@ export default Mixin.create({
   importStatusRefreshTime: IMPORT_STATUS_REFRESH_TIME,
 
   /**
-   * Currently chosen import interval (enum as in SpaceSyncStats: minute, hour or day)
+   * Currently chosen import interval (enum as in AutoStorageImportStats: minute, hour or day)
    * @type {string}
    */
   importInterval: 'minute',
@@ -196,21 +196,13 @@ export default Mixin.create({
   },
 
   /**
-   * @param {Onepanel.SpaceSyncStats} newImportStats importStats without time stats
+   * @param {Onepanel.AutoStorageImportStats} newImportStats importStats without time stats
    * @returns {undefined}
    */
   updateImportStatsWithStatusOnly(newImportStats) {
-    let currentImportStats = this.get('_importStats');
-    if (currentImportStats != null) {
-      // we already got some importStats so update only statuses
-      safeExec(this, 'setProperties', {
-        importStatus: get(newImportStats, 'importStatus'),
-        updateStatus: get(newImportStats, 'updateStatus'),
-      });
-    } else {
-      // first importStats update
-      safeExec(this, 'set', '_importStats', newImportStats);
-    }
+    safeExec(this, 'set', '_importStats', Object.assign({},
+      this.get('_importStats') || {}, { status: get(newImportStats, 'status') }
+    ));
   },
 
   fetchStatusImportStats() {

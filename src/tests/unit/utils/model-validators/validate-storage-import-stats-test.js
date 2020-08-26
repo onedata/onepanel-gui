@@ -5,8 +5,7 @@ import validateStorageImportStats from 'onepanel-gui/utils/model-validators/vali
 describe('Unit | Utility | model validators/validate space import stats', function () {
   it('detects lack of stats', function () {
     const importStats = {
-      updateStatus: 'none',
-      importStatus: 'none',
+      status: 'none',
     };
     let result = validateStorageImportStats(importStats);
     expect(result).to.be.false;
@@ -14,8 +13,7 @@ describe('Unit | Utility | model validators/validate space import stats', functi
 
   it('detects invalid type of stats', function () {
     const importStats = {
-      updateStatus: 'none',
-      importStatus: 'none',
+      status: 'none',
       stats: 'bad',
     };
     let result = validateStorageImportStats(importStats);
@@ -24,8 +22,7 @@ describe('Unit | Utility | model validators/validate space import stats', functi
 
   it('positively validates valid stats', function () {
     const importStats = {
-      updateStatus: 'none',
-      importStatus: 'none',
+      status: 'none',
       stats: {},
     };
     let result = validateStorageImportStats(importStats);

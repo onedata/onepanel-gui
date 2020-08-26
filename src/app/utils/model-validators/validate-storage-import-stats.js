@@ -9,8 +9,8 @@
 
 /**
  * @export
- * @param {onepanel.SpaceSyncStats} importStats
- * @returns {boolean} true if SpaceSyncStats object can be consumed by frontend
+ * @param {onepanel.AutoStorageImportStats} importStats
+ * @returns {boolean} true if AutoStorageImportStats object can be consumed by frontend
  */
 export default function validateStorageImportStats(importStats) {
   return importStats != null && importStats.stats instanceof Object;

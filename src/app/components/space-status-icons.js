@@ -10,7 +10,7 @@
 import Component from '@ember/component';
 
 import { computed } from '@ember/object';
-import { readOnly } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { not } from 'ember-awesome-macros';
 
@@ -32,13 +32,13 @@ export default Component.extend({
 
   /**
    * To inject.
-   * @type {Onepanel.SpaceSyncStats}
+   * @type {Onepanel.AutoStorageImportStats}
    */
   importStats: null,
 
-  storageImportEnabled: readOnly('space.storageImportEnabled'),
+  storageImportEnabled: reads('space.storageImportEnabled'),
 
-  importStatus: readOnly('importStats.importStatus'),
+  importStatus: reads('importStats.status'),
 
   _noStatus: not('storageImportEnabled'),
 

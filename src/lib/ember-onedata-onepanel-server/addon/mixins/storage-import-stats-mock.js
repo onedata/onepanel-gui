@@ -37,7 +37,6 @@ export default Mixin.create({
   _statusTimerId: null,
 
   globalImportStatus: 'inProgress',
-  globalUpdateStatus: 'waiting',
 
   lastValueDate: null,
 
@@ -120,10 +119,7 @@ export default Mixin.create({
 
   initDelayedStatusChange(delay = 10000) {
     let statusChangeTimerId = setTimeout(() => {
-      this.setProperties({
-        globalImportStatus: 'done',
-        globalUpdateStatus: 'inProgress',
-      });
+      this.set('globalImportStatus', 'done');
     }, delay);
     this.set('statusChangeTimerId', statusChangeTimerId);
   },
@@ -138,11 +134,9 @@ export default Mixin.create({
       let {
         allStats,
         globalImportStatus,
-        globalUpdateStatus,
         lastValueDate,
       } = this.getProperties('allStats',
         'globalImportStatus',
-        'globalUpdateStatus',
         'lastValueDate'
       );
 
@@ -156,8 +150,7 @@ export default Mixin.create({
       }
 
       return {
-        importStatus: globalImportStatus,
-        updateStatus: globalUpdateStatus,
+        status: globalImportStatus,
         stats,
       };
     }

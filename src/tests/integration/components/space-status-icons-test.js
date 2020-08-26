@@ -23,7 +23,7 @@ describe('Integration | Component | space status icons', function () {
           storageImportEnabled: true,
         }),
         importStats: {
-          importStatus: 'done',
+          status: 'done',
         },
       });
 
