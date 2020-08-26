@@ -40,6 +40,28 @@ export default Component.extend({
 
   importStatus: reads('importStats.status'),
 
+  /**
+   * @type {ComputedProperty<String>}
+   */
+  importStatusIconClasses: computed('importStatus', function importStatusIconClasses() {
+    const animationClassesBase = 'animated infinite semi-hinge';
+    switch (this.get('importStatus')) {
+      case 'initializing':
+      case 'running':
+        return `${animationClassesBase} pulse-mint`;
+      case 'aborting':
+        return `${animationClassesBase} pulse-orange`;
+      case 'done':
+        return 'text-success';
+      case 'failed':
+        return 'text-danger';
+      case 'aborted':
+        return 'text-danger';
+      default:
+        return '';
+    }
+  }),
+
   _noStatus: not('storageImportEnabled'),
 
   _importHint: computed('storageImportEnabled', 'importStatus', function () {

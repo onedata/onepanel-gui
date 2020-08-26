@@ -36,7 +36,7 @@ export default Mixin.create({
 
   _statusTimerId: null,
 
-  globalImportStatus: 'inProgress',
+  globalImportStatus: 'running',
 
   lastValueDate: null,
 
@@ -135,7 +135,8 @@ export default Mixin.create({
         allStats,
         globalImportStatus,
         lastValueDate,
-      } = this.getProperties('allStats',
+      } = this.getProperties(
+        'allStats',
         'globalImportStatus',
         'lastValueDate'
       );
