@@ -169,36 +169,24 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it('renders unchecked disabled import toggle if storage is not imported',
+  it('does not show import section if storage is not imported',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
-      return wait()
-        .then(() => {
-          const helper = new SupportSpaceFormHelper(this.$());
-          expect(helper.getToggleInput('main-importEnabled'))
-            .to.have.class('disabled');
-          expect(helper.getToggleInput('main-importEnabled'))
-            .to.not.have.class('checked');
-        });
+      return wait().then(() =>
+        expect(this.$('.storage-import-form')).to.have.class('collapse-hidden')
+      );
     }
   );
 
-  it('renders checked non-disabled import toggle if storage is imported', function () {
+  it('renders import section if storage is imported', function () {
     this.render(hbs `{{support-space-form}}`);
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        return wait()
-          .then(() => {
-            const helper = new SupportSpaceFormHelper(this.$());
-            expect(helper.getToggleInput('main-importEnabled'))
-              .to.not.have.class('disabled');
-            expect(helper.getToggleInput('main-importEnabled'))
-              .to.have.class('checked');
-          });
-      });
+      .then(() =>
+        expect(this.$('.storage-import-form')).to.not.have.class('collapse-hidden')
+      );
   });
 
   it('submits size multiplicated by chosen unit', function () {
@@ -298,12 +286,12 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => click('.toggle-field-generic-continuousImport'))
+      .then(() => click('.toggle-field-generic-continuousScan'))
       .then(() => new SupportSpaceFormHelper(this.$()).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
         expect(submitStub).to.be.calledWith(
-          sinon.match.hasNested('storageUpdate.strategy', 'no_update')
+          sinon.match.hasNested('storageImport.scanConfig.continuousScan', false)
         );
       });
   });

@@ -4,19 +4,14 @@
  * Does not provide or invoke backend operations itself - invokes ``submit`` action.
  *
  * @module components/support-space-form
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
-import {
-  observer,
-  get,
-  set,
-  getProperties,
-} from '@ember/object';
+import { observer, getProperties } from '@ember/object';
 import { Promise } from 'rsvp';
 import _ from 'lodash';
 
@@ -97,7 +92,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   /**
    * @type {boolean}
    */
-  isImportUpdateFormValid: false,
+  isImportFormValid: false,
 
   /**
    * @override
@@ -106,42 +101,25 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     token: '',
     size: '',
     sizeUnit: 'mib',
-    importEnabled: false,
   }),
 
   /**
-   * @type {Ember.ComputedProperty<boolean>}
+   * @type {boolean}
    */
-  importEnabled: reads('formValues.main.importEnabled'),
+  importEnabled: reads('selectedStorageItem.storage.importedStorage'),
 
   /**
    * @override
    */
   isValid: and(
     isEmpty('errors'),
-    or(not('importEnabled'), 'isImportUpdateFormValid')
+    or(not('importEnabled'), 'isImportFormValid')
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   canSubmit: and('selectedStorageItem', 'isValid'),
-
-  selectedStorageObserver: observer(
-    'selectedStorageItem',
-    function selectedStorageObserver() {
-      this.recalculateImportAvailability();
-    }
-  ),
-
-  importEnabledTipSetter: observer('importEnabled', function importEnabledTipSetter() {
-    const importEnabled = this.get('importEnabled');
-    const importEnabledField = this.getField('main.importEnabled');
-    const tipTranslationKey =
-      `fields.importEnabled.tip${importEnabled ? 'Enabled' : 'Disabled' }`;
-    const tip = this.t(tipTranslationKey);
-    set(importEnabledField, 'tip', tip);
-  }),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -165,13 +143,9 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     this.set('fields', _.cloneDeep(formFields));
     this._super(...arguments);
 
-    this.selectedStorageObserver();
-
     if (this.get('allStoragesItemsProxy') == null) {
       this.initStoragesProxy();
     }
-
-    this.importEnabledTipSetter();
 
     // first enabled storage is default selected storage
     this.get('allStoragesItemsProxy').then((storages) => {
@@ -221,25 +195,14 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
     );
   },
 
-  recalculateImportAvailability() {
-    const fields = this.get('fields');
-    const importField = fields.findBy('name', 'importEnabled');
-    const isImportedStorage = this.get('selectedStorageItem.storage.importedStorage');
-    importField.disabled = !isImportedStorage;
-    this.notifyPropertyChange('fields');
-    this.send(
-      'inputChanged',
-      'main.importEnabled',
-      isImportedStorage,
-    );
-  },
-
   actions: {
     submit() {
       const {
+        importEnabled,
         submitSupportSpace,
         globalNotify,
       } = this.getProperties(
+        'importEnabled',
         'submitSupportSpace',
         'globalNotify'
       );
@@ -249,8 +212,6 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         size,
         sizeUnit,
         storageImport,
-        storageUpdate,
-        importEnabled,
       } = getProperties(
         this.get('formValues.main'),
         'name',
@@ -258,30 +219,21 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         'size',
         'sizeUnit',
         'storageImport',
-        'storageUpdate',
-        'importEnabled'
       );
 
       size = size * _.find(units, { value: sizeUnit })._multiplicator;
-
-      if (!importEnabled) {
-        storageImport = {
-          strategy: 'no_import',
-        };
-        storageUpdate = {
-          strategy: 'no_update',
-        };
-      }
-
       const storageId = this.get('selectedStorageItem.storage.id');
 
-      return submitSupportSpace({
+      const supportRequestBody = {
         token: trimToken(token),
         size,
         storageId,
-        storageImport,
-        storageUpdate,
-      }).catch(error => {
+      };
+      if (importEnabled) {
+        supportRequestBody.storageImport = storageImport;
+      }
+
+      return submitSupportSpace(supportRequestBody).catch(error => {
         globalNotify.backendError('space supporting', error);
         throw error;
       });
@@ -290,12 +242,9 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       this.set('selectedStorageItem', storageItem);
     },
     importFormChanged(importFormValues, areValuesValid) {
-      this.set('isImportUpdateFormValid', areValuesValid);
+      this.set('isImportFormValid', areValuesValid);
       if (areValuesValid) {
-        const formValues = this.get('formValues.main');
-        Object.keys(importFormValues).forEach(key => {
-          formValues.set(key, get(importFormValues, key));
-        });
+        this.set('formValues.main.storageImport', importFormValues);
       }
     },
   },

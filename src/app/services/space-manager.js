@@ -3,7 +3,7 @@
  *
  * @module services/space-manager
  * @author Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -114,8 +114,7 @@ export default Service.extend({
   /**
    * @param {string} id
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
-   * @param {StorageImportDetails} spaceData.storageImport
-   * @param {StorageUpdateDetails} spaceData.storageUpdate
+   * @param {StorageImport} spaceData.storageImport
    * @returns {Promise<undefined|object>} resolves after updating details cache
    */
   modifySpaceDetails(id, spaceData) {
@@ -151,7 +150,7 @@ export default Service.extend({
   },
 
   /**
-   * Fetch current import (import/update) statistics with given configuration
+   * Fetch current import statistics with given configuration
    *
    * There are more high-level methods that should be considered to use:
    * - getImportStatusOnly
@@ -161,7 +160,7 @@ export default Service.extend({
    * @param {string} period one of: minute, hour, day
    * @param {Array.string} metrics array with any of: queueLength, insertCount,
    *  updateCount, deleteCount
-   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderSpaceSyncStats results
+   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderAutoStorageImportStats results
    */
   getImportStats(spaceId, period, metrics) {
     // convert metrics to special-format string that holds an array
@@ -172,7 +171,7 @@ export default Service.extend({
       let onepanelServer = this.get('onepanelServer');
       let gettingImportStats = onepanelServer.request(
         'oneprovider',
-        'getProviderSpaceSyncStats',
+        'getProviderAutoStorageImportStats',
         spaceId, {
           period,
           metrics,
@@ -293,7 +292,7 @@ export default Service.extend({
   stopImportScan(spaceId) {
     return this.get('onepanelServer').request(
       'oneprovider',
-      'stop_storage_import_scan',
+      'stopAutoStorageImportScan',
       spaceId,
     );
   },
@@ -305,7 +304,7 @@ export default Service.extend({
   startImportScan(spaceId) {
     return this.get('onepanelServer').request(
       'oneprovider',
-      'start_storage_import_scan',
+      'startAutoStorageImportScan',
       spaceId,
     );
   },

@@ -9,16 +9,13 @@
  * Example of defaultValues object (submit result has the same format):
  * ```
  * {
- *   storageImport: {
- *     strategy: 'simple_scan',
- *     maxDepth: 100,
- *   },
- *   storageUpdate: {
- *     strategy: 'simple_scan',
+ *   mode: 'auto',
+ *   scanConfig: {
+ *     continuousScan: true,
  *     maxDepth: 120,
  *     scanInterval: 100,
  *     writeOnce: true,
- *     deleteEnable: true,
+ *     detectDeletions: true,
  *   }
  * }
  * ```
@@ -46,9 +43,23 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { next } from '@ember/runloop';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import { equal, raw } from 'ember-awesome-macros';
+import _ from 'lodash';
+
+const modeField = {
+  name: 'mode',
+  type: 'radio-group',
+  options: [{
+    value: 'auto',
+  }, {
+    value: 'manual',
+  }],
+  defaultValue: 'auto',
+  tip: true,
+};
 
 const genericFields = [{
-  name: 'continuousImport',
+  name: 'continuousScan',
   type: 'checkbox',
   defaultValue: true,
 }, {
@@ -76,7 +87,7 @@ const continuousFields = [{
   defaultValue: false,
   optional: true,
 }, {
-  name: 'deleteEnable',
+  name: 'detectDeletions',
   type: 'checkbox',
   defaultValue: true,
   optional: true,
@@ -101,6 +112,7 @@ const Validations = buildValidations(createValidations(
 ));
 
 export const fields = {
+  mode: [modeField],
   generic: genericFields,
   continuous: continuousFields,
 };
@@ -164,27 +176,50 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @override
    */
-  currentFieldsPrefix: computed('continuousImportEnabled', function currentFieldsPrefix() {
-    const continuousImportEnabled = this.get('continuousImportEnabled');
-    const prefixes = ['generic'];
+  currentFieldsPrefix: computed(
+    'autoImportEnabled',
+    'continuousScanEnabled',
+    function currentFieldsPrefix() {
+      const {
+        autoImportEnabled,
+        continuousScanEnabled,
+      } = this.getProperties('autoImportEnabled', 'continuousScanEnabled');
+      const prefixes = ['mode'];
 
-    if (continuousImportEnabled) {
-      prefixes.push('continuous');
+      if (autoImportEnabled) {
+        prefixes.push('generic');
+
+        if (continuousScanEnabled) {
+          prefixes.push('continuous');
+        }
+      }
+
+      return prefixes;
     }
-
-    return prefixes;
-  }),
+  ),
 
   /**
    * @type {ComputedProperty<String>}
    */
-  continuousImportEnabled: reads('allFieldsValues.generic.continuousImport'),
+  autoImportEnabled: equal('allFieldsValues.mode.mode', raw('auto')),
+
+  /**
+   * @type {ComputedProperty<String>}
+   */
+  continuousScanEnabled: reads('allFieldsValues.generic.continuousScan'),
+
+  /**
+   * @type {ComputedProperty<Array<FieldType>>}
+   */
+  modeFields: computed(() => [EmberObject.create(modeField, {
+    name: `mode.${modeField.name}`,
+  })]),
 
   /**
    * @type {ComputedProperty<Array<FieldType>>}
    */
   genericFields: computed(() => genericFields.map(field =>
-    EmberObject.create(field, {
+    EmberObject.create(_.cloneDeep(field), {
       name: `generic.${field.name}`,
     })
   )),
@@ -201,7 +236,7 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @override
    */
-  allFields: union('genericFields', 'continuousFields'),
+  allFields: union('modeFields', 'genericFields', 'continuousFields'),
 
   /**
    * @override
@@ -211,16 +246,18 @@ export default OneForm.extend(I18n, Validations, {
     'continuousFields',
     function allFieldsValues() {
       const {
+        modeFields,
         genericFields,
         continuousFields,
-      } = this.getProperties('genericFields', 'continuousFields');
+      } = this.getProperties('modeFields', 'genericFields', 'continuousFields');
 
       const fields = EmberObject.create({
+        mode: EmberObject.create(),
         generic: EmberObject.create(),
         continuous: EmberObject.create(),
       });
 
-      [...genericFields, ...continuousFields].forEach(field => {
+      [...modeFields, ...genericFields, ...continuousFields].forEach(field => {
         fields.set(field.get('name'), null);
       });
 
@@ -252,134 +289,129 @@ export default OneForm.extend(I18n, Validations, {
     });
   },
 
-  didInsertElement() {
-    this._super(...arguments);
-    this.triggerValuesChanged();
-  },
-
   addFieldsTranslations() {
     const {
+      modeFields,
       genericFields,
       continuousFields,
-    } = this.getProperties('genericFields', 'continuousFields');
+    } = this.getProperties('modeFields', 'genericFields', 'continuousFields');
 
-    [...genericFields, ...continuousFields].forEach(field => {
-      const translationPrefix = `fields.${get(field, 'name')}`;
+    [...modeFields, ...genericFields, ...continuousFields].forEach(field => {
+      const {
+        name,
+        options,
+      } = getProperties(field, 'name', 'options');
+
+      const translationPrefix = `fields.${name}`;
       setProperties(field, {
         label: this.t(`${translationPrefix}.name`),
         tip: this.t(`${translationPrefix}.tip`),
       });
+      if (options) {
+        options.forEach(option =>
+          set(option, 'label', this.t(`${translationPrefix}.options.${option.value}`))
+        );
+      }
     });
   },
 
   loadDefaultValues() {
     const {
+      modeFields,
       genericFields,
       continuousFields,
       defaultValues,
     } = this.getProperties(
+      'modeFields',
       'genericFields',
       'continuousFields',
       'defaultValues'
     );
 
     if (defaultValues) {
-      const isUpdateEnabled =
-        get(defaultValues, 'storageUpdate.strategy') === 'simple_scan';
+      const inAutoMode = get(defaultValues, 'mode') === 'auto';
+      set(modeFields[0], 'defaultValue', inAutoMode ? 'auto' : 'manual');
 
-      const continuousImportField = genericFields.findBy('name', 'generic.continuousImport');
-      set(continuousImportField,
-        'defaultValue',
-        isUpdateEnabled,
-      );
+      if (inAutoMode) {
+        genericFields
+          .forEach(field => {
+            const fieldName = get(field, 'name');
+            const value = get(
+              defaultValues,
+              `scanConfig.${this.cutOffPrefix(fieldName)}`
+            );
+            set(field, 'defaultValue', value);
+          });
 
-      genericFields
-        .without(continuousImportField)
-        .forEach(field => {
-          const fieldName = get(field, 'name');
-          const value = get(
-            defaultValues,
-            `storage${isUpdateEnabled ? 'Update' : 'Import'}.${this.cutOffPrefix(fieldName)}`
-          );
-          set(field, 'defaultValue', value);
-        });
-
-      continuousFields
-        .forEach(field => {
-          const {
-            name: fieldName,
-            defaultValue,
-          } = getProperties(field, 'name', 'defaultValue');
-          const value = isUpdateEnabled ? get(
-            defaultValues,
-            `storageUpdate.${this.cutOffPrefix(fieldName)}`
-          ) : defaultValue;
-          set(field, 'defaultValue', value);
-        });
+        const continuousScanEnabled =
+          get(defaultValues, 'scanConfig.continuousScan');
+        continuousFields
+          .forEach(field => {
+            const {
+              name: fieldName,
+              defaultValue,
+            } = getProperties(field, 'name', 'defaultValue');
+            const value = continuousScanEnabled ? get(
+              defaultValues,
+              `scanConfig.${this.cutOffPrefix(fieldName)}`
+            ) : defaultValue;
+            set(field, 'defaultValue', value);
+          });
+      }
     }
 
-    this.resetFormValues(['generic', 'continuous']);
+    this.resetFormValues(['mode', 'generic', 'continuous']);
 
     this.triggerValuesChanged();
   },
 
   getValues() {
     const {
-      continuousImportEnabled,
+      autoImportEnabled,
       formValues,
       currentFields,
-      mode,
     } = this.getProperties(
-      'continuousImportEnabled',
+      'autoImportEnabled',
       'formValues',
       'currentFields',
-      'mode'
     );
 
     const formData = {
-      storageUpdate: {
-        strategy: continuousImportEnabled ? 'simple_scan' : 'no_update',
-      },
+      mode: autoImportEnabled ? 'auto' : 'manual',
     };
-    if (mode === 'new') {
-      formData.storageImport = {
-        strategy: 'simple_scan',
-      };
-    }
 
-    currentFields.rejectBy('name', 'generic.continuousImport').forEach(({ name }) => {
-      const formValue = formValues.get(name);
-      if (formValue === undefined || formValue === '' || formValue === null) {
-        return;
-      }
-      const nameWithoutPrefix = this.cutOffPrefix(name);
-      if (mode === 'new' && name.startsWith('generic.')) {
-        formData.storageImport[nameWithoutPrefix] = formValue;
-      }
-      if (continuousImportEnabled) {
-        formData.storageUpdate[nameWithoutPrefix] = formValue;
-      }
-    });
+    if (autoImportEnabled) {
+      const scanConfig = {};
+      currentFields.rejectBy('name', 'mode.mode').forEach(({ name }) => {
+        const formValue = formValues.get(name);
+        if (formValue === undefined || formValue === '' || formValue === null) {
+          return;
+        }
+        const nameWithoutPrefix = this.cutOffPrefix(name);
+        scanConfig[nameWithoutPrefix] = formValue;
+      });
+      formData.scanConfig = scanConfig;
+    }
     return formData;
   },
 
   triggerValuesChanged() {
     const {
       allFields,
-      continuousImportEnabled,
+      continuousScanEnabled,
       mode,
       valuesChanged,
     } = this.getProperties(
       'allFields',
-      'continuousImportEnabled',
+      'continuousScanEnabled',
       'mode',
       'valuesChanged'
     );
 
     const genericFieldsWithoutContinuousImport = allFields
       .filter(field => get(field, 'name').startsWith('generic.'))
-      .rejectBy('name', 'generic.continuousImport');
-    if (mode === 'edit' && !continuousImportEnabled) {
+      .rejectBy('name', 'generic.continuousScan');
+    if (mode === 'edit' && !continuousScanEnabled) {
       genericFieldsWithoutContinuousImport.forEach(field => {
         this.set(`allFieldsValues.${get(field, 'name')}`, get(field, 'defaultValue'));
         this._resetField(field);

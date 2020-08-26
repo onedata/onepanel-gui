@@ -72,7 +72,7 @@ export default Component.extend(I18n, {
   /**
    * @type {ComputedProperty<boolean>}
    */
-  importConfigurationOpen: reads('space.importEnabled'),
+  importConfigurationOpen: reads('space.storageImportEnabled'),
 
   /**
    * @virtual

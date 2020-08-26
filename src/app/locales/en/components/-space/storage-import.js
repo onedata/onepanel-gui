@@ -1,4 +1,13 @@
 export default {
+  mode: {
+    mode: {
+      name: 'Mode',
+      options: {
+        auto: 'auto',
+        manual: 'manual',
+      },
+    },
+  },
   generic: {
     maxDepth: {
       name: 'Max depth',
@@ -8,8 +17,8 @@ export default {
       name: 'Synchronize ACL',
       tip: 'Enables import of NFSv4 ACLs.',
     },
-    continuousImport: {
-      name: 'Continuous import',
+    continuousScan: {
+      name: 'Continuous scan',
       tip: 'Indicates if the data on the storage should be imported into the space periodically. Only continuous import guarantees data integrity if direct modifications on the storage are to be made during the space lifecycle.',
     },
   },
@@ -22,8 +31,8 @@ export default {
       name: 'Write once',
       tip: 'Flag determining that imported storage will be treated as immutable (only creations and deletions of files on storage will be detected).',
     },
-    deleteEnable: {
-      name: 'Delete enabled',
+    detectDeletions: {
+      name: 'Detect deletions',
       tip: 'Flag determining that deletions of files will be detected.',
     },
   },

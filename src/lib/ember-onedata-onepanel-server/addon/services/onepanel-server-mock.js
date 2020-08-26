@@ -537,12 +537,6 @@ export default OnepanelServerBase.extend(
               name: 'Space One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One',
               storageId: storage1.id,
               spaceOccupancy: 800000000,
-              storageImport: {
-                strategy: 'no_import',
-              },
-              storageUpdate: {
-                strategy: 'no_update',
-              },
               supportingProviders: _genSupportingProviders(),
             });
             spacesFilePopularity.push({
@@ -566,12 +560,12 @@ export default OnepanelServerBase.extend(
               storageId: storage1.id,
               spaceOccupancy: 800000000,
               storageImport: {
-                strategy: 'simple_scan',
-                maxDepth: 4,
-                syncAcl: true,
-              },
-              storageUpdate: {
-                strategy: 'no_update',
+                mode: 'auto',
+                scanConfig: {
+                  continuousScan: false,
+                  maxDepth: 4,
+                  syncAcl: true,
+                },
               },
               supportingProviders: _genSupportingProviders(),
             });
@@ -973,10 +967,10 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
+    _req_oneprovider_getProviderAutoStorageImportStats: computed(function () {
       return {
         success: (spaceId, { period, metrics }) => {
-          let space = _.find(this.get('__spaces', s => s.id === spaceId));
+          let space = _.find(this.get('__spaces'), s => s.id === spaceId);
           return this.generateStorageImportStats(space, period, metrics);
         },
       };

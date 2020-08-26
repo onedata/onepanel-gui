@@ -61,35 +61,38 @@ export default Component.extend(I18n, spaceItemSupports, {
 
     const {
       storageImport,
-      storageUpdate,
-      importEnabled,
-      continuousImportEnabled,
+      storageImportEnabled,
+      autoStorageImportEnabled,
+      continuousImportScanEnabled,
     } = getProperties(
       space,
       'storageImport',
-      'storageUpdate',
-      'importEnabled',
-      'continuousImportEnabled'
+      'storageImportEnabled',
+      'autoStorageImportEnabled',
+      'continuousImportScanEnabled'
     );
-    if (!importEnabled) {
+    if (!storageImportEnabled) {
       return [];
     } else {
-      const importConfig = Object.assign({},
-        storageImport,
-        continuousImportEnabled ? storageUpdate : {}, {
-          continuousImport: continuousImportEnabled,
-        }
+      const importConfig = Object.assign({ mode: storageImport.mode },
+        (storageImport.scanConfig || {})
       );
       const properties = [];
-      (continuousImportEnabled ? ['generic', 'continuous'] : ['generic'])
-      .forEach(namespace => {
-        const newProps = importFields[namespace]
+      const fieldsPrefixes = ['mode'];
+      if (autoStorageImportEnabled) {
+        fieldsPrefixes.push('generic');
+        if (continuousImportScanEnabled) {
+          fieldsPrefixes.push('continuous');
+        }
+      }
+      fieldsPrefixes.forEach(prefix => {
+        const newProps = importFields[prefix]
           .mapBy('name')
           .filter(name => importConfig[name] !== undefined)
           .map(name => {
             return {
               name,
-              label: this.t(`storageImport.${namespace}.${name}.name`),
+              label: this.t(`storageImport.${prefix}.${name}.name`),
               value: importConfig[name],
             };
           });

@@ -43,7 +43,7 @@ export default Component.extend(
      * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
-    _importActive: reads('space.importEnabled'),
+    _importActive: reads('space.storageImportEnabled'),
 
     /**
      * @type {Ember.ComputedProperty<Action>}

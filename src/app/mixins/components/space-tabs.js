@@ -26,7 +26,7 @@ export default Mixin.create({
   tabOverviewHint: computedTabHint('overview'),
 
   tabImportClass: conditional(
-    'space.importEnabled',
+    'space.storageImportEnabled',
     raw(enabledClass),
     raw(disabledClass)
   ),

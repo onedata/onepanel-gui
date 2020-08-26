@@ -85,7 +85,7 @@ export default Component.extend(
      * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
-    _importActive: readOnly('space.importEnabled'),
+    _importActive: readOnly('space.storageImportEnabled'),
 
     _importButtonActionName: computed(
       'importConfigurationOpen',

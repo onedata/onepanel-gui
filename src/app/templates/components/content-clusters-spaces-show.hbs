@@ -69,7 +69,6 @@
           {{#tab.pane elementId=tabImportId}}
             {{#if (and (eq tabImportClass "enabled") (eq tab.activeId tabImportId))}}
               {{space-storage-import
-                importEnabled=space.importEnabled
                 importInterval=importInterval
                 timeStats=timeStats
                 importIsPending=(or

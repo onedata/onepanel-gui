@@ -16,51 +16,32 @@ describe('Integration | Component | space status icons', function () {
   });
 
   it(
-    'shows only import icon when import is enabled and update is disabled',
+    'shows import icon when storage import is enabled',
     function () {
-      this.set('space', EmberObject.create({
-        importEnabled: true,
-        updateEnabled: false,
-      }));
-      this.set('importStats', {
-        importStatus: 'done',
+      this.setProperties({
+        space: EmberObject.create({
+          storageImportEnabled: true,
+        }),
+        importStats: {
+          importStatus: 'done',
+        },
       });
 
       this.render(hbs `
-      {{space-status-icons space=space importStats=importStats}}
+        {{space-status-icons space=space importStats=importStats}}
       `);
 
       expect(this.$('.oneicon-space-import')).to.be.visible;
-      expect(this.$('.oneicon-update')).to.be.hidden;
     }
   );
 
-  it('shows import and update icons when enabled', function () {
+  it('does not render status toolbar if storage import is disabled', function () {
     this.set('space', EmberObject.create({
-      importEnabled: true,
-      updateEnabled: true,
-    }));
-    this.set('importStats', {
-      importStatus: 'done',
-      updateStatus: 'done',
-    });
-
-    this.render(hbs `
-    {{space-status-icons space=space importStats=importStats}}
-    `);
-
-    expect(this.$('.oneicon-space-import')).to.be.visible;
-    expect(this.$('.oneicon-update')).to.be.visible;
-  });
-
-  it('does not render status toolbar if import and update are disabled', function () {
-    this.set('space', EmberObject.create({
-      importEnabled: false,
-      updateEnabled: false,
+      storageImportEnabled: false,
     }));
 
     this.render(hbs `
-    {{space-status-icons space=space importStats=importStats}}
+      {{space-status-icons space=space importStats=importStats}}
     `);
     expect(this.$('.space-status-icons')).to.be.hidden;
   });
