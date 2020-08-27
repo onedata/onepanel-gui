@@ -279,11 +279,21 @@ export default OneForm.extend(I18n, Validations, {
     this.loadDefaultValues();
   }),
 
+  /**
+   * Blocks "mode" field depending on form mode
+   */
+  modeObserver: observer('mode', function modeObserver() {
+    const modeField = this.getField('mode.mode');
+    const isInEditMode = this.get('mode') === 'edit';
+    set(modeField, 'disabled', isInEditMode);
+  }),
+
   init() {
     this._super(...arguments);
 
     this.prepareFields();
     this.addFieldsTranslations();
+    this.modeObserver();
     next(() => {
       this.loadDefaultValues();
     });

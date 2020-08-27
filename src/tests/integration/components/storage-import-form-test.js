@@ -247,7 +247,8 @@ describe('Integration | Component | storage import form', function () {
 
   context('when import mode is "manual"', function () {
     it('does not show any auto storage import fields', function () {
-      this.render(hbs `{{storage-import-form}}`);
+      // enforcing "new" form mode to allow "mode" field change
+      this.render(hbs `{{storage-import-form mode="new"}}`);
 
       return wait()
         .then(() => click('.field-mode-mode-manual'))
@@ -264,7 +265,8 @@ describe('Integration | Component | storage import form', function () {
     });
 
     it('does not show "continuous mode" info message', function () {
-      this.render(hbs `{{storage-import-form}}`);
+      // enforcing "new" form mode to allow "mode" field change
+      this.render(hbs `{{storage-import-form mode="new"}}`);
 
       return wait()
         .then(() => click('.field-mode-mode-manual'))
@@ -289,9 +291,8 @@ describe('Integration | Component | storage import form', function () {
     it('allows to submit', function () {
       const submitSpy = this.set('submitSpy', sinon.spy());
 
-      this.render(hbs `
-        {{storage-import-form submit=submitSpy}}
-      `);
+      // enforcing "new" form mode to allow "mode" field change
+      this.render(hbs `{{storage-import-form mode="new" submit=submitSpy}}`);
 
       return wait()
         .then(() => click('.field-mode-mode-manual'))
@@ -325,15 +326,28 @@ describe('Integration | Component | storage import form', function () {
   it('notifies about mode changed to "manual"', function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
-    this.render(hbs `
-      {{storage-import-form valuesChanged=changedSpy}}
-    `);
+    // enforcing "new" form mode to allow "mode" field change
+    this.render(hbs `{{storage-import-form mode="new" valuesChanged=changedSpy}}`);
 
     return wait()
       .then(() => click('.field-mode-mode-manual'))
       .then(() => expect(changedSpy).to.be.calledTwice.and.to.be.calledWith(sinon.match({
         mode: 'manual',
       })));
+  });
+
+  it('has enabled "mode" field in "new" form mode', function () {
+    this.render(hbs `{{storage-import-form mode="new"}}`);
+
+    return wait()
+      .then(() => expect(this.$('.field-mode-mode input')).to.not.have.attr('disabled'));
+  });
+
+  it('has disabled "mode" field in "edit" form mode', function () {
+    this.render(hbs `{{storage-import-form mode="edit"}}`);
+
+    return wait()
+      .then(() => expect(this.$('.field-mode-mode input')).to.have.attr('disabled'));
   });
 });
 
