@@ -38,12 +38,12 @@ export default Component.extend(
     _updatedSpaceOccupancy: undefined,
 
     /**
-     * If true, this space has storage import enabled
+     * If true, this space has auto storage import enabled
      *
      * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
-    _importActive: reads('space.storageImportEnabled'),
+    autoImportActive: reads('space.autoStorageImportEnabled'),
 
     /**
      * @type {Ember.ComputedProperty<Action>}

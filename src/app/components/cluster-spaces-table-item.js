@@ -80,12 +80,12 @@ export default Component.extend(
     _openRevokeModal: false,
 
     /**
-     * If true, this space has storage import enabled
+     * If true, this space has auto storage import enabled
      *
      * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
-    _importActive: readOnly('space.storageImportEnabled'),
+    autoImportActive: readOnly('space.autoStorageImportEnabled'),
 
     _importButtonActionName: computed(
       'importConfigurationOpen',

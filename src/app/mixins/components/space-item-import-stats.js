@@ -174,14 +174,14 @@ export default Mixin.create({
     let {
       importStatusRefreshTime,
       _lastImportStatusRefresh,
-      _importActive,
+      autoImportActive,
     } = this.getProperties(
       'importStatusRefreshTime',
       '_lastImportStatusRefresh',
-      '_importActive'
+      'autoImportActive'
     );
 
-    return _importActive &&
+    return autoImportActive &&
       Date.now() - _lastImportStatusRefresh > importStatusRefreshTime;
   },
 
@@ -251,20 +251,20 @@ export default Mixin.create({
   }),
 
   reconfigureImportWatchers: observer(
-    '_importActive',
+    'autoImportActive',
     'importInterval',
     '_importChartStatsWatcher',
     'importTabActive',
     function () {
       const {
-        _importActive,
+        autoImportActive,
         importInterval,
         _importChartStatsWatcher,
         _importStatusWatcher,
         importStatusRefreshTime,
         importTabActive,
       } = this.getProperties(
-        '_importActive',
+        'autoImportActive',
         'importInterval',
         '_importChartStatsWatcher',
         '_importStatusWatcher',
@@ -272,11 +272,11 @@ export default Mixin.create({
         'importTabActive',
       );
 
-      if (_importActive) {
+      if (autoImportActive) {
         _importStatusWatcher.set('interval', importStatusRefreshTime);
       }
 
-      if (importTabActive && _importActive) {
+      if (importTabActive && autoImportActive) {
         _importChartStatsWatcher.set('interval', WATCHER_INTERVAL[importInterval]);
       } else {
         _importChartStatsWatcher.stop();
