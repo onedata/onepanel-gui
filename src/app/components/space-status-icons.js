@@ -13,32 +13,50 @@ import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { not } from 'ember-awesome-macros';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-function t(i18n, key) {
-  return i18n.t('components.spaceStatusIcons.' + key);
-}
-
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['space-status-icons'],
-  classNameBindings: ['_noStatus:hidden'],
+  classNameBindings: ['noStatus:hidden'],
 
   i18n: service(),
 
   /**
-   * To inject.
+   * @override
+   */
+  i18nPrefix: 'components.spaceStatusIcons',
+
+  /**
+   * @virtual
    * @type {SpaceDetails}
    */
   space: null,
 
   /**
-   * To inject.
+   * @virtual
    * @type {Onepanel.AutoStorageImportStats}
    */
   importStats: null,
 
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
   storageImportEnabled: reads('space.storageImportEnabled'),
 
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  manualStorageImportEnabled: reads('space.manualStorageImportEnabled'),
+
+  /**
+   * @type {String|undefined}
+   */
   importStatus: reads('importStats.status'),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  noStatus: not('storageImportEnabled'),
 
   /**
    * @type {ComputedProperty<String>}
@@ -62,19 +80,34 @@ export default Component.extend({
     }
   }),
 
-  _noStatus: not('storageImportEnabled'),
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  importHint: computed(
+    'storageImportEnabled',
+    'manualStorageImportEnabled',
+    'importStatus',
+    function importHint() {
+      const {
+        storageImportEnabled,
+        manualStorageImportEnabled,
+        importStatus,
+      } = this.getProperties(
+        'storageImportEnabled',
+        'manualStorageImportEnabled',
+        'importStatus'
+      );
 
-  _importHint: computed('storageImportEnabled', 'importStatus', function () {
-    let i18n = this.get('i18n');
-    if (this.get('storageImportEnabled')) {
-      switch (this.get('importStatus')) {
-        case 'inProgress':
-          return `${t(i18n, 'dataImport')}: ${t(i18n, 'inProgress')}`;
-        case 'done':
-          return `${t(i18n, 'dataImport')}: ${t(i18n, 'done')}`;
-        default:
-          return `${t(i18n, 'dataImport') }: ${t(i18n, 'enabled')}`;
+      const hintPrefix = 'importStatus';
+      if (!storageImportEnabled) {
+        return;
+      } else if (manualStorageImportEnabled) {
+        return this.t(`${hintPrefix}.manualMode`);
+      } else {
+        return this.t(`${hintPrefix}.${importStatus}`, {}, {
+          defaultValue: this.t(`${hintPrefix}.autoMode`),
+        });
       }
     }
-  }),
+  ),
 });
