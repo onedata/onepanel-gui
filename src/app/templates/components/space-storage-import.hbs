@@ -18,7 +18,7 @@
               defaultValues=space.storageImport
               mode="edit"
               isFormOpened=importConfigurationOpen
-              submit=(action "modifySpace")
+              submit=(action "modifyStorageImport")
             }}
           </div>
         {{/listItem.content}}
@@ -49,9 +49,10 @@
   {{/bs-button-group}}
   
   <div class="tab-info-floating">
-    {{#if importIsPending}}
+    {{#if showScanStop}}
       {{#one-spin-button
         class="btn btn-sm btn-danger"
+        disabled=(not allowScanStop)
         action=stopScan
       }}
         {{one-icon icon="cancelled"}}
@@ -61,6 +62,7 @@
       {{#one-spin-button
         class="btn btn-sm btn-success"
         action=startScan
+        disabled=(not allowScanStart)
       }}
         {{one-icon icon="play"}}
         <span class="text">{{tt this "startScan"}}</span>

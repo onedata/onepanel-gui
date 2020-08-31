@@ -9,7 +9,7 @@
 
 import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
-import { computed, observer, get } from '@ember/object';
+import { computed, observer, get, getProperties } from '@ember/object';
 import { readOnly, equal, not } from '@ember/object/computed';
 import _ from 'lodash';
 import moment from 'moment';
@@ -201,7 +201,7 @@ export default Mixin.create({
    */
   updateImportStatsWithStatusOnly(newImportStats) {
     safeExec(this, 'set', '_importStats', Object.assign({},
-      this.get('_importStats') || {}, { status: get(newImportStats, 'status') }
+      this.get('_importStats') || {}, getProperties(newImportStats, 'status', 'nextScan')
     ));
   },
 

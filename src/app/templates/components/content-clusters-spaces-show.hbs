@@ -71,7 +71,7 @@
               {{space-storage-import
                 importInterval=importInterval
                 timeStats=timeStats
-                importIsPending=(eq _importStats.status "inProgress")
+                autoImportStatus=_importStats.status
                 timeStatsError=timeStatsError
                 timeStatsLoading=timeStatsLoading
                 space=space

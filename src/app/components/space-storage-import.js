@@ -14,6 +14,7 @@ import notImplementedReject from 'onedata-gui-common/utils/not-implemented-rejec
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import { array, raw, not } from 'ember-awesome-macros';
 
 export default Component.extend(I18n, {
   eventsBus: service(),
@@ -65,9 +66,9 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {boolean}
+   * @type {String}
    */
-  importIsPending: undefined,
+  autoImportStatus: undefined,
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -86,14 +87,35 @@ export default Component.extend(I18n, {
    */
   startScan: notImplementedReject,
 
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  allowScanStart: not(array.includes(
+    raw(['enqueued', 'running', 'aborting']),
+    'autoImportStatus'
+  )),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  allowScanStop: array.includes(
+    raw(['enqueued', 'running']),
+    'autoImportStatus'
+  ),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  showScanStop: reads('allowScanStop'),
+
   actions: {
-    modifySpace(...args) {
+    modifyStorageImport(storageImport) {
       const {
         modifySpace,
         eventsBus,
         elementId,
       } = this.getProperties('modifySpace', 'eventsBus', 'elementId');
-      return modifySpace(...args)
+      return modifySpace({ storageImport })
         .then(() => eventsBus.trigger(`${elementId}-import-config:close`));
     },
   },

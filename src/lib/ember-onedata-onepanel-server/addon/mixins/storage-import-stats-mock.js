@@ -152,6 +152,7 @@ export default Mixin.create({
 
       return {
         status: globalImportStatus,
+        nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
         stats,
       };
     }

@@ -4,6 +4,7 @@ import { describe, it } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import OneTooltipHelper from '../../helpers/one-tooltip';
+import moment from 'moment';
 
 describe('Integration | Component | space status icons', function () {
   setupComponentTest('space-status-icons', {
@@ -37,8 +38,8 @@ describe('Integration | Component | space status icons', function () {
   );
 
   [{
-    status: 'initializing',
-    tip: 'Auto storage import scan is initializing',
+    status: 'enqueued',
+    tip: 'Auto storage import scan is enqueued',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-mint'],
   }, {
     status: 'running',
@@ -97,5 +98,24 @@ describe('Integration | Component | space status icons', function () {
     const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
     return tipHelper.getText()
       .then(tipText => expect(tipText).to.equal('Manual storage import enabled'));
+  });
+
+  it('shows next storage import scan time info', function () {
+    const nextScanMoment = moment().add(1, 'h');
+    this.setProperties({
+      space: EmberObject.create({
+        storageImportEnabled: true,
+        autoStorageImportEnabled: true,
+      }),
+      importStats: { status: 'done', nextScan: nextScanMoment.unix() },
+    });
+
+    this.render(hbs `{{space-status-icons space=space importStats=importStats}}`);
+
+    const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
+    return tipHelper.getText()
+      .then(tipText => expect(tipText).to.equal(
+        `Auto storage import scan doneNext scan: ${nextScanMoment.format('H:mm:ss')}`
+      ));
   });
 });
