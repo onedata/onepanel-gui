@@ -21,6 +21,33 @@
 {{else}}
   <div class="row no-border">
     <div class="col-xs-12">
+      <div class="row content-row import-status-row has-border">
+        <div class="status-description">
+          <div class="item-icon-container">
+            {{one-icon class="item-icon" icon="space-import"}}
+          </div>
+          {{importStatusDescription}}
+        </div>
+        {{#if showScanStop}}
+          {{#one-spin-button
+            class="btn btn-sm btn-danger"
+            disabled=(not allowScanStop)
+            action=stopScan
+          }}
+            {{one-icon icon="cancelled"}}
+            <span class="text">{{tt this "stopScan"}}</span>
+          {{/one-spin-button}}
+        {{else}}
+          {{#one-spin-button
+            class="btn btn-sm btn-success"
+            action=startScan
+            disabled=(not allowScanStart)
+          }}
+            {{one-icon icon="play"}}
+            <span class="text">{{tt this "startScan"}}</span>
+          {{/one-spin-button}}
+        {{/if}}
+      </div>
       {{#one-collapsible-list as |list|}}
         {{#list.item as |listItem|}}
           {{#listItem.header
@@ -69,7 +96,7 @@
       {{/bg.button}}
     {{/bs-button-group}}
     
-    <div class="tab-info-floating">
+    {{!-- <div class="tab-info-floating">
       {{#if showScanStop}}
         {{#one-spin-button
           class="btn btn-sm btn-danger"
@@ -89,7 +116,7 @@
           <span class="text">{{tt this "startScan"}}</span>
         {{/one-spin-button}}
       {{/if}}
-    </div>
+    </div> --}}
     
     {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
       <div class="col-xs-12 item-table-cell item-table-content-cell">

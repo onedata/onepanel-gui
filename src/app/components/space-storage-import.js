@@ -12,11 +12,13 @@ import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { array, raw, not, equal } from 'ember-awesome-macros';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { storageImportStatusDescription } from 'onepanel-gui/components/space-status-icons';
 
 const componentMixins = [
   I18n,
@@ -66,16 +68,15 @@ export default Component.extend(...componentMixins, {
   timeStats: undefined,
 
   /**
+   * @type {Object}
+   */
+  autoImportStats: undefined,
+
+  /**
    * @virtual
    * @type {Space}
    */
   space: undefined,
-
-  /**
-   * @virtual
-   * @type {String}
-   */
-  autoImportStatus: undefined,
 
   /**
    * @virtual
@@ -90,9 +91,31 @@ export default Component.extend(...componentMixins, {
   startScan: notImplementedReject,
 
   /**
+   * @type {ComputedProperty<String>}
+   */
+  autoImportStatus: reads('autoImportStats.status'),
+
+  /**
    * @type {ComputedProperty<boolean>}
    */
   manualImportEnabled: equal('space.storageImport.mode', raw('manual')),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  importStatusDescription: computed(
+    'space',
+    'autoImportStats',
+    function importStatusDescription() {
+      const {
+        space,
+        autoImportStats,
+        i18n,
+      } = this.getProperties('i18n', 'space', 'autoImportStats');
+
+      return storageImportStatusDescription(i18n, space, autoImportStats);
+    }
+  ),
 
   /**
    * @type {ComputedProperty<boolean>}

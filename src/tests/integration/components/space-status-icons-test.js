@@ -39,7 +39,7 @@ describe('Integration | Component | space status icons', function () {
 
   [{
     status: 'enqueued',
-    tip: 'Auto import scan is enqueued',
+    tip: 'Auto import scan enqueued',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-mint'],
   }, {
     status: 'running',
@@ -50,8 +50,8 @@ describe('Integration | Component | space status icons', function () {
     tip: 'Auto import scan is aborting',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-orange'],
   }, {
-    status: 'done',
-    tip: 'Auto import scan done',
+    status: 'completed',
+    tip: 'Auto import scan completed',
     classes: ['text-success'],
   }, {
     status: 'failed',
@@ -107,7 +107,7 @@ describe('Integration | Component | space status icons', function () {
         storageImportEnabled: true,
         autoStorageImportEnabled: true,
       }),
-      importStats: { status: 'done', nextScan: nextScanMoment.unix() },
+      importStats: { status: 'completed', nextScan: nextScanMoment.unix() },
     });
 
     this.render(hbs `{{space-status-icons space=space importStats=importStats}}`);
@@ -115,7 +115,7 @@ describe('Integration | Component | space status icons', function () {
     const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
     return tipHelper.getText()
       .then(tipText => expect(tipText).to.equal(
-        `Auto import scan doneNext scan: ${nextScanMoment.format('H:mm:ss')}`
+        `Auto import scan completed, next scan: ${nextScanMoment.format('H:mm:ss')}`
       ));
   });
 });

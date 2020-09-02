@@ -8,25 +8,61 @@
  */
 
 import Component from '@ember/component';
-import { computed } from '@ember/object';
+import { computed, getProperties } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { not } from 'ember-awesome-macros';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
 import moment from 'moment';
 import { reportFormatter } from 'onedata-gui-common/helpers/date-format';
 import { htmlSafe } from '@ember/string';
+import { isMissingMessage } from 'onedata-gui-common/utils/i18n/missing-message';
 
-export default Component.extend(I18n, {
+export function storageImportStatusDescription(i18n, space, importStats) {
+  const i18nPrefix = 'components.spaceStatusIcons.importStatus';
+  const {
+    storageImportEnabled,
+    manualStorageImportEnabled,
+  } = getProperties(space || {}, 'storageImportEnabled', 'manualStorageImportEnabled');
+  const {
+    status: importStatus,
+    nextScan: nextScanTimestamp,
+  } = getProperties(importStats || {}, 'status', 'nextScan');
+
+  if (!storageImportEnabled) {
+    return;
+  } else if (manualStorageImportEnabled) {
+    return i18n.t(`${i18nPrefix}.manualMode`);
+  } else {
+    let translation = i18n.t(`${i18nPrefix}.${importStatus}`);
+    if (isMissingMessage(translation)) {
+      translation = i18n.t(`${i18nPrefix}.autoMode`);
+    }
+
+    let nextScanTimeString;
+    if (
+      nextScanTimestamp &&
+      typeof nextScanTimestamp === 'number' &&
+      nextScanTimestamp > 0
+    ) {
+      const nextScanMoment = moment.unix(nextScanTimestamp);
+      const nowTimestamp = moment().unix();
+
+      nextScanTimeString = nextScanTimestamp - nowTimestamp > 86400 ?
+        nextScanMoment.format(reportFormatter) : nextScanMoment.format('H:mm:ss');
+      translation = htmlSafe(`${String(translation)}${
+        i18n.t(`${i18nPrefix}.nextScanPart`, { time: nextScanTimeString })
+      }`);
+    }
+
+    return translation;
+  }
+}
+
+export default Component.extend({
   classNames: ['space-status-icons'],
   classNameBindings: ['noStatus:hidden'],
 
   i18n: service(),
-
-  /**
-   * @override
-   */
-  i18nPrefix: 'components.spaceStatusIcons',
 
   /**
    * @virtual
@@ -44,11 +80,6 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<boolean>}
    */
   storageImportEnabled: reads('space.storageImportEnabled'),
-
-  /**
-   * @type {ComputedProperty<boolean>}
-   */
-  manualStorageImportEnabled: reads('space.manualStorageImportEnabled'),
 
   /**
    * @type {ComputedProperty<String|undefined>}
@@ -71,7 +102,7 @@ export default Component.extend(I18n, {
         return `${animationClassesBase} pulse-mint`;
       case 'aborting':
         return `${animationClassesBase} pulse-orange`;
-      case 'done':
+      case 'completed':
         return 'text-success';
       case 'failed':
         return 'text-danger';
@@ -83,67 +114,19 @@ export default Component.extend(I18n, {
   }),
 
   /**
-   * @type {ComputedProperty<String|undefined>}
-   */
-  nextScanTimeString: computed('importStats.nextScan', function nextScanDateString() {
-    const nextScanTimestamp = this.get('importStats.nextScan');
-    if (
-      !nextScanTimestamp ||
-      typeof nextScanTimestamp !== 'number' ||
-      nextScanTimestamp < 0
-    ) {
-      return;
-    }
-
-    const nextScanMoment = moment.unix(nextScanTimestamp);
-    const nowTimestamp = moment().unix();
-
-    if (nextScanTimestamp - nowTimestamp > 86400) {
-      return nextScanMoment.format(reportFormatter);
-    } else {
-      return nextScanMoment.format('H:mm:ss');
-    }
-  }),
-
-  /**
    * @type {ComputedProperty<SafeString>}
    */
   importHint: computed(
-    'storageImportEnabled',
-    'manualStorageImportEnabled',
-    'importStatus',
-    'nextScanTimeString',
+    'space',
+    'importStats',
     function importHint() {
       const {
-        storageImportEnabled,
-        manualStorageImportEnabled,
-        importStatus,
-        nextScanTimeString,
-      } = this.getProperties(
-        'storageImportEnabled',
-        'manualStorageImportEnabled',
-        'importStatus',
-        'nextScanTimeString'
-      );
+        space,
+        importStats,
+        i18n,
+      } = this.getProperties('space', 'importStats', 'i18n');
 
-      const hintPrefix = 'importStatus';
-      if (!storageImportEnabled) {
-        return;
-      } else if (manualStorageImportEnabled) {
-        return this.t(`${hintPrefix}.manualMode`);
-      } else {
-        let translation = this.t(`${hintPrefix}.${importStatus}`, {}, {
-          defaultValue: this.t(`${hintPrefix}.autoMode`),
-        });
-
-        if (nextScanTimeString) {
-          translation = htmlSafe(`${String(translation)}<br>${
-            this.t(`${hintPrefix}.nextScan`, { time: nextScanTimeString })
-          }`);
-        }
-
-        return translation;
-      }
+      return storageImportStatusDescription(i18n, space, importStats);
     }
   ),
 });

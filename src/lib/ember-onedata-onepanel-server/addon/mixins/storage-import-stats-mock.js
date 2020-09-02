@@ -119,7 +119,7 @@ export default Mixin.create({
 
   initDelayedStatusChange(delay = 10000) {
     let statusChangeTimerId = setTimeout(() => {
-      this.set('globalImportStatus', 'done');
+      this.set('globalImportStatus', 'completed');
     }, delay);
     this.set('statusChangeTimerId', statusChangeTimerId);
   },

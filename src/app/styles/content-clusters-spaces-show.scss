@@ -13,6 +13,20 @@
     .file-registration-header {
       margin-top: $padding-large-vertical * 2;
     }
+    .import-status-row {
+      display:flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      padding: $padding-large-horizontal;
+
+      .status-description {
+        flex-grow: 1;
+      }
+      .oneicon-space-import {
+        transform: scale(0.9);
+      }
+    }
   }
   @media (max-width: 900px) {
     .nav-tabs li {
