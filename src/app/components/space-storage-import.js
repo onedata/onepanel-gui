@@ -3,8 +3,8 @@
  * Mainly used in space storage import tab
  *
  * @module components/space-storage-import
- * @author Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -13,13 +13,20 @@ import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads } from '@ember/object/computed';
-import { inject as service } from '@ember/service';
-import { array, raw, not } from 'ember-awesome-macros';
+import { array, raw, not, equal } from 'ember-awesome-macros';
+import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { resolve } from 'rsvp';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
-export default Component.extend(I18n, {
-  eventsBus: service(),
+const componentMixins = [
+  I18n,
+  createDataProxyMixin('fileRegistrationExample'),
+];
 
-  /** @override */
+export default Component.extend(...componentMixins, {
+  /**
+   * @override
+   */
   i18nPrefix: 'components.spaceStorageImport',
 
   /**
@@ -71,11 +78,6 @@ export default Component.extend(I18n, {
   autoImportStatus: undefined,
 
   /**
-   * @type {ComputedProperty<boolean>}
-   */
-  importConfigurationOpen: reads('space.storageImportEnabled'),
-
-  /**
    * @virtual
    * @type {Function}
    */
@@ -86,6 +88,11 @@ export default Component.extend(I18n, {
    * @type {Function}
    */
   startScan: notImplementedReject,
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  manualImportEnabled: equal('space.storageImport.mode', raw('manual')),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -108,15 +115,17 @@ export default Component.extend(I18n, {
    */
   showScanStop: reads('allowScanStop'),
 
+  /**
+   * @override
+   */
+  fetchFileRegistrationExample() {
+    return resolve('some_request');
+  },
+
   actions: {
-    modifyStorageImport(storageImport) {
-      const {
-        modifySpace,
-        eventsBus,
-        elementId,
-      } = this.getProperties('modifySpace', 'eventsBus', 'elementId');
-      return modifySpace({ storageImport })
-        .then(() => eventsBus.trigger(`${elementId}-import-config:close`));
+    modifyStorageImport(closeFormCallback, storageImport) {
+      return this.get('modifySpace')({ storageImport })
+        .then(() => safeExec(this, () => closeFormCallback()));
     },
   },
 });

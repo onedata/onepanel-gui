@@ -2,6 +2,7 @@ export default {
   mode: {
     mode: {
       name: 'Mode',
+      tip: 'When "auto" mode is selected, the storage will be automatically scanned and data will be imported from storage into the assigned Onedata space without need for copying the data. In case of "manual" mode, the files must be registered manually by the space users with REST API. Registration of directories is not supported.',
       options: {
         auto: 'auto',
         manual: 'manual',
@@ -27,9 +28,9 @@ export default {
       name: 'Scan interval [s]',
       tip: 'Period between subsequent scans in seconds (counted from end of one scan till beginning of the following).',
     },
-    writeOnce: {
-      name: 'Write once',
-      tip: 'Flag determining that imported storage will be treated as immutable (only creations and deletions of files on storage will be detected).',
+    detectModifications: {
+      name: 'Detect modifications',
+      tip: 'Flag determining that modifications of files on the synchronized storage will be detected. If disabled, the storage will be treated as immutable (only creations and deletions of files on storage will be detected).',
     },
     detectDeletions: {
       name: 'Detect deletions',

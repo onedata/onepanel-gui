@@ -160,7 +160,7 @@ export default Service.extend({
    * @param {string} period one of: minute, hour, day
    * @param {Array.string} metrics array with any of: queueLength, insertCount,
    *  updateCount, deleteCount
-   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderAutoStorageImportStats results
+   * @returns {Promise<object>} Onepanel.ProviderAPI.getAutoStorageImportStats results
    */
   getImportStats(spaceId, period, metrics) {
     // convert metrics to special-format string that holds an array
@@ -171,7 +171,7 @@ export default Service.extend({
       let onepanelServer = this.get('onepanelServer');
       let gettingImportStats = onepanelServer.request(
         'oneprovider',
-        'getProviderAutoStorageImportStats',
+        'getAutoStorageImportStats',
         spaceId, {
           period,
           metrics,

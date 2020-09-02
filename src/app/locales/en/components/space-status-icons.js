@@ -1,13 +1,13 @@
 export default {
   importStatus: {
-    manualMode: 'Manual storage import enabled',
-    autoMode: 'Auto storage import enabled',
-    enqueued: 'Auto storage import scan is enqueued',
-    running: 'Auto storage import scan is running',
-    aborting: 'Auto storage import scan is aborting',
-    done: 'Auto storage import scan done',
-    failed: 'Auto storage import scan failed',
-    aborted: 'Auto storage import scan aborted',
-    nextScan: 'Next scan: {{time}}',
+    manualMode: 'Manual import enabled',
+    autoMode: 'Auto import enabled',
+    enqueued: 'Auto import scan is enqueued',
+    running: 'Auto import scan is <strong>running</strong>',
+    aborting: 'Auto import scan is aborting',
+    done: 'Auto import scan <strong>done</strong>',
+    failed: 'Auto import scan failed',
+    aborted: 'Auto import scan aborted',
+    nextScan: 'Next scan: <strong>{{time}}</strong>',
   },
 };

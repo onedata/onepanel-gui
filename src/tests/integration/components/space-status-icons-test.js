@@ -39,31 +39,31 @@ describe('Integration | Component | space status icons', function () {
 
   [{
     status: 'enqueued',
-    tip: 'Auto storage import scan is enqueued',
+    tip: 'Auto import scan is enqueued',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-mint'],
   }, {
     status: 'running',
-    tip: 'Auto storage import scan is running',
+    tip: 'Auto import scan is running',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-mint'],
   }, {
     status: 'aborting',
-    tip: 'Auto storage import scan is aborting',
+    tip: 'Auto import scan is aborting',
     classes: ['animated', 'infinite', 'semi-hinge', 'pulse-orange'],
   }, {
     status: 'done',
-    tip: 'Auto storage import scan done',
+    tip: 'Auto import scan done',
     classes: ['text-success'],
   }, {
     status: 'failed',
-    tip: 'Auto storage import scan failed',
+    tip: 'Auto import scan failed',
     classes: ['text-danger'],
   }, {
     status: 'aborted',
-    tip: 'Auto storage import scan aborted',
+    tip: 'Auto import scan aborted',
     classes: ['text-danger'],
   }, {
     status: '',
-    tip: 'Auto storage import enabled',
+    tip: 'Auto import enabled',
     classes: [],
   }].forEach(({ status, tip, classes }) => {
     it(`shows "${status}"${status === '' ? ' (incorrect)' : ''} auto storage import status`, function () {
@@ -97,7 +97,7 @@ describe('Integration | Component | space status icons', function () {
 
     const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
     return tipHelper.getText()
-      .then(tipText => expect(tipText).to.equal('Manual storage import enabled'));
+      .then(tipText => expect(tipText).to.equal('Manual import enabled'));
   });
 
   it('shows next storage import scan time info', function () {
@@ -115,7 +115,7 @@ describe('Integration | Component | space status icons', function () {
     const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
     return tipHelper.getText()
       .then(tipText => expect(tipText).to.equal(
-        `Auto storage import scan doneNext scan: ${nextScanMoment.format('H:mm:ss')}`
+        `Auto import scan doneNext scan: ${nextScanMoment.format('H:mm:ss')}`
       ));
   });
 });

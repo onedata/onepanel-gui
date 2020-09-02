@@ -14,7 +14,7 @@
  *     continuousScan: true,
  *     maxDepth: 120,
  *     scanInterval: 100,
- *     writeOnce: true,
+ *     detectModifications: true,
  *     detectDeletions: true,
  *   }
  * }
@@ -82,9 +82,9 @@ const continuousFields = [{
   example: '1000',
   defaultValue: '60',
 }, {
-  name: 'writeOnce',
+  name: 'detectModifications',
   type: 'checkbox',
-  defaultValue: false,
+  defaultValue: true,
   optional: true,
 }, {
   name: 'detectDeletions',

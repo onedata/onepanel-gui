@@ -14,7 +14,7 @@ const exampleFormValues = {
     syncAcl: true,
     continuousScan: true,
     scanInterval: '20',
-    writeOnce: true,
+    detectModifications: false,
     detectDeletions: true,
   },
 };
@@ -27,7 +27,7 @@ function fillInWholeForm() {
       '.field-continuous-scanInterval',
       exampleFormValues.scanConfig.scanInterval
     ))
-    .then(() => click('.toggle-field-continuous-writeOnce'));
+    .then(() => click('.toggle-field-continuous-detectModifications'));
 }
 
 describe('Integration | Component | storage import form', function () {
@@ -66,8 +66,8 @@ describe('Integration | Component | storage import form', function () {
           expect(this.$('.field-generic-maxDepth').val()).to.equal('');
           expect(this.$('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
           expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-          expect(this.$('.toggle-field-continuous-writeOnce'))
-            .to.not.have.class('checked');
+          expect(this.$('.toggle-field-continuous-detectModifications'))
+            .to.have.class('checked');
           expect(this.$('.toggle-field-continuous-detectDeletions'))
             .to.have.class('checked');
         });
@@ -140,7 +140,7 @@ describe('Integration | Component | storage import form', function () {
             const correctData = _.cloneDeep(exampleFormValues);
             correctData.scanConfig.continuousScan = false;
             delete correctData.scanConfig.scanInterval;
-            delete correctData.scanConfig.writeOnce;
+            delete correctData.scanConfig.detectModifications;
             delete correctData.scanConfig.detectDeletions;
 
             const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
@@ -183,8 +183,8 @@ describe('Integration | Component | storage import form', function () {
           .then(() => click('.toggle-field-generic-continuousScan'))
           .then(() => {
             expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-            expect(this.$('.toggle-field-continuous-writeOnce'))
-              .to.not.have.class('checked');
+            expect(this.$('.toggle-field-continuous-detectModifications'))
+              .to.have.class('checked');
             expect(this.$('.toggle-field-continuous-detectDeletions'))
               .to.have.class('checked');
           });
@@ -200,7 +200,7 @@ describe('Integration | Component | storage import form', function () {
           .then(() => click('.field-mode-mode-auto'))
           .then(() =>
             expect(this.$('.continuous-info-msg').text())
-            .to.contain('Continous mode enabled')
+            .to.contain('Continuous scan enabled')
           );
       }
     );
@@ -215,7 +215,7 @@ describe('Integration | Component | storage import form', function () {
           .then(() => click('.toggle-field-generic-continuousScan'))
           .then(() =>
             expect(this.$('.continuous-info-msg').text())
-            .to.contain('Continous mode disabled')
+            .to.contain('Continuous scan disabled')
           );
       }
     );
@@ -236,8 +236,8 @@ describe('Integration | Component | storage import form', function () {
             expect(this.$('.field-generic-maxDepth').val()).to.equal('10');
             expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
             expect(this.$('.field-continuous-scanInterval').val()).to.equal('20');
-            expect(this.$('.toggle-field-continuous-writeOnce'))
-              .to.have.class('checked');
+            expect(this.$('.toggle-field-continuous-detectModifications'))
+              .to.not.have.class('checked');
             expect(this.$('.toggle-field-continuous-detectDeletions'))
               .to.have.class('checked');
           });
@@ -258,7 +258,7 @@ describe('Integration | Component | storage import form', function () {
             '.field-generic-maxDepth',
             '.toggle-field-generic-syncAcl',
             '.field-continuous-scanInterval',
-            '.toggle-field-continuous-writeOnce',
+            '.toggle-field-continuous-detectModifications',
             '.toggle-field-continuous-detectDeletions',
           ].forEach(selector => expect(this.$(selector)).to.not.exist);
         });
@@ -317,7 +317,7 @@ describe('Integration | Component | storage import form', function () {
           continuousScan: true,
           syncAcl: false,
           scanInterval: '60',
-          writeOnce: false,
+          detectModifications: true,
           detectDeletions: true,
         }),
       })));
@@ -353,7 +353,7 @@ describe('Integration | Component | storage import form', function () {
 
 const continuousFieldsSelectors = [
   '.field-continuous-scanInterval',
-  '.toggle-field-continuous-writeOnce',
+  '.toggle-field-continuous-detectModifications',
   '.toggle-field-continuous-detectDeletions',
 ];
 
