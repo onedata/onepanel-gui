@@ -533,6 +533,7 @@ export default OneForm.extend(I18n, Validations, {
       });
       if (isReadonly) {
         if (!isSkipStorageDetection) {
+          console.log('send change 1', mode);
           this.send(
             'inputChanged',
             `${prefix}.skipStorageDetection`,
@@ -541,7 +542,9 @@ export default OneForm.extend(I18n, Validations, {
         }
       } else {
         const previousSkipStorageDetection = this.get('previousSkipStorageDetection');
-        if (previousSkipStorageDetection !== null) {
+        if (previousSkipStorageDetection !== null &&
+          previousSkipStorageDetection !== Boolean(isSkipStorageDetection)
+        ) {
           this.send(
             'inputChanged',
             `${prefix}.skipStorageDetection`,
