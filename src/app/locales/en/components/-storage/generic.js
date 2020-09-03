@@ -9,7 +9,7 @@ export default {
   },
   skipStorageDetection: {
     name: 'Skip storage detection',
-    tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option should be enabled on readonly storages.',
+    tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option is always enabled on readonly storages.',
   },
   readonly: {
     name: 'Readonly',
