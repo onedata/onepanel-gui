@@ -20,6 +20,7 @@ import ReplacingChunksArray from 'onedata-gui-common/utils/replacing-chunks-arra
 import { htmlSafe } from '@ember/string';
 import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-cleaning-reports-updater';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { scheduleOnce } from '@ember/runloop';
 
 function compareIndex(a, b) {
   const ai = get(a, 'index');
@@ -127,6 +128,18 @@ export default Component.extend(I18n, {
       if (this.get('spaceAutoCleaningReportsUpdater.isEnabled') !== enable) {
         this.set('spaceAutoCleaningReportsUpdater.isEnabled', enable);
       }
+    }
+  ),
+
+  /**
+   * Change of a start or end index could be needed after source array length change
+   */
+  sourceArrayLengthObserver: observer(
+    'reportsArray.sourceArray.length',
+    function sourceArrayLengthObserver() {
+      scheduleOnce('afterRender', () => {
+        this.get('listWatcher').scrollHandler();
+      });
     }
   ),
 
