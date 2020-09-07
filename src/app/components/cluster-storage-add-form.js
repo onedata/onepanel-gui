@@ -235,6 +235,12 @@ export default OneForm.extend(I18n, Validations, {
   isSavingStorage: false,
 
   /**
+   * Remember value of skip storage detection before locking in `readonlyObserver`.
+   * @type {Boolean}
+   */
+  previousSkipStorageDetection: null,
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   inEditionMode: equal('mode', 'edit'),
@@ -508,6 +514,48 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  readonlyObserver: observer(
+    'formValues.generic.readonly',
+    'formValues.generic_editor.readonly',
+    function readonlyObserver() {
+      const mode = this.get('mode');
+      if (mode === 'show') {
+        return;
+      }
+      const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+      const isReadonly = this.get(`formValues.${prefix}.readonly`);
+      const isSkipStorageDetection =
+        this.get(`formValues.${prefix}.skipStorageDetection`);
+      const skipStorageDetectionField = this.getField(`${prefix}.skipStorageDetection`);
+      setProperties(skipStorageDetectionField, {
+        disabled: isReadonly,
+        lockHint: isReadonly ? this.t('cannotStorageDetectionReadonly') : null,
+      });
+      if (isReadonly) {
+        if (!isSkipStorageDetection) {
+          console.log('send change 1', mode);
+          this.send(
+            'inputChanged',
+            `${prefix}.skipStorageDetection`,
+            true,
+          );
+        }
+      } else {
+        const previousSkipStorageDetection = this.get('previousSkipStorageDetection');
+        if (previousSkipStorageDetection !== null &&
+          previousSkipStorageDetection !== Boolean(isSkipStorageDetection)
+        ) {
+          this.send(
+            'inputChanged',
+            `${prefix}.skipStorageDetection`,
+            previousSkipStorageDetection,
+          );
+        }
+      }
+      this.set('previousSkipStorageDetection', Boolean(isSkipStorageDetection));
+    }
+  ),
+
   importedStorageObserver: observer(
     'formValues.generic.importedStorage',
     'formValues.generic_editor.importedStorage',
@@ -592,6 +640,7 @@ export default OneForm.extend(I18n, Validations, {
     this.osdsNumberObserver();
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
+    this.readonlyObserver();
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
