@@ -967,10 +967,19 @@ export default OnepanelServerBase.extend(
       }
     },
 
+    _req_oneprovider_getAutoStorageImportInfo: computed(function () {
+      return {
+        success: (spaceId) => {
+          const space = _.find(this.get('__spaces'), s => s.id === spaceId);
+          return this.generateStorageImportInfo(space);
+        },
+      };
+    }),
+
     _req_oneprovider_getAutoStorageImportStats: computed(function () {
       return {
         success: (spaceId, { period, metrics }) => {
-          let space = _.find(this.get('__spaces'), s => s.id === spaceId);
+          const space = _.find(this.get('__spaces'), s => s.id === spaceId);
           return this.generateStorageImportStats(space, period, metrics);
         },
       };

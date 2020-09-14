@@ -9,8 +9,7 @@
 
 import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
-import { computed, observer, get, getProperties } from '@ember/object';
-import { readOnly, equal, not } from '@ember/object/computed';
+import { computed, observer, get } from '@ember/object';
 import _ from 'lodash';
 import moment from 'moment';
 import Looper from 'onedata-gui-common/utils/looper';
@@ -28,10 +27,19 @@ const WATCHER_INTERVAL = {
 /**
  * Default max time after which watchers should fetch at least import statuses [ms]
  */
-const IMPORT_STATUS_REFRESH_TIME = 15000;
+const IMPORT_STATUS_REFRESH_TIME = 5000;
 
 export default Mixin.create({
   spaceManager: service(),
+
+  /**
+   * Import info object fetched from backend
+   *
+   * This property is updated automatically by some interval watchers
+   *
+   * @type {Onepanel.AutoStorageImportInfo}
+   */
+  importInfo: null,
 
   /**
    * Import statistics object fetched from backend
@@ -40,14 +48,14 @@ export default Mixin.create({
    *
    * @type {Onepanel.AutoStorageImportStats}
    */
-  _importStats: null,
+  importStats: null,
 
   // TODO maybe this could be computed from import/update algorightm's loop period
   /**
-   * Maximal time [ms] after which ``_importStatus`` should be updated (fetched)
+   * Maximal time [ms] after which `importInfo` should be updated (fetched)
    * @type {number}
    */
-  importStatusRefreshTime: IMPORT_STATUS_REFRESH_TIME,
+  importInfoRefreshTime: IMPORT_STATUS_REFRESH_TIME,
 
   /**
    * Currently chosen import interval (enum as in AutoStorageImportStats: minute, hour or day)
@@ -56,18 +64,10 @@ export default Mixin.create({
   importInterval: 'minute',
 
   /**
-   * Previous value of importInterval used to detect changes
-   */
-  _prevImportInterval: null,
-
-  hideImportStats: equal('importInterval', null),
-  showImportStats: not('hideImportStats'),
-
-  /**
    * When the import status was updated last time?
    * @type {Date}
    */
-  _lastImportStatusRefresh: null,
+  lastImportInfoRefresh: null,
 
   /**
    * Periodically fetched new import statistics (for charts)
@@ -79,7 +79,7 @@ export default Mixin.create({
    *
    * @type {Looper}
    */
-  _importChartStatsWatcher: null,
+  importChartStatsWatcher: null,
 
   /**
    * Periodically checks if import status if fresh and if not - fetch import status
@@ -89,15 +89,29 @@ export default Mixin.create({
    * 
    * @type {Looper}
    */
-  _importStatusWatcher: null,
-
-  timeStatsCollection: readOnly('_importStats.stats'),
+  importInfoWatcher: null,
 
   /**
-   * TimeStatsCollection in form of Array
+   * @type {string}
    */
-  timeStats: computed('timeStatsCollection', function () {
-    return _.values(this.get('timeStatsCollection'));
+  timeStatsError: null,
+
+  /**
+   * True if time stats have been loaded after importInterval change
+   * at least once.
+   * @type {boolean}
+   */
+  timeStatsLoading: true,
+
+  /**
+   * importStats in form of Array
+   */
+  timeStats: computed('importStats', function timeStats() {
+    const importStats = this.get('importStats');
+    return Object.keys(this.get('importStats') || {}).reduce((arr, key) => {
+      arr.push(Object.assign({}, importStats[key], { name: key }));
+      return arr;
+    }, []);
   }).readOnly(),
 
   /**
@@ -124,128 +138,11 @@ export default Mixin.create({
   }),
 
   /**
-   * @type {string}
-   */
-  timeStatsError: null,
-
-  /**
-   * True if time stats have been loaded after importInterval change
-   * at least once.
-   * @type {boolean}
-   */
-  timeStatsLoading: true,
-
-  init() {
-    this._super(...arguments);
-
-    // interval of this Looper will be set in reconfigureImportWatchers observer
-    let _importChartStatsWatcher = Looper.create({ immediate: true });
-    _importChartStatsWatcher.on('tick', () =>
-      safeExec(this, 'fetchAllImportStats')
-    );
-
-    let _importStatusWatcher = Looper.create({
-      immediate: true,
-      interval: this.get('importStatusRefreshTime'),
-    });
-    _importStatusWatcher.on('tick', () =>
-      safeExec(this, 'checkImportStatusUpdate')
-    );
-    this.checkImportStatusUpdate();
-
-    this.setProperties({ _importChartStatsWatcher, _importStatusWatcher });
-
-    this.reconfigureImportWatchers();
-  },
-
-  willDestroyElement() {
-    try {
-      this.get('_importChartStatsWatcher').stop();
-      this.get('_importStatusWatcher').stop();
-    } finally {
-      this._super(...arguments);
-    }
-  },
-
-  /**
-   * @returns {boolean} true if import status should be refreshed
-   */
-  shouldRefreshImportStatus() {
-    let {
-      importStatusRefreshTime,
-      _lastImportStatusRefresh,
-      autoImportActive,
-    } = this.getProperties(
-      'importStatusRefreshTime',
-      '_lastImportStatusRefresh',
-      'autoImportActive'
-    );
-
-    return autoImportActive &&
-      Date.now() - _lastImportStatusRefresh > importStatusRefreshTime;
-  },
-
-  /**
-   * If import status was not updated for some mininal time, fetch import status
-   * @returns {undefined}
-   */
-  checkImportStatusUpdate() {
-    if (this.shouldRefreshImportStatus()) {
-      this.fetchStatusImportStats();
-    }
-  },
-
-  /**
-   * @param {Onepanel.AutoStorageImportStats} newImportStats importStats without time stats
-   * @returns {undefined}
-   */
-  updateImportStatsWithStatusOnly(newImportStats) {
-    safeExec(this, 'set', '_importStats', Object.assign({},
-      this.get('_importStats') || {}, getProperties(newImportStats, 'status', 'nextScan')
-    ));
-  },
-
-  fetchStatusImportStats() {
-    let importStatsPromise =
-      this.get('spaceManager').getImportStatusOnly(this.get('space.id'));
-
-    importStatsPromise.then(newImportStats => {
-      this.updateImportStatsWithStatusOnly(newImportStats);
-    });
-
-    importStatsPromise.finally(() => {
-      this.set('_lastImportStatusRefresh', Date.now());
-    });
-
-    // TODO status fetch error handling
-  },
-
-  fetchAllImportStats() {
-    const {
-      importInterval,
-      spaceManager,
-    } = this.getProperties('importInterval', 'spaceManager');
-    const spaceId = this.get('space.id');
-
-    return spaceManager.getImportAllStats(spaceId, importInterval)
-      .then(newImportStats => safeExec(this, () => this.setProperties({
-        lastStatsUpdateTime: Date.now(),
-        _importStats: newImportStats,
-        timeStatsError: null,
-      })))
-      .catch(error => safeExec(this, () => this.set('timeStatsError', error)))
-      .finally(() => safeExec(this, () => this.setProperties({
-        timeStatsLoading: false,
-        _lastImportStatusRefresh: Date.now(),
-      })));
-  },
-
-  /**
    * Is import tab currently opened
    * NOTE: selectedTab is provided by `space-tabs` mixin
    * @type {Ember.ComputedProperty<boolean>}
    */
-  importTabActive: computed('selectedTab', function () {
+  importTabActive: computed('selectedTab', function importTabActive() {
     const selectedTab = this.get('selectedTab');
     return selectedTab && selectedTab === 'import';
   }),
@@ -253,48 +150,136 @@ export default Mixin.create({
   reconfigureImportWatchers: observer(
     'autoImportActive',
     'importInterval',
-    '_importChartStatsWatcher',
+    'importChartStatsWatcher',
     'importTabActive',
     function () {
       const {
         autoImportActive,
         importInterval,
-        _importChartStatsWatcher,
-        _importStatusWatcher,
-        importStatusRefreshTime,
+        importChartStatsWatcher,
+        importInfoWatcher,
+        importInfoRefreshTime,
         importTabActive,
       } = this.getProperties(
         'autoImportActive',
         'importInterval',
-        '_importChartStatsWatcher',
-        '_importStatusWatcher',
-        'importStatusRefreshTime',
+        'importChartStatsWatcher',
+        'importInfoWatcher',
+        'importInfoRefreshTime',
         'importTabActive',
       );
 
       if (autoImportActive) {
-        _importStatusWatcher.set('interval', importStatusRefreshTime);
+        importInfoWatcher.set('interval', importInfoRefreshTime);
       }
 
       if (importTabActive && autoImportActive) {
-        _importChartStatsWatcher.set('interval', WATCHER_INTERVAL[importInterval]);
+        importChartStatsWatcher.set('interval', WATCHER_INTERVAL[importInterval]);
       } else {
-        _importChartStatsWatcher.stop();
+        importChartStatsWatcher.stop();
       }
-    }),
+    }
+  ),
+
+  init() {
+    this._super(...arguments);
+
+    // interval of this Looper will be set in reconfigureImportWatchers observer
+    let importChartStatsWatcher = Looper.create({ immediate: true });
+    importChartStatsWatcher.on('tick', () =>
+      safeExec(this, 'fetchImportStats')
+    );
+
+    let importInfoWatcher = Looper.create({
+      immediate: true,
+      interval: this.get('importInfoRefreshTime'),
+    });
+    importInfoWatcher.on('tick', () =>
+      safeExec(this, 'checkImportInfoUpdate')
+    );
+    this.checkImportInfoUpdate();
+
+    this.setProperties({ importChartStatsWatcher, importInfoWatcher });
+
+    this.reconfigureImportWatchers();
+  },
+
+  willDestroyElement() {
+    try {
+      this.get('importChartStatsWatcher').stop();
+      this.get('importInfoWatcher').stop();
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
+  /**
+   * @returns {boolean} true if import info should be refreshed
+   */
+  shouldRefreshImportInfo() {
+    let {
+      importInfoRefreshTime,
+      lastImportInfoRefresh,
+      autoImportActive,
+    } = this.getProperties(
+      'importInfoRefreshTime',
+      'lastImportInfoRefresh',
+      'autoImportActive'
+    );
+
+    return autoImportActive &&
+      Date.now() - lastImportInfoRefresh > importInfoRefreshTime;
+  },
+
+  /**
+   * If import status was not updated for some mininal time, fetch import status
+   * @returns {undefined}
+   */
+  checkImportInfoUpdate() {
+    if (this.shouldRefreshImportInfo()) {
+      this.fetchImportInfo();
+    }
+  },
+
+  fetchImportInfo() {
+    return this.get('spaceManager').getImportInfo(this.get('space.id'))
+      .then(importInfo => {
+        safeExec(this, 'set', 'importInfo', importInfo);
+      })
+      .finally(() => {
+        safeExec(this, 'set', 'lastImportInfoRefresh', Date.now());
+      });
+
+    // TODO status fetch error handling
+  },
+
+  fetchImportStats() {
+    const {
+      importInterval,
+      spaceManager,
+    } = this.getProperties('importInterval', 'spaceManager');
+    const spaceId = this.get('space.id');
+
+    return spaceManager.getImportStats(spaceId, importInterval)
+      .then(newImportStats => safeExec(this, () => this.setProperties({
+        importStats: newImportStats,
+        timeStatsError: null,
+      })))
+      .catch(error => safeExec(this, () => this.set('timeStatsError', error)))
+      .finally(() => safeExec(this, () => this.set('timeStatsLoading', false)));
+  },
 
   actions: {
     /**
      * @param {string} importInterval one of: minute, hour, day
      * @returns {undefined}
      */
-    onimportIntervalChange(importInterval) {
+    onImportIntervalChange(importInterval) {
       let currentimportInterval = this.get('importInterval');
       if (importInterval !== currentimportInterval) {
-        this.set('_importStats.stats', undefined);
         this.setProperties({
+          importStats: null,
           importInterval,
-          _prevImportInterval: currentimportInterval,
           timeStatsLoading: true,
           timeStatsError: null,
         });

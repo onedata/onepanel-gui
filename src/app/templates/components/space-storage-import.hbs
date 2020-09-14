@@ -96,28 +96,6 @@
       {{/bg.button}}
     {{/bs-button-group}}
     
-    {{!-- <div class="tab-info-floating">
-      {{#if showScanStop}}
-        {{#one-spin-button
-          class="btn btn-sm btn-danger"
-          disabled=(not allowScanStop)
-          action=stopScan
-        }}
-          {{one-icon icon="cancelled"}}
-          <span class="text">{{tt this "stopScan"}}</span>
-        {{/one-spin-button}}
-      {{else}}
-        {{#one-spin-button
-          class="btn btn-sm btn-success"
-          action=startScan
-          disabled=(not allowScanStart)
-        }}
-          {{one-icon icon="play"}}
-          <span class="text">{{tt this "startScan"}}</span>
-        {{/one-spin-button}}
-      {{/if}}
-    </div> --}}
-    
     {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
       <div class="col-xs-12 item-table-cell item-table-content-cell">
         {{storage-import-chart-operations

@@ -70,7 +70,7 @@ export default Component.extend(...componentMixins, {
   /**
    * @type {Object}
    */
-  autoImportStats: undefined,
+  autoImportInfo: undefined,
 
   /**
    * @virtual
@@ -93,7 +93,7 @@ export default Component.extend(...componentMixins, {
   /**
    * @type {ComputedProperty<String>}
    */
-  autoImportStatus: reads('autoImportStats.status'),
+  autoImportStatus: reads('autoImportInfo.status'),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -105,15 +105,15 @@ export default Component.extend(...componentMixins, {
    */
   importStatusDescription: computed(
     'space',
-    'autoImportStats',
+    'autoImportInfo',
     function importStatusDescription() {
       const {
         space,
-        autoImportStats,
+        autoImportInfo,
         i18n,
-      } = this.getProperties('i18n', 'space', 'autoImportStats');
+      } = this.getProperties('i18n', 'space', 'autoImportInfo');
 
-      return storageImportStatusDescription(i18n, space, autoImportStats);
+      return storageImportStatusDescription(i18n, space, autoImportInfo);
     }
   ),
 

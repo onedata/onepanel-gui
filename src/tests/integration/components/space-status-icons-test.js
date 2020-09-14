@@ -71,10 +71,10 @@ describe('Integration | Component | space status icons', function () {
         space: EmberObject.create({
           storageImportEnabled: true,
         }),
-        importStats: { status },
+        importInfo: { status },
       });
 
-      this.render(hbs `{{space-status-icons space=space importStats=importStats}}`);
+      this.render(hbs `{{space-status-icons space=space importInfo=importInfo}}`);
 
       const $importIcon = this.$('.status-toolbar-icon').eq(0);
       const tipHelper = new OneTooltipHelper($importIcon[0]);
@@ -107,10 +107,10 @@ describe('Integration | Component | space status icons', function () {
         storageImportEnabled: true,
         autoStorageImportEnabled: true,
       }),
-      importStats: { status: 'completed', nextScan: nextScanMoment.unix() },
+      importInfo: { status: 'completed', nextScan: nextScanMoment.unix() },
     });
 
-    this.render(hbs `{{space-status-icons space=space importStats=importStats}}`);
+    this.render(hbs `{{space-status-icons space=space importInfo=importInfo}}`);
 
     const tipHelper = new OneTooltipHelper(this.$('.status-toolbar-icon')[0]);
     return tipHelper.getText()

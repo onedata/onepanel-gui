@@ -124,6 +124,23 @@ export default Mixin.create({
     this.set('statusChangeTimerId', statusChangeTimerId);
   },
 
+  generateStorageImportInfo(space) {
+    if (get(space, 'storageImport') == null) {
+      return null;
+    } else {
+      const nowTimestamp = Math.floor((new Date().valueOf() / 1000));
+      return {
+        status: this.get('globalImportStatus'),
+        start: nowTimestamp - 3600,
+        stop: null,
+        importedFiles: 1000,
+        updatedFiles: 500,
+        deletedFiles: 250,
+        nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
+      };
+    }
+  },
+
   generateStorageImportStats(space, period, metrics) {
     if (typeof metrics === 'string') {
       metrics = metrics.split(',');
@@ -131,30 +148,20 @@ export default Mixin.create({
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
-      let {
+      const {
         allStats,
-        globalImportStatus,
         lastValueDate,
       } = this.getProperties(
         'allStats',
-        'globalImportStatus',
         'lastValueDate'
       );
 
-      let stats;
       if (period && metrics) {
-        stats = _.zipObject(metrics, metrics.map(metric => ({
-          name: metric,
+        return _.zipObject(metrics, metrics.map(metric => ({
           values: allStats[period][metric],
           lastValueDate: lastValueDate.toJSON(),
         })));
       }
-
-      return {
-        status: globalImportStatus,
-        nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
-        stats,
-      };
     }
   },
 });

@@ -150,58 +150,42 @@ export default Service.extend({
   },
 
   /**
+   * Fetch current import info
+   *
+   * @param {String} spaceId
+   * @returns {Promise<Onepanel.AutoStorageImportInfo>}
+   */
+  getImportInfo(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getAutoStorageImportInfo',
+      spaceId
+    ).then(({ data }) => data);
+  },
+
+  /**
    * Fetch current import statistics with given configuration
    *
-   * There are more high-level methods that should be considered to use:
-   * - getImportStatusOnly
-   * - getImportAllStats
-   *
-   * @param {string} spaceId 
-   * @param {string} period one of: minute, hour, day
-   * @param {Array.string} metrics array with any of: queueLength, insertCount,
+   * @param {String} spaceId
+   * @param {String} [period] one of: minute, hour, day
+   * @param {Array<String>} [metrics] array with any of: queueLength, insertCount,
    *  updateCount, deleteCount
-   * @returns {Promise<object>} Onepanel.ProviderAPI.getAutoStorageImportStats results
+   * @returns {Promise<Onepanel.AutoStorageImportStats>}
    */
-  getImportStats(spaceId, period, metrics) {
-    // convert metrics to special-format string that holds an array
-    if (Array.isArray(metrics)) {
-      metrics = metrics.join(',');
-    }
-    return new Promise((resolve, reject) => {
-      let onepanelServer = this.get('onepanelServer');
-      let gettingImportStats = onepanelServer.request(
-        'oneprovider',
-        'getAutoStorageImportStats',
-        spaceId, {
-          period,
-          metrics,
-        }
-      );
-
-      gettingImportStats.then(({ data }) => resolve(data));
-      gettingImportStats.catch(reject);
-    });
-  },
-
-  /**
-   * Helper method to get only status of import without statistics for charts
-   * @param {string} spaceId
-   * @returns {Promise<object>}
-   */
-  getImportStatusOnly(spaceId) {
-    return this.getImportStats(spaceId);
-  },
-
-  /**
-   * Get all known statistics for space import needed to display
-   * all charts
-   *
-   * @param {*} spaceId 
-   * @param {string} [period] one of: minute, hour, day (like in Onepanel.SyncStats)
-   * @returns {Promise<object>}
-   */
-  getImportAllStats(spaceId, period = DEFAULT_IMPORT_STATS_PERIOD) {
-    return this.getImportStats(spaceId, period, IMPORT_METRICS);
+  getImportStats(
+    spaceId,
+    period = DEFAULT_IMPORT_STATS_PERIOD,
+    metrics = IMPORT_METRICS
+  ) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getAutoStorageImportStats',
+      spaceId, {
+        period,
+        // convert metrics to special-format string that holds an array
+        metrics: Array.isArray(metrics) ? metrics.join(',') : metrics,
+      }
+    ).then(({ data }) => data);
   },
 
   /**

@@ -149,8 +149,7 @@ export default Component.extend(
           globalNotify,
         } = this.getProperties('spaceManager', 'globalNotify');
         return spaceManager.stopImportScan(spaceId)
-          // refresh stats to see difference in import status
-          .then(() => safeExec(this, 'fetchAllImportStats'))
+          .then(() => safeExec(this, 'fetchImportInfo'))
           .then(() => {
             globalNotify.info(this.t('importScanStoppedSuccess'));
           })
@@ -166,8 +165,7 @@ export default Component.extend(
           globalNotify,
         } = this.getProperties('spaceManager', 'globalNotify');
         return spaceManager.startImportScan(spaceId)
-          // refresh stats to see difference in import status
-          .then(() => safeExec(this, 'fetchAllImportStats'))
+          .then(() => safeExec(this, 'fetchImportInfo'))
           .then(() => {
             globalNotify.info(this.t('importScanStartedSuccess'));
           })

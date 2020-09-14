@@ -17,7 +17,7 @@ import { reportFormatter } from 'onedata-gui-common/helpers/date-format';
 import { htmlSafe } from '@ember/string';
 import { isMissingMessage } from 'onedata-gui-common/utils/i18n/missing-message';
 
-export function storageImportStatusDescription(i18n, space, importStats) {
+export function storageImportStatusDescription(i18n, space, importInfo) {
   const i18nPrefix = 'components.spaceStatusIcons.importStatus';
   const {
     storageImportEnabled,
@@ -26,7 +26,7 @@ export function storageImportStatusDescription(i18n, space, importStats) {
   const {
     status: importStatus,
     nextScan: nextScanTimestamp,
-  } = getProperties(importStats || {}, 'status', 'nextScan');
+  } = getProperties(importInfo || {}, 'status', 'nextScan');
 
   if (!storageImportEnabled) {
     return;
@@ -72,9 +72,9 @@ export default Component.extend({
 
   /**
    * @virtual
-   * @type {Onepanel.AutoStorageImportStats}
+   * @type {Onepanel.AutoStorageImportInfo}
    */
-  importStats: null,
+  importInfo: null,
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -84,7 +84,7 @@ export default Component.extend({
   /**
    * @type {ComputedProperty<String|undefined>}
    */
-  importStatus: reads('importStats.status'),
+  importStatus: reads('importInfo.status'),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -118,15 +118,15 @@ export default Component.extend({
    */
   importHint: computed(
     'space',
-    'importStats',
+    'importInfo',
     function importHint() {
       const {
         space,
-        importStats,
+        importInfo,
         i18n,
-      } = this.getProperties('space', 'importStats', 'i18n');
+      } = this.getProperties('space', 'importInfo', 'i18n');
 
-      return storageImportStatusDescription(i18n, space, importStats);
+      return storageImportStatusDescription(i18n, space, importInfo);
     }
   ),
 });
