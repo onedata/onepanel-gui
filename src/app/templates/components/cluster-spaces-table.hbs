@@ -14,7 +14,7 @@
         {{#listItem.header
           isCollapsible=false
           click=(action "spaceClicked" spaceProxy.content.id)
-          class="hoverable"
+          class="hoverable spaces-list-item-header"
         }}
           {{#if spaceProxy.isPending}}
             {{spin-spinner-block sizeClass="xs" class="absolute-middle-centered"}}
