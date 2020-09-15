@@ -538,6 +538,9 @@ export default OnepanelServerBase.extend(
               storageId: storage1.id,
               spaceOccupancy: 800000000,
               supportingProviders: _genSupportingProviders(),
+              storageImport: {
+                mode: 'manual',
+              },
             });
             spacesFilePopularity.push({
               id: 'space1_verylongid',
@@ -984,6 +987,18 @@ export default OnepanelServerBase.extend(
         },
       };
     }),
+
+    _req_oneprovider_getManualStorageImportExample() {
+      return {
+        success: (spaceId) => {
+          return {
+            curl: `curl -X POST -H "X-Auth-Token:$TOKEN" -H "content-type:application/json" \\
+-d '{"storageId":"'$STORAGE_ID'", "spaceId":"${spaceId}", "storageFileId":"'$STORAGE_FILE_ID'", "destinationPath":"'$DESTINATION_PATH'"}' $ONEPROVIDER_HOST/api/v3/oneprovider/data/register`,
+          };
+        },
+        statusCode: () => 200,
+      };
+    },
 
     // TODO: after revoking space support, do not return the space in getSpaces  
     _req_oneprovider_revokeSpaceSupport: computed(function () {

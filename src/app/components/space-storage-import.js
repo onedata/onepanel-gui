@@ -15,7 +15,6 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { computed, get } from '@ember/object';
 import { raw, equal, sum } from 'ember-awesome-macros';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { resolve } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { storageImportStatusDescription } from 'onepanel-gui/components/space-status-icons';
 import { dateFormat } from 'onedata-gui-common/helpers/date-format';
@@ -33,6 +32,7 @@ export default Component.extend(...componentMixins, {
   i18nPrefix: 'components.spaceStorageImport',
 
   i18n: service(),
+  spaceManager: service(),
 
   /**
    * Callback to notify change of `importInterval`
@@ -154,10 +154,11 @@ export default Component.extend(...componentMixins, {
   ),
 
   /**
-   * @override
+   * @returns {Promise<String>}
    */
   fetchFileRegistrationExample() {
-    return resolve('some_request');
+    return this.get('spaceManager').getManualImportRequestExample(this.get('space.id'))
+      .then(result => (result && result.curl) || '');
   },
 
   actions: {

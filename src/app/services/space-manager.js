@@ -189,6 +189,20 @@ export default Service.extend({
   },
 
   /**
+   * Fetch example of the file registration request in manual storage import
+   * 
+   * @param {String} spaceId 
+   * @returns {Promise<Onepanel.ManualStorageImportExample>}
+   */
+  getManualImportRequestExample(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getManualStorageImportExample',
+      spaceId
+    ).then(({ data }) => data);
+  },
+
+  /**
    * @param {string} spaceId
    * @returns {Promise<Onepanel.SpaceAutoCleaningStatus>}
    */

@@ -1,23 +1,27 @@
 {{#if manualImportEnabled}}
-  <h1>{{tt this "manualImportHeader"}}</h1>
-  <p>
-    {{tt this "manualImportDescriptionBeforeApi"}}
-    <a
-      class="documentation-link"
-      href={{one-api-doc-url product="oneprovider" anchor="tag/File-registration"}}
-      target="_blank"
-    >{{tt this "manualImportDescriptionApi"}}</a>{{tt this "manualImportDescriptionAfterApi"}}
-  </p>
-  <p>{{tt this "cannotSwitchToAutoModeDescription"}}</p>
+  <div class="manual-import-description">
+    <h1>{{tt this "manualImportHeader"}}</h1>
+    <p>
+      {{tt this "manualImportDescriptionBeforeApi"}}
+      <a
+        class="documentation-link"
+        href={{one-api-doc-url product="oneprovider" anchor="tag/File-registration"}}
+        target="_blank"
+      >{{tt this "manualImportDescriptionApi"}}</a>{{tt this "manualImportDescriptionAfterApi"}}
+    </p>
+    <p>{{tt this "cannotSwitchToAutoModeDescription"}}</p>
+  </div>
   <h5 class="file-registration-header">{{tt this "fileRegistrationExample"}}:</h5>
-  {{#promise-proxy-container proxy=fileRegistrationExampleProxy sizeClass="sm"}}
-    {{one-clipboard-line
-      value=fileRegistrationExample
-      type="textarea"
-      inputClass="request-textarea"
-      textareaRows=5
-    }}
-  {{/promise-proxy-container}}
+  <div class="file-registration-spinner-container">
+    {{#promise-proxy-container proxy=fileRegistrationExampleProxy sizeClass="sm"}}
+      {{one-clipboard-line
+        value=fileRegistrationExample
+        type="textarea"
+        inputClass="request-textarea code-textarea"
+        textareaRows=5
+      }}
+    {{/promise-proxy-container}}
+  </div>
 {{else}}
   <div class="row no-border">
     <div class="col-xs-12">
