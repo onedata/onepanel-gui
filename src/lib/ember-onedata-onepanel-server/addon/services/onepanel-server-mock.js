@@ -561,7 +561,7 @@ export default OnepanelServerBase.extend(
               spaceOccupancy: 800000000,
               storageImport: {
                 mode: 'auto',
-                scanConfig: {
+                autoStorageImportConfig: {
                   continuousScan: false,
                   maxDepth: 4,
                   syncAcl: true,
@@ -1002,6 +1002,10 @@ export default OnepanelServerBase.extend(
           let spaces = this.get('__spaces');
           let space = spaces.find(s => s.id === id);
           if (space) {
+            if (data.autoStorageImportConfig) {
+              set(space, 'storageImport.autoStorageImportConfig', data.autoStorageImportConfig);
+              delete data.autoStorageImportConfig;
+            }
             emberObjectMerge(space, data);
             if (data && data.size) {
               set(space, `supportingProviders.${PROVIDER_ID}`, data.size);

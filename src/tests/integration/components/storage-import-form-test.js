@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 const exampleFormValues = {
   mode: 'auto',
-  scanConfig: {
+  autoStorageImportConfig: {
     maxDepth: '10',
     syncAcl: true,
     continuousScan: true,
@@ -21,11 +21,13 @@ const exampleFormValues = {
 
 function fillInWholeForm() {
   return click('.field-mode-mode-auto')
-    .then(() => fillIn('.field-generic-maxDepth', exampleFormValues.scanConfig.maxDepth))
+    .then(() => fillIn(
+      '.field-generic-maxDepth',
+      exampleFormValues.autoStorageImportConfig.maxDepth))
     .then(() => click('.toggle-field-generic-syncAcl'))
     .then(() => fillIn(
       '.field-continuous-scanInterval',
-      exampleFormValues.scanConfig.scanInterval
+      exampleFormValues.autoStorageImportConfig.scanInterval
     ))
     .then(() => click('.toggle-field-continuous-detectModifications'));
 }
@@ -111,7 +113,7 @@ describe('Integration | Component | storage import form', function () {
       function () {
         const formValues = {
           mode: 'auto',
-          scanConfig: {
+          autoStorageImportConfig: {
             continuousScan: true,
           },
         };
@@ -138,10 +140,10 @@ describe('Integration | Component | storage import form', function () {
           .then(() => click('.toggle-field-generic-continuousScan'))
           .then(() => {
             const correctData = _.cloneDeep(exampleFormValues);
-            correctData.scanConfig.continuousScan = false;
-            delete correctData.scanConfig.scanInterval;
-            delete correctData.scanConfig.detectModifications;
-            delete correctData.scanConfig.detectDeletions;
+            correctData.autoStorageImportConfig.continuousScan = false;
+            delete correctData.autoStorageImportConfig.scanInterval;
+            delete correctData.autoStorageImportConfig.detectModifications;
+            delete correctData.autoStorageImportConfig.detectDeletions;
 
             const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
             expect(lastValues).to.deep.equal(correctData);
@@ -307,13 +309,13 @@ describe('Integration | Component | storage import form', function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
     this.render(hbs `
-      {{storage-import-form valuesChanged=changedSpy}}
+      {{storage-import-form valuesChanged=changedSpy mode="new"}}
     `);
 
     return wait()
       .then(() => expect(changedSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
         mode: 'auto',
-        scanConfig: sinon.match({
+        autoStorageImportConfig: sinon.match({
           continuousScan: true,
           syncAcl: false,
           scanInterval: '60',

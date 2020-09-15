@@ -23,7 +23,7 @@ const {
   SpaceSupportRequest,
 } = Onepanel;
 
-const IMPORT_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
+const IMPORT_METRICS = ['queueLength', 'createdFiles', 'modifiedFiles', 'deletedFiles'];
 const DEFAULT_IMPORT_STATS_PERIOD = 'minute';
 
 export default Service.extend({
@@ -276,7 +276,7 @@ export default Service.extend({
   stopImportScan(spaceId) {
     return this.get('onepanelServer').request(
       'oneprovider',
-      'stopAutoStorageImportScan',
+      'forceStopAutoStorageImportScan',
       spaceId,
     );
   },
@@ -288,7 +288,7 @@ export default Service.extend({
   startImportScan(spaceId) {
     return this.get('onepanelServer').request(
       'oneprovider',
-      'startAutoStorageImportScan',
+      'forceStartAutoStorageImportScan',
       spaceId,
     );
   },

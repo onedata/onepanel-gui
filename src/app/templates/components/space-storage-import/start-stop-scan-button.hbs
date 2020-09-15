@@ -1,0 +1,19 @@
+{{#if showScanStop}}
+  {{#one-spin-button
+    class="btn btn-sm btn-danger"
+    disabled=(not allowScanStop)
+    action=stopScan
+  }}
+    {{one-icon icon="cancelled"}}
+    <span class="text">{{tt this "stopScan"}}</span>
+  {{/one-spin-button}}
+{{else}}
+  {{#one-spin-button
+    class="btn btn-sm btn-success"
+    disabled=(not allowScanStart)
+    action=startScan
+  }}
+    {{one-icon icon="play"}}
+    <span class="text">{{tt this "startScan"}}</span>
+  {{/one-spin-button}}
+{{/if}}

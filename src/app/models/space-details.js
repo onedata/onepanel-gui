@@ -65,7 +65,7 @@ export default EmberObject.extend({
    */
   continuousImportScanEnabled: and(
     'autoStorageImportEnabled',
-    'storageImport.scanConfig.continuousScan'
+    'storageImport.autoStorageImportConfig.continuousScan'
   ),
 
   /**

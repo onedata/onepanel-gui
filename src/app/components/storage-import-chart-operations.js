@@ -28,7 +28,7 @@ export default StorageImportChartBase.extend({
   /**
    * @implements StorageImportChartDataValidator
    */
-  usedMetrics: Object.freeze(['insertCount', 'updateCount', 'deleteCount']),
+  usedMetrics: Object.freeze(['createdFiles', 'modifiedFiles', 'deletedFiles']),
 
   /**
    * Chartist settings
@@ -64,7 +64,7 @@ export default StorageImportChartBase.extend({
    * Series labels for chart
    * @type {Array.string}
    */
-  chartSeriesLabels: Object.freeze(['Inserted', 'Updated', 'Deleted']),
+  chartSeriesLabels: Object.freeze(['Created', 'Modified', 'Deleted']),
 
   _chartValues: Object.freeze([
     [],

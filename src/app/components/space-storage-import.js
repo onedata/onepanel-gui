@@ -12,13 +12,14 @@ import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { computed } from '@ember/object';
-import { reads } from '@ember/object/computed';
-import { array, raw, not, equal } from 'ember-awesome-macros';
+import { computed, get } from '@ember/object';
+import { raw, equal, sum } from 'ember-awesome-macros';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { storageImportStatusDescription } from 'onepanel-gui/components/space-status-icons';
+import { dateFormat } from 'onedata-gui-common/helpers/date-format';
+import { inject as service } from '@ember/service';
 
 const componentMixins = [
   I18n,
@@ -30,6 +31,8 @@ export default Component.extend(...componentMixins, {
    * @override
    */
   i18nPrefix: 'components.spaceStorageImport',
+
+  i18n: service(),
 
   /**
    * Callback to notify change of `importInterval`
@@ -91,14 +94,18 @@ export default Component.extend(...componentMixins, {
   startScan: notImplementedReject,
 
   /**
-   * @type {ComputedProperty<String>}
-   */
-  autoImportStatus: reads('autoImportInfo.status'),
-
-  /**
    * @type {ComputedProperty<boolean>}
    */
   manualImportEnabled: equal('space.storageImport.mode', raw('manual')),
+
+  /**
+   * @type {ComputedProperty<number>}
+   */
+  processedFiles: sum(
+    'autoImportInfo.createdFiles',
+    'autoImportInfo.modifiedFiles',
+    'autoImportInfo.deletedFiles'
+  ),
 
   /**
    * @type {ComputedProperty<SafeString>}
@@ -118,25 +125,33 @@ export default Component.extend(...componentMixins, {
   ),
 
   /**
-   * @type {ComputedProperty<boolean>}
+   * @type {ComputedProperty<Array<{ label: String, value: String }>>}
    */
-  allowScanStart: not(array.includes(
-    raw(['enqueued', 'running', 'aborting']),
-    'autoImportStatus'
-  )),
+  importInfoDetailsToShow: computed(
+    'autoImportInfo.${stop,start,createdFiles,modifiedFiles,deletedFiles}',
+    function importInfoDetailsToShow() {
+      const autoImportInfo = this.get('autoImportInfo') || {};
 
-  /**
-   * @type {ComputedProperty<boolean>}
-   */
-  allowScanStop: array.includes(
-    raw(['enqueued', 'running']),
-    'autoImportStatus'
+      const details = [];
+      ['start', 'stop'].forEach(detailName => {
+        const timestamp = get(autoImportInfo, detailName);
+        if (timestamp) {
+          details.push({
+            label: this.t(`importDetails.${detailName}`),
+            value: dateFormat([timestamp], { format: 'report' }),
+          });
+        }
+      });
+      ['createdFiles', 'modifiedFiles', 'deletedFiles'].forEach(detailName => {
+        details.push({
+          label: this.t(`importDetails.${detailName}`),
+          value: get(autoImportInfo, detailName) || 0,
+        });
+      });
+
+      return details;
+    }
   ),
-
-  /**
-   * @type {ComputedProperty<boolean>}
-   */
-  showScanStop: reads('allowScanStop'),
 
   /**
    * @override
@@ -146,8 +161,8 @@ export default Component.extend(...componentMixins, {
   },
 
   actions: {
-    modifyStorageImport(closeFormCallback, storageImport) {
-      return this.get('modifySpace')({ storageImport })
+    modifyStorageImport(closeFormCallback, autoStorageImportConfig) {
+      return this.get('modifySpace')({ autoStorageImportConfig })
         .then(() => safeExec(this, () => closeFormCallback()));
     },
   },

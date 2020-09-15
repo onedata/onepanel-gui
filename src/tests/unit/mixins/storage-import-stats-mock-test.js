@@ -11,7 +11,7 @@ describe('Unit | Mixin | storage import stats mock', function () {
     let allStats = subject.get('allStats');
 
     expect(allStats).to.have.property('hour');
-    expect(allStats.hour).to.have.property('insertCount');
-    expect(allStats.hour.insertCount).to.have.length(12);
+    expect(allStats.hour).to.have.property('createdFiles');
+    expect(allStats.hour.createdFiles).to.have.length(12);
   });
 });

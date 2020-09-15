@@ -20,9 +20,9 @@ const PERIODS = [
 
 const METRICS = [
   'queueLength',
-  'insertCount',
-  'updateCount',
-  'deleteCount',
+  'createdFiles',
+  'modifiedFiles',
+  'deletedFiles',
 ];
 
 const SAMPLES_COUNT = 12;
@@ -125,16 +125,17 @@ export default Mixin.create({
   },
 
   generateStorageImportInfo(space) {
+    const status = this.get('globalImportStatus');
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
       const nowTimestamp = Math.floor((new Date().valueOf() / 1000));
       return {
-        status: this.get('globalImportStatus'),
+        status,
         start: nowTimestamp - 3600,
-        stop: null,
-        importedFiles: 1000,
-        updatedFiles: 500,
+        stop: status === 'completed' ? nowTimestamp : null,
+        createdFiles: 1000,
+        modifiedFiles: 500,
         deletedFiles: 250,
         nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
       };

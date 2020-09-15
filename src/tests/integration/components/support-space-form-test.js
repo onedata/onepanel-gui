@@ -290,9 +290,10 @@ describe('Integration | Component | support space form', function () {
       .then(() => new SupportSpaceFormHelper(this.$()).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
-        expect(submitStub).to.be.calledWith(
-          sinon.match.hasNested('storageImport.scanConfig.continuousScan', false)
-        );
+        expect(submitStub).to.be.calledWith(sinon.match.hasNested(
+          'storageImport.autoStorageImportConfig.continuousScan',
+          false
+        ));
       });
   });
 });

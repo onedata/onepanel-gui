@@ -10,7 +10,7 @@
  * ```
  * {
  *   mode: 'auto',
- *   scanConfig: {
+ *   autoStorageImportConfig: {
  *     continuousScan: true,
  *     maxDepth: 120,
  *     scanInterval: 100,
@@ -348,13 +348,13 @@ export default OneForm.extend(I18n, Validations, {
             const fieldName = get(field, 'name');
             const value = get(
               defaultValues,
-              `scanConfig.${this.cutOffPrefix(fieldName)}`
+              `autoStorageImportConfig.${this.cutOffPrefix(fieldName)}`
             );
             set(field, 'defaultValue', value);
           });
 
         const continuousScanEnabled =
-          get(defaultValues, 'scanConfig.continuousScan');
+          get(defaultValues, 'autoStorageImportConfig.continuousScan');
         continuousFields
           .forEach(field => {
             const {
@@ -363,7 +363,7 @@ export default OneForm.extend(I18n, Validations, {
             } = getProperties(field, 'name', 'defaultValue');
             const value = continuousScanEnabled ? get(
               defaultValues,
-              `scanConfig.${this.cutOffPrefix(fieldName)}`
+              `autoStorageImportConfig.${this.cutOffPrefix(fieldName)}`
             ) : defaultValue;
             set(field, 'defaultValue', value);
           });
@@ -380,27 +380,35 @@ export default OneForm.extend(I18n, Validations, {
       autoImportEnabled,
       formValues,
       currentFields,
+      mode,
     } = this.getProperties(
       'autoImportEnabled',
       'formValues',
       'currentFields',
+      'mode',
     );
 
     const formData = {
       mode: autoImportEnabled ? 'auto' : 'manual',
     };
 
+    const autoStorageImportConfig = {};
     if (autoImportEnabled) {
-      const scanConfig = {};
       currentFields.rejectBy('name', 'mode.mode').forEach(({ name }) => {
         const formValue = formValues.get(name);
         if (formValue === undefined || formValue === '' || formValue === null) {
           return;
         }
         const nameWithoutPrefix = this.cutOffPrefix(name);
-        scanConfig[nameWithoutPrefix] = formValue;
+        autoStorageImportConfig[nameWithoutPrefix] = formValue;
       });
-      formData.scanConfig = scanConfig;
+
+      if (mode === 'edit') {
+        // in edit mode only auto import config is being sent
+        return autoStorageImportConfig;
+      } else {
+        formData.autoStorageImportConfig = autoStorageImportConfig;
+      }
     }
     return formData;
   },

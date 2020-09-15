@@ -75,7 +75,7 @@ export default Component.extend(I18n, spaceItemSupports, {
       return [];
     } else {
       const importConfig = Object.assign({ mode: storageImport.mode },
-        (storageImport.scanConfig || {})
+        (storageImport.autoStorageImportConfig || {})
       );
       const properties = [];
       const fieldsPrefixes = ['mode'];

@@ -21,34 +21,7 @@
 {{else}}
   <div class="row no-border">
     <div class="col-xs-12">
-      <div class="row content-row import-status-row has-border">
-        <div class="status-description">
-          <div class="item-icon-container">
-            {{one-icon class="item-icon" icon="space-import"}}
-          </div>
-          {{importStatusDescription}}
-        </div>
-        {{#if showScanStop}}
-          {{#one-spin-button
-            class="btn btn-sm btn-danger"
-            disabled=(not allowScanStop)
-            action=stopScan
-          }}
-            {{one-icon icon="cancelled"}}
-            <span class="text">{{tt this "stopScan"}}</span>
-          {{/one-spin-button}}
-        {{else}}
-          {{#one-spin-button
-            class="btn btn-sm btn-success"
-            action=startScan
-            disabled=(not allowScanStart)
-          }}
-            {{one-icon icon="play"}}
-            <span class="text">{{tt this "startScan"}}</span>
-          {{/one-spin-button}}
-        {{/if}}
-      </div>
-      {{#one-collapsible-list as |list|}}
+      {{#one-collapsible-list class="import-settings-list" as |list|}}
         {{#list.item as |listItem|}}
           {{#listItem.header
             class="hoverable"
@@ -69,6 +42,37 @@
                 submit=(action "modifyStorageImport" (action listItem.toggle false))
               }}
             </div>
+          {{/listItem.content}}
+        {{/list.item}}
+        {{#list.item as |listItem|}}
+          {{#listItem.header
+            class="hoverable import-info-header"
+          }}
+            <div class="item-icon-container">
+              {{one-icon class="item-icon" icon="space-import"}}
+            </div>
+            {{importStatusDescription}}
+            <div class="btn-toolbar hidden-xs">
+              {{space-storage-import/start-stop-scan-button
+                startScan=startScan
+                stopScan=stopScan
+                autoImportStatus=autoImportInfo.status
+              }}
+            </div>
+          {{/listItem.header}}
+          {{#listItem.content class="import-info-content"}}
+            <div class="hidden-sm hidden-md hidden-lg text-center row content-row">
+              {{space-storage-import/start-stop-scan-button
+                startScan=startScan
+                stopScan=stopScan
+                autoImportStatus=autoImportInfo.status
+              }}
+            </div>
+            {{#each importInfoDetailsToShow as |detail|}}
+              <div class="row content-row">
+                <strong>{{detail.label}}:</strong> {{detail.value}}
+              </div>
+            {{/each}}
           {{/listItem.content}}
         {{/list.item}}
       {{/one-collapsible-list}}
