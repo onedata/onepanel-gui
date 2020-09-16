@@ -180,11 +180,10 @@ export default Service.extend({
     return this.get('onepanelServer').request(
       'oneprovider',
       'getAutoStorageImportStats',
-      spaceId, {
-        period,
-        // convert metrics to special-format string that holds an array
-        metrics: Array.isArray(metrics) ? metrics.join(',') : metrics,
-      }
+      spaceId,
+      period,
+      // convert metrics to special-format string that holds an array
+      Array.isArray(metrics) ? metrics.join(',') : metrics,
     ).then(({ data }) => data);
   },
 
