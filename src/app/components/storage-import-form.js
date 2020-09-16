@@ -59,10 +59,6 @@ const modeField = {
 };
 
 const genericFields = [{
-  name: 'continuousScan',
-  type: 'checkbox',
-  defaultValue: true,
-}, {
   name: 'maxDepth',
   type: 'number',
   gte: 1,
@@ -73,14 +69,6 @@ const genericFields = [{
   type: 'checkbox',
   defaultValue: false,
   optional: true,
-}];
-
-const continuousFields = [{
-  name: 'scanInterval',
-  type: 'number',
-  gt: 0,
-  example: '1000',
-  defaultValue: '60',
 }, {
   name: 'detectModifications',
   type: 'checkbox',
@@ -91,6 +79,18 @@ const continuousFields = [{
   type: 'checkbox',
   defaultValue: true,
   optional: true,
+}, {
+  name: 'continuousScan',
+  type: 'checkbox',
+  defaultValue: true,
+}];
+
+const continuousFields = [{
+  name: 'scanInterval',
+  type: 'number',
+  gt: 0,
+  example: '1000',
+  defaultValue: '60',
 }];
 
 function createValidations(genericFields, continuousFields) {
@@ -415,31 +415,14 @@ export default OneForm.extend(I18n, Validations, {
 
   triggerValuesChanged() {
     const {
-      allFields,
-      continuousScanEnabled,
-      mode,
       valuesChanged,
+      isValid,
     } = this.getProperties(
-      'allFields',
-      'continuousScanEnabled',
-      'mode',
-      'valuesChanged'
+      'valuesChanged',
+      'isValid',
     );
 
-    const genericFieldsWithoutContinuousImport = allFields
-      .filter(field => get(field, 'name').startsWith('generic.'))
-      .rejectBy('name', 'generic.continuousScan');
-    if (mode === 'edit' && !continuousScanEnabled) {
-      genericFieldsWithoutContinuousImport.forEach(field => {
-        this.set(`allFieldsValues.${get(field, 'name')}`, get(field, 'defaultValue'));
-        this._resetField(field);
-        set(field, 'disabled', true);
-      });
-    } else {
-      genericFieldsWithoutContinuousImport.setEach('disabled', false);
-    }
-
-    return valuesChanged(this.getValues(), this.get('isValid'));
+    return valuesChanged(this.getValues(), isValid);
   },
 
   actions: {

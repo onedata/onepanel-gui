@@ -8,8 +8,7 @@
  */
 
 import Component from '@ember/component';
-import { readOnly } from '@ember/object/computed';
-import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -27,7 +26,6 @@ export default Component.extend(
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
-    storageManager: service(),
     onepanelServer: service(),
 
     /**
@@ -68,48 +66,12 @@ export default Component.extend(
     provider: null,
 
     /**
-     * Last resolved SpaceDetails
-     * @type {SpaceDetails}
-     */
-    _spaceCache: null,
-
-    /**
-     * If true, space revoke modal is opened
-     * @type {boolean}
-     */
-    _openRevokeModal: false,
-
-    /**
      * If true, this space has auto storage import enabled
      *
      * That means, the view should be enriched with import statuses and statistics
-     * @type {computed.boolean}
+     * @type {ComputedProperty<boolean>}
      */
-    autoImportActive: readOnly('space.autoStorageImportEnabled'),
-
-    _importButtonActionName: computed(
-      'importConfigurationOpen',
-      function _importButtonActionName() {
-        return this.get('importConfigurationOpen') ?
-          'endImportConfiguration' :
-          'startImportConfiguration';
-      }
-    ),
-
-    _importButtonTip: computed(
-      'importConfigurationOpen',
-      function _importButtonTip() {
-        return this.get('importConfigurationOpen') ?
-          this.t('cancelImportConfig') :
-          this.t('importConfig');
-      }
-    ),
-
-    /**
-     * Which tab should be shown for space details
-     * @type {Ember.ComputedProperty<string>}
-     */
-    _detailsToShow: '',
+    autoImportActive: reads('space.autoStorageImportEnabled'),
 
     init() {
       this._super(...arguments);

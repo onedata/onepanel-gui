@@ -140,7 +140,12 @@ export default Component.extend(
         const spaceId = this.get('space.id');
         const spaceManager = this.get('spaceManager');
         return this.get('modifySpace')(data)
-          .then(() => spaceManager.updateSpaceDetailsCache(spaceId));
+          .then(() => spaceManager.updateSpaceDetailsCache(spaceId))
+          .then(() => safeExec(this, () => {
+            if (this.get('autoImportActive')) {
+              this.fetchImportInfo();
+            }
+          }));
       },
       stopImportScan() {
         const spaceId = this.get('space.id');

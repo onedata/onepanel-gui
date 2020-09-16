@@ -29,7 +29,7 @@ function fillInWholeForm() {
       '.field-continuous-scanInterval',
       exampleFormValues.autoStorageImportConfig.scanInterval
     ))
-    .then(() => click('.toggle-field-continuous-detectModifications'));
+    .then(() => click('.toggle-field-generic-detectModifications'));
 }
 
 describe('Integration | Component | storage import form', function () {
@@ -68,9 +68,9 @@ describe('Integration | Component | storage import form', function () {
           expect(this.$('.field-generic-maxDepth').val()).to.equal('');
           expect(this.$('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
           expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-          expect(this.$('.toggle-field-continuous-detectModifications'))
+          expect(this.$('.toggle-field-generic-detectModifications'))
             .to.have.class('checked');
-          expect(this.$('.toggle-field-continuous-detectDeletions'))
+          expect(this.$('.toggle-field-generic-detectDeletions'))
             .to.have.class('checked');
         });
     });
@@ -142,8 +142,6 @@ describe('Integration | Component | storage import form', function () {
             const correctData = _.cloneDeep(exampleFormValues);
             correctData.autoStorageImportConfig.continuousScan = false;
             delete correctData.autoStorageImportConfig.scanInterval;
-            delete correctData.autoStorageImportConfig.detectModifications;
-            delete correctData.autoStorageImportConfig.detectDeletions;
 
             const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
             expect(lastValues).to.deep.equal(correctData);
@@ -185,10 +183,6 @@ describe('Integration | Component | storage import form', function () {
           .then(() => click('.toggle-field-generic-continuousScan'))
           .then(() => {
             expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-            expect(this.$('.toggle-field-continuous-detectModifications'))
-              .to.have.class('checked');
-            expect(this.$('.toggle-field-continuous-detectDeletions'))
-              .to.have.class('checked');
           });
       }
     );
@@ -238,9 +232,9 @@ describe('Integration | Component | storage import form', function () {
             expect(this.$('.field-generic-maxDepth').val()).to.equal('10');
             expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
             expect(this.$('.field-continuous-scanInterval').val()).to.equal('20');
-            expect(this.$('.toggle-field-continuous-detectModifications'))
+            expect(this.$('.toggle-field-generic-detectModifications'))
               .to.not.have.class('checked');
-            expect(this.$('.toggle-field-continuous-detectDeletions'))
+            expect(this.$('.toggle-field-generic-detectDeletions'))
               .to.have.class('checked');
           });
       }
@@ -355,8 +349,6 @@ describe('Integration | Component | storage import form', function () {
 
 const continuousFieldsSelectors = [
   '.field-continuous-scanInterval',
-  '.toggle-field-continuous-detectModifications',
-  '.toggle-field-continuous-detectDeletions',
 ];
 
 function checkContinuousFieldsExist(testCase) {
