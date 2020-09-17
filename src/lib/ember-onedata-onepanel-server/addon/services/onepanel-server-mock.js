@@ -981,7 +981,7 @@ export default OnepanelServerBase.extend(
 
     _req_oneprovider_getAutoStorageImportStats: computed(function () {
       return {
-        success: (spaceId, { period, metrics }) => {
+        success: (spaceId, period, metrics) => {
           const space = _.find(this.get('__spaces'), s => s.id === spaceId);
           return this.generateStorageImportStats(space, period, metrics);
         },
