@@ -55,12 +55,11 @@ export default SidebarContentRoute.extend({
           // another Onepanel if possible. If Onezone is not available, then
           // redirect to main page.
           if (get(onezoneGui, 'zoneDomain')) {
-            const redirectUrl = onezoneGui.getUrlInOnezone(
-              `onedata/clusters/${clusterId}/endpoint-error`
+            return this.transitionTo(
+              'onedata.sidebar.content.aspect',
+              urlClusterId,
+              'redirect',
             );
-            return new Promise(() => {
-              window.location = redirectUrl;
-            });
           } else {
             return this.transitionTo('onedata');
           }

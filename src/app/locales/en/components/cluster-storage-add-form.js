@@ -33,4 +33,5 @@ export default {
   modifyStorageModalHeader: 'Modify storage',
   modifyStorageModalMessage: 'Are you sure you want to modify storage details? Incorrect configuration can make your data unavailable.',
   cannotReadonlyNotImported: 'This option is available only for imported storages.',
+  cannotStorageDetectionReadonly: 'Storage detection is always skipped on readonly storages.',
 };

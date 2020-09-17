@@ -361,6 +361,106 @@ describe('Integration | Component | cluster storage add form', function () {
       }
     );
 
+    it(
+      'sets and locks Skip storage detection toggle to true after setting readonly to true',
+      function () {
+        this.set('storage', POSIX_STORAGE);
+        this.render(hbs `
+          {{cluster-storage-add-form
+            storageProvidesSupport=true
+            storage=storage 
+            mode="create"
+          }}
+        `);
+
+        let helper;
+        return wait()
+          .then(() => {
+            helper = new ClusterStorageAddHelper(this.$());
+            return click(helper.getToggleInput('generic-importedStorage')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
+              .to.not.have.class('checked')
+              .and.not.have.class('disabled');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-readonly'), 'readonly initial')
+              .to.have.class('checked')
+              .and.not.have.class('disabled');
+            expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
+              .to.have.class('checked')
+              .and.have.class('disabled');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-readonly'), 'readonly after check')
+              .to.not.have.class('checked');
+            expect(
+              helper.getToggleInput('generic-skipStorageDetection'),
+              'skip after readonly'
+            ).to.not.have.class('checked').and.not.have.class('disabled');
+            expect(helper.getToggleInput('generic-skipStorageDetection'));
+
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          });
+      }
+    );
+
+    it(
+      'restores Skip storage detection value after setting readonly to false',
+      function () {
+        this.set('storage', POSIX_STORAGE);
+        this.render(hbs `
+          {{cluster-storage-add-form
+            storageProvidesSupport=true
+            storage=storage 
+            mode="create"
+          }}
+        `);
+
+        let helper;
+        return wait()
+          .then(() => {
+            helper = new ClusterStorageAddHelper(this.$());
+            return click(helper.getToggleInput('generic-importedStorage')[0]);
+          })
+          .then(() => {
+            return click(helper.getToggleInput('generic-skipStorageDetection')[0]);
+          })
+          .then(() => {
+            expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
+              .to.have.class('checked')
+              .and.not.have.class('disabled');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          })
+          .then(() => {
+            expect(
+                helper.getToggleInput('generic-skipStorageDetection'),
+                'skip after check'
+              )
+              .to.have.class('checked')
+              .and.have.class('disabled');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          })
+          .then(() => {
+            expect(
+                helper.getToggleInput('generic-readonly'),
+                'readonly after uncheck'
+              )
+              .to.not.have.class('checked');
+            expect(
+                helper.getToggleInput('generic-skipStorageDetection'),
+                'skip after readonly uncheck'
+              )
+              .to.have.class('checked')
+              .and.not.have.class('disabled');
+            return click(helper.getToggleInput('generic-readonly')[0]);
+          });
+      }
+    );
+
     // test against a strange bug that occured when automatically changed readonly toggle
     it(
       'does not block name input by validation after immediate storage type change',

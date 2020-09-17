@@ -7,6 +7,10 @@ CHANGELOG
 ### Latest changes
 
 * VFS-6330 Redesigned storage import (formerly space synchronization) configuration
+* VFS-6732 Using new monospace font
+* VFS-6652 Enabled assets fingerprinting for more resources
+* VFS-6697 Auto enable and lock skip storage detection in storage form
+* VFS-6447 Redirect directly to other Onepanel cluster
 * VFS-6612 Added readonly toggle to storage creation form
 * VFS-6625 S3 storage credentials made optional
 * VFS-6536 Changed default fileMode for S3, HTTP and Webdav storages

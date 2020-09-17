@@ -13,7 +13,7 @@ import { registerService } from '../../helpers/stub-service';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
-const data = [{
+const data = Object.freeze([{
   id: 'id-0',
   index: 0,
   startedAt: new Date(),
@@ -31,7 +31,7 @@ const data = [{
   bytesToRelease: 1022976,
   filesNumber: 992,
   status: 'failure',
-}];
+}]);
 
 function fetchReports(index, limit = 1000, offset = 0) {
   let arrIndex = _.findIndex(this.reports, i => get(i, 'index') === index);
@@ -71,7 +71,7 @@ describe('Integration | Component | space cleaning reports', function () {
 
   it('renders reports', function () {
     const data = this.get('data');
-    this.on('fetchReports', () => resolve(data));
+    this.on('fetchReports', () => resolve(_.cloneDeep(data)));
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
@@ -103,7 +103,7 @@ describe('Integration | Component | space cleaning reports', function () {
   it('renders reports in mobile view', function () {
     this.set('_window.innerWidth', 500);
     const data = this.get('data');
-    this.on('fetchReports', () => resolve(data));
+    this.on('fetchReports', () => resolve(_.cloneDeep(data)));
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
