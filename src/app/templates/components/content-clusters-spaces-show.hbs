@@ -28,29 +28,25 @@
       }}
         {{#bs-nav type="tabs" as |nav|}}
           {{#nav.item class=tabOverviewClass active=(eq tab.activeId tabOverviewId)}}
-            <a href={{concat "#" tabOverviewId}}
-              class="nav-link"
-              role="tab" {{action tab.select tabOverviewId}}>
+            <a class="nav-link" role="tab" {{action tab.select tabOverviewId}}>
               {{t "mixins.components.spaceTabs.tabs.overview.title"}}
             </a>
             {{one-tooltip triggerEvents="hover" title=tabOverviewHint}}
           {{/nav.item}}
           {{#nav.item class=tabImportClass active=(eq tab.activeId tabImportId)}}
-            <a href={{concat "#" tabImportId}}
-              class="nav-link"
-              role="tab" {{action tab.select tabImportId}}>
+            <a class="nav-link" role="tab" {{action tab.select tabImportId}}>
               {{t "mixins.components.spaceTabs.tabs.import.title"}}
             </a>
             {{one-tooltip triggerEvents="hover" title=tabImportHint}}
           {{/nav.item}}
           {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
-            <a href={{concat "#" tabPopularId}} class="nav-link" role="tab" {{action tab.select tabPopularId}}>
+            <a class="nav-link" role="tab" {{action tab.select tabPopularId}}>
               {{t "mixins.components.spaceTabs.tabs.popular.title"}}
             </a>
             {{one-tooltip triggerEvents="hover" title=tabPopularHint}}
           {{/nav.item}}
           {{#nav.item class=tabCleanClass active=(eq tab.activeId tabCleanId)}}
-            <a href={{concat "#" tabCleanId}} class="nav-link" role="tab" {{action tab.select tabCleanId}}>
+            <a class="nav-link" role="tab" {{action tab.select tabCleanId}}>
               {{t "mixins.components.spaceTabs.tabs.clean.title"}}
             </a>
             {{one-tooltip triggerEvents="hover" title=tabCleanHint}}

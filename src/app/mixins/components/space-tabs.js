@@ -61,8 +61,8 @@ export default Mixin.create({
 
 /**
  * Create computed property that will return translated hint for tab
- * @param {string} tab one of: import, popular, clean
- * @returns {Ember.ComputedProperty}
+ * @param {string} tab one of: overview, import, popular, clean
+ * @returns {Ember.ComputedProperty<SafeString>}
  */
 function computedTabHint(tab) {
   const classProperty = camelize(`tab-${tab}-class`);

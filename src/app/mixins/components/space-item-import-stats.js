@@ -1,9 +1,9 @@
 /**
  * Adds storage import statistics fetch capabilities to `cluster-spaces-table-item`
  *
- * @module mixins/storage-import-import-stats
- * @author Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @module mixins/space-item-import-stats
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -119,7 +119,7 @@ export default Mixin.create({
    * @type {Date}
    */
   lastValueDate: computed('timeStats.@each.lastValueDate', function () {
-    let timeStats = this.get('timeStats');
+    const timeStats = this.get('timeStats');
     if (timeStats) {
       return _.max(
         _.map(
@@ -131,7 +131,7 @@ export default Mixin.create({
   }).readOnly(),
 
   lastValueDateText: computed('lastValueDate', function () {
-    let lastValueDate = this.get('lastValueDate');
+    const lastValueDate = this.get('lastValueDate');
     return lastValueDate ?
       moment(lastValueDate).format('YYYY-MM-DD, HH:mm:ss') :
       undefined;
@@ -151,6 +151,8 @@ export default Mixin.create({
     'autoImportActive',
     'importInterval',
     'importChartStatsWatcher',
+    'importInfoWatcher',
+    'importInfoRefreshTime',
     'importTabActive',
     function () {
       const {
@@ -185,12 +187,12 @@ export default Mixin.create({
     this._super(...arguments);
 
     // interval of this Looper will be set in reconfigureImportWatchers observer
-    let importChartStatsWatcher = Looper.create({ immediate: true });
+    const importChartStatsWatcher = Looper.create({ immediate: true });
     importChartStatsWatcher.on('tick', () =>
       safeExec(this, 'fetchImportStats')
     );
 
-    let importInfoWatcher = Looper.create({
+    const importInfoWatcher = Looper.create({
       immediate: true,
       interval: this.get('importInfoRefreshTime'),
     });
@@ -217,7 +219,7 @@ export default Mixin.create({
    * @returns {boolean} true if import info should be refreshed
    */
   shouldRefreshImportInfo() {
-    let {
+    const {
       importInfoRefreshTime,
       lastImportInfoRefresh,
       autoImportActive,
@@ -275,7 +277,7 @@ export default Mixin.create({
      * @returns {undefined}
      */
     onImportIntervalChange(importInterval) {
-      let currentimportInterval = this.get('importInterval');
+      const currentimportInterval = this.get('importInterval');
       if (importInterval !== currentimportInterval) {
         this.setProperties({
           importStats: null,

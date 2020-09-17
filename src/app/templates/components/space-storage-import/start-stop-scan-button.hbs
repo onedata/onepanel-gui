@@ -1,19 +1,8 @@
-{{#if showScanStop}}
-  {{#one-spin-button
-    class="btn btn-sm btn-danger"
-    disabled=(not allowScanStop)
-    action=stopScan
-  }}
-    {{one-icon icon="cancelled"}}
-    <span class="text">{{tt this "stopScan"}}</span>
-  {{/one-spin-button}}
-{{else}}
-  {{#one-spin-button
-    class="btn btn-sm btn-success"
-    disabled=(not allowScanStart)
-    action=startScan
-  }}
-    {{one-icon icon="play"}}
-    <span class="text">{{tt this "startScan"}}</span>
-  {{/one-spin-button}}
-{{/if}}
+{{#one-spin-button
+  class=(concat-classes "btn btn-sm" (if showScanStop "btn-danger" "btn-success"))
+  disabled=(if showScanStop (not allowScanStop) (not allowScanStart))
+  action=(if showScanStop stopScan startScan)
+}}
+  {{one-icon icon=(if showScanStop "cancelled" "play")}}
+  <span class="text">{{tt this (if showScanStop "stopScan" "startScan")}}</span>
+{{/one-spin-button}}

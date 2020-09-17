@@ -12,7 +12,7 @@
     <p>{{tt this "cannotSwitchToAutoModeDescription"}}</p>
   </div>
   <h5 class="file-registration-header">{{tt this "fileRegistrationExample"}}:</h5>
-  <div class="file-registration-spinner-container">
+  <div class="loadable-row">
     {{#promise-proxy-container proxy=fileRegistrationExampleProxy sizeClass="sm"}}
       {{one-clipboard-line
         value=fileRegistrationExample

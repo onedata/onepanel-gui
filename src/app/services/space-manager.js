@@ -2,7 +2,7 @@
  * Provides backend operations for spaces in onepanel
  *
  * @module services/space-manager
- * @author Jakub Liput
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -168,8 +168,8 @@ export default Service.extend({
    *
    * @param {String} spaceId
    * @param {String} [period] one of: minute, hour, day
-   * @param {Array<String>} [metrics] array with any of: queueLength, insertCount,
-   *  updateCount, deleteCount
+   * @param {Array<String>|String} [metrics] array with any of: queueLength, insertCount,
+   *  updateCount, deleteCount or a string containing any of these values joined with `,`
    * @returns {Promise<Onepanel.AutoStorageImportStats>}
    */
   getImportStats(

@@ -40,7 +40,6 @@ import { reads, union } from '@ember/object/computed';
 import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { next } from '@ember/runloop';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { equal, raw } from 'ember-awesome-macros';
@@ -242,6 +241,7 @@ export default OneForm.extend(I18n, Validations, {
    * @override
    */
   allFieldsValues: computed(
+    'modeFields',
     'genericFields',
     'continuousFields',
     function allFieldsValues() {
@@ -258,7 +258,7 @@ export default OneForm.extend(I18n, Validations, {
       });
 
       [...modeFields, ...genericFields, ...continuousFields].forEach(field => {
-        fields.set(field.get('name'), null);
+        set(fields, get(field, 'name'), null);
       });
 
       return fields;
@@ -276,7 +276,9 @@ export default OneForm.extend(I18n, Validations, {
    * Resets field if form visibility changes (clears validation errors)
    */
   isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
-    this.loadDefaultValues();
+    if (!this.get('isFormOpened')) {
+      this.loadDefaultValues();
+    }
   }),
 
   /**
@@ -294,9 +296,15 @@ export default OneForm.extend(I18n, Validations, {
     this.prepareFields();
     this.addFieldsTranslations();
     this.modeObserver();
-    next(() => {
-      this.loadDefaultValues();
-    });
+    // next(() => {
+    // this.loadDefaultValues();
+    // });
+  },
+
+  didInsertElement() {
+    this._super(...arguments);
+
+    this.loadDefaultValues();
   },
 
   addFieldsTranslations() {

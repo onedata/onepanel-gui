@@ -2,7 +2,7 @@ export default {
   mode: {
     mode: {
       name: 'Mode',
-      tip: 'When "auto" mode is selected, the storage will be automatically scanned and data will be imported from storage into the assigned Onedata space without need for copying the data. In case of "manual" mode, the files must be registered manually by the space users with REST API. Registration of directories is not supported.',
+      tip: 'When "auto" mode is selected, the storage will be automatically scanned and data will be imported from storage into the assigned Onedata space. In case of "manual" mode, the files must be registered manually by the space users with REST API. Registration of directories is not supported. In both modes there is no need for copying the data.',
       options: {
         auto: 'auto',
         manual: 'manual',
@@ -12,7 +12,7 @@ export default {
   generic: {
     maxDepth: {
       name: 'Max depth',
-      tip: 'Maximum depth of filesystem tree that will be traversed during storage import. By default it is unlimited.',
+      tip: 'Maximum depth of filesystem tree that will be traversed during the scan. By default it is 65535.',
     },
     syncAcl: {
       name: 'Synchronize ACL',
@@ -20,7 +20,7 @@ export default {
     },
     detectModifications: {
       name: 'Detect modifications',
-      tip: 'If disabled, the storage will be treated as immutable - changes of already imported files will not be detected. Relevant only if more than one scan is performed.',
+      tip: 'If disabled, the storage will be treated as immutable – changes of already imported files will not be detected. Relevant only if more than one scan is performed.',
     },
     detectDeletions: {
       name: 'Detect deletions',
