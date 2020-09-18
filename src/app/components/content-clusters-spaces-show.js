@@ -154,6 +154,13 @@ export default Component.extend(
           globalNotify,
         } = this.getProperties('spaceManager', 'globalNotify');
         return spaceManager.stopImportScan(spaceId)
+          .catch(error => {
+            // Ignore "not found" error. Sometimes scan is already ended when user tries
+            // to stop it.
+            if (!checkIfMatchesError(error, 'notFound')) {
+              throw error;
+            }
+          })
           .then(() => safeExec(this, 'fetchImportInfo'))
           .then(() => {
             globalNotify.info(this.t('importScanStoppedSuccess'));
@@ -170,6 +177,13 @@ export default Component.extend(
           globalNotify,
         } = this.getProperties('spaceManager', 'globalNotify');
         return spaceManager.startImportScan(spaceId)
+          .catch(error => {
+            // Ignore "already exist" error. Sometimes scan is already started when user tries
+            // to start a new one.
+            if (!checkIfMatchesError(error, 'alreadyExists')) {
+              throw error;
+            }
+          })
           .then(() => safeExec(this, 'fetchImportInfo'))
           .then(() => {
             globalNotify.info(this.t('importScanStartedSuccess'));
@@ -180,4 +194,12 @@ export default Component.extend(
           });
       },
     },
-  });
+  }
+);
+
+function checkIfMatchesError(error, errorId) {
+  const rawError = error && get(error, 'response.body.error');
+  return rawError &&
+    rawError.id === 'errorOnNodes' &&
+    get(rawError, 'details.error.id') === errorId;
+}

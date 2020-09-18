@@ -27,7 +27,7 @@ const WATCHER_INTERVAL = {
 /**
  * Default max time after which watchers should fetch at least import statuses [ms]
  */
-const IMPORT_STATUS_REFRESH_TIME = 5000;
+const IMPORT_STATUS_REFRESH_TIME = 3000;
 
 export default Mixin.create({
   spaceManager: service(),
@@ -216,29 +216,11 @@ export default Mixin.create({
   },
 
   /**
-   * @returns {boolean} true if import info should be refreshed
-   */
-  shouldRefreshImportInfo() {
-    const {
-      importInfoRefreshTime,
-      lastImportInfoRefresh,
-      autoImportActive,
-    } = this.getProperties(
-      'importInfoRefreshTime',
-      'lastImportInfoRefresh',
-      'autoImportActive'
-    );
-
-    return autoImportActive &&
-      Date.now() - lastImportInfoRefresh > importInfoRefreshTime;
-  },
-
-  /**
-   * If import status was not updated for some mininal time, fetch import status
+   * Fetch import info only if space has auto storage import active
    * @returns {undefined}
    */
   checkImportInfoUpdate() {
-    if (this.shouldRefreshImportInfo()) {
+    if (this.get('autoImportActive')) {
       this.fetchImportInfo();
     }
   },
