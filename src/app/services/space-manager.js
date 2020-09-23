@@ -145,11 +145,6 @@ export default Service.extend({
     return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
   },
 
-  ceaseOneproviderSupport(space) {
-    return this.get('onepanelServer')
-      .request('oneprovider', 'revokeSpaceSupport', get(space, 'id'));
-  },
-
   /**
    * Fetch current sync (import/update) statistics with given configuration
    *
