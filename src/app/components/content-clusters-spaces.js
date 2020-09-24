@@ -55,6 +55,22 @@ export default Component.extend(
       }
     }),
 
+    /**
+     * @type {ComputedProperty<String>}
+     */
+    removeSpaceToRevokeUrl: computed(
+      'spaceToRevoke',
+      function removeSpaceToRevokeUrl() {
+        const spaceId = this.get('spaceToRevoke.id');
+        if (!spaceId) {
+          return;
+        }
+        return this.get('onezoneGui').getUrlInOnezone(
+          `onedata/spaces/${spaceId}?action_name=removeSpace&action_space_id=${spaceId}`
+        );
+      }
+    ),
+
     init() {
       this._super(...arguments);
       this.updateProviderProxy();
@@ -105,13 +121,6 @@ export default Component.extend(
             );
             throw error;
           });
-      },
-      startCeaseSupport() {
-        const spaceId = this.get('spaceToRevoke.id');
-        const removeSpaceOnezoneUrl = this.get('onezoneGui').getUrlInOnezone(
-          `onedata/spaces/${spaceId}?action_name=removeSpace&action_space_id=${spaceId}`
-        );
-        window.location = removeSpaceOnezoneUrl;
       },
       closeCeaseSupportModal() {
         safeExec(this, 'set', 'spaceToRevoke', null);
