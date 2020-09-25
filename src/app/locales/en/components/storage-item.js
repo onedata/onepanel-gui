@@ -8,6 +8,8 @@ import webdav from './storage-item/webdav';
 import nulldevice from './storage-item/nulldevice';
 
 export default {
+  modifyBtn: 'Modify',
+  modifyDisabledBtnTip: 'The editor supports code edition features like code folding and syntax checking.',
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage',
