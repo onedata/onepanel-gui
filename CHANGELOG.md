@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6784 Better UX of triggering storage edition
 * VFS-6732 Using new monospace font
 * VFS-6652 Enabled assets fingerprinting for more resources
 * VFS-6697 Auto enable and lock skip storage detection in storage form
