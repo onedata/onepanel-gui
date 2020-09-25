@@ -45,10 +45,8 @@ export default Component.extend(
     submitModifySpace: undefined,
 
     /**
+     * Opens revoke space support modal
      * @virtual
-     * Returns promise that resolves if either user confirms and succeeds to
-     * revoke space (true) or cancels revocation (false).
-     * The promise rejects when revocation operation fails.
      * @type {function}
      */
     startRevokeSpace: notImplementedReject,
@@ -75,12 +73,6 @@ export default Component.extend(
      * @type {SpaceDetails}
      */
     _spaceCache: null,
-
-    /**
-     * If true, space revoke modal is opened
-     * @type {boolean}
-     */
-    _openRevokeModal: false,
 
     /**
      * If true, this space has synchronization import enabled
@@ -133,18 +125,5 @@ export default Component.extend(
           spaceId
         )
         .then(({ data }) => data);
-    },
-
-    actions: {
-      startRevokeSpace() {
-        return this.get('startRevokeSpace')(this.get('space'));
-      },
-      revokeSpace() {
-        const {
-          revokeSpace,
-          space,
-        } = this.getProperties('revokeSpace', 'space');
-        return revokeSpace(space);
-      },
     },
   });

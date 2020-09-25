@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6801 Disabled cease support mechanism in favour of removing space
 * VFS-6732 Using new monospace font
 * VFS-6652 Enabled assets fingerprinting for more resources
 * VFS-6697 Auto enable and lock skip storage detection in storage form
