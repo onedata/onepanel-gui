@@ -167,6 +167,18 @@ export default OneForm.extend(Validations, I18n, {
   mode: 'show',
 
   /**
+   * @virtual
+   * @type {string}
+   */
+  previousSubdomain: undefined,
+
+  /**
+   * @virtual
+   * @type {string}
+   */
+  previousDomain: undefined,
+
+  /**
    * To inject.
    * Contains provider registration info (like ``Onepanel.ProviderDetails``)
    * @type {Ember.Object}
@@ -430,6 +442,7 @@ export default OneForm.extend(Validations, I18n, {
   _willChangeDomainAfterSubmit: computed(
     'mode',
     'currentFields.@each.changed',
+    'allFieldsValues.{editSubdomain.subdomain,editDomain.domain}',
     function getWillChangeDomainAfterSubmit() {
       if (this.get('mode') === 'edit') {
         const currentFields = this.get('currentFields');
@@ -439,8 +452,11 @@ export default OneForm.extend(Validations, I18n, {
             name: 'editSubdomain.subdomain',
           }
         );
-        return domainField && get(domainField, 'changed') ||
-          subdomainField && get(subdomainField, 'changed');
+        const formValues = this.getProperties('formValues').formValues;
+        return domainField && get(domainField, 'changed') && 
+          formValues.editDomain.domain != this.previousDomain ||
+          subdomainField && get(subdomainField, 'changed') && 
+          formValues.editSubdomain.subdomain != this.previousSubdomain;
       } else {
         return false;
       }
@@ -451,9 +467,18 @@ export default OneForm.extend(Validations, I18n, {
     this.resetFormValues(ALL_PREFIXES);
   }),
 
+  _setPreviousDomainAndSubdomain() {
+    const allFields = this.getProperties('allFields').allFields;
+    const subdomainField = _.find(allFields, { name: 'editSubdomain.subdomain' });
+    const domainField = _.find(allFields, { name: 'editDomain.domain' });
+    this.set('previousSubdomain', subdomainField.defaultValue);
+    this.set('previousDomain', domainField.defaultValue);
+  },
+
   init() {
     this._super(...arguments);
     this.prepareFields();
+    this._setPreviousDomainAndSubdomain();
     next(() => this._modeObserver());
   },
 
