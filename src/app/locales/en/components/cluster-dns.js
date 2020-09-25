@@ -25,7 +25,7 @@ export default {
     stateHint: 'Configuring the DNS server for your domain depends on your environment. If you have a public domain, check the settings in its administration panel. If you are working in a cloud / virtual environment, contact your administrators to learn how can you modify the DNS server config.',
     stateInfo: {
       providerIp: 'This Oneprovider service is registered using an IP address rather than a domain. No DNS check is applicable.',
-      providerSubdomainDelegation: 'This Oneprovider service is using Subdomain Delegation - it was assigned a subdomain, which is managed completely by the Onezone service ({{providerOnezoneDomain}}). A DNS check should be performed to make sure that the Onezone service is properly configured to handle your subdomain.',
+      providerSubdomainDelegation: 'This Oneprovider service is using Subdomain Delegation – it was assigned a subdomain, which is managed completely by the Onezone service ({{providerOnezoneDomain}}). A DNS check should be performed to make sure that the Onezone service is properly configured to handle your subdomain.',
       providerNoSubdomainDelegationPreHint: 'This Oneprovider service is registered under domain "{{domain}}". You should ensure that the DNS server responsible for your domain',
       providerNoSubdomainDelegationPostHint: 'is properly configured.',
       zoneIp: 'This Onezone service is registered using an IP address rather than a domain. No DNS check is applicable.',

@@ -2,8 +2,8 @@
  * Provides backend operations for spaces in onepanel
  *
  * @module services/space-manager
- * @author Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki
+ * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -23,8 +23,8 @@ const {
   SpaceSupportRequest,
 } = Onepanel;
 
-const SYNC_METRICS = ['queueLength', 'insertCount', 'updateCount', 'deleteCount'];
-const DEFAULT_SYNC_STATS_PERIOD = 'minute';
+const IMPORT_METRICS = ['queueLength', 'createdFiles', 'modifiedFiles', 'deletedFiles'];
+const DEFAULT_IMPORT_STATS_PERIOD = 'minute';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -114,8 +114,7 @@ export default Service.extend({
   /**
    * @param {string} id
    * @param {SpaceModifyRequest} spaceData fields of space to be changed
-   * @param {StorageImportDetails} spaceData.storageImport
-   * @param {StorageUpdateDetails} spaceData.storageUpdate
+   * @param {StorageImport} spaceData.storageImport
    * @returns {Promise<undefined|object>} resolves after updating details cache
    */
   modifySpaceDetails(id, spaceData) {
@@ -151,58 +150,55 @@ export default Service.extend({
   },
 
   /**
-   * Fetch current sync (import/update) statistics with given configuration
+   * Fetch current import info
    *
-   * There are more high-level methods that should be considered to use:
-   * - getSyncStatusOnly
-   * - getSyncAllStats
-   *
-   * @param {string} spaceId 
-   * @param {string} period one of: minute, hour, day
-   * @param {Array.string} metrics array with any of: queueLength, insertCount,
-   *  updateCount, deleteCount
-   * @returns {Promise<object>} Onepanel.ProviderAPI.getProviderSpaceSyncStats results
+   * @param {String} spaceId
+   * @returns {Promise<Onepanel.AutoStorageImportInfo>}
    */
-  getSyncStats(spaceId, period, metrics) {
-    // convert metrics to special-format string that holds an array
-    if (Array.isArray(metrics)) {
-      metrics = metrics.join(',');
-    }
-    return new Promise((resolve, reject) => {
-      let onepanelServer = this.get('onepanelServer');
-      let gettingSyncStats = onepanelServer.request(
-        'oneprovider',
-        'getProviderSpaceSyncStats',
-        spaceId, {
-          period,
-          metrics,
-        }
-      );
-
-      gettingSyncStats.then(({ data }) => resolve(data));
-      gettingSyncStats.catch(reject);
-    });
+  getImportInfo(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getAutoStorageImportInfo',
+      spaceId
+    ).then(({ data }) => data);
   },
 
   /**
-   * Helper method to get only status of sync without statistics for charts
-   * @param {string} spaceId
-   * @returns {Promise<object>}
+   * Fetch current import statistics with given configuration
+   *
+   * @param {String} spaceId
+   * @param {String} [period] one of: minute, hour, day
+   * @param {Array<String>|String} [metrics] array with any of: queueLength, insertCount,
+   *  updateCount, deleteCount or a string containing any of these values joined with `,`
+   * @returns {Promise<Onepanel.AutoStorageImportStats>}
    */
-  getSyncStatusOnly(spaceId) {
-    return this.getSyncStats(spaceId);
+  getImportStats(
+    spaceId,
+    period = DEFAULT_IMPORT_STATS_PERIOD,
+    metrics = IMPORT_METRICS
+  ) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getAutoStorageImportStats',
+      spaceId,
+      period,
+      // convert metrics to special-format string that holds an array
+      Array.isArray(metrics) ? metrics.join(',') : metrics,
+    ).then(({ data }) => data);
   },
 
   /**
-   * Get all known statistics for space synchronization needed to display
-   * all charts
-   *
-   * @param {*} spaceId 
-   * @param {string} [period] one of: minute, hour, day (like in Onepanel.SyncStats)
-   * @returns {Promise<object>}
+   * Fetch example of the file registration request in manual storage import
+   * 
+   * @param {String} spaceId 
+   * @returns {Promise<Onepanel.ManualStorageImportExample>}
    */
-  getSyncAllStats(spaceId, period = DEFAULT_SYNC_STATS_PERIOD) {
-    return this.getSyncStats(spaceId, period, SYNC_METRICS);
+  getManualImportRequestExample(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'getManualStorageImportExample',
+      spaceId
+    ).then(({ data }) => data);
   },
 
   /**
@@ -286,4 +282,27 @@ export default Service.extend({
     ).then(({ data }) => data);
   },
 
+  /**
+   * @param {String} spaceId 
+   * @returns {Promise}
+   */
+  stopImportScan(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'forceStopAutoStorageImportScan',
+      spaceId,
+    );
+  },
+
+  /**
+   * @param {String} spaceId 
+   * @returns {Promise}
+   */
+  startImportScan(spaceId) {
+    return this.get('onepanelServer').request(
+      'oneprovider',
+      'forceStartAutoStorageImportScan',
+      spaceId,
+    );
+  },
 });

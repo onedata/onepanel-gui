@@ -1,0 +1,35 @@
+{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+  <div class="import-configuration-section">
+    <h2 class="form-section-title">{{tt this "importConfiguration"}}</h2>
+    {{one-form-fields
+      bsForm=form
+      fields=currentFields
+      formValues=formValues
+      inputChanged=(action "inputChanged")
+      onFocusOut=(action "focusOut")
+    }}
+  </div>
+  <div class="row">
+    <div class={{layoutConfig.formSubmitColumns}}>
+      {{#if autoImportEnabled}}
+        <p class="small continuous-info-msg">
+          {{tt this (if
+            continuousScanEnabled
+            "continuousScanEnabledDesc"
+            "continuousScanDisabledDesc"
+          )}}
+        </p>
+      {{/if}}
+      {{#if showSubmitButton}}
+        {{#one-spin-button
+          type="submit"
+          class="btn btn-primary submit-import"
+          disabled=(not isValid)
+          action=(action "submit")
+        }}
+          {{tt this (if (eq mode "new") "submitNew" "submitModify")}}
+        {{/one-spin-button}}
+      {{/if}}
+    </div>
+  </div>
+{{/bs-form}}

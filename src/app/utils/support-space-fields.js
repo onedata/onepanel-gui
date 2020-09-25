@@ -16,8 +16,4 @@ export default [{
       { value: 'pib', label: 'PiB', _multiplicator: Math.pow(1024, 5) },
     ],
   },
-  {
-    name: 'importEnabled',
-    type: 'checkbox',
-  },
 ];

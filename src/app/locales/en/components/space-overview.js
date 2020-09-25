@@ -1,9 +1,8 @@
 import storageImport from './-space/storage-import';
-import storageUpdate from './-space/storage-update';
 
 export default {
   storageImport,
-  storageUpdate,
+  storageImportSection: 'Storage import',
   id: 'Id',
   name: 'Name',
   storage: 'Assigned storage',

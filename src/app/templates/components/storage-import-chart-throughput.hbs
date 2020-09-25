@@ -1,6 +1,6 @@
 <div class="row content-row no-border">
   <h1>
-    <span class="chart-title">Synchronization throughput</span>
+    <span class="chart-title">Import throughput</span>
     {{one-label-tip
       title="The chart shows the throughput of file operations"
       placement="top"
@@ -9,8 +9,8 @@
 </div>
 <div class="row content-row chart-row has-border">
   <div class="scrollable-row">
-    {{#if syncChartDataError}}
-      {{resource-load-error reason=syncChartDataError}}
+    {{#if importChartDataError}}
+      {{resource-load-error reason=importChartDataError}}
     {{else}}
       {{chartist-chart data=chartData options=chartOptions type="line" class="hide-middle-x-labels"}}
     {{/if}}

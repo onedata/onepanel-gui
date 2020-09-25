@@ -1,7 +1,7 @@
 {{#if anySpaceRejected}}
   {{resource-load-error
     class="alert-some-spaces-rejected"
-    message=(tt this "components.clusterSpacesTable.someLoadError")
+    message=(tt this "someLoadError")
     onClose=(action "closeRejectedError")
   }}
 {{/if}}
@@ -14,7 +14,7 @@
         {{#listItem.header
           isCollapsible=false
           click=(action "spaceClicked" spaceProxy.content.id)
-          class="hoverable"
+          class="hoverable spaces-list-item-header"
         }}
           {{#if spaceProxy.isPending}}
             {{spin-spinner-block sizeClass="xs" class="absolute-middle-centered"}}
