@@ -116,7 +116,7 @@ export default Component.extend(I18n, {
       title: this.t(
         whileEdition ? 'cancelStorageModification' : 'modifyStorageDetails'
       ),
-      class: 'modify-storage-details',
+      class: 'modify-storage-details hidden-lg hidden-md hidden-sm',
       icon: 'rename',
     };
   }),
