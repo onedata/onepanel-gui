@@ -9,7 +9,7 @@ import nulldevice from './storage-item/nulldevice';
 
 export default {
   modifyBtn: 'Modify',
-  modifyDisabledBtnTip: 'The editor supports code edition features like code folding and syntax checking.',
+  modifyDisabledBtnTip: 'Current modifications have not been saved yet - use the buttons at the bottom of the form.',
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage',
