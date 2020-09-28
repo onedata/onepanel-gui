@@ -6,27 +6,27 @@ import {
   describe,
   it,
 } from 'mocha';
-import ComponentsSpaceSyncChartDataValidatorMixin from 'onepanel-gui/mixins/components/space-sync-chart-data-validator';
+import ComponentsStorageImportChartDataValidatorMixin from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
 import wait from 'ember-test-helpers/wait';
 
-describe('Unit | Mixin | components/space sync chart data validator', function () {
+describe('Unit | Mixin | components/space import chart data validator', function () {
   it('recomputes validation when timeStats changes', function (done) {
-    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
-      ComponentsSpaceSyncChartDataValidatorMixin);
+    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+      ComponentsStorageImportChartDataValidatorMixin);
 
-    let validateSyncChartData = () => {
+    let validateImportChartData = () => {
       return 'hello';
     };
 
-    let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
-      validateSyncChartData,
+    let subject = ComponentsStorageImportChartDataValidatorObject.create({
+      validateImportChartData,
     });
 
     subject.set('timeStats', []);
 
     wait().then(() => {
-      expect(subject.get('syncChartDataError')).to.equal('hello');
+      expect(subject.get('importChartDataError')).to.equal('hello');
       done();
     });
 
@@ -34,10 +34,10 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
-      ComponentsSpaceSyncChartDataValidatorMixin
+    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+      ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
+    let subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'one',
         lastValueDate: new Date().toJSON(),
@@ -51,10 +51,10 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is lack of at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
-      ComponentsSpaceSyncChartDataValidatorMixin
+    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+      ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
+    let subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'seven',
         lastValueDate: new Date().toJSON(),
@@ -68,10 +68,10 @@ describe('Unit | Mixin | components/space sync chart data validator', function (
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsSpaceSyncChartDataValidatorObject = EmberObject.extend(
-      ComponentsSpaceSyncChartDataValidatorMixin
+    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+      ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsSpaceSyncChartDataValidatorObject.create({
+    let subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'one',
         lastValueDate: new Date().toJSON(),

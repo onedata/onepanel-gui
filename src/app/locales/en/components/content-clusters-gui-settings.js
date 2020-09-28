@@ -6,7 +6,7 @@ export default {
       description: 'Sign-in notification is a short message that will be displayed to every user on the sign-in page. It can contain important announcements, such as possible downtime of the system or incoming upgrade. Only plain text without HTML tags is allowed.',
       signinNotificationEnabled: 'Sign-in notification enabled',
       save: 'Save',
-      emptyContentWarning: 'Sign-in notification is enabled, but content is missing - please fill it in below.',
+      emptyContentWarning: 'Sign-in notification is enabled, but content is missing – please fill it in below.',
       emptyContentTabWarning: 'Sign-in notification is enabled, but content is missing.',
     },
     privacyPolicy: {
@@ -14,7 +14,7 @@ export default {
       description: 'Privacy policy is a statement that describes how this service manages user data. May be required depending on the location of the service (e.g. in EU it is required by the GDPR).',
       privacyPolicyEnabled: 'Privacy policy enabled',
       save: 'Save',
-      emptyContentWarning: 'Privacy policy is enabled, but content is missing - please fill it in below.',
+      emptyContentWarning: 'Privacy policy is enabled, but content is missing – please fill it in below.',
       emptyContentTabWarning: 'Privacy policy is enabled, but content is missing.',
     },
     cookieConsentNotification: {
@@ -24,7 +24,7 @@ export default {
       insertPrivacyPolicyLink: 'Insert privacy policy link',
       privacyPolicy: 'privacy policy',
       save: 'Save',
-      emptyContentWarning: 'Cookie consent notification is enabled, but content is missing - please fill it in below.',
+      emptyContentWarning: 'Cookie consent notification is enabled, but content is missing – please fill it in below.',
       emptyContentTabWarning: 'Cookie consent notification is enabled, but content is missing.',
     },
   },

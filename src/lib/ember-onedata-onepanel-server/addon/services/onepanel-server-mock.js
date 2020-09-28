@@ -22,7 +22,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import DeploymentProgressMock from 'ember-onedata-onepanel-server/models/deployment-progress-mock';
 import Plainable from 'onedata-gui-common/mixins/plainable';
-import SpaceSyncStatsMock from 'ember-onedata-onepanel-server/mixins/space-sync-stats-mock';
+import StorageImportStatsMock from 'ember-onedata-onepanel-server/mixins/storage-import-stats-mock';
 import SpaceCleaningMock from 'ember-onedata-onepanel-server/mixins/space-cleaning-mock';
 import SpaceCleaningReportsMock from 'ember-onedata-onepanel-server/mixins/space-cleaning-reports-mock';
 import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-storage-class';
@@ -233,7 +233,7 @@ function getCurrentProviderClusterFromUrl() {
 }
 
 export default OnepanelServerBase.extend(
-  SpaceSyncStatsMock,
+  StorageImportStatsMock,
   SpaceCleaningMock,
   SpaceCleaningReportsMock, {
     cookies: service(),
@@ -519,6 +519,7 @@ export default OnepanelServerBase.extend(
             monitorHostname: 'host.name',
             clusterName: 'cluster_name',
             poolName: 'some_pool',
+            importedStorage: true,
           };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
@@ -536,13 +537,10 @@ export default OnepanelServerBase.extend(
               name: 'Space One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One One',
               storageId: storage1.id,
               spaceOccupancy: 800000000,
-              storageImport: {
-                strategy: 'no_import',
-              },
-              storageUpdate: {
-                strategy: 'no_update',
-              },
               supportingProviders: _genSupportingProviders(),
+              storageImport: {
+                mode: 'manual',
+              },
             });
             spacesFilePopularity.push({
               id: 'space1_verylongid',
@@ -565,17 +563,12 @@ export default OnepanelServerBase.extend(
               storageId: storage1.id,
               spaceOccupancy: 800000000,
               storageImport: {
-                strategy: 'simple_scan',
-                maxDepth: 4,
-                syncAcl: true,
-              },
-              storageUpdate: {
-                strategy: 'simple_scan',
-                maxDepth: 3,
-                scanInterval: 1000,
-                writeOnce: false,
-                deleteEnable: false,
-                syncAcl: true,
+                mode: 'auto',
+                autoStorageImportConfig: {
+                  continuousScan: false,
+                  maxDepth: 4,
+                  syncAcl: true,
+                },
               },
               supportingProviders: _genSupportingProviders(),
             });
@@ -977,14 +970,35 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getProviderSpaceSyncStats: computed(function () {
+    _req_oneprovider_getAutoStorageImportInfo: computed(function () {
       return {
-        success: (spaceId, { period, metrics }) => {
-          let space = _.find(this.get('__spaces', s => s.id === spaceId));
-          return this.generateSpaceSyncStats(space, period, metrics);
+        success: (spaceId) => {
+          const space = _.find(this.get('__spaces'), s => s.id === spaceId);
+          return this.generateStorageImportInfo(space);
         },
       };
     }),
+
+    _req_oneprovider_getAutoStorageImportStats: computed(function () {
+      return {
+        success: (spaceId, period, metrics) => {
+          const space = _.find(this.get('__spaces'), s => s.id === spaceId);
+          return this.generateStorageImportStats(space, period, metrics);
+        },
+      };
+    }),
+
+    _req_oneprovider_getManualStorageImportExample() {
+      return {
+        success: (spaceId) => {
+          return {
+            curl: `curl -X POST -H "X-Auth-Token:$TOKEN" -H "content-type:application/json" \\
+-d '{"storageId":"'$STORAGE_ID'", "spaceId":"${spaceId}", "storageFileId":"'$STORAGE_FILE_ID'", "destinationPath":"'$DESTINATION_PATH'"}' $ONEPROVIDER_HOST/api/v3/oneprovider/data/register`,
+          };
+        },
+        statusCode: () => 200,
+      };
+    },
 
     // TODO: after revoking space support, do not return the space in getSpaces  
     _req_oneprovider_revokeSpaceSupport: computed(function () {
@@ -1003,6 +1017,10 @@ export default OnepanelServerBase.extend(
           let spaces = this.get('__spaces');
           let space = spaces.find(s => s.id === id);
           if (space) {
+            if (data.autoStorageImportConfig) {
+              set(space, 'storageImport.autoStorageImportConfig', data.autoStorageImportConfig);
+              delete data.autoStorageImportConfig;
+            }
             emberObjectMerge(space, data);
             if (data && data.size) {
               set(space, `supportingProviders.${PROVIDER_ID}`, data.size);

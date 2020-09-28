@@ -1,7 +1,7 @@
 /**
  * A chart component for a space import/update queue length statistics.
  *
- * @module components/space-sync-chart-queue
+ * @module components/storage-import-chart-queue
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -13,7 +13,7 @@ import { computed } from '@ember/object';
 
 import _ from 'lodash';
 
-import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
+import StorageImportChartBase from 'onepanel-gui/components/storage-import-chart-base';
 import maximizeBarWidth from 'onedata-gui-common/utils/chartist/maximize-bar-width';
 import barSumLabels from 'onedata-gui-common/utils/chartist/bar-sum-labels';
 import axisLabels from 'onedata-gui-common/utils/chartist/axis-labels';
@@ -21,11 +21,11 @@ import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
-export default SpaceSyncChartBase.extend({
-  classNames: ['space-sync-chart-queue'],
+export default StorageImportChartBase.extend({
+  classNames: ['storage-import-chart-queue'],
 
   /**
-   * @implements SpaceSyncChartDataValidator
+   * @implements StorageImportChartDataValidator
    */
   usedMetrics: Object.freeze(['queueLength']),
 
