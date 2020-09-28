@@ -12,7 +12,7 @@ import supportSpaceForm from './components/support-space-form';
 import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
 import clusterSpacesTable from './components/cluster-spaces-table';
-import storageImportUpdateForm from './components/storage-import-update-form';
+import storageImportForm from './components/storage-import-form';
 import spaceStatusIcons from './components/space-status-icons';
 import loginBox from './components/login-box';
 import providerRegistrationForm from './components/provider-registration-form';
@@ -63,7 +63,7 @@ import clusterStoragesTile from './components/cluster-storages-tile';
 import contentClustersOverview from './components/content-clusters-overview';
 import onezoneInfoBox from './components/onezone-info-box';
 import sidebarClusters from './components/sidebar-clusters';
-import spaceStorageSynchronization from './components/space-storage-synchronization';
+import spaceStorageImport from './components/space-storage-import';
 import supportSizeInfo from './components/support-size-info';
 import emergencyWarningBar from './components/emergency-warning-bar';
 import registerOnezoneNotCompatible from './components/alerts/register-onezone-not-compatible';
@@ -107,7 +107,7 @@ let translations = {
     storageItem,
     clusterSpacesTable,
     clusterSpacesTableItem,
-    storageImportUpdateForm,
+    storageImportForm,
     spaceStatusIcons,
     loginBox,
     providerRegistrationForm,
@@ -158,7 +158,7 @@ let translations = {
     contentClustersOverview,
     onezoneInfoBox,
     sidebarClusters,
-    spaceStorageSynchronization,
+    spaceStorageImport,
     supportSizeInfo,
     emergencyWarningBar,
     contentClustersMembers,

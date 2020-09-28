@@ -23,8 +23,7 @@
 {{#render-later triggerRender=spaceToRevoke}}
   {{cease-oneprovider-support-modal
     opened=spaceToRevoke
-    provider=provider
-    space=spaceToRevoke
+    removeSpaceUrl=removeSpaceToRevokeUrl
     close=(action "closeCeaseSupportModal")
   }}
 {{/render-later}}

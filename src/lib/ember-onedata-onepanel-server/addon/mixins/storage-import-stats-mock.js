@@ -1,7 +1,7 @@
 /**
- * Mocks live statistics and status changes for space sync 
+ * Mocks live statistics and status changes for storage import
  *
- * @module mixins/space-sync-stats-mock
+ * @module mixins/storage-import-stats-mock
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -20,9 +20,9 @@ const PERIODS = [
 
 const METRICS = [
   'queueLength',
-  'insertCount',
-  'updateCount',
-  'deleteCount',
+  'createdFiles',
+  'modifiedFiles',
+  'deletedFiles',
 ];
 
 const SAMPLES_COUNT = 12;
@@ -36,8 +36,7 @@ export default Mixin.create({
 
   _statusTimerId: null,
 
-  globalImportStatus: 'inProgress',
-  globalUpdateStatus: 'waiting',
+  globalImportStatus: 'running',
 
   lastValueDate: null,
 
@@ -120,46 +119,50 @@ export default Mixin.create({
 
   initDelayedStatusChange(delay = 10000) {
     let statusChangeTimerId = setTimeout(() => {
-      this.setProperties({
-        globalImportStatus: 'done',
-        globalUpdateStatus: 'inProgress',
-      });
+      this.set('globalImportStatus', 'completed');
     }, delay);
     this.set('statusChangeTimerId', statusChangeTimerId);
   },
 
-  generateSpaceSyncStats(space, period, metrics) {
+  generateStorageImportInfo(space) {
+    const status = this.get('globalImportStatus');
+    if (get(space, 'storageImport') == null) {
+      return null;
+    } else {
+      const nowTimestamp = Math.floor((new Date().valueOf() / 1000));
+      return {
+        status,
+        start: nowTimestamp - 3600,
+        stop: status === 'completed' ? nowTimestamp : null,
+        createdFiles: 1000,
+        modifiedFiles: 500,
+        deletedFiles: 250,
+        nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
+      };
+    }
+  },
+
+  generateStorageImportStats(space, period, metrics) {
     if (typeof metrics === 'string') {
       metrics = metrics.split(',');
     }
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
-      let {
+      const {
         allStats,
-        globalImportStatus,
-        globalUpdateStatus,
         lastValueDate,
-      } = this.getProperties('allStats',
-        'globalImportStatus',
-        'globalUpdateStatus',
+      } = this.getProperties(
+        'allStats',
         'lastValueDate'
       );
 
-      let stats;
       if (period && metrics) {
-        stats = _.zipObject(metrics, metrics.map(metric => ({
-          name: metric,
+        return _.zipObject(metrics, metrics.map(metric => ({
           values: allStats[period][metric],
           lastValueDate: lastValueDate.toJSON(),
         })));
       }
-
-      return {
-        importStatus: globalImportStatus,
-        updateStatus: globalUpdateStatus,
-        stats,
-      };
     }
   },
 });

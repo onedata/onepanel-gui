@@ -31,12 +31,6 @@ class SupportSpaceFormHelper extends FormHelper {
   }
 }
 
-class UpdateStrategySelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.update-configuration-section .ember-basic-dropdown');
-  }
-}
-
 class StorageSelectHelper extends EmberPowerSelectHelper {
   constructor() {
     super('.form .form-group:first-child .ember-basic-dropdown');
@@ -175,36 +169,24 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it('renders unchecked disabled import toggle if storage is not imported',
+  it('does not show import section if storage is not imported',
     function () {
       this.render(hbs `{{support-space-form}}`);
 
-      return wait()
-        .then(() => {
-          const helper = new SupportSpaceFormHelper(this.$());
-          expect(helper.getToggleInput('main-importEnabled'))
-            .to.have.class('disabled');
-          expect(helper.getToggleInput('main-importEnabled'))
-            .to.not.have.class('checked');
-        });
+      return wait().then(() =>
+        expect(this.$('.storage-import-form')).to.have.class('collapse-hidden')
+      );
     }
   );
 
-  it('renders checked non-disabled import toggle if storage is imported', function () {
+  it('renders import section if storage is imported', function () {
     this.render(hbs `{{support-space-form}}`);
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        return wait()
-          .then(() => {
-            const helper = new SupportSpaceFormHelper(this.$());
-            expect(helper.getToggleInput('main-importEnabled'))
-              .to.not.have.class('disabled');
-            expect(helper.getToggleInput('main-importEnabled'))
-              .to.have.class('checked');
-          });
-      });
+      .then(() =>
+        expect(this.$('.storage-import-form')).to.not.have.class('collapse-hidden')
+      );
   });
 
   it('submits size multiplicated by chosen unit', function () {
@@ -286,10 +268,7 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        const helper = new SupportSpaceFormHelper(this.$());
-        fillIn(helper.getInput('import_generic-maxDepth')[0], 'incorrect');
-      })
+      .then(() => fillIn('.field-generic-maxDepth', 'bad value'))
       .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
   });
 
@@ -307,15 +286,14 @@ describe('Integration | Component | support space form', function () {
 
     return wait()
       .then(() => selectStorageWithImport(this))
-      .then(() => {
-        return new UpdateStrategySelectHelper().selectOption(2);
-      })
+      .then(() => click('.toggle-field-generic-continuousScan'))
       .then(() => new SupportSpaceFormHelper(this.$()).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
-        expect(submitStub).to.be.calledWith(
-          sinon.match.hasNested('storageUpdate.strategy', 'simple_scan')
-        );
+        expect(submitStub).to.be.calledWith(sinon.match.hasNested(
+          'storageImport.autoStorageImportConfig.continuousScan',
+          false
+        ));
       });
   });
 });

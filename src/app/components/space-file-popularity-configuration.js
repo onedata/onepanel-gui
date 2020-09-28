@@ -1,5 +1,5 @@
 /**
- * Auto-saved form with configuration of file-popularity function
+ * Auto-saved form with configuration of file popularity function
  * 
  * @module components/space-file-popularity-configuration
  * @author Jakub Liput

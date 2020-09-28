@@ -10,6 +10,7 @@
 import { computed } from '@ember/object';
 import Mixin from '@ember/object/mixin';
 import { camelize } from '@ember/string';
+import { conditional, raw } from 'ember-awesome-macros';
 
 const enabledClass = 'enabled';
 const disabledClass = 'disabled';
@@ -24,18 +25,23 @@ export default Mixin.create({
   tabOverviewId: 'overview',
   tabOverviewHint: computedTabHint('overview'),
 
-  tabSyncClass: enabledClass,
-  tabSyncId: 'sync',
-  tabSyncHint: computedTabHint('sync'),
+  tabImportClass: conditional(
+    'space.storageImportEnabled',
+    raw(enabledClass),
+    raw(disabledClass)
+  ),
+  tabImportId: 'import',
+  tabImportHint: computedTabHint('import'),
 
   tabPopularClass: enabledClass,
   tabPopularId: 'popular',
   tabPopularHint: computedTabHint('popular'),
 
-  tabCleanClass: computed('filePopularityConfiguration.enabled', function () {
-    return this.get('filePopularityConfiguration.enabled') ? enabledClass :
-      disabledClass;
-  }),
+  tabCleanClass: conditional(
+    'filePopularityConfiguration.enabled',
+    raw(enabledClass),
+    raw(disabledClass)
+  ),
   tabCleanId: 'clean',
   tabCleanHint: computedTabHint('clean'),
 
@@ -55,8 +61,8 @@ export default Mixin.create({
 
 /**
  * Create computed property that will return translated hint for tab
- * @param {string} tab one of: sync, popular, clean
- * @returns {Ember.ComputedProperty}
+ * @param {string} tab one of: overview, import, popular, clean
+ * @returns {Ember.ComputedProperty<SafeString>}
  */
 function computedTabHint(tab) {
   const classProperty = camelize(`tab-${tab}-class`);

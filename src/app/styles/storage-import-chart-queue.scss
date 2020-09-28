@@ -1,12 +1,9 @@
 $chart-color: $color-one-mint;
 
-.space-sync-chart-throughput .ct-chart {
+.storage-import-chart-queue .ct-chart {
   .ct-series-0 {
-    .ct-line, .ct-point {
+    .ct-bar {
       stroke: $chart-color;
-    }
-    .ct-point {
-      stroke-width: 10px;
     }
   }
   .ct-legend {

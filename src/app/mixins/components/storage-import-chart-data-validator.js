@@ -1,11 +1,11 @@
 /**
- * Mixin for space-sync-charts adding data validation capabilities.
+ * Mixin for storage-import-charts adding data validation capabilities.
  *
- * Usage: implement ``validateSyncChartData`` function.
- * It's result will be available in ``syncChartDataError`` computed property
+ * Usage: implement ``validateImportChartData`` function.
+ * It's result will be available in ``importChartDataError`` computed property
  * everytime ``timeStats`` property changes.
  *
- * @module mixins/components/space-sync-chart-data-validator
+ * @module mixins/components/storage-import-chart-data-validator
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -28,9 +28,9 @@ export default Mixin.create({
    */
   usedMetrics: [],
 
-  syncChartDataError: computed('timeStats', function () {
+  importChartDataError: computed('timeStats', function () {
     return this.get('timeStats') ?
-      this.validateSyncChartData() :
+      this.validateImportChartData() :
       undefined;
   }),
 
@@ -42,7 +42,7 @@ export default Mixin.create({
    *
    * @returns {string|undefined} description of error if validation failed or nothing
    */
-  validateSyncChartData() {
+  validateImportChartData() {
     let usedMetrics = this.get('usedMetrics');
     let errors = _.concat(
       this.validateAnyMetric(usedMetrics),

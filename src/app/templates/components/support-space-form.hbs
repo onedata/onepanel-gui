@@ -34,7 +34,11 @@
     onFocusOut=(action "focusOut")
   }}
   
-  {{storage-import-update-form class=(concat "col-xs-12 collapse-animation collapse-small" (if importEnabled "" " collapse-hidden"))
+  {{storage-import-form
+    class=(concat-classes
+      "col-xs-12 collapse-animation collapse-small"
+      (unless importEnabled "collapse-hidden")
+    )
     mode="new"
     isFormOpened=importEnabled
     valuesChanged=(action "importFormChanged")

@@ -12,14 +12,14 @@
     }}
   </span>
   {{name-conflict item=space tagName="span" class="one-label space-name-header"}}
-  {{space-status-icons space=space syncStats=_syncStats}}
+  {{space-status-icons space=space importInfo=importInfo}}
   {{#one-collapsible-toolbar
     isMinimized=true
     toggleBtnClass="btn-menu-toggle"
     as |dropdown|
   }}
     {{#dropdown.item
-      itemAction=(action "startRevokeSpace" space)
+      itemAction=(action startRevokeSpace space)
       triggerClasses="btn-revoke-space-support"
     }}
       {{one-icon icon="remove"}}

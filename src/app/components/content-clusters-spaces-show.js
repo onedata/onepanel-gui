@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
-import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { get, computed } from '@ember/object';
@@ -8,9 +8,10 @@ import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(
-  SpaceItemSyncStats,
+  SpaceItemImportStats,
   SpaceTabs,
   I18n,
   GlobalActions,
@@ -21,6 +22,7 @@ export default Component.extend(
     onepanelServer: service(),
     spaceManager: service(),
     storageManager: service(),
+    globalNotify: service(),
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesShow',
@@ -36,12 +38,12 @@ export default Component.extend(
     _updatedSpaceOccupancy: undefined,
 
     /**
-     * If true, this space has synchronization import enabled
+     * If true, this space has auto storage import enabled
      *
-     * That means, the view should be enriched with sync statuses and statistics
+     * That means, the view should be enriched with import statuses and statistics
      * @type {computed.boolean}
      */
-    _importActive: reads('space.importEnabled'),
+    autoImportActive: reads('space.autoStorageImportEnabled'),
 
     /**
      * @type {Ember.ComputedProperty<Action>}
@@ -138,7 +140,66 @@ export default Component.extend(
         const spaceId = this.get('space.id');
         const spaceManager = this.get('spaceManager');
         return this.get('modifySpace')(data)
-          .then(() => spaceManager.updateSpaceDetailsCache(spaceId));
+          .then(() => spaceManager.updateSpaceDetailsCache(spaceId))
+          .then(() => safeExec(this, () => {
+            if (this.get('autoImportActive')) {
+              this.fetchImportInfo();
+            }
+          }));
+      },
+      stopImportScan() {
+        const spaceId = this.get('space.id');
+        const {
+          spaceManager,
+          globalNotify,
+        } = this.getProperties('spaceManager', 'globalNotify');
+        return spaceManager.stopImportScan(spaceId)
+          .catch(error => {
+            // Ignore "not found" error. Sometimes scan is already ended when user tries
+            // to stop it.
+            if (!checkIfMatchesError(error, 'notFound')) {
+              throw error;
+            }
+          })
+          .then(() => safeExec(this, 'fetchImportInfo'))
+          .then(() => {
+            globalNotify.info(this.t('importScanStoppedSuccess'));
+          })
+          .catch(error => {
+            globalNotify.backendError(this.t('importScanStopOperation'), error);
+            throw error;
+          });
+      },
+      startImportScan() {
+        const spaceId = this.get('space.id');
+        const {
+          spaceManager,
+          globalNotify,
+        } = this.getProperties('spaceManager', 'globalNotify');
+        return spaceManager.startImportScan(spaceId)
+          .catch(error => {
+            // Ignore "already exist" error. Sometimes scan is already started when user tries
+            // to start a new one.
+            if (!checkIfMatchesError(error, 'alreadyExists')) {
+              throw error;
+            }
+          })
+          .then(() => safeExec(this, 'fetchImportInfo'))
+          .then(() => {
+            globalNotify.info(this.t('importScanStartedSuccess'));
+          })
+          .catch(error => {
+            globalNotify.backendError(this.t('importScanStartOperation'), error);
+            throw error;
+          });
       },
     },
-  });
+  }
+);
+
+function checkIfMatchesError(error, errorId) {
+  const rawError = error && get(error, 'response.body.error');
+  return rawError &&
+    rawError.id === 'errorOnNodes' &&
+    get(rawError, 'details.error.id') === errorId;
+}

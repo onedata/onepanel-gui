@@ -8,18 +8,15 @@
  */
 
 import Component from '@ember/component';
-import { readOnly } from '@ember/object/computed';
-import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import SpaceItemSyncStats from 'onepanel-gui/mixins/components/space-item-sync-stats';
+import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-throw';
 
-const I18N_PREFIX = 'components.clusterSpacesTableItem.';
-
 export default Component.extend(
-  SpaceItemSyncStats,
+  SpaceItemImportStats,
   createDataProxyMixin('filePopularityConfiguration'),
   createDataProxyMixin('autoCleaningConfiguration'),
   I18n, {
@@ -29,8 +26,6 @@ export default Component.extend(
     classNames: ['cluster-spaces-table-item'],
 
     i18n: service(),
-
-    storageManager: service(),
     onepanelServer: service(),
 
     /**
@@ -45,10 +40,8 @@ export default Component.extend(
     submitModifySpace: undefined,
 
     /**
+     * Opens revoke space support modal
      * @virtual
-     * Returns promise that resolves if either user confirms and succeeds to
-     * revoke space (true) or cancels revocation (false).
-     * The promise rejects when revocation operation fails.
      * @type {function}
      */
     startRevokeSpace: notImplementedReject,
@@ -71,43 +64,12 @@ export default Component.extend(
     provider: null,
 
     /**
-     * Last resolved SpaceDetails
-     * @type {SpaceDetails}
-     */
-    _spaceCache: null,
-
-    /**
-     * If true, space revoke modal is opened
-     * @type {boolean}
-     */
-    _openRevokeModal: false,
-
-    /**
-     * If true, this space has synchronization import enabled
+     * If true, this space has auto storage import enabled
      *
-     * That means, the view should be enriched with sync statuses and statistics
-     * @type {computed.boolean}
+     * That means, the view should be enriched with import statuses and statistics
+     * @type {ComputedProperty<boolean>}
      */
-    _importActive: readOnly('space.importEnabled'),
-
-    _importButtonActionName: computed('importConfigurationOpen', function () {
-      return this.get('importConfigurationOpen') ?
-        'endImportConfiguration' :
-        'startImportConfiguration';
-    }),
-
-    _importButtonTip: computed('importConfigurationOpen', function () {
-      let i18n = this.get('i18n');
-      return this.get('importConfigurationOpen') ?
-        i18n.t(I18N_PREFIX + 'cancelSyncConfig') :
-        i18n.t(I18N_PREFIX + 'syncConfig');
-    }),
-
-    /**
-     * Which tab should be shown for space details
-     * @type {Ember.ComputedProperty<string>}
-     */
-    _detailsToShow: '',
+    autoImportActive: reads('space.autoStorageImportEnabled'),
 
     init() {
       this._super(...arguments);
@@ -133,18 +95,5 @@ export default Component.extend(
           spaceId
         )
         .then(({ data }) => data);
-    },
-
-    actions: {
-      startRevokeSpace() {
-        return this.get('startRevokeSpace')(this.get('space'));
-      },
-      revokeSpace() {
-        const {
-          revokeSpace,
-          space,
-        } = this.getProperties('revokeSpace', 'space');
-        return revokeSpace(space);
-      },
     },
   });
