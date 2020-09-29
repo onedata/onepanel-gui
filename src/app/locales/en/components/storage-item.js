@@ -9,7 +9,7 @@ import nulldevice from './storage-item/nulldevice';
 
 export default {
   modifyBtn: 'Modify',
-  modifyDisabledBtnTip: 'Current modifications have not been saved yet - use the buttons at the bottom of the form.',
+  modifyDisabledBtnTip: 'Current modifications have not been saved yet – use the buttons at the bottom of the form.',
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage',
