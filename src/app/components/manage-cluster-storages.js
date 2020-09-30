@@ -125,8 +125,9 @@ export default Component.extend(I18n, GlobalActions, {
     return {
       action: () => this.send('toggleAddStorageForm'),
       title: this.t(addStorageOpened ? 'cancel' : 'addStorage'),
+      icon: addStorageOpened ? undefined : 'add-filled',
       class: 'btn-add-storage',
-      buttonStyle: 'default',
+      buttonStyle: addStorageOpened ? 'default' : 'primary',
     };
   }),
 

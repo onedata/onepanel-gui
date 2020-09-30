@@ -11,6 +11,21 @@
   <span class="one-label storage-name">
     {{storage.name}}
   </span>
+  <div class="btn-toolbar">
+    <span clas="btn-tooltip-container">
+      {{#bs-button
+        type="default"
+        size="sm"
+        disabled=whileEdition
+        onClick=(action "turnOnModifyStorage")
+      }}
+        {{one-icon icon="rename"}}<span class="text">{{tt this "modifyBtn"}}</span>
+      {{/bs-button}}
+      {{#if whileEdition}}
+        {{one-tooltip title=(tt this "modifyDisabledBtnTip")}}
+      {{/if}}
+    </span>
+  </div>
   {{actions-toolbar
     isMinimized=true
     toolbarClasses=""

@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6784 Redesigned toggling modification of storage
 * VFS-6801 Disabled ceasing space support feature in favour of removing space in GUI
 * VFS-6330 Redesigned storage import (formerly space synchronization) configuration
 * VFS-6732 Using new monospace font
