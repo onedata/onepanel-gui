@@ -181,6 +181,16 @@ export default OneForm.extend(Validations, I18n, {
   excludedSubdomains: Object.freeze([]),
 
   /**
+   * @type {String}
+   */
+  previousSubdomain: undefined,
+
+  /**
+   * @type {String}
+   */
+  previousDomain: undefined,
+
+  /**
    * If true, all fields and submit button will be disabled
    * @type {boolean}
    */
@@ -429,18 +439,22 @@ export default OneForm.extend(Validations, I18n, {
    */
   _willChangeDomainAfterSubmit: computed(
     'mode',
-    'currentFields.@each.changed',
+    '_subdomainDelegation',
+    'allFieldsValues.{editSubdomain.subdomain,editDomain.domain}',
     function getWillChangeDomainAfterSubmit() {
       if (this.get('mode') === 'edit') {
-        const currentFields = this.get('currentFields');
-        const domainField = _.find(currentFields, { name: 'editDomain.domain' });
-        const subdomainField = _.find(
-          currentFields, {
-            name: 'editSubdomain.subdomain',
-          }
+        const {
+          previousDomain,
+          previousSubdomain,
+          _subdomainDelegation,
+        } = this.getProperties(
+          'previousDomain',
+          'previousSubdomain',
+          '_subdomainDelegation',
         );
-        return domainField && get(domainField, 'changed') ||
-          subdomainField && get(subdomainField, 'changed');
+        const formValues = this.get('formValues');
+        return _subdomainDelegation && get(formValues, 'editSubdomain.subdomain') != previousSubdomain ||
+          !_subdomainDelegation && get(formValues, 'editDomain.domain') != previousDomain;
       } else {
         return false;
       }
@@ -454,7 +468,18 @@ export default OneForm.extend(Validations, I18n, {
   init() {
     this._super(...arguments);
     this.prepareFields();
+    this.setPreviousDomainAndSubdomain();
     next(() => this._modeObserver());
+  },
+
+  setPreviousDomainAndSubdomain() {
+    const allFields = this.get('allFields');
+    const subdomainField = allFields.findBy('name', 'editSubdomain.subdomain');
+    const domainField = allFields.findBy('name', 'editDomain.domain');
+    this.setProperties({
+      previousSubdomain: get(subdomainField, 'defaultValue'),
+      previousDomain: get(domainField, 'defaultValue'),
+    });
   },
 
   /**
