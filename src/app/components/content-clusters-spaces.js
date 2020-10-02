@@ -28,6 +28,7 @@ export default Component.extend(
     globalNotify: service(),
     i18n: service(),
     navigationState: service(),
+    onezoneGui: service(),
 
     /**
      * @override
@@ -53,6 +54,22 @@ export default Component.extend(
         });
       }
     }),
+
+    /**
+     * @type {ComputedProperty<String>}
+     */
+    removeSpaceToRevokeUrl: computed(
+      'spaceToRevoke',
+      function removeSpaceToRevokeUrl() {
+        const spaceId = this.get('spaceToRevoke.id');
+        if (!spaceId) {
+          return;
+        }
+        return this.get('onezoneGui').getUrlInOnezone(
+          `onedata/spaces/${spaceId}?action_name=removeSpace&action_space_id=${spaceId}`
+        );
+      }
+    ),
 
     init() {
       this._super(...arguments);
@@ -105,14 +122,8 @@ export default Component.extend(
             throw error;
           });
       },
-      closeCeaseSupportModal({ confirmed, success } = {}) {
+      closeCeaseSupportModal() {
         safeExec(this, 'set', 'spaceToRevoke', null);
-        if (confirmed) {
-          if (success) {
-            this.showSpacesList();
-          }
-          this.updateSpacesProxy();
-        }
       },
       updateSpacesProxy() {
         return this.updateSpacesProxy();

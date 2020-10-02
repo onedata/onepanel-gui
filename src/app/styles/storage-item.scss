@@ -2,7 +2,25 @@
   $storage-item-padding: 1.5em;
   .one-collapsible-list-item-header {
     padding-right: 60px;
+    transition: none;
+
+    .btn-toolbar {
+      display: none;
+    }
   }
+
+  @media (min-width: $screen-sm-min) {
+    &.in-edit-mode .one-collapsible-list-item-header,
+    .one-collapsible-list-item-header.opened,
+    .one-collapsible-list-item-header:hover {
+      padding-right: 190px;
+
+      .btn-toolbar {
+        display: block;
+      }
+    }
+  }
+
   .id-edition-label .clipboard-line-label {
     @media (min-width: $screen-sm-min) {
       width: 33.333333%;

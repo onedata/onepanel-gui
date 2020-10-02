@@ -1,0 +1,128 @@
+{{#if manualImportEnabled}}
+  <div class="manual-import-description">
+    <h1>{{tt this "manualImportHeader"}}</h1>
+    <p>
+      {{tt this "manualImportDescriptionBeforeApi"}}
+      <a
+        class="documentation-link"
+        href={{one-api-doc-url product="oneprovider" anchor="tag/File-registration"}}
+        target="_blank"
+      >{{tt this "manualImportDescriptionApi"}}</a>{{tt this "manualImportDescriptionAfterApi"}}
+    </p>
+    <p>{{tt this "cannotSwitchToAutoModeDescription"}}</p>
+  </div>
+  <h5 class="file-registration-header">{{tt this "fileRegistrationExample"}}:</h5>
+  <div class="loadable-row">
+    {{#promise-proxy-container proxy=fileRegistrationExampleProxy sizeClass="sm"}}
+      {{one-clipboard-line
+        value=fileRegistrationExample
+        type="textarea"
+        inputClass="request-textarea code-textarea"
+        textareaRows=5
+      }}
+    {{/promise-proxy-container}}
+  </div>
+{{else}}
+  <div class="row no-border">
+    <div class="col-xs-12">
+      {{#one-collapsible-list class="import-settings-list" as |list|}}
+        {{#list.item as |listItem|}}
+          {{#listItem.header
+            class="hoverable"
+          }}
+            <div class="item-icon-container">
+              {{one-icon class="item-icon" icon="settings"}}
+            </div>
+            <strong>{{tt this "configurationCollapse"}}</strong>
+          {{/listItem.header}}
+          {{#listItem.content}}
+            <div class="row content-row row-medium">
+              <h1 class="form-title">{{tt this "importFormHeader"}}</h1>
+              {{storage-import-form
+                class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
+                defaultValues=space.storageImport
+                mode="edit"
+                isFormOpened=true
+                submit=(action "modifyStorageImport" (action listItem.toggle false))
+              }}
+            </div>
+          {{/listItem.content}}
+        {{/list.item}}
+        {{#list.item as |listItem|}}
+          {{#listItem.header
+            class="hoverable import-info-header"
+          }}
+            <div class="item-icon-container">
+              {{one-icon class="item-icon" icon="space-import"}}
+            </div>
+            {{importStatusDescription}}
+            <div class="btn-toolbar hidden-xs">
+              {{space-storage-import/start-stop-scan-button
+                startScan=startScan
+                stopScan=stopScan
+                autoImportStatus=autoImportInfo.status
+              }}
+            </div>
+          {{/listItem.header}}
+          {{#listItem.content class="import-info-content"}}
+            <div class="hidden-sm hidden-md hidden-lg text-center row content-row">
+              {{space-storage-import/start-stop-scan-button
+                startScan=startScan
+                stopScan=stopScan
+                autoImportStatus=autoImportInfo.status
+              }}
+            </div>
+            {{#each importInfoDetailsToShow as |detail|}}
+              <div class="row content-row">
+                <strong>{{detail.label}}:</strong> {{detail.value}}
+              </div>
+            {{/each}}
+          {{/listItem.content}}
+        {{/list.item}}
+      {{/one-collapsible-list}}
+    </div>
+  </div>
+
+  <div class="row row-time-stats-charts">
+    {{#bs-button-group
+      class="btn-group-floating btn-group-3-btns"
+      value=importInterval
+      type="radio"
+      onChange=importIntervalChanged as |bg|
+    }}
+      {{#bg.button type="default" class="btn-sm btn-import-interval-minute" value="minute"}}
+        {{tt this "minute"}}
+        {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
+      {{/bg.button}}
+      {{#bg.button type="default" class="btn-sm btn-import-interval-hour" value="hour"}}
+        {{tt this "hour"}}
+        {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
+      {{/bg.button}}
+      {{#bg.button type="default" class="btn-sm btn-import-interval-day" value="day"}}
+        {{tt this "day"}}
+        {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
+      {{/bg.button}}
+    {{/bs-button-group}}
+    
+    {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{storage-import-chart-operations
+          timeStats=timeStats
+          timeUnit=importInterval
+        }}
+      </div>
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{storage-import-chart-queue
+          timeStats=timeStats
+          timeUnit=importInterval
+        }}
+      </div>
+      <div class="col-xs-12 item-table-cell item-table-content-cell">
+        {{storage-import-chart-throughput
+          timeStats=timeStats
+          timeUnit=importInterval
+        }}
+      </div>
+    {{/loading-container}}
+  </div>
+{{/if}}

@@ -25,6 +25,7 @@ const {
 
 export default Component.extend(I18n, {
   classNames: ['storage-item'],
+  classNameBindings: ['whileEdition:in-edit-mode'],
 
   storageManager: service(),
   storageActionsService: service('storageActions'),
@@ -116,7 +117,7 @@ export default Component.extend(I18n, {
       title: this.t(
         whileEdition ? 'cancelStorageModification' : 'modifyStorageDetails'
       ),
-      class: 'modify-storage-details',
+      class: 'modify-storage-details hidden-lg hidden-md hidden-sm',
       icon: 'rename',
     };
   }),
@@ -170,6 +171,11 @@ export default Component.extend(I18n, {
   },
 
   actions: {
+    turnOnModifyStorage() {
+      if (!this.get('whileEdition')) {
+        this.toggleEdition();
+      }
+    },
     saveEdition(storageFormData) {
       // nothing to modify - close form
       // <= 1 because "type" field is always sent by form

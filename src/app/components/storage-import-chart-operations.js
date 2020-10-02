@@ -1,7 +1,7 @@
 /**
  * A chart component for a space import/update operations statistics.
  *
- * @module components/space-sync-chart-operations
+ * @module components/storage-import-chart-operations
  * @author Michal Borzecki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -13,7 +13,7 @@ import { computed } from '@ember/object';
 
 import _ from 'lodash';
 
-import SpaceSyncChartBase from 'onepanel-gui/components/space-sync-chart-base';
+import StorageImportChartBase from 'onepanel-gui/components/storage-import-chart-base';
 import maximizeBarWidth from 'onedata-gui-common/utils/chartist/maximize-bar-width';
 import barSumLabels from 'onedata-gui-common/utils/chartist/bar-sum-labels';
 import refreshLegendFilter from 'onedata-gui-common/utils/chartist/refresh-legend-filter';
@@ -22,13 +22,13 @@ import tooltip from 'onedata-gui-common/utils/chartist/tooltip';
 import additionalXLabel from 'onedata-gui-common/utils/chartist/additional-x-label';
 import shortHorizontalGrid from 'onedata-gui-common/utils/chartist/short-horizontal-grid';
 
-export default SpaceSyncChartBase.extend({
-  classNames: ['space-sync-chart-operations'],
+export default StorageImportChartBase.extend({
+  classNames: ['storage-import-chart-operations'],
 
   /**
-   * @implements SpaceSyncChartDataValidator
+   * @implements StorageImportChartDataValidator
    */
-  usedMetrics: Object.freeze(['insertCount', 'updateCount', 'deleteCount']),
+  usedMetrics: Object.freeze(['createdFiles', 'modifiedFiles', 'deletedFiles']),
 
   /**
    * Chartist settings
@@ -64,7 +64,7 @@ export default SpaceSyncChartBase.extend({
    * Series labels for chart
    * @type {Array.string}
    */
-  chartSeriesLabels: Object.freeze(['Inserted', 'Updated', 'Deleted']),
+  chartSeriesLabels: Object.freeze(['Created', 'Modified', 'Deleted']),
 
   _chartValues: Object.freeze([
     [],

@@ -13,6 +13,7 @@
  */
 
 import EmberObject, { computed, get } from '@ember/object';
+import { and, equal, raw, or } from 'ember-awesome-macros';
 
 export default EmberObject.extend({
   /**
@@ -42,19 +43,30 @@ export default EmberObject.extend({
   storageImport: null,
 
   /**
-   * @type {Onepanel.StorageUpdate}
+   * @type {ComputedProperty<boolean>}
    */
-  storageUpdate: null,
+  autoStorageImportEnabled: equal('storageImport.mode', raw('auto')),
 
-  importEnabled: computed('storageImport.strategy', function () {
-    let strategy = this.get('storageImport.strategy');
-    return strategy != null && strategy !== 'no_import';
-  }),
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  manualStorageImportEnabled: equal('storageImport.mode', raw('manual')),
 
-  updateEnabled: computed('storageUpdate.strategy', function () {
-    let strategy = this.get('storageUpdate.strategy');
-    return strategy != null && strategy !== 'no_update';
-  }),
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  storageImportEnabled: or(
+    'autoStorageImportEnabled',
+    'manualStorageImportEnabled'
+  ),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  continuousImportScanEnabled: and(
+    'autoStorageImportEnabled',
+    'storageImport.autoStorageImportConfig.continuousScan'
+  ),
 
   /**
    * Space size.

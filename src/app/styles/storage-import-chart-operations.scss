@@ -1,6 +1,6 @@
 $chart-colors: $color-one-mint $color-one-azure $color-one-red;
 
-.space-sync-chart-operations .ct-chart {
+.storage-import-chart-operations .ct-chart {
   @for $i from 0 to length($chart-colors) {
     .ct-series-#{$i} {
       .ct-bar {

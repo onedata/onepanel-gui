@@ -10,6 +10,33 @@
         }
       }
     }
+    .file-registration-header {
+      margin-top: $padding-large-vertical * 2;
+    }
+    .import-settings-list {
+      .one-collapsible-list-item-content {
+        padding: 0 $padding-base-horizontal
+      }
+    }
+
+    .manual-import-description {
+      // remove padding in mobile devices
+      p, h1 {
+        padding: 0;
+      }
+    }
+
+    .file-registration-spinner-container {
+      position: relative;
+      min-height: 100px;
+    }
+
+    @media (min-width: $screen-sm-min) {
+      .import-info-header {
+        // Space for start/stop scan button
+        padding-right: 190px;
+      }
+    }
   }
   @media (max-width: 900px) {
     .nav-tabs li {
@@ -74,5 +101,9 @@
         margin-bottom: 0;
       }
     }
+  }
+
+  .storage-import-form .form-section-title {
+    display: none;
   }
 }
