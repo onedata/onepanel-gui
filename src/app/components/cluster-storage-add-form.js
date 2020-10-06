@@ -235,12 +235,6 @@ export default OneForm.extend(I18n, Validations, {
   isSavingStorage: false,
 
   /**
-   * Remember value of skip storage detection before locking in `readonlyObserver`.
-   * @type {Boolean}
-   */
-  previousSkipStorageDetection: null,
-
-  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   inEditionMode: equal('mode', 'edit'),
@@ -484,8 +478,15 @@ export default OneForm.extend(I18n, Validations, {
   selectedStorageTypeObserver: observer(
     'selectedStorageType',
     function selectedStorageTypeObserver() {
+      if (this.get('selectedStorageType.id') !== 'http') {
+        this.unlockToggle('importedStorage');
+      }
       this.resetFormValues();
       this._toggleLumaPrefix(false, false);
+      if (this.get('selectedStorageType.id') === 'http') {
+        this.lockToggle('importedStorage', true, this.t('httpOnlyImported'));
+        this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
+      }
     }
   ),
 
@@ -514,70 +515,43 @@ export default OneForm.extend(I18n, Validations, {
     }
   ),
 
+  /**
+   * Lock skip storage detection to true if readonly is set, or unlock to previous value
+   */
   readonlyObserver: observer(
     'formValues.generic.readonly',
     'formValues.generic_editor.readonly',
     function readonlyObserver() {
-      const mode = this.get('mode');
-      if (mode === 'show') {
-        return;
-      }
-      const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+
+      const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
       const isReadonly = this.get(`formValues.${prefix}.readonly`);
-      const isSkipStorageDetection =
-        this.get(`formValues.${prefix}.skipStorageDetection`);
-      const skipStorageDetectionField = this.getField(`${prefix}.skipStorageDetection`);
-      setProperties(skipStorageDetectionField, {
-        disabled: isReadonly,
-        lockHint: isReadonly ? this.t('cannotStorageDetectionReadonly') : null,
-      });
+
       if (isReadonly) {
-        if (!isSkipStorageDetection) {
-          console.log('send change 1', mode);
-          this.send(
-            'inputChanged',
-            `${prefix}.skipStorageDetection`,
-            true,
-          );
-        }
+        this.lockToggle(
+          'skipStorageDetection',
+          true,
+          this.t('cannotStorageDetectionReadonly')
+        );
       } else {
-        const previousSkipStorageDetection = this.get('previousSkipStorageDetection');
-        if (previousSkipStorageDetection !== null &&
-          previousSkipStorageDetection !== Boolean(isSkipStorageDetection)
-        ) {
-          this.send(
-            'inputChanged',
-            `${prefix}.skipStorageDetection`,
-            previousSkipStorageDetection,
-          );
-        }
+        this.unlockToggle('skipStorageDetection');
       }
-      this.set('previousSkipStorageDetection', Boolean(isSkipStorageDetection));
     }
   ),
 
+  /**
+   * Unlock/lock readonly toggle
+   */
   importedStorageObserver: observer(
     'formValues.generic.importedStorage',
     'formValues.generic_editor.importedStorage',
     function importedStorageObserver() {
-      const mode = this.get('mode');
-      if (mode === 'show') {
-        return;
-      }
-      const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+      const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
       const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
-      const isReadonly = this.get(`formValues.${prefix}.readonly`);
-      const readonlyField = this.getField(`${prefix}.readonly`);
-      setProperties(readonlyField, {
-        disabled: !isImportedStorage,
-        lockHint: isImportedStorage ? null : this.t('cannotReadonlyNotImported'),
-      });
-      if (!isImportedStorage && isReadonly) {
-        this.send(
-          'inputChanged',
-          `${prefix}.readonly`,
-          false,
-        );
+
+      if (isImportedStorage) {
+        this.unlockToggle('readonly');
+      } else {
+        this.lockToggle('readonly', false, this.t('cannotReadonlyNotImported'));
       }
     }),
 
@@ -683,6 +657,46 @@ export default OneForm.extend(I18n, Validations, {
             );
         }
       }
+    }
+  },
+
+  lockToggle(fieldName, state, lockHint = null) {
+    const mode = this.get('mode');
+    if (mode === 'show') {
+      return;
+    }
+    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+    const field = this.getField(`${prefix}.${fieldName}`);
+    if (!get(field, 'disabled')) {
+      setProperties(field, {
+        disabled: true,
+        lockHint,
+      });
+      const current = this.get(`formValues.${prefix}.${fieldName}`);
+      if (current !== state) {
+        this.send(
+          'inputChanged',
+          `${prefix}.${fieldName}`,
+          state,
+        );
+      }
+    }
+  },
+
+  unlockToggle(fieldName) {
+    const mode = this.get('mode');
+    if (mode === 'show') {
+      return;
+    }
+
+    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+    const field = this.getField(`${prefix}.${fieldName}`);
+
+    if (get(field, 'disabled')) {
+      setProperties(field, {
+        disabled: false,
+        lockHint: null,
+      });
     }
   },
 
@@ -921,7 +935,7 @@ export default OneForm.extend(I18n, Validations, {
     },
 
     toggleChanged({ newValue, context }) {
-      let fieldName = context.get('fieldName');
+      const fieldName = context.get('fieldName');
       invoke(this, 'inputChanged', fieldName, newValue);
     },
 
