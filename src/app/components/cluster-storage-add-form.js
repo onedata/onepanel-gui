@@ -488,7 +488,7 @@ export default OneForm.extend(I18n, Validations, {
         this.lockToggle(
           'importedStorage',
           true,
-          this.t('cannotStorageDetectionReadonly')
+          this.t('httpOnlyImported')
         );
         this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
       }
