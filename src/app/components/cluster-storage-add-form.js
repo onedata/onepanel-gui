@@ -478,13 +478,18 @@ export default OneForm.extend(I18n, Validations, {
   selectedStorageTypeObserver: observer(
     'selectedStorageType',
     function selectedStorageTypeObserver() {
-      if (this.get('selectedStorageType.id') !== 'http') {
+      const isHttpStorage = this.get('selectedStorageType.id') === 'http';
+      if (!isHttpStorage) {
         this.unlockToggle('importedStorage');
       }
       this.resetFormValues();
       this._toggleLumaPrefix(false, false);
-      if (this.get('selectedStorageType.id') === 'http') {
-        this.lockToggle('importedStorage', true, this.t('httpOnlyImported'));
+      if (isHttpStorage) {
+        this.lockToggle(
+          'importedStorage',
+          true,
+          this.t('cannotStorageDetectionReadonly')
+        );
         this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
       }
     }
@@ -516,7 +521,7 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
-   * Lock skip storage detection to true if readonly is set, or unlock to previous value
+   * Lock skip storage detection to true if readonly is set, or unlock
    */
   readonlyObserver: observer(
     'formValues.generic.readonly',
@@ -666,17 +671,18 @@ export default OneForm.extend(I18n, Validations, {
       return;
     }
     const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
-    const field = this.getField(`${prefix}.${fieldName}`);
+    const fieldPath = `${prefix}.${fieldName}`;
+    const field = this.getField(fieldPath);
     if (!get(field, 'disabled')) {
       setProperties(field, {
         disabled: true,
         lockHint,
       });
-      const current = this.get(`formValues.${prefix}.${fieldName}`);
+      const current = this.get(`formValues.${fieldPath}`);
       if (current !== state) {
         this.send(
           'inputChanged',
-          `${prefix}.${fieldName}`,
+          fieldPath,
           state,
         );
       }

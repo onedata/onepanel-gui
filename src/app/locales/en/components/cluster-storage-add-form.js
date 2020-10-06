@@ -34,6 +34,5 @@ export default {
   modifyStorageModalMessage: 'Are you sure you want to modify storage details? Incorrect configuration can make your data unavailable.',
   cannotReadonlyNotImported: 'This option is available only for imported storages.',
   cannotStorageDetectionReadonly: 'Storage detection is always skipped on readonly storages.',
-  httpOnlyImported: 'HTTP storage can work only as imported storage.',
-  httpOnlyReadonly: 'HTTP storage is always readonly.',
+  httpOnlyReadonly: 'The HTTP storage helper is limited to readonly mode.',
 };
