@@ -15,6 +15,7 @@ import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
+import { selectChoose } from '../../helpers/ember-power-select';
 
 const CephManager = Service.extend({
   getOsds() {
@@ -393,17 +394,6 @@ describe('Integration | Component | cluster storage add form', function () {
               .to.have.class('checked')
               .and.have.class('disabled');
             return click(helper.getToggleInput('generic-readonly')[0]);
-          })
-          .then(() => {
-            expect(helper.getToggleInput('generic-readonly'), 'readonly after check')
-              .to.not.have.class('checked');
-            expect(
-              helper.getToggleInput('generic-skipStorageDetection'),
-              'skip after readonly'
-            ).to.not.have.class('checked').and.not.have.class('disabled');
-            expect(helper.getToggleInput('generic-skipStorageDetection'));
-
-            return click(helper.getToggleInput('generic-readonly')[0]);
           });
       }
     );
@@ -484,6 +474,25 @@ describe('Integration | Component | cluster storage add form', function () {
         }).then(() => {
           expect(this.$('.has-error'), 'error indicator').to.not.exist;
         });
+      }
+    );
+
+    it(
+      'locks readonly and skip storage detection to true for HTTP storage',
+      async function () {
+        this.render(hbs `{{cluster-storage-add-form}}`);
+
+        await wait();
+        const helper = new ClusterStorageAddHelper(this.$());
+        await selectChoose('.storage-type-select-group', 'HTTP');
+
+        expect(helper.getToggleInput('generic-readonly'), 'readonly')
+          .to.have.class('checked')
+          .and.have.class('disabled');
+
+        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skipStorageDet.')
+          .to.have.class('checked')
+          .and.have.class('disabled');
       }
     );
   });
