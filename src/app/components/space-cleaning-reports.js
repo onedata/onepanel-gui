@@ -199,10 +199,10 @@ export default Component.extend(I18n, {
     const firstId = items[0] && items[0].getAttribute('data-row-id') || null;
     const lastId = items[items.length - 1] &&
       items[items.length - 1].getAttribute('data-row-id') || null;
+    const $firstRow = $('.first-row');
     let startIndex, endIndex;
-    if (firstId === null && get(sourceArray, 'length') !== 0) {
+    if (firstId === null && get(sourceArray, 'length') !== 0 && $firstRow.length) {
       const rowHeight = this.get('rowHeight');
-      const $firstRow = $('.first-row');
       const blankStart = $firstRow.offset().top * -1;
       const blankEnd = blankStart + window.innerHeight;
       startIndex = Math.floor(blankStart / rowHeight);
