@@ -1,48 +1,50 @@
-{{#if _mobileMode}}
-  <div class="first-row" style={{firstRowStyle}}></div>
-  <div class="table-start-row"></div>
-  {{#if noReportsAvailable}}
-    <div class="row content-row">
-      {{t "components.spaceCleaningReports.noReportsAvailable"}}
-    </div>
-  {{else}}
-    {{#one-collapsible-list as |list|}}
-      {{#each reportsArray as |item|}}
-        {{#list.item as |listItem|}}
-          {{space-cleaning-reports/data-mobile-item listItem=listItem item=item}}
-        {{/list.item}}
-      {{/each}}
-    {{/one-collapsible-list}}
-  {{/if}}
-{{else}}
-  <table class="table one-table one-infinite-list">
-    <thead class="thead-space-cleaning-reports">
-      <tr>
-        <th>{{tt this "start"}}</th>
-        <th>{{tt this "stop"}}</th>
-        <th>{{tt this "releasedBytes"}}</th>
-        <th>{{tt this "filesNumber"}}</th>
-        <th>{{tt this "status"}}</th>
-      </tr>
-    </thead>
-    <tbody>
-    <tr class="first-row">
-      <td colspan="9999" style={{firstRowStyle}}></td>
-    </tr>
+{{#if reportsArray.initialLoad.isSettled}}
+  {{#if _mobileMode}}
+    <div class="first-row" style={{firstRowStyle}}></div>
     <div class="table-start-row"></div>
     {{#if noReportsAvailable}}
-      <tr class="no-data-row">
-        <td colspan="9999" class="no-data-cell">
-          {{t "components.spaceCleaningReports.noReportsAvailable"}}
-        </td>
-      </tr>
+      <div class="row content-row">
+        {{t "components.spaceCleaningReports.noReportsAvailable"}}
+      </div>
     {{else}}
-      {{#each reportsArray as |item|}}
-        {{space-cleaning-reports/data-row item=item}}
-      {{/each}}
+      {{#one-collapsible-list as |list|}}
+        {{#each reportsArray as |item|}}
+          {{#list.item as |listItem|}}
+            {{space-cleaning-reports/data-mobile-item listItem=listItem item=item}}
+          {{/list.item}}
+        {{/each}}
+      {{/one-collapsible-list}}
     {{/if}}
-    </tbody>
-  </table>
+  {{else}}
+    <table class="table one-table one-infinite-list">
+      <thead class="thead-space-cleaning-reports">
+        <tr>
+          <th>{{tt this "start"}}</th>
+          <th>{{tt this "stop"}}</th>
+          <th>{{tt this "releasedBytes"}}</th>
+          <th>{{tt this "filesNumber"}}</th>
+          <th>{{tt this "status"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="first-row">
+          <td colspan="9999" style={{firstRowStyle}}></td>
+        </tr>
+        <div class="table-start-row"></div>
+        {{#if noReportsAvailable}}
+          <tr class="no-data-row">
+            <td colspan="9999" class="no-data-cell">
+              {{t "components.spaceCleaningReports.noReportsAvailable"}}
+            </td>
+          </tr>
+        {{else}}
+          {{#each reportsArray as |item|}}
+            {{space-cleaning-reports/data-row item=item}}
+          {{/each}}
+        {{/if}}
+      </tbody>
+    </table>
+  {{/if}}
 {{/if}}
 
 {{#if bottomLoading}}
