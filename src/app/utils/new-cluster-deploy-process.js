@@ -126,7 +126,7 @@ export default EmberObject.extend(I18n, {
     );
     const start = new Promise((resolve, reject) => {
       const config = configurationClass.constructFromObject(configuration);
-      const apiName = capitalize(onepanelServer) + 'ClusterApi';
+      const apiName = capitalize(onepanelServiceType) + 'ClusterApi';
       onepanelServer.request(
         apiName,
         camelize(`configure-${shortServiceType(onepanelServiceType)}`),
