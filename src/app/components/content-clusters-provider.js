@@ -96,7 +96,7 @@ export default Component.extend(
      */
     fetchOnezoneInfo() {
       const onepanelServer = this.get('onepanelServer');
-      return onepanelServer.request('oneprovider', 'getOnezoneInfo', {})
+      return onepanelServer.request('RegistrationAndIdentityApi', 'getOnezoneInfo', {})
         .then(({ data }) => data);
     },
 

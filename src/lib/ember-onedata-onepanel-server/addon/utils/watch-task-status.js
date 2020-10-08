@@ -20,7 +20,7 @@ const {
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
-  let gettingTaskStatus = onepanelServer.request('onepanel', 'getTaskStatus', taskId);
+  let gettingTaskStatus = onepanelServer.request('ClusterApi', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({
     data: taskStatus,

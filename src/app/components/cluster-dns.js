@@ -442,12 +442,14 @@ export default Component.extend(
     },
 
     fetchZonePolicies() {
-      return this.get('onepanelServer').request('onezone', 'getZonePolicies')
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'getZonePolicies')
         .then(({ data }) => data);
     },
 
     fetchDnsCheckConfiguration() {
-      return this.get('onepanelServer').request('onepanel', 'getDnsCheckConfiguration')
+      return this.get('onepanelServer')
+        .request('DNSAndWebCertificatesApi', 'getDnsCheckConfiguration')
         .then(({ data }) => data);
     },
 
@@ -479,7 +481,7 @@ export default Component.extend(
       }
 
       return this.get('onepanelServer')
-        .request('onepanel', 'modifyDnsCheckConfiguration', config)
+        .request('DNSAndWebCertificatesApi', 'modifyDnsCheckConfiguration', config)
         .finally(() => {
           if (dnsServers) {
             safeExec(this, 'set', 'dnsServersBusy', false);
@@ -497,7 +499,7 @@ export default Component.extend(
       }
 
       return this.get('onepanelServer')
-        .request('onezone', 'modifyZonePolicies', config);
+        .request('ServiceConfigurationApi', 'modifyZonePolicies', config);
     },
 
     actions: {

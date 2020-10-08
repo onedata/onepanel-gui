@@ -9,7 +9,8 @@ import { click } from 'ember-native-dom-helpers';
 import { get } from '@ember/object';
 import _ from 'lodash';
 import Service from '@ember/service';
-import { registerService } from '../../helpers/stub-service';
+import { lookupService, registerService } from '../../helpers/stub-service';
+import sinon from 'sinon';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
@@ -33,15 +34,15 @@ const data = Object.freeze([{
   status: 'failure',
 }]);
 
-function fetchReports(index, limit = 1000, offset = 0) {
+function fetchReports(spaceId, index, limit = 1000, offset = 0) {
   let arrIndex = _.findIndex(this.reports, i => get(i, 'index') === index);
   if (arrIndex === -1) {
     arrIndex = 0;
   }
-  return resolve(data.slice(
+  return resolve(_.cloneDeep(data.slice(
     arrIndex + offset,
     arrIndex + offset + limit
-  ));
+  )));
 }
 
 const SpaceManager = Service.extend({
@@ -55,105 +56,97 @@ describe('Integration | Component | space cleaning reports', function () {
 
   beforeEach(function () {
     registerService(this, 'spaceManager', SpaceManager);
-
-    this.set('data', data);
-
     this.set('_window', {
-      innerWidth: 1000,
+      innerWidth: 1366,
       addEventListener() {},
       removeEventListener() {},
     });
-
-    this.on('nop', () => {});
-
-    this.on('fetchReports', fetchReports);
   });
 
-  it('renders reports', function () {
-    const data = this.get('data');
-    this.on('fetchReports', () => resolve(_.cloneDeep(data)));
+  it('renders reports in desktop mode', async function () {
+    this.set('_window.innerWidth', 1366);
+
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        fetchReports=(action "fetchReports")
         _window=_window
       }}
     </div>`);
 
-    return wait().then(() => {
-      expect(this.$('tbody tr.data-row')).to.have.length(2);
-      const cells = this.$('tbody tr.data-row:first td');
-      const cellsValues = [
-        moment(data[0].startedAt).format(START_END_TIME_FORMAT),
-        moment(data[0].stoppedAt).format(START_END_TIME_FORMAT),
-        '1 MiB (out of 2 MiB)',
-        String(data[0].filesNumber),
-      ];
-      cellsValues.forEach((value, index) =>
-        expect(cells.eq(index).text().trim()).to.be.equal(value)
-      );
-      expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled-x')).to.exist;
-      expect(this.$(
-        'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled'
-      )).to.exist;
-    });
+    await wait();
+
+    expect(this.$('tbody tr.data-row')).to.have.length(2);
+    const cells = this.$('tbody tr.data-row:first td');
+    const cellsValues = [
+      moment(data[0].startedAt).format(START_END_TIME_FORMAT),
+      moment(data[0].stoppedAt).format(START_END_TIME_FORMAT),
+      '1 MiB (out of 2 MiB)',
+      String(data[0].filesNumber),
+    ];
+    cellsValues.forEach((value, index) =>
+      expect(cells.eq(index).text().trim()).to.be.equal(value)
+    );
+    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled-x')).to.exist;
+    expect(this.$(
+      'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled'
+    )).to.exist;
   });
 
-  it('renders reports in mobile view', function () {
-    this.set('_window.innerWidth', 500);
-    const data = this.get('data');
-    this.on('fetchReports', () => resolve(_.cloneDeep(data)));
+  it('renders reports in mobile view', async function () {
+    this.set('_window.innerWidth', 600);
+
+    // this.set('_window.innerWidth', 500);
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        fetchReports=(action "fetchReports")
         _window=_window
       }}
     </div>`);
 
-    return wait().then(() => {
-      expect(this.$('.one-collapsible-list .data-row')).to.have.length(2);
-      return click(
-        '.one-collapsible-list-item:last-child .one-collapsible-list-item-header'
-      ).then(() => {
-        const cells = this.$(
-          '.one-collapsible-list-item:last-child .one-collapsible-list-item-content .one-label'
-        );
-        const cellsValues = [
-          moment(data[1].startedAt).format(START_END_TIME_FORMAT),
-          moment(data[1].stoppedAt).format(START_END_TIME_FORMAT),
-          '999 KiB (out of 999 KiB)',
-          String(data[1].filesNumber),
-        ];
-        cellsValues.forEach((value, index) =>
-          expect(cells.eq(index).text().trim()).to.be.equal(value)
-        );
-        expect(this.$('.one-collapsible-list-item:last-child' +
-            ' .one-collapsible-list-item-header .oneicon.oneicon-checkbox-filled'
-          ))
-          .to.exist;
-      });
-    });
+    await wait();
+
+    expect(this.$('.one-collapsible-list .data-row')).to.have.length(2);
+
+    await click(
+      '.one-collapsible-list-item:last-child .one-collapsible-list-item-header'
+    );
+
+    const cells = this.$(
+      '.one-collapsible-list-item:last-child .one-collapsible-list-item-content .one-label'
+    );
+    const cellsValues = [
+      moment(data[1].startedAt).format(START_END_TIME_FORMAT),
+      moment(data[1].stoppedAt).format(START_END_TIME_FORMAT),
+      '999 KiB (out of 999 KiB)',
+      String(data[1].filesNumber),
+    ];
+    cellsValues.forEach((value, index) =>
+      expect(cells.eq(index).text().trim()).to.be.equal(value)
+    );
+    expect(this.$('.one-collapsible-list-item:last-child' +
+        ' .one-collapsible-list-item-header .oneicon.oneicon-checkbox-filled'
+      ))
+      .to.exist;
   });
 
-  it('renders message about no reports', function () {
-    this.on('fetchReports', () => resolve([]));
+  it('renders message about no reports', async function () {
+    sinon
+      .stub(lookupService(this, 'spaceManager'), 'getAutoCleaningReports').resolves([]);
+
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        fetchReports=(action "fetchReports")
         _window=_window
       }}
     </div>`);
+    await wait();
 
-    return wait().then(() => {
-      const $noDataRow = this.$('.no-data-row');
-      expect($noDataRow).to.exist;
-      expect($noDataRow).to.contain('No reports available.');
-    });
+    const $noDataRow = this.$('.no-data-row');
+    expect($noDataRow).to.exist;
+    expect($noDataRow).to.contain('No reports available.');
   });
 
 });

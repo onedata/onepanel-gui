@@ -87,7 +87,7 @@ export default Component.extend(
     fetchFilePopularityConfiguration() {
       const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
-          'oneprovider',
+          'FilePopularityAndAutoCleaningApi',
           'getFilePopularityConfiguration',
           spaceId
         )
@@ -97,7 +97,7 @@ export default Component.extend(
     fetchAutoCleaningConfiguration() {
       const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
-          'oneprovider',
+          'FilePopularityAndAutoCleaningApi',
           'getSpaceAutoCleaningConfiguration',
           spaceId
         )
@@ -108,7 +108,7 @@ export default Component.extend(
       configureFilePopularity(configuration) {
         const spaceId = this.get('space.id');
         return this.get('onepanelServer').request(
-            'oneprovider',
+            'FilePopularityAndAutoCleaningApi',
             'configureFilePopularity',
             spaceId,
             configuration
@@ -125,7 +125,7 @@ export default Component.extend(
       configureSpaceAutoCleaning(configuration) {
         const spaceId = this.get('space.id');
         return this.get('onepanelServer').request(
-          'oneprovider',
+          'FilePopularityAndAutoCleaningApi',
           'configureSpaceAutoCleaning',
           spaceId,
           configuration

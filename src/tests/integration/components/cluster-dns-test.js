@@ -56,7 +56,7 @@ describe('Integration | Component | cluster dns', function () {
       });
 
     sinon.stub(lookupService(this, 'onepanelServer'), 'request')
-      .withArgs('onepanel', 'getDnsCheckConfiguration')
+      .withArgs('DNSAndWebCertificatesApi', 'getDnsCheckConfiguration')
       .resolves({
         data: {
           dnsServers: ['8.8.8.8', '192.168.0.1'],

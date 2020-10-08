@@ -68,7 +68,7 @@ export default Component.extend(I18n, {
 
   acknowledgeDnsCheck() {
     const promise = this.get('onepanelServer')
-      .request('onepanel', 'modifyDnsCheckConfiguration', {
+      .request('DNSAndWebCertificatesApi', 'modifyDnsCheckConfiguration', {
         dnsCheckAcknowledged: true,
       })
       .catch(error => {

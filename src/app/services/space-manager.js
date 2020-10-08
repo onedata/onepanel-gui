@@ -60,7 +60,7 @@ export default Service.extend({
   _getSpaces() {
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer.requestValidData(
-      'oneprovider',
+      'SpaceSupportApi',
       'getProviderSpaces'
     ).then(({ data: { ids } }) => {
       return A(ids.map(id => this.getSpaceDetails(id)));
@@ -105,7 +105,7 @@ export default Service.extend({
    */
   _getSpaceDetails(id) {
     return this.get('onepanelServer').requestValidData(
-      'oneprovider',
+      'SpaceSupportApi',
       'getSpaceDetails',
       id
     ).then(({ data }) => SpaceDetails.create(data));
@@ -120,7 +120,7 @@ export default Service.extend({
   modifySpaceDetails(id, spaceData) {
     let onepanelServer = this.get('onepanelServer');
     return onepanelServer
-      .request('oneprovider', 'modifySpace', id, spaceData)
+      .request('SpaceSupportApi', 'modifySpace', id, spaceData)
       .catch(modifyError =>
         this.updateSpaceDetailsCache(id).finally(() => {
           throw modifyError;
@@ -141,7 +141,7 @@ export default Service.extend({
   supportSpace(supportSpaceData) {
     let onepanelServer = this.get('onepanelServer');
     let supportReq = SpaceSupportRequest.constructFromObject(supportSpaceData);
-    return onepanelServer.request('oneprovider', 'supportSpace', supportReq);
+    return onepanelServer.request('SpaceSupportApi', 'supportSpace', supportReq);
   },
 
   /**
@@ -152,7 +152,7 @@ export default Service.extend({
    */
   getImportInfo(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'SpaceSupportApi',
       'getAutoStorageImportInfo',
       spaceId
     ).then(({ data }) => data);
@@ -173,7 +173,7 @@ export default Service.extend({
     metrics = IMPORT_METRICS
   ) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'SpaceSupportApi',
       'getAutoStorageImportStats',
       spaceId,
       period,
@@ -190,7 +190,7 @@ export default Service.extend({
    */
   getManualImportRequestExample(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'SpaceSupportApi',
       'getManualStorageImportExample',
       spaceId
     ).then(({ data }) => data);
@@ -202,7 +202,7 @@ export default Service.extend({
    */
   getAutoCleaningStatus(spaceId) {
     return this.get('onepanelServer').requestValidData(
-      'oneprovider',
+      'FilePopularityAndAutoCleaningApi',
       'getProviderSpaceAutoCleaningStatus',
       spaceId
     ).then(({ data }) => data);
@@ -218,7 +218,7 @@ export default Service.extend({
    */
   getAutoCleaningReportIds(spaceId, startFromIndex, size, offset) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'FilePopularityAndAutoCleaningApi',
       'getProviderSpaceAutoCleaningReports',
       spaceId, {
         index: startFromIndex,
@@ -243,7 +243,7 @@ export default Service.extend({
       return resolve(cachedReport);
     } else {
       return this.get('onepanelServer').request(
-        'oneprovider',
+        'FilePopularityAndAutoCleaningApi',
         'getProviderSpaceAutoCleaningReport',
         spaceId,
         reportId,
@@ -271,7 +271,7 @@ export default Service.extend({
 
   startCleaning(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'FilePopularityAndAutoCleaningApi',
       'triggerAutoCleaning',
       spaceId,
     ).then(({ data }) => data);
@@ -283,7 +283,7 @@ export default Service.extend({
    */
   stopImportScan(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'SpaceSupportApi',
       'forceStopAutoStorageImportScan',
       spaceId,
     );
@@ -295,7 +295,7 @@ export default Service.extend({
    */
   startImportScan(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'SpaceSupportApi',
       'forceStartAutoStorageImportScan',
       spaceId,
     );

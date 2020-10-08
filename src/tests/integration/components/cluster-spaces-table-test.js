@@ -30,13 +30,13 @@ describe('Integration | Component | cluster spaces table', function () {
     requestStub.rejects();
 
     requestStub.withArgs(
-      'oneprovider',
+      'FilePopularityAndAutoCleaningApi',
       'getFilePopularityConfiguration',
       sinon.match.any
     ).resolves({ data: {} });
 
     requestStub.withArgs(
-      'oneprovider',
+      'FilePopularityAndAutoCleaningApi',
       'getSpaceAutoCleaningConfiguration',
       sinon.match.any
     ).resolves({ data: {} });
