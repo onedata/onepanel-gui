@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6874 Added "Block size" parameter to "Local Ceph" storage
 * VFS-6872 Fixed auto cleaning reports tests on Chrome 84
 * VFS-6860 Locking HTTP storage readonly and skip storage detection toggles always to enabled state
 * VFS-6801 Disabled ceasing space support feature in favour of removing space in GUI
