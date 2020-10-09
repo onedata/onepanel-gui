@@ -10,6 +10,13 @@
     font-size: 170%;
     vertical-align: top;
     line-height: 0;
+
+    &.cancelling .oneicon-cancelled {
+      @extend .animated;
+      @extend .infinite;
+      @extend .semi-hinge;
+      @extend .pulse-orange;
+    }
     
     .one-icon {
       position: relative;
@@ -20,6 +27,9 @@
       &.oneicon-checkbox-filled-x {
         color: $color-one-red;
       }
+      &.oneicon-cancelled {
+        color: $color-one-orange;
+      }
       &.oneicon-update {
         top: 0;
         @media (max-width: $screen-xs-max) {
@@ -27,6 +37,10 @@
         }
         font-size: 80%;
       }
+      &.oneicon-sign-question {
+        font-size: 60%;
+      }
+
     }
   }
 }

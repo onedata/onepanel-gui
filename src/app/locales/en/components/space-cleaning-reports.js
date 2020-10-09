@@ -13,5 +13,6 @@ export default {
     active: 'In progress',
     cancelling: 'Cancelling',
     cancelled: 'Cancelled',
+    unknown: 'Unknown',
   },
 };

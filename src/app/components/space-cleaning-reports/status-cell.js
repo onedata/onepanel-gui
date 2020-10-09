@@ -10,12 +10,16 @@
 import Component from '@ember/component';
 
 import { get, computed } from '@ember/object';
-import { inject as service } from '@ember/service';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
-export default Component.extend({
+export default Component.extend(I18n, {
   classNames: ['status-cell'],
+  classNameBindings: ['record.status'],
 
-  i18n: service(),
+  /**
+   * @override
+   */
+  i18nPrefix: 'components.spaceCleaningReports',
 
   /**
    * Record.
@@ -39,8 +43,8 @@ export default Component.extend({
   _iconName: computed(
     'record.status',
     function () {
-      let status = this.get('record.status');
-      
+      const status = this.get('record.status');
+
       switch (status) {
         case 'active':
           return 'update';
@@ -51,6 +55,8 @@ export default Component.extend({
         case 'cancelling':
         case 'cancelled':
           return 'cancelled';
+        default:
+          return 'sign-question';
       }
     }
   ),
@@ -63,11 +69,13 @@ export default Component.extend({
     'record.status',
     function () {
       let {
-        i18n,
         record,
-      } = this.getProperties('i18n', 'record');
-      const prefix = 'components.spaceCleaningReports.statusValues.';
-      return i18n.t(prefix + get(record, 'status'));
+      } = this.getProperties('record');
+
+      return this.t(`statusValues.${get(record, 'status')}`, {}, {
+        defaultValue: this.t(
+          'statusValues.unknown')
+      });
     }
   ),
 });
