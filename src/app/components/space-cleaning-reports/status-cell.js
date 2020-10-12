@@ -56,7 +56,7 @@ export default Component.extend(I18n, {
         case 'cancelled':
           return 'cancelled';
         default:
-          return 'sign-question';
+          return 'warning';
       }
     }
   ),
@@ -68,13 +68,10 @@ export default Component.extend(I18n, {
   _tip: computed(
     'record.status',
     function () {
-      let {
-        record,
-      } = this.getProperties('record');
+      const status = this.get('record.status');
 
-      return this.t(`statusValues.${get(record, 'status')}`, {}, {
-        defaultValue: this.t(
-          'statusValues.unknown')
+      return this.t(`statusValues.${status}`, {}, {
+        defaultValue: this.t('statusValues.unknown')
       });
     }
   ),

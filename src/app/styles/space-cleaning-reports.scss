@@ -11,25 +11,43 @@
     vertical-align: top;
     line-height: 0;
 
-    &.cancelling .oneicon-cancelled {
-      @extend .animated;
-      @extend .infinite;
-      @extend .semi-hinge;
-      @extend .pulse-orange;
+    &.active {
+      .oneicon {
+        color: $color-one-mint;
+        @extend .animated;
+        @extend .infinite;
+        @extend .semi-hinge;
+        @extend .pulse-mint;
+      }
     }
-    
+    &.completed {
+      .oneicon {
+        color: $color-one-mint;
+      }
+    }
+    &.failed {
+      .oneicon {
+        color: $color-one-red;
+      }
+    }
+    &.cancelling {
+      .oneicon {
+        color: $color-one-orange;
+        @extend .animated;
+        @extend .infinite;
+        @extend .semi-hinge;
+        @extend .pulse-orange;
+      }
+    }
+    &.cancelled {
+      .oneicon {
+        color: $color-one-orange;
+      }
+    }
+
     .one-icon {
       position: relative;
       top: -0.1em;
-      &.oneicon-checkbox-filled {
-        color: $color-one-mint;
-      }
-      &.oneicon-checkbox-filled-x {
-        color: $color-one-red;
-      }
-      &.oneicon-cancelled {
-        color: $color-one-orange;
-      }
       &.oneicon-update {
         top: 0;
         @media (max-width: $screen-xs-max) {
@@ -37,10 +55,6 @@
         }
         font-size: 80%;
       }
-      &.oneicon-sign-question {
-        font-size: 60%;
-      }
-
     }
   }
 }
