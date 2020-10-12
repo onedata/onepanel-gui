@@ -9,12 +9,15 @@
 
 import Component from '@ember/component';
 
-import { get, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { computed } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 export default Component.extend(I18n, {
   classNames: ['status-cell'],
   classNameBindings: ['record.status'],
+
+  i18n: service(),
 
   /**
    * @override
@@ -71,7 +74,7 @@ export default Component.extend(I18n, {
       const status = this.get('record.status');
 
       return this.t(`statusValues.${status}`, {}, {
-        defaultValue: this.t('statusValues.unknown')
+        defaultValue: this.t('statusValues.unknown'),
       });
     }
   ),
