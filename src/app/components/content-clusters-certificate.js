@@ -87,6 +87,8 @@ export default Component.extend(I18n, GlobalActions, {
 
   expirationTime: reads('webCert.expirationTime'),
 
+  refreshCert: true,
+
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
@@ -177,11 +179,13 @@ export default Component.extend(I18n, GlobalActions, {
    * Creates new promise object for `webCertProxy` property
    */
   updateWebCertProxy() {
-    const proxy = PromiseObject.create({
-      promise: this.get('webCertManager')
-        .fetchWebCert(),
-    });
-    safeExec(this, 'set', 'webCertProxy', proxy);
+    if (this.get('refreshCert')) {
+      const proxy = PromiseObject.create({
+        promise: this.get('webCertManager')
+          .fetchWebCert(),
+      });
+      safeExec(this, 'set', 'webCertProxy', proxy);
+    }
   },
 
   actions: {
@@ -190,6 +194,9 @@ export default Component.extend(I18n, GlobalActions, {
      * @returns {Promise} promise with modify web cert request result
      */
     submitModify(webCertChange) {
+      if (webCertChange) {
+        this.set('refreshCert', false);
+      }
       return this.get('webCertManager').modifyWebCert(webCertChange)
         .then(() => {
           const thisWebCert = this.get('webCert');
