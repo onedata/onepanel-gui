@@ -8,8 +8,11 @@ export default {
   filesNumber: 'Files number',
   status: 'Status',
   statusValues: {
-    success: 'Success',
-    failure: 'Failure',
-    inProgress: 'In progress',
+    completed: 'Success',
+    failed: 'Failure',
+    active: 'In progress',
+    cancelling: 'Cancelling',
+    cancelled: 'Cancelled',
+    unknown: 'Unknown',
   },
 };

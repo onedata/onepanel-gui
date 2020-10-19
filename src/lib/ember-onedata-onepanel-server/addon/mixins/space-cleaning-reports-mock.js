@@ -48,6 +48,7 @@ class ReportsCollection {
       releasedBytes: Math.pow(1024, 3) * 4,
       bytesToRelease: Math.pow(1024, 3) * 5,
       filesNumber: 50,
+      status: 'active',
     });
     this.reports.unshift(report);
   }
@@ -89,6 +90,7 @@ export default Mixin.create({
       releasedBytes: 1024 * 1024 * (isSuccess ? 75 : 50),
       bytesToRelease: 1024 * 1024 * 75,
       filesNumber: 80,
+      status: (isSuccess ? 'completed' : 'failed'),
     };
   },
 

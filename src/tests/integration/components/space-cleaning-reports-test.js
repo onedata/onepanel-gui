@@ -22,7 +22,7 @@ const data = Object.freeze([{
   releasedBytes: 1048576,
   bytesToRelease: 2097152,
   filesNumber: 991,
-  status: 'success',
+  status: 'failed',
 }, {
   id: 'id-1',
   index: 1,
@@ -31,7 +31,7 @@ const data = Object.freeze([{
   releasedBytes: 1022976,
   bytesToRelease: 1022976,
   filesNumber: 992,
-  status: 'failure',
+  status: 'completed',
 }]);
 
 function fetchReports(spaceId, index, limit = 1000, offset = 0) {
