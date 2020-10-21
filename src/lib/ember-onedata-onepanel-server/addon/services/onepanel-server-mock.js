@@ -645,7 +645,7 @@ export default OnepanelServerBase.extend(
 
     /// mocked request handlers - override to change server behaviour
 
-    _req_DNSAndWebCertificatesApi_getWebCert() {
+    _req_SecurityApi_getWebCert() {
       const __webCert = this.get('__webCert');
       return {
         success() {
@@ -657,7 +657,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_DNSAndWebCertificatesApi_modifyWebCert() {
+    _req_SecurityApi_modifyWebCert() {
       const __webCert = this.get('__webCert');
       return {
         success({ letsEncrypt }) {
@@ -790,7 +790,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_RegistrationAndIdentityApi_modifyProvider: computed(function () {
+    _req_OneproviderIdentityApi_modifyProvider: computed(function () {
       return {
         success: (data) => {
           let __provider = this.get('__provider');
@@ -814,14 +814,14 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_RegistrationAndIdentityApi_removeProvider: computed(function () {
+    _req_OneproviderIdentityApi_removeProvider: computed(function () {
       return {
         success: () => null,
         statusCode: () => 204,
       };
     }),
 
-    _req_RegistrationAndIdentityApi_addProvider: computed(function () {
+    _req_OneproviderIdentityApi_addProvider: computed(function () {
       return {
         success: (provider) => {
           this.set('__provider', PlainableObject.create({ id: '3i92ry78ngq78' }));
@@ -907,7 +907,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_RegistrationAndIdentityApi_getProvider() {
+    _req_OneproviderIdentityApi_getProvider() {
       if (this.get('__provider')) {
         return {
           success: () => this.get('__provider').plainCopy(),
@@ -1038,7 +1038,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_FilePopularityAndAutoCleaningApi_configureFilePopularity() {
+    _req_FilePopularityApi_configureFilePopularity() {
       const taskId = `popularity-${popularityTaskCounter++}`;
       return {
         // data: enabled, [lastOpenHourWeight], [avgOpenCountPerDayWeight], [maxAvgOpenCountPerDay]
@@ -1077,7 +1077,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_FilePopularityAndAutoCleaningApi_getFilePopularityConfiguration() {
+    _req_FilePopularityApi_getFilePopularityConfiguration() {
       return {
         success: (id) => {
           const __spacesFilePopularity = this.get('__spacesFilePopularity');
@@ -1092,7 +1092,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_FilePopularityAndAutoCleaningApi_configureSpaceAutoCleaning() {
+    _req_AutoCleaningApi_configureSpaceAutoCleaning() {
       return {
         // data: { enabled, threshold, target, rules }
         success: (id, data) => {
@@ -1115,7 +1115,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_FilePopularityAndAutoCleaningApi_getSpaceAutoCleaningConfiguration() {
+    _req_AutoCleaningApi_getSpaceAutoCleaningConfiguration() {
       return {
         success: (id) => {
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
@@ -1164,7 +1164,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_FilePopularityAndAutoCleaningApi_getProviderSpaceAutoCleaningReports: computed(
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningReports: computed(
       function () {
         return {
           success: (spaceId, { index, limit, offset }) =>
@@ -1174,7 +1174,7 @@ export default OnepanelServerBase.extend(
       }
     ),
 
-    _req_FilePopularityAndAutoCleaningApi_getProviderSpaceAutoCleaningReport: computed(
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningReport: computed(
       function () {
         return {
           success: (spaceId, reportId) => this._getReport(spaceId, reportId),
@@ -1183,14 +1183,14 @@ export default OnepanelServerBase.extend(
       }
     ),
 
-    _req_FilePopularityAndAutoCleaningApi_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
       '__spaceAutoCleaningStates', {
         inProgress: false,
         spaceOccupancy: 250000000,
       }
     ),
 
-    _req_FilePopularityAndAutoCleaningApi_triggerAutoCleaning: computed(function () {
+    _req_AutoCleaningApi_triggerAutoCleaning: computed(function () {
       return {
         success: (id) => {
           this._getAutoCleaningStatusMock(id).forceStart();
@@ -1377,7 +1377,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_DNSAndWebCertificatesApi_checkDns() {
+    _req_DNSApi_checkDns() {
       const __dnsCheck = this.get('__dnsCheck');
       const builtInDnsServer = this.get('__dnsCheckConfiguration.builtInDnsServer');
       const check = builtInDnsServer ? { domain: __dnsCheck.domain } : __dnsCheck;
@@ -1392,7 +1392,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_DNSAndWebCertificatesApi_getDnsCheckConfiguration() {
+    _req_DNSApi_getDnsCheckConfiguration() {
       const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
       return {
         success() {
@@ -1401,7 +1401,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_DNSAndWebCertificatesApi_modifyDnsCheckConfiguration() {
+    _req_DNSApi_modifyDnsCheckConfiguration() {
       const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
       return {
         success(data) {
@@ -1429,7 +1429,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_RegistrationAndIdentityApi_getOnezoneInfo() {
+    _req_OneproviderIdentityApi_getOnezoneInfo() {
       return {
         success: ({ token }) => {
           let online = true;

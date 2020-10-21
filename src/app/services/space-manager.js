@@ -202,7 +202,7 @@ export default Service.extend({
    */
   getAutoCleaningStatus(spaceId) {
     return this.get('onepanelServer').requestValidData(
-      'FilePopularityAndAutoCleaningApi',
+      'AutoCleaningApi',
       'getProviderSpaceAutoCleaningStatus',
       spaceId
     ).then(({ data }) => data);
@@ -218,7 +218,7 @@ export default Service.extend({
    */
   getAutoCleaningReportIds(spaceId, startFromIndex, size, offset) {
     return this.get('onepanelServer').request(
-      'FilePopularityAndAutoCleaningApi',
+      'AutoCleaningApi',
       'getProviderSpaceAutoCleaningReports',
       spaceId, {
         index: startFromIndex,
@@ -243,7 +243,7 @@ export default Service.extend({
       return resolve(cachedReport);
     } else {
       return this.get('onepanelServer').request(
-        'FilePopularityAndAutoCleaningApi',
+        'AutoCleaningApi',
         'getProviderSpaceAutoCleaningReport',
         spaceId,
         reportId,
@@ -271,7 +271,7 @@ export default Service.extend({
 
   startCleaning(spaceId) {
     return this.get('onepanelServer').request(
-      'FilePopularityAndAutoCleaningApi',
+      'AutoCleaningApi',
       'triggerAutoCleaning',
       spaceId,
     ).then(({ data }) => data);

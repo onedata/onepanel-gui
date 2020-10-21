@@ -27,7 +27,7 @@ describe('Unit | Service | dns manager', function () {
     };
     const onepanelServer = lookupService(this, 'onepanelServer');
     sinon.stub(onepanelServer, 'request')
-      .withArgs('DNSAndWebCertificatesApi', 'checkDns')
+      .withArgs('DNSApi', 'checkDns')
       .resolves({ data: checkDnsData });
 
     const service = this.subject();
@@ -46,7 +46,7 @@ describe('Unit | Service | dns manager', function () {
     };
     const onepanelServer = lookupService(this, 'onepanelServer');
     sinon.stub(onepanelServer, 'request')
-      .withArgs('DNSAndWebCertificatesApi', 'checkDns')
+      .withArgs('DNSApi', 'checkDns')
       .resolves({ data: checkDnsData });
 
     const service = this.subject();

@@ -449,7 +449,7 @@ export default Component.extend(
 
     fetchDnsCheckConfiguration() {
       return this.get('onepanelServer')
-        .request('DNSAndWebCertificatesApi', 'getDnsCheckConfiguration')
+        .request('DNSApi', 'getDnsCheckConfiguration')
         .then(({ data }) => data);
     },
 
@@ -481,7 +481,7 @@ export default Component.extend(
       }
 
       return this.get('onepanelServer')
-        .request('DNSAndWebCertificatesApi', 'modifyDnsCheckConfiguration', config)
+        .request('DNSApi', 'modifyDnsCheckConfiguration', config)
         .finally(() => {
           if (dnsServers) {
             safeExec(this, 'set', 'dnsServersBusy', false);

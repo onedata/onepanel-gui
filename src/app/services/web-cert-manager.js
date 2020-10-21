@@ -26,7 +26,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
    * @returns {Promise<Onepanel.WebCert>}
    */
   fetchWebCert() {
-    return this.get('onepanelServer').request('DNSAndWebCertificatesApi', 'getWebCert')
+    return this.get('onepanelServer').request('SecurityApi', 'getWebCert')
       .then(({ data: webCert }) => webCert);
   },
 
@@ -36,7 +36,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
    */
   modifyWebCert({ letsEncrypt }) {
     return this.get('onepanelServer').request(
-      'DNSAndWebCertificatesApi',
+      'SecurityApi',
       'modifyWebCert', {
         letsEncrypt,
       }

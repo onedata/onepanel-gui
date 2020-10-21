@@ -41,7 +41,7 @@ export default Mixin.create({
     OneproviderClusterApi: {
       getProviderConfiguration,
     },
-    RegistrationAndIdentityApi: {
+    OneproviderIdentityApi: {
       getProvider,
     },
     SpaceSupportApi: {
@@ -52,7 +52,7 @@ export default Mixin.create({
       getStorages,
       getStorageDetails,
     },
-    FilePopularityAndAutoCleaningApi: {
+    AutoCleaningApi: {
       getProviderSpaceAutoCleaningReports,
       getProviderSpaceAutoCleaningStatus,
     },

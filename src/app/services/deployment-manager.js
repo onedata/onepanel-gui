@@ -234,7 +234,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   _checkIsDnsCheckAcknowledged() {
     return this.get('onepanelServer')
-      .request('DNSAndWebCertificatesApi', 'getDnsCheckConfiguration')
+      .request('DNSApi', 'getDnsCheckConfiguration')
       .then(({ data }) => data.dnsCheckAcknowledged);
   },
 

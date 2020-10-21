@@ -27,7 +27,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
    */
   fetchProviderDetails() {
     let onepanelServer = this.get('onepanelServer');
-    return onepanelServer.requestValidData('RegistrationAndIdentityApi', 'getProvider')
+    return onepanelServer.requestValidData('OneproviderIdentityApi', 'getProvider')
       .then(({ data }) => data)
       .catch(error => {
         if (error && error.response && error.response.statusCode === 404) {
@@ -50,7 +50,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
     } = this.getProperties('onepanelServer', 'deploymentManager');
     let providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
     return onepanelServer.request(
-        'RegistrationAndIdentityApi',
+        'OneproviderIdentityApi',
         'modifyProvider',
         providerModifyRequest
       )
@@ -68,7 +68,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
       deploymentManager,
     } = this.getProperties('onepanelServer', 'deploymentManager');
     let deregistering = onepanelServer.request(
-      'RegistrationAndIdentityApi',
+      'OneproviderIdentityApi',
       'removeProvider'
     );
     deregistering.then(() => deploymentManager
@@ -83,7 +83,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
 
   getOnezoneInfo() {
     return this.get('onepanelServer').request(
-        'RegistrationAndIdentityApi',
+        'OneproviderIdentityApi',
         'getOnezoneInfo', {}
       )
       .then(({ data }) => data);

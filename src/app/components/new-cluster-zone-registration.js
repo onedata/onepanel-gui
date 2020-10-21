@@ -134,7 +134,7 @@ export default Component.extend(I18n, {
       let providerRegisterRequest = this.createProviderRegisterRequest(
         providerData);
       let addingProvider =
-        onepanelServer.request('RegistrationAndIdentityApi', 'addProvider',
+        onepanelServer.request('OneproviderIdentityApi', 'addProvider',
           providerRegisterRequest);
 
       addingProvider.then(resolve, reject);
@@ -145,7 +145,7 @@ export default Component.extend(I18n, {
 
   handleProceedToken() {
     return this.get('onepanelServer')
-      .request('RegistrationAndIdentityApi', 'getOnezoneInfo', {
+      .request('OneproviderIdentityApi', 'getOnezoneInfo', {
         token: this.get('trimmedToken'),
       })
       .catch(error => {
