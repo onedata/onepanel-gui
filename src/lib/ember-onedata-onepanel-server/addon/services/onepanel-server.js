@@ -74,6 +74,11 @@ export default OnepanelServerBase.extend(
       }
       let api = apiCache[apiName];
       if (!api) {
+        if (typeof Onepanel[apiName] !== 'function') {
+          throw new Error(
+            `onepanel-sever#getApi: API "${apiName}" not found in JS client - probably a wrong version of onepanel JS library is used`
+          );
+        }
         api = apiCache[apiName] = new Onepanel[apiName](client);
       }
       return api;
