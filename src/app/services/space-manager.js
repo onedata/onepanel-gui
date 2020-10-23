@@ -152,7 +152,7 @@ export default Service.extend({
    */
   getImportInfo(spaceId) {
     return this.get('onepanelServer').request(
-      'SpaceSupportApi',
+      'StorageImportApi',
       'getAutoStorageImportInfo',
       spaceId
     ).then(({ data }) => data);
@@ -173,7 +173,7 @@ export default Service.extend({
     metrics = IMPORT_METRICS
   ) {
     return this.get('onepanelServer').request(
-      'SpaceSupportApi',
+      'StorageImportApi',
       'getAutoStorageImportStats',
       spaceId,
       period,
@@ -190,7 +190,7 @@ export default Service.extend({
    */
   getManualImportRequestExample(spaceId) {
     return this.get('onepanelServer').request(
-      'SpaceSupportApi',
+      'StorageImportApi',
       'getManualStorageImportExample',
       spaceId
     ).then(({ data }) => data);
@@ -283,7 +283,7 @@ export default Service.extend({
    */
   stopImportScan(spaceId) {
     return this.get('onepanelServer').request(
-      'SpaceSupportApi',
+      'StorageImportApi',
       'forceStopAutoStorageImportScan',
       spaceId,
     );
@@ -295,7 +295,7 @@ export default Service.extend({
    */
   startImportScan(spaceId) {
     return this.get('onepanelServer').request(
-      'SpaceSupportApi',
+      'StorageImportApi',
       'forceStartAutoStorageImportScan',
       spaceId,
     );
