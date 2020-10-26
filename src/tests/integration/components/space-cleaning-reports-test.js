@@ -96,7 +96,6 @@ describe('Integration | Component | space cleaning reports', function () {
   it('renders reports in mobile view', async function () {
     this.set('_window.innerWidth', 600);
 
-    // this.set('_window.innerWidth', 500);
     this.render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"

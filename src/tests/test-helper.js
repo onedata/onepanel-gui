@@ -5,5 +5,5 @@ import { mocha } from 'mocha';
 setResolver(resolver);
 
 mocha.setup({
-  timeout: 100000,
+  timeout: 5000,
 });
