@@ -74,6 +74,11 @@ module.exports = function (environment) {
        * @type {number}
        */
       redirectDomainDelay: 5000,
+      /**
+       * How long to wait before refresh page
+       * @type {number}
+       */
+      reloadPageDelay: 5000,
     },
     'i18n': {
       defaultLocale: 'en',

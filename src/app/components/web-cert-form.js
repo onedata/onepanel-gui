@@ -104,12 +104,6 @@ export default OneForm.extend(I18n, Validations, {
   webCert: undefined,
 
   /**
-   * @virtual
-   * @type {Function}
-   */
-  changeDomain: notImplementedReject,
-
-  /**
    * If true, all fields and submit button will be disabled
    * @type {boolean}
    */
@@ -325,7 +319,7 @@ export default OneForm.extend(I18n, Validations, {
 
       const letsEncrypt = get(formValues, 'editLetsEncrypt.letsEncrypt');
 
-      const willChangeDomainAfterSubmit = get(
+      const willReloadAfterSubmit = get(
         _.find(currentFields, { name: 'editLetsEncrypt.letsEncrypt' }),
         'changed'
       ) && letsEncrypt;
@@ -335,12 +329,9 @@ export default OneForm.extend(I18n, Validations, {
         letsEncrypt,
       };
       this.set('disabled', true);
-      return this.get('submit')(webCertChange)
-        .then(() => {
-          if (willChangeDomainAfterSubmit) {
-            this.get('changeDomain')();
-          }
-        })
+      this.set('showLetsEncryptChangeModal', false);
+
+      return this.get('submit')(webCertChange, willReloadAfterSubmit)
         .catch(error => {
           this.get('globalNotify').backendError(
             this.t('modifyingWebCert'),
