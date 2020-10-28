@@ -315,7 +315,8 @@ export default OneForm.extend(I18n, Validations, {
       const {
         formValues,
         currentFields,
-      } = this.getProperties('formValues', 'currentFields');
+        submit,
+      } = this.getProperties('formValues', 'currentFields', 'submit');
 
       const letsEncrypt = get(formValues, 'editLetsEncrypt.letsEncrypt');
 
@@ -328,10 +329,12 @@ export default OneForm.extend(I18n, Validations, {
       const webCertChange = {
         letsEncrypt,
       };
-      this.set('disabled', true);
-      this.set('showLetsEncryptChangeModal', false);
+      this.setProperties({
+        disabled: true,
+        showLetsEncryptChangeModal: false,
+      });
 
-      return this.get('submit')(webCertChange, willReloadAfterSubmit)
+      return submit(webCertChange, willReloadAfterSubmit)
         .catch(error => {
           this.get('globalNotify').backendError(
             this.t('modifyingWebCert'),

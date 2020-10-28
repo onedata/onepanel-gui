@@ -11,14 +11,13 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
-import { default as EmberObject, computed, get } from '@ember/object';
+import { default as EmberObject, computed } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 
 const {
   time: {
-    reloadPageDelay,
+    reloadDelayForCertificateChange,
   },
 } = config;
 
@@ -64,9 +63,9 @@ export default Component.extend(I18n, {
 
   /**
    * Using intermediate var for testing purposes
-   * @type {Location}
+   * @type {Window.Location}
    */
-  _location: window.location,
+  _location: location,
 
   /**
    * Set to true if the location has been changed to show that location
@@ -124,21 +123,15 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * Alias for testing puproses
-   * Using the same parameters as `util:changeDomain`
-   * @returns {Promise} resolves after setting window.location
-   */
-  _changeDomain() {
-    return changeDomain(...arguments);
-  },
-
-  /**
    * Configure Let's Encrypt feature for provider
    * @param {boolean} enabled 
    * @returns {Promise} invoke server `modifyProvider` method
    */
   _setLetsEncrypt(enabled) {
-    const globalNotify = this.get('globalNotify');
+    const {
+      globalNotify,
+      _location,
+    } = this.getProperties('globalNotify', '_location');
     return this.get('webCertManager')
       .modifyWebCert({
         letsEncrypt: enabled,
@@ -151,8 +144,8 @@ export default Component.extend(I18n, {
         if (enabled) {
           this.set('_redirectPage', true);
           setTimeout(() => {
-            window.location.reload();
-          }, reloadPageDelay);
+            _location.reload();
+          }, reloadDelayForCertificateChange);
         } else {
           this.get('nextStep')();
         }

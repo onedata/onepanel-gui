@@ -22,7 +22,7 @@ import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
 
 const {
   time: {
-    reloadPageDelay,
+    reloadDelayForCertificateChange,
   },
 } = config;
 
@@ -92,6 +92,12 @@ export default Component.extend(I18n, GlobalActions, {
   refreshCert: true,
 
   /**
+   * Using intermediate var for testing purposes
+   * @type {Window.Location}
+   */
+  _location: location,
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   shouldPollWebCert: computed(
@@ -151,9 +157,10 @@ export default Component.extend(I18n, GlobalActions, {
 
   reloadPage() {
     this.set('showRedirectPage', true);
+    const _location = this.get('_location');
     setTimeout(() => {
-      window.location.reload();
-    }, reloadPageDelay);
+      _location.reload();
+    }, reloadDelayForCertificateChange);
   },
 
   actions: {
@@ -163,7 +170,7 @@ export default Component.extend(I18n, GlobalActions, {
      * @returns {Promise} promise with modify web cert request result
      */
     submitModify(webCertChange, shouldReload) {
-      if (webCertChange) {
+      if (shouldReload) {
         this.set('refreshCert', false);
       }
       return this.get('webCertManager').modifyWebCert(webCertChange)
@@ -178,7 +185,7 @@ export default Component.extend(I18n, GlobalActions, {
         })
         .finally(() => {
           if (this.get('refreshCert')) {
-            this.updateWebCertProxy.bind(this);
+            this.updateWebCertProxy();
           }
         })
         .then(() => {
@@ -200,6 +207,8 @@ export default Component.extend(I18n, GlobalActions, {
       const regeneratePromise = this.actions.submitModify.bind(this)({
         letsEncrypt: true,
       });
+      this.set('refreshCert', false);
+      this.reloadPage();
       regeneratePromise.catch(error => {
         this.get('globalNotify').backendError(
           this.t('renewingWebCert'),

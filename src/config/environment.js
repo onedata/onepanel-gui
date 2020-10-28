@@ -78,7 +78,7 @@ module.exports = function (environment) {
        * How long to wait before refresh page
        * @type {number}
        */
-      reloadPageDelay: 5000,
+      reloadDelayForCertificateChange: 5000,
     },
     'i18n': {
       defaultLocale: 'en',
