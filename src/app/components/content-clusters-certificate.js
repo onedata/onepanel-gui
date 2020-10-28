@@ -93,7 +93,7 @@ export default Component.extend(I18n, GlobalActions, {
 
   /**
    * Using intermediate var for testing purposes
-   * @type {Window.Location}
+   * @type {Location}
    */
   _location: location,
 
@@ -155,7 +155,7 @@ export default Component.extend(I18n, GlobalActions, {
     safeExec(this, 'set', 'webCertProxy', proxy);
   },
 
-  reloadPage() {
+  schedulePageReload() {
     this.set('showRedirectPage', true);
     const _location = this.get('_location');
     setTimeout(() => {
@@ -191,7 +191,7 @@ export default Component.extend(I18n, GlobalActions, {
         .then(() => {
           safeExec(this, 'set', '_editing', false);
           if (shouldReload) {
-            this.reloadPage();
+            this.schedulePageReload();
           }
         });
     },
@@ -208,7 +208,6 @@ export default Component.extend(I18n, GlobalActions, {
         letsEncrypt: true,
       });
       this.set('refreshCert', false);
-      this.reloadPage();
       regeneratePromise.catch(error => {
         this.get('globalNotify').backendError(
           this.t('renewingWebCert'),
@@ -216,6 +215,7 @@ export default Component.extend(I18n, GlobalActions, {
         );
       });
       this.set('regenerateProxy', PromiseObject.create({ promise: regeneratePromise }));
+      this.schedulePageReload();
       return regeneratePromise;
     },
   },

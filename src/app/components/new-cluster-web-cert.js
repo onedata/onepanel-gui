@@ -63,7 +63,7 @@ export default Component.extend(I18n, {
 
   /**
    * Using intermediate var for testing purposes
-   * @type {Window.Location}
+   * @type {Location}
    */
   _location: location,
 
