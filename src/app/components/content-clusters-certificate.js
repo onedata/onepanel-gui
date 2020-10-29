@@ -105,8 +105,12 @@ export default Component.extend(I18n, GlobalActions, {
     'regeneratePending',
     'refreshCert',
     function shouldPollWebCert() {
-      return (this.get('status') === 'regenerating' ||
-        this.get('regeneratePending')) && this.get('refreshCert');
+      const {
+        status,
+        regeneratePending,
+        refreshCert,
+      } = this.getProperties('status', 'regeneratePending', 'refreshCert');
+      return (status === 'regenerating' || regeneratePending) && refreshCert;
     }
   ),
 
@@ -156,7 +160,7 @@ export default Component.extend(I18n, GlobalActions, {
   },
 
   schedulePageReload() {
-    this.set('showRedirectPage', true);
+    safeExec(this, 'set', 'showRedirectPage', true);
     const _location = this.get('_location');
     setTimeout(() => {
       _location.reload();
@@ -215,7 +219,7 @@ export default Component.extend(I18n, GlobalActions, {
         );
       });
       this.set('regenerateProxy', PromiseObject.create({ promise: regeneratePromise }));
-      this.schedulePageReload();
+      regeneratePromise.then(() => this.schedulePageReload());
       return regeneratePromise;
     },
   },

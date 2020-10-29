@@ -329,11 +329,7 @@ export default OneForm.extend(I18n, Validations, {
       const webCertChange = {
         letsEncrypt,
       };
-      this.setProperties({
-        disabled: true,
-        showLetsEncryptChangeModal: false,
-      });
-
+      this.set('disabled', true);
       return submit(webCertChange, willReloadAfterSubmit)
         .catch(error => {
           this.get('globalNotify').backendError(
@@ -343,7 +339,10 @@ export default OneForm.extend(I18n, Validations, {
           );
         })
         .finally(() => {
-          safeExec(this, 'set', 'disabled', false);
+          safeExec(this, 'setProperties', {
+            disabled: false,
+            showLetsEncryptChangeModal: false,
+          });
         });
     },
 

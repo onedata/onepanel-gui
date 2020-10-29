@@ -139,7 +139,6 @@ describe('Integration | Component | new cluster web cert', function () {
               expect(this.get('_location.reload'), 'reload').to.be.not.called;
               expect(nextStep, 'nextStep').to.be.called;
             });
-
           });
         });
       });
