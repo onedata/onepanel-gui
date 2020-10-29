@@ -6,7 +6,7 @@ export default {
   letsEncryptToggle: 'Use Let\'s Encrypt',
   certificateGeneration: 'certificate setup',
   generationSuccess: 'The certificate has been obtained and installed successfully',
-  redirectInfo: 'When the new certificate has been installed, the page will be reloaded with the new domain.',
+  redirectInfo: 'The page will be reloaded upon successful certificate installation.',
   manualWarning: 'You will have to manually obtain and set up proper TLS certificates.',
   certDocsLink,
   text: {

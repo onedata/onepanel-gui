@@ -52,7 +52,7 @@ export default {
     text: {
       enableCertWillBeObtained: 'After enabling Let\'s Encrypt, web certificate will be obtained and renewed automatically as necessary.',
       enableAgreement: 'By using the Let\'s Encrypt service you agree to the current Let\'s Encrypt Subscriber Agreement:',
-      enableReloadInfo: 'When the new certificate has been installed, the page will be reloaded.',
+      enableReloadInfo: 'The page will be reloaded upon successful certificate installation.',
       disable: 'After disabling Let\'s Encrypt, you will have to manually obtain and set up proper web certificate.',
     },
     cancel: 'Cancel',

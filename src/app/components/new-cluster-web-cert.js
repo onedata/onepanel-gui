@@ -11,14 +11,13 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
-import { default as EmberObject, computed, trySet, get } from '@ember/object';
+import { default as EmberObject, computed } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 
 const {
   time: {
-    redirectDomainDelay,
+    reloadDelayForCertificateChange,
   },
 } = config;
 
@@ -66,7 +65,7 @@ export default Component.extend(I18n, {
    * Using intermediate var for testing purposes
    * @type {Location}
    */
-  _location: window.location,
+  _location: location,
 
   /**
    * Set to true if the location has been changed to show that location
@@ -74,29 +73,6 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   _redirectPage: false,
-
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<string|undefined>>}
-   */
-  _redirectDomain: computed('onepanelServiceType', function _redirectDomain() {
-    const onepanelServiceType = this.get('onepanelServiceType');
-    let promise;
-    switch (onepanelServiceType) {
-      case 'oneprovider':
-        promise = this.get('providerManager').getProviderDetailsProxy()
-          .then(provider => provider && get(provider, 'domain'));
-        break;
-      case 'onezone':
-        promise = this.get('deploymentManager').getClusterConfiguration()
-          .then(({ data: cluster }) =>
-            cluster && get(cluster, 'onezone.domainName')
-          );
-        break;
-      default:
-        throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
-    }
-    return PromiseObject.create({ promise });
-  }),
 
   /**
    * True if currently making Let's Encrypt request
@@ -147,21 +123,15 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * Alias for testing puproses
-   * Using the same parameters as `util:changeDomain`
-   * @returns {Promise} resolves after setting window.location
-   */
-  _changeDomain() {
-    return changeDomain(...arguments);
-  },
-
-  /**
    * Configure Let's Encrypt feature for provider
    * @param {boolean} enabled 
    * @returns {Promise} invoke server `modifyProvider` method
    */
   _setLetsEncrypt(enabled) {
-    const globalNotify = this.get('globalNotify');
+    const {
+      globalNotify,
+      _location,
+    } = this.getProperties('globalNotify', '_location');
     return this.get('webCertManager')
       .modifyWebCert({
         letsEncrypt: enabled,
@@ -173,17 +143,9 @@ export default Component.extend(I18n, {
       .then(() => {
         if (enabled) {
           this.set('_redirectPage', true);
-
-          this.get('_redirectDomain')
-            .then(domain => {
-              const _location = this.get('_location');
-              globalNotify.success(this.t('generationSuccess'));
-              return this._changeDomain(domain, {
-                location: _location,
-                delay: redirectDomainDelay,
-              });
-            })
-            .catch(() => trySet(this, '_redirectPage', false));
+          setTimeout(() => {
+            _location.reload();
+          }, reloadDelayForCertificateChange);
         } else {
           this.get('nextStep')();
         }
