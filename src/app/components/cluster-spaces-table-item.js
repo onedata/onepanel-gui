@@ -80,7 +80,7 @@ export default Component.extend(
     fetchFilePopularityConfiguration() {
       const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
-          'oneprovider',
+          'FilePopularityApi',
           'getFilePopularityConfiguration',
           spaceId
         )
@@ -90,7 +90,7 @@ export default Component.extend(
     fetchAutoCleaningConfiguration() {
       const spaceId = this.get('space.id');
       return this.get('onepanelServer').request(
-          'oneprovider',
+          'AutoCleaningApi',
           'getSpaceAutoCleaningConfiguration',
           spaceId
         )

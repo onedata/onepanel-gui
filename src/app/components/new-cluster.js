@@ -90,8 +90,7 @@ export default Component.extend(I18n, {
     stepsArray.forEach(step => set(
       step,
       'title',
-      this.t(`steps.${onepanelServiceType}.${get(step, 'name')}`))
-    );
+      this.t(`steps.${onepanelServiceType}.${get(step, 'name')}`)));
     return stepsArray;
   }),
 
@@ -175,7 +174,7 @@ export default Component.extend(I18n, {
     } = this.getProperties('cookies', 'onepanelServer');
     const deploymentTaskId = cookies.read(COOKIE_DEPLOYMENT_TASK_ID);
     if (deploymentTaskId) {
-      return onepanelServer.request('onepanel', 'getTaskStatus', deploymentTaskId)
+      return onepanelServer.request('ClusterApi', 'getTaskStatus', deploymentTaskId)
         .then(({ data: { status } }) => {
           const currentStep = this.get('currentStep');
           switch (status) {

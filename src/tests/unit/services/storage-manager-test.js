@@ -21,8 +21,8 @@ describe('Unit | Service | storage manager', function () {
     const SOME_ID = 'some_id_1';
 
     let onepanelServer = this.container.lookup('service:onepanelServer');
-    onepanelServer.requestValidData = function (service, method, ...params) {
-      if (service === 'oneprovider') {
+    onepanelServer.requestValidData = function (api, method, ...params) {
+      if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
           if (params[0] === SOME_ID) {
             return new Promise(resolve => resolve({
@@ -55,8 +55,8 @@ describe('Unit | Service | storage manager', function () {
     const SOME_ID = 'some_id_2';
 
     let onepanelServer = this.container.lookup('service:onepanelServer');
-    onepanelServer.requestValidData = function (service, method, ...params) {
-      if (service === 'oneprovider') {
+    onepanelServer.requestValidData = function (api, method, ...params) {
+      if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
           if (params[0] === SOME_ID) {
             return new Promise(resolve => resolve({

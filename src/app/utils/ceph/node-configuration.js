@@ -43,7 +43,7 @@ export default EmberObject.extend({
     if (host) {
       return PromiseArray.create({
         promise: onepanelServer
-          .request('oneprovider', 'getBlockDevices', host)
+          .request('CephApi', 'getBlockDevices', host)
           .then(({ data }) =>
             data.blockDevices.map(device => CephNodeDevice.create(device))
           ),
@@ -93,7 +93,7 @@ export default EmberObject.extend({
           .mapBy('id')
           // increment proper field in `used` object
           .forEach(id => set(used, id, get(used, id) + 1));
-        
+
         return used;
       }
     }

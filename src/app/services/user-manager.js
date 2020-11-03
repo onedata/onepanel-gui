@@ -38,7 +38,7 @@ export default Service.extend({
         );
         return UserDetails.create(userBasicData);
       });
-    
+
     return PromiseObject.create({ promise: fetchUserPromise });
   },
 
@@ -49,7 +49,7 @@ export default Service.extend({
     const onepanelServer = this.get('onepanelServer');
 
     return onepanelServer
-      .staticRequest('onepanel', 'getEmergencyPassphraseStatus')
+      .staticRequest('SecurityApi', 'getEmergencyPassphraseStatus')
       .then(({ data: { isSet } }) => isSet);
   },
 
@@ -64,7 +64,7 @@ export default Service.extend({
       newPassphrase: passphrase,
     });
     return onepanelServer
-      .staticRequest('onepanel', 'setEmergencyPassphrase', [requestData]);
+      .staticRequest('SecurityApi', 'setEmergencyPassphrase', [requestData]);
   },
 
   /**
@@ -74,13 +74,13 @@ export default Service.extend({
    */
   changeEmergencyPassphrase(currentPassphrase, newPassphrase) {
     const onepanelServer = this.get('onepanelServer');
-    
+
     const requestData = EmergencyPassphraseChangeRequest.constructFromObject({
       currentPassphrase,
       newPassphrase,
     });
     return onepanelServer.request(
-      'onepanel',
+      'SecurityApi',
       'setEmergencyPassphrase',
       requestData
     );

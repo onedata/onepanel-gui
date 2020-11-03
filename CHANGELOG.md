@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6855 Using refactored Onepanel API (methods namespace change)
 * VFS-6835 Sidebar items layout changed to use flexbox
 * VFS-6874 Added "Block size" parameter to "Local Ceph" storage
 * VFS-6872 Fixed auto cleaning reports tests on Chrome 84
