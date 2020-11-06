@@ -12,6 +12,9 @@ export default {
   manuallyStartingCleaning: 'manually starting space cleaning',
   configuringAutoCleaning: 'configuring space cleaning',
   startCleaning: 'Start cleaning now',
+  stopCleaning: 'Stop cleaning now',
+  startedCleaning: 'Cleaning started',
+  stopedCleaning: 'Cleaning finished',
   startCleaningHint: 'Manually starts cleaning of space with current ' +
     'configuration. Does not check if storage occupancy has exceeded threshold.',
 };

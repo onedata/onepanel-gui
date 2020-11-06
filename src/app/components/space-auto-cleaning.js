@@ -14,6 +14,7 @@ import { computed, get, observer } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { resolve, reject } from 'rsvp';
 import Onepanel from 'npm:onepanel';
+import { later } from '@ember/runloop';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { getOwner } from '@ember/application';
@@ -100,6 +101,12 @@ export default Component.extend(I18n, {
    */
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
+  /**
+   * If true, disable cleaning button
+   * @type {boolean}
+   */
+  disableCleaningButton: false,
+
   startNowEnabled: computed(
     'isCleanEnabled',
     'target',
@@ -108,6 +115,14 @@ export default Component.extend(I18n, {
       return this.get('isCleanEnabled') &&
         !this.get('status.inProgress') &&
         this.get('target') < this.get('status.spaceOccupancy');
+    }),
+
+  displayStartButton: computed(
+    'isCleanEnabled',
+    'status.{spaceOccupancy,inProgress}',
+    function () {
+      return this.get('isCleanEnabled') &&
+        !this.get('status.inProgress');
     }),
 
   /**
@@ -243,10 +258,49 @@ export default Component.extend(I18n, {
         'spaceId',
         'spaceAutoCleaningStatusUpdater'
       );
+      this.set('disableCleaningButton', true);
       return spaceManager.startCleaning(spaceId)
         .then(() => {
           // only a side effect
           spaceAutoCleaningStatusUpdater.updateData();
+        })
+        .then(() => {
+          later(this, () => {
+            this.set('disableCleaningButton', false);
+          }, 1000);
+        })
+        .catch(error => {
+          globalNotify.backendError(
+            this.t('manuallyStartingCleaning'),
+            error
+          );
+          throw error;
+        });
+
+    },
+
+    stopCleaning() {
+      const {
+        spaceManager,
+        globalNotify,
+        spaceId,
+        spaceAutoCleaningStatusUpdater,
+      } = this.getProperties(
+        'spaceManager',
+        'globalNotify',
+        'spaceId',
+        'spaceAutoCleaningStatusUpdater'
+      );
+      this.set('disableCleaningButton', true);
+      return spaceManager.stopCleaning(spaceId)
+        .then(() => {
+          // only a side effect
+          spaceAutoCleaningStatusUpdater.updateData();
+        })
+        .then(() => {
+          later(this, () => {
+            this.set('disableCleaningButton', false);
+          }, 10000);
         })
         .catch(error => {
           globalNotify.backendError(

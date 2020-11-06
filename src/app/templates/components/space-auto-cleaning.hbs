@@ -43,20 +43,35 @@
               onChange=(action "barValuesChanged")
             }}
           </div>
+          
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{one-label-tip
-              title=(tt this "startCleaningHint")
-              class="clean-now-tip hidden-xs"
-              placement="top"
-              arrowPlacement="left"
-            }}
-            {{#one-spin-button
-              action=(action "startCleaning")
-              class="btn btn-sm btn-primary btn-clean-now"
-              disabled=(not startNowEnabled)
-            }}
-            {{tt this "startCleaning"}}
-            {{/one-spin-button}}
+            {{#if displayStartButton}}
+              {{#one-spin-button
+                  action=(action "startCleaning")
+                  class="btn btn-sm btn-primary btn-clean-now"
+                  defaultTimout=10000
+                  disabled=(or disableCleaningButton (not startNowEnabled))
+                }}
+                {{tt this (if disableCleaningButton "stopedCleaning" "startCleaning")}}
+              {{/one-spin-button}}
+              {{one-label-tip
+                title=(tt this "startCleaningHint")
+                class="clean-now-tip hidden-xs"
+                placement="top"
+                arrowPlacement="left"
+              }}
+            {{/if}}
+            {{#unless displayStartButton}}
+              {{#one-spin-button
+                  action=(action "stopCleaning")
+                  class="btn btn-sm btn-warning btn-stop-now"
+                  defaultTimout=10000
+                  disabled=disableCleaningButton
+                }}
+                {{tt this (if disableCleaningButton "startedCleaning" "stopCleaning")}}
+              {{/one-spin-button}}
+            {{/unless}}
+            
           </div>
         {{/loading-container}}
       </div>

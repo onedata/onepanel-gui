@@ -1196,6 +1196,16 @@ export default OnepanelServerBase.extend(
       };
     }),
 
+    _req_oneprovider_cancelAutoCleaning: computed(function () {
+      return {
+        success: (id) => {
+          this._getAutoCleaningStatusMock(id).tick();
+          return undefined;
+        },
+        statusCode: () => 200,
+      };
+    }),
+
     _req_oneprovider_getCephStatus: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
