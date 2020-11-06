@@ -44,7 +44,7 @@
             }}
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{#if displayStartButton}}
+            {{#if (or stopButtonClick displayStartButton)}}
               {{#one-spin-button
                 action=(action "startCleaning")
                 class="btn btn-sm btn-primary btn-clean-now"
@@ -59,8 +59,7 @@
                 placement="top"
                 arrowPlacement="left"
               }}
-            {{/if}}
-            {{#unless displayStartButton}}
+            {{else}}
               {{#one-spin-button
                 action=(action "stopCleaning")
                 class="btn btn-sm btn-warning btn-stop-now"
@@ -69,7 +68,7 @@
               }}
                 {{tt this (if disableCleaningButton "startedCleaning" "stopCleaning")}}
               {{/one-spin-button}}
-            {{/unless}}
+            {{/if}}
           </div>
         {{/loading-container}}
       </div>

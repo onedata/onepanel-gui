@@ -107,6 +107,12 @@ export default Component.extend(I18n, {
    */
   disableCleaningButton: false,
 
+  /**
+   * If true, stop button is clicked
+   * @type {boolean}
+   */
+  stopButtonClick: true,
+
   startNowEnabled: computed(
     'isCleanEnabled',
     'target',
@@ -259,6 +265,7 @@ export default Component.extend(I18n, {
         'spaceAutoCleaningStatusUpdater'
       );
       this.set('disableCleaningButton', true);
+      this.set('displayStartButton', false);
       return spaceManager.startCleaning(spaceId)
         .then(() => {
           // only a side effect
@@ -292,6 +299,7 @@ export default Component.extend(I18n, {
         'spaceAutoCleaningStatusUpdater'
       );
       this.set('disableCleaningButton', true);
+      this.set('displayStartButton', true);
       return spaceManager.stopCleaning(spaceId)
         .then(() => {
           // only a side effect
