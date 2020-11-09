@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6973 Locking HTTP storage readonly and skip storage detection toggles to enabled state also when modifying storage
 * VFS-6855 Using refactored Onepanel API (methods namespace change)
 * VFS-6835 Sidebar items layout changed to use flexbox
 * VFS-6874 Added "Block size" parameter to "Local Ceph" storage

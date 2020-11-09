@@ -69,6 +69,26 @@ const POSIX_STORAGE = {
   name: 'Some storage',
 };
 
+const HTTP_STORAGE = {
+  name: 'Some Apache',
+  verifyServerCertificate: false,
+  type: 'http',
+  storagePathType: 'canonical',
+  skipStorageDetection: true,
+  readonly: true,
+  qosParameters: {
+    storageId: 'e777476baf3418ed9861a97750be285ech9802',
+    providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
+  },
+  lumaFeed: 'auto',
+  importedStorage: true,
+  id: 'e777476baf3418ed9861a97750be285ech9802',
+  endpoint: 'http://172.17.0.3',
+  credentialsType: 'none',
+  connectionPoolSize: 150,
+  authorizationHeader: 'Authorization: Bearer {}',
+};
+
 describe('Integration | Component | cluster storage add form', function () {
   setupComponentTest('cluster-storage-add-form', {
     integration: true,
@@ -753,5 +773,27 @@ describe('Integration | Component | cluster storage add form', function () {
           });
       }
     );
+
+    it(
+      'locks readonly and skip storage detection to true for HTTP storage',
+      async function () {
+        this.set('storage', HTTP_STORAGE);
+        this.render(hbs `{{cluster-storage-add-form
+          storage=storage
+          mode="edit"
+        }}`);
+
+        await wait();
+        const helper = new ClusterStorageAddHelper(this.$());
+
+        expect(helper.getToggleInput('generic_editor-readonly'), 'readonly')
+          .to.have.class('checked')
+          .and.have.class('disabled');
+
+        expect(
+          helper.getToggleInput('generic_editor-skipStorageDetection'),
+          'skipStorageDet.'
+        ).to.have.class('checked').and.have.class('disabled');
+      });
   });
 });

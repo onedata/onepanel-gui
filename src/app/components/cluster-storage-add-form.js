@@ -478,20 +478,8 @@ export default OneForm.extend(I18n, Validations, {
   selectedStorageTypeObserver: observer(
     'selectedStorageType',
     function selectedStorageTypeObserver() {
-      const isHttpStorage = this.get('selectedStorageType.id') === 'http';
-      if (!isHttpStorage) {
-        this.unlockToggle('importedStorage');
-      }
       this.resetFormValues();
       this._toggleLumaPrefix(false, false);
-      if (isHttpStorage) {
-        this.lockToggle(
-          'importedStorage',
-          true,
-          this.t('httpOnlyImported')
-        );
-        this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
-      }
     }
   ),
 
@@ -631,6 +619,25 @@ export default OneForm.extend(I18n, Validations, {
           );
         }
       }));
+    this.autoSettingsAfterFill(storage && get(storage, 'type') || selectedStorageType);
+  },
+
+  autoSettingsBeforeFill(storageType) {
+    const isHttpStorage = storageType === 'http';
+    if (!isHttpStorage) {
+      this.unlockToggle('importedStorage');
+    }
+  },
+
+  autoSettingsAfterFill(storageType) {
+    if (storageType === 'http') {
+      this.lockToggle(
+        'importedStorage',
+        true,
+        this.t('httpOnlyImported')
+      );
+      this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
+    }
   },
 
   fetchCephOsds() {
@@ -673,19 +680,19 @@ export default OneForm.extend(I18n, Validations, {
     const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
     const fieldPath = `${prefix}.${fieldName}`;
     const field = this.getField(fieldPath);
-    if (!get(field, 'disabled')) {
+    if (!get(field, 'disabled') || get(field, 'lockHint') !== lockHint) {
       setProperties(field, {
         disabled: true,
         lockHint,
       });
-      const current = this.get(`formValues.${fieldPath}`);
-      if (current !== state) {
-        this.send(
-          'inputChanged',
-          fieldPath,
-          state,
-        );
-      }
+    }
+    const current = this.get(`formValues.${fieldPath}`);
+    if (Boolean(current) !== Boolean(state)) {
+      this.send(
+        'inputChanged',
+        fieldPath,
+        Boolean(state),
+      );
     }
   },
 
@@ -730,11 +737,14 @@ export default OneForm.extend(I18n, Validations, {
    */
   resetFormValues() {
     this._super(...arguments);
+    const storageType = this.get('storage.type') || this.get('selectedStorageType.id');
+    this.autoSettingsBeforeFill(storageType);
     this.set(
       'allFieldsValues.generic.storagePathType',
       storagePathTypeDefaults[this.get('selectedStorageType.id')]
     );
     this.resetQosFormState();
+    this.autoSettingsAfterFill(storageType);
   },
 
   /**
@@ -843,10 +853,12 @@ export default OneForm.extend(I18n, Validations, {
       'allFields'
     );
 
+    const storageTypeId = get(storage, 'type');
+    this.autoSettingsBeforeFill(storageTypeId);
     this.prepareFields();
     this.resetQosFormState();
 
-    const storageType = storageTypes.findBy('id', get(storage, 'type'));
+    const storageType = storageTypes.findBy('id', storageTypeId);
     this.send('storageTypeChanged', storageType);
 
     this._toggleLumaPrefix(storage['lumaFeed'] === 'external', false);
@@ -868,6 +880,7 @@ export default OneForm.extend(I18n, Validations, {
       });
     });
     allFieldsValues.set('type_static.type', get(storageType, 'name'));
+    this.autoSettingsAfterFill(storageTypeId);
   },
 
   /**
