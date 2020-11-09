@@ -46,7 +46,7 @@ export default Service.extend(
      * @returns {Onepanel.ClusterDetails}
      */
     fetchRawCurrentCluster() {
-      return this.get('onepanelServer').request('onepanel', 'getCurrentCluster')
+      return this.get('onepanelServer').request('ClusterApi', 'getCurrentCluster')
         .then(({ data }) => data)
         .catch(error => {
           if (error && error.response && error.response.statusCode === 404) {
@@ -69,7 +69,7 @@ export default Service.extend(
      * @override
      */
     fetchClusterIds() {
-      return this.get('onepanelServer').request('onepanel', 'getClusters')
+      return this.get('onepanelServer').request('CurrentUserApi', 'getClusters')
         .then(({ data }) => data.ids);
     },
 
@@ -100,7 +100,7 @@ export default Service.extend(
     },
 
     getCluster(id) {
-      return this.get('onepanelServer').request('onepanel', 'getCluster', id)
+      return this.get('onepanelServer').request('CurrentUserApi', 'getCluster', id)
         .then(({ data }) => this.generateGuiCluster(data));
     },
 

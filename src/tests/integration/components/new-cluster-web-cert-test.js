@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { describe, it, beforeEach } from 'mocha';
+import { describe, it, beforeEach, afterEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
@@ -71,11 +71,21 @@ describe('Integration | Component | new cluster web cert', function () {
     registerService(this, 'deployment-manager', DeploymentManager);
     registerService(this, 'onepanel-server', OnepanelServer);
     registerService(this, 'gui-utils', GuiUtils);
-    this.set('_location', {});
+    this.setProperties({
+      _location: { reload: sinon.spy() },
+      fakeClock: sinon.useFakeTimers({
+        now: Date.now(),
+        shouldAdvanceTime: true,
+      }),
+    });
+  });
+
+  afterEach(function () {
+    this.get('fakeClock').restore();
   });
 
   it(
-    'changes the domain on next step if LetsEncrypt is enabled',
+    'reloads page on next step if LetsEncrypt is enabled',
     function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
@@ -83,31 +93,29 @@ describe('Integration | Component | new cluster web cert', function () {
       this.set('providerDetailsProxy', PromiseObject.create({
         promise: Promise.resolve(providerDetails),
       }));
-      const changeDomain = sinon.stub();
-      changeDomain.resolves(undefined);
-      this.on('changeDomain', changeDomain);
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
       set(lookupService(this, 'guiUtils'), 'serviceType', 'onezone');
 
       this.render(hbs `{{new-cluster-web-cert
-        _changeDomain=(action "changeDomain")
         _location=_location
         nextStep=(action "nextStep")
       }}`);
 
       return wait().then(() => {
         return click('.btn-cert-next').then(() => {
-          expect(changeDomain)
-            .to.be.calledWith('example.com', sinon.match.any);
-          expect(nextStep).to.be.not.called;
+          this.get('fakeClock').tick(6000);
+          return wait().then(() => {
+            expect(this.get('_location.reload'), 'reload').to.be.called;
+            expect(nextStep).to.be.not.called;
+          });
         });
       });
     }
   );
 
   it(
-    'does not change the domain if LetsEncrypt is disabled',
+    'does not reload page if LetsEncrypt is disabled',
     function () {
       const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
         subdomainDelegation: true,
@@ -115,13 +123,10 @@ describe('Integration | Component | new cluster web cert', function () {
       this.set('providerDetailsProxy', PromiseObject.create({
         promise: Promise.resolve(providerDetails),
       }));
-      const changeDomain = sinon.spy();
-      this.on('changeDomain', changeDomain);
       const nextStep = sinon.spy();
       this.on('nextStep', nextStep);
 
       this.render(hbs `{{new-cluster-web-cert
-        _changeDomain=(action "changeDomain")
         _location=_location
         nextStep=(action "nextStep")
       }}`);
@@ -129,8 +134,11 @@ describe('Integration | Component | new cluster web cert', function () {
       return wait().then(() => {
         return click('.toggle-field-letsEncrypt').then(() => {
           return click('.btn-cert-next').then(() => {
-            expect(changeDomain, 'changeDomain').to.be.not.called;
-            expect(nextStep, 'nextStep').to.be.called;
+            this.get('fakeClock').tick(6000);
+            return wait().then(() => {
+              expect(this.get('_location.reload'), 'reload').to.be.not.called;
+              expect(nextStep, 'nextStep').to.be.called;
+            });
           });
         });
       });

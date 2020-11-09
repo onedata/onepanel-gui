@@ -15,7 +15,7 @@ import { assert } from '@ember/debug';
 import EmberObject, { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { camelize } from '@ember/string';
+import { camelize, capitalize } from '@ember/string';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import Onepanel from 'npm:onepanel';
@@ -126,8 +126,9 @@ export default EmberObject.extend(I18n, {
     );
     const start = new Promise((resolve, reject) => {
       const config = configurationClass.constructFromObject(configuration);
+      const apiName = capitalize(onepanelServiceType) + 'ClusterApi';
       onepanelServer.request(
-        onepanelServiceType,
+        apiName,
         camelize(`configure-${shortServiceType(onepanelServiceType)}`),
         config
       ).then(resolve, reject);

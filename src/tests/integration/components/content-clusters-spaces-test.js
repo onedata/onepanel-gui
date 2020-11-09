@@ -55,13 +55,13 @@ describe('Integration | Component | content clusters spaces', function () {
     requestStub.rejects();
 
     requestStub.withArgs(
-      'oneprovider',
+      'FilePopularityApi',
       'getFilePopularityConfiguration',
       sinon.match.any
     ).resolves({ data: {} });
 
     requestStub.withArgs(
-      'oneprovider',
+      'AutoCleaningApi',
       'getSpaceAutoCleaningConfiguration',
       sinon.match.any
     ).resolves({ data: {} });

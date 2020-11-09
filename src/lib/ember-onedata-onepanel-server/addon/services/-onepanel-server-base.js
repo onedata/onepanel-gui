@@ -47,7 +47,7 @@ export default Service.extend(
      * @returns {Promise<Object>}
      */
     fetchConfiguration() {
-      return this.staticRequest('onepanel', 'getConfiguration')
+      return this.staticRequest('ClusterApi', 'getConfiguration')
         .then(({ data }) => data);
     },
 
@@ -55,7 +55,7 @@ export default Service.extend(
      * @override
      */
     fetchNode() {
-      return this.staticRequest('onepanel', 'getNode')
+      return this.staticRequest('ClusterApi', 'getNode')
         .then(({ data: { hostname, clusterType } }) => ({
           hostname,
           clusterType,
@@ -97,7 +97,7 @@ export default Service.extend(
           ],
         });
       } else {
-        return this.request('onepanel', 'getCurrentUser')
+        return this.request('CurrentUserApi', 'getCurrentUser')
           .then(({ data }) => data);
       }
     },

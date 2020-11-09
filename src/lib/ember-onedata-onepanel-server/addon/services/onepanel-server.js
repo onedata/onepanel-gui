@@ -15,7 +15,6 @@
 import { computed, get } from '@ember/object';
 import { run } from '@ember/runloop';
 import { inject as service } from '@ember/service';
-import { classify } from '@ember/string';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
@@ -56,26 +55,34 @@ export default OnepanelServerBase.extend(
     username: null,
 
     /**
+     * We cannot store `api` objects if client changes - they must be re-generated.
+     */
+    apiCache: computed('client', () => ({})),
+
+    /**
      * @type {computed<Boolean>}
      */
     isInitialized: computed('client', function () {
       return this.get('client') != null;
     }).readOnly(),
 
-    _onepanelApi: computed('client', function () {
-      let client = this.get('client');
-      return client ? new Onepanel.OnepanelApi(client) : null;
-    }).readOnly(),
-
-    _onezoneApi: computed('client', function () {
-      let client = this.get('client');
-      return client ? new Onepanel.OnezoneApi(client) : null;
-    }).readOnly(),
-
-    _oneproviderApi: computed('client', function () {
-      let client = this.get('client');
-      return client ? new Onepanel.OneproviderApi(client) : null;
-    }).readOnly(),
+    getApi(apiName) {
+      const apiCache = this.get('apiCache');
+      const client = this.get('client');
+      if (!client) {
+        return null;
+      }
+      let api = apiCache[apiName];
+      if (!api) {
+        if (typeof Onepanel[apiName] !== 'function') {
+          throw new Error(
+            `onepanel-sever#getApi: API "${apiName}" not found in JS client - probably a wrong version of onepanel JS library is used`
+          );
+        }
+        api = apiCache[apiName] = new Onepanel[apiName](client);
+      }
+      return api;
+    },
 
     /**
      * Make an API call using onepanel library (onepanel-javascript-client).
@@ -113,7 +120,7 @@ export default OnepanelServerBase.extend(
             customHandler(...params, callback);
           } else {
             if (this.get('isInitialized')) {
-              const apiObject = this.get('_' + api + 'Api');
+              const apiObject = this.getApi(api);
               const methodFun = apiObject[method];
               if (methodFun) {
                 let ensureTokenPromise;
@@ -288,7 +295,7 @@ export default OnepanelServerBase.extend(
           client.defaultHeaders['Authorization'] =
             'Basic ' + btoa(password);
         }
-        const ApiConstructor = Onepanel[classify(`${apiName}-api`)];
+        const ApiConstructor = Onepanel[apiName];
         const api = new ApiConstructor(client);
 
         return new Promise((resolve, reject) => {

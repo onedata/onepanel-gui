@@ -1,12 +1,12 @@
 /**
  * Adds a validation of backend response data
  *
- * See VALIDATORS const to add a validator for specific api method response
- * Validator functions are stored in ``utils/response-validators/``
+ * See `validators` property to add a validator for specific api method response
+ * Validator functions are stored in `utils/response-validators/`
  *
  * @module mixins/response-validator
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -26,33 +26,37 @@ import getStorageDetails from 'ember-onedata-onepanel-server/utils/response-vali
 import getProviderSpaceAutoCleaningReports from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-reports';
 import getProviderSpaceAutoCleaningStatus from 'ember-onedata-onepanel-server/utils/response-validators/oneprovider/get-provider-space-auto-cleaning-status';
 
-/**
- * Contains <api> -> <method> -> <validation function> mapping
- * @type {object}
- */
-const VALIDATORS = {
-  onepanel: {
-    getClusterHosts,
-  },
-  onezone: {
-    getZoneConfiguration,
-  },
-  oneprovider: {
-    getProviderConfiguration,
-    getProvider,
-    getProviderSpaces,
-    getSpaceDetails,
-    getStorages,
-    getStorageDetails,
-    getProviderSpaceAutoCleaningReports,
-    getProviderSpaceAutoCleaningStatus,
-  },
-};
-
 export default Mixin.create({
-  init() {
-    this._super(...arguments);
-  },
+  /**
+   * Contains `<api> -> <method> -> <validation function>` mapping
+   * @type {Object}
+   */
+  validators: Object.freeze({
+    ClusterApi: {
+      getClusterHosts,
+    },
+    OnezoneClusterApi: {
+      getZoneConfiguration,
+    },
+    OneproviderClusterApi: {
+      getProviderConfiguration,
+    },
+    OneproviderIdentityApi: {
+      getProvider,
+    },
+    SpaceSupportApi: {
+      getProviderSpaces,
+      getSpaceDetails,
+    },
+    StoragesApi: {
+      getStorages,
+      getStorageDetails,
+    },
+    AutoCleaningApi: {
+      getProviderSpaceAutoCleaningReports,
+      getProviderSpaceAutoCleaningStatus,
+    },
+  }),
 
   /**
    * See eg. onepanel-server for implementation
@@ -66,14 +70,15 @@ export default Mixin.create({
   /**
    * Check if backend response can be used by frontend
    *
-   * @param {string} api one of: onepanel, onezone, oneprovider
+   * @param {string} api name as defined in Onepanel JS client (`new Onepanel.<NameApi>`)
    * @param {string} method onepanel API method name
    * @param {string} data response data of remote method call
    * @returns {any|null} if data is not valid, return error message
    */
   validateResponseData(api, method, data) {
-    if (VALIDATORS.hasOwnProperty(api) && VALIDATORS[api].hasOwnProperty(method)) {
-      return VALIDATORS[api][method](data);
+    const validators = this.get('validators');
+    if (validators.hasOwnProperty(api) && validators[api].hasOwnProperty(method)) {
+      return validators[api][method](data);
     } else {
       console.warn(
         `responseValidator: validator function not found for: ${api}/${method}`

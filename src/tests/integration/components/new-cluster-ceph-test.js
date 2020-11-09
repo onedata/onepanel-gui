@@ -20,7 +20,7 @@ describe('Integration | Component | new cluster ceph', function () {
     registerService(this, 'onepanel-server', OnepanelServerStub);
     const onepanelServer = lookupService(this, 'onepanel-server');
     sinon.stub(onepanelServer, 'request')
-      .withArgs('oneprovider', 'getBlockDevices', 'example.com')
+      .withArgs('CephApi', 'getBlockDevices', 'example.com')
       .resolves({
         data: {
           blockDevices: [{

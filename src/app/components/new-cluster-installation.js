@@ -517,7 +517,7 @@ export default Component.extend(I18n, {
       } = this.getProperties('onepanelServer', 'globalNotify', 'hosts');
 
       return onepanelServer
-        .request('onepanel', 'removeClusterHost', hostname)
+        .request('ClusterApi', 'removeClusterHost', hostname)
         .then(() => {
           hosts.removeObject(hosts.find(h => get(h, 'hostname') === hostname));
           if (this.get('primaryClusterManager') === hostname) {

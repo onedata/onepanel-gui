@@ -89,7 +89,7 @@ export default Service.extend(
     fetchSignInNotification() {
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
-          .request('onezone', 'getGuiMessage', 'signin_notification')
+          .request('ServiceConfigurationApi', 'getGuiMessage', 'signin_notification')
           .then(({ data }) => data);
       } else {
         return resolve();
@@ -103,7 +103,12 @@ export default Service.extend(
      */
     saveSignInNotification(message) {
       return this.get('onepanelServer')
-        .request('onezone', 'modifyGuiMessage', 'signin_notification', message)
+        .request(
+          'ServiceConfigurationApi',
+          'modifyGuiMessage',
+          'signin_notification',
+          message
+        )
         .then(result => {
           setProperties(this.get('signInNotificationProxy.content'), message);
           return result;
@@ -116,7 +121,7 @@ export default Service.extend(
     fetchPrivacyPolicy() {
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
-          .request('onezone', 'getGuiMessage', 'privacy_policy')
+          .request('ServiceConfigurationApi', 'getGuiMessage', 'privacy_policy')
           .then(({ data }) => data);
       } else {
         return resolve();
@@ -130,7 +135,7 @@ export default Service.extend(
      */
     savePrivacyPolicy(message) {
       return this.get('onepanelServer')
-        .request('onezone', 'modifyGuiMessage', 'privacy_policy', message)
+        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'privacy_policy', message)
         .then(result => {
           setProperties(this.get('privacyPolicyProxy.content'), message);
           return result;
@@ -143,7 +148,11 @@ export default Service.extend(
     fetchCookieConsentNotification() {
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
-          .request('onezone', 'getGuiMessage', 'cookie_consent_notification')
+          .request(
+            'ServiceConfigurationApi',
+            'getGuiMessage',
+            'cookie_consent_notification'
+          )
           .then(({ data }) => data);
       } else {
         return resolve();
@@ -157,7 +166,12 @@ export default Service.extend(
      */
     saveCookieConsentNotification(message) {
       return this.get('onepanelServer')
-        .request('onezone', 'modifyGuiMessage', 'cookie_consent_notification', message)
+        .request(
+          'ServiceConfigurationApi',
+          'modifyGuiMessage',
+          'cookie_consent_notification',
+          message
+        )
         .then(result => {
           setProperties(this.get('cookieConsentNotificationProxy.content'), message);
           return result;
