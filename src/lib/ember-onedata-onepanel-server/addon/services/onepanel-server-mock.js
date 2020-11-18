@@ -521,9 +521,28 @@ export default OnepanelServerBase.extend(
             poolName: 'some_pool',
             importedStorage: true,
           };
+          const storageHttp = {
+            name: 'My HTTP server',
+            verifyServerCertificate: false,
+            type: 'http',
+            storagePathType: 'canonical',
+            skipStorageDetection: true,
+            readonly: true,
+            qosParameters: {
+              storageId: 'e777476baf3418ed9861a97750be285ech9802',
+              providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
+            },
+            lumaFeed: 'auto',
+            importedStorage: true,
+            id: 'e777476baf3418ed9861a97750be285ech9802',
+            endpoint: 'http://172.17.0.3',
+            credentialsType: 'none',
+            connectionPoolSize: 150,
+            authorizationHeader: 'Authorization: Bearer {}',
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            ...[storage1, storageCeph, storageCephRados, storage2].map(storage =>
+            ...[storage1, storageCeph, storageCephRados, storage2, storageHttp].map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );
