@@ -803,7 +803,41 @@ describe('Integration | Component | cluster storage add form', function () {
         await wait();
         const helper = new ClusterStorageAddHelper(this.$());
 
-        expect(helper.getToggleInput('generic_editor-importedStorage'), 'readonly')
+        expect(helper.getToggleInput('generic_editor-importedStorage'), 'importedStorage')
+          .to.have.class('checked')
+          .and.have.class('disabled');
+
+        expect(helper.getToggleInput('generic_editor-readonly'), 'readonly')
+          .to.have.class('checked')
+          .and.have.class('disabled');
+
+        expect(
+          helper.getToggleInput('generic_editor-skipStorageDetection'),
+          'skipStorageDet.'
+        ).to.have.class('checked').and.have.class('disabled');
+      });
+
+    it(
+      'locks "imported storage", "readonly" and "skip storage detection" to true for HTTP storage after change from show mode',
+      async function () {
+        this.setProperties({
+          storage: HTTP_STORAGE,
+          mode: 'show',
+        });
+        this.render(hbs `{{cluster-storage-add-form
+          storage=storage
+          mode=mode
+        }}`);
+
+        await wait();
+
+        this.set('mode', 'edit');
+
+        await wait();
+
+        const helper = new ClusterStorageAddHelper(this.$());
+
+        expect(helper.getToggleInput('generic_editor-importedStorage'), 'importedStorage')
           .to.have.class('checked')
           .and.have.class('disabled');
 

@@ -515,6 +515,7 @@ export default OneForm.extend(I18n, Validations, {
 
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
+    this.autoSettingsAll();
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
@@ -632,7 +633,7 @@ export default OneForm.extend(I18n, Validations, {
       hint = this.t('cannotReadonlyNotImported');
     }
 
-    // HTTP storage type imples that storage is imported,
+    // HTTP storage type implies that storage is imported,
     // so it will be eventually locked to true
     let storageType = this.get('storage.type') || this.get('selectedStorageType.id');
     if (storageType === 'http') {
@@ -661,6 +662,12 @@ export default OneForm.extend(I18n, Validations, {
     } else {
       this.unlockToggle('skipStorageDetection');
     }
+  },
+
+  autoSettingsAll() {
+    this.autoSettingsImportedStorage();
+    this.autoSettingsReadonly();
+    this.autoSettingsSkipStorageDetection();
   },
 
   fetchCephOsds() {
@@ -765,10 +772,7 @@ export default OneForm.extend(I18n, Validations, {
       storagePathTypeDefaults[this.get('selectedStorageType.id')]
     );
     this.resetQosFormState();
-
-    this.autoSettingsImportedStorage();
-    this.autoSettingsReadonly();
-    this.autoSettingsSkipStorageDetection();
+    this.autoSettingsAll();
   },
 
   /**
