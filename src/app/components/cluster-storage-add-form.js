@@ -480,31 +480,15 @@ export default OneForm.extend(I18n, Validations, {
     function selectedStorageTypeObserver() {
       this.resetFormValues();
       this._toggleLumaPrefix(false, false);
+      this.autoSettingsImportedStorage();
+      this.autoSettingsReadonly();
     }
   ),
 
   storageProvidesSupportObserver: observer(
     'storageProvidesSupport',
     function storageProvidesSupportObserver() {
-      const importedStorageEditField =
-        this.getField('generic_editor.importedStorage');
-      const storageProvidesSupport = this.get('storageProvidesSupport');
-      const defaultImportedStorageValue = this.get('storage.importedStorage');
-      const changedImportedStorageValue =
-        this.get('allFieldsValues.generic_editor.importedStorage');
-
-      set(importedStorageEditField, 'disabled', storageProvidesSupport);
-
-      // Reset importedStorage value when storageProvidesSupport changed during edition 
-      if (storageProvidesSupport &&
-        changedImportedStorageValue !== defaultImportedStorageValue
-      ) {
-        this.send(
-          'inputChanged',
-          'generic_editor.importedStorage',
-          defaultImportedStorageValue
-        );
-      }
+      this.autoSettingsImportedStorage();
     }
   ),
 
@@ -515,19 +499,7 @@ export default OneForm.extend(I18n, Validations, {
     'formValues.generic.readonly',
     'formValues.generic_editor.readonly',
     function readonlyObserver() {
-
-      const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
-      const isReadonly = this.get(`formValues.${prefix}.readonly`);
-
-      if (isReadonly) {
-        this.lockToggle(
-          'skipStorageDetection',
-          true,
-          this.t('cannotStorageDetectionReadonly')
-        );
-      } else {
-        this.unlockToggle('skipStorageDetection');
-      }
+      this.autoSettingsSkipStorageDetection();
     }
   ),
 
@@ -538,14 +510,7 @@ export default OneForm.extend(I18n, Validations, {
     'formValues.generic.importedStorage',
     'formValues.generic_editor.importedStorage',
     function importedStorageObserver() {
-      const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
-      const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
-
-      if (isImportedStorage) {
-        this.unlockToggle('readonly');
-      } else {
-        this.lockToggle('readonly', false, this.t('cannotReadonlyNotImported'));
-      }
+      this.autoSettingsReadonly();
     }),
 
   modeObserver: observer('mode', function modeObserver() {
@@ -598,16 +563,20 @@ export default OneForm.extend(I18n, Validations, {
     this._addFieldsLabels();
     this._generateStaticFields();
     this._generateEditorFields();
+
     if (storage) {
       this._fillInForm();
     } else if (selectedStorageType) {
       this.selectedStorageTypeObserver();
     }
+
     this.fetchCephOsds();
     this.osdsNumberObserver();
+
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
     this.readonlyObserver();
+
     this.get('cephOsdsProxy')
       .then(() => safeExec(this, () => {
         this.introduceCephOsds();
@@ -619,24 +588,78 @@ export default OneForm.extend(I18n, Validations, {
           );
         }
       }));
-    this.autoSettingsAfterFill(storage && get(storage, 'type') || selectedStorageType);
   },
 
-  autoSettingsBeforeFill(storageType) {
-    const isHttpStorage = storageType === 'http';
-    if (!isHttpStorage) {
+  autoSettingsImportedStorage() {
+    let storageType = this.get('storage.type') || this.get('selectedStorageType.id');
+    const storageProvidesSupport = this.get('storageProvidesSupport');
+    const defaultImportedStorageValue = this.get('storage.importedStorage');
+    const changedImportedStorageValue =
+      this.get('allFieldsValues.generic_editor.importedStorage');
+
+    let disabled = storageProvidesSupport;
+    let value = storageProvidesSupport &&
+      changedImportedStorageValue !== defaultImportedStorageValue ?
+      defaultImportedStorageValue : undefined;
+    let lockHint = null;
+
+    if (storageType === 'http') {
+      disabled = true;
+      value = true;
+      lockHint = this.t('httpOnlyImported');
+    }
+
+    if (disabled) {
+      this.lockToggle('importedStorage', value, lockHint);
+    } else {
       this.unlockToggle('importedStorage');
     }
   },
 
-  autoSettingsAfterFill(storageType) {
+  autoSettingsReadonly() {
+    const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
+    const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
+
+    let locked;
+    let value;
+    let hint = null;
+
+    if (isImportedStorage) {
+      locked = false;
+    } else {
+      locked = true;
+      value = false;
+      hint = this.t('cannotReadonlyNotImported');
+    }
+
+    // HTTP storage type imples that storage is imported,
+    // so it will be eventually locked to true
+    let storageType = this.get('storage.type') || this.get('selectedStorageType.id');
     if (storageType === 'http') {
+      locked = true;
+      value = true;
+      hint = this.t('httpOnlyReadonly');
+    }
+
+    if (locked) {
+      this.lockToggle('readonly', value, hint);
+    } else {
+      this.unlockToggle('readonly');
+    }
+  },
+
+  autoSettingsSkipStorageDetection() {
+    const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
+    const isReadonly = this.get(`formValues.${prefix}.readonly`);
+
+    if (isReadonly) {
       this.lockToggle(
-        'importedStorage',
+        'skipStorageDetection',
         true,
-        this.t('httpOnlyImported')
+        this.t('cannotStorageDetectionReadonly')
       );
-      this.lockToggle('readonly', true, this.t('httpOnlyReadonly'));
+    } else {
+      this.unlockToggle('skipStorageDetection');
     }
   },
 
@@ -737,14 +760,15 @@ export default OneForm.extend(I18n, Validations, {
    */
   resetFormValues() {
     this._super(...arguments);
-    const storageType = this.get('storage.type') || this.get('selectedStorageType.id');
-    this.autoSettingsBeforeFill(storageType);
     this.set(
       'allFieldsValues.generic.storagePathType',
       storagePathTypeDefaults[this.get('selectedStorageType.id')]
     );
     this.resetQosFormState();
-    this.autoSettingsAfterFill(storageType);
+
+    this.autoSettingsImportedStorage();
+    this.autoSettingsReadonly();
+    this.autoSettingsSkipStorageDetection();
   },
 
   /**
@@ -853,11 +877,10 @@ export default OneForm.extend(I18n, Validations, {
       'allFields'
     );
 
-    const storageTypeId = get(storage, 'type');
-    this.autoSettingsBeforeFill(storageTypeId);
     this.prepareFields();
     this.resetQosFormState();
 
+    const storageTypeId = get(storage, 'type');
     const storageType = storageTypes.findBy('id', storageTypeId);
     this.send('storageTypeChanged', storageType);
 
@@ -880,7 +903,6 @@ export default OneForm.extend(I18n, Validations, {
       });
     });
     allFieldsValues.set('type_static.type', get(storageType, 'name'));
-    this.autoSettingsAfterFill(storageTypeId);
   },
 
   /**
