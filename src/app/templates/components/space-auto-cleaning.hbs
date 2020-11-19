@@ -44,30 +44,23 @@
             }}
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{#if (or stopButtonClick displayStartButton)}}
-              {{#one-spin-button
-                action=(action "startCleaning")
-                class="btn btn-sm btn-primary btn-clean-now"
-                defaultTimout=10000
-                disabled=(or disableCleaningButton (not startNowEnabled))
-              }}
-                {{tt this (if disableCleaningButton "stopedCleaning" "startCleaning")}}
-              {{/one-spin-button}}
+            {{#one-spin-button
+                action=(action (if displayStartButton "startCleaning" "stopCleaning"))
+                class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-warning btn-stop-now"))
+                disabled=(or (and displayStartButton (not enableStartButton)) disableAutoCleaningButton)}}
+              {{#if disableAutoCleaningButton}}
+                {{tt this (if displayStartButton "stoppedCleaning" "startedCleaning")}}
+              {{else}}
+                {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
+              {{/if}}  
+            {{/one-spin-button}}
+            {{#if (and displayStartButton (not media.isMobile))}}
               {{one-label-tip
                 title=(tt this "startCleaningHint")
-                class="clean-now-tip hidden-xs"
+                class="clean-now-tip"
                 placement="top"
                 arrowPlacement="left"
               }}
-            {{else}}
-              {{#one-spin-button
-                action=(action "stopCleaning")
-                class="btn btn-sm btn-warning btn-stop-now"
-                defaultTimout=10000
-                disabled=disableCleaningButton
-              }}
-                {{tt this (if disableCleaningButton "startedCleaning" "stopCleaning")}}
-              {{/one-spin-button}}
             {{/if}}
           </div>
         {{/loading-container}}

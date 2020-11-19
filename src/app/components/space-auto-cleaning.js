@@ -19,6 +19,7 @@ import notImplementedReject from 'onedata-gui-common/utils/not-implemented-rejec
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { getOwner } from '@ember/application';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   SpaceAutoCleaningConfiguration,
@@ -27,6 +28,8 @@ const {
 const BLANK_AUTO_CLEANING = {
   enabled: false,
 };
+
+const autoCleaningButtonTimeout = 1000;
 
 export default Component.extend(I18n, {
   media: service(),
@@ -102,33 +105,35 @@ export default Component.extend(I18n, {
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   /**
-   * If true, disable cleaning button
+   * If true, start button is clicked
    * @type {boolean}
    */
-  disableCleaningButton: false,
+  startButtonClicked: false,
 
   /**
-   * If true, stop button is clicked
+   * If true, auto-cleaning button is disable
    * @type {boolean}
    */
-  stopButtonClick: true,
-
-  startNowEnabled: computed(
-    'isCleanEnabled',
-    'target',
-    'status.{spaceOccupancy,inProgress}',
-    function () {
-      return this.get('isCleanEnabled') &&
-        !this.get('status.inProgress') &&
-        this.get('target') < this.get('status.spaceOccupancy');
-    }),
+  disableAutoCleaningButton: false,
 
   displayStartButton: computed(
     'isCleanEnabled',
+    'status.inProgress',
+    'startButtonClicked',
+    function displayStartButton() {
+      return !this.get('status.inProgress') || !this.get('startButtonClicked');
+    }),
+
+  enableStartButton: computed(
+    'isCleanEnabled',
+    'target',
     'status.{spaceOccupancy,inProgress}',
+    'disableAutoCleaningButton',
     function () {
       return this.get('isCleanEnabled') &&
-        !this.get('status.inProgress');
+        !this.get('status.inProgress') &&
+        this.get('target') < this.get('status.spaceOccupancy') &&
+        !this.get('disableAutoCleaningButton');
     }),
 
   /**
@@ -164,6 +169,8 @@ export default Component.extend(I18n, {
     // we should provide an empty valid autoCleaningConfiguration
     if (autoCleaningConfiguration == null) {
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
+    } else {
+      this.set('target', autoCleaningConfiguration.target);
     }
 
     const spaceAutoCleaningStatusUpdater =
@@ -264,8 +271,10 @@ export default Component.extend(I18n, {
         'spaceId',
         'spaceAutoCleaningStatusUpdater'
       );
-      this.set('disableCleaningButton', true);
-      this.set('displayStartButton', false);
+      this.setProperties({
+        startButtonClicked: true,
+        disableAutoCleaningButton: true,
+      });
       return spaceManager.startCleaning(spaceId)
         .then(() => {
           // only a side effect
@@ -273,8 +282,9 @@ export default Component.extend(I18n, {
         })
         .then(() => {
           later(this, () => {
-            this.set('disableCleaningButton', false);
-          }, 1000);
+            safeExec(this, 'set', 'disableAutoCleaningButton',
+              false);
+          }, autoCleaningButtonTimeout);
         })
         .catch(error => {
           globalNotify.backendError(
@@ -283,7 +293,6 @@ export default Component.extend(I18n, {
           );
           throw error;
         });
-
     },
 
     stopCleaning() {
@@ -298,8 +307,10 @@ export default Component.extend(I18n, {
         'spaceId',
         'spaceAutoCleaningStatusUpdater'
       );
-      this.set('disableCleaningButton', true);
-      this.set('displayStartButton', true);
+      this.setProperties({
+        disableAutoCleaningButton: true,
+        startButtonClicked: false,
+      });
       return spaceManager.stopCleaning(spaceId)
         .then(() => {
           // only a side effect
@@ -307,8 +318,9 @@ export default Component.extend(I18n, {
         })
         .then(() => {
           later(this, () => {
-            this.set('disableCleaningButton', false);
-          }, 10000);
+            safeExec(this, 'set', 'disableAutoCleaningButton',
+              false);
+          }, autoCleaningButtonTimeout);
         })
         .catch(error => {
           globalNotify.backendError(

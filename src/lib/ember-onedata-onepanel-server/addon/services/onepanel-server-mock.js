@@ -1200,10 +1200,10 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_cancelAutoCleaning: computed(function () {
+    _req_AutoCleaningApi_cancelAutoCleaning: computed(function () {
       return {
         success: (id) => {
-          this._getAutoCleaningStatusMock(id).tick();
+          this._getAutoCleaningStatusMock(id).stop();
           return undefined;
         },
         statusCode: () => 200,

@@ -279,7 +279,7 @@ export default Service.extend({
 
   stopCleaning(spaceId) {
     return this.get('onepanelServer').request(
-      'oneprovider',
+      'AutoCleaningApi',
       'cancelAutoCleaning',
       spaceId,
     ).then(({ data }) => data);
