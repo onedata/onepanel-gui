@@ -250,7 +250,7 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
+    // NOTE: Uncomment one of lines below to start onepanel-gui in specified
     // deployment step. See more in models/installation-details.
     //
     // mockStep: installationStepsMap.deploy,
@@ -989,7 +989,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_SpaceSupportApi_getAutoStorageImportInfo: computed(function () {
+    _req_StorageImportApi_getAutoStorageImportInfo: computed(function () {
       return {
         success: (spaceId) => {
           const space = _.find(this.get('__spaces'), s => s.id === spaceId);
@@ -998,7 +998,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_SpaceSupportApi_getAutoStorageImportStats: computed(function () {
+    _req_StorageImportApi_getAutoStorageImportStats: computed(function () {
       return {
         success: (spaceId, period, metrics) => {
           const space = _.find(this.get('__spaces'), s => s.id === spaceId);
@@ -1007,7 +1007,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_SpaceSupportApi_getManualStorageImportExample() {
+    _req_StorageImportApi_getManualStorageImportExample() {
       return {
         success: (spaceId) => {
           return {
@@ -1019,7 +1019,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    // TODO: after revoking space support, do not return the space in getSpaces  
+    // TODO: after revoking space support, do not return the space in getSpaces
     _req_oneprovider_revokeSpaceSupport: computed(function () {
       return {
         success: (spaceId) => {
@@ -1325,14 +1325,14 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    // TODO: maybe implement real 
+    // TODO: maybe implement real
     _req_OneproviderClusterApi_modifyProviderClusterIps() {
       return {
         success: () => 204,
       };
     },
 
-    // TODO: maybe implement real 
+    // TODO: maybe implement real
     _req_OnezoneClusterApi_modifyZoneClusterIps() {
       return {
         success: () => 204,

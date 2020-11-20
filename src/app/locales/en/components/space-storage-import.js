@@ -16,9 +16,15 @@ export default {
   importDetails: {
     start: 'Started',
     stop: 'Stopped',
+    processedFiles: 'Processed files',
+    totalStorageFiles: 'Total storage files',
     createdFiles: 'Created files',
     modifiedFiles: 'Modified files',
+    unmodifiedFiles: 'Unmodified files',
     deletedFiles: 'Deleted files',
+    failedFiles: 'Failed files',
+    processedFilesTip: 'Sum of created, modified, unmodified, deleted and failed files.',
+    totalStorageFilesTip: 'Sum of created, modified and unmodified files.',
   },
   startStopScanButton: {
     stopScan: 'Stop scan',
