@@ -108,7 +108,7 @@ export default Component.extend(I18n, {
    * If true, start button is clicked
    * @type {boolean}
    */
-  startButtonClicked: false,
+  startButtonClicked: true,
 
   /**
    * If true, auto-cleaning button is disable
