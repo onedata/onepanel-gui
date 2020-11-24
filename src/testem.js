@@ -5,9 +5,15 @@ module.exports = {
   report_file: 'tmp/test-results.xml',
   disable_watching: true,
   launch_in_ci: [
-    'Firefox',
+    'Chrome',
   ],
   launch_in_dev: [
-    'Firefox',
+    'Chrome',
   ],
+  // TODO: use only for CI on xvfb and dockerized env
+  browser_args: {
+    Chrome: [
+      '--no-sandbox',
+    ],
+  },
 };
