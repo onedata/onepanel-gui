@@ -38,6 +38,10 @@
       }
     }
 
+    .import-info-content {
+      position: relative;
+    }
+
     .import-info-details-first-col {
       .detail-highlighted {
         color: darken($color-one-azure, 25%);
@@ -50,7 +54,23 @@
       }
     }
 
+    .counters-notice {
+      font-style: italic;
+      font-size: smaller;
+      padding: 0;
+
+      @media (min-width: $screen-md-min) {
+        position: absolute;
+        bottom: $content-row-vertical-padding;
+        margin: 0;
+      }
+    }
+
     @media (min-width: $screen-md-min) {
+      .import-info-details-first-col {
+        margin-bottom: 2.5em;
+      }
+
       .import-info-details-second-col {
         padding-left: $padding-base-horizontal;
       }
