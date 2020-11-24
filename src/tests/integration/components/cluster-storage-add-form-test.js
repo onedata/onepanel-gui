@@ -14,7 +14,6 @@ import FormHelper from '../../helpers/form';
 import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { selectChoose } from '../../helpers/ember-power-select';
 
 const CephManager = Service.extend({
@@ -30,12 +29,6 @@ const CephManager = Service.extend({
 class ClusterStorageAddHelper extends FormHelper {
   constructor($template) {
     super($template, '.cluster-storage-add-form');
-  }
-}
-
-class StorageTypeSelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.storage-type-select-group');
   }
 }
 
@@ -144,8 +137,9 @@ describe('Integration | Component | cluster storage add form', function () {
   context('in create mode', function () {
     /**
      * Test against a strange bug that occured when automatically changed readonly toggle
+     * @param {{ id: String, name: String }} targetStorageType
      */
-    function runNameValidationLockTest({ targetStorageType }) {
+    function runNameValidationLockTest(targetStorageType) {
       it(
         `does not block name input by validation after immediate storage type change to ${targetStorageType.name}`,
         async function () {
@@ -155,25 +149,20 @@ describe('Integration | Component | cluster storage add form', function () {
             {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
           `);
 
-          let helper;
-          let select;
-          return wait().then(() => {
-            helper = new ClusterStorageAddHelper(this.$());
-            select = new StorageTypeSelectHelper();
-            this.set('selectedStorageType', targetStorageType);
-            return new Promise(resolve => select.selectOption(2, resolve));
-          }).then(() => {
-            helper.getInput('generic-name').val('hello').change();
-            return wait();
-          }).then(() => {
-            expect(this.$('.has-error'), 'error indicator').to.not.exist;
-          });
+          await wait();
+          const helper = new ClusterStorageAddHelper(this.$());
+          this.set('selectedStorageType', targetStorageType);
+          await wait();
+          helper.getInput('generic-name').val('hello').change();
+          await wait();
+
+          expect(this.$('.has-error'), 'error indicator').to.not.exist;
         }
       );
     }
 
-    runNameValidationLockTest({ targetStorageType: POSIX_TYPE });
-    runNameValidationLockTest({ targetStorageType: HTTP_TYPE });
+    runNameValidationLockTest(POSIX_TYPE);
+    runNameValidationLockTest(HTTP_TYPE);
 
     it('renders fields for POSIX storage type if "posix" is selected',
       function () {
