@@ -25,7 +25,7 @@ export default {
     failedFiles: 'Failed files',
     processedFilesTip: 'Sum of created, modified, unmodified, deleted and failed files.',
     totalStorageFilesTip: 'Sum of created, modified and unmodified files.',
-    countersNotice: 'Files counters include both directories and regular files.',
+    countersNotice: 'File counters include both directories and regular files.',
   },
   startStopScanButton: {
     stopScan: 'Stop scan',
