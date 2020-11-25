@@ -201,16 +201,10 @@ export default Component.extend(...componentMixins, {
       return this.get('modifySpace')({ autoStorageImportConfig })
         .then(() => safeExec(this, () => closeFormCallback()));
     },
-    importDetailHovered(event) {
+    toggleImportDetailsHovered(isHovered, event) {
       const hoverTargetClass = event.target.getAttribute('data-highlight-on-hover');
       if (hoverTargetClass) {
-        this.$(`.${hoverTargetClass}`).addClass('detail-highlighted');
-      }
-    },
-    importDetailUnhovered(event) {
-      const hoverTargetClass = event.target.getAttribute('data-highlight-on-hover');
-      if (hoverTargetClass) {
-        this.$(`.${hoverTargetClass}`).removeClass('detail-highlighted');
+        this.$(`.${hoverTargetClass}`).toggleClass('detail-highlighted', isHovered);
       }
     },
   },

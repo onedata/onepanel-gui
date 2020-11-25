@@ -54,10 +54,38 @@
       }
     }
 
+    .highlightable-subproperty {
+      position: relative;
+      transition: transition-ease-in(padding-left);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        display: block;
+        width: 0.5em;
+        height: 0.5em;
+        background-color: $main-text-color;
+        opacity: 0;
+        transition: transition-ease-in(opacity), transition-ease-in(background-color);
+      }
+
+      &.detail-highlighted {
+        padding-left: 1em;
+
+        &::before {
+          opacity: 1;
+          background-color: $color-one-azure;
+        }
+      }
+    }
+
     .counters-notice {
       font-style: italic;
       font-size: smaller;
-      padding: 0;
+      padding: $content-row-vertical-padding 0 0 0;
 
       @media (min-width: $screen-md-min) {
         position: absolute;
