@@ -14,7 +14,6 @@ import FormHelper from '../../helpers/form';
 import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { selectChoose } from '../../helpers/ember-power-select';
 
 const CephManager = Service.extend({
@@ -33,12 +32,6 @@ class ClusterStorageAddHelper extends FormHelper {
   }
 }
 
-class StorageTypeSelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.storage-type-select-group');
-  }
-}
-
 const POSIX_TYPE = {
   id: 'posix',
   name: 'POSIX',
@@ -52,6 +45,11 @@ const CEPH_RADOS_TYPE = {
 const S3_TYPE = {
   id: 's3',
   name: 'S3',
+};
+
+const HTTP_TYPE = {
+  id: 'http',
+  name: 'HTTP',
 };
 
 const POSIX_STORAGE = {
@@ -137,6 +135,35 @@ describe('Integration | Component | cluster storage add form', function () {
   });
 
   context('in create mode', function () {
+    /**
+     * Test against a strange bug that occured when automatically changed readonly toggle
+     * @param {{ id: String, name: String }} targetStorageType
+     */
+    function runNameValidationLockTest(targetStorageType) {
+      it(
+        `does not block name input by validation after immediate storage type change to ${targetStorageType.name}`,
+        async function () {
+          this.set('selectedStorageType', CEPH_RADOS_TYPE);
+
+          this.render(hbs `
+            {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+          `);
+
+          await wait();
+          const helper = new ClusterStorageAddHelper(this.$());
+          this.set('selectedStorageType', targetStorageType);
+          await wait();
+          helper.getInput('generic-name').val('hello').change();
+          await wait();
+
+          expect(this.$('.has-error'), 'error indicator').to.not.exist;
+        }
+      );
+    }
+
+    runNameValidationLockTest(POSIX_TYPE);
+    runNameValidationLockTest(HTTP_TYPE);
+
     it('renders fields for POSIX storage type if "posix" is selected',
       function () {
         // +2 because of 'type' field and empty qos parameter field
@@ -461,32 +488,6 @@ describe('Integration | Component | cluster storage add form', function () {
               .and.not.have.class('disabled');
             return click(helper.getToggleInput('generic-readonly')[0]);
           });
-      }
-    );
-
-    // test against a strange bug that occured when automatically changed readonly toggle
-    it(
-      'does not block name input by validation after immediate storage type change',
-      function () {
-        this.set('selectedStorageType', CEPH_RADOS_TYPE);
-
-        this.render(hbs `
-          {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
-        `);
-
-        let helper;
-        let select;
-        return wait().then(() => {
-          helper = new ClusterStorageAddHelper(this.$());
-          select = new StorageTypeSelectHelper();
-          this.set('selectedStorageType', POSIX_TYPE);
-          return new Promise(resolve => select.selectOption(2, resolve));
-        }).then(() => {
-          helper.getInput('generic-name').val('hello').change();
-          return wait();
-        }).then(() => {
-          expect(this.$('.has-error'), 'error indicator').to.not.exist;
-        });
       }
     );
 
@@ -849,6 +850,34 @@ describe('Integration | Component | cluster storage add form', function () {
           helper.getToggleInput('generic_editor-skipStorageDetection'),
           'skipStorageDet.'
         ).to.have.class('checked').and.have.class('disabled');
+      });
+
+    it(
+      'locks "imported storage" to true for non-HTTP storage with enabled import and provides support after change from show mode',
+      async function () {
+        this.setProperties({
+          storage: POSIX_STORAGE,
+          mode: 'show',
+        });
+        this.render(hbs `{{cluster-storage-add-form
+          storage=storage
+          mode=mode
+          storageProvidesSupport=true
+        }}`);
+
+        await wait();
+        const helper = new ClusterStorageAddHelper(this.$());
+        expect(
+            helper.getInput('generic_static-importedStorage').find('.one-way-toggle'),
+            'show'
+          )
+          .to.have.class('checked')
+          .and.have.class('disabled');
+        this.set('mode', 'edit');
+        await wait();
+        expect(helper.getToggleInput('generic_editor-importedStorage'), 'edit')
+          .to.have.class('checked')
+          .and.have.class('disabled');
       });
   });
 });

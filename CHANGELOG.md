@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-7002 Added "Processed files", "Total storage files", "Unmodified files" and "Failed files" counters to storage import statistics
+* VFS-7017 Fixed false locked state of toggles and false validation in storage edit form
 * VFS-6973 Locking HTTP storage readonly and skip storage detection toggles to enabled state also when modifying storage
 * VFS-6855 Using refactored Onepanel API (methods namespace change)
 * VFS-6835 Sidebar items layout changed to use flexbox

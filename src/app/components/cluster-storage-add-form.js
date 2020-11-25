@@ -717,7 +717,7 @@ export default OneForm.extend(I18n, Validations, {
       });
     }
     const current = this.get(`formValues.${fieldPath}`);
-    if (Boolean(current) !== Boolean(state)) {
+    if (state !== undefined && Boolean(current) !== Boolean(state)) {
       this.send(
         'inputChanged',
         fieldPath,
