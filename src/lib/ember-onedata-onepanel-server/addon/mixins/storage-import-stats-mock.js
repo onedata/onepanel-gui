@@ -136,7 +136,9 @@ export default Mixin.create({
         stop: status === 'completed' ? nowTimestamp : null,
         createdFiles: 1000,
         modifiedFiles: 500,
+        unmodifiedFiles: 300,
         deletedFiles: 250,
+        failedFiles: 1,
         nextScan: Math.floor((new Date().valueOf() / 1000)) + 7200,
       };
     }
