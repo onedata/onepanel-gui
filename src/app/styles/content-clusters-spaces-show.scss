@@ -15,7 +15,7 @@
     }
     .import-settings-list {
       .one-collapsible-list-item-content {
-        padding: 0 $padding-base-horizontal
+        padding: 0 $padding-base-horizontal;
       }
     }
 
@@ -35,6 +35,78 @@
       .import-info-header {
         // Space for start/stop scan button
         padding-right: 190px;
+      }
+    }
+
+    .import-info-content {
+      position: relative;
+    }
+
+    .import-info-details-first-col {
+      .detail-highlighted {
+        color: darken($color-one-azure, 25%);
+      }
+    }
+
+    .import-info-details-second-col {
+      .detail-highlighted {
+        color: $color-one-azure;
+      }
+    }
+
+    .highlightable-subproperty {
+      position: relative;
+      transition: transition-ease-in(padding-left);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        display: block;
+        width: 0.5em;
+        height: 0.5em;
+        background-color: $main-text-color;
+        opacity: 0;
+        transition: transition-ease-in(opacity), transition-ease-in(background-color);
+      }
+
+      &.detail-highlighted {
+        padding-left: 1em;
+
+        &::before {
+          opacity: 1;
+          background-color: $color-one-azure;
+        }
+      }
+    }
+
+    .counters-notice {
+      font-style: italic;
+      font-size: smaller;
+      padding: $content-row-vertical-padding 0 0 0;
+
+      @media (min-width: $screen-md-min) {
+        position: absolute;
+        bottom: $content-row-vertical-padding;
+        margin: 0;
+      }
+    }
+
+    @media (min-width: $screen-md-min) {
+      .import-info-details-first-col {
+        margin-bottom: 2.5em;
+      }
+
+      .import-info-details-second-col {
+        padding-left: $padding-base-horizontal;
+      }
+    }
+
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      .import-info-details-first-col .content-row:last-child {
+        border-bottom: 1px solid $main-border-color;
       }
     }
   }
@@ -87,7 +159,7 @@
   .one-space-indicator {
     margin-top: $padding-base-vertical;
   }
-  
+
   .support-size-this {
     .row-modify-support-size {
       position: relative;

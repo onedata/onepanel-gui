@@ -97,7 +97,7 @@
     "jquery.scrollto": "2.1.2",
     "loader.js": "4.6.0",
     "moment": "2.19.3",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#a41939d1d9242fc246fce18109e24a51508629a4",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#cbe2b8b67004f387954ca36b2694845975d1298c",
     "perfect-scrollbar": "1.4.0",
     "round10": "1.0.3",
     "sass": "1.17.0",
