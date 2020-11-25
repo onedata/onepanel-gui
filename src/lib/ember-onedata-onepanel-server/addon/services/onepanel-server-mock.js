@@ -1194,6 +1194,7 @@ export default OnepanelServerBase.extend(
       return {
         success: (id) => {
           this._getAutoCleaningStatusMock(id).forceStart();
+          this._addReport(id);
           return undefined;
         },
         statusCode: () => 200,
@@ -1203,6 +1204,7 @@ export default OnepanelServerBase.extend(
     _req_AutoCleaningApi_cancelAutoCleaning: computed(function () {
       return {
         success: (id) => {
+          this._changeStatusToCancelled(id);
           this._getAutoCleaningStatusMock(id).stop();
           return undefined;
         },

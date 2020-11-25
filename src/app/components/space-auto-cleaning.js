@@ -272,8 +272,8 @@ export default Component.extend(I18n, {
         'spaceAutoCleaningStatusUpdater'
       );
       this.setProperties({
-        startButtonClicked: true,
         disableAutoCleaningButton: true,
+        startButtonClicked: true,
       });
       return spaceManager.startCleaning(spaceId)
         .then(() => {
@@ -308,8 +308,8 @@ export default Component.extend(I18n, {
         'spaceAutoCleaningStatusUpdater'
       );
       this.setProperties({
-        disableAutoCleaningButton: true,
         startButtonClicked: false,
+        disableAutoCleaningButton: true,
       });
       return spaceManager.stopCleaning(spaceId)
         .then(() => {

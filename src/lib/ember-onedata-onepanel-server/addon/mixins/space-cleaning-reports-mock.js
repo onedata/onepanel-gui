@@ -14,7 +14,8 @@ import Mixin from '@ember/object/mixin';
 import Onepanel from 'npm:onepanel';
 import moment from 'moment';
 import _ from 'lodash';
-import { get, set } from '@ember/object';
+import { get, set, setProperties } from '@ember/object';
+import { later } from '@ember/runloop';
 
 const {
   SpaceAutoCleaningReports,
@@ -30,27 +31,31 @@ function genReportIndex() {
 
 class ReportsCollection {
   constructor(initialReports = []) {
-    this.intervalId = setInterval(this.addReport.bind(this), 10000);
+    this.intervalId = setInterval(this.addReport.bind(this), 15000);
     this.reports = [...initialReports];
   }
   addReport() {
     const lastReport = this.reports[this.reports.length - 1];
-    if (lastReport) {
-      set(lastReport, 'releasedBytes', get(lastReport, 'bytesToRelease'));
-      set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
+    const firstReport = this.reports[0];
+    if (firstReport.status != 'active') {
+      if (lastReport) {
+        set(lastReport, 'releasedBytes', get(lastReport, 'bytesToRelease'));
+        set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
+      }
+      const [index, id] = genReportIndex();
+      const now = moment(index);
+      const report = SpaceAutoCleaningReport.constructFromObject({
+        id,
+        index,
+        startedAt: now,
+        releasedBytes: Math.pow(1024, 3) * 4,
+        bytesToRelease: Math.pow(1024, 3) * 5,
+        filesNumber: 50,
+        status: 'active',
+      });
+      this.reports.unshift(report);
+      later(this.finishReport.bind(this), 10000);
     }
-    const [index, id] = genReportIndex();
-    const now = moment(index);
-    const report = SpaceAutoCleaningReport.constructFromObject({
-      id,
-      index,
-      startedAt: now,
-      releasedBytes: Math.pow(1024, 3) * 4,
-      bytesToRelease: Math.pow(1024, 3) * 5,
-      filesNumber: 50,
-      status: 'active',
-    });
-    this.reports.unshift(report);
   }
   destroy() {
     clearInterval(this.intervalId);
@@ -69,12 +74,38 @@ class ReportsCollection {
   getReport(reportId) {
     return this.reports.find(r => get(r, 'id') === reportId);
   }
+  cancelReport() {
+    const firstReport = this.reports[0];
+    set(firstReport, 'status', 'cancelled');
+  }
+  finishReport() {
+    const firstReport = this.reports[0];
+    const now = moment(firstReport.index);
+    if (firstReport.status === 'active') {
+      setProperties(firstReport, {
+        status: 'failed',
+        stoppedAt: now,
+      });
+    }
+  }
 }
 
 export default Mixin.create({
   init() {
     this._super(...arguments);
     this.set('reports', []);
+  },
+
+  _addReport(spaceId) {
+    const reports = this.get('reports');
+    let report = reports[spaceId];
+    report.addReport();
+  },
+
+  _changeStatusToCancelled(spaceId) {
+    const reports = this.get('reports');
+    let report = reports[spaceId];
+    report.cancelReport();
   },
 
   _genReport(duration = 1, isSuccess = true, inProgress = false) {

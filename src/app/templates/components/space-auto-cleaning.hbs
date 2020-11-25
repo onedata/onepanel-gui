@@ -44,16 +44,6 @@
             }}
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{#one-spin-button
-                action=(action (if displayStartButton "startCleaning" "stopCleaning"))
-                class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-warning btn-stop-now"))
-                disabled=(or (and displayStartButton (not enableStartButton)) disableAutoCleaningButton)}}
-              {{#if disableAutoCleaningButton}}
-                {{tt this (if displayStartButton "stoppedCleaning" "startedCleaning")}}
-              {{else}}
-                {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
-              {{/if}}  
-            {{/one-spin-button}}
             {{#if (and displayStartButton (not media.isMobile))}}
               {{one-label-tip
                 title=(tt this "startCleaningHint")
@@ -62,6 +52,16 @@
                 arrowPlacement="left"
               }}
             {{/if}}
+            {{#one-spin-button
+                action=(action (if displayStartButton "startCleaning" "stopCleaning"))
+                class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-warning btn-stop-now"))
+                disabled=(or (and displayStartButton (not enableStartButton)) disableAutoCleaningButton)}}
+              {{#if disableAutoCleaningButton}}
+                {{tt this (if startButtonClicked "startedCleaning" "stoppedCleaning")}}
+              {{else}}
+                {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
+              {{/if}}  
+            {{/one-spin-button}}
           </div>
         {{/loading-container}}
       </div>

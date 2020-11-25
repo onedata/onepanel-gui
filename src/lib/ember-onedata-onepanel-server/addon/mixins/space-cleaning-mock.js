@@ -44,6 +44,7 @@ class MockState {
   stop() {
     clearInterval(this.interval);
     this.interval = null;
+    this.inProgress = false;
   }
   getData() {
     return {
