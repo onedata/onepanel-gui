@@ -23,6 +23,7 @@ const {
 } = Onepanel;
 
 let globalReportIndex = 10000;
+const cleaningTime = 10000;
 
 function genReportIndex() {
   const index = globalReportIndex--;
@@ -31,13 +32,13 @@ function genReportIndex() {
 
 class ReportsCollection {
   constructor(initialReports = []) {
-    this.intervalId = setInterval(this.addReport.bind(this), 15000);
+    this.intervalId = setInterval(this.addReport.bind(this), cleaningTime + 5000);
     this.reports = [...initialReports];
   }
   addReport() {
     const lastReport = this.reports[this.reports.length - 1];
     const firstReport = this.reports[0];
-    if (firstReport.status != 'active') {
+    if (firstReport && firstReport.status !== 'active') {
       if (lastReport) {
         set(lastReport, 'releasedBytes', get(lastReport, 'bytesToRelease'));
         set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
@@ -54,7 +55,7 @@ class ReportsCollection {
         status: 'active',
       });
       this.reports.unshift(report);
-      later(this.finishReport.bind(this), 10000);
+      later(this.finishReport.bind(this), cleaningTime);
     }
   }
   destroy() {
@@ -80,8 +81,8 @@ class ReportsCollection {
   }
   finishReport() {
     const firstReport = this.reports[0];
-    const now = moment(firstReport.index);
-    if (firstReport.status === 'active') {
+    const now = moment(get(firstReport, 'index'));
+    if (firstReport && firstReport.status === 'active') {
       setProperties(firstReport, {
         status: 'failed',
         stoppedAt: now,
@@ -93,18 +94,18 @@ class ReportsCollection {
 export default Mixin.create({
   init() {
     this._super(...arguments);
-    this.set('reports', []);
+    this.set('reports', {});
   },
 
   _addReport(spaceId) {
     const reports = this.get('reports');
-    let report = reports[spaceId];
+    const report = reports[spaceId];
     report.addReport();
   },
 
   _changeStatusToCancelled(spaceId) {
     const reports = this.get('reports');
-    let report = reports[spaceId];
+    const report = reports[spaceId];
     report.cancelReport();
   },
 

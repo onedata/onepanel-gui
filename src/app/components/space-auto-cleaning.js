@@ -105,24 +105,30 @@ export default Component.extend(I18n, {
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   /**
-   * If true, start button is clicked
-   * @type {boolean}
+   * Last triggered action. It may be: stop, start or undefined. 
+   * This value is changed to undefined when auto cleaning is finished or stopped.
+   * @type {string}
    */
-  startButtonClicked: true,
+  lastTriggeredAction: undefined,
 
   /**
-   * If true, auto-cleaning button is disable
+   * If true, auto-cleaning button is disabled
    * @type {boolean}
    */
   disableAutoCleaningButton: false,
 
   displayStartButton: computed(
-    'isCleanEnabled',
     'status.inProgress',
-    'startButtonClicked',
+    'lastTriggeredAction',
     function displayStartButton() {
-      return !this.get('status.inProgress') || !this.get('startButtonClicked');
+      return !this.get('status.inProgress') || this.lastTriggeredAction === 'stop';
     }),
+
+  resetLastTriggerAction: observer('status.inProgress', function resetLastTriggerAction() {
+    if (!this.get('status.inProgress')) {
+      this.set('lastTriggeredAction', undefined);
+    }
+  }),
 
   enableStartButton: computed(
     'isCleanEnabled',
@@ -170,7 +176,7 @@ export default Component.extend(I18n, {
     if (autoCleaningConfiguration == null) {
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
     } else {
-      this.set('target', autoCleaningConfiguration.target);
+      this.set('target', get(autoCleaningConfiguration, 'target'));
     }
 
     const spaceAutoCleaningStatusUpdater =
@@ -220,6 +226,41 @@ export default Component.extend(I18n, {
     return autoCleaningConfiguration;
   },
 
+  toggleCleaning(action) {
+    const {
+      spaceManager,
+      globalNotify,
+      spaceId,
+      spaceAutoCleaningStatusUpdater,
+    } = this.getProperties(
+      'spaceManager',
+      'globalNotify',
+      'spaceId',
+      'spaceAutoCleaningStatusUpdater'
+    );
+    return spaceManager[`${action}Cleaning`](spaceId)
+      .then(() => {
+        // only a side effect
+        spaceAutoCleaningStatusUpdater.updateData();
+      })
+      .then(() => {
+        this.setProperties({
+          lastTriggeredAction: action,
+          disableAutoCleaningButton: true,
+        });
+        later(this, () => {
+          safeExec(this, 'set', 'disableAutoCleaningButton', false);
+        }, autoCleaningButtonTimeout);
+      })
+      .catch(error => {
+        globalNotify.backendError(
+          this.t(action + 'ManualCleaning'),
+          error
+        );
+        throw error;
+      });
+  },
+
   actions: {
     toggleCleaning() {
       const newCleanEnabled = !this.get('isCleanEnabled');
@@ -260,75 +301,16 @@ export default Component.extend(I18n, {
      *  on backend succeeds
      */
     startCleaning() {
-      const {
-        spaceManager,
-        globalNotify,
-        spaceId,
-        spaceAutoCleaningStatusUpdater,
-      } = this.getProperties(
-        'spaceManager',
-        'globalNotify',
-        'spaceId',
-        'spaceAutoCleaningStatusUpdater'
-      );
-      this.setProperties({
-        disableAutoCleaningButton: true,
-        startButtonClicked: true,
-      });
-      return spaceManager.startCleaning(spaceId)
-        .then(() => {
-          // only a side effect
-          spaceAutoCleaningStatusUpdater.updateData();
-        })
-        .then(() => {
-          later(this, () => {
-            safeExec(this, 'set', 'disableAutoCleaningButton',
-              false);
-          }, autoCleaningButtonTimeout);
-        })
-        .catch(error => {
-          globalNotify.backendError(
-            this.t('manuallyStartingCleaning'),
-            error
-          );
-          throw error;
-        });
+      return this.toggleCleaning('start');
     },
 
+    /**
+     * Manual space cleaning stop
+     * @returns {Promise<undefined|any>} resolves when stopping cleaning
+     *  on backend succeeds
+     */
     stopCleaning() {
-      const {
-        spaceManager,
-        globalNotify,
-        spaceId,
-        spaceAutoCleaningStatusUpdater,
-      } = this.getProperties(
-        'spaceManager',
-        'globalNotify',
-        'spaceId',
-        'spaceAutoCleaningStatusUpdater'
-      );
-      this.setProperties({
-        startButtonClicked: false,
-        disableAutoCleaningButton: true,
-      });
-      return spaceManager.stopCleaning(spaceId)
-        .then(() => {
-          // only a side effect
-          spaceAutoCleaningStatusUpdater.updateData();
-        })
-        .then(() => {
-          later(this, () => {
-            safeExec(this, 'set', 'disableAutoCleaningButton',
-              false);
-          }, autoCleaningButtonTimeout);
-        })
-        .catch(error => {
-          globalNotify.backendError(
-            this.t('manuallyStartingCleaning'),
-            error
-          );
-          throw error;
-        });
+      return this.toggleCleaning('stop');
     },
   },
 });
