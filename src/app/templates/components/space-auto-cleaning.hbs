@@ -54,7 +54,7 @@
             {{/if}}
             {{#one-spin-button
               action=(action (if displayStartButton "startCleaning" "stopCleaning"))
-              class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-warning btn-stop-now"))
+              class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-danger btn-stop-now"))
               disabled=(or (and displayStartButton (not enableStartButton)) disableAutoCleaningButton)
             }}
               {{#if disableAutoCleaningButton}}
