@@ -105,7 +105,7 @@ export default Component.extend(I18n, {
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   /**
-   * Last triggered action. It may be: stop, start or undefined. 
+   * Last triggered action. It may be: 'stop', 'start' or undefined. 
    * This value is changed to undefined when auto cleaning is finished or stopped.
    * @type {string}
    */
@@ -117,18 +117,19 @@ export default Component.extend(I18n, {
    */
   disableAutoCleaningButton: false,
 
+  /**
+   * Cleaning status
+   * Aliased and auto updated from SpaceAutoCleaningStatusUpdater
+   * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
+   */
+  status: reads('spaceAutoCleaningStatusUpdater.status'),
+
   displayStartButton: computed(
     'status.inProgress',
     'lastTriggeredAction',
     function displayStartButton() {
-      return !this.get('status.inProgress') || this.lastTriggeredAction === 'stop';
+      return this.get('lastTriggeredAction') !== 'start';
     }),
-
-  resetLastTriggerAction: observer('status.inProgress', function resetLastTriggerAction() {
-    if (!this.get('status.inProgress')) {
-      this.set('lastTriggeredAction', undefined);
-    }
-  }),
 
   enableStartButton: computed(
     'isCleanEnabled',
@@ -141,13 +142,6 @@ export default Component.extend(I18n, {
         this.get('target') < this.get('status.spaceOccupancy') &&
         !this.get('disableAutoCleaningButton');
     }),
-
-  /**
-   * Cleaning status
-   * Aliased and auto updated from SpaceAutoCleaningStatusUpdater
-   * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
-   */
-  status: reads('spaceAutoCleaningStatusUpdater.status'),
 
   toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
     const enable = this.get('isCleanEnabled');
@@ -163,6 +157,15 @@ export default Component.extend(I18n, {
       this.get('spaceOccupancyChanged')(spaceOccupancy);
     }
   }),
+
+  resetLastTriggerAction: observer(
+    'status.inProgress',
+    function resetLastTriggerAction() {
+      if (!this.get('status.inProgress')) {
+        this.set('lastTriggeredAction', undefined);
+      }
+    }
+  ),
 
   init() {
     this._super(...arguments);
@@ -226,7 +229,11 @@ export default Component.extend(I18n, {
     return autoCleaningConfiguration;
   },
 
-  toggleCleaning(action) {
+  /**
+   * @param {String} action One of: 'start', 'stop'
+   * @returns {Promise}
+   */
+  toggleManualCleaning(action) {
     const {
       spaceManager,
       globalNotify,
@@ -262,7 +269,7 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    toggleCleaning() {
+    toggleAutoCleaning() {
       const newCleanEnabled = !this.get('isCleanEnabled');
       const configureReq = Object.assign({},
         this.enabledSettings(), { enabled: newCleanEnabled }
@@ -301,7 +308,7 @@ export default Component.extend(I18n, {
      *  on backend succeeds
      */
     startCleaning() {
-      return this.toggleCleaning('start');
+      return this.toggleManualCleaning('start');
     },
 
     /**
@@ -310,7 +317,7 @@ export default Component.extend(I18n, {
      *  on backend succeeds
      */
     stopCleaning() {
-      return this.toggleCleaning('stop');
+      return this.toggleManualCleaning('stop');
     },
   },
 });
