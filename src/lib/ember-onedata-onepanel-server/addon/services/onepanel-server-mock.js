@@ -250,7 +250,7 @@ export default OnepanelServerBase.extend(
 
     username: MOCK_USERNAME,
 
-    // NOTE: Uncomment one of lines below to start onepanel-gui in specified 
+    // NOTE: Uncomment one of lines below to start onepanel-gui in specified
     // deployment step. See more in models/installation-details.
     //
     // mockStep: installationStepsMap.deploy,
@@ -521,9 +521,28 @@ export default OnepanelServerBase.extend(
             poolName: 'some_pool',
             importedStorage: true,
           };
+          const storageHttp = {
+            name: 'My HTTP server',
+            verifyServerCertificate: false,
+            type: 'http',
+            storagePathType: 'canonical',
+            skipStorageDetection: true,
+            readonly: true,
+            qosParameters: {
+              storageId: 'e777476baf3418ed9861a97750be285ech9802',
+              providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
+            },
+            lumaFeed: 'auto',
+            importedStorage: true,
+            id: 'e777476baf3418ed9861a97750be285ech9802',
+            endpoint: 'http://172.17.0.3',
+            credentialsType: 'none',
+            connectionPoolSize: 150,
+            authorizationHeader: 'Authorization: Bearer {}',
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            ...[storage1, storageCeph, storageCephRados, storage2].map(storage =>
+            ...[storage1, storageCeph, storageCephRados, storage2, storageHttp].map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );
@@ -645,7 +664,7 @@ export default OnepanelServerBase.extend(
 
     /// mocked request handlers - override to change server behaviour
 
-    _req_onepanel_getWebCert() {
+    _req_SecurityApi_getWebCert() {
       const __webCert = this.get('__webCert');
       return {
         success() {
@@ -657,7 +676,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_modifyWebCert() {
+    _req_SecurityApi_modifyWebCert() {
       const __webCert = this.get('__webCert');
       return {
         success({ letsEncrypt }) {
@@ -675,14 +694,14 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getClusters() {
+    _req_CurrentUserApi_getClusters() {
       const __clusters = this.get('__clusters');
       return {
         success: () => ({ ids: __clusters.mapBy('id') }),
       };
     },
 
-    _req_onepanel_getCluster() {
+    _req_CurrentUserApi_getCluster() {
       const __clusters = this.get('__clusters');
       const getCluster = id => __clusters.find(c => get(c, 'id') === id);
       return {
@@ -691,7 +710,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getClusterHosts: computed(function () {
+    _req_ClusterApi_getClusterHosts: computed(function () {
       return {
         success: () => {
           return _.clone(this.get('__clusterHosts'));
@@ -699,7 +718,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getClusterCookie: computed(function () {
+    _req_ClusterApi_getClusterCookie: computed(function () {
       return {
         success() {
           return 'some_cluster_cookie';
@@ -707,7 +726,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getTaskStatus: computed('progressMock', function () {
+    _req_ClusterApi_getTaskStatus: computed('progressMock', function () {
       let progressMock = this.get('progressMock');
       return {
         success(taskId) {
@@ -724,7 +743,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onepanel_getCurrentUser() {
+    _req_CurrentUserApi_getCurrentUser() {
       const isEmergency = this.get('isEmergency');
       if (isEmergency) {
         return {
@@ -753,7 +772,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_onepanel_getClusterMembersSummary() {
+    _req_ClusterApi_getClusterMembersSummary() {
       return {
         success() {
           return {
@@ -766,7 +785,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_createUserInviteToken() {
+    _req_ClusterApi_createUserInviteToken() {
       return {
         success() {
           return {
@@ -776,7 +795,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_configureProvider() {
+    _req_OneproviderClusterApi_configureProvider() {
       this.set('mockStep', installationStepsMap.oneproviderRegistration);
       return {
         success: (data) => {
@@ -790,7 +809,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_modifyProvider: computed(function () {
+    _req_OneproviderIdentityApi_modifyProvider: computed(function () {
       return {
         success: (data) => {
           let __provider = this.get('__provider');
@@ -814,14 +833,14 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_removeProvider: computed(function () {
+    _req_OneproviderIdentityApi_removeProvider: computed(function () {
       return {
         success: () => null,
         statusCode: () => 204,
       };
     }),
 
-    _req_oneprovider_addProvider: computed(function () {
+    _req_OneproviderIdentityApi_addProvider: computed(function () {
       return {
         success: (provider) => {
           this.set('__provider', PlainableObject.create({ id: '3i92ry78ngq78' }));
@@ -839,7 +858,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_addStorage: computed(function () {
+    _req_StoragesApi_addStorage: computed(function () {
       return {
         success: (storages) => {
           // the only storage is stored in the only key of storages
@@ -855,7 +874,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_modifyStorage() {
+    _req_StoragesApi_modifyStorage() {
       return {
         success: (id, storages) => {
           // find existing storage by id
@@ -882,7 +901,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_removeStorage() {
+    _req_StoragesApi_removeStorage() {
       const storages = this.get('__storages');
       return {
         success: id => {
@@ -895,7 +914,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_getProviderConfiguration() {
+    _req_OneproviderClusterApi_getProviderConfiguration() {
       if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
@@ -907,7 +926,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getProvider() {
+    _req_OneproviderIdentityApi_getProvider() {
       if (this.get('__provider')) {
         return {
           success: () => this.get('__provider').plainCopy(),
@@ -919,7 +938,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getStorages: computed('__storages',
+    _req_StoragesApi_getStorages: computed('__storages',
       function () {
         return {
           success: () => ({
@@ -928,14 +947,14 @@ export default OnepanelServerBase.extend(
         };
       }),
 
-    _req_oneprovider_getStorageDetails: computed('__storages',
+    _req_StoragesApi_getStorageDetails: computed('__storages',
       function () {
         return {
           success: id => _.find(this.get('__storages'), s => s.id === id),
         };
       }),
 
-    _req_oneprovider_getProviderSpaces() {
+    _req_SpaceSupportApi_getProviderSpaces() {
       const {
         mockInitializedCluster,
         mockStep,
@@ -955,7 +974,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getSpaceDetails() {
+    _req_SpaceSupportApi_getSpaceDetails() {
       if (this.get('mockInitializedCluster')) {
         let spaces = this.get('__spaces');
         let findSpace = (id) => _.find(spaces, s => s.id === id);
@@ -970,7 +989,7 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getAutoStorageImportInfo: computed(function () {
+    _req_StorageImportApi_getAutoStorageImportInfo: computed(function () {
       return {
         success: (spaceId) => {
           const space = _.find(this.get('__spaces'), s => s.id === spaceId);
@@ -979,7 +998,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getAutoStorageImportStats: computed(function () {
+    _req_StorageImportApi_getAutoStorageImportStats: computed(function () {
       return {
         success: (spaceId, period, metrics) => {
           const space = _.find(this.get('__spaces'), s => s.id === spaceId);
@@ -988,7 +1007,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getManualStorageImportExample() {
+    _req_StorageImportApi_getManualStorageImportExample() {
       return {
         success: (spaceId) => {
           return {
@@ -1000,7 +1019,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    // TODO: after revoking space support, do not return the space in getSpaces  
+    // TODO: after revoking space support, do not return the space in getSpaces
     _req_oneprovider_revokeSpaceSupport: computed(function () {
       return {
         success: (spaceId) => {
@@ -1011,7 +1030,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_modifySpace() {
+    _req_SpaceSupportApi_modifySpace() {
       return {
         success: (id, data) => {
           let spaces = this.get('__spaces');
@@ -1038,7 +1057,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_configureFilePopularity() {
+    _req_FilePopularityApi_configureFilePopularity() {
       const taskId = `popularity-${popularityTaskCounter++}`;
       return {
         // data: enabled, [lastOpenHourWeight], [avgOpenCountPerDayWeight], [maxAvgOpenCountPerDay]
@@ -1077,7 +1096,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_getFilePopularityConfiguration() {
+    _req_FilePopularityApi_getFilePopularityConfiguration() {
       return {
         success: (id) => {
           const __spacesFilePopularity = this.get('__spacesFilePopularity');
@@ -1092,7 +1111,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_configureSpaceAutoCleaning() {
+    _req_AutoCleaningApi_configureSpaceAutoCleaning() {
       return {
         // data: { enabled, threshold, target, rules }
         success: (id, data) => {
@@ -1115,7 +1134,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_getSpaceAutoCleaningConfiguration() {
+    _req_AutoCleaningApi_getSpaceAutoCleaningConfiguration() {
       return {
         success: (id) => {
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
@@ -1130,7 +1149,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_supportSpace: computed(function () {
+    _req_SpaceSupportApi_supportSpace: computed(function () {
       return {
         success: (supportSpaceRequest) => {
           let space = _.clone(supportSpaceRequest);
@@ -1144,7 +1163,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_onezone_configureZone() {
+    _req_OnezoneClusterApi_configureZone() {
       this.set('mockStep', installationStepsMap.ips);
       return {
         success: () => null,
@@ -1152,7 +1171,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getZoneConfiguration() {
+    _req_OnezoneClusterApi_getZoneConfiguration() {
       if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => this.get('__configuration').plainCopy(),
@@ -1164,29 +1183,33 @@ export default OnepanelServerBase.extend(
       }
     },
 
-    _req_oneprovider_getProviderSpaceAutoCleaningReports: computed(function () {
-      return {
-        success: (spaceId, { index, limit, offset }) =>
-          this._getReportIds(spaceId, index, limit, offset),
-        statusCode: () => 200,
-      };
-    }),
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningReports: computed(
+      function () {
+        return {
+          success: (spaceId, { index, limit, offset }) =>
+            this._getReportIds(spaceId, index, limit, offset),
+          statusCode: () => 200,
+        };
+      }
+    ),
 
-    _req_oneprovider_getProviderSpaceAutoCleaningReport: computed(function () {
-      return {
-        success: (spaceId, reportId) => this._getReport(spaceId, reportId),
-        statusCode: () => 200,
-      };
-    }),
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningReport: computed(
+      function () {
+        return {
+          success: (spaceId, reportId) => this._getReport(spaceId, reportId),
+          statusCode: () => 200,
+        };
+      }
+    ),
 
-    _req_oneprovider_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
+    _req_AutoCleaningApi_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
       '__spaceAutoCleaningStates', {
         inProgress: false,
         spaceOccupancy: 250000000,
       }
     ),
 
-    _req_oneprovider_triggerAutoCleaning: computed(function () {
+    _req_AutoCleaningApi_triggerAutoCleaning: computed(function () {
       return {
         success: (id) => {
           this._getAutoCleaningStatusMock(id).forceStart();
@@ -1196,7 +1219,7 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_oneprovider_getCephStatus: computed(function () {
+    _req_CephApi_getCephStatus: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1213,7 +1236,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephUsage: computed(function () {
+    _req_CephApi_getCephUsage: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1228,7 +1251,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephManagers: computed(function () {
+    _req_CephApi_getCephManagers: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1240,7 +1263,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephMonitors: computed(function () {
+    _req_CephApi_getCephMonitors: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1252,7 +1275,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephOsds: computed(function () {
+    _req_CephApi_getCephOsds: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1264,7 +1287,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephParams: computed(function () {
+    _req_CephApi_getCephParams: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1276,7 +1299,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getCephPools: computed(function () {
+    _req_CephApi_getCephPools: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1288,7 +1311,7 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    _req_oneprovider_getBlockDevices: computed(function () {
+    _req_CephApi_getBlockDevices: computed(function () {
       return serviceTypeDependentResponse({
         onezone: {
           statusCode: () => 406,
@@ -1302,21 +1325,21 @@ export default OnepanelServerBase.extend(
       });
     }),
 
-    // TODO: maybe implement real 
-    _req_oneprovider_modifyProviderClusterIps() {
+    // TODO: maybe implement real
+    _req_OneproviderClusterApi_modifyProviderClusterIps() {
       return {
         success: () => 204,
       };
     },
 
-    // TODO: maybe implement real 
-    _req_onezone_modifyZoneClusterIps() {
+    // TODO: maybe implement real
+    _req_OnezoneClusterApi_modifyZoneClusterIps() {
       return {
         success: () => 204,
       };
     },
 
-    _req_oneprovider_getProviderClusterIps() {
+    _req_OneproviderClusterApi_getProviderClusterIps() {
       return {
         success: () => ({
           isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
@@ -1328,7 +1351,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getZoneClusterIps() {
+    _req_OnezoneClusterApi_getZoneClusterIps() {
       return {
         success: () => ({
           isConfigured: this.get('mockStep').gt(installationStepsMap.ips),
@@ -1340,7 +1363,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_addClusterHost() {
+    _req_ClusterApi_addClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
         success: ({ address: hostname }) => {
@@ -1353,7 +1376,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_removeClusterHost() {
+    _req_ClusterApi_removeClusterHost() {
       const __clusterHosts = this.get('__clusterHosts');
       return {
         success: (hostname) => {
@@ -1363,7 +1386,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getNode() {
+    _req_ClusterApi_getNode() {
       return {
         success: () => ({
           hostname: `${mockSubdomain}.local-onedata.org`,
@@ -1373,7 +1396,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_checkDns() {
+    _req_DNSApi_checkDns() {
       const __dnsCheck = this.get('__dnsCheck');
       const builtInDnsServer = this.get('__dnsCheckConfiguration.builtInDnsServer');
       const check = builtInDnsServer ? { domain: __dnsCheck.domain } : __dnsCheck;
@@ -1388,7 +1411,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getDnsCheckConfiguration() {
+    _req_DNSApi_getDnsCheckConfiguration() {
       const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
       return {
         success() {
@@ -1397,7 +1420,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_modifyDnsCheckConfiguration() {
+    _req_DNSApi_modifyDnsCheckConfiguration() {
       const __dnsCheckConfiguration = this.get('__dnsCheckConfiguration');
       return {
         success(data) {
@@ -1407,7 +1430,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getZonePolicies() {
+    _req_ServiceConfigurationApi_getZonePolicies() {
       const __zonePolicies = this.get('__zonePolicies');
       return {
         success() {
@@ -1416,7 +1439,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_modifyZonePolicies() {
+    _req_ServiceConfigurationApi_modifyZonePolicies() {
       const __zonePolicies = this.get('__zonePolicies');
       return {
         success(data) {
@@ -1425,7 +1448,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_oneprovider_getOnezoneInfo() {
+    _req_OneproviderIdentityApi_getOnezoneInfo() {
       return {
         success: ({ token }) => {
           let online = true;
@@ -1455,14 +1478,14 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getCurrentCluster() {
+    _req_ClusterApi_getCurrentCluster() {
       return {
         success: () => (mockServiceType === 'oneprovider' ?
           getCurrentProviderClusterFromUrl() : zoneCluster),
       };
     },
 
-    _req_onepanel_getRemoteProvider() {
+    _req_InternalApi_getRemoteProvider() {
       const __remoteProviders = this.get('__remoteProviders');
       return {
         success: id => __remoteProviders.findBy('id', id),
@@ -1470,7 +1493,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getConfiguration() {
+    _req_ClusterApi_getConfiguration() {
       const {
         mockStep,
         isEmergency,
@@ -1495,14 +1518,14 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onepanel_getEmergencyPassphraseStatus() {
+    _req_SecurityApi_getEmergencyPassphraseStatus() {
       return {
         success: () => ({ isSet: Boolean(this.get('currentEmergencyPassphrase')) }),
         statusCode: () => 200,
       };
     },
 
-    _req_onepanel_setEmergencyPassphrase() {
+    _req_SecurityApi_setEmergencyPassphrase() {
       return {
         success: ({ newPassphrase }) => {
           this.set('currentEmergencyPassphrase', newPassphrase);
@@ -1511,7 +1534,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_getGuiMessage() {
+    _req_ServiceConfigurationApi_getGuiMessage() {
       return {
         success: (id) => {
           return this.get(`__guiMessages.${id}`);
@@ -1519,7 +1542,7 @@ export default OnepanelServerBase.extend(
       };
     },
 
-    _req_onezone_modifyGuiMessage() {
+    _req_ServiceConfigurationApi_modifyGuiMessage() {
       return {
         success: (id, message) => {
           this.set(`__guiMessages.${id}`, message);

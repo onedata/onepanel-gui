@@ -11,20 +11,18 @@ import Component from '@ember/component';
 import { reads } from '@ember/object/computed';
 
 import { inject as service } from '@ember/service';
-import EmberObject, { get, computed, setProperties, observer } from '@ember/object';
+import EmberObject, { computed, setProperties, observer } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import Looper from 'onedata-gui-common/utils/looper';
-import changeDomain from 'onepanel-gui/utils/change-domain';
 import config from 'ember-get-config';
 import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
-import { resolve } from 'rsvp';
 
 const {
   time: {
-    redirectDomainDelay,
+    reloadDelayForCertificateChange,
   },
 } = config;
 
@@ -88,14 +86,31 @@ export default Component.extend(I18n, GlobalActions, {
   expirationTime: reads('webCert.expirationTime'),
 
   /**
+   * If false, block refresh web cert
+   * @type {boolean}
+   */
+  refreshCert: true,
+
+  /**
+   * Using intermediate var for testing purposes
+   * @type {Location}
+   */
+  _location: location,
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   shouldPollWebCert: computed(
     'status',
     'regeneratePending',
+    'refreshCert',
     function shouldPollWebCert() {
-      return this.get('status') === 'regenerating' ||
-        this.get('regeneratePending');
+      const {
+        status,
+        regeneratePending,
+        refreshCert,
+      } = this.getProperties('status', 'regeneratePending', 'refreshCert');
+      return (status === 'regenerating' || regeneratePending) && refreshCert;
     }
   ),
 
@@ -107,37 +122,6 @@ export default Component.extend(I18n, GlobalActions, {
   _formTitle: computed(function _formTitle() {
     return this.t('formTitleStatic');
   }),
-
-  /**
-   * @type {Ember.ComputedProperty<PromiseObject<string|undefined>>}
-   */
-  redirectDomain: computed(
-    'onepanelServiceType',
-    'isEmergencyOnepanel',
-    function redirectDomain() {
-      const onepanelServiceType = this.get('onepanelServiceType');
-      let promise;
-      if (this.get('isEmergencyOnepanel')) {
-        switch (onepanelServiceType) {
-          case 'oneprovider':
-            promise = this.get('providerManager').getProviderDetailsProxy()
-              .then(provider => provider && get(provider, 'domain'));
-            break;
-          case 'onezone':
-            promise = this.get('deploymentManager').getClusterConfiguration()
-              .then(({ data: cluster }) =>
-                cluster && get(cluster, 'onezone.domainName')
-              );
-            break;
-          default:
-            throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
-        }
-      } else {
-        promise = resolve(location.hostname);
-      }
-      return PromiseObject.create({ promise });
-    }
-  ),
 
   configureWebCertPoll: observer('shouldPollWebCert', function configureWebCertPoll() {
     const {
@@ -165,15 +149,6 @@ export default Component.extend(I18n, GlobalActions, {
   },
 
   /**
-   * Alias for testing puproses
-   * Using the same parameters as `util:changeDomain`
-   * @returns {Promise} resolves after setting window.location
-   */
-  _changeDomain() {
-    return changeDomain(...arguments);
-  },
-
-  /**
    * Creates new promise object for `webCertProxy` property
    */
   updateWebCertProxy() {
@@ -184,12 +159,24 @@ export default Component.extend(I18n, GlobalActions, {
     safeExec(this, 'set', 'webCertProxy', proxy);
   },
 
+  schedulePageReload() {
+    safeExec(this, 'set', 'showRedirectPage', true);
+    const _location = this.get('_location');
+    setTimeout(() => {
+      _location.reload();
+    }, reloadDelayForCertificateChange);
+  },
+
   actions: {
     /**
      * @param {Onepanel.WebCert} webCertChange
+     * @param { Boolean } shouldReload
      * @returns {Promise} promise with modify web cert request result
      */
-    submitModify(webCertChange) {
+    submitModify(webCertChange, shouldReload) {
+      if (shouldReload) {
+        this.set('refreshCert', false);
+      }
       return this.get('webCertManager').modifyWebCert(webCertChange)
         .then(() => {
           const thisWebCert = this.get('webCert');
@@ -200,8 +187,17 @@ export default Component.extend(I18n, GlobalActions, {
             );
           });
         })
-        .finally(this.updateWebCertProxy.bind(this))
-        .then(() => safeExec(this, 'set', '_editing', false));
+        .finally(() => {
+          if (this.get('refreshCert')) {
+            this.updateWebCertProxy();
+          }
+        })
+        .then(() => {
+          safeExec(this, 'set', '_editing', false);
+          if (shouldReload) {
+            this.schedulePageReload();
+          }
+        });
     },
 
     toggleModifyWebCert() {
@@ -215,7 +211,7 @@ export default Component.extend(I18n, GlobalActions, {
       const regeneratePromise = this.actions.submitModify.bind(this)({
         letsEncrypt: true,
       });
-      regeneratePromise.then(this.actions.changeDomain.bind(this));
+      this.set('refreshCert', false);
       regeneratePromise.catch(error => {
         this.get('globalNotify').backendError(
           this.t('renewingWebCert'),
@@ -223,18 +219,8 @@ export default Component.extend(I18n, GlobalActions, {
         );
       });
       this.set('regenerateProxy', PromiseObject.create({ promise: regeneratePromise }));
+      regeneratePromise.then(() => this.schedulePageReload());
       return regeneratePromise;
-    },
-
-    changeDomain() {
-      this.set('showRedirectPage', true);
-      this.get('redirectDomain')
-        .then(domain => changeDomain(
-          domain, {
-            delay: redirectDomainDelay,
-          }
-        ))
-        .catch(() => safeExec(this, 'set', 'showRedirectPage', false));
     },
   },
 });

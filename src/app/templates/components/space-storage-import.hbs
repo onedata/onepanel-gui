@@ -72,11 +72,33 @@
                 autoImportStatus=autoImportInfo.status
               }}
             </div>
-            {{#each importInfoDetailsToShow as |detail|}}
-              <div class="row content-row">
-                <strong>{{detail.label}}:</strong> {{detail.value}}
-              </div>
-            {{/each}}
+            <div class="col-md-6 col-sm-12 import-info-details-first-col">
+              {{#each importInfoDetailsCol1ToShow key="label" as |detail|}}
+                <div
+                  class="row content-row {{detail.classNames}}"
+                  data-highlight-on-hover={{detail.highlightOnHover}}
+                  onMouseEnter={{action "toggleImportDetailsHovered" true}}
+                  onMouseLeave={{action "toggleImportDetailsHovered" false}}
+                >
+                  <strong>{{detail.label}}:</strong>
+                  <span class="detail-value">{{detail.value}}</span>
+                  {{#if detail.tip}}
+                    {{one-label-tip title=detail.tip}}
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+            <div class="col-md-6 col-sm-12 import-info-details-second-col">
+              {{#each importInfoDetailsCol2ToShow key="label" as |detail|}}
+                <div class="row content-row highlightable-subproperty {{detail.classNames}}">
+                  <strong>{{detail.label}}:</strong>
+                  <span class="detail-value">{{detail.value}}</span>
+                </div>
+              {{/each}}
+            </div>
+            <p class="counters-notice col-md-6 col-sm-12">
+              {{tt this "importDetails.countersNotice"}}
+            </p>
           {{/listItem.content}}
         {{/list.item}}
       {{/one-collapsible-list}}
@@ -103,7 +125,7 @@
         {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
       {{/bg.button}}
     {{/bs-button-group}}
-    
+
     {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
       <div class="col-xs-12 item-table-cell item-table-content-cell">
         {{storage-import-chart-operations

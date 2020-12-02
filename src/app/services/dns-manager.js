@@ -31,7 +31,7 @@ export default Service.extend(createDataProxyMixin('dnsCheck'), {
    */
   fetchDnsCheck({ forceCheck } = {}) {
     return this.get('onepanelServer')
-      .request('onepanel', 'checkDns', { forceCheck })
+      .request('DNSApi', 'checkDns', { forceCheck })
       .then(({ data }) => data);
   },
 });

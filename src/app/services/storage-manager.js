@@ -52,7 +52,7 @@ export default Service.extend({
         resolve(collectionCache);
       } else {
         let getStorages = onepanelServer.requestValidData(
-          'oneprovider',
+          'StoragesApi',
           'getStorages'
         );
 
@@ -94,7 +94,7 @@ export default Service.extend({
         resolve(record);
       } else {
         let req = onepanelServer.requestValidData(
-          'oneprovider',
+          'StoragesApi',
           'getStorageDetails',
           id
         );
@@ -121,7 +121,7 @@ export default Service.extend({
     createReqProto[clusterStorage.name] = clusterStorage;
     let createReq = StorageCreateRequest.constructFromObject(createReqProto);
 
-    return onepanelServer.request('oneprovider', 'addStorage', createReq);
+    return onepanelServer.request('StoragesApi', 'addStorage', createReq);
   },
 
   /**
@@ -140,7 +140,7 @@ export default Service.extend({
       StorageModifyRequest.constructFromObject(modifyRequestProto);
 
     return onepanelServer.request(
-      'oneprovider',
+      'StoragesApi',
       'modifyStorage',
       id,
       modifyRequest
@@ -153,6 +153,6 @@ export default Service.extend({
    */
   removeStorage(id) {
     const onepanelServer = this.get('onepanelServer');
-    return onepanelServer.request('oneprovider', 'removeStorage', id);
+    return onepanelServer.request('StoragesApi', 'removeStorage', id);
   },
 });

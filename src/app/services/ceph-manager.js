@@ -27,7 +27,7 @@ export default Service.extend({
 
   init() {
     this._super(...arguments);
-    
+
     if (this.get('guiUtils.serviceType') === 'oneprovider') {
       // initialize status property with actual status
       this.getStatus();
@@ -39,7 +39,7 @@ export default Service.extend({
    * @return {Promise<Array<Onepanel.CephOsd>>}
    */
   getOsds() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephOsds')
+    return this.get('onepanelServer').request('CephApi', 'getCephOsds')
       .then(({ data: { osds } }) => osds);
   },
 
@@ -48,7 +48,7 @@ export default Service.extend({
    * @return {Promise<Array<Onepanel.CephManager>>}
    */
   getManagers() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephManagers')
+    return this.get('onepanelServer').request('CephApi', 'getCephManagers')
       .then(({ data: { managers } }) => managers);
   },
 
@@ -57,7 +57,7 @@ export default Service.extend({
    * @return {Promise<Array<Onepanel.CephMonitor>>}
    */
   getMonitors() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephMonitors')
+    return this.get('onepanelServer').request('CephApi', 'getCephMonitors')
       .then(({ data: { monitors } }) => monitors);
   },
 
@@ -66,7 +66,7 @@ export default Service.extend({
    * @return {Promise<Array<Onepanel.CephGlobalParams>>}
    */
   getParams() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephParams')
+    return this.get('onepanelServer').request('CephApi', 'getCephParams')
       .then(({ data }) => data);
   },
 
@@ -106,7 +106,7 @@ export default Service.extend({
    */
   getStatus() {
     const promise = this.get('onepanelServer')
-      .request('oneprovider', 'getCephStatus')
+      .request('CephApi', 'getCephStatus')
       .then(({ data }) => data);
 
     // update status property with new value
@@ -122,7 +122,7 @@ export default Service.extend({
    * @return {Promise<Object>} Object osdId -> Onepanel.DataUsage
    */
   getOsdsUsage() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephUsage')
+    return this.get('onepanelServer').request('CephApi', 'getCephUsage')
       .then(({ data: { osds } }) => osds);
   },
 
@@ -142,7 +142,7 @@ export default Service.extend({
    * @return {Promise<Array<Onepanel.CephPool>>}
    */
   getPools() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephPools')
+    return this.get('onepanelServer').request('CephApi', 'getCephPools')
       .then(({ data: { pools } }) => pools);
   },
 
@@ -151,7 +151,7 @@ export default Service.extend({
    * @return {Promise<Object>} Object name -> Onepanel.PoolUsage
    */
   getPoolsUsage() {
-    return this.get('onepanelServer').request('oneprovider', 'getCephUsage')
+    return this.get('onepanelServer').request('CephApi', 'getCephUsage')
       .then(({ data: { pools } }) => pools);
   },
 

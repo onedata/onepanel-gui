@@ -12,8 +12,8 @@ import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { computed, get } from '@ember/object';
-import { raw, equal, sum } from 'ember-awesome-macros';
+import { computed, get, getProperties } from '@ember/object';
+import { raw, equal } from 'ember-awesome-macros';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { storageImportStatusDescription } from 'onepanel-gui/components/space-status-icons';
@@ -44,7 +44,7 @@ export default Component.extend(...componentMixins, {
 
   /**
    * See `mixins/components/space-item-import-stats`
-   * @virtual 
+   * @virtual
    * @type {string}
    */
   importInterval: undefined,
@@ -99,15 +99,6 @@ export default Component.extend(...componentMixins, {
   manualImportEnabled: equal('space.storageImport.mode', raw('manual')),
 
   /**
-   * @type {ComputedProperty<number>}
-   */
-  processedFiles: sum(
-    'autoImportInfo.createdFiles',
-    'autoImportInfo.modifiedFiles',
-    'autoImportInfo.deletedFiles'
-  ),
-
-  /**
    * @type {ComputedProperty<SafeString>}
    */
   importStatusDescription: computed(
@@ -125,12 +116,26 @@ export default Component.extend(...componentMixins, {
   ),
 
   /**
-   * @type {ComputedProperty<Array<{ label: String, value: String }>>}
+   * @type {ComputedProperty<Array<{ label: String, value: String, tip: String|undefined }>>}
    */
-  importInfoDetailsToShow: computed(
-    'autoImportInfo.${stop,start,createdFiles,modifiedFiles,deletedFiles}',
+  importInfoDetailsCol1ToShow: computed(
+    'autoImportInfo.${stop,start,createdFiles,modifiedFiles,unmodifiedFiles,deletedFiles,failedFiles}',
     function importInfoDetailsToShow() {
       const autoImportInfo = this.get('autoImportInfo') || {};
+      const {
+        createdFiles = 0,
+          modifiedFiles = 0,
+          unmodifiedFiles = 0,
+          deletedFiles = 0,
+          failedFiles = 0,
+      } = getProperties(
+        autoImportInfo,
+        'createdFiles',
+        'modifiedFiles',
+        'unmodifiedFiles',
+        'deletedFiles',
+        'failedFiles'
+      );
 
       const details = [];
       ['start', 'stop'].forEach(detailName => {
@@ -142,14 +147,44 @@ export default Component.extend(...componentMixins, {
           });
         }
       });
-      ['createdFiles', 'modifiedFiles', 'deletedFiles'].forEach(detailName => {
-        details.push({
-          label: this.t(`importDetails.${detailName}`),
-          value: get(autoImportInfo, detailName) || 0,
-        });
+      details.push({
+        label: this.t('importDetails.processedFiles'),
+        value: createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles,
+        tip: this.t('importDetails.processedFilesTip'),
+        classNames: 'processed-counter-related',
+        highlightOnHover: 'processed-counter-related',
+      }, {
+        label: this.t('importDetails.totalStorageFiles'),
+        value: createdFiles + modifiedFiles + unmodifiedFiles,
+        tip: this.t('importDetails.totalStorageFilesTip'),
+        classNames: 'storage-counter-related',
+        highlightOnHover: 'storage-counter-related',
       });
 
       return details;
+    }
+  ),
+
+  /**
+   * @type {ComputedProperty<Array<{ label: String, value: String }>>}
+   */
+  importInfoDetailsCol2ToShow: computed(
+    'autoImportInfo.${createdFiles,modifiedFiles,unmodifiedFiles,deletedFiles,failedFiles}',
+    function importInfoDetailsToShow() {
+      const autoImportInfo = this.get('autoImportInfo') || {};
+      const infoObjects = [
+        'createdFiles',
+        'modifiedFiles',
+        'unmodifiedFiles',
+        'deletedFiles',
+        'failedFiles',
+      ].map(detailName => ({
+        label: this.t(`importDetails.${detailName}`),
+        value: get(autoImportInfo, detailName) || 0,
+        classNames: 'processed-counter-related',
+      }));
+      infoObjects.slice(0, 3).forEach(obj => obj.classNames += ' storage-counter-related');
+      return infoObjects;
     }
   ),
 
@@ -165,6 +200,12 @@ export default Component.extend(...componentMixins, {
     modifyStorageImport(closeFormCallback, autoStorageImportConfig) {
       return this.get('modifySpace')({ autoStorageImportConfig })
         .then(() => safeExec(this, () => closeFormCallback()));
+    },
+    toggleImportDetailsHovered(isHovered, event) {
+      const hoverTargetClass = event.target.getAttribute('data-highlight-on-hover');
+      if (hoverTargetClass) {
+        this.$(`.${hoverTargetClass}`).toggleClass('detail-highlighted', isHovered);
+      }
     },
   },
 });

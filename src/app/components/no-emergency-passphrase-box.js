@@ -56,7 +56,7 @@ export default Component.extend(I18n, {
   hostnameProxy: computed(function () {
     return PromiseObject.create({
       promise: this.get('onepanelServer')
-        .staticRequest('onepanel', 'getNode')
+        .staticRequest('ClusterApi', 'getNode')
         .then(({ data: { hostname } }) => hostname),
     });
   }),

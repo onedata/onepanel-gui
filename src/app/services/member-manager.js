@@ -26,9 +26,9 @@ export default Service.extend(createDataProxyMixin('members'), {
    */
   fetchMembers() {
     const onepanelServer = this.get('onepanelServer');
-      return onepanelServer
-        .request('onepanel', 'getClusterMembersSummary')
-        .then(({ data }) => data);
+    return onepanelServer
+      .request('ClusterApi', 'getClusterMembersSummary')
+      .then(({ data }) => data);
   },
 
   /**
@@ -38,7 +38,7 @@ export default Service.extend(createDataProxyMixin('members'), {
   createUserInvitationToken() {
     const onepanelServer = this.get('onepanelServer');
     return onepanelServer
-      .request('onepanel', 'createUserInviteToken')
+      .request('ClusterApi', 'createUserInviteToken')
       .then(({ data }) => data);
   },
 });

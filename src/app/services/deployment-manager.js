@@ -13,7 +13,7 @@ import { resolve } from 'rsvp';
 import { get } from '@ember/object';
 import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
-import { camelize } from '@ember/string';
+import { camelize, capitalize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
 import InstallationDetails, { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
@@ -177,7 +177,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       (validateData ? onepanelServer.requestValidData : onepanelServer.request)
       .bind(onepanelServer);
     return requestFun(
-      onepanelServiceType,
+      clusterApiName(onepanelServiceType),
       camelize(`get-${shortServiceType(onepanelServiceType)}-configuration`)
     );
   },
@@ -188,7 +188,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        onepanelServiceType,
+        clusterApiName(onepanelServiceType),
         camelize(`get-${shortServiceType(onepanelServiceType)}-cluster-ips`)
       )
       .then(({ data }) => data);
@@ -204,7 +204,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       onepanelServiceType,
     } = this.getProperties('onepanelServer', 'onepanelServiceType');
     return onepanelServer.request(
-        onepanelServiceType,
+        clusterApiName(onepanelServiceType),
         camelize(`modify-${shortServiceType(onepanelServiceType)}-cluster-ips`), {
           hosts: hostsData,
         },
@@ -217,7 +217,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @returns {Promise}
    */
   _checkIsAnyStorage(onepanelServer) {
-    return onepanelServer.request('oneprovider', 'getStorages')
+    return onepanelServer.request('StoragesApi', 'getStorages')
       .then(({ data: { ids } }) => ids != null && ids.length > 0)
       .catch((error) => {
         if (error && error.status === 503) {
@@ -234,7 +234,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   _checkIsDnsCheckAcknowledged() {
     return this.get('onepanelServer')
-      .request('onepanel', 'getDnsCheckConfiguration')
+      .request('DNSApi', 'getDnsCheckConfiguration')
       .then(({ data }) => data.dnsCheckAcknowledged);
   },
 
@@ -337,7 +337,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    */
   getHostNames() {
     return this.get('onepanelServer').requestValidData(
-      'onepanel',
+      'ClusterApi',
       'getClusterHosts',
     );
   },
@@ -348,8 +348,12 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    */
   addKnownHost(address) {
     return this.get('onepanelServer').request(
-      'onepanel',
+      'ClusterApi',
       'addClusterHost', { address }
     ).then(({ data }) => data);
   },
 });
+
+function clusterApiName(onepanelServiceType) {
+  return capitalize(onepanelServiceType) + 'ClusterApi';
+}
