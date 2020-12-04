@@ -105,17 +105,10 @@ export default Component.extend(I18n, {
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   /**
-   * Last triggered action. It may be: 'stop', 'start' or undefined. 
-   * This value is changed to undefined when auto cleaning is finished or stopped.
-   * @type {string}
-   */
-  lastTriggeredAction: undefined,
-
-  /**
-   * If true, auto-cleaning button is disabled
+   * If true, start auto-cleaning button is disabled
    * @type {boolean}
    */
-  disableAutoCleaningButton: false,
+  disableStartButton: false,
 
   /**
    * Cleaning status
@@ -125,22 +118,30 @@ export default Component.extend(I18n, {
   status: reads('spaceAutoCleaningStatusUpdater.status'),
 
   displayStartButton: computed(
-    'status.inProgress',
-    'lastTriggeredAction',
+    'status.lastRunStatus',
     function displayStartButton() {
-      return this.get('lastTriggeredAction') !== 'start';
+      return this.get('status.lastRunStatus') !== 'active' &&
+        this.get('status.lastRunStatus') !== 'cancelling';
     }),
 
   enableStartButton: computed(
     'isCleanEnabled',
     'target',
-    'status.{spaceOccupancy,inProgress}',
-    'disableAutoCleaningButton',
-    function () {
+    'status.spaceOccupancy',
+    function enableStartButton() {
       return this.get('isCleanEnabled') &&
-        !this.get('status.inProgress') &&
-        this.get('target') < this.get('status.spaceOccupancy') &&
-        !this.get('disableAutoCleaningButton');
+        this.get('target') < this.get('status.spaceOccupancy');
+    }),
+
+  disableAutoCleaningButton: computed(
+    'status.lastRunStatus',
+    'displayStartButton',
+    'enableStartButton',
+    'disableStartButton',
+    function disableAutoCleaningButton() {
+      return (this.get('displayStartButton') && !this.get('enableStartButton')) ||
+        this.get('status.lastRunStatus') === 'cancelling' ||
+        this.get('disableAutoCleaningButton');
     }),
 
   toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
@@ -157,15 +158,6 @@ export default Component.extend(I18n, {
       this.get('spaceOccupancyChanged')(spaceOccupancy);
     }
   }),
-
-  resetLastTriggerAction: observer(
-    'status.inProgress',
-    function resetLastTriggerAction() {
-      if (!this.get('status.inProgress')) {
-        this.set('lastTriggeredAction', undefined);
-      }
-    }
-  ),
 
   init() {
     this._super(...arguments);
@@ -251,13 +243,14 @@ export default Component.extend(I18n, {
         spaceAutoCleaningStatusUpdater.updateData();
       })
       .then(() => {
-        this.setProperties({
-          lastTriggeredAction: action,
-          disableAutoCleaningButton: true,
-        });
-        later(this, () => {
-          safeExec(this, 'set', 'disableAutoCleaningButton', false);
-        }, autoCleaningButtonTimeout);
+        if (action === 'start') {
+          this.setProperties({
+            disableStartButton: true,
+          });
+          later(this, () => {
+            safeExec(this, 'set', 'disableStartButton', false);
+          }, autoCleaningButtonTimeout);
+        }
       })
       .catch(error => {
         globalNotify.backendError(

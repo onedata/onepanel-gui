@@ -37,7 +37,7 @@ export default DataWatcher.extend({
    * @override
    * @type {ComputedProperty<boolean>}
    */
-  isFastPolling: reads('status.inProgress'),
+  isFastPolling: reads('status.lastRunStatus'),
 
   init() {
     this._super(...arguments);

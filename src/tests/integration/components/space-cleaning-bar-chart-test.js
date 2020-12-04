@@ -22,7 +22,7 @@ describe('Integration | Component | space cleaning bar chart', function () {
       },
       status: {
         spaceOccupancy: 7340032,
-        inProgress: true,
+        lastRunStatus: 'active',
       },
       spaceSize: 10485760,
     });
@@ -41,7 +41,7 @@ describe('Integration | Component | space cleaning bar chart', function () {
   });
 
   it('does not render pacman if cleaning is not working', function () {
-    this.set('status.inProgress', false);
+    this.set('status.lastRunStatus', 'completed');
     this.render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart

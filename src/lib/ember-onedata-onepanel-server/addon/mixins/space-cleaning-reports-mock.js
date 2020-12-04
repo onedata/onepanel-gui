@@ -77,7 +77,9 @@ class ReportsCollection {
   }
   cancelReport() {
     const firstReport = this.reports[0];
-    set(firstReport, 'status', 'cancelled');
+    if (firstReport && firstReport.status === 'active') {
+      set(firstReport, 'status', 'cancelled');
+    }
   }
   finishReport() {
     const firstReport = this.reports[0];
@@ -109,7 +111,7 @@ export default Mixin.create({
     report.cancelReport();
   },
 
-  _genReport(duration = 1, isSuccess = true, inProgress = false) {
+  _genReport(duration = 1, isSuccess = true, lastRunStatus = 'completed') {
     const [index, id] = genReportIndex();
     const now = moment(index);
     let stoppedAt = now.subtract(1, 's').toISOString();
@@ -118,7 +120,7 @@ export default Mixin.create({
       id,
       index,
       startedAt,
-      stoppedAt: (inProgress ? null : stoppedAt),
+      stoppedAt: (lastRunStatus === 'completed' ? null : stoppedAt),
       releasedBytes: 1024 * 1024 * (isSuccess ? 75 : 50),
       bytesToRelease: 1024 * 1024 * 75,
       filesNumber: 80,

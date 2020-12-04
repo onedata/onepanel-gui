@@ -1204,7 +1204,7 @@ export default OnepanelServerBase.extend(
 
     _req_AutoCleaningApi_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
       '__spaceAutoCleaningStates', {
-        inProgress: false,
+        lastRunStatus: 'completed',
         spaceOccupancy: 250000000,
       }
     ),
