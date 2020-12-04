@@ -120,8 +120,8 @@ export default Component.extend(I18n, {
   displayStartButton: computed(
     'status.lastRunStatus',
     function displayStartButton() {
-      return this.get('status.lastRunStatus') !== 'active' &&
-        this.get('status.lastRunStatus') !== 'cancelling';
+      const lastRunStatus = this.get('status.lastRunStatus');
+      return lastRunStatus !== 'active' && lastRunStatus !== 'cancelling';
     }),
 
   enableStartButton: computed(
@@ -141,7 +141,7 @@ export default Component.extend(I18n, {
     function disableAutoCleaningButton() {
       return (this.get('displayStartButton') && !this.get('enableStartButton')) ||
         this.get('status.lastRunStatus') === 'cancelling' ||
-        this.get('disableAutoCleaningButton');
+        this.get('disableStartButton');
     }),
 
   toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
