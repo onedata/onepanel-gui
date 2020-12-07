@@ -55,12 +55,12 @@
             {{#one-spin-button
               action=(action (if displayStartButton "startCleaning" "stopCleaning"))
               class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-danger btn-stop-now"))
-              disabled=disableAutoCleaningButton
+              disabled=disableManualCleaningButton
             }}
               {{#if disableStartButton}}
                 {{tt this "startedCleaning"}}
               {{else}}
-                {{#if (eq status.lastRunStatus "cancelling")}}
+                {{#if (or (eq status.lastRunStatus "cancelling") (eq lastTriggeredAction "stop"))}}
                   {{tt this "cancelling"}}
                 {{else}}
                   {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}

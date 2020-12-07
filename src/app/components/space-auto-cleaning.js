@@ -105,10 +105,17 @@ export default Component.extend(I18n, {
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
   /**
-   * If true, start auto-cleaning button is disabled
+   * If true, start manual-cleaning button is disabled
    * @type {boolean}
    */
   disableStartButton: false,
+
+  /** 
+   * Last triggered action.It may be: 'stop', 'start' or undefined. 
+   * This value is changed to undefined when auto cleaning is finished or stopped.
+   * @type { string }
+   */
+  lastTriggeredAction: undefined,
 
   /**
    * Cleaning status
@@ -133,15 +140,17 @@ export default Component.extend(I18n, {
         this.get('target') < this.get('status.spaceOccupancy');
     }),
 
-  disableAutoCleaningButton: computed(
+  disableManualCleaningButton: computed(
     'status.lastRunStatus',
     'displayStartButton',
     'enableStartButton',
     'disableStartButton',
-    function disableAutoCleaningButton() {
+    'lastTriggeredAction',
+    function disableManualCleaningButton() {
       return (this.get('displayStartButton') && !this.get('enableStartButton')) ||
         this.get('status.lastRunStatus') === 'cancelling' ||
-        this.get('disableStartButton');
+        this.get('disableStartButton') ||
+        this.get('lastTriggeredAction') === 'stop';
     }),
 
   toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
@@ -158,6 +167,15 @@ export default Component.extend(I18n, {
       this.get('spaceOccupancyChanged')(spaceOccupancy);
     }
   }),
+
+  resetLastTriggerAction: observer(
+    'status.lastRunStatus',
+    function resetLastTriggerAction() {
+      if (this.get('status.lastRunStatus') === 'cancelled') {
+        this.set('lastTriggeredAction', undefined);
+      }
+    }
+  ),
 
   init() {
     this._super(...arguments);
@@ -245,11 +263,14 @@ export default Component.extend(I18n, {
       .then(() => {
         if (action === 'start') {
           this.setProperties({
+            lastTriggeredAction: action,
             disableStartButton: true,
           });
           later(this, () => {
             safeExec(this, 'set', 'disableStartButton', false);
           }, autoCleaningButtonTimeout);
+        } else {
+          this.set('lastTriggeredAction', action);
         }
       })
       .catch(error => {

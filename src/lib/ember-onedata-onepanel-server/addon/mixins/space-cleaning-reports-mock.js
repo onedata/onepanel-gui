@@ -120,7 +120,7 @@ export default Mixin.create({
       id,
       index,
       startedAt,
-      stoppedAt: (lastRunStatus === 'completed' ? null : stoppedAt),
+      stoppedAt: (lastRunStatus === 'completed' ? stoppedAt : null),
       releasedBytes: 1024 * 1024 * (isSuccess ? 75 : 50),
       bytesToRelease: 1024 * 1024 * 75,
       filesNumber: 80,
