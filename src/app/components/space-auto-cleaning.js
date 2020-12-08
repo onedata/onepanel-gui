@@ -113,7 +113,7 @@ export default Component.extend(I18n, {
   /** 
    * Last triggered action.It may be: 'stop', 'start' or undefined. 
    * This value is changed to undefined when auto cleaning is finished or stopped.
-   * @type { string }
+   * @type {string}
    */
   lastTriggeredAction: undefined,
 
@@ -171,7 +171,10 @@ export default Component.extend(I18n, {
   resetLastTriggerAction: observer(
     'status.lastRunStatus',
     function resetLastTriggerAction() {
-      if (this.get('status.lastRunStatus') === 'cancelled') {
+      if (
+        this.get('lastTriggeredAction') === 'stop' &&
+        this.get('status.lastRunStatus') !== 'cancelled'
+      ) {
         this.set('lastTriggeredAction', undefined);
       }
     }

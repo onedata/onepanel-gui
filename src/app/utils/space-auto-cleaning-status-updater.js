@@ -38,8 +38,10 @@ export default DataWatcher.extend({
    * @override
    * @type {ComputedProperty<boolean>}
    */
-  isFastPolling: or(eq('status.lastRunStatus', raw('active')),
-    eq('status.lastRunStatus', raw('cancelling'))),
+  isFastPolling: or(
+    eq('status.lastRunStatus', raw('active')),
+    eq('status.lastRunStatus', raw('cancelling')),
+  ),
 
   init() {
     this._super(...arguments);
