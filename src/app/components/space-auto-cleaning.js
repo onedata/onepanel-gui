@@ -14,10 +14,12 @@ import { computed, get, observer } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { resolve, reject } from 'rsvp';
 import Onepanel from 'npm:onepanel';
+import { later } from '@ember/runloop';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { getOwner } from '@ember/application';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   SpaceAutoCleaningConfiguration,
@@ -26,6 +28,8 @@ const {
 const BLANK_AUTO_CLEANING = {
   enabled: false,
 };
+
+const autoCleaningButtonTimeout = 1000;
 
 export default Component.extend(I18n, {
   media: service(),
@@ -100,15 +104,18 @@ export default Component.extend(I18n, {
    */
   conditionsFormData: reads('autoCleaningConfiguration.rules'),
 
-  startNowEnabled: computed(
-    'isCleanEnabled',
-    'target',
-    'status.{spaceOccupancy,inProgress}',
-    function () {
-      return this.get('isCleanEnabled') &&
-        !this.get('status.inProgress') &&
-        this.get('target') < this.get('status.spaceOccupancy');
-    }),
+  /**
+   * If true, start manual-cleaning button is disabled
+   * @type {boolean}
+   */
+  disableStartButton: false,
+
+  /** 
+   * Last triggered action.It may be: 'stop', 'start' or undefined. 
+   * This value is changed to undefined when auto cleaning is finished or stopped.
+   * @type {string}
+   */
+  lastTriggeredAction: undefined,
 
   /**
    * Cleaning status
@@ -116,6 +123,35 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<Onepanel.AutoCleaningStatus>}
    */
   status: reads('spaceAutoCleaningStatusUpdater.status'),
+
+  displayStartButton: computed(
+    'status.lastRunStatus',
+    function displayStartButton() {
+      const lastRunStatus = this.get('status.lastRunStatus');
+      return lastRunStatus !== 'active' && lastRunStatus !== 'cancelling';
+    }),
+
+  enableStartButton: computed(
+    'isCleanEnabled',
+    'target',
+    'status.spaceOccupancy',
+    function enableStartButton() {
+      return this.get('isCleanEnabled') &&
+        this.get('target') < this.get('status.spaceOccupancy');
+    }),
+
+  disableManualCleaningButton: computed(
+    'status.lastRunStatus',
+    'displayStartButton',
+    'enableStartButton',
+    'disableStartButton',
+    'lastTriggeredAction',
+    function disableManualCleaningButton() {
+      return (this.get('displayStartButton') && !this.get('enableStartButton')) ||
+        this.get('status.lastRunStatus') === 'cancelling' ||
+        this.get('disableStartButton') ||
+        this.get('lastTriggeredAction') === 'stop';
+    }),
 
   toggleStatusUpdater: observer('isCleanEnabled', function toggleStatusUpdater() {
     const enable = this.get('isCleanEnabled');
@@ -132,6 +168,18 @@ export default Component.extend(I18n, {
     }
   }),
 
+  resetLastTriggerAction: observer(
+    'status.lastRunStatus',
+    function resetLastTriggerAction() {
+      if (
+        this.get('lastTriggeredAction') === 'stop' &&
+        this.get('status.lastRunStatus') !== 'cancelled'
+      ) {
+        this.set('lastTriggeredAction', undefined);
+      }
+    }
+  ),
+
   init() {
     this._super(...arguments);
     const {
@@ -143,6 +191,8 @@ export default Component.extend(I18n, {
     // we should provide an empty valid autoCleaningConfiguration
     if (autoCleaningConfiguration == null) {
       this.set('autoCleaning', BLANK_AUTO_CLEANING);
+    } else {
+      this.set('target', get(autoCleaningConfiguration, 'target'));
     }
 
     const spaceAutoCleaningStatusUpdater =
@@ -192,8 +242,51 @@ export default Component.extend(I18n, {
     return autoCleaningConfiguration;
   },
 
+  /**
+   * @param {String} action One of: 'start', 'stop'
+   * @returns {Promise}
+   */
+  toggleManualCleaning(action) {
+    const {
+      spaceManager,
+      globalNotify,
+      spaceId,
+      spaceAutoCleaningStatusUpdater,
+    } = this.getProperties(
+      'spaceManager',
+      'globalNotify',
+      'spaceId',
+      'spaceAutoCleaningStatusUpdater'
+    );
+    return spaceManager[`${action}Cleaning`](spaceId)
+      .then(() => {
+        // only a side effect
+        spaceAutoCleaningStatusUpdater.updateData();
+      })
+      .then(() => {
+        if (action === 'start') {
+          this.setProperties({
+            lastTriggeredAction: action,
+            disableStartButton: true,
+          });
+          later(this, () => {
+            safeExec(this, 'set', 'disableStartButton', false);
+          }, autoCleaningButtonTimeout);
+        } else {
+          this.set('lastTriggeredAction', action);
+        }
+      })
+      .catch(error => {
+        globalNotify.backendError(
+          this.t(action + 'ManualCleaning'),
+          error
+        );
+        throw error;
+      });
+  },
+
   actions: {
-    toggleCleaning() {
+    toggleAutoCleaning() {
       const newCleanEnabled = !this.get('isCleanEnabled');
       const configureReq = Object.assign({},
         this.enabledSettings(), { enabled: newCleanEnabled }
@@ -232,29 +325,16 @@ export default Component.extend(I18n, {
      *  on backend succeeds
      */
     startCleaning() {
-      const {
-        spaceManager,
-        globalNotify,
-        spaceId,
-        spaceAutoCleaningStatusUpdater,
-      } = this.getProperties(
-        'spaceManager',
-        'globalNotify',
-        'spaceId',
-        'spaceAutoCleaningStatusUpdater'
-      );
-      return spaceManager.startCleaning(spaceId)
-        .then(() => {
-          // only a side effect
-          spaceAutoCleaningStatusUpdater.updateData();
-        })
-        .catch(error => {
-          globalNotify.backendError(
-            this.t('manuallyStartingCleaning'),
-            error
-          );
-          throw error;
-        });
+      return this.toggleManualCleaning('start');
+    },
+
+    /**
+     * Manual space cleaning stop
+     * @returns {Promise<undefined|any>} resolves when stopping cleaning
+     *  on backend succeeds
+     */
+    stopCleaning() {
+      return this.toggleManualCleaning('stop');
     },
   },
 });

@@ -14,7 +14,8 @@ import Mixin from '@ember/object/mixin';
 import Onepanel from 'npm:onepanel';
 import moment from 'moment';
 import _ from 'lodash';
-import { get, set } from '@ember/object';
+import { get, set, setProperties } from '@ember/object';
+import { later } from '@ember/runloop';
 
 const {
   SpaceAutoCleaningReports,
@@ -22,6 +23,7 @@ const {
 } = Onepanel;
 
 let globalReportIndex = 10000;
+const cleaningTime = 10000;
 
 function genReportIndex() {
   const index = globalReportIndex--;
@@ -30,27 +32,31 @@ function genReportIndex() {
 
 class ReportsCollection {
   constructor(initialReports = []) {
-    this.intervalId = setInterval(this.addReport.bind(this), 10000);
+    this.intervalId = setInterval(this.addReport.bind(this), cleaningTime + 5000);
     this.reports = [...initialReports];
   }
   addReport() {
     const lastReport = this.reports[this.reports.length - 1];
-    if (lastReport) {
-      set(lastReport, 'releasedBytes', get(lastReport, 'bytesToRelease'));
-      set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
+    const firstReport = this.reports[0];
+    if (firstReport && firstReport.status !== 'active') {
+      if (lastReport) {
+        set(lastReport, 'releasedBytes', get(lastReport, 'bytesToRelease'));
+        set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
+      }
+      const [index, id] = genReportIndex();
+      const now = moment(index);
+      const report = SpaceAutoCleaningReport.constructFromObject({
+        id,
+        index,
+        startedAt: now,
+        releasedBytes: Math.pow(1024, 3) * 4,
+        bytesToRelease: Math.pow(1024, 3) * 5,
+        filesNumber: 50,
+        status: 'active',
+      });
+      this.reports.unshift(report);
+      later(this.finishReport.bind(this), cleaningTime);
     }
-    const [index, id] = genReportIndex();
-    const now = moment(index);
-    const report = SpaceAutoCleaningReport.constructFromObject({
-      id,
-      index,
-      startedAt: now,
-      releasedBytes: Math.pow(1024, 3) * 4,
-      bytesToRelease: Math.pow(1024, 3) * 5,
-      filesNumber: 50,
-      status: 'active',
-    });
-    this.reports.unshift(report);
   }
   destroy() {
     clearInterval(this.intervalId);
@@ -69,15 +75,43 @@ class ReportsCollection {
   getReport(reportId) {
     return this.reports.find(r => get(r, 'id') === reportId);
   }
+  cancelReport() {
+    const firstReport = this.reports[0];
+    if (firstReport && firstReport.status === 'active') {
+      set(firstReport, 'status', 'cancelled');
+    }
+  }
+  finishReport() {
+    const firstReport = this.reports[0];
+    const now = moment(get(firstReport, 'index'));
+    if (firstReport && firstReport.status === 'active') {
+      setProperties(firstReport, {
+        status: 'failed',
+        stoppedAt: now,
+      });
+    }
+  }
 }
 
 export default Mixin.create({
   init() {
     this._super(...arguments);
-    this.set('reports', []);
+    this.set('reports', {});
   },
 
-  _genReport(duration = 1, isSuccess = true, inProgress = false) {
+  _addReport(spaceId) {
+    const reports = this.get('reports');
+    const report = reports[spaceId];
+    report.addReport();
+  },
+
+  _changeStatusToCancelled(spaceId) {
+    const reports = this.get('reports');
+    const report = reports[spaceId];
+    report.cancelReport();
+  },
+
+  _genReport(duration = 1, isSuccess = true, lastRunStatus = 'completed') {
     const [index, id] = genReportIndex();
     const now = moment(index);
     let stoppedAt = now.subtract(1, 's').toISOString();
@@ -86,7 +120,7 @@ export default Mixin.create({
       id,
       index,
       startedAt,
-      stoppedAt: (inProgress ? null : stoppedAt),
+      stoppedAt: (lastRunStatus === 'completed' ? stoppedAt : null),
       releasedBytes: 1024 * 1024 * (isSuccess ? 75 : 50),
       bytesToRelease: 1024 * 1024 * 75,
       filesNumber: 80,

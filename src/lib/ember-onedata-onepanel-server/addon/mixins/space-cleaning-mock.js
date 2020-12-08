@@ -15,28 +15,28 @@ class MockState {
     this.spaceOccupancy = threshold;
     this.target = target;
     this.step = Math.floor((threshold - target) / steps);
-    this.inProgress = false;
+    this.lastRunStatus = null;
     this.startTimeout = setTimeout(() => {
       this._startLoop();
     }, 2000);
   }
   _startLoop() {
-    this.inProgress = true;
+    this.lastRunStatus = 'active';
     this.interval = setInterval(this.tick.bind(this), 1000);
   }
   forceStart() {
-    if (this.interval == null && this.inProgress === false) {
+    if (this.interval == null && this.lastRunStatus !== 'active') {
       // TODO: currently fake target, because we do not remember real target
       this.target = this.target - Math.pow(1024, 2);
       this._startLoop();
     }
   }
   tick() {
-    if (this.inProgress) {
+    if (this.lastRunStatus === 'active') {
       this.spaceOccupancy -= this.step;
       if (this.spaceOccupancy <= this.target) {
         this.spaceOccupancy = this.target;
-        this.inProgress = false;
+        this.lastRunStatus = 'completed';
         this.stop();
       }
     }
@@ -44,10 +44,11 @@ class MockState {
   stop() {
     clearInterval(this.interval);
     this.interval = null;
+    this.lastRunStatus = 'cancelled';
   }
   getData() {
     return {
-      inProgress: this.inProgress,
+      lastRunStatus: this.lastRunStatus,
       spaceOccupancy: this.spaceOccupancy,
     };
   }

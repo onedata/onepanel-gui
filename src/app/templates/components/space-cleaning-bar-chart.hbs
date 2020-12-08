@@ -54,7 +54,7 @@
     <div class="pacman-row">
       <div class="used-space"></div>
       <div class="pacman-cell">
-        {{#if status.inProgress}}
+        {{#if (eq status.lastRunStatus "active")}}
           <div class="pacman">
             <div class="pacman-shape">
               <div class="pacman-top">

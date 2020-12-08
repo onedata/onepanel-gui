@@ -13,6 +13,7 @@ import { assert } from '@ember/debug';
 import { inject as service } from '@ember/service';
 import DataWatcher from 'onedata-gui-common/utils/data-watcher';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { raw, eq, or } from 'ember-awesome-macros';
 
 export default DataWatcher.extend({
   /**
@@ -37,7 +38,10 @@ export default DataWatcher.extend({
    * @override
    * @type {ComputedProperty<boolean>}
    */
-  isFastPolling: reads('status.inProgress'),
+  isFastPolling: or(
+    eq('status.lastRunStatus', raw('active')),
+    eq('status.lastRunStatus', raw('cancelling')),
+  ),
 
   init() {
     this._super(...arguments);

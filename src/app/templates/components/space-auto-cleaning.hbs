@@ -11,7 +11,7 @@
       checked=isCleanEnabled
       class=(if media.isMobile "pull-right right" "toggle-right-side")
       spinnerSide=(if media.isMobile "left" "right")
-      update=(action "toggleCleaning")}}
+      update=(action "toggleAutoCleaning")}}
   </h1>
 </div>
 {{#if isCleanEnabled}}
@@ -44,18 +44,28 @@
             }}
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{one-label-tip
-              title=(tt this "startCleaningHint")
-              class="clean-now-tip hidden-xs"
-              placement="top"
-              arrowPlacement="left"
-            }}
+            {{#if (and displayStartButton (not media.isMobile))}}
+              {{one-label-tip
+                title=(tt this "startCleaningHint")
+                class="clean-now-tip"
+                placement="top"
+                arrowPlacement="left"
+              }}
+            {{/if}}
             {{#one-spin-button
-              action=(action "startCleaning")
-              class="btn btn-sm btn-primary btn-clean-now"
-              disabled=(not startNowEnabled)
+              action=(action (if displayStartButton "startCleaning" "stopCleaning"))
+              class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-danger btn-stop-now"))
+              disabled=disableManualCleaningButton
             }}
-            {{tt this "startCleaning"}}
+              {{#if disableStartButton}}
+                {{tt this "startedCleaning"}}
+              {{else}}
+                {{#if (or (eq status.lastRunStatus "cancelling") (eq lastTriggeredAction "stop"))}}
+                  {{tt this "cancelling"}}
+                {{else}}
+                  {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
+                {{/if}}
+              {{/if}}  
             {{/one-spin-button}}
           </div>
         {{/loading-container}}

@@ -1204,7 +1204,7 @@ export default OnepanelServerBase.extend(
 
     _req_AutoCleaningApi_getProviderSpaceAutoCleaningStatus: computedResourceGetHandler(
       '__spaceAutoCleaningStates', {
-        inProgress: false,
+        lastRunStatus: 'completed',
         spaceOccupancy: 250000000,
       }
     ),
@@ -1213,6 +1213,18 @@ export default OnepanelServerBase.extend(
       return {
         success: (id) => {
           this._getAutoCleaningStatusMock(id).forceStart();
+          this._addReport(id);
+          return undefined;
+        },
+        statusCode: () => 200,
+      };
+    }),
+
+    _req_AutoCleaningApi_cancelAutoCleaning: computed(function () {
+      return {
+        success: (id) => {
+          this._changeStatusToCancelled(id);
+          this._getAutoCleaningStatusMock(id).stop();
           return undefined;
         },
         statusCode: () => 200,

@@ -14,7 +14,7 @@
  */
 export default function (data) {
   try {
-    return typeof data.inProgress === 'boolean' &&
+    return (data.lastRunStatus === null || typeof data.lastRunStatus === 'string') &&
       typeof data.spaceOccupancy === 'number' &&
       data.spaceOccupancy >= 0;
   } catch (error) {
