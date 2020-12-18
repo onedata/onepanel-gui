@@ -54,6 +54,27 @@
       }
     }
 
+    .import-info-details-first-col,
+    .import-info-details-second-col {
+      .content-row {
+        display: flex;
+      }
+
+      .detail-label {
+        flex-grow: 1;
+      }
+
+      .one-label-tip {
+        margin-left: 0.25em;
+      }
+
+      @media (min-width: $screen-md-min) {
+        .content-row {
+          padding-right: calc(100% - 18em);
+        }
+      }
+    }
+
     .highlightable-subproperty {
       position: relative;
       transition: transition-ease-in(padding-left);
