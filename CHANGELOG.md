@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-6802 Updated commons
+* VFS-7042 Improved UX of storage import counters
 * VFS-6745 Updated common libs
 * VFS-7002 Added "Processed files", "Total storage files", "Unmodified files" and "Failed files" counters to storage import statistics
 * VFS-7017 Fixed false locked state of toggles and false validation in storage edit form

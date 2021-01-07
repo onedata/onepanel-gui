@@ -19,6 +19,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { storageImportStatusDescription } from 'onepanel-gui/components/space-status-icons';
 import { dateFormat } from 'onedata-gui-common/helpers/date-format';
 import { inject as service } from '@ember/service';
+import { formatNumber } from 'onedata-gui-common/helpers/format-number';
 
 const componentMixins = [
   I18n,
@@ -149,13 +150,15 @@ export default Component.extend(...componentMixins, {
       });
       details.push({
         label: this.t('importDetails.processedFiles'),
-        value: createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles,
+        value: formatNumber(
+          [createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles]
+        ),
         tip: this.t('importDetails.processedFilesTip'),
         classNames: 'processed-counter-related',
         highlightOnHover: 'processed-counter-related',
       }, {
         label: this.t('importDetails.totalStorageFiles'),
-        value: createdFiles + modifiedFiles + unmodifiedFiles,
+        value: formatNumber([createdFiles + modifiedFiles + unmodifiedFiles]),
         tip: this.t('importDetails.totalStorageFilesTip'),
         classNames: 'storage-counter-related',
         highlightOnHover: 'storage-counter-related',
@@ -170,8 +173,10 @@ export default Component.extend(...componentMixins, {
    */
   importInfoDetailsCol2ToShow: computed(
     'autoImportInfo.${createdFiles,modifiedFiles,unmodifiedFiles,deletedFiles,failedFiles}',
+    'space.id',
     function importInfoDetailsToShow() {
       const autoImportInfo = this.get('autoImportInfo') || {};
+      const spaceId = this.get('space.id') || '';
       const infoObjects = [
         'createdFiles',
         'modifiedFiles',
@@ -180,7 +185,8 @@ export default Component.extend(...componentMixins, {
         'failedFiles',
       ].map(detailName => ({
         label: this.t(`importDetails.${detailName}`),
-        value: get(autoImportInfo, detailName) || 0,
+        value: formatNumber([get(autoImportInfo, detailName) || 0]),
+        tip: this.t(`importDetails.${detailName}Tip`, { spaceId }),
         classNames: 'processed-counter-related',
       }));
       infoObjects.slice(0, 3).forEach(obj => obj.classNames += ' storage-counter-related');
