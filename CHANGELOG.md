@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7202 Updated "bad data" backend error translation
 * VFS-6802 Updated commons
 * VFS-7042 Improved UX of storage import counters
 * VFS-6745 Updated common libs
