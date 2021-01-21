@@ -11,11 +11,13 @@ import { A } from '@ember/array';
 
 import ObjectProxy from '@ember/object/proxy';
 import ArrayProxy from '@ember/array/proxy';
+import { observer } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 const {
   StorageCreateRequest,
@@ -29,11 +31,23 @@ export default Service.extend({
 
   _collectionMap: undefined,
 
-  collectionCache: ArrayProxy.create({ content: null }),
+  collectionCache: undefined,
   _collectionCache: alias('collectionCache.content'),
+
+  conflictNameObserver: observer(
+    'collectionCache.content.@each.content.name',
+    function conflictNameObserver() {
+      addConflictLabels(
+        this.get('collectionCache.content').filterBy('content').mapBy('content'),
+        'name',
+        'id'
+      );
+    }
+  ),
 
   init() {
     this._super(...arguments);
+    this.set('collectionCache', ArrayProxy.create({ content: [] }));
     this.set('_collectionMap', {});
   },
 
@@ -58,7 +72,7 @@ export default Service.extend({
 
         getStorages.then(({ data: { ids } }) => {
           const storagesProxyArray = A(ids.map(id =>
-            this.getStorageDetails(id, reload)));
+            this.getStorageDetails(id, reload, true)));
           Promise.all(storagesProxyArray)
             .finally(() => safeExec(this, () => {
               this.set('collectionCache.content', storagesProxyArray);
@@ -83,11 +97,17 @@ export default Service.extend({
   /**
    * @param {string} id
    * @param {boolean} [reload=false] if true, force call to backend
+   * @param {boolean} [batch=false] should be set to true, if `getStorageDetails` is
+   *   launched in batch that would change `collectionCache`; otherwise it will try to
+   *   add new record to existing `collectionCache` list
    * @returns {PromiseObject} resolves ClusterStorage ObjectProxy
    */
-  getStorageDetails(id, reload = false) {
-    let onepanelServer = this.get('onepanelServer');
-    let _collectionMap = this.get('_collectionMap');
+  getStorageDetails(id, reload = false, batch = false) {
+    const {
+      onepanelServer,
+      _collectionMap,
+      collectionCache,
+    } = this.getProperties('onepanelServer', '_collectionMap', 'collectionCache');
     let record = _collectionMap[id];
     let promise = new Promise((resolve, reject) => {
       if (!reload && record != null && record.get('content') != null) {
@@ -102,6 +122,15 @@ export default Service.extend({
           record = _collectionMap[id] =
             (_collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);
+          if (!batch) {
+            const indexInCollection =
+              collectionCache.toArray().findIndex(record => record.id === id);
+            if (indexInCollection > -1) {
+              collectionCache[indexInCollection] = record;
+            } else {
+              collectionCache.pushObject(record);
+            }
+          }
           resolve(record);
         });
         req.catch(reject);

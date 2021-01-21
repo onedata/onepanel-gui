@@ -17,7 +17,7 @@
 {{/if}}
 
 {{#one-collapsible-list as |list|}}
-  {{#each storages key="id" as |storageProxy|}}
+  {{#each storagesSorted key="id" as |storageProxy|}}
     {{#if storageProxy.isFulfilled}}
       {{#list.item as |listItem|}}
         {{storage-item

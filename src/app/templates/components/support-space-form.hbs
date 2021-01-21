@@ -1,9 +1,7 @@
-{{!-- TODO i18n --}}
-
 {{#bs-form submitOnEnter=false class=_formClasses as |form|}}
   {{#form.group}}
     <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
-      Storage:
+      {{tt this "storage"}}:
     </label>
     <div class={{layoutConfig.formInputColumns}}>
       {{#power-select
@@ -16,7 +14,7 @@
         placeholder=(tt this "storageSelectPlaceholder")
         as |storageItem|
       }}
-        {{storageItem.storage.name}}
+        {{name-conflict item=storageItem.storage}}
         {{#if storageItem.isImportedAndUsed}}
           <small class="imported-used-storage">{{tt this "storageImportedAndUsed"}}</small>
         {{else if storageItem.storage.importedStorage}}

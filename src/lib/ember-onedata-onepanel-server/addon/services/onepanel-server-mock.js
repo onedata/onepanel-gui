@@ -490,7 +490,7 @@ export default OnepanelServerBase.extend(
           const storage2 = {
             id: 'storage2_verylongid',
             type: 'posix',
-            name: 'Some storage 2',
+            name: 'Some storage',
             importedStorage: true,
             mountPoint: '/mnt/st2',
             lumaFeed: 'external',
@@ -579,7 +579,7 @@ export default OnepanelServerBase.extend(
             spaces.push({
               id: 'space2_verylongid',
               name: 'Space Two',
-              storageId: storage1.id,
+              storageId: storage2.id,
               spaceOccupancy: 800000000,
               storageImport: {
                 mode: 'auto',
