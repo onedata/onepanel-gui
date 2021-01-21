@@ -102,11 +102,13 @@ export default Component.extend(I18n, GlobalActions, {
     return this.get('nextStep') != null;
   }),
 
-  storagesLoading: computed('storagesProxy.isSettled', 'spacesProxy.isSettled',
+  dataIsLoading: computed(
+    'storagesProxy.isPending',
+    'spacesProxy.isPending',
     function () {
-      return this.get('storagesProxy.isSettled') === false &&
-        this.get('spacesProxy.isSettled') == false;
-    }),
+      return this.get('storagesProxy.isPending') && this.get('spacesProxy.isPending');
+    }
+  ),
 
   storagesError: alias('storagesProxy.reason'),
 

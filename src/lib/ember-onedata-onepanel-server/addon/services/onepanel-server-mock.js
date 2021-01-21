@@ -579,7 +579,7 @@ export default OnepanelServerBase.extend(
             spaces.push({
               id: 'space2_verylongid',
               name: 'Space Two',
-              storageId: storage1.id,
+              storageId: storage2.id,
               spaceOccupancy: 800000000,
               storageImport: {
                 mode: 'auto',
