@@ -1,15 +1,16 @@
 {{#listItem.header disableToggleIcon=true as |itemHeader|}}
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="provider"}}
-    {{one-tooltip
-      title=storage.name
+    {{#one-tooltip
       placement="top"
       arrowPlacement="left"
       triggerEvents="hover"
     }}
+      {{name-conflict item=storage}}
+    {{/one-tooltip}}
   </span>
   <span class="one-label storage-name">
-    {{storage.name}}
+    {{name-conflict item=storage}}
   </span>
   <div class="btn-toolbar">
     <span clas="btn-tooltip-container">

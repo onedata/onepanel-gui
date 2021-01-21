@@ -490,7 +490,7 @@ export default OnepanelServerBase.extend(
           const storage2 = {
             id: 'storage2_verylongid',
             type: 'posix',
-            name: 'Some storage 2',
+            name: 'Some storage',
             importedStorage: true,
             mountPoint: '/mnt/st2',
             lumaFeed: 'external',

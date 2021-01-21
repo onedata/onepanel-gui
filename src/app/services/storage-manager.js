@@ -11,11 +11,13 @@ import { A } from '@ember/array';
 
 import ObjectProxy from '@ember/object/proxy';
 import ArrayProxy from '@ember/array/proxy';
+import { observer } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import Onepanel from 'npm:onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 
 const {
   StorageCreateRequest,
@@ -31,6 +33,14 @@ export default Service.extend({
 
   collectionCache: ArrayProxy.create({ content: null }),
   _collectionCache: alias('collectionCache.content'),
+
+  conflictNameObserver: observer('collectionCache.content.@each.isFulfilled', function conflictNameObserver() {
+    addConflictLabels(
+      this.get('collectionCache.content').filterBy('isFulfilled').mapBy('content'),
+      'name',
+      'id'
+    );
+  }),
 
   init() {
     this._super(...arguments);

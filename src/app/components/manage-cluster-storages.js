@@ -195,14 +195,14 @@ export default Component.extend(I18n, GlobalActions, {
       storagesProxy,
     } = this.getProperties('storageManager', 'storagesProxy');
 
-    const newProxy = storageManager.getStorages(true);
+    const newStoragesProxy = storageManager.getStorages(true);
 
     // first update - initialize component storagesProxy field
     if (!storagesProxy) {
-      this.set('storagesProxy', newProxy);
+      this.set('storagesProxy', newStoragesProxy);
     }
 
-    return newProxy;
+    return newStoragesProxy;
   },
 
   /**

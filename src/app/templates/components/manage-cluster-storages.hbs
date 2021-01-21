@@ -14,7 +14,7 @@
 </div>
 <div class="row {{if storagesLoading "min-height-100"}}">
   {{#loading-container
-    isLoading=(or storagesLoading spacesProxy.isPending)
+    isLoading=(or storagesProxy.isPending spacesProxy.isPending)
     errorReason=(or storagesError spacesProxy.reason)}}
     {{#unless noStorages}}
       {{cluster-storage-table 
