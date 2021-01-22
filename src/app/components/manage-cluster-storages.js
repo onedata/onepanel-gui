@@ -106,7 +106,7 @@ export default Component.extend(I18n, GlobalActions, {
     'storagesProxy.isPending',
     'spacesProxy.isPending',
     function () {
-      return this.get('storagesProxy.isPending') && this.get('spacesProxy.isPending');
+      return this.get('storagesProxy.isPending') || this.get('spacesProxy.isPending');
     }
   ),
 
