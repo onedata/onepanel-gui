@@ -32,10 +32,16 @@ export default Service.extend({
   _collectionMap: undefined,
 
   collectionCache: undefined,
+
+  /**
+   * @type {Boolean}
+   */
+  collectionCacheInitialized: false,
+
   _collectionCache: alias('collectionCache.content'),
 
   conflictNameObserver: observer(
-    'collectionCache.content.@each.content.name',
+    'collectionCache.content.@each.name',
     function conflictNameObserver() {
       addConflictLabels(
         this.get('collectionCache.content').filterBy('content').mapBy('content'),
@@ -58,11 +64,18 @@ export default Service.extend({
    * @return {PromiseObject<Ember.ArrayProxy>} resolves ArrayProxy of SpaceDetails promise proxies
    */
   getStorages(reload = false) {
-    let onepanelServer = this.get('onepanelServer');
-    let collectionCache = this.get('collectionCache');
+    const {
+      onepanelServer,
+      collectionCache,
+      collectionCacheInitialized,
+    } = this.getProperties(
+      'onepanelServer',
+      'collectionCache',
+      'collectionCacheInitialized'
+    );
 
     let promise = new Promise((resolve, reject) => {
-      if (!reload && collectionCache.get('content') != null) {
+      if (!reload && collectionCacheInitialized) {
         resolve(collectionCache);
       } else {
         let getStorages = onepanelServer.requestValidData(
@@ -76,6 +89,7 @@ export default Service.extend({
           Promise.all(storagesProxyArray)
             .finally(() => safeExec(this, () => {
               this.set('collectionCache.content', storagesProxyArray);
+              this.set('collectionCacheInitialized', true);
             }))
             .then(() => resolve(collectionCache))
             .catch(error => reject(error));
@@ -83,6 +97,7 @@ export default Service.extend({
         getStorages.catch(error => {
           if (error && error.response && error.response.statusCode === 404) {
             this.set('collectionCache.content', A());
+            this.set('collectionCacheInitialized', true);
             resolve(collectionCache);
           } else {
             reject(error);
