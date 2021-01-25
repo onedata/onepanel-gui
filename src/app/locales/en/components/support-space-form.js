@@ -1,4 +1,5 @@
 export default {
+  storage: 'Storage',
   storageSelectPlaceholder: 'Select a storage...',
   storageSelectLoading: 'Loading...',
   storageImported: '(import-enabled)',

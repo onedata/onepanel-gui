@@ -102,11 +102,13 @@ export default Component.extend(I18n, GlobalActions, {
     return this.get('nextStep') != null;
   }),
 
-  storagesLoading: computed('storagesProxy.isSettled', 'spacesProxy.isSettled',
+  dataIsLoading: computed(
+    'storagesProxy.isPending',
+    'spacesProxy.isPending',
     function () {
-      return this.get('storagesProxy.isSettled') === false &&
-        this.get('spacesProxy.isSettled') == false;
-    }),
+      return this.get('storagesProxy.isPending') || this.get('spacesProxy.isPending');
+    }
+  ),
 
   storagesError: alias('storagesProxy.reason'),
 
@@ -195,14 +197,14 @@ export default Component.extend(I18n, GlobalActions, {
       storagesProxy,
     } = this.getProperties('storageManager', 'storagesProxy');
 
-    const newProxy = storageManager.getStorages(true);
+    const newStoragesProxy = storageManager.getStorages(true);
 
     // first update - initialize component storagesProxy field
     if (!storagesProxy) {
-      this.set('storagesProxy', newProxy);
+      this.set('storagesProxy', newStoragesProxy);
     }
 
-    return newProxy;
+    return newStoragesProxy;
   },
 
   /**

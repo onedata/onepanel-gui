@@ -12,10 +12,11 @@
       isFormOpened=addStorageOpened
       selectedStorageType=createStorageFormType}}
 </div>
-<div class="row {{if storagesLoading "min-height-100"}}">
+<div class="row {{if dataIsLoading "min-height-100"}}">
   {{#loading-container
-    isLoading=(or storagesLoading spacesProxy.isPending)
-    errorReason=(or storagesError spacesProxy.reason)}}
+    isLoading=dataIsLoading
+    errorReason=(or storagesError spacesProxy.reason)
+  }}
     {{#unless noStorages}}
       {{cluster-storage-table 
         storages=storagesProxy.content 
