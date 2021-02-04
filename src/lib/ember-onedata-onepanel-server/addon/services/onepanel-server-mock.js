@@ -77,7 +77,7 @@ function getMockServiceType() {
 
 const mockServiceType = getMockServiceType();
 
-const mockSubdomain = (mockServiceType === 'oneprovider' ? 'oneprovider-1' : 'onezone');
+const mockSubdomain = (mockServiceType === 'oneprovider' ? 'oneprovider1' : 'onezone');
 
 /**
  * Response delay in milliseconds
@@ -188,7 +188,7 @@ const zoneCluster = {
   proxy: false,
 };
 const providerCluster1 = {
-  id: 'oneprovider-1',
+  id: 'oneprovider1',
   type: 'oneprovider',
   serviceId: PROVIDER1_ID,
   version: '18.02.1',
@@ -196,7 +196,7 @@ const providerCluster1 = {
   proxy: false,
 };
 const providerCluster2 = {
-  id: 'oneprovider-2',
+  id: 'oneprovider2',
   type: 'oneprovider',
   serviceId: PROVIDER2_ID,
   version: '18.02.0',
@@ -207,7 +207,7 @@ const providerClusters = [providerCluster1, providerCluster2];
 const provider1 = PlainableObject.create({
   id: PROVIDER_ID,
   name: 'Some provider 1',
-  domain: 'oneprovider-1.local-onedata.org',
+  domain: 'oneprovider1.local-onedata.org',
   geoLatitude: 49.698284,
   geoLongitude: 21.898093,
   online: true,
@@ -228,7 +228,7 @@ function getCurrentProviderClusterFromUrl() {
   const url = location.toString();
   const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
   const mh = new RegExp(`https://.*/${onepanelAbbrev}/(.*?)/.*/`).exec(url);
-  const id = me && me[1] || mh && mh[1] || 'oneprovider-1';
+  const id = me && me[1] || mh && mh[1] || 'oneprovider1';
   return providerClusters.findBy('id', id);
 }
 
@@ -1570,8 +1570,8 @@ export default OnepanelServerBase.extend(
         provider1,
         {
           id: PROVIDER2_ID,
-          name: 'Some provider 1',
-          domain: 'oneprovider-2.local-onedata.org',
+          name: 'Some provider 2',
+          domain: 'oneprovider2.local-onedata.org',
           geoLatitude: 49.698284,
           geoLongitude: 21.898093,
           online: true,

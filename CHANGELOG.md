@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6566 Updated commons
 * VFS-7221 Fixed empty storage selector when supporting space
 * VFS-7183 Showing storage IDs when there are multiple storages with the same name
 * VFS-7202 Updated "bad data" backend error translation
