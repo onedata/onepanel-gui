@@ -11,9 +11,10 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
-import { default as EmberObject, computed } from '@ember/object';
+import { default as EmberObject, computed, get, trySet } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import config from 'ember-get-config';
+import changeDomain from 'onepanel-gui/utils/change-domain';
 
 const {
   time: {
@@ -75,6 +76,27 @@ export default Component.extend(I18n, {
   _redirectPage: false,
 
   /**
+   * @type {ComputedProperty<PromiseObject<String|undefined>>}
+   */
+  redirectDomain: computed('onepanelServiceType', function redirectDomain() {
+    const onepanelServiceType = this.get('onepanelServiceType');
+    let promise;
+    switch (onepanelServiceType) {
+      case 'oneprovider':
+        promise = this.get('providerManager').getProviderDetailsProxy()
+          .then(provider => provider && get(provider, 'domain'));
+        break;
+      case 'onezone':
+        promise = this.get('deploymentManager').getClusterConfiguration()
+          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
+        break;
+      default:
+        throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
+    }
+    return PromiseObject.create({ promise });
+  }),
+
+  /**
    * True if currently making Let's Encrypt request
    * @type {Ember.ComputedProperty<boolean>}
    */
@@ -130,12 +152,9 @@ export default Component.extend(I18n, {
   _setLetsEncrypt(enabled) {
     const {
       globalNotify,
-      _location,
-    } = this.getProperties('globalNotify', '_location');
-    return this.get('webCertManager')
-      .modifyWebCert({
-        letsEncrypt: enabled,
-      })
+      webCertManager,
+    } = this.getProperties('globalNotify', 'webCertManager');
+    return webCertManager.modifyWebCert({ letsEncrypt: enabled })
       .catch(error => {
         globalNotify.backendError(this.t('certificateGeneration'), error);
         throw error;
@@ -143,9 +162,12 @@ export default Component.extend(I18n, {
       .then(() => {
         if (enabled) {
           this.set('_redirectPage', true);
-          setTimeout(() => {
-            _location.reload();
-          }, reloadDelayForCertificateChange);
+          this.get('redirectDomain')
+            .then(domain => changeDomain(domain, {
+              location: this.get('_location'),
+              delay: reloadDelayForCertificateChange,
+            }))
+            .catch(() => trySet(this, '_redirectPage', false));
         } else {
           this.get('nextStep')();
         }
