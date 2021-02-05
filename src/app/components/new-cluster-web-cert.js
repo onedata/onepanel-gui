@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
-import { default as EmberObject, computed, get, trySet } from '@ember/object';
+import { default as EmberObject, computed, trySet } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import config from 'ember-get-config';
 import changeDomain from 'onepanel-gui/utils/change-domain';
@@ -25,17 +25,11 @@ const {
 export default Component.extend(I18n, {
   classNames: ['new-cluster-web-cert'],
 
-  onepanelServer: service(),
-  deploymentManager: service(),
   webCertManager: service(),
-  providerManager: service(),
   globalNotify: service(),
   i18n: service(),
-  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterWebCert',
-
-  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * @virtual
@@ -74,27 +68,6 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   _redirectPage: false,
-
-  /**
-   * @type {ComputedProperty<PromiseObject<String|undefined>>}
-   */
-  redirectDomain: computed('onepanelServiceType', function redirectDomain() {
-    const onepanelServiceType = this.get('onepanelServiceType');
-    let promise;
-    switch (onepanelServiceType) {
-      case 'oneprovider':
-        promise = this.get('providerManager').getProviderDetailsProxy()
-          .then(provider => provider && get(provider, 'domain'));
-        break;
-      case 'onezone':
-        promise = this.get('deploymentManager').getClusterConfiguration()
-          .then(({ data: cluster }) => cluster && get(cluster, 'onezone.domainName'));
-        break;
-      default:
-        throw new Error(`Invalid onepanelServiceType: ${onepanelServiceType}`);
-    }
-    return PromiseObject.create({ promise });
-  }),
 
   /**
    * True if currently making Let's Encrypt request
@@ -162,7 +135,7 @@ export default Component.extend(I18n, {
       .then(() => {
         if (enabled) {
           this.set('_redirectPage', true);
-          this.get('redirectDomain')
+          webCertManager.getDomainForRedirectAfterWebCertChange()
             .then(domain => changeDomain(domain, {
               location: this.get('_location'),
               delay: reloadDelayForCertificateChange,
