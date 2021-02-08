@@ -79,12 +79,6 @@ export default Component.extend(I18n, GlobalActions, {
   refreshCert: true,
 
   /**
-   * Using intermediate var for testing purposes
-   * @type {Location}
-   */
-  _location: location,
-
-  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   shouldPollWebCert: computed(
