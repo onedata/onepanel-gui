@@ -11,12 +11,15 @@ import { click } from 'ember-native-dom-helpers';
 import { resolve } from 'rsvp';
 import { set } from '@ember/object';
 
+const onezoneDomain = 'onezone.org';
+const oneproviderDomain = `somedomain.${onezoneDomain}`;
+
 const DeploymentManager = Service.extend({
   getClusterConfiguration() {
     return resolve({
       data: {
         onezone: {
-          domainName: 'onezone.org',
+          domainName: onezoneDomain,
         },
       },
     });
@@ -26,7 +29,7 @@ const DeploymentManager = Service.extend({
 const ProviderManager = Service.extend({
   getProviderDetailsProxy() {
     return promiseObject(resolve({
-      domain: 'somedomain.onezone.org',
+      domain: oneproviderDomain,
     }));
   },
 });
@@ -73,14 +76,15 @@ describe('Integration | Component | new cluster web cert', function () {
   [true, false].forEach(isEmergencyGui => {
     [{
       serviceType: 'onezone',
-      beforeReloadDomain: 'onezone.org',
-      reloadedDomain: 'onezone.org',
+      beforeReloadDomain: onezoneDomain,
+      reloadedDomain: onezoneDomain,
     }, {
       serviceType: 'oneprovider',
-      beforeReloadDomain: isEmergencyGui ? 'somedomain.onezone.org' : 'onezone.org',
-      reloadedDomain: isEmergencyGui ? 'somedomain.onezone.org' : 'onezone.org',
+      beforeReloadDomain: isEmergencyGui ? oneproviderDomain : onezoneDomain,
+      reloadedDomain: isEmergencyGui ? oneproviderDomain : onezoneDomain,
     }].forEach(({ serviceType, beforeReloadDomain, reloadedDomain }) => {
       const emergencyModeDesc = `GUI is ${isEmergencyGui ? '' : 'not '}in emergency mode`;
+
       it(
         `redirects to ${isEmergencyGui ? serviceType : 'onezone'} domain on next step if LetsEncrypt is enabled and GUI was served via IP address and ${emergencyModeDesc}`,
         async function () {
@@ -89,7 +93,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           _location.hostname = '127.0.0.1';
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert _location=_location nextStep=nextStep}}`);
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.btn-cert-next');
@@ -118,7 +122,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           _location.hostname = beforeReloadDomain;
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert _location=_location nextStep=nextStep}}`);
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.btn-cert-next');
@@ -138,7 +142,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           const oldHostname = _location.hostname;
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert _location=_location nextStep=nextStep}}`);
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.toggle-field-letsEncrypt');

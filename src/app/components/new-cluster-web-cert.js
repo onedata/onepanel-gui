@@ -13,14 +13,6 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { reads, alias } from '@ember/object/computed';
 import { default as EmberObject, computed, trySet } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import config from 'ember-get-config';
-import changeDomain from 'onepanel-gui/utils/change-domain';
-
-const {
-  time: {
-    reloadDelayForCertificateChange,
-  },
-} = config;
 
 export default Component.extend(I18n, {
   classNames: ['new-cluster-web-cert'],
@@ -55,12 +47,6 @@ export default Component.extend(I18n, {
     const promise = this.get('webCertManager').fetchWebCert();
     return PromiseObject.create({ promise });
   }),
-
-  /**
-   * Using intermediate var for testing purposes
-   * @type {Location}
-   */
-  _location: location,
 
   /**
    * Set to true if the location has been changed to show that location
@@ -135,11 +121,7 @@ export default Component.extend(I18n, {
       .then(() => {
         if (enabled) {
           this.set('_redirectPage', true);
-          webCertManager.getDomainForRedirectAfterWebCertChange()
-            .then(domain => changeDomain(domain, {
-              location: this.get('_location'),
-              delay: reloadDelayForCertificateChange,
-            }))
+          return webCertManager.reloadPageAfterWebCertChange()
             .catch(() => trySet(this, '_redirectPage', false));
         } else {
           this.get('nextStep')();

@@ -12,6 +12,14 @@ import { computed, get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { reject, resolve } from 'rsvp';
+import config from 'ember-get-config';
+import changeDomain from 'onepanel-gui/utils/change-domain';
+
+const {
+  time: {
+    reloadDelayForCertificateChange,
+  },
+} = config;
 
 export default Service.extend(createDataProxyMixin('webCert'), {
   onepanelServer: service(),
@@ -61,6 +69,17 @@ export default Service.extend(createDataProxyMixin('webCert'), {
         letsEncrypt,
       }
     );
+  },
+
+  /**
+   * @returns {Promise}
+   */
+  reloadPageAfterWebCertChange() {
+    return this.getDomainForRedirectAfterWebCertChange()
+      .then(domain => changeDomain(domain, {
+        location: this.get('_location'),
+        delay: reloadDelayForCertificateChange,
+      }));
   },
 
   /**

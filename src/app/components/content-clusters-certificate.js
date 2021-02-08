@@ -17,14 +17,7 @@ import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import Looper from 'onedata-gui-common/utils/looper';
-import config from 'ember-get-config';
 import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
-
-const {
-  time: {
-    reloadDelayForCertificateChange,
-  },
-} = config;
 
 /**
  * @type {Number} interval in ms
@@ -34,8 +27,6 @@ const webCertPollInterval = 2000;
 export default Component.extend(I18n, GlobalActions, {
   webCertManager: service(),
   onepanelServer: service(),
-  deploymentManager: service(),
-  providerManager: service(),
   globalNotify: service(),
   guiUtils: service(),
 
@@ -68,10 +59,6 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {boolean}
    */
   showRedirectPage: false,
-
-  isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
-
-  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * True, if regenerate action is pending
@@ -161,10 +148,8 @@ export default Component.extend(I18n, GlobalActions, {
 
   schedulePageReload() {
     safeExec(this, 'set', 'showRedirectPage', true);
-    const _location = this.get('_location');
-    setTimeout(() => {
-      _location.reload();
-    }, reloadDelayForCertificateChange);
+    return this.get('webCertManager').reloadPageAfterWebCertChange()
+      .catch(() => safeExec(this, 'set', 'showRedirectPage', false));
   },
 
   actions: {
