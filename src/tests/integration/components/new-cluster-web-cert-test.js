@@ -86,7 +86,7 @@ describe('Integration | Component | new cluster web cert', function () {
       const emergencyModeDesc = `GUI is ${isEmergencyGui ? '' : 'not '}in emergency mode`;
 
       it(
-        `redirects to ${isEmergencyGui ? serviceType : 'onezone'} domain on next step if LetsEncrypt is enabled and GUI was served via IP address and ${emergencyModeDesc}`,
+        `${!isEmergencyGui && serviceType === 'oneprovider' ? 'does not ' : ''}redirect to ${isEmergencyGui ? serviceType : 'onezone'} domain on next step if LetsEncrypt is enabled and ${serviceType} GUI was served via IP address and ${emergencyModeDesc}`,
         async function () {
           set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
@@ -100,13 +100,12 @@ describe('Integration | Component | new cluster web cert', function () {
           this.get('fakeClock').tick(reloadDelay);
           await wait();
 
-          if (isEmergencyGui) {
+          if (isEmergencyGui || serviceType === 'onezone') {
             expect(_location.hostname).to.equal(reloadedDomain);
             expect(_location.reload).to.not.be.called;
           } else {
-            // If onezone was served via IP, then we don't care about changing it to its
-            // domain. Browsing Onezone via IP is corrupted out-of-the-box. Reload is
-            // performed as it is a generic behavior.
+            // During the Oneprovider certificate change in hosted GUI we don't change
+            // Onezone IP to domain.
             expect(_location.hostname).to.equal('127.0.0.1');
             expect(_location.reload).to.be.calledOnce;
           }

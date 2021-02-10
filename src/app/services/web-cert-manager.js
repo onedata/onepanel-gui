@@ -92,7 +92,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
       _location,
     } = this.getProperties('onepanelServiceType', 'isEmergencyOnepanel', '_location');
 
-    if (isEmergencyOnepanel) {
+    if (isEmergencyOnepanel || onepanelServiceType === 'onezone') {
       switch (onepanelServiceType) {
         case 'oneprovider':
           return this.get('providerManager').getProviderDetailsProxy()

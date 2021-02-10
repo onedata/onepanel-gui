@@ -20,6 +20,7 @@ export default Component.extend(I18n, {
   webCertManager: service(),
   globalNotify: service(),
   i18n: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.newClusterWebCert',
 
@@ -54,6 +55,11 @@ export default Component.extend(I18n, {
    * @type {boolean}
    */
   _redirectPage: false,
+
+  /**
+   * @type {ComputedProperty<String>}
+   */
+  onepanelServiceType: reads('guiUtils.serviceType'),
 
   /**
    * True if currently making Let's Encrypt request
@@ -105,7 +111,7 @@ export default Component.extend(I18n, {
 
   /**
    * Configure Let's Encrypt feature for provider
-   * @param {boolean} enabled 
+   * @param {boolean} enabled
    * @returns {Promise} invoke server `modifyProvider` method
    */
   _setLetsEncrypt(enabled) {
