@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7333 Updated commons
 * VFS-7280 Fixed page reload after web certificate change
 * VFS-6566 Updated commons
 * VFS-7221 Fixed empty storage selector when supporting space
