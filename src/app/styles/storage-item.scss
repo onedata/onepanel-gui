@@ -101,17 +101,15 @@
         }
         .form-field-right-addon {
           right: 40px;
-          top: $storage-item-padding * 0.33;
+          padding-top: $storage-item-padding * 0.33;
           transform: translateX(1.5em);
           text-align: right;
         }
         .form-control-static {
           padding: $storage-item-padding 0;
         }
-        .form-control-column .form-control {
-          margin-top: $storage-item-padding * 0.33;
-        }
         .form-control-column {
+          padding-top: $storage-item-padding * 0.33;
           margin-right: 50px;
           width: calc(66.666666% - 50px);
         }
@@ -123,7 +121,7 @@
         }
         .has-feedback .form-control-feedback {
           right: 50px;
-          margin-top: $storage-item-padding * 0.33;
+          padding-top: $storage-item-padding * 0.33;
           padding-right: $padding-base-horizontal;
           text-align: right;
         }
