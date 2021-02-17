@@ -9,13 +9,13 @@
  */
 
 import EmberObject from '@ember/object';
-import checkImg from 'onedata-gui-common/utils/check-img';
+import { reads } from '@ember/object/computed';
+import validateOnepanelConnection from 'onedata-gui-common/utils/validate-onepanel-connection';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve, reject } from 'rsvp';
 import { inject as service } from '@ember/service';
 import {
   onepanelAbbrev,
-  onepanelTestImagePath,
 } from 'onedata-gui-common/utils/onedata-urls';
 import $ from 'jquery';
 
@@ -37,6 +37,18 @@ export default EmberObject.extend(
     isLocal: undefined,
 
     /**
+     * @virtual
+     * @type {String}
+     */
+    id: undefined,
+
+    /**
+     * Compatibility with onezone-gui
+     * @type {ComputedProperty<String>}
+     */
+    entityId: reads('id'),
+
+    /**
      * @override
      */
     fetchStandaloneOrigin() {
@@ -56,8 +68,12 @@ export default EmberObject.extend(
       if (this.get('isLocal')) {
         return resolve(true);
       } else {
-        return this.get('standaloneOriginProxy').then(standaloneOrigin => {
-          return checkImg(`${standaloneOrigin}${onepanelTestImagePath}`);
+        const {
+          standaloneOriginProxy,
+          id,
+        } = this.getProperties('standaloneOriginProxy', 'id');
+        return standaloneOriginProxy.then(standaloneOrigin => {
+          return validateOnepanelConnection(standaloneOrigin, id);
         });
       }
     },
