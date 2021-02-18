@@ -6,6 +6,7 @@ export default {
   showOnMap: 'Show on map',
   oneproviderTileTitle: 'Oneprovider',
   domain: 'Domain',
+  providerId: 'Provider ID',
   clusterType: {
     onezone: 'Onezone',
     oneprovider: 'Oneprovider',

@@ -9,6 +9,7 @@
  */
 
 import EmberObject from '@ember/object';
+import { reads } from '@ember/object/computed';
 import checkImg from 'onedata-gui-common/utils/check-img';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve, reject } from 'rsvp';
@@ -35,6 +36,18 @@ export default EmberObject.extend(
      * @type {boolean}
      */
     isLocal: undefined,
+
+    /**
+     * @virtual
+     * @type {String}
+     */
+    id: undefined,
+
+    /**
+     * Compatibility with onezone-gui
+     * @type {ComputedProperty<String>}
+     */
+    entityId: reads('id'),
 
     /**
      * @override

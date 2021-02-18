@@ -36,6 +36,7 @@ const EMAIL_REGEX =
 const COMMON_FIELDS_TOP = [{
     name: 'id',
     type: 'static',
+    copyable: true,
   },
   {
     name: 'name',

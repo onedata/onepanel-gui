@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6663 Added options for copy provider ID and cluster ID/domain
 * VFS-7333 Updated commons
 * VFS-7280 Fixed page reload after web certificate change
 * VFS-6566 Updated commons
