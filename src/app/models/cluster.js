@@ -71,7 +71,7 @@ export default EmberObject.extend(
         const {
           standaloneOriginProxy,
           id,
-        } = this.getProperties('standaloneOriginProxy', 'id');
+        } = this.getProperties('standaloneOriginProxy', 'entityId');
         return standaloneOriginProxy.then(standaloneOrigin => {
           return validateOnepanelConnection(standaloneOrigin, id);
         });
