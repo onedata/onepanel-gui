@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-6638 Detecting unreachable duplicated clusters
 * VFS-7281 Fixed scrolling to active items in sidebar
 * VFS-7333 Updated commons
 * VFS-7280 Fixed page reload after web certificate change
