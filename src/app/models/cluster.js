@@ -70,10 +70,10 @@ export default EmberObject.extend(
       } else {
         const {
           standaloneOriginProxy,
-          id,
+          entityId,
         } = this.getProperties('standaloneOriginProxy', 'entityId');
         return standaloneOriginProxy.then(standaloneOrigin => {
-          return validateOnepanelConnection(standaloneOrigin, id);
+          return validateOnepanelConnection(standaloneOrigin, entityId);
         });
       }
     },
