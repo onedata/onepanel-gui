@@ -2,63 +2,39 @@ import { expect } from 'chai';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-import { Promise } from 'rsvp';
-import I18nStub from '../../helpers/i18n-stub';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import Service from '@ember/service';
 import { click } from 'ember-native-dom-helpers';
-import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import { resolve } from 'rsvp';
 import { set } from '@ember/object';
 
-const PROVIDER_DETAILS = {
-  id: 'provider_id',
-  name: 'Some provider',
-  onezoneDomainName: 'example.com',
-  subdomainDelegation: true,
-  letsEncryptEnabled: undefined,
-  subdomain: 'somedomain',
-  domain: 'somedomain.onezone.org',
-  geoLatitude: 49.698284,
-  geoLongitude: 21.898093,
-};
-
-const GuiUtils = Service.extend({
-  updateGuiNameProxy: () => resolve(),
-});
+const onezoneDomain = 'onezone.org';
+const oneproviderDomain = `somedomain.${onezoneDomain}`;
 
 const DeploymentManager = Service.extend({
   getClusterConfiguration() {
-    return Promise.resolve({
+    return resolve({
       data: {
         onezone: {
-          domainName: 'example.com',
+          domainName: onezoneDomain,
         },
       },
     });
   },
-  getHostNames: notImplementedThrow,
 });
 
-const WebCertManager = Service.extend({
-  fetchWebCert() {
-    return Promise.resolve({
-      letsEncrypt: false,
-    });
-  },
-  modifyWebCert() {
-    return Promise.resolve();
+const ProviderManager = Service.extend({
+  getProviderDetailsProxy() {
+    return promiseObject(resolve({
+      domain: oneproviderDomain,
+    }));
   },
 });
 
-const OnepanelServer = Service.extend({
-  serviceType: 'onezone',
-  fetchConfiguration: notImplementedThrow,
-  requestValidData: notImplementedThrow,
-});
+const reloadDelay = 5000;
 
 describe('Integration | Component | new cluster web cert', function () {
   setupComponentTest('new-cluster-web-cert', {
@@ -66,13 +42,26 @@ describe('Integration | Component | new cluster web cert', function () {
   });
 
   beforeEach(function () {
-    registerService(this, 'i18n', I18nStub);
-    registerService(this, 'web-cert-manager', WebCertManager);
+    const _location = {
+      reload: sinon.spy(),
+      hostname: '127.0.0.1',
+    };
+
     registerService(this, 'deployment-manager', DeploymentManager);
-    registerService(this, 'onepanel-server', OnepanelServer);
-    registerService(this, 'gui-utils', GuiUtils);
+    registerService(this, 'provider-manager', ProviderManager);
+    registerService(this, 'gui-utils', Service);
+    registerService(this, 'onepanel-server', Service);
+
+    const webCertManager = lookupService(this, 'web-cert-manager');
+    sinon.stub(webCertManager, 'fetchWebCert').resolves({ letsEncrypt: false });
+    sinon.stub(webCertManager, 'modifyWebCert').resolves();
+    set(webCertManager, '_location', _location);
+
+    const onepanelServer = lookupService(this, 'onepanel-server');
+    set(onepanelServer, 'isEmergency', true);
+
     this.setProperties({
-      _location: { reload: sinon.spy() },
+      _location,
       fakeClock: sinon.useFakeTimers({
         now: Date.now(),
         shouldAdvanceTime: true,
@@ -84,64 +73,86 @@ describe('Integration | Component | new cluster web cert', function () {
     this.get('fakeClock').restore();
   });
 
-  it(
-    'reloads page on next step if LetsEncrypt is enabled',
-    function () {
-      const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
-        subdomainDelegation: true,
-      });
-      this.set('providerDetailsProxy', PromiseObject.create({
-        promise: Promise.resolve(providerDetails),
-      }));
-      const nextStep = sinon.spy();
-      this.on('nextStep', nextStep);
-      set(lookupService(this, 'guiUtils'), 'serviceType', 'onezone');
+  [true, false].forEach(isEmergencyGui => {
+    [{
+      serviceType: 'onezone',
+      beforeReloadDomain: onezoneDomain,
+      reloadedDomain: onezoneDomain,
+    }, {
+      serviceType: 'oneprovider',
+      beforeReloadDomain: isEmergencyGui ? oneproviderDomain : onezoneDomain,
+      reloadedDomain: isEmergencyGui ? oneproviderDomain : onezoneDomain,
+    }].forEach(({ serviceType, beforeReloadDomain, reloadedDomain }) => {
+      const emergencyModeDesc = `GUI is ${isEmergencyGui ? '' : 'not '}in emergency mode`;
 
-      this.render(hbs `{{new-cluster-web-cert
-        _location=_location
-        nextStep=(action "nextStep")
-      }}`);
+      it(
+        `${!isEmergencyGui && serviceType === 'oneprovider' ? 'does not ' : ''}redirect to ${isEmergencyGui ? serviceType : 'onezone'} domain on next step if LetsEncrypt is enabled and ${serviceType} GUI was served via IP address and ${emergencyModeDesc}`,
+        async function () {
+          set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
+          set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
+          const _location = this.get('_location');
+          _location.hostname = '127.0.0.1';
+          const nextStep = this.set('nextStep', sinon.spy());
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
-      return wait().then(() => {
-        return click('.btn-cert-next').then(() => {
-          this.get('fakeClock').tick(6000);
-          return wait().then(() => {
-            expect(this.get('_location.reload'), 'reload').to.be.called;
-            expect(nextStep).to.be.not.called;
-          });
+          await wait();
+          await click('.btn-cert-next');
+          this.get('fakeClock').tick(reloadDelay);
+          await wait();
+
+          if (isEmergencyGui || serviceType === 'onezone') {
+            expect(_location.hostname).to.equal(reloadedDomain);
+            expect(_location.reload).to.not.be.called;
+          } else {
+            // During the Oneprovider certificate change in hosted GUI we don't change
+            // Onezone IP to domain.
+            expect(_location.hostname).to.equal('127.0.0.1');
+            expect(_location.reload).to.be.calledOnce;
+          }
+          expect(nextStep).to.be.not.called;
+        }
+      );
+
+      it(
+        `reloads ${serviceType} GUI on next step if LetsEncrypt is enabled and GUI was served via domain and ${emergencyModeDesc}`,
+        async function () {
+          set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
+          set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
+          const _location = this.get('_location');
+          _location.hostname = beforeReloadDomain;
+          const nextStep = this.set('nextStep', sinon.spy());
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+
+          await wait();
+          await click('.btn-cert-next');
+          this.get('fakeClock').tick(reloadDelay);
+          await wait();
+
+          expect(_location.hostname).to.equal(reloadedDomain);
+          expect(_location.reload).to.be.calledOnce;
+          expect(nextStep).to.be.not.called;
+        }
+      );
+
+      it(`does not reload ${serviceType} GUI on next step if LetsEncrypt is disabled and ${emergencyModeDesc}`,
+        async function () {
+          set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
+          set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
+          const _location = this.get('_location');
+          const oldHostname = _location.hostname;
+          const nextStep = this.set('nextStep', sinon.spy());
+          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+
+          await wait();
+          await click('.toggle-field-letsEncrypt');
+          await click('.btn-cert-next');
+          this.get('fakeClock').tick(reloadDelay);
+          await wait();
+
+          expect(_location.hostname).to.equal(oldHostname);
+          expect(this.get('_location.reload')).to.be.not.called;
+          expect(nextStep, 'nextStep').to.be.called;
         });
-      });
-    }
-  );
-
-  it(
-    'does not reload page if LetsEncrypt is disabled',
-    function () {
-      const providerDetails = Object.assign({}, PROVIDER_DETAILS, {
-        subdomainDelegation: true,
-      });
-      this.set('providerDetailsProxy', PromiseObject.create({
-        promise: Promise.resolve(providerDetails),
-      }));
-      const nextStep = sinon.spy();
-      this.on('nextStep', nextStep);
-
-      this.render(hbs `{{new-cluster-web-cert
-        _location=_location
-        nextStep=(action "nextStep")
-      }}`);
-
-      return wait().then(() => {
-        return click('.toggle-field-letsEncrypt').then(() => {
-          return click('.btn-cert-next').then(() => {
-            this.get('fakeClock').tick(6000);
-            return wait().then(() => {
-              expect(this.get('_location.reload'), 'reload').to.be.not.called;
-              expect(nextStep, 'nextStep').to.be.called;
-            });
-          });
-        });
-      });
-    }
-  );
+    });
+  });
 });

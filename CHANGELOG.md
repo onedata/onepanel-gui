@@ -7,6 +7,8 @@ CHANGELOG
 ### Latest changes
 
 * VFS-7281 Fixed scrolling to active items in sidebar
+* VFS-7333 Updated commons
+* VFS-7280 Fixed page reload after web certificate change
 * VFS-6566 Updated commons
 * VFS-7221 Fixed empty storage selector when supporting space
 * VFS-7183 Showing storage IDs when there are multiple storages with the same name
