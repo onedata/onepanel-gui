@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7114 Do not allow to edit readonly QoS properties like providerId and storageId
 * VFS-6663 Added options for copy provider ID and cluster ID/domain
 * VFS-6638 Detecting unreachable duplicated clusters
 * VFS-7281 Fixed scrolling to active items in sidebar
