@@ -1,0 +1,12 @@
+.content-clusters-overview {
+  .resource-info-tile {
+    .cluster-type {
+      position: relative;
+      .id-trigger {
+        @include vertical-align-middle;
+        right: 0;
+        font-size: 225%;
+      }
+    }
+  }
+}

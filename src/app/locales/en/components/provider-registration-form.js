@@ -11,7 +11,7 @@ export default {
       tip: 'Provide registration token to register in Onezone of your choice. It can be obtained in Onezone Web GUI by admin.',
     },
     id: {
-      label: 'ID',
+      label: 'Provider ID',
     },
     name: {
       label: 'Provider name',

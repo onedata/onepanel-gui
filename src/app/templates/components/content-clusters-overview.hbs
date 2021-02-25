@@ -22,8 +22,41 @@
             </tr>
             <tr>
               <td class="property-name">{{tt this "type"}}</td>
-              <td class="property-value creation-time">
-                {{tt this (concat "clusterType." cluster.type)}}
+              <td class="property-value cluster-type">
+                {{#if (eq cluster.type "oneprovider")}}
+                  {{#link-to
+                    "onedata.sidebar.content.aspect"
+                    "provider"
+                    class="cluster-type-text black"
+                  }}
+                    {{tt this (concat "clusterType." cluster.type)}}
+                  {{/link-to}}
+                  {{one-icon
+                    id=providerIdInfoTriggerId
+                    icon="circle-id"
+                    class="icon-trigger id-trigger clickable"
+                  }}
+                  {{#one-webui-popover
+                    class="id-info"
+                    popoverStyle="id-info over-modals"
+                    triggerSelector=(concat "#" providerIdInfoTriggerId)
+                    as |popover|
+                  }}
+                    <div class="form-group without-margin">
+                      <label class="control-label">{{tt this "providerId"}}:</label>
+                      {{one-clipboard-line
+                        size="sm"
+                        value=providerId
+                        showText=false
+                        btnType="default"
+                      }}
+                    </div>
+                  {{/one-webui-popover}}
+                {{else}}
+                  <div class="cluster-type-text">
+                    {{tt this (concat "clusterType." cluster.type)}}
+                  </div>
+                {{/if}}
               </td>
             </tr>
             {{yield}}
