@@ -14,6 +14,7 @@ import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { tag } from 'ember-awesome-macros';
 import { Promise } from 'rsvp';
 
 export default Component.extend(
@@ -21,6 +22,8 @@ export default Component.extend(
   createDataProxyMixin('provider'),
   createDataProxyMixin('providerId'),
   createDataProxyMixin('installationDetails'), {
+    classNames: ['content-clusters-overview'],
+
     guiUtils: service(),
     providerManager: service(),
     spaceManager: service(),
@@ -50,6 +53,11 @@ export default Component.extend(
     //     });
     //   }
     // }),
+
+    /**
+     * @type {ComputedProperty<String>}
+     */
+    providerIdInfoTriggerId: tag `${'elementId'}-provider-id-info-trigger`,
 
     /**
      * @type {Ember.ComputedProperty<PromiseArray<SpaceDetails>>}
