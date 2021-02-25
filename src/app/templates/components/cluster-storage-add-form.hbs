@@ -32,6 +32,7 @@
         showHeader=true
         mode=mode
         qosParams=storage.qosParameters
+        readonlyKeys=(array "storageId" "providerId")
         isFormOpened=isFormOpened
         class=(concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static"))
         onChange=(action "qosParamsChanged")

@@ -52,6 +52,10 @@ const MOCKED_SUPPORT = {
 };
 
 const fallbackMockServiceType = 'oneprovider';
+const baseQosParameters = {
+  storageId: 'e777476baf3418ed9861a97750be285ech9802',
+  providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
+};
 
 /**
  * Match using URL, because we know that this is NodeJS-based mocked backend,
@@ -481,11 +485,11 @@ export default OnepanelServerBase.extend(
             lumaFeedApiKey: 'some_storage',
             skipStorageDetection: true,
             readonly: true,
-            qosParameters: {
+            qosParameters: Object.assign({}, baseQosParameters, {
               param1: 'abc',
               param2: 'def',
               param3: '123',
-            },
+            }),
           };
           const storage2 = {
             id: 'storage2_verylongid',
@@ -498,11 +502,11 @@ export default OnepanelServerBase.extend(
             lumaFeedApiKey: 'some_storage',
             skipStorageDetection: true,
             readonly: false,
-            qosParameters: {
+            qosParameters: Object.assign({}, baseQosParameters, {
               param1: 'abc',
               param2: 'def',
               param3: '123',
-            },
+            }),
           };
           const storageCeph = {
             id: 'storage2_id',
@@ -511,6 +515,7 @@ export default OnepanelServerBase.extend(
             monitorHostname: 'host.name',
             clusterName: 'cluster_name',
             poolName: 'some_pool',
+            qosParameters: Object.assign({}, baseQosParameters),
           };
           const storageCephRados = {
             id: 'storage3_id',
@@ -520,6 +525,7 @@ export default OnepanelServerBase.extend(
             clusterName: 'cluster_name',
             poolName: 'some_pool',
             importedStorage: true,
+            qosParameters: Object.assign({}, baseQosParameters),
           };
           const storageHttp = {
             name: 'My HTTP server',
@@ -528,10 +534,7 @@ export default OnepanelServerBase.extend(
             storagePathType: 'canonical',
             skipStorageDetection: true,
             readonly: true,
-            qosParameters: {
-              storageId: 'e777476baf3418ed9861a97750be285ech9802',
-              providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
-            },
+            qosParameters: Object.assign({}, baseQosParameters),
             lumaFeed: 'auto',
             importedStorage: true,
             id: 'e777476baf3418ed9861a97750be285ech9802',
