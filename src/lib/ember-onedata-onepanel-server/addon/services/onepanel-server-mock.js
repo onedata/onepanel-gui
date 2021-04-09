@@ -873,7 +873,9 @@ export default OnepanelServerBase.extend(
               _.assign({ id }, storage)
             )
           );
+          return { id };
         },
+        statusCode: () => 200,
       };
     }),
 
@@ -1783,7 +1785,8 @@ export default OnepanelServerBase.extend(
         body: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy]',
       },
     })),
-  });
+  }
+);
 
 function computedResourceGetHandler(storeProperty, defaultData) {
   return computed(function () {
