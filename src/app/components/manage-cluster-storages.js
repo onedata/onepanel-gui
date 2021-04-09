@@ -146,7 +146,7 @@ export default Component.extend(I18n, GlobalActions, {
   }),
 
   /**
-   * @override 
+   * @override
    * @type {Ember.ComputedProperty<Array<Action>>}
    */
   globalActions: computed(
@@ -262,15 +262,29 @@ export default Component.extend(I18n, GlobalActions, {
      * @returns {ClusterStorages} instance of ClusterStorages subclass
      */
     submitAddStorage(storageFormData) {
-      let { name } = storageFormData;
-      let submitting = this._submitAddStorage(storageFormData);
+      const globalNotify = this.get('globalNotify');
+      const { name } = storageFormData;
+      const submitting = this._submitAddStorage(storageFormData);
       submitting.then(() => {
-        // TODO i18n
-        this.get('globalNotify').info(`Storage "${name}" added`);
+        globalNotify.info(this.t('storageAdded', { storageName: name }));
       });
       submitting.catch(error => {
-        // TODO i18n
-        this.get('globalNotify').backendError(`adding "${name}" storage`, error);
+        console.dir(error);
+        let storageError;
+        try {
+          storageError = (error || this.t('unknownError')) && error.response &&
+            error.response.body && error.response.body[name] &&
+            error.response.body[name].error || error.toString();
+          if (typeof storageError === 'object') {
+            storageError.message = storageError.description;
+          }
+        } catch (parseError) {
+          error = this.t('unknownError');
+        }
+        globalNotify.backendError(
+          this.t('addingStorage', { storageName: name }),
+          storageError
+        );
       });
       return submitting;
     },
