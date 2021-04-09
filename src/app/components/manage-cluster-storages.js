@@ -269,17 +269,16 @@ export default Component.extend(I18n, GlobalActions, {
         globalNotify.info(this.t('storageAdded', { storageName: name }));
       });
       submitting.catch(error => {
-        console.dir(error);
         let storageError;
         try {
-          storageError = (error || this.t('unknownError')) && error.response &&
+          storageError = typeof error === 'object' && error.response &&
             error.response.body && error.response.body[name] &&
-            error.response.body[name].error || error.toString();
+            error.response.body[name].error || error.toString() || this.t('unknownError');
           if (typeof storageError === 'object') {
             storageError.message = storageError.description;
           }
         } catch (parseError) {
-          error = this.t('unknownError');
+          storageError = this.t('unknownError');
         }
         globalNotify.backendError(
           this.t('addingStorage', { storageName: name }),
