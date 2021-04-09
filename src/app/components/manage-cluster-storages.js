@@ -271,7 +271,7 @@ export default Component.extend(I18n, GlobalActions, {
       submitting.catch(error => {
         let storageError;
         try {
-          storageError = typeof error === 'object' && error.response &&
+          storageError = error && typeof error === 'object' && error.response &&
             error.response.body && error.response.body[name] &&
             error.response.body[name].error || error.toString() || this.t('unknownError');
           if (typeof storageError === 'object') {
