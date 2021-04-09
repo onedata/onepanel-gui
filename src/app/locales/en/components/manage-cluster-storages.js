@@ -7,4 +7,7 @@ export default {
   removeStorageModalHeader: 'Remove storage',
   removeStorageModalMessage: 'Are you sure you want to remove storage "{{name}}"?',
   remove: 'Remove',
+  storageAdded: 'Storage "{{storageName}}" added',
+  addingStorage: 'adding "{{storageName}}" storage',
+  unknownError: 'Unknown error',
 };
