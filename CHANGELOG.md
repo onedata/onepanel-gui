@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7703 Added "Archive storage" option to S3 storage
 * VFS-7666 Changed default value of S3 storage hostname
 * VFS-7663 Changed login background image
 * VFS-7523 Use new storage create API response with detailed error message

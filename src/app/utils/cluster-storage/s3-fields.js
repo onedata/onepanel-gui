@@ -1,6 +1,11 @@
 const posixRegexp = /^[0-7][0-7][0-7][0-7]?$/;
 
 export default [{
+  name: 'archiveStorage',
+  type: 'checkbox',
+  defaultValue: false,
+  tip: true,
+}, {
   name: 'hostname',
   type: 'text',
   defaultValue: 'https://s3.amazonaws.com',

@@ -1,4 +1,8 @@
 export default {
+  archiveStorage: {
+    name: 'Archive storage',
+    tip: 'Defines whether storage supports long-term dataset archiving.',
+  },
   accessKey: { name: 'Admin access key' },
   secretKey: { name: 'Admin secret key' },
   hostname: { name: 'Hostname' },
