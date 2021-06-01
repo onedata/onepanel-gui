@@ -1,5 +1,5 @@
 import Service from '@ember/service';
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { computed } from '@ember/object';
 import ObjectProxy from '@ember/object/proxy';
 
@@ -36,5 +36,9 @@ export default Service.extend({
         resolve(this.get('__providerDetails'));
       }),
     });
+  },
+
+  getRemoteProvider() {
+    return resolve();
   },
 });
