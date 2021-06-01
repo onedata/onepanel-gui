@@ -10,6 +10,7 @@
 import Service, { inject as service } from '@ember/service';
 import Onepanel from 'npm:onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { resolve } from 'rsvp';
 
 const {
   ProviderModifyRequest,
@@ -18,6 +19,8 @@ const {
 export default Service.extend(createDataProxyMixin('providerDetails'), {
   onepanelServer: service(),
   deploymentManager: service(),
+
+  providersDetailsCache: Object(),
 
   /**
    * @override
@@ -77,8 +80,17 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
   },
 
   getRemoteProvider(id) {
-    return this.get('onepanelServer').request('InternalApi', 'getRemoteProvider', id)
-      .then(({ data }) => data);
+    const providersDetailsCache = this.get('providersDetailsCache');
+    const detailsCache = providersDetailsCache[id];
+    if (detailsCache) {
+      return resolve(detailsCache);
+    } else {
+      return this.get('onepanelServer').request('InternalApi', 'getRemoteProvider', id)
+        .then(({ data }) => {
+          providersDetailsCache[id] = data;
+          return resolve(data);
+        });
+    }
   },
 
   getOnezoneInfo() {
