@@ -3,7 +3,7 @@ const posixRegexp = /^[0-7][0-7][0-7][0-7]?$/;
 export default [{
   name: 'hostname',
   type: 'text',
-  defaultValue: 's3.amazonaws.com',
+  defaultValue: 'https://s3.amazonaws.com',
 }, {
   name: 'bucketName',
   type: 'text',
