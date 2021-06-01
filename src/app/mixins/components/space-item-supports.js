@@ -12,18 +12,10 @@ import { reads } from '@ember/object/computed';
 import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
 import { get, computed } from '@ember/object';
+import { resolve, all as allFulfilled } from 'rsvp';
 import _ from 'lodash';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-
-/**
- * Generates name to display of provider based on its Id
- * @param {string} providerId
- * @return {string} name to display
- */
-function providerIdToName(providerId) {
-  return providerId && `Provider#${providerId.slice(0, 6)}`;
-}
 
 export default Mixin.create({
   providerManager: service(),
@@ -66,6 +58,25 @@ export default Mixin.create({
       });
     }),
 
+  /**
+   * Generates name to display of provider based on its Id
+   * @param {string} providerId
+   * @param {string} currentProviderId
+   * @param {string} currentProviderName
+   * @return {string} name to display
+   */
+  providerIdToName(providerId, currentProviderId, currentProviderName) {
+    if (providerId === currentProviderId) {
+      return resolve(currentProviderName);
+    }
+    const providerManager = this.get('providerManager');
+    return providerManager.getRemoteProvider(providerId)
+      .then(result => result.name)
+      .catch(() =>
+        providerId && `Provider#${providerId.slice(0, 6)}`
+      );
+  },
+
   _providerDetailsProxy: null,
 
   init() {
@@ -75,11 +86,11 @@ export default Mixin.create({
   },
 
   createSupportersArray(supportingProviders, currentProviderId, currentProviderName) {
-    return _.map(supportingProviders, (size, pid) => ({
-      name: pid === currentProviderId ?
-        currentProviderName : providerIdToName(pid),
-      size,
-      isCurrentProvider: pid === currentProviderId,
-    }));
+    return allFulfilled(_.map(supportingProviders, (size, pid) =>
+      this.providerIdToName(pid, currentProviderId, currentProviderName).then(name => ({
+        name,
+        size,
+        isCurrentProvider: pid === currentProviderId,
+      }))));
   },
 });
