@@ -3,7 +3,7 @@
  *
  * @module components/cluster-spaces-table.js
  * @author Jakub Liput
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -52,7 +52,7 @@ export default Component.extend(I18n, {
       this.set('anySpaceRejected', false);
     },
     spaceClicked(spaceId) {
-      return this.get('navigationState').setAspectOptions({
+      return this.get('navigationState').changeRouteAspectOptions({
         space: spaceId,
         tab: 'overview',
       });
