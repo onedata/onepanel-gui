@@ -20,7 +20,11 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
   onepanelServer: service(),
   deploymentManager: service(),
 
-  providersDetailsCache: Object(),
+  /**
+   * Undefined if data not yet fetched or maps requested provider id => provider model 
+   * @type {Object|undefined}
+   */
+  providersDetailsCache: undefined,
 
   /**
    * @override
@@ -80,7 +84,11 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
   },
 
   getRemoteProvider(id) {
+    if (!this.get('providersDetailsCache')) {
+      this.set('providersDetailsCache', {});
+    }
     const providersDetailsCache = this.get('providersDetailsCache');
+
     const detailsCache = providersDetailsCache[id];
     if (detailsCache) {
       return resolve(detailsCache);
@@ -88,7 +96,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
       return this.get('onepanelServer').request('InternalApi', 'getRemoteProvider', id)
         .then(({ data }) => {
           providersDetailsCache[id] = data;
-          return resolve(data);
+          return data;
         });
     }
   },

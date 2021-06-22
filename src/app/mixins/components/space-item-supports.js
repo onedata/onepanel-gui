@@ -14,11 +14,13 @@ import { inject as service } from '@ember/service';
 import { get, computed } from '@ember/object';
 import { resolve, all as allFulfilled } from 'rsvp';
 import _ from 'lodash';
+import I18n from 'onedata-gui-common/mixins/components/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
-export default Mixin.create({
+export default Mixin.create(I18n, {
   providerManager: service(),
+  i18n: service(),
 
   currentProviderId: null,
   currentProviderName: null,
@@ -73,7 +75,7 @@ export default Mixin.create({
     return providerManager.getRemoteProvider(providerId)
       .then(result => result.name)
       .catch(() =>
-        providerId && `Provider#${providerId.slice(0, 6)}`
+        providerId && `${this.tt('supportInfo.provider')}#${providerId.slice(0, 6)}`
       );
   },
 
@@ -86,11 +88,12 @@ export default Mixin.create({
   },
 
   createSupportersArray(supportingProviders, currentProviderId, currentProviderName) {
-    return allFulfilled(_.map(supportingProviders, (size, pid) =>
-      this.providerIdToName(pid, currentProviderId, currentProviderName).then(name => ({
-        name,
-        size,
-        isCurrentProvider: pid === currentProviderId,
-      }))));
+    return allFulfilled(_.map(supportingProviders, (size, providerId) =>
+      this.providerIdToName(providerId, currentProviderId, currentProviderName).then(
+        name => ({
+          name,
+          size,
+          isCurrentProvider: providerId === currentProviderId,
+        }))));
   },
 });
