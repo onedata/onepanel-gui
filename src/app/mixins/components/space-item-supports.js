@@ -75,7 +75,7 @@ export default Mixin.create(I18n, {
     return providerManager.getRemoteProvider(providerId)
       .then(result => result.name)
       .catch(() =>
-        providerId && `${this.tt('supportInfo.provider')}#${providerId.slice(0, 6)}`
+        providerId && `${this.t('supportInfo.provider')}#${providerId.slice(0, 6)}`
       );
   },
 

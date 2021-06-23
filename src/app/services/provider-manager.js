@@ -21,10 +21,16 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
   deploymentManager: service(),
 
   /**
-   * Undefined if data not yet fetched or maps requested provider id => provider model 
-   * @type {Object|undefined}
+   * Contains mapping `providerId -> provider` of already fetched providers.
+   * Initialized on service init.
+   * @type {Object}
    */
   providersDetailsCache: undefined,
+
+  init() {
+    this._super(...arguments);
+    this.set('providersDetailsCache', {});
+  },
 
   /**
    * @override
@@ -84,11 +90,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
   },
 
   getRemoteProvider(id) {
-    if (!this.get('providersDetailsCache')) {
-      this.set('providersDetailsCache', {});
-    }
     const providersDetailsCache = this.get('providersDetailsCache');
-
     const detailsCache = providersDetailsCache[id];
     if (detailsCache) {
       return resolve(detailsCache);

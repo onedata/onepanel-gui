@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7626 Show names of other providers in support table if available
 * VFS-7738 Updated common libs: refactored navigation code
 * VFS-7703 Added "Archive storage" option to S3 storage
 * VFS-7666 Changed default value of S3 storage hostname
