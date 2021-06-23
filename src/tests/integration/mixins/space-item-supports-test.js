@@ -5,6 +5,8 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import ComponentsSpaceItemSupportsMixin from 'onepanel-gui/mixins/components/space-item-supports';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
+import { lookupService } from '../../helpers/stub-service';
+import sinon from 'sinon';
 
 describe('Integration | Mixin | components/space item supports', function () {
   setupTest('mixin:components/space-item-supports', {
@@ -25,6 +27,10 @@ describe('Integration | Mixin | components/space item supports', function () {
 
   it('converts supportingProviders object to spaceSupporters format', function (done) {
     let providerManager = getOwner(this).lookup('service:provider-manager');
+    sinon.stub(providerManager, 'getRemoteProvider').rejects();
+    sinon.stub(lookupService(this, 'i18n'), 't')
+      .withArgs('supportInfo.provider')
+      .returns('Provider');
     providerManager.set('__providerDetails.id', 'id1');
     providerManager.set('__providerDetails.name', 'My provider');
 
