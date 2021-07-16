@@ -61,6 +61,8 @@ const POSIX_STORAGE = {
   lumaFeed: 'external',
   lumaFeedUrl: 'http://some.url.com',
   lumaFeedApiKey: 'someapikey',
+  rootUid: '1000',
+  rootGid: '1001',
   timeout: 20,
   skipStorageDetection: true,
   readonly: true,
@@ -97,7 +99,7 @@ describe('Integration | Component | cluster storage add form', function () {
   });
 
   context('in show mode', function () {
-    it('shows storage details', function () {
+    it('shows storage details for POSIX type', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `{{cluster-storage-add-form storage=storage mode="show"}}`);
 
@@ -115,6 +117,8 @@ describe('Integration | Component | cluster storage add form', function () {
           'luma_static-lumaFeedUrl',
           'luma_static-lumaFeedApiKey',
           'posix_static-mountPoint',
+          'posix_static-rootUid',
+          'posix_static-rootGid',
           'posix_static-timeout',
         ].forEach((fieldName) => {
           expect(helper.getInput(fieldName).text())
@@ -183,6 +187,8 @@ describe('Integration | Component | cluster storage add form', function () {
             'generic-name',
             'posix-mountPoint',
             'posix-timeout',
+            'posix-rootUid',
+            'posix-rootGid',
           ].forEach(fieldName => {
             expect(helper.getInput(fieldName)).to.exist;
             expect(helper.getInput(fieldName)).to.match('input');
@@ -534,7 +540,7 @@ describe('Integration | Component | cluster storage add form', function () {
   });
 
   context('in edit mode', function () {
-    it('shows storage details', function () {
+    it('shows storage details for POSIX type', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
@@ -555,6 +561,8 @@ describe('Integration | Component | cluster storage add form', function () {
           'luma_editor-lumaFeedApiKey',
           'posix_editor-timeout',
           'posix_editor-mountPoint',
+          'posix_editor-rootUid',
+          'posix_editor-rootGid',
         ].forEach((fieldName) => {
           expect(helper.getInput(fieldName).val())
             .to.be.equal(String(POSIX_STORAGE[fieldName.split('-').pop()]));
