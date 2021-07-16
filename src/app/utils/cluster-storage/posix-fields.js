@@ -5,6 +5,7 @@ export default [
     type: 'number',
     tip: 'UID of the user on whose behalf operations in the admin context will be performed on the storage. Default: 0.',
     optional: true,
+    integer: true,
     gte: 0,
   },
   {
@@ -12,6 +13,7 @@ export default [
     type: 'number',
     tip: 'GID of the group on whose behalf operations in the admin context will be performed on the storage. Default: 0.',
     optional: true,
+    integer: true,
     gte: 0,
   },
   { name: 'timeout', type: 'number', optional: true },
