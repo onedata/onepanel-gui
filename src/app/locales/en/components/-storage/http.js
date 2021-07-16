@@ -31,6 +31,10 @@ export default {
     name: 'Connection pool size',
     tip: 'Defines the maximum number of parallel connections for a single HTTP storage. Default: 25.',
   },
+  maxRequestsPerSession: {
+    name: 'Max requests per session',
+    tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0 (default), number of requests per session is unlimited, unless imposed by the server. Default: 0.',
+  },
   fileMode: {
     name: 'File mode',
     tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664". Default: 0664.',
