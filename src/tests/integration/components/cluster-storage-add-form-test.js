@@ -83,6 +83,7 @@ const HTTP_STORAGE = {
   id: 'e777476baf3418ed9861a97750be285ech9802',
   endpoint: 'http://172.17.0.3',
   credentialsType: 'none',
+  maxRequestsPerSession: 3,
   connectionPoolSize: 150,
   authorizationHeader: 'Authorization: Bearer {}',
 };

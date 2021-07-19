@@ -62,6 +62,15 @@ export default [{
     example: 25,
   },
   {
+    name: 'maxRequestsPerSession',
+    type: 'number',
+    optional: true,
+    integer: true,
+    gte: 0,
+    tip: true,
+    example: 3,
+  },
+  {
     name: 'fileMode',
     tip: true,
     type: 'text',

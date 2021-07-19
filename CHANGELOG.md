@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8034 Added max requests per session setting for HTTP storage
 * VFS-7626 Show names of other providers in support table if available
 * VFS-7738 Updated common libs: refactored navigation code
 * VFS-7703 Added "Archive storage" option to S3 storage
