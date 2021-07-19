@@ -33,7 +33,7 @@ export default {
   },
   maxRequestsPerSession: {
     name: 'Max requests per session',
-    tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0 (default), number of requests per session is unlimited, unless imposed by the server. Default: 0.',
+    tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0, number of requests per session is unlimited, unless imposed by the server. Default: 0.',
   },
   fileMode: {
     name: 'File mode',

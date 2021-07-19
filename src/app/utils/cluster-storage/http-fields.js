@@ -65,6 +65,7 @@ export default [{
     name: 'maxRequestsPerSession',
     type: 'number',
     optional: true,
+    integer: true,
     gte: 0,
     tip: true,
     example: 3,
