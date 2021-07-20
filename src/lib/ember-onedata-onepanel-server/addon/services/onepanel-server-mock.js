@@ -502,6 +502,8 @@ export default OnepanelServerBase.extend(
             lumaFeedApiKey: 'some_storage',
             skipStorageDetection: true,
             readonly: false,
+            rootUid: 1000,
+            rootGid: 1000,
             qosParameters: Object.assign({}, baseQosParameters, {
               param1: 'abc',
               param2: 'def',
