@@ -30,7 +30,7 @@ export default [{
   type: 'text',
   tip: true,
   optional: true,
-  regex: /^(\d+-\d+(:\d+-\d+)*)?$/,
+  regex: /^(\d+-\d+(:\d+-\d+)*(:\d+)?)?$/,
   regexAllowBlank: true,
   regexMessage: 'This field should be in format described in the hint',
 }, {

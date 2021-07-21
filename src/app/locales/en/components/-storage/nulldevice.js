@@ -28,6 +28,9 @@ export default {
       'Each of these directories will have 4 subdirectories ' +
       'and 5 files, and each subdirectory will have 0 directories and 1 file. ' +
       'The tree may have specified any number of levels separated with ":" sign. ' +
+      'In order to specify the size of generated files, a size in bytes needs to ' +
+      'be added as the last component of the parameter specification, for ' +
+      'example "2-3:4-5:0-1:1048576". ' +
       'Default empty string disables the simulated filesystem feature.',
   },
   simulatedFilesystemGrowSpeed: {
