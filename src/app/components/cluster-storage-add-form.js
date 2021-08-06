@@ -4,7 +4,7 @@
  *
  * @module components/cluster-storage-add-form
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -22,7 +22,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
-import { promise, raw, writable } from 'ember-awesome-macros';
+import { promise, raw, writable, or } from 'ember-awesome-macros';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
@@ -93,18 +93,18 @@ const Validations = buildValidations(createValidations(
 
 const VISIBILITY_ANIMATION_TIME = 333;
 
-const storagePathTypeDefaults = {
-  posix: 'canonical',
-  glusterfs: 'canonical',
-  nulldevice: 'canonical',
-  ceph: 'flat',
-  cephrados: 'flat',
-  localceph: 'flat',
-  s3: 'flat',
-  swift: 'flat',
-  xrootd: 'canonical',
-  http: 'canonical',
-  webdav: 'canonical',
+const storagePathTypeConfig = {
+  posix: { defaultValue: 'canonical' },
+  glusterfs: { defaultValue: 'canonical' },
+  nulldevice: { defaultValue: 'canonical' },
+  ceph: { defaultValue: 'flat' },
+  cephrados: { defaultValue: 'flat', disabled: true },
+  localceph: { defaultValue: 'flat' },
+  s3: { defaultValue: 'flat' },
+  swift: { defaultValue: 'flat' },
+  xrootd: { defaultValue: 'canonical' },
+  http: { defaultValue: 'canonical' },
+  webdav: { defaultValue: 'canonical' },
 };
 
 export default OneForm.extend(I18n, Validations, {
@@ -253,6 +253,11 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Object}
    */
   selectedStorageType: undefined,
+
+  /**
+   * @type {String}
+   */
+  currentStorageType: or('storage.type', 'selectedStorageType.id'),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -566,6 +571,7 @@ export default OneForm.extend(I18n, Validations, {
     this._generateEditorFields();
 
     if (storage) {
+      this.configureStoragePathType();
       this._fillInForm();
     } else if (selectedStorageType) {
       this.selectedStorageTypeObserver();
@@ -592,8 +598,10 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   autoSettingsImportedStorage() {
-    let storageType = this.get('storage.type') || this.get('selectedStorageType.id');
-    const storageProvidesSupport = this.get('storageProvidesSupport');
+    const {
+      currentStorageType,
+      storageProvidesSupport,
+    } = this.getProperties('currentStorageType', 'storageProvidesSupport');
     const defaultImportedStorageValue = this.get('storage.importedStorage');
     const changedImportedStorageValue =
       this.get('allFieldsValues.generic_editor.importedStorage');
@@ -604,7 +612,7 @@ export default OneForm.extend(I18n, Validations, {
       defaultImportedStorageValue : undefined;
     let lockHint = null;
 
-    if (storageType === 'http') {
+    if (currentStorageType === 'http') {
       disabled = true;
       value = true;
       lockHint = this.t('httpOnlyImported');
@@ -618,7 +626,11 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   autoSettingsReadonly() {
-    const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
+    const {
+      mode,
+      currentStorageType,
+    } = this.getProperties('mode', 'currentStorageType');
+    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
     const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
 
     let locked;
@@ -635,8 +647,7 @@ export default OneForm.extend(I18n, Validations, {
 
     // HTTP storage type implies that storage is imported,
     // so it will be eventually locked to true
-    let storageType = this.get('storage.type') || this.get('selectedStorageType.id');
-    if (storageType === 'http') {
+    if (currentStorageType === 'http') {
       locked = true;
       value = true;
       hint = this.t('httpOnlyReadonly');
@@ -763,14 +774,35 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   /**
+   * Generic storage type field has different default value for various storage types
+   * and should be disabled (fixed for single value) for some.
+   */
+  configureStoragePathType() {
+    const currentStorageType = this.get('currentStorageType');
+    const currentStoragePathTypeConfig = storagePathTypeConfig[currentStorageType];
+    if (currentStoragePathTypeConfig) {
+      this.set(
+        'allFieldsValues.generic.storagePathType',
+        currentStoragePathTypeConfig.defaultValue
+      );
+      const pathTypeField = this.get('allFields')
+        .findBy('name', 'generic.storagePathType');
+      if (pathTypeField) {
+        set(
+          pathTypeField,
+          'disabled',
+          Boolean(currentStoragePathTypeConfig.disabled)
+        );
+      }
+    }
+  },
+
+  /**
    * @override
    */
   resetFormValues() {
     this._super(...arguments);
-    this.set(
-      'allFieldsValues.generic.storagePathType',
-      storagePathTypeDefaults[this.get('selectedStorageType.id')]
-    );
+    this.configureStoragePathType();
     this.resetQosFormState();
     this.autoSettingsAll();
   },
