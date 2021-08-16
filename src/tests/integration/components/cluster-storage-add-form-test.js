@@ -66,7 +66,12 @@ const POSIX_STORAGE = {
   timeout: 20,
   skipStorageDetection: true,
   readonly: true,
-  name: 'Some storage',
+  name: 'Some POXSIX storage',
+};
+
+const CEPH_RADOS_STORAGE = {
+  type: 'cephrados',
+  id: 'cephrados_id',
 };
 
 const HTTP_STORAGE = {
@@ -88,6 +93,70 @@ const HTTP_STORAGE = {
   connectionPoolSize: 150,
   authorizationHeader: 'Authorization: Bearer {}',
 };
+
+async function testNotAllowPathTypeEdit(storageData, storageType = storageData.type) {
+  it(`does not allow to edit path type of storage with type "${storageType}"`, async function () {
+    this.setProperties({
+      storage: storageData,
+      mode: 'edit',
+    });
+    this.render(hbs `{{cluster-storage-add-form
+      storage=storage
+      mode=mode
+      storageProvidesSupport=true
+    }}`);
+
+    await wait();
+    const helper = new ClusterStorageAddHelper(this.$());
+
+    const pathGroup = helper.getInput('generic_editor-storagePathType');
+    expect(pathGroup).to.exist;
+    const anyInput = pathGroup.find('input');
+    expect(anyInput, 'any input').to.not.exist;
+    const staticValue = pathGroup.text().trim();
+    expect(staticValue).to.equal(storageData.storagePathType);
+  });
+}
+
+async function testAllowCertainPathTypeCreate({
+  storageData,
+  allow,
+  pathType,
+  storageType = storageData.type,
+}) {
+  const allowText = allow ? 'allows' : 'does not allow';
+  it(`${allowText} to set "${pathType}" path type of storage with type "${storageType}"`, async function () {
+    this.setProperties({
+      storage: storageData,
+      mode: 'create',
+    });
+    this.render(hbs `{{cluster-storage-add-form
+      storage=storage
+      mode=mode
+    }}`);
+
+    await wait();
+    const helper = new ClusterStorageAddHelper(this.$());
+
+    const pathGroup = helper.getInput('generic-storagePathType');
+    expect(pathGroup).to.exist;
+    const $radio = pathGroup
+      .find(`input[type=radio].field-generic-storagePathType-${pathType}`);
+    const radio = $radio[0];
+    if ($radio.length) {
+      if (allow) {
+        radio.click();
+        await wait();
+        expect(radio.checked).to.equal(allow);
+      } else {
+        expect($radio, 'radio').to.have.attr('disabled');
+      }
+    } else {
+      const value = pathGroup.text().trim();
+      expect(value).to.equal(pathType);
+    }
+  });
+}
 
 describe('Integration | Component | cluster storage add form', function () {
   setupComponentTest('cluster-storage-add-form', {
@@ -537,6 +606,30 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.not.have.class('disabled');
       }
     );
+
+    testAllowCertainPathTypeCreate({
+      storageData: POSIX_STORAGE,
+      allow: true,
+      pathType: 'canonical',
+    });
+
+    testAllowCertainPathTypeCreate({
+      storageData: POSIX_STORAGE,
+      allow: true,
+      pathType: 'flat',
+    });
+
+    testAllowCertainPathTypeCreate({
+      storageData: CEPH_RADOS_STORAGE,
+      allow: false,
+      pathType: 'canonical',
+    });
+
+    testAllowCertainPathTypeCreate({
+      storageData: CEPH_RADOS_STORAGE,
+      allow: true,
+      pathType: 'flat',
+    });
   });
 
   context('in edit mode', function () {
@@ -887,5 +980,7 @@ describe('Integration | Component | cluster storage add form', function () {
           .to.have.class('checked')
           .and.have.class('disabled');
       });
+
+    testNotAllowPathTypeEdit(POSIX_STORAGE);
   });
 });
