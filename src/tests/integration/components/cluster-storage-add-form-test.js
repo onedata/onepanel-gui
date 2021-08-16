@@ -109,7 +109,6 @@ async function testNotAllowPathTypeEdit(storageData, storageType = storageData.t
     await wait();
     const helper = new ClusterStorageAddHelper(this.$());
 
-    // const xd = 'input[type=radio].field-generic_editor-storagePathType-local';
     const pathGroup = helper.getInput('generic_editor-storagePathType');
     expect(pathGroup).to.exist;
     const anyInput = pathGroup.find('input');
@@ -134,7 +133,6 @@ async function testAllowCertainPathTypeCreate({
     this.render(hbs `{{cluster-storage-add-form
       storage=storage
       mode=mode
-      storageProvidesSupport=true
     }}`);
 
     await wait();

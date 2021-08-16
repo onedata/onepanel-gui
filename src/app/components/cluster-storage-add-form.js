@@ -99,7 +99,7 @@ const storagePathTypeConfig = {
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
-  localceph: { defaultValue: 'flat' },
+  localceph: { defaultValue: 'flat', disabled: true },
   s3: { defaultValue: 'flat' },
   swift: { defaultValue: 'flat' },
   xrootd: { defaultValue: 'canonical' },
