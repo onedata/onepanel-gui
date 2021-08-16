@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8081 Disabled "canonical" path type for Ceph RADOS storage type
 * VFS-7713 Fixed validation of simulatedFilesystemParameters parameter in NullDevice storage
 * VFS-7995 Added root UID and root GID fields to POSIX storage creation
 * VFS-8034 Added max requests per session setting for HTTP storage
