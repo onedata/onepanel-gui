@@ -16,5 +16,6 @@ export default {
     guiSettings: 'GUI settings',
     notFound: 'Cluster not found',
     installation: 'Installation',
+    redirect: 'Redirecting...',
   },
 };
