@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-7633 Updated infinite scroll implementation
 * VFS-7661 Updated commons: timeout for connection check in clusters
 * VFS-8081 Disabled "canonical" path type for Ceph RADOS storage type
 * VFS-7713 Fixed validation of simulatedFilesystemParameters parameter in NullDevice storage
