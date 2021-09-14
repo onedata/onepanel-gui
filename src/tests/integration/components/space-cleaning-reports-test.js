@@ -35,7 +35,7 @@ const data = Object.freeze([{
 }]);
 
 function fetchReports(spaceId, index, limit = 1000, offset = 0) {
-  let arrIndex = _.findIndex(this.reports, i => get(i, 'index') === index);
+  let arrIndex = _.findIndex(data, i => get(i, 'index') === index);
   if (arrIndex === -1) {
     arrIndex = 0;
   }
@@ -76,7 +76,7 @@ describe('Integration | Component | space cleaning reports', function () {
 
     await wait();
 
-    expect(this.$('tbody tr.data-row')).to.have.length(2);
+    expect(this.$('tbody tr.data-row'), 'data rows').to.have.length(2);
     const cells = this.$('tbody tr.data-row:first td');
     const cellsValues = [
       moment(data[0].startedAt).format(START_END_TIME_FORMAT),
