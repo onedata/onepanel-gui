@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8288 Updated commons: refactor of one-way-capacity
 * VFS-8053 Updated commons: refactor of id copiers in sidebar
 * VFS-7661 Updated commons: timeout for connection check in clusters
 * VFS-8081 Disabled "canonical" path type for Ceph RADOS storage type
