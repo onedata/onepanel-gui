@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8083 Refactored build process to support faster builds on CI
 * VFS-8288 Updated commons: refactor of one-way-capacity
 * VFS-7633 Updated infinite scroll implementation
 * VFS-8053 Updated commons: refactor of id copiers in sidebar
