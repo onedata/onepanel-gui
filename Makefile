@@ -1,7 +1,7 @@
 SRC_DIR	 ?= src
 REL_DIR	 ?= rel
 
-.PHONY: deps dev mock rel build_mock build_dev build_prod doc clean test test_xunit_output pull_onedata_gui_common push_onedata_gui_common
+.PHONY: dev mock rel test test_xunit_output deps build_mock build_dev build_prod clean run_tests run_tests_xunit_output submodules
 
 all: dev
 
@@ -13,10 +13,10 @@ rel: deps build_prod
 
 test: deps run_tests
 
-test_xunit_output: deps run_tests_xunit
+test_xunit_output: deps run_tests_xunit_output
 
 deps:
-	cd $(SRC_DIR) && npm install --no-package-lock
+	cd $(SRC_DIR) && npm install
 	cd $(SRC_DIR) && bower install --allow-root
 
 build_mock:
@@ -28,16 +28,13 @@ build_dev:
 build_prod:
 	cd $(SRC_DIR) && ember build --environment=production --output-path=../$(REL_DIR)
 
-doc:
-	jsdoc -c $(SRC_DIR)/.jsdoc.conf $(SRC_DIR)/app
-
 clean:
 	cd $(SRC_DIR) && rm -rf node_modules bower_components dist tmp ../$(REL_DIR)/*
 
-run_tests: deps
+run_tests:
 	cd $(SRC_DIR) && xvfb-run ember test
 
-run_tests_xunit: deps
+run_tests_xunit_output:
 	cd $(SRC_DIR) && xvfb-run ember test -r xunit
 
 ##
