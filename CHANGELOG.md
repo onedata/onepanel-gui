@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8038 Refactored build process to support faster builds on CI
 * VFS-8081 Disabled "canonical" path type for Ceph RADOS storage type
 * VFS-7995 Added root UID and root GID fields to POSIX storage creation
 * VFS-7666 Changed default value of S3 storage hostname
