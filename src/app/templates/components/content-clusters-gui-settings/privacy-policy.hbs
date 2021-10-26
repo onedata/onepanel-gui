@@ -15,7 +15,7 @@
     content=body
     disabled=(or isSaving (not isEnabled))
     onChange=(action "bodyChanged")}}
-  <p>
+  <p class="clearfix">
     {{#one-spin-button
       class=(concat "btn btn-primary btn-save pull-right")
       action=(action "save")
