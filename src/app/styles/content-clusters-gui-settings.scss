@@ -1,8 +1,23 @@
 .content-clusters-gui-settings {
-  .tab-content {
-    padding: $padding-large-vertical * 1.5 0 $padding-large-vertical 0;
+  .bs-tab-onedata {
+    padding: $content-row-vertical-padding 0;
   }
-  
+
+  .tab-content {
+    padding: $padding-large-vertical 0 0 0;
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .tab-content {
+      padding-left: $padding-base-horizontal;
+      padding-right: $padding-base-horizontal;
+    }
+  }
+
+  .alert {
+    margin-top: 0;
+  }
+
   .privacy-policy {
     .pell-content {
       min-height: 200px;

@@ -18,7 +18,7 @@
       disabled={{or isSaving (not isEnabled)}}
       class="form-control sign-in-notification-input no-resize"></textarea>
   </p>
-  <p>
+  <p class="clearfix">
     {{#one-spin-button
       class=(concat "btn btn-primary btn-save pull-right")
       action=(action "save")
