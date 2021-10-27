@@ -72,6 +72,40 @@ export default GuiUtils.extend(
     }),
 
     /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    serviceDomain: computed(
+      'onepanelConfiguration.{providerDomain,zoneDomain}', 'serviceType',
+      function serviceDomain() {
+        const serviceType = this.get('serviceType');
+        if (serviceType === 'oneprovider') {
+          return this.get('onepanelConfiguration.providerDomain');
+        } else if (serviceType === 'onezone') {
+          return this.get('onepanelConfiguration.zoneDomain');
+        } else {
+          return null;
+        }
+      }
+    ),
+
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    serviceName: computed(
+      'onepanelConfiguration.{providerName,zoneName}', 'serviceType',
+      function serviceName() {
+        const serviceType = this.get('serviceType');
+        if (serviceType === 'oneprovider') {
+          return this.get('onepanelConfiguration.providerName');
+        } else if (serviceType === 'onezone') {
+          return this.get('onepanelConfiguration.zoneName');
+        } else {
+          return null;
+        }
+      }
+    ),
+
+    /**
      * @override
      * One of: Oneprovider Panel, Onezone Panel
      */

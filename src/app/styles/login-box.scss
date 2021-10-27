@@ -1,4 +1,23 @@
 .login-box {
+  .row {
+    .login-upper-title {
+      font-size: 35px;
+      text-transform: uppercase;
+      text-align: center;
+      font-weight: bold;
+      padding-bottom: 20px;
+    }
+    .login-titles {
+      padding-top: 25px;
+      .login-main-subtitle {
+        font-size: 14px;
+        text-transform: none;
+      }
+      .login-main-title {
+        text-transform: none;
+      }
+    }
+  }
   $-login-form-width: 400px;
   .login-main-title {
     &.onezone {
@@ -30,6 +49,6 @@
     background-color: $color-one-semiwhite;
   }
   .col-user-profile-icon {
-    margin-bottom: 20px;
+    margin-bottom: 60px;
   }
 }
