@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8326 Added name and domain on login page
 * VFS-8482 Fixed styles of H1 headers in privacy policy WYSIWYG editor
 * VFS-8038 Refactored build process to support faster builds on CI
 * VFS-8081 Disabled "canonical" path type for Ceph RADOS storage type
