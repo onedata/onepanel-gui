@@ -75,7 +75,8 @@ export default GuiUtils.extend(
      * @type {Ember.ComputedProperty<string>}
      */
     serviceDomain: computed(
-      'onepanelConfiguration.{providerDomain,zoneDomain}', 'serviceType',
+      'onepanelConfiguration.{providerDomain,zoneDomain}',
+      'serviceType',
       function serviceDomain() {
         const serviceType = this.get('serviceType');
         if (serviceType === 'oneprovider') {
@@ -92,7 +93,8 @@ export default GuiUtils.extend(
      * @type {Ember.ComputedProperty<string>}
      */
     serviceName: computed(
-      'onepanelConfiguration.{providerName,zoneName}', 'serviceType',
+      'onepanelConfiguration.{providerName,zoneName}',
+      'serviceType',
       function serviceName() {
         const serviceType = this.get('serviceType');
         if (serviceType === 'oneprovider') {

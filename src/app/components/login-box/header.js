@@ -33,9 +33,8 @@ export default Header.extend({
    */
   brandSubtitle: reads('guiUtils.serviceDomain'),
 
-  upperTitle: reads('guiUtils.fullServiceName'),
-
-  upperSubtitle: computed(function upperSubtitle() {
-    return this.get('i18n').t('components.loginBox.header.brandSubtitle');
+  upperTitle: computed(function upperTitle() {
+    return this.get('guiUtils.fullServiceName') + ' ' +
+      this.get('i18n').t('components.loginBox.header.brandSubtitle');
   }),
 });
