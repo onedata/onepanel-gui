@@ -10,6 +10,7 @@
 import Header from 'onedata-gui-common/components/login-box/header';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import { computed } from '@ember/object';
 import layout from 'onedata-gui-common/templates/components/login-box/header';
 
 export default Header.extend({
@@ -25,5 +26,15 @@ export default Header.extend({
   /**
    * @override
    */
-  brandTitle: reads('guiUtils.fullServiceName'),
+  brandTitle: reads('guiUtils.serviceName'),
+
+  /**
+   * @override
+   */
+  brandSubtitle: reads('guiUtils.serviceDomain'),
+
+  upperTitle: computed(function upperTitle() {
+    return this.get('guiUtils.fullServiceName') + ' ' +
+      this.get('i18n').t('components.loginBox.header.brandSubtitle');
+  }),
 });

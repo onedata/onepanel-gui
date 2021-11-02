@@ -71,6 +71,18 @@ export default Service.extend(
      * Oneprovider field.
      * @type {Ember.ComputedProperty<string>}
      */
+    providerDomain: reads('configurationProxy.providerDomain'),
+
+    /**
+     * Oneprovider field.
+     * @type {Ember.ComputedProperty<string>}
+     */
+    providerName: reads('configurationProxy.providerName'),
+
+    /**
+     * Oneprovider field.
+     * @type {Ember.ComputedProperty<string>}
+     */
     providerId: reads('configurationProxy.providerId'),
 
     /**
