@@ -210,21 +210,15 @@ export default Component.extend(I18n, {
       } else if (eventTarget.hasClass('nested-row')) {
         element = eventTarget.find('.one-label.qos-param-value')[0];
       } else {
-        element = eventTarget.find('.form-control-static')[0] || '';
+        element = eventTarget.find('.form-control-static')[0];
       }
       
       if (element) {
-        if (window.getSelection && document.createRange) {
-          const selection = window.getSelection();
-          const range = document.createRange();
-          range.selectNodeContents(element);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        } else if (document.selection && document.body.createTextRange) {
-          const range = document.body.createTextRange();
-          range.moveToElementText(element);
-          range.select();
-        }
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
     },
   },
