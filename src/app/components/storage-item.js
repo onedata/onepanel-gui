@@ -18,6 +18,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
 import config from 'ember-get-config';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
+import $ from 'jquery';
 
 const {
   layoutConfig,
@@ -199,6 +200,26 @@ export default Component.extend(I18n, {
     },
     cancelEdition() {
       this.set('whileEdition', false);
+    },
+    selectText(event) {
+      let element;
+      const eventTarget = $(event.target);
+      if (eventTarget.hasClass('form-control-static') ||
+        eventTarget.hasClass('qos-param-value')) {
+        element = eventTarget[0];
+      } else if (eventTarget.hasClass('nested-row')) {
+        element = eventTarget.find('.one-label.qos-param-value')[0];
+      } else {
+        element = eventTarget.find('.form-control-static')[0];
+      }
+      
+      if (element) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
     },
   },
 });
