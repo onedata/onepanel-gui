@@ -12,7 +12,7 @@
 }
 
 .login-layout::before {
-  position: absolute;
+  position: fixed;
   top: 0;
   background-image: url($root-url + 'images/main-background.jpg');
   background-size: cover;
