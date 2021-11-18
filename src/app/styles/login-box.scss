@@ -47,6 +47,14 @@
   .basicauth-login-form {
     max-width: $-login-form-width;
     margin: 0 auto;
+    .form-horizontal .row {
+      flex-direction: row;
+      justify-content: center;
+    }
+    button {
+      margin-left: 2px;
+      margin-right: 2px;
+    }
   }
   .login-separator {
     max-width: $-login-form-width;
