@@ -50,6 +50,8 @@ const MOCKED_SUPPORT = {
   'fkmdeoswtg9y4895609byt746tb-7046506b7848958': 315000000,
   'o8t62yrfgt4y7eeyuaftgry9u896u78390658b9u0-2': 210000000,
 };
+const SERVICE_DOMAIN = 'dev-oneprovider-krakow.default.svc.cluster.local';
+const SERVICE_NAME = 'dev-oneprovider-krakow';
 
 const fallbackMockServiceType = 'oneprovider';
 
@@ -1527,6 +1529,8 @@ export default OnepanelServerBase.extend(
             mockStep.gt(installationStepsMap.oneproviderRegistration),
           serviceType: mockServiceType,
           zoneDomain: 'onezone.local-onedata.org',
+          providerDomain: SERVICE_DOMAIN,
+          providerName: SERVICE_NAME,
         }),
         statusCode: () => 200,
       };
