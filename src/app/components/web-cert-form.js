@@ -7,76 +7,19 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { computed, get, observer } from '@ember/object';
-import { reads, alias } from '@ember/object/computed';
+import Component from '@ember/component';
+import { computed, get, getProperties } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
-import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-
-const Validations = buildValidations({});
-
-const staticFields = [{
-    name: 'expirationTime',
-    type: 'static',
-    format: 'date',
-    tip: true,
-  },
-  {
-    name: 'creationTime',
-    type: 'static',
-    format: 'date',
-    tip: true,
-  },
-  {
-    name: 'domain',
-    type: 'static',
-    tip: true,
-  },
-  {
-    name: 'issuer',
-    type: 'static',
-    tip: true,
-  },
-  {
-    name: 'certPath',
-    type: 'static',
-    tip: true,
-  },
-  {
-    name: 'keyPath',
-    type: 'static',
-    tip: true,
-  },
-  {
-    name: 'chainPath',
-    type: 'static',
-    tip: true,
-  },
-];
-
-const letsEncryptInfoFields = [{
-    name: 'lastRenewalSuccess',
-    type: 'static',
-    format: 'date',
-    tip: true,
-  },
-  {
-    name: 'lastRenewalFailure',
-    type: 'static',
-    format: 'date',
-    tip: true,
-  },
-];
-
-const letsEncryptField = {
-  name: 'letsEncrypt',
-  type: 'checkbox',
-  tip: true,
-};
+import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
+import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
+import { tag } from 'ember-awesome-macros';
+import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
+import { scheduleOnce } from '@ember/runloop';
 
 /**
  * Eg. certPath -> paths.cert
@@ -88,7 +31,7 @@ function pathFieldToProperty(fieldName) {
     `paths.${fieldName.replace(/Path$/, '')}` : fieldName;
 }
 
-export default OneForm.extend(I18n, Validations, {
+export default Component.extend(I18n, {
   classNames: ['web-cert-form'],
 
   i18n: service(),
@@ -125,7 +68,7 @@ export default OneForm.extend(I18n, Validations, {
    * Currently displayed value of Let's Encrypt toggle
    * @type {Ember.ComputedProperty<boolean>}
    */
-  formLetsEncryptValue: alias('allFieldsValues.editLetsEncrypt.letsEncrypt'),
+  formLetsEncryptValue: reads('webCert.letsEncrypt'),
 
   /**
    * State of letsEncrypt configuration from backend.
@@ -135,199 +78,211 @@ export default OneForm.extend(I18n, Validations, {
   letsEncrypt: reads('webCert.letsEncrypt'),
 
   /**
-   * @override
+   * @type {ComputedProperty<Utils.FormComponent.FormFieldsRootGroup>}
    */
-  currentFieldsPrefix: computed(
-    'letsEncrypt',
-    function currentFieldsPrefix() {
-      const letsEncrypt = this.get('letsEncrypt');
-      const prefixes = [
-        'editLetsEncrypt',
-      ];
-      if (letsEncrypt) {
-        prefixes.push('letsEncryptInfoFields');
-      }
-      prefixes.push('staticFields');
-      return prefixes;
-    }),
+  fields: computed(function fields() {
+    const component = this;
+    const {
+      letsEncryptField,
+      expirationTimeField,
+      creationTimeField,
+      domainField,
+      issuerField,
+      certPathField,
+      keyPathField,
+      chainPathField,
+      disabled,
+    } = this.getProperties(
+      'letsEncryptField',
+      'expirationTimeField',
+      'creationTimeField',
+      'domainField',
+      'issuerField',
+      'certPathField',
+      'keyPathField',
+      'chainPathField',
+      'disabled',
+    );
 
-  /**
-   * @override
-   * @type {Array<FieldType>}
-   */
-  allFields: computed(
-    'letsEncryptEditField',
-    'staticFields',
-    'letsEncryptInfoFields',
-    function allFields() {
-      return _.flatten(
-        _.values(
-          this.getProperties(
-            'letsEncryptEditField',
-            'letsEncryptInfoFields',
-            'staticFields',
-          )
-        )
-      );
-    }
-  ),
-
-  /**
-   * @override
-   */
-  allFieldsValues: computed(
-    'webCert',
-    'allFields',
-    function allFieldsValues() {
-      const webCert = this.get('webCert');
-      const values = EmberObject.create({});
-
-      values.set('showLetsEncrypt', EmberObject.create({
-        letsEncrypt: get(webCert, 'letsEncrypt'),
-      }));
-
-      values.set('editLetsEncrypt', EmberObject.create({
-        letsEncrypt: get(webCert, 'letsEncrypt'),
-      }));
-
-      const staticFieldsValues = values.set('staticFields', EmberObject.create());
-      const letsEncryptInfoFieldsValues = values.set(
-        'letsEncryptInfoFields',
-        EmberObject.create()
-      );
-
-      /** @param {string} fieldName */
-      staticFields.forEach(({ name: fieldName }) => {
-        const value = get(
-          webCert,
-          pathFieldToProperty(fieldName),
-        );
-        staticFieldsValues.set(fieldName, value);
-      });
-
-      /** @param {string} fieldName */
-      letsEncryptInfoFields.forEach(({ name: fieldName }) => {
-        const value = get(
-          webCert,
-          pathFieldToProperty(fieldName),
-        );
-        letsEncryptInfoFieldsValues.set(fieldName, value);
-      });
-
-      return values;
-    }),
-
-  /**
-   * Preprocessed fields objects
-   * @type {Ember.ComputedProperty<Ember.Object>}
-   */
-  fieldsSource: computed(function fieldsSource() {
-    const i18n = this.get('i18n');
-    const tPrefix = 'components.webCertForm.fields.';
-    const prepareField = (field) => _.assign({}, field, {
-      label: i18n.t(tPrefix + field.name + '.label'),
-      tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
-    });
-    return EmberObject.create({
-      letsEncryptField: prepareField(letsEncryptField),
-      staticFields: staticFields.map(prepareField),
-      letsEncryptInfoFields: letsEncryptInfoFields.map(prepareField),
+    return FormFieldsRootGroup.extend({
+      i18nPrefix: tag `${'component.i18nPrefix'}.fields`,
+      ownerSource: reads('component'),
+      isEnabled: !disabled,
+      onValueChange(value, field) {
+        this._super(...arguments);
+        if (field.get('name') === 'letsEncrypt') {
+          scheduleOnce('afterRender', component, 'notifyAboutChange', value);
+        }
+        
+      },
+    }).create({
+      component,
+      fields: [
+        letsEncryptField,
+        expirationTimeField,
+        creationTimeField,
+        domainField,
+        issuerField,
+        certPathField,
+        keyPathField,
+        chainPathField,
+      ],
     });
   }),
 
-  /**
-   * Static fields
-   * @type {Ember.ComputedProperty<Array<Ember.Object>>}
-   */
-  staticFields: computed(
-    'fieldsSource.staticFields',
-    'webCert',
-    function staticFields() {
-      return this.get('fieldsSource.staticFields')
-        .map(field => this.preprocessField(field, 'staticFields', true));
-    }
-  ),
+  letsEncryptField: computed('webCert', function letsEncryptField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return ToggleField.extend({
+      defaultValue: get(
+          webCert,
+          pathFieldToProperty('letsEncrypt'),
+        ),
+    }).create({
+      component,
+      name: 'letsEncrypt',
+    });
+  }),
 
-  letsEncryptInfoFields: computed(
-    'fieldsSource.letsEncryptInfoFields',
-    'webCert',
-    function letsEncryptInfoFields() {
-      return this.get('fieldsSource.letsEncryptInfoFields')
-        .map(field => this.preprocessField(field, 'letsEncryptInfoFields', true));
-    }
-  ),
+  notifyAboutChange(value) {
+    this.set('formLetsEncryptValue', value);
+    this.set('showLetsEncryptChangeModal', true);
+    safeExec(this, () => {
+      const {
+        fields,
+        onChange,
+      } = this.getProperties('fields', 'onChange');
 
-  /**
-   * LE edit field
-   * @type {computed.Ember.Object}
-   */
-  letsEncryptEditField: computed(
-    'fieldsSource.letsEncryptField',
-    'webCert',
-    function letsEncryptEditField() {
-      return this.preprocessField(
-        this.get('fieldsSource.letsEncryptField'),
-        'editLetsEncrypt',
-        false
-      );
-    }
-  ),
+      const {
+        isValid,
+        invalidFields,
+      } = getProperties(fields, 'isValid', 'invalidFields');
 
-  letsEncryptChanged: observer(
-    'allFieldsValues.editLetsEncrypt.letsEncrypt',
-    function letsEncryptChanged() {
-      this.set('showLetsEncryptChangeModal', true);
-    }
-  ),
+      onChange({
+        values: fields.dumpValue(),
+        isValid,
+        invalidFields: invalidFields.mapBy('valuePath'),
+      });
+    });
+  },
+
+  expirationTimeField: computed('webCert', function expirationTimeField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('expirationTime'),
+        ),
+    }).create({
+      component,
+      name: 'expirationTime',
+    });
+  }),
+
+  creationTimeField: computed('webCert', function creationTimeField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('creationTime'),
+        ),
+    }).create({
+      component,
+      name: 'creationTime',
+    });
+  }),
+
+  domainField: computed('webCert', function domainField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('domain'),
+        ),
+    }).create({
+      component,
+      name: 'domain',
+    });
+  }),
+
+  issuerField: computed('webCert', function issuerField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('issuer'),
+        ),
+    }).create({
+      component,
+      name: 'issuer',
+    });
+  }),
+
+  certPathField: computed('webCert', function certPathField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('certPath'),
+        ),
+    }).create({
+      component,
+      name: 'certPath',
+    });
+  }),
+
+  keyPathField: computed('webCert', function keyPathField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('keyPath'),
+        ),
+    }).create({
+      component,
+      name: 'keyPath',
+    });
+  }),
+
+  chainPathField: computed('webCert', function chainPathField() {
+    const component = this;
+    const webCert = this.get('webCert');
+    return StaticTextField.extend({
+      text: get(
+          webCert,
+          pathFieldToProperty('chainPath'),
+        ),
+    }).create({
+      component,
+      name: 'chainPath',
+    });
+  }),
 
   init() {
     this._super(...arguments);
-    this.prepareFields();
-  },
-
-  /**
-   * Performs initial field setup.
-   * @param {FieldType} field Field
-   * @param {string} prefix Field prefix
-   * @param {boolean} isStatic Should field be static
-   * @returns {object} prepared field
-   */
-  preprocessField(field, prefix, isStatic = false) {
-    field = EmberObject.create(field);
-    field.set('name', `${prefix}.${field.get('name')}`);
-    if (isStatic) {
-      field.set('type', 'static');
-    }
-    return field;
   },
 
   actions: {
-    inputChanged(fieldName, value) {
-      this.changeFormValue(fieldName, value);
-    },
-
-    focusOut(field) {
-      field.set('changed', true);
-      this.recalculateErrors();
-    },
-
     submit() {
       const {
-        formValues,
-        currentFields,
+        fields,
+        formLetsEncryptValue,
+        letsEncrypt,
         submit,
-      } = this.getProperties('formValues', 'currentFields', 'submit');
+      } = this.getProperties('fields', 'formLetsEncryptValue', 'letsEncrypt', 'submit');
 
-      const letsEncrypt = get(formValues, 'editLetsEncrypt.letsEncrypt');
-
-      const willReloadAfterSubmit = get(
-        _.find(currentFields, { name: 'editLetsEncrypt.letsEncrypt' }),
-        'changed'
-      ) && letsEncrypt;
-
+      console.log(fields);
+      const willReloadAfterSubmit = formLetsEncryptValue !== letsEncrypt;
+ 
       /** @type {Onepanel.WebCert} */
       const webCertChange = {
-        letsEncrypt,
+        letsEncrypt: formLetsEncryptValue,
       };
       this.set('disabled', true);
       return submit(webCertChange, willReloadAfterSubmit)
@@ -347,7 +302,8 @@ export default OneForm.extend(I18n, Validations, {
     },
 
     changedModalCanceled() {
-      this.toggleProperty('formLetsEncryptValue');
+      const letsEncrypt = this.get('letsEncrypt');
+      this.set('fields.value.letsEncrypt', letsEncrypt);
       this.set('showLetsEncryptChangeModal', false);
     },
   },
