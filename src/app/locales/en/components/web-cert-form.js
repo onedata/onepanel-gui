@@ -9,6 +9,7 @@ export default {
     expirationTime: {
       label: 'Expiration time',
       tip: 'Installed certificate\'s expiration time.',
+      warningTip: 'Your certificate expires soon.',
     },
     creationTime: {
       label: 'Creation time',
@@ -17,6 +18,7 @@ export default {
     domain: {
       label: 'Domain',
       tip: 'The domain (Common Name) for which current certificate was issued.',
+      warningTip: 'This domain is different from the current domain service.',
     },
     issuer: {
       label: 'Issuer',
@@ -50,7 +52,7 @@ export default {
       disable: 'Disable Let\'s Encrypt',
     },
     text: {
-      enableCertWillBeObtained: 'After enabling Let\'s Encrypt, web certificate will be obtained and renewed automatically as necessary.',
+      enableCertWillBeObtained: 'After enabling Let\'s Encrypt, web certificate will be obtained and renewed automatically as necessary for the currently configured domain:',
       enableAgreement: 'By using the Let\'s Encrypt service you agree to the current Let\'s Encrypt Subscriber Agreement:',
       enableReloadInfo: 'The page will be reloaded upon successful certificate installation.',
       disable: 'After disabling Let\'s Encrypt, you will have to manually obtain and set up proper web certificate.',

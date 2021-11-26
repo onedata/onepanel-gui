@@ -17,7 +17,7 @@ import notImplementedReject from 'onedata-gui-common/utils/not-implemented-rejec
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
-import { tag } from 'ember-awesome-macros';
+import { tag, raw, conditional } from 'ember-awesome-macros';
 import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
 import { scheduleOnce } from '@ember/runloop';
 
@@ -36,6 +36,7 @@ export default Component.extend(I18n, {
 
   i18n: service(),
   globalNotify: service(),
+  guiUtils: service(),
 
   i18nPrefix: 'components.webCertForm',
 
@@ -76,6 +77,12 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   letsEncrypt: reads('webCert.letsEncrypt'),
+  
+  /**
+   * Domain of service for this onepanel
+   * @type {String}
+   */
+  currentDomain: reads('guiUtils.serviceDomain'),
 
   /**
    * @type {ComputedProperty<Utils.FormComponent.FormFieldsRootGroup>}
@@ -113,7 +120,6 @@ export default Component.extend(I18n, {
         if (field.get('name') === 'letsEncrypt') {
           scheduleOnce('afterRender', component, 'notifyAboutChange', value);
         }
-        
       },
     }).create({
       component,
@@ -137,7 +143,7 @@ export default Component.extend(I18n, {
       defaultValue: get(
           webCert,
           pathFieldToProperty('letsEncrypt'),
-        ),
+      ),
     }).create({
       component,
       name: 'letsEncrypt',
@@ -147,23 +153,6 @@ export default Component.extend(I18n, {
   notifyAboutChange(value) {
     this.set('formLetsEncryptValue', value);
     this.set('showLetsEncryptChangeModal', true);
-    safeExec(this, () => {
-      const {
-        fields,
-        onChange,
-      } = this.getProperties('fields', 'onChange');
-
-      const {
-        isValid,
-        invalidFields,
-      } = getProperties(fields, 'isValid', 'invalidFields');
-
-      onChange({
-        values: fields.dumpValue(),
-        isValid,
-        invalidFields: invalidFields.mapBy('valuePath'),
-      });
-    });
   },
 
   expirationTimeField: computed('webCert', function expirationTimeField() {
@@ -173,7 +162,13 @@ export default Component.extend(I18n, {
       text: get(
           webCert,
           pathFieldToProperty('expirationTime'),
-        ),
+      ),
+      warningTip: this.t('fields.expirationTime.warningTip'),
+      afterComponentName: conditional(
+        get(webCert, 'status') !== 'valid',
+        raw('web-cert-form/warning-icon'),
+        raw(undefined),
+      ),
     }).create({
       component,
       name: 'expirationTime',
@@ -201,7 +196,13 @@ export default Component.extend(I18n, {
       text: get(
           webCert,
           pathFieldToProperty('domain'),
-        ),
+      ),
+      warningTip: this.t('fields.domain.warningTip'),
+      afterComponentName: conditional(
+        get(webCert, 'domain') !== this.get('guiUtils.serviceDomain'),
+        raw('web-cert-form/warning-icon'),
+        raw(undefined),
+      ),
     }).create({
       component,
       name: 'domain',
@@ -271,13 +272,11 @@ export default Component.extend(I18n, {
   actions: {
     submit() {
       const {
-        fields,
         formLetsEncryptValue,
         letsEncrypt,
         submit,
       } = this.getProperties('fields', 'formLetsEncryptValue', 'letsEncrypt', 'submit');
 
-      console.log(fields);
       const willReloadAfterSubmit = formLetsEncryptValue !== letsEncrypt;
  
       /** @type {Onepanel.WebCert} */

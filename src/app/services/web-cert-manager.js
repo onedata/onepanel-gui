@@ -47,7 +47,9 @@ export default Service.extend(createDataProxyMixin('webCert'), {
    */
   webCertValid: computed('webCert.status', function webCertValid() {
     const webCert = this.get('webCert');
-    return !webCert || get(webCert, 'status') === 'valid';
+    return !webCert ||
+      (get(webCert, 'status') === 'valid' &&
+        get(webCert, 'domain') === this.get('guiUtils.serviceDomain'));
   }),
 
   /**

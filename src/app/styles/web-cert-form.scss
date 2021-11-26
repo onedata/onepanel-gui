@@ -1,0 +1,35 @@
+.web-cert-form {
+  @extend .center-block;
+  padding-left: $padding-base-horizontal;
+  padding-right: $padding-base-horizontal;
+  @media (max-width: $screen-xs-max) {
+    max-width: 600px;
+  }
+  @media (min-width: $screen-sm-min) {
+    max-width: 800px;
+  }
+
+  .warning-icon-container {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 16px;
+    height: 16px;
+    padding-bottom: 26px;
+
+    .warning-icon {
+      vertical-align: baseline;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .form-component .control-label {
+    width: 40%;
+  }
+
+  .field-component {
+    padding-right: 20px;
+  }
+}
