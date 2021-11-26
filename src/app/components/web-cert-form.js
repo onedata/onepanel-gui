@@ -8,7 +8,7 @@
  */
 
 import Component from '@ember/component';
-import { computed, get, getProperties } from '@ember/object';
+import { computed, get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
