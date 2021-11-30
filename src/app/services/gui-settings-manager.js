@@ -23,6 +23,7 @@ import { setProperties } from '@ember/object';
 export default Service.extend(
   createDataProxyMixin('signInNotification'),
   createDataProxyMixin('privacyPolicy'),
+  createDataProxyMixin('acceptableUsePolicy'),
   createDataProxyMixin('cookieConsentNotification'),
   createDataProxyMixin('guiSettings'), {
 
@@ -48,6 +49,14 @@ export default Service.extend(
     /**
      * @type {Ember.ComputedProperty<boolean>}
      */
+    acceptableUsePolicyEmptyError: and(
+      'acceptableUsePolicy.enabled',
+      not('acceptableUsePolicy.body')
+    ),
+
+    /**
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     cookieConsentNotificationEmptyError: and(
       'cookieConsentNotification.enabled',
       not('cookieConsentNotification.body')
@@ -59,6 +68,7 @@ export default Service.extend(
     guiSettingsValid: and(
       not('signInNotificationEmptyError'),
       not('privacyPolicyEmptyError'),
+      not('acceptableUsePolicyEmptyError'),
       not('cookieConsentNotificationEmptyError'),
     ),
 
@@ -69,16 +79,19 @@ export default Service.extend(
       const {
         signInNotificationProxy,
         privacyPolicyProxy,
+        acceptableUsePolicyProxy,
         cookieConsentNotificationProxy,
       } = this.getProperties(
         'signInNotificationProxy',
         'privacyPolicyProxy',
+        'acceptableUsePolicyProxy',
         'cookieConsentNotificationProxy'
       );
 
       return Promise.all([
         signInNotificationProxy,
         privacyPolicyProxy,
+        acceptableUsePolicyProxy,
         cookieConsentNotificationProxy,
       ]);
     },
@@ -138,6 +151,33 @@ export default Service.extend(
         .request('ServiceConfigurationApi', 'modifyGuiMessage', 'privacy_policy', message)
         .then(result => {
           setProperties(this.get('privacyPolicyProxy.content'), message);
+          return result;
+        });
+    },
+
+        /**
+     * @override
+     */
+    fetchAcceptableUsePolicy() {
+      if (this.get('guiUtils.serviceType') === 'onezone') {
+        return this.get('onepanelServer')
+          .request('ServiceConfigurationApi', 'getGuiMessage', 'acceptable_use_policy')
+          .then(({ data }) => data);
+      } else {
+        return resolve();
+      }
+    },
+
+    /**
+     * Saves new acceptable use policy message config.
+     * @param {GuiMessage} message
+     * @returns {Promise}
+     */
+    saveAcceptableUsePolicy(message) {
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'acceptable_use_policy', message)
+        .then(result => {
+          setProperties(this.get('acceptableUsePolicyProxy.content'), message);
           return result;
         });
     },

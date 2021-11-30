@@ -63,5 +63,9 @@ export default GuiMessageEditorBase.extend(I18n, {
       const text = `[privacy-policy]${this.t('privacyPolicy')}[/privacy-policy]`;
       insertTextAtCursor(this.get('textareaElement'), text);
     },
+    insertAcceptableUsePolicyLink() {
+      const text = `[acceptable-use-policy]${this.t('acceptableUsePolicy')}[/acceptable-use-policy]`;
+      insertTextAtCursor(this.get('textareaElement'), text);
+    },
   },
 });

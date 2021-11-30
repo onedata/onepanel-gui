@@ -68,6 +68,30 @@ export default Service.extend(I18n, {
       );
   },
 
+    /**
+   * Saves new acceptable use policy content.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  saveAcceptableUsePolicy(message) {
+    const {
+      guiSettingsManager,
+      globalNotify,
+    } = this.getProperties('guiSettingsManager', 'globalNotify');
+    return guiSettingsManager
+      .saveAcceptableUsePolicy(message)
+      .then(
+        result => {
+          globalNotify.success(this.t('acceptableUsePolicySaveSuccess'));
+          return result;
+        },
+        error => {
+          globalNotify.backendError(this.t('savingAcceptableUsePolicy', error));
+          throw error;
+        }
+      );
+  },
+  
   /**
    * Saves new cookie consent notification.
    * @param {GuiMessage} message
