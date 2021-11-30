@@ -155,7 +155,7 @@ export default Service.extend(
         });
     },
 
-        /**
+    /**
      * @override
      */
     fetchAcceptableUsePolicy() {

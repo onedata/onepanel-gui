@@ -68,7 +68,7 @@ export default Service.extend(I18n, {
       );
   },
 
-    /**
+  /**
    * Saves new acceptable use policy content.
    * @param {GuiMessage} message
    * @returns {Promise}

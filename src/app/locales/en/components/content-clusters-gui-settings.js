@@ -19,7 +19,7 @@ export default {
     },
     acceptableUsePolicy: {
       header: 'Acceptable use policy',
-      description: 'Acceptable use policy is...',
+      description: 'An acceptable use policy (AUP) is a set of rules applied by the service administrator that restricts the ways in which the service may be used by the users.',
       acceptableUsePolicyEnabled: 'Acceptable use policy enabled',
       save: 'Save',
       emptyContentWarning: 'Acceptable use policy is enabled, but content is missing – please fill it in below.',
@@ -27,7 +27,7 @@ export default {
     },
     cookieConsentNotification: {
       header: 'Cookie consent notification',
-      description: 'Cookie consent notification is a short text in a floating pop-up that will be visible to every user unless accepted. It can contain a link to the privacy policy for detailed description. Only plain text without HTML tags is allowed.',
+      description: 'Cookie consent notification is a short text in a floating pop-up that will be visible to every user unless accepted. It should contain information how HTTP cookies are used across the service. Only plain text without HTML tags is allowed.',
       cookieConsentNotificationEnabled: 'Cookie consent notification enabled',
       insertPrivacyPolicyLink: 'Insert privacy policy link',
       privacyPolicy: 'privacy policy',
