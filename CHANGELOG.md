@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8617 Removed usages of ember-invoke-action
 * VFS-8608 Fixed buttons position on login page
 * VFS-7380 Made storage form in readonly mode easier to copy
 * VFS-8326 Added name and domain on login page

@@ -9,9 +9,6 @@
 
 import { readOnly } from '@ember/object/computed';
 import { observer, computed } from '@ember/object';
-import {
-  InvokeActionMixin,
-} from 'ember-invoke-action';
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
@@ -53,11 +50,7 @@ let Validations = buildValidations(generateColumnValidations(roles));
 // as a primary cluster manager
 
 /**
- * Renders a table in which roles can be set to hosts for cluster deployment 
- *
- * Invokes passed actions:
- * - hostOptionChanged(hostname: string, option: string, value: boolean)
- * - primaryClusterManagerChanged(hostname: string, isSet: boolean)
+ * Renders a table in which roles can be set to hosts for cluster deployment
  *
  * @module components/cluster-host-table
  * @author Jakub Liput, Michal Borzecki
@@ -66,13 +59,30 @@ let Validations = buildValidations(generateColumnValidations(roles));
  */
 export default BasicTable.extend(
   I18n,
-  InvokeActionMixin,
   hostColumnComputedProperties(roles),
   Validations, {
     tagName: 'table',
     classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown-table-rows'],
 
     i18nPrefix: 'components.clusterHostTable',
+
+    /**
+     * @virtual optional
+     * @type {(hostname: string, option: string, value: boolean) => void}
+     */
+    hostOptionChanged: undefined,
+
+    /**
+     * @virtual optional
+     * @type {(hostname: string|null) => void}
+     */
+    primaryClusterManagerChanged: undefined,
+
+    /**
+     * @virtual optional
+     * @type {(isValid: boolean) => void}
+     */
+    allValidChanged: undefined,
 
     /**
      * @virtual optional
@@ -117,7 +127,13 @@ export default BasicTable.extend(
     }),
 
     tableValidChanged: observer('allValid', function () {
-      this.invokeAction('allValidChanged', this.get('allValid') === true);
+      const {
+        allValidChanged,
+        allValid,
+      } = this.getProperties('allValidChanged', 'allValid');
+      if (allValidChanged) {
+        allValidChanged(allValid === true);
+      }
     }),
 
     hostsChanged: observer('hosts.[]', function () {
@@ -134,11 +150,17 @@ export default BasicTable.extend(
 
     actions: {
       checkboxChanged(hostname, option, newValue) {
-        this.invokeAction('hostOptionChanged', hostname, option, newValue);
+        const hostOptionChanged = this.get('hostOptionChanged');
+        if (hostOptionChanged) {
+          hostOptionChanged(hostname, option, newValue);
+        }
       },
 
       primaryClusterManagerChanged(hostname, isSet) {
-        this.invokeAction('primaryClusterManagerChanged', isSet ? hostname : null);
+        const primaryClusterManagerChanged = this.get('primaryClusterManagerChanged');
+        if (primaryClusterManagerChanged) {
+          primaryClusterManagerChanged(isSet ? hostname : null);
+        }
       },
 
       removeHost(hostname) {

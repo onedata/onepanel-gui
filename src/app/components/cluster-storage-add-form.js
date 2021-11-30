@@ -13,7 +13,6 @@ import { run } from '@ember/runloop';
 import EmberObject, { observer, computed, set, get, setProperties } from '@ember/object';
 import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { invoke } from 'ember-invoke-action';
 import { buildValidations } from 'ember-cp-validations';
 import _ from 'lodash';
 import config from 'ember-get-config';
@@ -944,7 +943,7 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * Adds suffix to the field prefix so it changes from
    * prefix.fieldName to prefixsuffix.fieldName.
-   * @param {FieldType} field 
+   * @param {FieldType} field
    * @param {string} suffix
    * @returns {string} new field name
    */
@@ -955,8 +954,8 @@ export default OneForm.extend(I18n, Validations, {
 
   /**
    * Shows/hides luma fields
-   * @param {boolean} isVisible 
-   * @param {boolean} animate 
+   * @param {boolean} isVisible
+   * @param {boolean} animate
    */
   _toggleLumaPrefix(isVisible, animate = true) {
     const {
@@ -1013,7 +1012,7 @@ export default OneForm.extend(I18n, Validations, {
 
     toggleChanged({ newValue, context }) {
       const fieldName = context.get('fieldName');
-      invoke(this, 'inputChanged', fieldName, newValue);
+      this.send('inputChanged', fieldName, newValue);
     },
 
     focusOut(field) {
