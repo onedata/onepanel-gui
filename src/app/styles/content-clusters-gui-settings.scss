@@ -18,10 +18,14 @@
     margin-top: 0;
   }
 
-  .privacy-policy {
+  .privacy-policy, .terms-of-use {
     .pell-content {
       min-height: 200px;
       height: 40vh;
     }
+  }
+
+  .insert-terms-of-use-link {
+    margin-right: $padding-xs-horizontal;
   }
 }

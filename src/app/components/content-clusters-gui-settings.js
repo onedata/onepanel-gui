@@ -16,7 +16,12 @@ import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-state';
 
-const allowedTabs = ['signInNotification', 'privacyPolicy', 'cookieConsentNotification'];
+const allowedTabs = [
+  'signInNotification',
+  'privacyPolicy',
+  'termsOfUse',
+  'cookieConsentNotification',
+];
 
 export default Component.extend(I18n, {
   classNames: ['content-clusters-gui-settings'],
@@ -61,6 +66,13 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
+  termsOfUseTabId: computed('elementId', function termsOfUseTabId() {
+    return this.get('elementId') + '-termsOfUse';
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<string>}
+   */
   cookieConsentNotificationTabId: computed(
     'elementId',
     function cookieConsentNotificationTabId() {
@@ -97,7 +109,6 @@ export default Component.extend(I18n, {
           options: serializeAspectOptions({ tab }),
         },
       };
-
       if (replaceHistoryEntry) {
         router.replaceWith(transitionParams);
       } else {

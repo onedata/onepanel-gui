@@ -23,6 +23,7 @@ import { setProperties } from '@ember/object';
 export default Service.extend(
   createDataProxyMixin('signInNotification'),
   createDataProxyMixin('privacyPolicy'),
+  createDataProxyMixin('termsOfUse'),
   createDataProxyMixin('cookieConsentNotification'),
   createDataProxyMixin('guiSettings'), {
 
@@ -48,6 +49,14 @@ export default Service.extend(
     /**
      * @type {Ember.ComputedProperty<boolean>}
      */
+    termsOfUseEmptyError: and(
+      'termsOfUse.enabled',
+      not('termsOfUse.body')
+    ),
+
+    /**
+     * @type {Ember.ComputedProperty<boolean>}
+     */
     cookieConsentNotificationEmptyError: and(
       'cookieConsentNotification.enabled',
       not('cookieConsentNotification.body')
@@ -59,6 +68,7 @@ export default Service.extend(
     guiSettingsValid: and(
       not('signInNotificationEmptyError'),
       not('privacyPolicyEmptyError'),
+      not('termsOfUseEmptyError'),
       not('cookieConsentNotificationEmptyError'),
     ),
 
@@ -69,16 +79,19 @@ export default Service.extend(
       const {
         signInNotificationProxy,
         privacyPolicyProxy,
+        termsOfUseProxy,
         cookieConsentNotificationProxy,
       } = this.getProperties(
         'signInNotificationProxy',
         'privacyPolicyProxy',
+        'termsOfUseProxy',
         'cookieConsentNotificationProxy'
       );
 
       return Promise.all([
         signInNotificationProxy,
         privacyPolicyProxy,
+        termsOfUseProxy,
         cookieConsentNotificationProxy,
       ]);
     },
@@ -138,6 +151,33 @@ export default Service.extend(
         .request('ServiceConfigurationApi', 'modifyGuiMessage', 'privacy_policy', message)
         .then(result => {
           setProperties(this.get('privacyPolicyProxy.content'), message);
+          return result;
+        });
+    },
+
+    /**
+     * @override
+     */
+    fetchTermsOfUse() {
+      if (this.get('guiUtils.serviceType') === 'onezone') {
+        return this.get('onepanelServer')
+          .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
+          .then(({ data }) => data);
+      } else {
+        return resolve();
+      }
+    },
+
+    /**
+     * Saves new terms of use message config.
+     * @param {GuiMessage} message
+     * @returns {Promise}
+     */
+    saveTermsOfUse(message) {
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'terms_of_use', message)
+        .then(result => {
+          setProperties(this.get('termsOfUseProxy.content'), message);
           return result;
         });
     },

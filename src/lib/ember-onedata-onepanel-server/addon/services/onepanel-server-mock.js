@@ -1781,9 +1781,13 @@ export default OnepanelServerBase.extend(
         enabled: true,
         body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
       },
+      terms_of_use: {
+        enabled: true,
+        body: '<h1>Terms of use of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
+      },
       cookie_consent_notification: {
         enabled: true,
-        body: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy]',
+        body: 'Cookies! [privacy-policy]see privacy policy[/privacy-policy] and [terms-of-use]see terms of use[/terms-of-use]',
       },
     })),
   });
