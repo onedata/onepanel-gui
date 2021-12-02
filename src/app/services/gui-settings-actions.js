@@ -69,24 +69,24 @@ export default Service.extend(I18n, {
   },
 
   /**
-   * Saves new acceptable use policy content.
+   * Saves new terms of use content.
    * @param {GuiMessage} message
    * @returns {Promise}
    */
-  saveAcceptableUsePolicy(message) {
+  saveTermsOfUse(message) {
     const {
       guiSettingsManager,
       globalNotify,
     } = this.getProperties('guiSettingsManager', 'globalNotify');
     return guiSettingsManager
-      .saveAcceptableUsePolicy(message)
+      .saveTermsOfUse(message)
       .then(
         result => {
-          globalNotify.success(this.t('acceptableUsePolicySaveSuccess'));
+          globalNotify.success(this.t('termsOfUseSaveSuccess'));
           return result;
         },
         error => {
-          globalNotify.backendError(this.t('savingAcceptableUsePolicy', error));
+          globalNotify.backendError(this.t('savingTermsOfUse', error));
           throw error;
         }
       );

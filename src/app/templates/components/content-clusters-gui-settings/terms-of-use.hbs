@@ -4,9 +4,9 @@
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>
   <p>
-    <label for="acceptable-use-policy-enabled" class="align-left">{{tt this "acceptableUsePolicyEnabled"}}:</label>
+    <label for="terms-of-use-enabled" class="align-left">{{tt this "termsOfUseEnabled"}}:</label>
     {{one-way-toggle
-      inputId="acceptable-use-policy-enabled"
+      inputId="terms-of-use-enabled"
       checked=isEnabled
       update=(action "isEnabledChanged")}}
   </p>

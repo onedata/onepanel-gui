@@ -19,7 +19,7 @@ import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-s
 const allowedTabs = [
   'signInNotification',
   'privacyPolicy',
-  'acceptableUsePolicy',
+  'termsOfUse',
   'cookieConsentNotification',
 ];
 
@@ -66,8 +66,8 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<string>}
    */
-  acceptableUsePolicyTabId: computed('elementId', function acceptableUsePolicyTabId() {
-    return this.get('elementId') + '-acceptableUsePolicy';
+  termsOfUseTabId: computed('elementId', function termsOfUseTabId() {
+    return this.get('elementId') + '-termsOfUse';
   }),
 
   /**

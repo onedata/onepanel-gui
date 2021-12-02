@@ -1,8 +1,8 @@
 /**
  * Extended version of GuiMessageEditorBase component that allows to modify
- * acceptable use policy. It allows only to input text with HTML tags (using WYSIWIG editor).
+ * Terms of Use. It allows only to input text with HTML tags (using WYSIWIG editor).
  * 
- * @module components/content-clusters-gui-settings/acceptable-use-policy
+ * @module components/content-clusters-gui-settings/terms-of-use
  * @author Agnieszka Warchoł
  * @copyright (C) 2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -14,7 +14,7 @@ import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-s
 import { reads } from '@ember/object/computed';
 
 export default GuiMessageEditorBase.extend(I18n, {
-  classNames: ['acceptable-use-policy'],
+  classNames: ['terms-of-use'],
 
   i18n: service(),
   guiSettingsActions: service(),
@@ -23,17 +23,17 @@ export default GuiMessageEditorBase.extend(I18n, {
   /**
    * @override
    */
-  i18nPrefix: 'components.contentClustersGuiSettings.tabs.acceptableUsePolicy',
+  i18nPrefix: 'components.contentClustersGuiSettings.tabs.termsOfUse',
 
   /**
    * @override
    */
-  savedMessageProxy: reads('guiSettingsManager.acceptableUsePolicyProxy'),
+  savedMessageProxy: reads('guiSettingsManager.termsOfUseProxy'),
 
   /**
    * @override
    */
   save(message) {
-    return this.get('guiSettingsActions').saveAcceptableUsePolicy(message);
+    return this.get('guiSettingsActions').saveTermsOfUse(message);
   },
 });

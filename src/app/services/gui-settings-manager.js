@@ -23,7 +23,7 @@ import { setProperties } from '@ember/object';
 export default Service.extend(
   createDataProxyMixin('signInNotification'),
   createDataProxyMixin('privacyPolicy'),
-  createDataProxyMixin('acceptableUsePolicy'),
+  createDataProxyMixin('termsOfUse'),
   createDataProxyMixin('cookieConsentNotification'),
   createDataProxyMixin('guiSettings'), {
 
@@ -49,9 +49,9 @@ export default Service.extend(
     /**
      * @type {Ember.ComputedProperty<boolean>}
      */
-    acceptableUsePolicyEmptyError: and(
-      'acceptableUsePolicy.enabled',
-      not('acceptableUsePolicy.body')
+    termsOfUseEmptyError: and(
+      'termsOfUse.enabled',
+      not('termsOfUse.body')
     ),
 
     /**
@@ -68,7 +68,7 @@ export default Service.extend(
     guiSettingsValid: and(
       not('signInNotificationEmptyError'),
       not('privacyPolicyEmptyError'),
-      not('acceptableUsePolicyEmptyError'),
+      not('termsOfUseEmptyError'),
       not('cookieConsentNotificationEmptyError'),
     ),
 
@@ -79,19 +79,19 @@ export default Service.extend(
       const {
         signInNotificationProxy,
         privacyPolicyProxy,
-        acceptableUsePolicyProxy,
+        termsOfUseProxy,
         cookieConsentNotificationProxy,
       } = this.getProperties(
         'signInNotificationProxy',
         'privacyPolicyProxy',
-        'acceptableUsePolicyProxy',
+        'termsOfUseProxy',
         'cookieConsentNotificationProxy'
       );
 
       return Promise.all([
         signInNotificationProxy,
         privacyPolicyProxy,
-        acceptableUsePolicyProxy,
+        termsOfUseProxy,
         cookieConsentNotificationProxy,
       ]);
     },
@@ -158,7 +158,7 @@ export default Service.extend(
     /**
      * @override
      */
-    fetchAcceptableUsePolicy() {
+    fetchTermsOfUse() {
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
           .request('ServiceConfigurationApi', 'getGuiMessage', 'acceptable_use_policy')
@@ -169,15 +169,15 @@ export default Service.extend(
     },
 
     /**
-     * Saves new acceptable use policy message config.
+     * Saves new terms of use message config.
      * @param {GuiMessage} message
      * @returns {Promise}
      */
-    saveAcceptableUsePolicy(message) {
+    saveTermsOfUse(message) {
       return this.get('onepanelServer')
         .request('ServiceConfigurationApi', 'modifyGuiMessage', 'acceptable_use_policy', message)
         .then(result => {
-          setProperties(this.get('acceptableUsePolicyProxy.content'), message);
+          setProperties(this.get('termsOfUseProxy.content'), message);
           return result;
         });
     },
