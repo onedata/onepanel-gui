@@ -161,7 +161,7 @@ export default Service.extend(
     fetchTermsOfUse() {
       if (this.get('guiUtils.serviceType') === 'onezone') {
         return this.get('onepanelServer')
-          .request('ServiceConfigurationApi', 'getGuiMessage', 'acceptable_use_policy')
+          .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
           .then(({ data }) => data);
       } else {
         return resolve();
@@ -175,7 +175,7 @@ export default Service.extend(
      */
     saveTermsOfUse(message) {
       return this.get('onepanelServer')
-        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'acceptable_use_policy', message)
+        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'terms_of_use', message)
         .then(result => {
           setProperties(this.get('termsOfUseProxy.content'), message);
           return result;

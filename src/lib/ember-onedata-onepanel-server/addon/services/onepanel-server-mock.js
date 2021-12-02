@@ -1781,7 +1781,7 @@ export default OnepanelServerBase.extend(
         enabled: true,
         body: '<h1>Privacy policy of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
       },
-      acceptable_use_policy: {
+      terms_of_use: {
         enabled: true,
         body: '<h1>Terms of use of Mocked Onedata</h1><p>Yes, but no, but yes.</p> <button class="btn btn-sm btn-default" onclick="javascript:alert(\'hacked\')">Injected dangerous button</button>',
       },

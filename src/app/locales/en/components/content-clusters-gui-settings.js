@@ -32,7 +32,7 @@ export default {
       insertPrivacyPolicyLink: 'Insert privacy policy link',
       privacyPolicy: 'privacy policy',
       insertTermsOfUseLink: 'Insert terms of use link',
-      termsOfUse: 'Terms of use',
+      termsOfUse: 'terms of use',
       save: 'Save',
       emptyContentWarning: 'Cookie consent notification is enabled, but content is missing – please fill it in below.',
       emptyContentTabWarning: 'Cookie consent notification is enabled, but content is missing.',
