@@ -9,9 +9,21 @@
       inputId="cookie-consent-notification-enabled"
       checked=isEnabled
       update=(action "isEnabledChanged")}}
-    <button class="btn btn-sm btn-default pull-right" {{action "insertPrivacyPolicyLink"}} disabled={{or isSaving (not isEnabled)}}>
+    <button 
+      class="btn btn-sm btn-default pull-right insert-privacy-policy-link" 
+      disabled={{or isSaving (not isEnabled)}}
+      {{action "insertPrivacyPolicyLink"}} 
+    >
       {{one-icon icon="text-link"}}
       {{tt this "insertPrivacyPolicyLink"}}
+    </button>
+    <button 
+      class="btn btn-sm btn-default pull-right insert-terms-of-use-link" 
+      disabled={{or isSaving (not isEnabled)}}
+      {{action "insertTermsOfUseLink"}} 
+    >
+      {{one-icon icon="text-link"}}
+      {{tt this "insertTermsOfUseLink"}}
     </button>
   </p>
   <p>

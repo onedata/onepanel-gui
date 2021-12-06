@@ -1,0 +1,27 @@
+{{#promise-proxy-container proxy=savedMessageProxy}}
+  {{#if (and isEnabled (not body))}}
+    <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
+  {{/if}}
+  <p class="subheader-text">{{tt this "description"}}</p>
+  <p>
+    <label for="terms-of-use-enabled" class="align-left">{{tt this "termsOfUseEnabled"}}:</label>
+    {{one-way-toggle
+      inputId="terms-of-use-enabled"
+      checked=isEnabled
+      update=(action "isEnabledChanged")}}
+  </p>
+  {{wysiwyg-editor
+    mode="edit"
+    content=body
+    disabled=(or isSaving (not isEnabled))
+    onChange=(action "bodyChanged")}}
+  <p class="clearfix">
+    {{#one-spin-button
+      class=(concat "btn btn-primary btn-save pull-right")
+      action=(action "save")
+      disabled=(not isModified)}}
+      {{tt this "save"}}
+    {{/one-spin-button}}
+  </p>
+{{/promise-proxy-container}}
+{{yield}}
