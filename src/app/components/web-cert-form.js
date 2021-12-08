@@ -2,14 +2,14 @@
  * A view to show or edit web certificate details
  *
  * @module components/web-cert-form
- * @author Jakub Liput
- * @copyright (C) 2018 ACK CYFRONET AGH
+ * @author Jakub Liput, Agnieszka Warchoł
+ * @copyright (C) 2018-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 import { computed, get } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { reads, not } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -17,9 +17,12 @@ import notImplementedReject from 'onedata-gui-common/utils/not-implemented-rejec
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
-import { tag, raw, conditional } from 'ember-awesome-macros';
+import { tag, raw, conditional, notEqual, getBy, equal } from 'ember-awesome-macros';
 import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
+import DatetimeField from 'onedata-gui-common/utils/form-component/datetime-field';
 import { scheduleOnce } from '@ember/runloop';
+import computedT from 'onedata-gui-common/utils/computed-t';
+import moment from 'moment';
 
 /**
  * Eg. certPath -> paths.cert
@@ -69,7 +72,7 @@ export default Component.extend(I18n, {
    * Currently displayed value of Let's Encrypt toggle
    * @type {Ember.ComputedProperty<boolean>}
    */
-  formLetsEncryptValue: reads('webCert.letsEncrypt'),
+  formLetsEncryptValue: reads('fields.value.letsEncrypt'),
 
   /**
    * State of letsEncrypt configuration from backend.
@@ -84,6 +87,16 @@ export default Component.extend(I18n, {
    */
   currentDomain: reads('guiUtils.serviceDomain'),
 
+  timeLeft: computed('webCert.expirationTime', function timeLeft() {
+    const expirationTime = this.get('webCert.expirationTime');
+    const expirationTimeLeft = moment(expirationTime).fromNow();
+    if (expirationTimeLeft.includes('in')) {
+      return expirationTimeLeft.replace('in ', '') + this.t('fields.expirationTime.left');
+    } else {
+      return expirationTimeLeft;
+    }
+  }),
+    
   /**
    * @type {ComputedProperty<Utils.FormComponent.FormFieldsRootGroup>}
    */
@@ -91,6 +104,8 @@ export default Component.extend(I18n, {
     const component = this;
     const {
       letsEncryptField,
+      lastRenewalSuccess,
+      lastRenewalFailure,
       expirationTimeField,
       creationTimeField,
       domainField,
@@ -98,9 +113,10 @@ export default Component.extend(I18n, {
       certPathField,
       keyPathField,
       chainPathField,
-      disabled,
     } = this.getProperties(
       'letsEncryptField',
+      'lastRenewalSuccess',
+      'lastRenewalFailure',
       'expirationTimeField',
       'creationTimeField',
       'domainField',
@@ -108,23 +124,24 @@ export default Component.extend(I18n, {
       'certPathField',
       'keyPathField',
       'chainPathField',
-      'disabled',
     );
 
     return FormFieldsRootGroup.extend({
-      i18nPrefix: tag `${'component.i18nPrefix'}.fields`,
+      i18nPrefix: tag`${'component.i18nPrefix'}.fields`,
       ownerSource: reads('component'),
-      isEnabled: !disabled,
+      isEnabled: not('component.disabled'),
       onValueChange(value, field) {
         this._super(...arguments);
-        if (field.get('name') === 'letsEncrypt') {
-          scheduleOnce('afterRender', component, 'notifyAboutChange', value);
+        if (get(field, 'name') === 'letsEncrypt') {
+          scheduleOnce('afterRender', component, 'notifyAboutChange');
         }
       },
     }).create({
       component,
       fields: [
         letsEncryptField,
+        lastRenewalSuccess,
+        lastRenewalFailure,
         expirationTimeField,
         creationTimeField,
         domainField,
@@ -136,36 +153,87 @@ export default Component.extend(I18n, {
     });
   }),
 
-  letsEncryptField: computed('webCert', function letsEncryptField() {
+  letsEncryptField: computed(function letsEncryptField() {
     const component = this;
-    const webCert = this.get('webCert');
     return ToggleField.extend({
-      defaultValue: get(
-          webCert,
-          pathFieldToProperty('letsEncrypt'),
-      ),
+      defaultValue: component.computedDefaultValueFor('letsEncrypt'),
     }).create({
       component,
       name: 'letsEncrypt',
     });
   }),
 
-  notifyAboutChange(value) {
-    this.set('formLetsEncryptValue', value);
-    this.set('showLetsEncryptChangeModal', true);
-  },
-
-  expirationTimeField: computed('webCert', function expirationTimeField() {
+  lastRenewalSuccess: computed(function lastRenewalSuccess() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('expirationTime'),
+      lastRenewal: component.computedDefaultValueFor('lastRenewalSuccess'),
+      text: computed('lastRenewal', function text() {
+        const lastRenewal = this.get('lastRenewal');
+        if (lastRenewal) {
+          return moment(this.get('lastRenewal')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
+        }
+        return 'never';
+      }),
+    }).create({
+      component,
+      name: 'lastRenewalSuccess',
+    });
+  }),
+  
+  lastRenewalFailure: computed(function lastRenewalFailure() {
+    const component = this;
+    return StaticTextField.extend({
+      lastRenewal: component.computedDefaultValueFor('lastRenewalFailure'),
+      text: computed('lastRenewal', function text() {
+        const lastRenewal = this.get('lastRenewal');
+        if (lastRenewal) {
+          return moment(this.get('lastRenewale')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
+        }
+        return 'never';
+      }),
+    }).create({
+      component,
+      name: 'lastRenewalFailure',
+    });
+  }), 
+
+  expirationTimeField: computed(function expirationTimeField() {
+    const component = this;
+    return DatetimeField.extend({
+      defaultValue: component.computedDefaultValueFor('expirationTime'),
+      expirationTime: component.computedDefaultValueFor('expirationTime'),
+      letsEncrypt: component.computedDefaultValueFor('letsEncrypt'),
+      status: component.computedDefaultValueFor('status'),
+      isNearExpiration: equal('status', raw('near_expiration')),
+      timeLeft: getBy(component, 'timeLeft'),
+      isWarningTip: computed(
+        'expirationTime',
+        'letsEncrypt',
+        'isNearExpiration',
+        function isWarningTip() {
+          const {
+            letsEncrypt,
+            expirationTime,
+            isNearExpiration,
+          } = this.getProperties('letsEncrypt', 'expirationTime', 'isNearExpiration');
+          const lessThenMonths = moment().add(3, 'months').diff(moment(expirationTime)) > 0;
+          return (letsEncrypt && isNearExpiration && lessThenMonths) || (!letsEncrypt && lessThenMonths);
+        }
       ),
-      warningTip: this.t('fields.expirationTime.warningTip'),
+      warningTip: conditional(
+        equal('status', raw('expired')),
+        computedT('expirationTime.warningTipExpired'),
+        computedT('expirationTime.warningTip'),
+      ),
+      viewModeFormat: `YYYY-MM-DD [at] H:mm ([UTC]Z) [(${this.get('timeLeft')})]`,
+      mode: 'view',
+      classes: conditional(
+        'isWarningTip',
+        raw('warning-field'),
+        raw(''),
+      ),
       afterComponentName: conditional(
-        get(webCert, 'status') !== 'valid',
+        'isWarningTip',
         raw('web-cert-form/warning-icon'),
         raw(undefined),
       ),
@@ -175,31 +243,30 @@ export default Component.extend(I18n, {
     });
   }),
 
-  creationTimeField: computed('webCert', function creationTimeField() {
+  creationTimeField: computed(function creationTimeField() {
     const component = this;
-    const webCert = this.get('webCert');
-    return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('creationTime'),
-        ),
+    return DatetimeField.extend({
+      defaultValue: component.computedDefaultValueFor('creationTime'),
+      viewModeFormat: 'YYYY-MM-DD [at] H:mm ([UTC]Z)',
+      mode: 'view',
     }).create({
       component,
       name: 'creationTime',
     });
   }),
 
-  domainField: computed('webCert', function domainField() {
+  domainField: computed(function domainField() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('domain'),
+      text: component.computedDefaultValueFor('domain'),
+      warningTip: computedT('domain.warningTip'),
+      classes: conditional(
+        notEqual('component.webCert.domain', ('component.guiUtils.serviceDomain')),
+        raw('warning-field'),
+        raw('')
       ),
-      warningTip: this.t('fields.domain.warningTip'),
       afterComponentName: conditional(
-        get(webCert, 'domain') !== this.get('guiUtils.serviceDomain'),
+        notEqual('component.webCert.domain', ('component.guiUtils.serviceDomain')),
         raw('web-cert-form/warning-icon'),
         raw(undefined),
       ),
@@ -209,64 +276,52 @@ export default Component.extend(I18n, {
     });
   }),
 
-  issuerField: computed('webCert', function issuerField() {
+  issuerField: computed(function issuerField() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('issuer'),
-        ),
+      text: component.computedDefaultValueFor('issuer'),
     }).create({
       component,
       name: 'issuer',
     });
   }),
 
-  certPathField: computed('webCert', function certPathField() {
+  certPathField: computed(function certPathField() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('certPath'),
-        ),
+      text: component.computedDefaultValueFor('certPath'),
     }).create({
       component,
       name: 'certPath',
     });
   }),
 
-  keyPathField: computed('webCert', function keyPathField() {
+  keyPathField: computed(function keyPathField() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('keyPath'),
-        ),
+      text: component.computedDefaultValueFor('keyPath'),
     }).create({
       component,
       name: 'keyPath',
     });
   }),
 
-  chainPathField: computed('webCert', function chainPathField() {
+  chainPathField: computed(function chainPathField() {
     const component = this;
-    const webCert = this.get('webCert');
     return StaticTextField.extend({
-      text: get(
-          webCert,
-          pathFieldToProperty('chainPath'),
-        ),
+      text: component.computedDefaultValueFor('chainPath'),
     }).create({
       component,
       name: 'chainPath',
     });
   }),
 
-  init() {
-    this._super(...arguments);
+  computedDefaultValueFor(fieldName) {
+    return getBy('component.webCert', raw(pathFieldToProperty(fieldName)));
+  },
+
+  notifyAboutChange() {
+    this.set('showLetsEncryptChangeModal', true);
   },
 
   actions: {
@@ -277,7 +332,9 @@ export default Component.extend(I18n, {
         submit,
       } = this.getProperties('fields', 'formLetsEncryptValue', 'letsEncrypt', 'submit');
 
-      const willReloadAfterSubmit = formLetsEncryptValue !== letsEncrypt;
+      const willReloadAfterSubmit =
+        formLetsEncryptValue !== letsEncrypt &&
+        formLetsEncryptValue;
  
       /** @type {Onepanel.WebCert} */
       const webCertChange = {

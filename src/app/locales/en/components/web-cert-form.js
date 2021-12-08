@@ -9,7 +9,9 @@ export default {
     expirationTime: {
       label: 'Expiration time',
       tip: 'Installed certificate\'s expiration time.',
-      warningTip: 'Your certificate expires soon.',
+      left: ' left',
+      warningTip: 'This certificate expires soon, it should be renewed as soon as possible.',
+      warningTipExpired: 'This certificate has expired, it should be renewed as soon as possible.',
     },
     creationTime: {
       label: 'Creation time',
@@ -18,7 +20,7 @@ export default {
     domain: {
       label: 'Domain',
       tip: 'The domain (Common Name) for which current certificate was issued.',
-      warningTip: 'This domain is different from the current domain service.',
+      warningTip: 'The domain for which the certificate was issued is different than the configured Oneprovider/Onezone domain (<tutaj skonfigurowana domena>). Until this problem is resolved, the HTTPS connections with the service will be considered insecure and may not work at all.',
     },
     issuer: {
       label: 'Issuer',
@@ -39,10 +41,12 @@ export default {
     lastRenewalSuccess: {
       label: 'Last renewal success',
       tip: 'Date and time of last successful attempt to obtain certificate from Let\'s Encrypt (may be "never").',
+      never: 'never',
     },
     lastRenewalFailure: {
       label: 'Last renewal failure',
       tip: 'Date and time of last unsucessful attempt to obtain certificate from Let\'s Encrypt (may be "never").',
+      never: 'never',
     },
   },
   changedModal: {
