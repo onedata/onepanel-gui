@@ -87,13 +87,17 @@ export default Component.extend(I18n, {
    */
   currentDomain: reads('guiUtils.serviceDomain'),
 
-  timeLeft: computed('webCert.expirationTime', function timeLeft() {
+  /**
+   * Time left until expired certificate
+   * @type {String}
+   */
+  expirationTimeLeft: computed('webCert.expirationTime', function expirationTimeLeft() {
     const expirationTime = this.get('webCert.expirationTime');
-    const expirationTimeLeft = moment(expirationTime).fromNow();
-    if (expirationTimeLeft.includes('in')) {
-      return expirationTimeLeft.replace('in ', '') + this.t('fields.expirationTime.left');
+    const timeLeft = moment(expirationTime).fromNow();
+    if (timeLeft.includes('in')) {
+      return timeLeft.replace('in ', '') + this.t('fields.expirationTime.left');
     } else {
-      return expirationTimeLeft;
+      return timeLeft;
     }
   }),
     
@@ -153,6 +157,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.ToggleField>}
+   */
   letsEncryptField: computed(function letsEncryptField() {
     const component = this;
     return ToggleField.extend({
@@ -163,6 +170,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   lastRenewalSuccess: computed(function lastRenewalSuccess() {
     const component = this;
     return StaticTextField.extend({
@@ -172,7 +182,7 @@ export default Component.extend(I18n, {
         if (lastRenewal) {
           return moment(this.get('lastRenewal')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
         }
-        return 'never';
+        return this.t('lastRenewalSuccess.never');
       }),
     }).create({
       component,
@@ -180,6 +190,9 @@ export default Component.extend(I18n, {
     });
   }),
   
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   lastRenewalFailure: computed(function lastRenewalFailure() {
     const component = this;
     return StaticTextField.extend({
@@ -187,9 +200,9 @@ export default Component.extend(I18n, {
       text: computed('lastRenewal', function text() {
         const lastRenewal = this.get('lastRenewal');
         if (lastRenewal) {
-          return moment(this.get('lastRenewale')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
+          return moment(this.get('lastRenewal')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
         }
-        return 'never';
+        return this.t('lastRenewalFailure.never');
       }),
     }).create({
       component,
@@ -197,6 +210,9 @@ export default Component.extend(I18n, {
     });
   }), 
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.DatetimeField>}
+   */
   expirationTimeField: computed(function expirationTimeField() {
     const component = this;
     return DatetimeField.extend({
@@ -205,19 +221,29 @@ export default Component.extend(I18n, {
       letsEncrypt: component.computedDefaultValueFor('letsEncrypt'),
       status: component.computedDefaultValueFor('status'),
       isNearExpiration: equal('status', raw('near_expiration')),
-      timeLeft: getBy(component, 'timeLeft'),
+      isExpired: equal('status', raw('expired')),
+      expirationTimeLeft: getBy(component, 'expirationTimeLeft'),
       isWarningTip: computed(
         'expirationTime',
         'letsEncrypt',
         'isNearExpiration',
+        'isExpired',
         function isWarningTip() {
           const {
             letsEncrypt,
             expirationTime,
             isNearExpiration,
-          } = this.getProperties('letsEncrypt', 'expirationTime', 'isNearExpiration');
+            isExpired,
+          } = this.getProperties(
+            'letsEncrypt',
+            'expirationTime',
+            'isNearExpiration',
+            'isExpired'
+          );
           const lessThenMonths = moment().add(3, 'months').diff(moment(expirationTime)) > 0;
-          return (letsEncrypt && isNearExpiration && lessThenMonths) || (!letsEncrypt && lessThenMonths);
+          return (letsEncrypt && isNearExpiration && lessThenMonths) ||
+            (!letsEncrypt && lessThenMonths) ||
+            isExpired;
         }
       ),
       warningTip: conditional(
@@ -225,7 +251,7 @@ export default Component.extend(I18n, {
         computedT('expirationTime.warningTipExpired'),
         computedT('expirationTime.warningTip'),
       ),
-      viewModeFormat: `YYYY-MM-DD [at] H:mm ([UTC]Z) [(${this.get('timeLeft')})]`,
+      viewModeFormat: `YYYY-MM-DD [at] H:mm ([UTC]Z) [(${this.get('expirationTimeLeft')})]`,
       mode: 'view',
       classes: conditional(
         'isWarningTip',
@@ -243,6 +269,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.DatetimeField>}
+   */
   creationTimeField: computed(function creationTimeField() {
     const component = this;
     return DatetimeField.extend({
@@ -255,6 +284,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   domainField: computed(function domainField() {
     const component = this;
     return StaticTextField.extend({
@@ -276,6 +308,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   issuerField: computed(function issuerField() {
     const component = this;
     return StaticTextField.extend({
@@ -286,6 +321,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   certPathField: computed(function certPathField() {
     const component = this;
     return StaticTextField.extend({
@@ -296,6 +334,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   keyPathField: computed(function keyPathField() {
     const component = this;
     return StaticTextField.extend({
@@ -306,6 +347,9 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
+   */
   chainPathField: computed(function chainPathField() {
     const component = this;
     return StaticTextField.extend({
