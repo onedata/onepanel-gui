@@ -1,11 +1,9 @@
-import Service, { inject as service } from '@ember/service';
-import { resolve } from 'rsvp';
 /**
  * Provides GUI settings management functions.
- * 
+ *
  * @module services/gui-settings-manager
  * @author Michał Borzęcki
- * @copyright (C) 2019 ACK CYFRONET AGH
+ * @copyright (C) 2019-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -16,205 +14,250 @@ import { resolve } from 'rsvp';
  * message).
  */
 
+import Service, { inject as service } from '@ember/service';
+import { resolve } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { and, not } from 'ember-awesome-macros';
 import { setProperties } from '@ember/object';
+import DOMPurify from 'npm:dompurify';
 
-export default Service.extend(
+const mixins = [
   createDataProxyMixin('signInNotification'),
   createDataProxyMixin('privacyPolicy'),
   createDataProxyMixin('termsOfUse'),
   createDataProxyMixin('cookieConsentNotification'),
-  createDataProxyMixin('guiSettings'), {
+  createDataProxyMixin('guiSettings'),
+];
 
-    onepanelServer: service(),
-    guiUtils: service(),
+export default Service.extend(...mixins, {
+  onepanelServer: service(),
+  guiUtils: service(),
 
-    /**
-     * @type {Ember.ComputedProperty<boolean>}
-     */
-    signInNotificationEmptyError: and(
-      'signInNotification.enabled',
-      not('signInNotification.body')
-    ),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  signInNotificationEmptyError: and(
+    'signInNotification.enabled',
+    not('signInNotification.body')
+  ),
 
-    /**
-     * @type {Ember.ComputedProperty<boolean>}
-     */
-    privacyPolicyEmptyError: and(
-      'privacyPolicy.enabled',
-      not('privacyPolicy.body')
-    ),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  privacyPolicyEmptyError: and(
+    'privacyPolicy.enabled',
+    not('privacyPolicy.body')
+  ),
 
-    /**
-     * @type {Ember.ComputedProperty<boolean>}
-     */
-    termsOfUseEmptyError: and(
-      'termsOfUse.enabled',
-      not('termsOfUse.body')
-    ),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  termsOfUseEmptyError: and(
+    'termsOfUse.enabled',
+    not('termsOfUse.body')
+  ),
 
-    /**
-     * @type {Ember.ComputedProperty<boolean>}
-     */
-    cookieConsentNotificationEmptyError: and(
-      'cookieConsentNotification.enabled',
-      not('cookieConsentNotification.body')
-    ),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  cookieConsentNotificationEmptyError: and(
+    'cookieConsentNotification.enabled',
+    not('cookieConsentNotification.body')
+  ),
 
-    /**
-     * @type {Ember.ComputedProperty<boolean>}
-     */
-    guiSettingsValid: and(
-      not('signInNotificationEmptyError'),
-      not('privacyPolicyEmptyError'),
-      not('termsOfUseEmptyError'),
-      not('cookieConsentNotificationEmptyError'),
-    ),
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  guiSettingsValid: and(
+    not('signInNotificationEmptyError'),
+    not('privacyPolicyEmptyError'),
+    not('termsOfUseEmptyError'),
+    not('cookieConsentNotificationEmptyError'),
+  ),
 
-    /**
-     * @override
-     */
-    fetchGuiSettings() {
-      const {
-        signInNotificationProxy,
-        privacyPolicyProxy,
-        termsOfUseProxy,
-        cookieConsentNotificationProxy,
-      } = this.getProperties(
-        'signInNotificationProxy',
-        'privacyPolicyProxy',
-        'termsOfUseProxy',
-        'cookieConsentNotificationProxy'
-      );
+  /**
+   * @override
+   */
+  fetchGuiSettings() {
+    const {
+      signInNotificationProxy,
+      privacyPolicyProxy,
+      termsOfUseProxy,
+      cookieConsentNotificationProxy,
+    } = this.getProperties(
+      'signInNotificationProxy',
+      'privacyPolicyProxy',
+      'termsOfUseProxy',
+      'cookieConsentNotificationProxy'
+    );
 
-      return Promise.all([
-        signInNotificationProxy,
-        privacyPolicyProxy,
-        termsOfUseProxy,
-        cookieConsentNotificationProxy,
-      ]);
-    },
+    return Promise.all([
+      signInNotificationProxy,
+      privacyPolicyProxy,
+      termsOfUseProxy,
+      cookieConsentNotificationProxy,
+    ]);
+  },
 
-    /**
-     * @override
-     */
-    fetchSignInNotification() {
-      if (this.get('guiUtils.serviceType') === 'onezone') {
-        return this.get('onepanelServer')
-          .request('ServiceConfigurationApi', 'getGuiMessage', 'signin_notification')
-          .then(({ data }) => data);
-      } else {
-        return resolve();
-      }
-    },
+  /**
+   * @override
+   */
+  fetchSignInNotification() {
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'getGuiMessage', 'signin_notification')
+        .then(({ data }) => this.sanitizeGuiMessage(data, true));
+    } else {
+      return resolve();
+    }
+  },
 
-    /**
-     * Saves new sign-in notification config.
-     * @param {GuiMessage} message
-     * @returns {Promise}
-     */
-    saveSignInNotification(message) {
+  /**
+   * Saves new sign-in notification config.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  saveSignInNotification(message) {
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    return this.get('onepanelServer')
+      .request(
+        'ServiceConfigurationApi',
+        'modifyGuiMessage',
+        'signin_notification',
+        sanitizedMessage
+      )
+      .then(result => {
+        setProperties(this.get('signInNotificationProxy.content'), sanitizedMessage);
+        return result;
+      });
+  },
+
+  /**
+   * @override
+   */
+  fetchPrivacyPolicy() {
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'getGuiMessage', 'privacy_policy')
+        .then(({ data }) => this.sanitizeGuiMessage(data));
+    } else {
+      return resolve();
+    }
+  },
+
+  /**
+   * Saves new privacy policy message config.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  savePrivacyPolicy(message) {
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    return this.get('onepanelServer')
+      .request(
+        'ServiceConfigurationApi',
+        'modifyGuiMessage',
+        'privacy_policy',
+        sanitizedMessage
+      )
+      .then(result => {
+        setProperties(this.get('privacyPolicyProxy.content'), sanitizedMessage);
+        return result;
+      });
+  },
+
+  /**
+   * @override
+   */
+  fetchTermsOfUse() {
+    if (this.get('guiUtils.serviceType') === 'onezone') {
+      return this.get('onepanelServer')
+        .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
+        .then(({ data }) => this.sanitizeGuiMessage(data));
+    } else {
+      return resolve();
+    }
+  },
+
+  /**
+   * Saves new terms of use message config.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  saveTermsOfUse(message) {
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    return this.get('onepanelServer')
+      .request(
+        'ServiceConfigurationApi',
+        'modifyGuiMessage',
+        'terms_of_use',
+        sanitizedMessage
+      )
+      .then(result => {
+        setProperties(this.get('termsOfUseProxy.content'), sanitizedMessage);
+        return result;
+      });
+  },
+
+  /**
+   * @override
+   */
+  fetchCookieConsentNotification() {
+    if (this.get('guiUtils.serviceType') === 'onezone') {
       return this.get('onepanelServer')
         .request(
           'ServiceConfigurationApi',
-          'modifyGuiMessage',
-          'signin_notification',
-          message
+          'getGuiMessage',
+          'cookie_consent_notification'
         )
-        .then(result => {
-          setProperties(this.get('signInNotificationProxy.content'), message);
-          return result;
-        });
-    },
+        .then(({ data }) => this.sanitizeGuiMessage(data, true));
+    } else {
+      return resolve();
+    }
+  },
 
-    /**
-     * @override
-     */
-    fetchPrivacyPolicy() {
-      if (this.get('guiUtils.serviceType') === 'onezone') {
-        return this.get('onepanelServer')
-          .request('ServiceConfigurationApi', 'getGuiMessage', 'privacy_policy')
-          .then(({ data }) => data);
-      } else {
-        return resolve();
-      }
-    },
+  /**
+   * Saves new cookie consent notification config.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  saveCookieConsentNotification(message) {
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    return this.get('onepanelServer')
+      .request(
+        'ServiceConfigurationApi',
+        'modifyGuiMessage',
+        'cookie_consent_notification',
+        sanitizedMessage
+      )
+      .then(result => {
+        setProperties(this.get('cookieConsentNotificationProxy.content'), sanitizedMessage);
+        return result;
+      });
+  },
 
-    /**
-     * Saves new privacy policy message config.
-     * @param {GuiMessage} message
-     * @returns {Promise}
-     */
-    savePrivacyPolicy(message) {
-      return this.get('onepanelServer')
-        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'privacy_policy', message)
-        .then(result => {
-          setProperties(this.get('privacyPolicyProxy.content'), message);
-          return result;
-        });
-    },
+  /**
+   * @param {GuiMessage} message
+   * @param {boolean} [textOnly=false]
+   * @returns {GuiMessage}
+   */
+  sanitizeGuiMessage(message, textOnly = false) {
+    if (!message || typeof message.body !== 'string') {
+      return message;
+    }
+    return Object.assign({}, message, {
+      body: this.sanitizeGuiMessageBody(message.body, textOnly),
+    });
+  },
 
-    /**
-     * @override
-     */
-    fetchTermsOfUse() {
-      if (this.get('guiUtils.serviceType') === 'onezone') {
-        return this.get('onepanelServer')
-          .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
-          .then(({ data }) => data);
-      } else {
-        return resolve();
-      }
-    },
-
-    /**
-     * Saves new terms of use message config.
-     * @param {GuiMessage} message
-     * @returns {Promise}
-     */
-    saveTermsOfUse(message) {
-      return this.get('onepanelServer')
-        .request('ServiceConfigurationApi', 'modifyGuiMessage', 'terms_of_use', message)
-        .then(result => {
-          setProperties(this.get('termsOfUseProxy.content'), message);
-          return result;
-        });
-    },
-
-    /**
-     * @override
-     */
-    fetchCookieConsentNotification() {
-      if (this.get('guiUtils.serviceType') === 'onezone') {
-        return this.get('onepanelServer')
-          .request(
-            'ServiceConfigurationApi',
-            'getGuiMessage',
-            'cookie_consent_notification'
-          )
-          .then(({ data }) => data);
-      } else {
-        return resolve();
-      }
-    },
-
-    /**
-     * Saves new cookie consent notification config.
-     * @param {GuiMessage} message
-     * @returns {Promise}
-     */
-    saveCookieConsentNotification(message) {
-      return this.get('onepanelServer')
-        .request(
-          'ServiceConfigurationApi',
-          'modifyGuiMessage',
-          'cookie_consent_notification',
-          message
-        )
-        .then(result => {
-          setProperties(this.get('cookieConsentNotificationProxy.content'), message);
-          return result;
-        });
-    },
-  });
+  /**
+   * @param {string} body
+   * @param {boolean} [textOnly=false]
+   * @returns {string}
+   */
+  sanitizeGuiMessageBody(body, textOnly) {
+    const sanitizedBody = textOnly ?
+      DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }) :
+      DOMPurify.sanitize(body);
+    return sanitizedBody.toString();
+  },
+});
