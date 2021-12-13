@@ -118,7 +118,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   saveSignInNotification(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
@@ -221,7 +221,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   saveCookieConsentNotification(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
