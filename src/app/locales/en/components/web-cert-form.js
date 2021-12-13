@@ -10,7 +10,7 @@ export default {
       label: 'Expiration time',
       tip: 'Installed certificate\'s expiration time.',
       left: ' left',
-      warningTip: 'This certificate expires soon, it should be renewed as soon as possible.',
+      warningTipNearExpiration: 'This certificate expires soon, it should be renewed as soon as possible.',
       warningTipExpired: 'This certificate has expired, it should be renewed as soon as possible.',
     },
     creationTime: {
@@ -20,7 +20,7 @@ export default {
     domain: {
       label: 'Domain',
       tip: 'The domain (Common Name) for which current certificate was issued.',
-      warningTip: 'The domain for which the certificate was issued is different than the configured Oneprovider/Onezone domain (<tutaj skonfigurowana domena>). Until this problem is resolved, the HTTPS connections with the service will be considered insecure and may not work at all.',
+      warningTip: 'The domain for which the certificate was issued is different than the configured {{currentServiceType}} domain ({{currentDomain}}). Until this problem is resolved, the HTTPS connections with the service will be considered insecure and may not work at all.',
     },
     issuer: {
       label: 'Issuer',

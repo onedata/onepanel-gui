@@ -23,6 +23,9 @@ import DatetimeField from 'onedata-gui-common/utils/form-component/datetime-fiel
 import { scheduleOnce } from '@ember/runloop';
 import computedT from 'onedata-gui-common/utils/computed-t';
 import moment from 'moment';
+import { capitalize } from '@ember/string';
+
+const DATE_FORMAT = 'YYYY-MM-DD [at] H:mm ([UTC]Z)';
 
 /**
  * Eg. certPath -> paths.cert
@@ -88,16 +91,34 @@ export default Component.extend(I18n, {
   currentDomain: reads('guiUtils.serviceDomain'),
 
   /**
+   * Domain of service for this onepanel
+   * @type {String}
+   */
+  currentServiceType: reads('guiUtils.serviceType'),
+
+  domainWarningTip: computed(
+    'currentDomain',
+    'currentServiceType',
+    function domainWarningTip() {
+      const currentDomain = this.get('currentDomain');
+      const currentServiceType = this.get('currentServiceType');
+      return this.t('fields.domain.warningTip', {
+        currentServiceType: capitalize(currentServiceType),
+        currentDomain: currentDomain,
+      });
+    }
+  ),
+
+  /**
    * Time left until expired certificate
    * @type {String}
    */
   expirationTimeLeft: computed('webCert.expirationTime', function expirationTimeLeft() {
-    const expirationTime = this.get('webCert.expirationTime');
-    const timeLeft = moment(expirationTime).fromNow();
-    if (timeLeft.includes('in')) {
-      return timeLeft.replace('in ', '') + this.t('fields.expirationTime.left');
+    const expirationTime = moment(this.get('webCert.expirationTime'));
+    if (expirationTime.diff(moment()) > 0) {
+      return expirationTime.fromNow(true) + this.t('fields.expirationTime.left');
     } else {
-      return timeLeft;
+      return expirationTime.fromNow();
     }
   }),
     
@@ -180,10 +201,11 @@ export default Component.extend(I18n, {
       text: computed('lastRenewal', function text() {
         const lastRenewal = this.get('lastRenewal');
         if (lastRenewal) {
-          return moment(this.get('lastRenewal')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
+          return moment(lastRenewal).format(DATE_FORMAT);
         }
         return this.t('lastRenewalSuccess.never');
       }),
+      mode: 'view',
     }).create({
       component,
       name: 'lastRenewalSuccess',
@@ -200,10 +222,11 @@ export default Component.extend(I18n, {
       text: computed('lastRenewal', function text() {
         const lastRenewal = this.get('lastRenewal');
         if (lastRenewal) {
-          return moment(this.get('lastRenewal')).format('YYYY-MM-DD [at] H:mm ([UTC]Z)');
+          return moment(lastRenewal).format(DATE_FORMAT);
         }
         return this.t('lastRenewalFailure.never');
       }),
+      mode: 'view',
     }).create({
       component,
       name: 'lastRenewalFailure',
@@ -222,13 +245,12 @@ export default Component.extend(I18n, {
       status: component.computedDefaultValueFor('status'),
       isNearExpiration: equal('status', raw('near_expiration')),
       isExpired: equal('status', raw('expired')),
-      expirationTimeLeft: getBy(component, 'expirationTimeLeft'),
-      isWarningTip: computed(
+      hasWarningTip: computed(
         'expirationTime',
         'letsEncrypt',
         'isNearExpiration',
         'isExpired',
-        function isWarningTip() {
+        function hasWarningTip() {
           const {
             letsEncrypt,
             expirationTime,
@@ -240,7 +262,7 @@ export default Component.extend(I18n, {
             'isNearExpiration',
             'isExpired'
           );
-          const lessThenMonths = moment().add(3, 'months').diff(moment(expirationTime)) > 0;
+          const lessThenMonths = moment().add(21, 'days').diff(moment(expirationTime)) > 0;
           return (letsEncrypt && isNearExpiration && lessThenMonths) ||
             (!letsEncrypt && lessThenMonths) ||
             isExpired;
@@ -249,17 +271,17 @@ export default Component.extend(I18n, {
       warningTip: conditional(
         equal('status', raw('expired')),
         computedT('expirationTime.warningTipExpired'),
-        computedT('expirationTime.warningTip'),
+        computedT('expirationTime.warningTipNearExpiration'),
       ),
-      viewModeFormat: `YYYY-MM-DD [at] H:mm ([UTC]Z) [(${this.get('expirationTimeLeft')})]`,
+      viewModeFormat: tag `YYYY-MM-DD [at] H:mm ([UTC]Z) [(${'component.expirationTimeLeft'})]`,
       mode: 'view',
       classes: conditional(
-        'isWarningTip',
+        'hasWarningTip',
         raw('warning-field'),
         raw(''),
       ),
       afterComponentName: conditional(
-        'isWarningTip',
+        'hasWarningTip',
         raw('web-cert-form/warning-icon'),
         raw(undefined),
       ),
@@ -276,7 +298,7 @@ export default Component.extend(I18n, {
     const component = this;
     return DatetimeField.extend({
       defaultValue: component.computedDefaultValueFor('creationTime'),
-      viewModeFormat: 'YYYY-MM-DD [at] H:mm ([UTC]Z)',
+      viewModeFormat: DATE_FORMAT,
       mode: 'view',
     }).create({
       component,
@@ -291,17 +313,18 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticTextField.extend({
       text: component.computedDefaultValueFor('domain'),
-      warningTip: computedT('domain.warningTip'),
+      warningTip: reads('component.domainWarningTip'),
       classes: conditional(
-        notEqual('component.webCert.domain', ('component.guiUtils.serviceDomain')),
+        equal('component.webCert.domain', 'component.guiUtils.serviceDomain'),
         raw('warning-field'),
         raw('')
       ),
       afterComponentName: conditional(
-        notEqual('component.webCert.domain', ('component.guiUtils.serviceDomain')),
+        equal('component.webCert.domain', 'component.guiUtils.serviceDomain'),
         raw('web-cert-form/warning-icon'),
         raw(undefined),
       ),
+      mode: 'view',
     }).create({
       component,
       name: 'domain',
@@ -315,6 +338,7 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticTextField.extend({
       text: component.computedDefaultValueFor('issuer'),
+      mode: 'view',
     }).create({
       component,
       name: 'issuer',
@@ -328,6 +352,7 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticTextField.extend({
       text: component.computedDefaultValueFor('certPath'),
+      mode: 'view',
     }).create({
       component,
       name: 'certPath',
@@ -341,6 +366,7 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticTextField.extend({
       text: component.computedDefaultValueFor('keyPath'),
+      mode: 'view',
     }).create({
       component,
       name: 'keyPath',
@@ -354,6 +380,7 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticTextField.extend({
       text: component.computedDefaultValueFor('chainPath'),
+      mode: 'view',
     }).create({
       component,
       name: 'chainPath',
