@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8574 Updated backend errors translations
 * VFS-8704 Added "Clear formatting" button to WYSIWYG editors
 * VFS-8631 Added terms of use to gui settings
 * VFS-8608 Fixed buttons position on login page
