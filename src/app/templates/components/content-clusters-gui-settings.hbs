@@ -43,6 +43,23 @@
           {{/if}}
         </a>
       {{/nav.item}}
+      {{#nav.item class="terms-of-use-item" active=(eq tab.activeId termsOfUseTabId)}}
+        <a
+          class="nav-link"
+          role="tab" {{action tab.select termsOfUseTabId}}>
+          {{tt this "tabs.termsOfUse.header"}}
+          {{#if guiSettingsManager.termsOfUseEmptyError}}
+            <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
+            {{#unless media.isMobile}}
+              {{one-tooltip
+                title=(tt this "tabs.termsOfUse.emptyContentTabWarning")
+                triggerElement=".terms-of-use-item .warning-icon"
+                triggerEvent="hover"
+              }}
+            {{/unless}}
+          {{/if}}
+        </a>
+      {{/nav.item}}
       {{#nav.item class="cookie-consent-notification-item" active=(eq tab.activeId cookieConsentNotificationTabId)}}
         <a class="nav-link" role="tab" {{action tab.select cookieConsentNotificationTabId}}>
           {{tt this "tabs.cookieConsentNotification.header"}}
@@ -65,6 +82,9 @@
       {{/tab.pane}}
       {{#tab.pane elementId=privacyPolicyTabId}}
         {{content-clusters-gui-settings/privacy-policy}}
+      {{/tab.pane}}
+      {{#tab.pane elementId=termsOfUseTabId}}
+        {{content-clusters-gui-settings/terms-of-use}}
       {{/tab.pane}}
       {{#tab.pane elementId=cookieConsentNotificationTabId}}
         {{content-clusters-gui-settings/cookie-consent-notification}}
