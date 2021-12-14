@@ -13,7 +13,6 @@ import { Promise, reject } from 'rsvp';
 import Component from '@ember/component';
 import Onepanel from 'npm:onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
-import { invokeAction } from 'ember-invoke-action';
 import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -38,6 +37,12 @@ export default Component.extend(I18n, {
   guiUtils: service(),
 
   i18nPrefix: 'components.newClusterZoneRegistration',
+
+  /**
+   * @virtual
+   * @type {() => void}
+   */
+  nextStep: undefined,
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -125,7 +130,7 @@ export default Component.extend(I18n, {
 
   /**
    * Use API to register provider
-   * @param {Ember.Object} providerData 
+   * @param {Ember.Object} providerData
    * @returns {Promise} resolves when provider was registered; otherwise rejects
    */
   _submit(providerData) {
@@ -191,7 +196,7 @@ export default Component.extend(I18n, {
   actions: {
     /**
      * Start registering provider
-     * @param {Ember.Object} providerData 
+     * @param {Ember.Object} providerData
      * @returns {Promise} ``_submit`` promise
      */
     submit(providerData) {
@@ -199,11 +204,14 @@ export default Component.extend(I18n, {
         globalNotify,
         _excludedSubdomains,
         i18n,
-      } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n');
+        nextStep,
+      } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n', 'nextStep');
       let submitting = this._submit(providerData);
       submitting.then(() => {
         globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
-        invokeAction(this, 'nextStep');
+        if (nextStep) {
+          nextStep();
+        }
         this.get('clusterModelManager').updateCurrentClusterProxy();
       });
       submitting.catch(errorResponse => {
