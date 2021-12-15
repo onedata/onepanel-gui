@@ -315,12 +315,12 @@ export default Component.extend(I18n, {
       text: component.computedDefaultValueFor('domain'),
       warningTip: reads('component.domainWarningTip'),
       classes: conditional(
-        equal('component.webCert.domain', 'component.guiUtils.serviceDomain'),
+        notEqual('component.webCert.domain', 'component.guiUtils.serviceDomain'),
         raw('warning-field'),
         raw('')
       ),
       afterComponentName: conditional(
-        equal('component.webCert.domain', 'component.guiUtils.serviceDomain'),
+        notEqual('component.webCert.domain', 'component.guiUtils.serviceDomain'),
         raw('web-cert-form/warning-icon'),
         raw(undefined),
       ),
