@@ -10,7 +10,6 @@
 import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import layout from 'onedata-gui-common/templates/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
-import { invokeAction } from 'ember-invoke-action';
 import _array from 'lodash/array';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 
@@ -44,13 +43,22 @@ const Validations = buildValidations(
 export default OneFormSimple.extend(Validations, {
   layout,
 
+  /**
+   * @virtual
+   * @type {(fieldName: string, value: any) => void}
+   */
+  zoneFormChanged: undefined,
+
   fields: FORM_FIELDS,
   submitButton: false,
 
   actions: {
     inputChanged(fieldName, value) {
       this._super(...arguments);
-      invokeAction(this, 'zoneFormChanged', fieldName, value);
+      const zoneFormChanged = this.get('zoneFormChanged');
+      if (zoneFormChanged) {
+        zoneFormChanged(fieldName, value);
+      }
     },
   },
 });
