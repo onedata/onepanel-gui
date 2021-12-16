@@ -1,0 +1,56 @@
+.web-cert-form {
+  @extend .center-block;
+  padding-left: $padding-base-horizontal;
+  @media (max-width: $screen-xs-max) {
+    max-width: 100%;
+  }
+  @media (min-width: $screen-sm-min) {
+    max-width: 800px;
+  }
+
+  .warning-icon-container {
+    .warning-icon {
+      vertical-align: baseline;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  
+  .form-component .control-label {
+    @media (min-width: $screen-sm-min) {
+      width: 40%;
+    }
+  }
+
+  .field-component {
+    padding-right: $padding-xs-horizontal;
+    flex-grow: 0;
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .warning-field {
+      display: grid;
+      grid-template-areas: 
+        "label label"
+        "value warning";
+      grid-template-columns: auto 1fr;
+      
+      .control-label {
+        grid-area: label;
+      }
+      
+      .field-component  {
+        grid-area: value;
+      }
+      
+      .warning-icon-container {
+        grid-area: warning;
+      }
+    }
+  }
+
+  .warning-field .field-component  {
+    color: $color-one-red;
+  }
+}

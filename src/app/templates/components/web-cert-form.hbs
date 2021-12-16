@@ -1,18 +1,6 @@
-{{#bs-form
-  submitOnEnter=false
-  class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal form-horizontal-condensed"
-  as |form|
-}}
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-    disabled=disabled
-  }}
-{{/bs-form}}
-
+<div class="form form-horizontal form-component">
+  {{form-component/field-renderer field=fields}}
+</div>
 {{#bs-modal
   id="lets-encrypt-changed"
   open=showLetsEncryptChangeModal
@@ -30,7 +18,8 @@
   {{#modal.body}}
     {{#if formLetsEncryptValue}}
       <p>
-        {{tt this "changedModal.text.enableCertWillBeObtained"}}
+        {{tt this "changedModal.text.enableCertWillBeObtained"}}<br>
+        <b>{{currentDomain}}</b>.
       </p>
       <p>
         {{tt this "changedModal.text.enableAgreement"}}
