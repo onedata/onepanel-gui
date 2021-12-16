@@ -30,6 +30,7 @@ export default SidebarResources.extend({
       case 'groups':
       case 'tokens':
       case 'harvesters':
+      case 'atm-inventories':
       case 'users': {
         return resolve([]);
       }

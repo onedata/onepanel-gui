@@ -11,6 +11,7 @@ import NavigationState from 'onedata-gui-common/services/navigation-state';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
+import { camelize } from '@ember/string';
 
 export default NavigationState.extend({
   onepanelServer: service(),
@@ -36,7 +37,8 @@ export default NavigationState.extend({
       if (activeResourceType === 'clusters' && isEmergencyOnepanel) {
         tid += 'Emergency';
       }
-      return i18n.t(`tabs.${activeResourceType}.${tid}`);
+      return activeResourceType ?
+        i18n.t(`tabs.${camelize(activeResourceType)}.${tid}`) : '';
     }
   ),
 });

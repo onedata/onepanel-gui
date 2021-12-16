@@ -49,6 +49,7 @@ module.exports = function (environment) {
       { id: 'groups', icon: 'groups' },
       { id: 'tokens', icon: 'tokens' },
       { id: 'harvesters', icon: 'light-bulb' },
+      { id: 'atmInventories', icon: 'atm-inventory'},
       {
         id: 'clusters',
         icon: 'cluster',

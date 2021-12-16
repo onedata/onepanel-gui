@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8568 Added automation main menu item
 * VFS-8617 Removed usages of ember-invoke-action
 * VFS-8574 Updated backend errors translations
 * VFS-8704 Added "Clear formatting" button to WYSIWYG editors
