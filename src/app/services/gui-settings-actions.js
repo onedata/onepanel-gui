@@ -69,6 +69,30 @@ export default Service.extend(I18n, {
   },
 
   /**
+   * Saves new terms of use content.
+   * @param {GuiMessage} message
+   * @returns {Promise}
+   */
+  saveTermsOfUse(message) {
+    const {
+      guiSettingsManager,
+      globalNotify,
+    } = this.getProperties('guiSettingsManager', 'globalNotify');
+    return guiSettingsManager
+      .saveTermsOfUse(message)
+      .then(
+        result => {
+          globalNotify.success(this.t('termsOfUseSaveSuccess'));
+          return result;
+        },
+        error => {
+          globalNotify.backendError(this.t('savingTermsOfUse', error));
+          throw error;
+        }
+      );
+  },
+  
+  /**
    * Saves new cookie consent notification.
    * @param {GuiMessage} message
    * @returns {Promise}

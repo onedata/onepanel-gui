@@ -5,6 +5,7 @@ import spaces from './tabs/spaces';
 import groups from './tabs/groups';
 import shares from './tabs/shares';
 import harvesters from './tabs/harvesters';
+import atmInventories from './tabs/atm-inventories';
 import users from './tabs/users';
 
 import clusterStorageAddForm from './components/cluster-storage-add-form';
@@ -100,6 +101,7 @@ let translations = {
     users,
     clusters,
     harvesters,
+    atmInventories,
   },
   components: {
     clusterStorageAddForm,

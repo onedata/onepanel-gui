@@ -6,6 +6,11 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8568 Added automation main menu item
+* VFS-8617 Removed usages of ember-invoke-action
+* VFS-8574 Updated backend errors translations
+* VFS-8704 Added "Clear formatting" button to WYSIWYG editors
+* VFS-8631 Added terms of use to gui settings
 * VFS-8608 Fixed buttons position on login page
 * VFS-7380 Made storage form in readonly mode easier to copy
 * VFS-8326 Added name and domain on login page

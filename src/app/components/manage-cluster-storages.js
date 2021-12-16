@@ -13,7 +13,6 @@ import { equal, oneWay, alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { get, computed } from '@ember/object';
-import { invokeAction } from 'ember-invoke-action';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -37,6 +36,12 @@ export default Component.extend(I18n, GlobalActions, {
    * @override
    */
   globalActionsTitle: computedT('storages'),
+
+  /**
+   * @virtual
+   * @type {() => void}
+   */
+  nextStep: undefined,
 
   /**
    * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
@@ -248,7 +253,10 @@ export default Component.extend(I18n, GlobalActions, {
 
   actions: {
     next() {
-      invokeAction(this, 'nextStep');
+      const nextStep = this.get('nextStep');
+      if (nextStep) {
+        nextStep();
+      }
     },
     toggleAddStorageForm() {
       this.toggleProperty('addStorageOpened');

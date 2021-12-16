@@ -16,7 +16,6 @@ import { inject as service } from '@ember/service';
 import { readOnly } from '@ember/object/computed';
 import { get, set, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
-import { invokeAction } from 'ember-invoke-action';
 import { installationStepsMap, installationStepsArray } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
@@ -44,6 +43,11 @@ export default Component.extend(I18n, {
    * @override
    */
   i18nPrefix: 'components.newCluster',
+
+  /**
+   * @type {() => void}
+   */
+  finishInitProcess: undefined,
 
   /**
    * @type {Utils.InstallationStep}
@@ -306,7 +310,10 @@ export default Component.extend(I18n, {
       this._prev(stepData);
     },
     finishInitProcess() {
-      return invokeAction(this, 'finishInitProcess');
+      const finishInitProcess = this.get('finishInitProcess');
+      if (finishInitProcess) {
+        return finishInitProcess();
+      }
     },
   },
 });
