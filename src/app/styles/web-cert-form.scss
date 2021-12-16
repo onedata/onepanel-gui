@@ -13,7 +13,6 @@
       vertical-align: baseline;
       width: 16px;
       height: 16px;
-      margin-top: 3px;
     }
   }
 
@@ -36,12 +35,15 @@
         "label label"
         "value warning";
       grid-template-columns: auto 1fr;
+      
       .control-label {
         grid-area: label;
       }
+      
       .field-component  {
         grid-area: value;
       }
+      
       .warning-icon-container {
         grid-area: warning;
       }

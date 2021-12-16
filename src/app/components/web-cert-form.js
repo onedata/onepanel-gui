@@ -91,7 +91,7 @@ export default Component.extend(I18n, {
   currentDomain: reads('guiUtils.serviceDomain'),
 
   /**
-   * Domain of service for this onepanel
+   * Service type for this onepanel
    * @type {String}
    */
   currentServiceType: reads('guiUtils.serviceType'),
@@ -100,11 +100,13 @@ export default Component.extend(I18n, {
     'currentDomain',
     'currentServiceType',
     function domainWarningTip() {
-      const currentDomain = this.get('currentDomain');
-      const currentServiceType = this.get('currentServiceType');
+      const {
+        currentDomain,
+        currentServiceType,
+      } = this.getProperties('currentDomain', 'currentServiceType');
       return this.t('fields.domain.warningTip', {
         currentServiceType: capitalize(currentServiceType),
-        currentDomain: currentDomain,
+        currentDomain,
       });
     }
   ),
