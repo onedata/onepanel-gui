@@ -6,7 +6,7 @@ export default [{
   gte: 1,
   lte: {
     property: 'meta.osdsNumber',
-    message: 'components.clusterStorageAddForm.localceph.copiesNumber.lteMessage',
+    message: 'components.clusterStorageAddForm.embeddedceph.copiesNumber.lteMessage',
   },
 }, {
   name: 'minCopiesNumber',
@@ -15,8 +15,8 @@ export default [{
   defaultValue: 1,
   gte: 1,
   lte: {
-    property: 'localceph.copiesNumber',
-    message: 'components.clusterStorageAddForm.localceph.minCopiesNumber.lteMessage',
+    property: 'embeddedceph.copiesNumber',
+    message: 'components.clusterStorageAddForm.embeddedceph.minCopiesNumber.lteMessage',
   },
 }, {
   name: 'blockSize',

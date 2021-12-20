@@ -1,6 +1,6 @@
 /**
  * Shows information about ceph pools.
- * 
+ *
  * @module components/cluster-ceph-pools
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -43,7 +43,7 @@ export default Component.extend(
     /**
      * @type {Object}
      */
-    createStorageFormType: storageTypes.findBy('id', 'localceph'),
+    createStorageFormType: storageTypes.findBy('id', 'embeddedceph'),
 
     /**
      * @type {Ember.ComputedProperty<Array<Object>>}
@@ -112,7 +112,7 @@ export default Component.extend(
 
         return storageManager.createStorage(
           createClusterStorageModel(storageFormData)
-        ).then(() => 
+        ).then(() =>
           safeExec(this, () => {
             this.set('addStorageOpened', false);
             $('.col-content').scrollTop(0);

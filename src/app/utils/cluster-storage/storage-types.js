@@ -19,7 +19,7 @@ import WEBDAV_FIELDS from 'onepanel-gui/utils/cluster-storage/webdav-fields';
 import HTTP_FIELDS from 'onepanel-gui/utils/cluster-storage/http-fields';
 import XROOTD_FIELDS from 'onepanel-gui/utils/cluster-storage/xrootd-fields';
 import NULLDEVICE_FIELDS from 'onepanel-gui/utils/cluster-storage/nulldevice-fields';
-import LOCALCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/localceph-fields';
+import EMBEDDEDCEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/embeddedceph-fields';
 
 export default [{
     id: 'cephrados',
@@ -27,9 +27,9 @@ export default [{
     fields: CEPHRADOS_FIELDS,
   },
   {
-    id: 'localceph',
-    name: 'Local Ceph',
-    fields: LOCALCEPH_FIELDS,
+    id: 'embeddedceph',
+    name: 'Embedded Ceph',
+    fields: EMBEDDEDCEPH_FIELDS,
   },
   {
     id: 'posix',
