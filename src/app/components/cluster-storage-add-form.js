@@ -98,7 +98,7 @@ const storagePathTypeConfig = {
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
-  localceph: { defaultValue: 'flat', disabled: true },
+  embeddedceph: { defaultValue: 'flat', disabled: true },
   s3: { defaultValue: 'flat' },
   swift: { defaultValue: 'flat' },
   xrootd: { defaultValue: 'canonical' },
@@ -450,9 +450,9 @@ export default OneForm.extend(I18n, Validations, {
     function visibleStorageTypes() {
       // Remove ceph storage, because it is deprecated
       let visibleTypes = this.get('storageTypes').rejectBy('id', 'ceph');
-      // If no osds are present, remove localceph storage type
+      // If no osds are present, remove embeddedceph storage type
       if (!this.get('cephOsdsProxy.length')) {
-        visibleTypes = visibleTypes.rejectBy('id', 'localceph');
+        visibleTypes = visibleTypes.rejectBy('id', 'embeddedceph');
       }
 
       return visibleTypes;
@@ -691,7 +691,7 @@ export default OneForm.extend(I18n, Validations, {
     } else {
       if (
         mode === 'create' ||
-        (mode === 'edit' && this.get('storage.type') === 'localceph')
+        (mode === 'edit' && this.get('storage.type') === 'embeddedceph')
       ) {
         const osdProxy = PromiseArray.create({
           promise: cephManager.suppressNotDeployed(cephManager.getOsds(), []),
@@ -767,9 +767,9 @@ export default OneForm.extend(I18n, Validations, {
     const osdsNumber = get(cephOsdsProxy, 'length') || 1;
     const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
 
-    const copiesNumberField = allFields.findBy('name', 'localceph.copiesNumber');
+    const copiesNumberField = allFields.findBy('name', 'embeddedceph.copiesNumber');
     set(copiesNumberField, 'defaultValue', defaultPoolSize);
-    set(allFieldsValues, 'localceph.copiesNumber', defaultPoolSize);
+    set(allFieldsValues, 'embeddedceph.copiesNumber', defaultPoolSize);
   },
 
   /**

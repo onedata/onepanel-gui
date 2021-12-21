@@ -8,21 +8,11 @@
       onClick=(action "toggleAddStorageForm")}}
       {{tt this (if addStorageOpened "cancelCreatePool" "createPool")}}
     {{/bs-button}}
-    {{!-- {{#link-to
-      "onedata.sidebar.content.aspect" 
-      "storages"
-      (query-params options="createStorageFormTypeId.localceph")
-      class="btn btn-default btn-sm create-pool"
-      disabledWhen=(not canCreatePool)
-    }}
-      {{one-icon icon="add-filled"}}
-      {{tt this "createPool"}}
-    {{/link-to}} --}}
   </p>
   <div class="row content-row row-medium {{unless addStorageOpened "row-hidden"}}">
     <h1 class="form-title">{{tt this "addNewStorage"}}</h1>
-      {{cluster-storage-add-form 
-        class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered" 
+      {{cluster-storage-add-form
+        class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
         submit=(action "submitAddStorage")
         isFormOpened=addStorageOpened
         selectedStorageType=createStorageFormType
@@ -49,7 +39,7 @@
           {{#listItem.content}}
             <div class="item-table row">
               <div class="row">
-                <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row pool-info">        
+                <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row pool-info">
                   <div class="row content-row">
                     <strong class="property-label">
                       {{tt this "pool.copiesNumber"}}:

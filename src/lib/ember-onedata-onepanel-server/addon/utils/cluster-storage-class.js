@@ -19,8 +19,8 @@ const {
   CephModify,
   Cephrados,
   CephradosModify,
-  Localceph,
-  LocalcephModify,
+  Embeddedceph,
+  EmbeddedcephModify,
   Swift,
   SwiftModify,
   Glusterfs,
@@ -36,7 +36,7 @@ const {
 } = Onepanel;
 
 /**
- * @param {string} storageType 
+ * @param {string} storageType
  * @param {boolean} [modify=false] if true, class for storage edition will be
  *   returned
  * @returns {Object} class for given storageType
@@ -49,8 +49,8 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? CephModify : Ceph;
     case 'cephrados':
       return modify ? CephradosModify : Cephrados;
-    case 'localceph':
-      return modify ? LocalcephModify : Localceph;
+    case 'embeddedceph':
+      return modify ? EmbeddedcephModify : Embeddedceph;
     case 'posix':
       return modify ? PosixModify : Posix;
     case 'swift':
