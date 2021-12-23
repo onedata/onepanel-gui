@@ -1,8 +1,6 @@
 {
-  "name": "onepanel-gui", 
+  "name": "onepanel-gui",
   "dependencies": {
-    "animate.css": "3.5.2",
-    "chartist": "0.11.0", 
     "spin.js": "2.3.2"
   }
 }
