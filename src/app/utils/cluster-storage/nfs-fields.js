@@ -1,5 +1,5 @@
 export default [{
-    name: 'hostname',
+    name: 'host',
     type: 'text',
     tip: true,
     // NOTE: there is no regex validation, because of hidden, unstable feature

@@ -1,5 +1,5 @@
 export default {
-  hostname: {
+  host: {
     name: 'Hostname',
     tip: 'The hostname (IP address or FQDN) of NFS server.',
   },

@@ -66,7 +66,7 @@ const POSIX_STORAGE = {
   timeout: 20,
   skipStorageDetection: true,
   readonly: true,
-  name: 'Some POXSIX storage',
+  name: 'Some POSIX storage',
 };
 
 const CEPH_RADOS_STORAGE = {
@@ -433,7 +433,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.render(hbs `
           {{cluster-storage-add-form
             storageProvidesSupport=true
-            storage=storage 
+            storage=storage
             mode="create"}}
         `);
 
@@ -451,7 +451,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.set('storage', POSIX_STORAGE);
         this.render(hbs `
           {{cluster-storage-add-form
-            storage=storage 
+            storage=storage
             mode="create"
           }}
         `);
@@ -521,7 +521,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.set('storage', POSIX_STORAGE);
         this.render(hbs `
           {{cluster-storage-add-form
-            storage=storage 
+            storage=storage
             mode="create"
           }}
         `);
@@ -616,7 +616,7 @@ describe('Integration | Component | cluster storage add form', function () {
 
     testAllowCertainPathTypeCreate({
       storageData: POSIX_STORAGE,
-      allow: true,
+      allow: false,
       pathType: 'flat',
     });
 
@@ -638,7 +638,7 @@ describe('Integration | Component | cluster storage add form', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storage=storage 
+          storage=storage
           mode="edit"}}
       `);
 
@@ -682,7 +682,7 @@ describe('Integration | Component | cluster storage add form', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storage=storage 
+          storage=storage
           mode="edit"}}
       `);
 
@@ -722,7 +722,7 @@ describe('Integration | Component | cluster storage add form', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storage=storage 
+          storage=storage
           mode="edit"
           isFormOpened=true
           submit=submit}}
@@ -760,7 +760,7 @@ describe('Integration | Component | cluster storage add form', function () {
       this.set('storage', POSIX_STORAGE);
       this.render(hbs `
         {{cluster-storage-add-form
-          storage=storage 
+          storage=storage
           mode="edit"
           submit=submit}}
       `);
@@ -788,7 +788,7 @@ describe('Integration | Component | cluster storage add form', function () {
         });
         this.render(hbs `
           {{cluster-storage-add-form
-            storage=storage 
+            storage=storage
             mode=mode
             submit=submit}}
         `);
@@ -819,7 +819,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.render(hbs `
           {{cluster-storage-add-form
             storageProvidesSupport=false
-            storage=storage 
+            storage=storage
             mode="edit"}}
         `);
 
@@ -837,7 +837,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.render(hbs `
           {{cluster-storage-add-form
             storageProvidesSupport=true
-            storage=storage 
+            storage=storage
             mode="edit"}}
         `);
 
@@ -861,7 +861,7 @@ describe('Integration | Component | cluster storage add form', function () {
         this.render(hbs `
           {{cluster-storage-add-form
             storageProvidesSupport=storageProvidesSupport
-            storage=storage 
+            storage=storage
             mode="edit"
             submit=(action "submit")}}
         `);
