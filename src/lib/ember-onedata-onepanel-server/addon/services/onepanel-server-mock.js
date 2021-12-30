@@ -547,9 +547,32 @@ export default OnepanelServerBase.extend(
             connectionPoolSize: 150,
             authorizationHeader: 'Authorization: Bearer {}',
           };
+          const storageNfs = {
+            name: 'My NFS',
+            type: 'nfs',
+            storagePathType: 'canonical',
+            skipStorageDetection: true,
+            readonly: false,
+            qosParameters: Object.assign({}, baseQosParameters),
+            lumaFeed: 'auto',
+            importedStorage: false,
+            id: 'my_nfs',
+            endpoint: 'nfs.example.com',
+            connectionPoolSize: 20,
+            dirCache: true,
+            readAhead: 1024,
+            autoReconnect: 4,
+          };
           this.set('__storages', this.get('__storages') || []);
           this.get('__storages').push(
-            ...[storage1, storageCeph, storageCephRados, storage2, storageHttp].map(storage =>
+            ...[
+              storage1,
+              storageCeph,
+              storageCephRados,
+              storage2,
+              storageHttp,
+              storageNfs,
+            ].map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );
