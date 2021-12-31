@@ -4,7 +4,7 @@ export default {
     tip: 'The hostname (IP address or FQDN) of NFS server.',
   },
   version: {
-    name: 'Version',
+    name: 'NFS version',
     tip: 'The NFS protocol version. Allowed values are 3 (default) and 4 (experimental).',
   },
   volume: {

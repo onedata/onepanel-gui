@@ -9,11 +9,11 @@ export default [{
   {
     name: 'version',
     type: 'radio-group',
-    defaultValue: '3',
+    defaultValue: 3,
     tip: true,
     options: [
-      { value: '3', label: 'v3' },
-      { value: '4', label: 'v4' },
+      { value: 3, label: 'v3' },
+      { value: 4, label: 'v4' },
     ],
   },
   {

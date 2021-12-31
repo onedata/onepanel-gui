@@ -560,6 +560,7 @@ export default OnepanelServerBase.extend(
             endpoint: 'nfs.example.com',
             connectionPoolSize: 20,
             dirCache: true,
+            version: 4,
             readAhead: 1024,
             autoReconnect: 4,
           };
