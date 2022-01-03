@@ -557,10 +557,11 @@ export default OnepanelServerBase.extend(
             lumaFeed: 'auto',
             importedStorage: false,
             id: 'my_nfs',
-            endpoint: 'nfs.example.com',
+            host: 'nfs.example.com',
+            version: 4,
+            volume: '/nfs/mynfsvolume/',
             connectionPoolSize: 20,
             dirCache: true,
-            version: 4,
             readAhead: 1024,
             autoReconnect: 4,
           };
