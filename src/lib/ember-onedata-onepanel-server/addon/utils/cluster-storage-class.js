@@ -4,7 +4,7 @@
  *
  * @module utils/cluster-storage-class
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -31,6 +31,8 @@ const {
   HTTPModify,
   XRootD,
   XRootDModify,
+  NFS,
+  NFSModify,
   Nulldevice,
   NulldeviceModify,
 } = Onepanel;
@@ -65,6 +67,8 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? HTTPModify : HTTP;
     case 'nulldevice':
       return modify ? NulldeviceModify : Nulldevice;
+    case 'nfs':
+      return modify ? NFSModify : NFS;
     default:
       return undefined;
   }

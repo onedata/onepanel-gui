@@ -93,8 +93,8 @@ const Validations = buildValidations(createValidations(
 const VISIBILITY_ANIMATION_TIME = 333;
 
 const storagePathTypeConfig = {
-  posix: { defaultValue: 'canonical' },
-  glusterfs: { defaultValue: 'canonical' },
+  posix: { defaultValue: 'canonical', disabled: true },
+  glusterfs: { defaultValue: 'canonical', disabled: true },
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
@@ -103,7 +103,8 @@ const storagePathTypeConfig = {
   swift: { defaultValue: 'flat' },
   xrootd: { defaultValue: 'canonical' },
   http: { defaultValue: 'canonical' },
-  webdav: { defaultValue: 'canonical' },
+  webdav: { defaultValue: 'canonical', disabled: true },
+  nfs: { defaultValue: 'canonical', disabled: true },
 };
 
 export default OneForm.extend(I18n, Validations, {

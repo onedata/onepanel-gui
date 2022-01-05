@@ -5,13 +5,14 @@
  *
  * @module utils/cluster-storages/storage-types
  * @author Jakub Liput, Michal Borzecki
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import CEPHRADOS_FIELDS from 'onepanel-gui/utils/cluster-storage/cephrados-fields';
 import CEPH_FIELDS from 'onepanel-gui/utils/cluster-storage/ceph-fields';
 import POSIX_FIELDS from 'onepanel-gui/utils/cluster-storage/posix-fields';
+import NFS_FIELDS from 'onepanel-gui/utils/cluster-storage/nfs-fields';
 import S3_FIELDS from 'onepanel-gui/utils/cluster-storage/s3-fields';
 import SWIFT_FIELDS from 'onepanel-gui/utils/cluster-storage/swift-fields';
 import GLUSTERFS_FIELDS from 'onepanel-gui/utils/cluster-storage/glusterfs-fields';
@@ -35,6 +36,11 @@ export default [{
     id: 'posix',
     name: 'POSIX',
     fields: POSIX_FIELDS,
+  },
+  {
+    id: 'nfs',
+    name: 'NFS',
+    fields: NFS_FIELDS,
   }, {
     id: 's3',
     name: 'S3',
