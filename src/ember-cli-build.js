@@ -90,8 +90,6 @@ module.exports = function (defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  const BOWER_ASSETS = [];
-
   const NODE_ASSETS = [
     'chartist-plugin-legend/chartist-plugin-legend.js',
     'jquery.scrollto/jquery.scrollTo.min.js',
@@ -102,7 +100,6 @@ module.exports = function (defaults) {
     'webui-popover/dist/jquery.webui-popover.js',
   ];
 
-  BOWER_ASSETS.forEach(path => app.import(app.bowerDirectory + '/' + path));
   NODE_ASSETS.forEach(path => app.import(`node_modules/${path}`));
 
   return app.toTree();
