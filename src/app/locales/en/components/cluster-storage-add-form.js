@@ -11,6 +11,7 @@ import xrootd from './cluster-storage-add-form/xrootd';
 import webdav from './cluster-storage-add-form/webdav';
 import http from './cluster-storage-add-form/http';
 import nulldevice from './cluster-storage-add-form/nulldevice';
+import nfs from './cluster-storage-add-form/nfs';
 
 export default {
   generic,
@@ -26,6 +27,7 @@ export default {
   webdav,
   http,
   nulldevice,
+  nfs,
   storageType: 'Storage type',
   save: 'Save',
   add: 'Add',

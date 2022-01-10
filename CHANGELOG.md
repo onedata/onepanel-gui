@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-6397 Removed redundant bower dependencies
+* VFS-8521 Added support for NFS storage
 * VFS-8800 Renamed "Local Ceph" storage type to "Embedded Ceph"
 * VFS-7272 Changed let's encrypt form
 * VFS-8568 Added automation main menu item

@@ -6,6 +6,7 @@ import swift from './storage-item/swift';
 import glusterfs from './storage-item/glusterfs';
 import webdav from './storage-item/webdav';
 import nulldevice from './storage-item/nulldevice';
+import nfs from './storage-item/nfs';
 
 export default {
   modifyBtn: 'Modify',
@@ -32,4 +33,5 @@ export default {
   glusterfs,
   webdav,
   nulldevice,
+  nfs,
 };
