@@ -31,18 +31,21 @@
         <h1>
           <div class="btn-toolbar">
             {{#if (or ipsEdit ipsSetupProxy.isPending)}}
-              {{#one-spin-button
-                class=(concat "btn btn-sm btn-primary btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
-                action=(action "startSetup")
+              {{#one-button
+                type="primary"
+                buttonType="submit"
+                size="sm"
+                class=(concat "btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
+                onClick=(action "startSetup")
               }}
                 <span>{{tt this "setupIpsButton"}}</span>
                 {{one-tooltip
-                  title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid") 
-                  placement="left" 
+                  title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid")
+                  placement="left"
                   class=(if _hostsIpsFormValid "hidden" "")
                   triggerElement=".btn-setup-ips"
                 }}
-              {{/one-spin-button}}
+              {{/one-button}}
             {{/if}}
             {{#bs-button
               onClick=(action (if ipsEdit "cancelIpsEdit" "enableIpsEdit"))
@@ -51,7 +54,7 @@
               disabled=ipsSetupProxy.isPending
             }}
               {{tt this (if ipsEdit "cancelIpsEdit" "editIps")}}
-            {{/bs-button}}            
+            {{/bs-button}}
           </div>
         </h1>
       </div>

@@ -66,14 +66,16 @@
   <td class="text-center column btn-column compact">
     <div>
       {{#if isMobile}}
-        {{#one-spin-button
-          class="btn btn-sm btn-danger"
-          action=(action "removeHost")
+        {{#one-button
+          type="danger"
+          buttonType="submit"
+          size="sm"
+          onClick=(action "removeHost")
           disabled=isRemoveHostBtnDisabled
           class="btn-remove-node"
         }}
           {{t "components.clusterHostTableRow.removeBtn"}}
-        {{/one-spin-button}}
+        {{/one-button}}
       {{else}}
         {{remove-icon
           tooltipText=(t "components.clusterHostTableRow.removeBtn")

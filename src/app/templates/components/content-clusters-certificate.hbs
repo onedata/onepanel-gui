@@ -30,13 +30,13 @@
           </div>
           {{#if letsEncrypt}}
             <div class="row alert-simple-info-btn">
-              {{#one-spin-button
-                type="submit"
-                class="btn btn-default btn-sm"
-                action=(action "refreshCert")
+              {{#one-button
+                buttonType="submit"
+                size="sm"
+                onClick=(action "refreshCert")
               }}
                 {{tt this "renewCertBtn"}}
-              {{/one-spin-button}}
+              {{/one-button}}
             </div>
           {{/if}}
         </div>
@@ -64,13 +64,13 @@
           </div>
           {{#if letsEncrypt}}
             <div class="row alert-simple-info-btn">
-              {{#one-spin-button
-                type="submit"
-                class="btn btn-default btn-sm"
-                action=(action "refreshCert")
+              {{#one-button
+                buttonType="submit"
+                size="sm"
+                onClick=(action "refreshCert")
               }}
                 {{tt this "renewCertBtn"}}
-              {{/one-spin-button}}
+              {{/one-button}}
             </div>
           {{/if}}
         </div>

@@ -4,10 +4,12 @@
   {{#bs-button class="btn btn-sm" type="info" onClick=closeAction}}
     {{tt this "keepItRegistered"}}
   {{/bs-button}}
-  {{#one-spin-button
-    class="btn btn-sm btn-danger"
-    action=submitAction
+  {{#one-button
+    type="danger"
+    buttonType="submit"
+    size="sm"
+    onClick=submitAction
   }}
     {{one-icon icon="remove"}} <span>{{tt this "yesDeregister"}}</span>
-  {{/one-spin-button}}
+  {{/one-button}}
 </div>

@@ -21,14 +21,15 @@
         </p>
       {{/if}}
       {{#if showSubmitButton}}
-        {{#one-spin-button
-          type="submit"
-          class="btn btn-primary submit-import"
+        {{#one-button
+          type="primary"
+          buttonType="submit"
+          class="submit-import"
           disabled=(not isValid)
-          action=(action "submit")
+          onClick=(action "submit")
         }}
           {{tt this (if (eq mode "new") "submitNew" "submitModify")}}
-        {{/one-spin-button}}
+        {{/one-button}}
       {{/if}}
     </div>
   </div>

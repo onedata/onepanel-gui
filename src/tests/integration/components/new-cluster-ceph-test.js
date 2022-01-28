@@ -116,7 +116,7 @@ describe('Integration | Component | new cluster ceph', function () {
       .then(() => {
         expect(startDeploySpy).to.be.called;
         expect($('.block-device-format-warning-modal.in .proceed'))
-          .to.have.class('in-flight');
+          .to.have.class('pending');
         resolveDeployCallback();
         return wait();
       })

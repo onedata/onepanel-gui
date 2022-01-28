@@ -36,7 +36,7 @@
                   </span>
                 </li>
               </ul>
-            </div>          
+            </div>
           </div>
         </div>
         {{#if hasNoConnectedUser}}
@@ -48,12 +48,15 @@
       {{/promise-proxy-container}}
     </div>
     <div class="text-center">
-      {{#one-spin-button
-        class=(concat "btn btn-primary manage-via-onezone")
-        action=(action "manageViaOnezone")
-        disabled=(or membersProxy.isPending hasNoConnectedUser)}}
+      {{#one-button
+        type="primary"
+        buttonType="submit"
+        class="manage-via-onezone"
+        onClick=(action "manageViaOnezone")
+        disabled=(or membersProxy.isPending hasNoConnectedUser)
+      }}
         {{tt this "openInOnezone"}}
-      {{/one-spin-button}}
+      {{/one-button}}
     </div>
     <div class="user-token-container {{if isUserTokenVisible "expanded"}}">
       {{#if isUserTokenVisible}}
