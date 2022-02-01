@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8874 Removed bower and ember-spin-button
 * VFS-6397 Removed redundant bower dependencies
 * VFS-8521 Added support for NFS storage
 * VFS-8800 Renamed "Local Ceph" storage type to "Embedded Ceph"

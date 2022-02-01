@@ -9,18 +9,18 @@
       inputId="cookie-consent-notification-enabled"
       checked=isEnabled
       update=(action "isEnabledChanged")}}
-    <button 
-      class="btn btn-sm btn-default pull-right insert-privacy-policy-link" 
+    <button
+      class="btn btn-sm btn-default pull-right insert-privacy-policy-link"
       disabled={{or isSaving (not isEnabled)}}
-      {{action "insertPrivacyPolicyLink"}} 
+      {{action "insertPrivacyPolicyLink"}}
     >
       {{one-icon icon="text-link"}}
       {{tt this "insertPrivacyPolicyLink"}}
     </button>
-    <button 
-      class="btn btn-sm btn-default pull-right insert-terms-of-use-link" 
+    <button
+      class="btn btn-sm btn-default pull-right insert-terms-of-use-link"
       disabled={{or isSaving (not isEnabled)}}
-      {{action "insertTermsOfUseLink"}} 
+      {{action "insertTermsOfUseLink"}}
     >
       {{one-icon icon="text-link"}}
       {{tt this "insertTermsOfUseLink"}}
@@ -35,12 +35,15 @@
       class="form-control cookie-consent-notification-input no-resize"></textarea>
   </p>
   <p class="clearfix">
-    {{#one-spin-button
-      class=(concat "btn btn-primary btn-save pull-right")
-      action=(action "save")
-      disabled=(not isModified)}}
+    {{#one-button
+      type="primary"
+      buttonType="submit"
+      class="btn-save pull-right"
+      onClick=(action "save")
+      disabled=(not isModified)
+    }}
       {{tt this "save"}}
-    {{/one-spin-button}}
+    {{/one-button}}
   </p>
 {{/promise-proxy-container}}
 {{yield}}

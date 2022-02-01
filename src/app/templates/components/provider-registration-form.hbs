@@ -19,9 +19,14 @@
   {{#if (not (eq mode "show"))}}
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
-        {{#one-spin-button type="submit" class="btn btn-primary" disabled=(not isValid) action=(action "submit")}}
-          {{submitText}}  
-        {{/one-spin-button}}
+        {{#one-button
+          type="primary"
+          buttonType="submit"
+          disabled=(not isValid)
+          onClick=(action "submit")
+        }}
+          {{submitText}}
+        {{/one-button}}
       </div>
     </div>
   {{/if}}

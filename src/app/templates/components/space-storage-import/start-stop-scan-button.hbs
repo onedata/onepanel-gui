@@ -1,8 +1,10 @@
-{{#one-spin-button
-  class=(concat-classes "btn btn-sm" (if showScanStop "btn-danger" "btn-success"))
+{{#one-button
+  type=(if showScanStop "danger" "success")
+  buttonType="submit"
+  size="sm"
   disabled=(if showScanStop (not allowScanStop) (not allowScanStart))
-  action=(if showScanStop stopScan startScan)
+  onClick=(if showScanStop stopScan startScan)
 }}
   {{one-icon icon=(if showScanStop "cancelled" "play")}}
   <span class="text">{{tt this (if showScanStop "stopScan" "startScan")}}</span>
-{{/one-spin-button}}
+{{/one-button}}

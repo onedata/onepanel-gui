@@ -19,12 +19,15 @@
       class="form-control sign-in-notification-input no-resize"></textarea>
   </p>
   <p class="clearfix">
-    {{#one-spin-button
-      class=(concat "btn btn-primary btn-save pull-right")
-      action=(action "save")
-      disabled=(not isModified)}}
+    {{#one-button
+      type="primary"
+      buttonType="submit"
+      class="btn-save pull-right"
+      onClick=(action "save")
+      disabled=(not isModified)
+    }}
       {{tt this "save"}}
-    {{/one-spin-button}}
+    {{/one-button}}
   </p>
 {{/promise-proxy-container}}
 {{yield}}

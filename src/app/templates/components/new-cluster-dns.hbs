@@ -7,12 +7,15 @@
       }}
         {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
       {{/bs-button}}
-      {{#one-spin-button
-        class=(concat "btn btn-sm btn-primary btn-dns-proceed " (unless proceedEnabled "disabled"))
-        action=(action "proceed")
+      {{#one-button
+        type="primary"
+        buttonType="submit"
+        size="sm"
+        class=(concat "btn-dns-proceed " (unless proceedEnabled "disabled"))
+        onClick=(action "proceed")
       }}
         <span>{{tt this "proceed"}}</span>{{one-icon icon="arrow-right"}}
-      {{/one-spin-button}}
+      {{/one-button}}
       {{#unless performCheckDone}}
         {{one-tooltip
           triggerEvents="hover"
@@ -58,4 +61,4 @@
     </div>
   </div>
 {{/proceed-process-modal}}
-  
+

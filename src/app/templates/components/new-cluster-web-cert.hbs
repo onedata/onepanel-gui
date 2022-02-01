@@ -2,12 +2,15 @@
   <h1>{{tt this "header"}}
     <div class="btn-toolbar">
       {{#if (not _redirectPage)}}
-        {{#one-spin-button
-          class=(concat "btn btn-sm btn-primary btn-cert-next " btnClass)
-          action=(action "proceed")
+        {{#one-button
+          type="primary"
+          buttonType="submit"
+          size="sm"
+          class=(concat "btn-cert-next " btnClass)
+          onClick=(action "proceed")
         }}
           <span>{{btnLabel}}</span>{{one-icon icon="arrow-right"}}
-        {{/one-spin-button}}
+        {{/one-button}}
       {{/if}}
     </div>
   </h1>

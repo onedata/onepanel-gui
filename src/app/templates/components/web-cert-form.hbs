@@ -41,11 +41,12 @@
     }}
       {{tt this "changedModal.cancel"}}
     {{/bs-button}}
-    {{#one-spin-button
-      action=(action "submit")
-      class="btn btn-primary"
+    {{#one-button
+      type="primary"
+      buttonType="submit"
+      onClick=(action "submit")
     }}
       {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
-    {{/one-spin-button}}
+    {{/one-button}}
   {{/modal.footer}}
 {{/bs-modal}}

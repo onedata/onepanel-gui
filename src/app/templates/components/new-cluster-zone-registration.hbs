@@ -55,7 +55,7 @@
       </div>
     {{/if}}
     </div>
-      
+
     <div class="row content-row no-border">
       <div class="col-xs-12">
         <p>
@@ -77,16 +77,17 @@
         </p>
       </div>
     </div>
-    
+
     <div class="row content-row no-border">
       <div class="col-xs-12 text-center">
-        {{#one-spin-button
-          class="btn btn-primary"
-          action=(action "proceedToken")
+        {{#one-button
+          type="primary"
+          buttonType="submit"
+          onClick=(action "proceedToken")
           disabled=proceedTokenDisabled
         }}
           {{tt this "proceedToken"}}
-        {{/one-spin-button}}
+        {{/one-button}}
       </div>
     </div>
   </div>

@@ -45,7 +45,7 @@
         </div>
       {{/promise-proxy-container}}
   </div>
-  
+
   <div class="row content-row no-border row-zone-subdomain-delegation">
     <h1>{{tt this "subdomainDelegation.header"}}</h1>
     {{!-- NOTE: subdomainDelegation property is updated async right after
@@ -111,7 +111,7 @@
         {{else if (eq stateInfo "zoneSubdomainDelegation")}}
           {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPreHint" domain=domain}}
           {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
-          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPostHint"}}  
+          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPostHint"}}
         {{else if (eq stateInfo "zoneNoSubdomainDelegation")}}
           {{tt this "dnsCheck.stateInfo.zoneNoSubdomainDelegationPreHint" domain=domain}}
           {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
@@ -149,13 +149,16 @@
         {{/if}}
         <div class="btn-container">
           <div class="row row-btn">
-            {{#one-spin-button
-              class=(concat "btn btn-sm btn-primary btn-perform-dns-check")
-              action=(action "performDnsCheck")
+            {{#one-button
+              type="primary"
+              buttonType="submit"
+              size="sm"
+              class="btn-perform-dns-check"
+              onClick=(action "performDnsCheck")
               disabled=(not performCheckEnabled)
             }}
               <span>{{tt this "dnsCheck.performCheck"}}</span>
-            {{/one-spin-button}}
+            {{/one-button}}
           </div>
         </div>
       {{/unless}}

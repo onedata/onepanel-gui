@@ -2,16 +2,19 @@
   <h1>{{tt this "clusterDeployment"}}
     <div class="btn-toolbar">
       {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
-      {{#one-spin-button
-        class=(concat "btn btn-sm btn-primary btn-deploy-cluster btn-cluster-proceed")
+      {{#one-button
+        type="primary"
+        buttonType="submit"
+        size="sm"
+        class=(concat "btn-deploy-cluster btn-cluster-proceed")
         disabled=(not canDeploy)
-        action=(action (if cephEnabled "nextStep" "startDeploy"))
+        onClick=(action (if cephEnabled "nextStep" "startDeploy"))
       }}
         <span>{{tt this (if cephEnabled "proceed" "deploy")}}</span>{{one-icon icon="arrow-right"}}
         {{#unless canDeploy}}
           {{one-tooltip title="Configuration is invalid!" placement="left"}}
         {{/unless}}
-      {{/one-spin-button}}
+      {{/one-button}}
     </div>
   </h1>
 </div>
@@ -58,14 +61,17 @@
           >
         </div>
         <span class="new-host-btn-group row-btn-spacing">
-          {{#one-spin-button
-            class="btn btn-primary btn-sm btn-submit-new-host"
-            action=(action "submitNewHost")
+          {{#one-button
+            type="primary"
+            buttonType="submit"
+            size="sm"
+            class="btn-submit-new-host"
+            onClick=(action "submitNewHost")
             disabled=(not _newHostname)
-            inFlight=_isSubmittingNewHost
+            isPending=_isSubmittingNewHost
           }}
             {{tt this "save"}}
-          {{/one-spin-button}}
+          {{/one-button}}
           {{#bs-button
             class="btn-cancel-new-host"
             size="sm"
@@ -98,7 +104,7 @@
       </div>
     {{else}}
       <div class="row inner-row-content">
-        {{#bs-button 
+        {{#bs-button
           type="default"
           size="sm"
           onClick=(action (mut addingNewHost) true)

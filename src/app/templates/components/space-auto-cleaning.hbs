@@ -52,9 +52,12 @@
                 arrowPlacement="left"
               }}
             {{/if}}
-            {{#one-spin-button
-              action=(action (if displayStartButton "startCleaning" "stopCleaning"))
-              class=(concat-classes "btn btn-sm" (if displayStartButton "btn-primary btn-clean-now" "btn-danger btn-stop-now"))
+            {{#one-button
+              type=(if displayStartButton "primary" "danger")
+              buttonType="submit"
+              size="sm"
+              onClick=(action (if displayStartButton "startCleaning" "stopCleaning"))
+              class=(if displayStartButton "btn-clean-now" "btn-stop-now")
               disabled=disableManualCleaningButton
             }}
               {{#if disableStartButton}}
@@ -65,8 +68,8 @@
                 {{else}}
                   {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
                 {{/if}}
-              {{/if}}  
-            {{/one-spin-button}}
+              {{/if}}
+            {{/one-button}}
           </div>
         {{/loading-container}}
       </div>

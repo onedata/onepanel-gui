@@ -40,7 +40,7 @@
         {{#if confirmInvalid}}
           <div class="form-message">{{tt this "passphrasesNotMatch"}}</div>
         {{/if}}
-      {{/form.group}}      
+      {{/form.group}}
       <div class="login-error-message {{if error "active" ""}}">
         {{tt this "error"}} {{if error error (tt this "unknownError")}}
       </div>
@@ -53,13 +53,14 @@
           {{one-icon icon="arrow-right"}}
           {{tt this "back"}}
         {{/bs-button}}
-        {{#one-spin-button class="btn btn-primary"
-          buttonStyle="expand-left"
+        {{#one-button
+          type="primary"
+          buttonType="submit"
           disabled=(not submitEnabled)
-          action=(action "submitPassphrase" passphrase confirmPassphrase)
+          onClick=(action "submitPassphrase" passphrase confirmPassphrase)
         }}
           {{tt this "submit"}}
-        {{/one-spin-button}}
+        {{/one-button}}
       </div>
     {{/bs-form}}
   </div>
