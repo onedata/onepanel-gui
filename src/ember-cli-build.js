@@ -31,9 +31,8 @@ module.exports = function (defaults) {
       exclude: ['assets/images/auth-providers/**'],
       replaceExtensions: ['html', 'css', 'js', 'webmanifest'],
     },
-    'ember-cli-babel': {
-      includePolyfill: true,
-    },
+    // see: https://github.com/babel/ember-cli-babel/tree/v7.3.0#options
+    'babel': {},
     'sassOptions': {
       implementation: sass,
       includePaths: [
