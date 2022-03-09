@@ -13,7 +13,7 @@ import { oneWay } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { get, computed } from '@ember/object';
 import { A } from '@ember/array';
-import generateColors from 'onedata-gui-common/utils/generate-colors';
+import ColorGenerator from 'onedata-gui-common/utils/color-generator';
 
 export default Component.extend({
   classNames: ['storage-item-supported-spaces'],
@@ -35,6 +35,11 @@ export default Component.extend({
   spaces: null,
 
   /**
+   * @type {ComputedProperty<Utils.ColorGenerator>}
+   */
+  colorGenerator: computed(() => new ColorGenerator()),
+
+  /**
    * Id of provider for this onepanel
    * Used for checking what support is local
    * @type {String}
@@ -53,7 +58,7 @@ export default Component.extend({
 
     return spaces.filter(spaceProxy => {
       if (spaceProxy.get('isFulfilled')) {
-        // if there will be more than one local storage per space, 
+        // if there will be more than one local storage per space,
         // localStorages array can be used instead of storageId
         let localStorage = spaceProxy.get('content.storageId');
         return localStorage && localStorage === storageId;
@@ -67,23 +72,28 @@ export default Component.extend({
    * Data for support-size-info component
    * @type computed.Ember.Array.PieChartSeries
    */
-  chartData: computed('supportedSpaces', 'providerId', function () {
-    let {
-      supportedSpaces,
-      providerId,
-    } = this.getProperties('supportedSpaces', 'providerId');
-    let colors = generateColors(supportedSpaces.length);
-    if (providerId && supportedSpaces.length) {
-      return A(supportedSpaces.map((space, index) => EmberObject.create({
-        id: String(index),
-        label: get(space, 'name'),
-        value: get(space, `supportingProviders.${providerId}`),
-        color: colors[index],
-      })));
-    } else {
-      return A();
+  chartData: computed(
+    'supportedSpaces',
+    'providerId',
+    'colorGenerator',
+    function chartData() {
+      const {
+        supportedSpaces,
+        providerId,
+        colorGenerator,
+      } = this.getProperties('supportedSpaces', 'providerId', 'colorGenerator');
+      if (providerId && supportedSpaces.length) {
+        return A(supportedSpaces.map((space, index) => EmberObject.create({
+          id: String(index),
+          label: get(space, 'name'),
+          value: get(space, `supportingProviders.${providerId}`),
+          color: colorGenerator.generateColorForKey(get(space, 'id')),
+        })));
+      } else {
+        return A();
+      }
     }
-  }),
+  ),
 
   init() {
     this._super(...arguments);

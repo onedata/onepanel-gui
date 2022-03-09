@@ -38,6 +38,7 @@ export default Mixin.create(I18n, {
    *  providerId: <provider id>
    *  name: <provider name to display>
    *  size: <support size in bytes>
+   *  isCurrentProvider: boolean
    * }
    * ```
    * @type {PromiseProxy.Array}
@@ -93,6 +94,7 @@ export default Mixin.create(I18n, {
         name => ({
           name,
           size,
+          providerId,
           isCurrentProvider: providerId === currentProviderId,
         }))));
   },

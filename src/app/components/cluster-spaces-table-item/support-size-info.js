@@ -12,7 +12,7 @@ import Component from '@ember/component';
 import EmberObject, { computed } from '@ember/object';
 import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
-import generateColors from 'onedata-gui-common/utils/generate-colors';
+import ColorGenerator from 'onedata-gui-common/utils/color-generator';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 
@@ -31,17 +31,24 @@ export default Component.extend(I18n, {
   spaceSupporters: null,
 
   /**
+   * @type {ComputedProperty<Utils.ColorGenerator>}
+   */
+  colorGenerator: computed(() => new ColorGenerator()),
+
+  /**
    * Data for the support-size-info component
    * @type computed.Ember.Array.PieChartSeries
    */
-  _data: computed('spaceSupporters', function () {
-    let spaceSupporters = this.get('spaceSupporters');
-    let colors = generateColors(spaceSupporters.length);
+  _data: computed('spaceSupporters', function _data() {
+    const {
+      spaceSupporters,
+      colorGenerator,
+    } = this.getProperties('spaceSupporters', 'colorGenerator');
     return A(spaceSupporters.map((supporter, index) => EmberObject.create({
       id: String(index),
       label: supporter.name,
       value: supporter.size,
-      color: colors[index],
+      color: colorGenerator.generateColorForKey(supporter.providerId),
     })));
   }),
 
