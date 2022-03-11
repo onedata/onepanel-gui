@@ -68,5 +68,9 @@ rel
 jsconfig.json
 typings/
 
+# Emacs
+*~
+
 gui_static.tar.gz
 gui_static
+
