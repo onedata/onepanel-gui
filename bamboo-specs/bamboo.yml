@@ -4,6 +4,29 @@ plan:
   project-key: VFS
   key: OPG
   name: onepanel-gui
+repositories:
+- onepanel-gui:
+    scope: global
+branches:
+  create: for-new-branch
+  delete:
+    after-deleted-days: 7
+    after-inactive-days: 30
+  link-to-jira: true
+notifications:
+- events:
+  - job-failed
+  recipients:
+  - users:
+    - plgjliput
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: system-default
 stages:
 - Dependencies:
     description: Fetch dependencies and make them available for builds
@@ -26,11 +49,11 @@ Fetch dependencies:
         auto: {}
         buildHangingConfig.enabled: 'false'
   tasks:
-  - checkout:
+  - checkout: &checkout
       path: onepanel-gui
       force-clean-build: 'true'
       description: Checkout Default Repository
-  - script:
+  - script: &init-submodules
       interpreter: SHELL
       scripts:
       - |-
@@ -51,7 +74,7 @@ Fetch dependencies:
       - tar -czf deps.tar.gz $(ls -d onepanel-gui/src/node_modules onepanel-gui/src/bower_components 2>/dev/null)
       description: Package dependencies
   final-tasks:
-  - script:
+  - script: &clear-env
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
@@ -73,19 +96,8 @@ Run tests:
         auto: {}
         buildHangingConfig.enabled: 'false'
   tasks:
-  - checkout:
-      path: onepanel-gui
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: SHELL
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onepanel-gui
-      description: Init submodules
+  - checkout: *checkout
+  - script: *init-submodules
   - script:
       interpreter: SHELL
       scripts:
@@ -108,11 +120,7 @@ Run tests:
       ignore-time: 'false'
       test-results: onepanel-gui/src/tmp/test-results.xml
       description: Parse test results
-  - script:
-      interpreter: SHELL
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
+  - script: *clear-env
   requirements:
   - gui
   artifact-subscriptions:
@@ -128,19 +136,8 @@ Build and publish:
           useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
-  - checkout:
-      path: onepanel-gui
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: SHELL
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onepanel-gui
-      description: Init submodules
+  - checkout: *checkout
+  - script: *init-submodules
   - script:
       interpreter: SHELL
       scripts:
@@ -167,11 +164,7 @@ Build and publish:
       working-dir: onepanel-gui
       description: Docker build and push
   final-tasks:
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
+  - script: *clear-env
   artifacts:
   - name: docker-build-list.json
     location: onepanel-gui
@@ -192,29 +185,6 @@ Build and publish:
   - gui
   artifact-subscriptions:
   - artifact: deps.tar.gz
-repositories:
-- onepanel-gui:
-    scope: global
-branches:
-  create: for-new-branch
-  delete:
-    after-deleted-days: 7
-    after-inactive-days: 30
-  link-to-jira: true
-notifications:
-- events:
-  - job-failed
-  recipients:
-  - users:
-    - plgjliput
-labels: []
-dependencies:
-  require-all-stages-passing: false
-  enabled-for-branches: true
-  block-strategy: none
-  plans: []
-other:
-  concurrent-build-plugin: system-default
 ---
 version: 2
 plan:
