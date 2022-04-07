@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * A base component for all space import/update import statistics charts.
  * Needs timeStats (chart data), lastUpdateTime and timeUnit to be injected.
@@ -43,10 +46,10 @@ export default Component.extend(StorageImportChartDataValidator, {
   }),
 
   timeParts: computed('timeStats', function () {
-    let timeStats = this.get('timeStats');
+    const timeStats = this.get('timeStats');
     let len = 0;
     if (timeStats) {
-      let nonEmptyTimeStats = _.find(timeStats, ts =>
+      const nonEmptyTimeStats = _.find(timeStats, ts =>
         ts && Array.isArray(ts.values) && ts.values.length > 0
       );
       if (nonEmptyTimeStats.values.length) {
@@ -57,7 +60,7 @@ export default Component.extend(StorageImportChartDataValidator, {
   }),
 
   timePeriod: computed('timeParts', function () {
-    let timeParts = this.get('timeParts');
+    const timeParts = this.get('timeParts');
     return timeParts ? 1 / timeParts : 1 / 12;
   }),
 
@@ -113,7 +116,7 @@ export default Component.extend(StorageImportChartDataValidator, {
   },
 
   /**
-   * Hides chart tooltip on scroll and translates tooltip position 
+   * Hides chart tooltip on scroll and translates tooltip position
    * according to x-scroll.
    */
   handleChartScroll() {

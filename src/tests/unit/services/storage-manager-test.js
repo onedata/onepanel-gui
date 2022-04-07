@@ -20,7 +20,7 @@ describe('Unit | Service | storage manager', function () {
   it('can return single storage promise proxy', function (done) {
     const SOME_ID = 'some_id_1';
 
-    let onepanelServer = this.container.lookup('service:onepanelServer');
+    const onepanelServer = this.container.lookup('service:onepanelServer');
     onepanelServer.requestValidData = function (api, method, ...params) {
       if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
@@ -37,9 +37,9 @@ describe('Unit | Service | storage manager', function () {
       }
     };
 
-    let service = this.subject();
+    const service = this.subject();
 
-    let storageProxy = service.getStorageDetails(SOME_ID);
+    const storageProxy = service.getStorageDetails(SOME_ID);
 
     wait().then(() => {
       storageProxy.get('promise').then(data => {
@@ -54,7 +54,7 @@ describe('Unit | Service | storage manager', function () {
   it('can return the same record proxy when using cache', function (done) {
     const SOME_ID = 'some_id_2';
 
-    let onepanelServer = this.container.lookup('service:onepanelServer');
+    const onepanelServer = this.container.lookup('service:onepanelServer');
     onepanelServer.requestValidData = function (api, method, ...params) {
       if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
@@ -71,11 +71,11 @@ describe('Unit | Service | storage manager', function () {
       }
     };
 
-    let service = this.subject();
+    const service = this.subject();
 
-    let storageProxy1 = service.getStorageDetails(SOME_ID);
+    const storageProxy1 = service.getStorageDetails(SOME_ID);
     storageProxy1.get('promise').then(() => {
-      let storageProxy2 = service.getStorageDetails(SOME_ID);
+      const storageProxy2 = service.getStorageDetails(SOME_ID);
       storageProxy2.get('promise').then(data => {
         expect(storageProxy1.get('content'))
           .to.be.equal(storageProxy2.get('content'));

@@ -17,7 +17,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import { resolve } from 'rsvp';
+import { all as allFulfilled, resolve } from 'rsvp';
 import $ from 'jquery';
 
 export default Component.extend(
@@ -78,7 +78,7 @@ export default Component.extend(
           canCreatePoolProxy,
         } = this.getProperties('poolsWithUsageProxy', 'canCreatePoolProxy');
         return PromiseObject.create({
-          promise: Promise.all([
+          promise: allFulfilled([
             poolsWithUsageProxy,
             canCreatePoolProxy,
           ]),

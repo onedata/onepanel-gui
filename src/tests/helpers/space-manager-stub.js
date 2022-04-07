@@ -18,7 +18,7 @@ export default Service.extend({
   getSpaces() {
     return PromiseObject.create({
       promise: new Promise(resolve => {
-        let spaceDetailsList = A();
+        const spaceDetailsList = A();
         this.get('__spaces').forEach(space => {
           spaceDetailsList.push(this.getSpaceDetails(space.id));
         });

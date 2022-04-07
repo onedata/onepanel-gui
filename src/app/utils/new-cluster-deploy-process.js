@@ -21,6 +21,7 @@ import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-stat
 import Onepanel from 'npm:onepanel';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { Promise } from 'rsvp';
 
 const {
   ProviderConfiguration,
@@ -91,7 +92,7 @@ export default EmberObject.extend(I18n, {
 
   /**
    * Starts watching deployment identified by taskId.
-   * @param {string} taskId 
+   * @param {string} taskId
    * @returns {undefined};
    */
   watchExistingDeploy(taskId) {
@@ -105,9 +106,9 @@ export default EmberObject.extend(I18n, {
    *
    * When process starts successfully, a deployment promise
    * is bound to success/failure handlers.
-   * 
+   *
    * Returned promise resolves when backend started deployment.
-   * 
+   *
    * @returns {Promise}
    */
   startDeploy() {

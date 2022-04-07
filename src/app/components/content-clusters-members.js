@@ -13,6 +13,7 @@ import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import { Promise } from 'rsvp';
 
 export default Component.extend(
   I18n,

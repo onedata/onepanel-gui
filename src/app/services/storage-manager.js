@@ -59,9 +59,9 @@ export default Service.extend({
 
   /**
    * Fetch collection of onepanel ClusterStorage
-   * 
+   *
    * @param {boolean} [reload=false] if true, force call to backend
-   * @return {PromiseObject<Ember.ArrayProxy>} resolves ArrayProxy of SpaceDetails promise proxies
+   * @returns {PromiseObject<Ember.ArrayProxy>} resolves ArrayProxy of SpaceDetails promise proxies
    */
   getStorages(reload = false) {
     const {
@@ -74,11 +74,11 @@ export default Service.extend({
       'collectionCacheInitialized'
     );
 
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       if (!reload && collectionCacheInitialized) {
         resolve(collectionCache);
       } else {
-        let getStorages = onepanelServer.requestValidData(
+        const getStorages = onepanelServer.requestValidData(
           'StoragesApi',
           'getStorages'
         );
@@ -124,11 +124,11 @@ export default Service.extend({
       collectionCache,
     } = this.getProperties('onepanelServer', '_collectionMap', 'collectionCache');
     let record = _collectionMap[id];
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       if (!reload && record != null && record.get('content') != null) {
         resolve(record);
       } else {
-        let req = onepanelServer.requestValidData(
+        const req = onepanelServer.requestValidData(
           'StoragesApi',
           'getStorageDetails',
           id
@@ -159,11 +159,11 @@ export default Service.extend({
    * @returns {Promise}
    */
   createStorage(clusterStorage) {
-    let onepanelServer = this.get('onepanelServer');
+    const onepanelServer = this.get('onepanelServer');
 
-    let createReqProto = {};
+    const createReqProto = {};
     createReqProto[clusterStorage.name] = clusterStorage;
-    let createReq = StorageCreateRequest.constructFromObject(createReqProto);
+    const createReq = StorageCreateRequest.constructFromObject(createReqProto);
 
     return onepanelServer.request('StoragesApi', 'addStorage', createReq);
   },

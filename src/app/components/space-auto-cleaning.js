@@ -1,5 +1,5 @@
 /**
- * A space auto-cleaning tab with bar chart, file conditions form and 
+ * A space auto-cleaning tab with bar chart, file conditions form and
  * cleaning reports table.
  *
  * @module components/space-auto-cleaning
@@ -89,7 +89,7 @@ export default Component.extend(I18n, {
    * @virtual
    * @type {Function}
    * @param {number} spaceOccupancy
-   * @return {undefined}
+   * @returns {undefined}
    */
   spaceOccupancyChanged: () => {},
 
@@ -110,8 +110,8 @@ export default Component.extend(I18n, {
    */
   disableStartButton: false,
 
-  /** 
-   * Last triggered action.It may be: 'stop', 'start' or undefined. 
+  /**
+   * Last triggered action.It may be: 'stop', 'start' or undefined.
    * This value is changed to undefined when auto cleaning is finished or stopped.
    * @type {string}
    */

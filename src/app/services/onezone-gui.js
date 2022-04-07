@@ -1,7 +1,10 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * Provides information and methods for this app to cooperate with
  * Onezone GUI app hosted on the same domain.
- * 
+ *
  * @module services/onezone-gui
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH

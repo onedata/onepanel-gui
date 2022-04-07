@@ -121,8 +121,8 @@ export default Component.extend({
       newValue,
       context
     ) {
-      let hostname = context.get('hostHostname');
-      let option = context.get('hostOption');
+      const hostname = context.get('hostHostname');
+      const option = context.get('hostOption');
       this.get('checkboxChanged')(hostname, option, newValue);
     },
     primaryClusterManagerChanged() {

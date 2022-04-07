@@ -16,6 +16,7 @@ const Router = OnedataRouter.extend({
   rootURL: config.rootURL,
 });
 
+// eslint-disable-next-line array-callback-return
 Router.map(function () {
   onedataRouterSetup(Router, this);
 });

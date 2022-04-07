@@ -93,13 +93,13 @@ const continuousFields = [{
 }];
 
 function createValidations(genericFields, continuousFields) {
-  let validations = {};
+  const validations = {};
   genericFields.forEach(field => {
-    let fieldName = 'allFieldsValues.generic.' + field.name;
+    const fieldName = 'allFieldsValues.generic.' + field.name;
     validations[fieldName] = createFieldValidator(field);
   });
   continuousFields.forEach(field => {
-    let fieldName = 'allFieldsValues.continuous.' + field.name;
+    const fieldName = 'allFieldsValues.continuous.' + field.name;
     validations[fieldName] = createFieldValidator(field);
   });
   return validations;

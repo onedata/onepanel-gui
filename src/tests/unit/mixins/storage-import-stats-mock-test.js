@@ -5,10 +5,10 @@ import StorageImportStatsMockMixin from 'ember-onedata-onepanel-server/mixins/st
 
 describe('Unit | Mixin | storage import stats mock', function () {
   it('generates mock stats on init', function () {
-    let StorageImportStatsMockObject = EmberObject.extend(StorageImportStatsMockMixin);
-    let subject = StorageImportStatsMockObject.create();
+    const StorageImportStatsMockObject = EmberObject.extend(StorageImportStatsMockMixin);
+    const subject = StorageImportStatsMockObject.create();
 
-    let allStats = subject.get('allStats');
+    const allStats = subject.get('allStats');
 
     expect(allStats).to.have.property('hour');
     expect(allStats.hour).to.have.property('createdFiles');

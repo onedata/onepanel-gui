@@ -45,13 +45,13 @@ export default Mixin.create(I18n, {
    */
   spaceSupportersProxy: computed('supportingProviders', '_providerDetailsProxy',
     function () {
-      let _providerDetailsProxy = this.get('_providerDetailsProxy');
-      let supportingProviders = this.get('supportingProviders');
+      const _providerDetailsProxy = this.get('_providerDetailsProxy');
+      const supportingProviders = this.get('supportingProviders');
       return PromiseObject.create({
         promise: _providerDetailsProxy
           .then(provider => {
-            let id = get(provider, 'id');
-            let name = get(provider, 'name');
+            const id = get(provider, 'id');
+            const name = get(provider, 'name');
             return this.createSupportersArray(
               supportingProviders,
               id,
@@ -66,7 +66,7 @@ export default Mixin.create(I18n, {
    * @param {string} providerId
    * @param {string} currentProviderId
    * @param {string} currentProviderName
-   * @return {string} name to display
+   * @returns {string} name to display
    */
   providerIdToName(providerId, currentProviderId, currentProviderName) {
     if (providerId === currentProviderId) {
@@ -84,7 +84,7 @@ export default Mixin.create(I18n, {
 
   init() {
     this._super(...arguments);
-    let providerManager = this.get('providerManager');
+    const providerManager = this.get('providerManager');
     this.set('_providerDetailsProxy', providerManager.getProviderDetailsProxy());
   },
 

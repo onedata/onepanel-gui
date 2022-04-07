@@ -54,11 +54,11 @@ export default Service.extend({
     return spacesCache;
   },
 
-  /** 
+  /**
    * @returns {Promise<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
    */
   _getSpaces() {
-    let onepanelServer = this.get('onepanelServer');
+    const onepanelServer = this.get('onepanelServer');
     return onepanelServer.requestValidData(
       'SpaceSupportApi',
       'getProviderSpaces'
@@ -90,9 +90,9 @@ export default Service.extend({
 
   /**
    * Fetch details of space support with given ID
-   * 
+   *
    * @param {string} id
-   * @return {PromiseUpdatedObject} resolves SpaceDetails object
+   * @returns {PromiseUpdatedObject} resolves SpaceDetails object
    */
   getSpaceDetails(id) {
     return PromiseUpdatedObject.create({ promise: this._getSpaceDetails(id) });
@@ -118,7 +118,7 @@ export default Service.extend({
    * @returns {Promise<undefined|object>} resolves after updating details cache
    */
   modifySpaceDetails(id, spaceData) {
-    let onepanelServer = this.get('onepanelServer');
+    const onepanelServer = this.get('onepanelServer');
     return onepanelServer
       .request('SpaceSupportApi', 'modifySpace', id, spaceData)
       .catch(modifyError =>
@@ -131,7 +131,7 @@ export default Service.extend({
 
   /**
    * Support space in current provider using some storage
-   * 
+   *
    * @param {Object} supportSpaceData
    * @param {number} supportSpaceData.size
    * @param {string} supportSpaceData.storageId
@@ -139,8 +139,8 @@ export default Service.extend({
    * @returns {Promise}
    */
   supportSpace(supportSpaceData) {
-    let onepanelServer = this.get('onepanelServer');
-    let supportReq = SpaceSupportRequest.constructFromObject(supportSpaceData);
+    const onepanelServer = this.get('onepanelServer');
+    const supportReq = SpaceSupportRequest.constructFromObject(supportSpaceData);
     return onepanelServer.request('SpaceSupportApi', 'supportSpace', supportReq);
   },
 
@@ -184,8 +184,8 @@ export default Service.extend({
 
   /**
    * Fetch example of the file registration request in manual storage import
-   * 
-   * @param {String} spaceId 
+   *
+   * @param {String} spaceId
    * @returns {Promise<Onepanel.ManualStorageImportExample>}
    */
   getManualImportRequestExample(spaceId) {
@@ -213,7 +213,7 @@ export default Service.extend({
    * @param {number} startFromIndex
    * @param {number} size
    * @param {number} offset
-   * 
+   *
    * @returns {Promise<Onepanel.SpaceAutoCleaningReportCollection>}
    */
   getAutoCleaningReportIds(spaceId, startFromIndex, size, offset) {
@@ -286,7 +286,7 @@ export default Service.extend({
   },
 
   /**
-   * @param {String} spaceId 
+   * @param {String} spaceId
    * @returns {Promise}
    */
   stopImportScan(spaceId) {
@@ -298,7 +298,7 @@ export default Service.extend({
   },
 
   /**
-   * @param {String} spaceId 
+   * @param {String} spaceId
    * @returns {Promise}
    */
   startImportScan(spaceId) {

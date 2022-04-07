@@ -6,6 +6,7 @@ import wait from 'ember-test-helpers/wait';
 import { fillIn, blur, click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import _ from 'lodash';
+import { resolve } from 'rsvp';
 
 const globalData = Object.freeze({
   enabled: true,
@@ -118,7 +119,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
 
     it(`sends data after ${fieldName} input focus lost`, function (done) {
-      const saveSpy = sinon.spy(() => Promise.resolve());
+      const saveSpy = sinon.spy(() => resolve());
       this.on('onSave', saveSpy);
       this.render(hbs `
                 {{space-cleaning-conditions-form
@@ -160,7 +161,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
   });
 
   it('debounce changes save', function (done) {
-    const saveSpy = sinon.spy(() => Promise.resolve());
+    const saveSpy = sinon.spy(() => resolve());
     this.on('onSave', saveSpy);
     this.render(hbs `
               {{space-cleaning-conditions-form
@@ -192,7 +193,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     const localData = _.cloneDeep(globalData);
     const saveSpy = sinon.spy(data => {
       _.merge(localData, data);
-      return Promise.resolve();
+      return resolve();
     });
     this.on('onSave', saveSpy);
 

@@ -114,8 +114,8 @@ export default Mixin.create({
   _genReport(duration = 1, isSuccess = true, lastRunStatus = 'completed') {
     const [index, id] = genReportIndex();
     const now = moment(index);
-    let stoppedAt = now.subtract(1, 's').toISOString();
-    let startedAt = now.subtract(duration, 'h').toISOString();
+    const stoppedAt = now.subtract(1, 's').toISOString();
+    const startedAt = now.subtract(duration, 'h').toISOString();
     return {
       id,
       index,

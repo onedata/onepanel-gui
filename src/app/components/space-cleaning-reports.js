@@ -200,7 +200,7 @@ export default Component.extend(I18n, {
     const lastId = items[items.length - 1] &&
       items[items.length - 1].getAttribute('data-row-id') || null;
     const $firstRow = $('.first-row');
-    let startIndex, endIndex;
+    let startIndex; let endIndex;
     if (firstId === null && get(sourceArray, 'length') !== 0 && $firstRow.length) {
       const rowHeight = this.get('rowHeight');
       const blankStart = $firstRow.offset().top * -1;
@@ -223,7 +223,7 @@ export default Component.extend(I18n, {
 
   willDestroyElement() {
     try {
-      let {
+      const {
         _resizeEventHandler,
         _window,
       } = this.getProperties('_resizeEventHandler', '_window');

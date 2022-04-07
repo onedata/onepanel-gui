@@ -1,6 +1,6 @@
 /**
  * Shows information about ceph cluster status.
- * 
+ *
  * @module components/cluster-ceph-status
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -121,7 +121,7 @@ export default Component.extend(
 
     /**
      * Performs automatic expand of OSDs usage items
-     * @return {undefined}
+     * @returns {undefined}
      */
     autoexpandOsds() {
       const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');

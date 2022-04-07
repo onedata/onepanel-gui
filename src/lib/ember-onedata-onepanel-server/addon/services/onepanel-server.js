@@ -100,7 +100,7 @@ export default OnepanelServerBase.extend(
     request(api, method, ...params) {
       return new Promise((requestResolve, requestReject) => {
           const callback = (error, data, response) => {
-            let taskId = getTaskId(response);
+            const taskId = getTaskId(response);
             let task;
             if (taskId) {
               task = watchTaskStatus(this, taskId);
@@ -211,7 +211,7 @@ export default OnepanelServerBase.extend(
      */
     createClient({ token, apiOrigin, ttl } = {}) {
       const location = this.get('_location');
-      let client = new Onepanel.ApiClient();
+      const client = new Onepanel.ApiClient();
       if (token) {
         setClientToken(client, token, ttl);
       }
@@ -233,7 +233,7 @@ export default OnepanelServerBase.extend(
      */
     initClient({ token, apiOrigin, ttl } = {}) {
       return new Promise((resolve) => {
-        let client = this.createClient({ token, apiOrigin, ttl });
+        const client = this.createClient({ token, apiOrigin, ttl });
         this.set('client', client);
         resolve();
       });
@@ -299,7 +299,7 @@ export default OnepanelServerBase.extend(
         const api = new ApiConstructor(client);
 
         return new Promise((resolve, reject) => {
-          let callback = function (error, data, response) {
+          const callback = function (error, data, response) {
             if (error) {
               reject(error);
             } else {

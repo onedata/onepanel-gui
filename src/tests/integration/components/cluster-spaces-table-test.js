@@ -44,7 +44,7 @@ describe('Integration | Component | cluster spaces table', function () {
 
   it('renders error message when at least one space details fetch was rejected',
     function () {
-      let spaces = [
+      const spaces = [
         EmberObject.create({
           isSettled: true,
           isRejected: false,
@@ -78,7 +78,7 @@ describe('Integration | Component | cluster spaces table', function () {
 
   it('does not render error message when all spaces are fetched successfully',
     function () {
-      let spaces = [
+      const spaces = [
         EmberObject.create({
           isSettled: true,
           isRejected: false,

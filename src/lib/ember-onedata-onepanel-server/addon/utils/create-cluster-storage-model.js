@@ -7,7 +7,7 @@ import clusterStorageClass from 'ember-onedata-onepanel-server/utils/cluster-sto
  * @returns {ClusterStorages} instance of ClusterStorages subclass
  */
 function createClusterStorage(formData, modify = false) {
-  let csClass = clusterStorageClass(formData.type, modify);
+  const csClass = clusterStorageClass(formData.type, modify);
   return csClass.constructFromObject(formData);
 }
 

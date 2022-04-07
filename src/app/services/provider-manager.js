@@ -39,7 +39,7 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
    *  rejects on non-404 request errors
    */
   fetchProviderDetails() {
-    let onepanelServer = this.get('onepanelServer');
+    const onepanelServer = this.get('onepanelServer');
     return onepanelServer.requestValidData('OneproviderIdentityApi', 'getProvider')
       .then(({ data }) => data)
       .catch(error => {
@@ -57,11 +57,11 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
    * @returns {Promise} onepanel.modifyProvider request promise
    */
   modifyProvider(providerData) {
-    let {
+    const {
       onepanelServer,
       deploymentManager,
     } = this.getProperties('onepanelServer', 'deploymentManager');
-    let providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
+    const providerModifyRequest = ProviderModifyRequest.constructFromObject(providerData);
     return onepanelServer.request(
         'OneproviderIdentityApi',
         'modifyProvider',
@@ -76,11 +76,11 @@ export default Service.extend(createDataProxyMixin('providerDetails'), {
    * @returns {Promise} API operation promise
    */
   deregisterProvider() {
-    let {
+    const {
       onepanelServer,
       deploymentManager,
     } = this.getProperties('onepanelServer', 'deploymentManager');
-    let deregistering = onepanelServer.request(
+    const deregistering = onepanelServer.request(
       'OneproviderIdentityApi',
       'removeProvider'
     );

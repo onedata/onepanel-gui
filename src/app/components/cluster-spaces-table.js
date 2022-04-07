@@ -38,7 +38,7 @@ export default Component.extend(I18n, {
   spacesSorted: sort('spaces', 'sorting'),
 
   anySpaceRejected: computed('spaces.content', function () {
-    let spaces = this.get('spaces');
+    const spaces = this.get('spaces');
     if (spaces) {
       return (get(spaces, 'content') || spaces).some(s => get(s, 'isRejected'));
     }

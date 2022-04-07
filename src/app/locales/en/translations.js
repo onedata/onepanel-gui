@@ -88,7 +88,7 @@ import newClusterDeployProcess from './utils/new-cluster-deploy-process';
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
 
-let translations = {
+const translations = {
   tabs: {
     undefined: {
       menuItem: '',

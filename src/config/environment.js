@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = function (environment) {
-  var ENV = {
+  const ENV = {
     'modulePrefix': 'onepanel-gui',
     'environment': environment,
     // NOTE: the rootURL is set also in ember-cli-build for SASS function

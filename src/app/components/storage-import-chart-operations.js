@@ -73,7 +73,7 @@ export default StorageImportChartBase.extend({
   ]),
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
-    let {
+    const {
       timeStats,
     } = this.getProperties('timeStats');
     // if there are falsy TimeStats (e.g. null) we want to fill them with empty data
@@ -88,13 +88,13 @@ export default StorageImportChartBase.extend({
    * @type {computed.Object}
    */
   chartData: computed('_timeStatsValues.[]', 'chartLabels', function () {
-    let {
+    const {
       _timeStatsValues,
       chartSeriesLabels,
       _chartValues,
     } = this.getProperties('_timeStatsValues', 'chartSeriesLabels', '_chartValues');
     if (_timeStatsValues && _timeStatsValues.length > 0) {
-      let statsValues = _timeStatsValues.slice(1);
+      const statsValues = _timeStatsValues.slice(1);
       statsValues.forEach((values, index) => {
         while (_chartValues[index].length) {
           _chartValues[index].shift();

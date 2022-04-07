@@ -12,14 +12,14 @@ import wait from 'ember-test-helpers/wait';
 
 describe('Unit | Mixin | components/space import chart data validator', function () {
   it('recomputes validation when timeStats changes', function (done) {
-    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+    const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin);
 
-    let validateImportChartData = () => {
+    const validateImportChartData = () => {
       return 'hello';
     };
 
-    let subject = ComponentsStorageImportChartDataValidatorObject.create({
+    const subject = ComponentsStorageImportChartDataValidatorObject.create({
       validateImportChartData,
     });
 
@@ -34,10 +34,10 @@ describe('Unit | Mixin | components/space import chart data validator', function
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+    const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsStorageImportChartDataValidatorObject.create({
+    const subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'one',
         lastValueDate: new Date().toJSON(),
@@ -45,16 +45,16 @@ describe('Unit | Mixin | components/space import chart data validator', function
       }],
     });
 
-    let errors = subject.validateAnyMetric(['one', 'two', 'three']);
+    const errors = subject.validateAnyMetric(['one', 'two', 'three']);
 
     expect(errors).to.be.empty;
   });
 
   it('can check if there is lack of at least one required metric', function () {
-    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+    const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsStorageImportChartDataValidatorObject.create({
+    const subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'seven',
         lastValueDate: new Date().toJSON(),
@@ -62,16 +62,16 @@ describe('Unit | Mixin | components/space import chart data validator', function
       }],
     });
 
-    let errors = subject.validateAnyMetric(['one', 'two', 'three']);
+    const errors = subject.validateAnyMetric(['one', 'two', 'three']);
 
     expect(errors).to.not.be.empty;
   });
 
   it('can check if there is at least one required metric', function () {
-    let ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
+    const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin
     );
-    let subject = ComponentsStorageImportChartDataValidatorObject.create({
+    const subject = ComponentsStorageImportChartDataValidatorObject.create({
       timeStats: [{
         name: 'one',
         lastValueDate: new Date().toJSON(),
@@ -79,7 +79,7 @@ describe('Unit | Mixin | components/space import chart data validator', function
       }],
     });
 
-    let errors = subject.validateAllMetricsValidOrNull(['one']);
+    const errors = subject.validateAllMetricsValidOrNull(['one']);
 
     expect(errors).to.be.empty;
   });

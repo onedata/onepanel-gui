@@ -19,8 +19,8 @@ export default Service.extend({
   getStorages() {
     return PromiseObject.create({
       promise: new Promise(resolve => {
-        let storageDetailsList = A();
-        for (let storageId in this.get('__storages')) {
+        const storageDetailsList = A();
+        for (const storageId in this.get('__storages')) {
           storageDetailsList.push(this.getStorageDetails(storageId));
         }
         resolve(ArrayProxy.create({ content: storageDetailsList }));
