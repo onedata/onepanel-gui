@@ -12,7 +12,7 @@ import { reads } from '@ember/object/computed';
 import { get, set } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import _ from 'lodash';
-import { resolve } from 'rsvp';
+import { resolve, all as allFulfilled } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import Cluster from 'onepanel-gui/models/cluster';
 import { getOwner } from '@ember/application';
@@ -78,7 +78,7 @@ export default Service.extend(
      */
     fetchClusters() {
       return this.getClusterIdsProxy({ reload: true })
-        .then(ids => Promise.all(ids.map(id => this.getCluster(id))))
+        .then(ids => allFulfilled(ids.map(id => this.getCluster(id))))
         .then(clusters => addConflictLabels(clusters));
     },
 
@@ -106,7 +106,7 @@ export default Service.extend(
 
     /**
      * Adds missing name, domain, isLocal and isNotDeployed fields to cluster
-     * records fetched from backend 
+     * records fetched from backend
      * @param {Onepanel.ClusterDetails} data cluster data from backend(REST)
      * @param {string} data.id
      * @param {string} data.type

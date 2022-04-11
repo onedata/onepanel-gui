@@ -57,7 +57,7 @@ export default Component.extend(I18n, {
    * @type {computed.string}
    */
   _dataError: computed('spaceSupporters', function () {
-    let {
+    const {
       spaceSupporters,
       i18n,
     } = this.getProperties('spaceSupporters', 'i18n');

@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { getOwner } from '@ember/application';
 import { get } from '@ember/object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import { hash as promiseHash } from 'rsvp';
+import { all as allFulfilled, hash as promiseHash } from 'rsvp';
 
 export default Service.extend({
   onepanelServer: service(),
@@ -36,7 +36,7 @@ export default Service.extend({
 
   /**
    * Returns all osds in the ceph cluster.
-   * @return {Promise<Array<Onepanel.CephOsd>>}
+   * @returns {Promise<Array<Onepanel.CephOsd>>}
    */
   getOsds() {
     return this.get('onepanelServer').request('CephApi', 'getCephOsds')
@@ -45,7 +45,7 @@ export default Service.extend({
 
   /**
    * Returns all managers in the ceph cluster.
-   * @return {Promise<Array<Onepanel.CephManager>>}
+   * @returns {Promise<Array<Onepanel.CephManager>>}
    */
   getManagers() {
     return this.get('onepanelServer').request('CephApi', 'getCephManagers')
@@ -54,7 +54,7 @@ export default Service.extend({
 
   /**
    * Returns all monitors in the ceph cluster.
-   * @return {Promise<Array<Onepanel.CephMonitor>>}
+   * @returns {Promise<Array<Onepanel.CephMonitor>>}
    */
   getMonitors() {
     return this.get('onepanelServer').request('CephApi', 'getCephMonitors')
@@ -63,7 +63,7 @@ export default Service.extend({
 
   /**
    * Returns global ceph parameters
-   * @return {Promise<Array<Onepanel.CephGlobalParams>>}
+   * @returns {Promise<Array<Onepanel.CephGlobalParams>>}
    */
   getParams() {
     return this.get('onepanelServer').request('CephApi', 'getCephParams')
@@ -73,10 +73,10 @@ export default Service.extend({
   /**
    * Returns ceph cluster configuration - aggregates results from multiple
    * requests to form complex configuration object.
-   * @return {Promise<Utils/Ceph/ClusterConfiguration>}
+   * @returns {Promise<Utils/Ceph/ClusterConfiguration>}
    */
   getConfiguration() {
-    return Promise.all([
+    return allFulfilled([
       this.getManagers(),
       this.getMonitors(),
       this.getOsds(),
@@ -102,7 +102,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph cluster status
-   * @return {Promise<Onepanel.CephStatus>}
+   * @returns {Promise<Onepanel.CephStatus>}
    */
   getStatus() {
     const promise = this.get('onepanelServer')
@@ -119,7 +119,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph OSDs usage
-   * @return {Promise<Object>} Object osdId -> Onepanel.DataUsage
+   * @returns {Promise<Object>} Object osdId -> Onepanel.DataUsage
    */
   getOsdsUsage() {
     return this.get('onepanelServer').request('CephApi', 'getCephUsage')
@@ -128,7 +128,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph OSDs and OSDs usage
-   * @return {Promise<Object>} Object with fields: osds, usage
+   * @returns {Promise<Object>} Object with fields: osds, usage
    */
   getOsdsWithUsage() {
     return promiseHash({
@@ -139,7 +139,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph cluster pools
-   * @return {Promise<Array<Onepanel.CephPool>>}
+   * @returns {Promise<Array<Onepanel.CephPool>>}
    */
   getPools() {
     return this.get('onepanelServer').request('CephApi', 'getCephPools')
@@ -148,7 +148,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph pools usage
-   * @return {Promise<Object>} Object name -> Onepanel.PoolUsage
+   * @returns {Promise<Object>} Object name -> Onepanel.PoolUsage
    */
   getPoolsUsage() {
     return this.get('onepanelServer').request('CephApi', 'getCephUsage')
@@ -157,7 +157,7 @@ export default Service.extend({
 
   /**
    * Returns Ceph pools and pools usage
-   * @return {Promise<Object>} Object with fields: pools, usage
+   * @returns {Promise<Object>} Object with fields: pools, usage
    */
   getPoolsWithUsage() {
     return promiseHash({

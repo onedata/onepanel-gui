@@ -139,9 +139,9 @@ export default Component.extend(I18n, spaceItemSupports, {
    * @type {PromiseObject}
    */
   _storage: computed('space.storageId', function () {
-    let space = this.get('space');
+    const space = this.get('space');
     if (space) {
-      let storageManager = this.get('storageManager');
+      const storageManager = this.get('storageManager');
       return storageManager.getStorageDetails(get(space, 'storageId'));
     }
   }),

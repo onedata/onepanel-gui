@@ -103,7 +103,7 @@ export default Component.extend(I18n, {
   canDeploy: and('_hostTableValid', '_zoneOptionsValid'),
 
   hostsUsed: computed('hosts.@each.isUsed', function () {
-    let hosts = this.get('hosts');
+    const hosts = this.get('hosts');
     return hosts.filter(h => h.get('isUsed'));
   }).readOnly(),
 
@@ -267,9 +267,9 @@ export default Component.extend(I18n, {
   },
 
   getNodes() {
-    let hosts = this.get('hosts');
-    let hostnames = hosts.map(h => get(h, 'hostname'));
-    let nodes = {};
+    const hosts = this.get('hosts');
+    const hostnames = hosts.map(h => get(h, 'hostname'));
+    const nodes = {};
     hostnames.forEach(hostname => {
       nodes[hostname] = { hostname };
     });
@@ -282,7 +282,7 @@ export default Component.extend(I18n, {
    * @returns {Object}
    */
   createConfiguration() {
-    let {
+    const {
       hostsUsed,
       primaryClusterManager,
       _zoneName,
@@ -296,14 +296,14 @@ export default Component.extend(I18n, {
       'onepanelServiceType'
     );
 
-    let nodes = this.getNodes();
-    let hostnames = hostsUsed.map(h => h.hostname);
+    const nodes = this.getNodes();
+    const hostnames = hostsUsed.map(h => h.hostname);
     if (!hostnames || hostnames.length === 0) {
       throw new Error(
         'Cannot create cluster configuration if no hosts are selected');
     }
 
-    let configProto = {
+    const configProto = {
       cluster: {
         autoDeploy: true,
         domainName: '',
@@ -434,8 +434,8 @@ export default Component.extend(I18n, {
     },
 
     hostOptionChanged(hostname, option, value) {
-      let hosts = this.get('hosts');
-      let host = hosts.find(h => get(h, 'hostname') === hostname);
+      const hosts = this.get('hosts');
+      const host = hosts.find(h => get(h, 'hostname') === hostname);
       assert(
         host,
         'host for which option was changed, must be present in collection'

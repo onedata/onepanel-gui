@@ -1,6 +1,6 @@
 /**
  * Redirects to to Onezone app on init showing loader spinner
- * 
+ *
  * @module components/content-clusters-onezone-redirect
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
@@ -9,7 +9,7 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { resolve } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import { getOnezoneUrl } from 'onedata-gui-common/utils/onedata-urls';
 
 export default Component.extend({

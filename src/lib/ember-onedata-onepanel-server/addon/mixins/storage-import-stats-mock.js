@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * Mocks live statistics and status changes for storage import
  *
@@ -62,7 +65,7 @@ export default Mixin.create({
   },
 
   willDestroy() {
-    let {
+    const {
       statusChangeTimerId,
       statsPushIntervalIds,
     } = this.getProperties(
@@ -85,7 +88,7 @@ export default Mixin.create({
    * ```
    */
   initAllStats() {
-    let allStats = _.zipObject(PERIODS, PERIODS.map(() => {
+    const allStats = _.zipObject(PERIODS, PERIODS.map(() => {
       return _.zipObject(METRICS, METRICS.map(() => {
         return _.times(SAMPLES_COUNT, randomValue);
       }));
@@ -95,18 +98,18 @@ export default Mixin.create({
   },
 
   initAutoStatsPush() {
-    let allStats = this.get('allStats');
-    let sampling = {
+    const allStats = this.get('allStats');
+    const sampling = {
       minute: 60000 / SAMPLES_COUNT,
       hour: (60 * 60000) / SAMPLES_COUNT,
       day: (24 * 60 * 60000) / SAMPLES_COUNT,
     };
-    let statsPushIntervalIds = [];
+    const statsPushIntervalIds = [];
     _.keys(sampling).forEach(period => {
-      let interval = sampling[period];
+      const interval = sampling[period];
       statsPushIntervalIds.push(setInterval(() => {
         _.keys(allStats[period]).forEach(metric => {
-          let values = allStats[period][metric].slice(0);
+          const values = allStats[period][metric].slice(0);
           values.shift();
           values.push(randomValue());
           allStats[period][metric] = values;
@@ -118,7 +121,7 @@ export default Mixin.create({
   },
 
   initDelayedStatusChange(delay = 10000) {
-    let statusChangeTimerId = setTimeout(() => {
+    const statusChangeTimerId = setTimeout(() => {
       this.set('globalImportStatus', 'completed');
     }, delay);
     this.set('statusChangeTimerId', statusChangeTimerId);

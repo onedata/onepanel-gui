@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * Renders new cluster deployment process (steps bar and their content)
  *
@@ -20,6 +23,7 @@ import { installationStepsMap, installationStepsArray } from 'onepanel-gui/model
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 import { array, raw } from 'ember-awesome-macros';
+import { resolve } from 'rsvp';
 
 const {
   TaskStatus: {
@@ -143,7 +147,7 @@ export default Component.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    let clusterInitStep = this.get('cluster.initStep');
+    const clusterInitStep = this.get('cluster.initStep');
     this.setProperties({
       currentStep: clusterInitStep,
       _isInProcess: clusterInitStep.gt(installationStepsMap.deploy),
@@ -206,7 +210,7 @@ export default Component.extend(I18n, {
           return undefined;
         });
     } else {
-      return Promise.resolve(undefined);
+      return resolve(undefined);
     }
   },
 

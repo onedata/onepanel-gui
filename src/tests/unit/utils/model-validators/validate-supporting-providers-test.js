@@ -6,19 +6,19 @@ describe(
   'Unit | Utility | model validators/validate  model validators/supporting providers',
   function () {
     it('returns false for lack of supportingProviders at all', function () {
-      let result = validateSupportingProviders(undefined);
+      const result = validateSupportingProviders(undefined);
       expect(result).to.be.false;
     });
 
     it('returns false if supportingProviders has no properties at all',
       function () {
-        let result = validateSupportingProviders({});
+        const result = validateSupportingProviders({});
         expect(result).to.be.false;
       });
 
     it('returns true if supportingProviders is Object with at least one property',
       function () {
-        let result = validateSupportingProviders({
+        const result = validateSupportingProviders({
           someProvider: '',
         });
         expect(result).to.be.true;

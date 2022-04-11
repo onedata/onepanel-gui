@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * A view to create, show or edit registered provider details
  *
@@ -215,7 +218,7 @@ export default OneForm.extend(Validations, I18n, {
   }),
 
   currentFieldsPrefix: computed('mode', '_subdomainDelegation', function () {
-    let {
+    const {
       mode,
       _subdomainDelegation,
     } = this.getProperties('mode', '_subdomainDelegation');
@@ -243,14 +246,14 @@ export default OneForm.extend(Validations, I18n, {
    * @type {computed.EmberObject}
    */
   _fieldsSource: computed(function () {
-    let i18n = this.get('i18n');
-    let tPrefix = 'components.providerRegistrationForm.fields.';
-    let prepareField = (field) => _.assign({}, field, {
+    const i18n = this.get('i18n');
+    const tPrefix = 'components.providerRegistrationForm.fields.';
+    const prepareField = (field) => _.assign({}, field, {
       label: i18n.t(tPrefix + field.name + '.label'),
       tip: field.tip ? i18n.t(tPrefix + field.name + '.tip') : undefined,
       example: field.example,
     });
-    let fields = EmberObject.create({
+    const fields = EmberObject.create({
       topFields: COMMON_FIELDS_TOP.map(prepareField),
       bottomFields: COMMON_FIELDS_BOTTOM.map(prepareField),
       domainField: prepareField(HOSTNAME_FIELD),
@@ -265,11 +268,11 @@ export default OneForm.extend(Validations, I18n, {
    */
   _editTopFields: computed('_fieldsSource.topFields', 'provider', 'mode',
     function () {
-      let {
+      const {
         _fieldsSource,
         mode,
       } = this.getProperties('_fieldsSource', 'mode');
-      let excludedFields = mode === 'edit' ? [] : ['id'];
+      const excludedFields = mode === 'edit' ? [] : ['id'];
       return _fieldsSource.get('topFields')
         .filter((field) => excludedFields.indexOf(field.name) === -1)
         .map((field) =>
@@ -374,7 +377,7 @@ export default OneForm.extend(Validations, I18n, {
     '_domainStaticField',
     '_subdomainStaticField',
     function () {
-      let properties = [
+      const properties = [
         '_editTopFields',
         '_editBottomFields',
         '_domainEditField',
@@ -391,7 +394,7 @@ export default OneForm.extend(Validations, I18n, {
   ),
 
   allFieldsValues: computed('provider', 'allFields', function () {
-    let values = EmberObject.create({});
+    const values = EmberObject.create({});
     ALL_PREFIXES.forEach((prefix) => values.set(prefix, EmberObject.create()));
     return values;
   }),
@@ -404,7 +407,7 @@ export default OneForm.extend(Validations, I18n, {
     'mode',
     'allFieldsValues.{editTop.subdomainDelegation,showTop.subdomainDelegation}',
     function () {
-      let {
+      const {
         mode,
         allFieldsValues,
       } = this.getProperties('mode', 'allFieldsValues');
@@ -419,7 +422,7 @@ export default OneForm.extend(Validations, I18n, {
    * @type {computed.string}
    */
   submitText: computed('mode', function () {
-    let {
+    const {
       mode,
       i18n,
     } = this.getProperties('mode', 'i18n');
@@ -545,19 +548,19 @@ export default OneForm.extend(Validations, I18n, {
    * @param {string} fromValue source value
    */
   _proposeSubdomain(fromValue) {
-    let proposedSubdomain = simplifyString(fromValue).substring(0, 63);
+    const proposedSubdomain = simplifyString(fromValue).substring(0, 63);
     this.set('allFieldsValues.editSubdomain.subdomain', proposedSubdomain);
   },
 
   actions: {
     inputChanged(fieldName, value) {
-      let {
+      const {
         mode,
         allFields,
       } = this.getProperties('mode', 'allFields');
       this.changeFormValue(fieldName, value);
       if (fieldName === 'editTop.name' && mode === 'new') {
-        let subdomainField = _.find(allFields, ((field) => field.get('name') ===
+        const subdomainField = _.find(allFields, ((field) => field.get('name') ===
           'editSubdomain.subdomain'));
         if (!subdomainField.get('changed')) {
           this._proposeSubdomain(value);
@@ -583,9 +586,9 @@ export default OneForm.extend(Validations, I18n, {
         '_willChangeDomainAfterSubmit'
       );
 
-      let values = EmberObject.create();
+      const values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
-        let prefixValues = formValues.get(prefix);
+        const prefixValues = formValues.get(prefix);
         Object.keys(prefixValues).forEach(
           (key) => values.set(key, prefixValues.get(key))
         );
@@ -609,9 +612,9 @@ export default OneForm.extend(Validations, I18n, {
               return;
             }
             this.validateSync();
-            // subdomain field may throw errors, so it should be marked as 
+            // subdomain field may throw errors, so it should be marked as
             // changed to show that errors
-            let subdomainField = _.find(
+            const subdomainField = _.find(
               allFields,
               ((field) => field.get('name') === 'editSubdomain.subdomain')
             );

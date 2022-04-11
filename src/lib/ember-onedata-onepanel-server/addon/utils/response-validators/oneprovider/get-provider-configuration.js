@@ -11,7 +11,7 @@
  * @returns {boolean} true if response data is valid
  */
 export default function (data) {
-  let { cluster, oneprovider } = data;
+  const { cluster, oneprovider } = data;
   try {
     return !!(
       typeof cluster === 'object' &&

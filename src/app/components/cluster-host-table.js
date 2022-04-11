@@ -22,7 +22,7 @@ function hostColumnPropertyName(role) {
 }
 
 function hostColumnComputedProperties(roles) {
-  let columnLists = {};
+  const columnLists = {};
   roles.forEach(role => {
     columnLists[hostColumnPropertyName(role)] = computed(
       `hosts.@each.${role}`,
@@ -36,7 +36,7 @@ function hostColumnComputedProperties(roles) {
 
 function generateColumnValidations(roles) {
   const roleColumns = roles.map(hostColumnPropertyName);
-  let columnValidations = {};
+  const columnValidations = {};
   roleColumns.forEach(col => {
     columnValidations[col] = validator('length', { min: 1 });
   });
@@ -44,7 +44,7 @@ function generateColumnValidations(roles) {
   return columnValidations;
 }
 
-let Validations = buildValidations(generateColumnValidations(roles));
+const Validations = buildValidations(generateColumnValidations(roles));
 
 // TODO: validation TODO: is setting first options for some host, set this host
 // as a primary cluster manager

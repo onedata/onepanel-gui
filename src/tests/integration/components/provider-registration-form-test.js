@@ -26,7 +26,7 @@ describe('Integration | Component | provider registration form', function () {
         {{provider-registration-form mode="new" submit=(action "submit")}}
       `);
 
-      let helper = new ProviderRegistrationHelper(this.$());
+      const helper = new ProviderRegistrationHelper(this.$());
       return wait().then(() => {
         [
           'editTop-name',

@@ -31,14 +31,14 @@ export default Component.extend({
   storagesSorted: array.sort('storages', ['name', 'conflictLabel']),
 
   spacesLoadError: computed('spaces.@each.isRejected', function () {
-    let spaces = this.get('spaces');
+    const spaces = this.get('spaces');
     if (spaces) {
       return spaces.some(s => s.get('isRejected'));
     }
   }),
 
   anyStorageRejected: computed('storages.content.@each.isRejected', function () {
-    let storages = this.get('storages.content');
+    const storages = this.get('storages.content');
     if (storages) {
       return storages.some(s => s.get('isRejected'));
     }

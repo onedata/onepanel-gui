@@ -295,7 +295,7 @@ describe('Integration | Component | cluster storage add form', function () {
           expect(formData.mountPoint).to.be.equal('/mnt/st1');
           expect(formData).to.not.have.property('timeout');
           expect(formData).to.not.have.property('skipStorageDetection');
-          return Promise.resolve();
+          return resolve();
         },
       });
 
@@ -716,7 +716,7 @@ describe('Integration | Component | cluster storage add form', function () {
         submitOccurred = true;
         expect(_.keys(formData)).to.have.length(2);
         expect(formData.name).to.be.equal(storageName);
-        return Promise.resolve();
+        return resolve();
       });
 
       this.set('storage', POSIX_STORAGE);
@@ -754,7 +754,7 @@ describe('Integration | Component | cluster storage add form', function () {
         submitOccurred = true;
         expect(_.keys(formData)).to.have.length(2);
         expect(formData.lumaFeedApiKey).to.be.null;
-        return Promise.resolve();
+        return resolve();
       });
 
       this.set('storage', POSIX_STORAGE);
@@ -794,7 +794,7 @@ describe('Integration | Component | cluster storage add form', function () {
         `);
 
         return wait().then(() => {
-          let helper = new ClusterStorageAddHelper(this.$());
+          const helper = new ClusterStorageAddHelper(this.$());
           helper.getInput('generic_editor-name').val('someVal').change();
           return wait().then(() => {
             this.set('mode', 'show');

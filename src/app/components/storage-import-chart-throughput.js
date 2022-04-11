@@ -33,10 +33,10 @@ export default StorageImportChartBase.extend({
    * @type {Object}
    */
   chartOptions: computed('chartData', function () {
-    let chartData = this.get('chartData');
-    let data = chartData.series ?
+    const chartData = this.get('chartData');
+    const data = chartData.series ?
       chartData.series[0].data.filter(d => d !== null) : [];
-    let maxValue = data.length > 0 ? Math.max.apply(Math, data) : 0;
+    const maxValue = data.length > 0 ? Math.max.apply(Math, data) : 0;
     return {
       axisY: {
         onlyInteger: true,
@@ -82,7 +82,7 @@ export default StorageImportChartBase.extend({
   _chartValues: computed(function () { return []; }),
 
   throughputDivisor: computed('timeUnit', 'timePeriod', function () {
-    let {
+    const {
       timeUnit,
       timePeriod,
     } = this.getProperties('timeUnit', 'timePeriod');
@@ -99,7 +99,7 @@ export default StorageImportChartBase.extend({
   }),
 
   _timeStatsValues: computed('timeStats.@each.values', function () {
-    let timeStats = this.get('timeStats');
+    const timeStats = this.get('timeStats');
     // stat or stat.values can be null in case when there are no deletes or updates
     return timeStats ? timeStats.map(stat => stat && stat.values ||
       this.get('emptyTimePeriod')) : [];
@@ -110,7 +110,7 @@ export default StorageImportChartBase.extend({
    * @type {computed.Object}
    */
   chartData: computed('_timeStatsValues.[]', 'chartLabel', function () {
-    let {
+    const {
       _timeStatsValues,
       chartSeriesLabel,
       _chartValues,

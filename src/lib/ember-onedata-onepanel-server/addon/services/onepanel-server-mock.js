@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * Mock for REST backend of onepanel
  *
@@ -135,7 +138,7 @@ function getPopularityTask(taskId) {
 }
 
 function _genSupportingProviders() {
-  let supportingProviders = {};
+  const supportingProviders = {};
   supportingProviders[PROVIDER_ID] = 700000000 * providerSupportCounter;
   providerSupportCounter += 1;
   _.assign(supportingProviders, MOCKED_SUPPORT);
@@ -250,7 +253,7 @@ export default OnepanelServerBase.extend(
     isLoading: readOnly('sessionValidator.isPending'),
 
     sessionValidator: computed(function () {
-      let promise = this.validateSession();
+      const promise = this.validateSession();
       return PromiseObject.create({ promise });
     }).readOnly(),
 
@@ -321,10 +324,10 @@ export default OnepanelServerBase.extend(
     },
 
     _request(staticReq, api, method, ...params) {
-      let cookies = this.get('cookies');
+      const cookies = this.get('cookies');
 
       // TODO protect property read
-      let promise = new Promise((resolve, reject) => {
+      const promise = new Promise((resolve, reject) => {
         console.debug(
           `service:onepanel-server-mock: request API ${api}, method ${method}, params: ${JSON.stringify(params)}`
         );
@@ -352,7 +355,7 @@ export default OnepanelServerBase.extend(
         }
         if (handler) {
           if (handler.success) {
-            let response = {
+            const response = {
               statusCode: handler.statusCode &&
                 handler.statusCode(...params) || 200,
               headers: {
@@ -360,7 +363,7 @@ export default OnepanelServerBase.extend(
                   handler.taskId) : undefined,
               },
             };
-            let taskId = getTaskId(response);
+            const taskId = getTaskId(response);
             run.later(() => {
               const data = handler.success(...params);
               console.debug(
@@ -375,7 +378,7 @@ export default OnepanelServerBase.extend(
               });
             }, responseDelay);
           } else {
-            let response = {
+            const response = {
               statusCode: handler.statusCode && handler.statusCode(...params),
             };
             run.later(() => {
@@ -416,9 +419,9 @@ export default OnepanelServerBase.extend(
 
     validateSession() {
       console.debug('service:onepanel-server-mock: validateSession');
-      let cookies = this.get('cookies');
-      let fakeLoginFlag = (cookies.read('is-authenticated') === 'true');
-      let validating = new Promise((resolve, reject) => {
+      const cookies = this.get('cookies');
+      const fakeLoginFlag = (cookies.read('is-authenticated') === 'true');
+      const validating = new Promise((resolve, reject) => {
         if (fakeLoginFlag) {
           run.next(resolve);
         } else {
@@ -432,8 +435,8 @@ export default OnepanelServerBase.extend(
     login(passphrase) {
       const currentEmergencyPassphrase = this.get('currentEmergencyPassphrase');
       console.debug('service:onepanel-server-mock: login');
-      let cookies = this.get('cookies');
-      let loginCall = new Promise((resolve, reject) => {
+      const cookies = this.get('cookies');
+      const loginCall = new Promise((resolve, reject) => {
         if (passphrase === currentEmergencyPassphrase) {
           cookies.write('is-authenticated', 'true');
           run.next(resolve);
@@ -759,7 +762,7 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_ClusterApi_getTaskStatus: computed('progressMock', function () {
-      let progressMock = this.get('progressMock');
+      const progressMock = this.get('progressMock');
       return {
         success(taskId) {
           if (taskId === 'configure') {
@@ -831,9 +834,9 @@ export default OnepanelServerBase.extend(
       this.set('mockStep', installationStepsMap.oneproviderRegistration);
       return {
         success: (data) => {
-          let __provider = this.get('__provider') ||
+          const __provider = this.get('__provider') ||
             this.set('__provider', EmberObject.create({}));
-          for (let prop in data) {
+          for (const prop in data) {
             __provider.set(prop, data[prop]);
           }
         },
@@ -844,8 +847,8 @@ export default OnepanelServerBase.extend(
     _req_OneproviderIdentityApi_modifyProvider: computed(function () {
       return {
         success: (data) => {
-          let __provider = this.get('__provider');
-          for (let prop in data) {
+          const __provider = this.get('__provider');
+          for (const prop in data) {
             if (data[prop] !== undefined) {
               __provider.set(prop, data[prop]);
             }
@@ -894,9 +897,9 @@ export default OnepanelServerBase.extend(
       return {
         success: (storages) => {
           // the only storage is stored in the only key of storages
-          let storage = _.values(storages)[0];
+          const storage = _.values(storages)[0];
           // generate some fake id
-          let id = `id-${storage.name}`;
+          const id = `id-${storage.name}`;
           this.get('__storages').push(
             clusterStorageClass(storage.type).constructFromObject(
               _.assign({ id }, storage)
@@ -1010,8 +1013,8 @@ export default OnepanelServerBase.extend(
 
     _req_SpaceSupportApi_getSpaceDetails() {
       if (this.get('mockInitializedCluster')) {
-        let spaces = this.get('__spaces');
-        let findSpace = (id) => _.find(spaces, s => s.id === id);
+        const spaces = this.get('__spaces');
+        const findSpace = (id) => _.find(spaces, s => s.id === id);
         return {
           success: (id) => findSpace(id),
           statusCode: (id) => findSpace(id) ? 200 : 404,
@@ -1057,7 +1060,7 @@ export default OnepanelServerBase.extend(
     _req_oneprovider_revokeSpaceSupport: computed(function () {
       return {
         success: (spaceId) => {
-          let __spaces = this.get('__spaces');
+          const __spaces = this.get('__spaces');
           this.set('__spaces', _.reject(__spaces, s => get(s, 'id') === spaceId));
         },
         statusCode: () => 200,
@@ -1067,8 +1070,8 @@ export default OnepanelServerBase.extend(
     _req_SpaceSupportApi_modifySpace() {
       return {
         success: (id, data) => {
-          let spaces = this.get('__spaces');
-          let space = spaces.find(s => s.id === id);
+          const spaces = this.get('__spaces');
+          const space = spaces.find(s => s.id === id);
           if (space) {
             if (data.autoStorageImportConfig) {
               set(space, 'storageImport.autoStorageImportConfig', data.autoStorageImportConfig);
@@ -1084,8 +1087,8 @@ export default OnepanelServerBase.extend(
           }
         },
         statusCode: (id) => {
-          let spaces = this.get('__spaces');
-          let space = spaces.find(s => s.id === id);
+          const spaces = this.get('__spaces');
+          const space = spaces.find(s => s.id === id);
           return space ? 204 : 404;
         },
       };
@@ -1123,7 +1126,7 @@ export default OnepanelServerBase.extend(
         },
         statusCode: (id) => {
           const spacesFilePopularity = this.get('__spacesFilePopularity');
-          let configuration = spacesFilePopularity.find(s => s.id === id);
+          const configuration = spacesFilePopularity.find(s => s.id === id);
           return configuration ? 204 : 404;
         },
         taskId,
@@ -1162,7 +1165,7 @@ export default OnepanelServerBase.extend(
         },
         statusCode: (id) => {
           const spacesAutoCleaning = this.get('__spacesAutoCleaning');
-          let configuration = spacesAutoCleaning.find(s => s.id === id);
+          const configuration = spacesAutoCleaning.find(s => s.id === id);
           return configuration ? 204 : 404;
         },
       };
@@ -1186,7 +1189,7 @@ export default OnepanelServerBase.extend(
     _req_SpaceSupportApi_supportSpace: computed(function () {
       return {
         success: (supportSpaceRequest) => {
-          let space = _.clone(supportSpaceRequest);
+          const space = _.clone(supportSpaceRequest);
           space.id = 'id-' + Math.round(Math.random() * 100000, 0);
           space.name = 'Space-' + Math.round(Math.random() * 100, 0);
           space.supportingProviders = _genSupportingProviders();

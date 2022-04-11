@@ -1,3 +1,6 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable promise/no-return-in-finally */
+
 /**
  * A content page for managing registration data of provider
  *
@@ -109,8 +112,8 @@ export default Component.extend(
     },
 
     _providerFormMode: computed('_editing', 'providerProxy.content', function () {
-      let _editing = this.get('_editing');
-      let provider = this.get('providerProxy.content');
+      const _editing = this.get('_editing');
+      const provider = this.get('providerProxy.content');
       if (provider != null) {
         return _editing ? 'edit' : 'show';
       } else {
@@ -166,7 +169,7 @@ export default Component.extend(
     }),
 
     /**
-     * @override 
+     * @override
      * @type {Ember.ComputedProperty<Array<Action>>}
      */
     globalActions: computed(
@@ -226,14 +229,14 @@ export default Component.extend(
        * @returns {Promise}
        */
       deregister() {
-        let {
+        const {
           globalNotify,
           providerManager,
         } = this.getProperties(
           'globalNotify',
           'providerManager',
         );
-        let deregistering = providerManager.deregisterProvider();
+        const deregistering = providerManager.deregisterProvider();
         deregistering.catch(error => {
           globalNotify.backendError(this.t('providerDeregistration'), error);
         });

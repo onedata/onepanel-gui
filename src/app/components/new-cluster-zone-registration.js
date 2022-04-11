@@ -89,7 +89,7 @@ export default Component.extend(I18n, {
    * @returns {Onepanel.ProviderRegisterRequest}
    */
   createProviderRegisterRequest(providerData) {
-    let {
+    const {
       token,
       name,
       onezoneDomainName,
@@ -111,7 +111,7 @@ export default Component.extend(I18n, {
       'adminEmail',
     );
 
-    let reqProto = stripObject({
+    const reqProto = stripObject({
       token,
       name,
       onezoneDomainName,
@@ -123,7 +123,7 @@ export default Component.extend(I18n, {
       geoLatitude: Number.parseFloat(geoLatitude),
     }, [undefined, null, NaN, '']);
 
-    let req = ProviderRegisterRequest.constructFromObject(reqProto);
+    const req = ProviderRegisterRequest.constructFromObject(reqProto);
 
     return req;
   },
@@ -134,11 +134,11 @@ export default Component.extend(I18n, {
    * @returns {Promise} resolves when provider was registered; otherwise rejects
    */
   _submit(providerData) {
-    let submitting = new Promise((resolve, reject) => {
-      let onepanelServer = this.get('onepanelServer');
-      let providerRegisterRequest = this.createProviderRegisterRequest(
+    const submitting = new Promise((resolve, reject) => {
+      const onepanelServer = this.get('onepanelServer');
+      const providerRegisterRequest = this.createProviderRegisterRequest(
         providerData);
-      let addingProvider =
+      const addingProvider =
         onepanelServer.request('OneproviderIdentityApi', 'addProvider',
           providerRegisterRequest);
 
@@ -200,13 +200,13 @@ export default Component.extend(I18n, {
      * @returns {Promise} ``_submit`` promise
      */
     submit(providerData) {
-      let {
+      const {
         globalNotify,
         _excludedSubdomains,
         i18n,
         nextStep,
       } = this.getProperties('globalNotify', '_excludedSubdomains', 'i18n', 'nextStep');
-      let submitting = this._submit(providerData);
+      const submitting = this._submit(providerData);
       submitting.then(() => {
         globalNotify.info(i18n.t(I18N_PREFIX + 'providerRegisteredSuccessfully'));
         if (nextStep) {
