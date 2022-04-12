@@ -39,7 +39,7 @@ describe('Integration | Component | user account button', function () {
     const onepanelServer = lookupService(this, 'onepanelServer');
     const providerManager = lookupService(this, 'providerManager');
 
-    let someUsername = 'some_username';
+    const someUsername = 'some_username';
     onepanelServer.set('username', someUsername);
     set(onepanelServer, 'guiContext', {
       clusterId: 'cluster_id',

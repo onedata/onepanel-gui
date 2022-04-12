@@ -1,6 +1,6 @@
 /**
  * Override opening cluster in Onezone method
- * 
+ *
  * @module components/content-clusters-onepanel-redirect
  * @author Jakub Liput
  * @copyright (C) 2020 ACK CYFRONET AGH
@@ -9,6 +9,7 @@
 
 import { inject as service } from '@ember/service';
 import ContentClustersOnepanelRedirect from 'onedata-gui-common/components/content-clusters-onepanel-redirect';
+import { Promise } from 'rsvp';
 
 export default ContentClustersOnepanelRedirect.extend({
   onezoneGui: service(),

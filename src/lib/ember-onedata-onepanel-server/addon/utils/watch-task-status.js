@@ -20,7 +20,7 @@ const {
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
-  let gettingTaskStatus = onepanelServer.request('ClusterApi', 'getTaskStatus', taskId);
+  const gettingTaskStatus = onepanelServer.request('ClusterApi', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({
     data: taskStatus,
@@ -63,11 +63,11 @@ function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) 
  *    passed taskId
  */
 function watchTaskStatus(onepanelServer, taskId, interval = 1000) {
-  let deferred = new Deferred();
+  const deferred = new Deferred();
 
   // TODO: should we stop on getStatusError? - maybe failure counter
 
-  let scheduleTaskCheck = () => {
+  const scheduleTaskCheck = () => {
     setTimeout(() => getAndHandleTaskStatus(onepanelServer, taskId, deferred,
       scheduleTaskCheck), interval);
   };

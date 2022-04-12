@@ -118,7 +118,7 @@ export default Component.extend(I18n, GlobalActions, {
   storagesError: alias('storagesProxy.reason'),
 
   someStorageIsLoading: computed('storagesProxy.content.@each.isSettled', function () {
-    let storages = this.get('storagesProxy.content');
+    const storages = this.get('storagesProxy.content');
     if (storages) {
       return storages.toArray().some(sp => get(sp, 'isPending'));
     }
@@ -218,7 +218,7 @@ export default Component.extend(I18n, GlobalActions, {
    * @returns {undefined}
    */
   _updateSpacesProxy(reload = true) {
-    let spaceManager = this.get('spaceManager');
+    const spaceManager = this.get('spaceManager');
     this.set('spacesProxy', spaceManager.getSpaces(reload));
   },
 
@@ -229,13 +229,13 @@ export default Component.extend(I18n, GlobalActions, {
    * @returns {Promise<undefined|object>}
    */
   _submitAddStorage(storageFormData) {
-    let {
+    const {
       storageManager,
     } = this.getProperties('storageManager');
 
-    let cs = createClusterStorageModel(storageFormData);
+    const cs = createClusterStorageModel(storageFormData);
 
-    let addingStorage = storageManager.createStorage(cs);
+    const addingStorage = storageManager.createStorage(cs);
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {

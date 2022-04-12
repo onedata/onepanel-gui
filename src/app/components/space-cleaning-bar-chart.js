@@ -109,7 +109,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _targetPercent: computed('_target', 'spaceSize', function () {
-    let {
+    const {
       _target,
       spaceSize,
     } = this.getProperties('_target', 'spaceSize');
@@ -121,7 +121,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _thresholdPercent: computed('_threshold', 'spaceSize', function () {
-    let {
+    const {
       _threshold,
       spaceSize,
     } = this.getProperties('_threshold', 'spaceSize');
@@ -147,7 +147,7 @@ export default Component.extend({
     '_thresholdForSlider',
     '_targetForSlider',
     function () {
-      let {
+      const {
         _thresholdForSlider,
         _targetForSlider,
       } = this.getProperties('_thresholdForSlider', '_targetForSlider');
@@ -160,7 +160,7 @@ export default Component.extend({
    * @type {computed.boolean}
    */
   _usedPercent: computed('spaceSize', 'status.spaceOccupancy', function () {
-    let {
+    const {
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
@@ -172,7 +172,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _freeSpace: computed('spaceSize', 'status.spaceOccupancy', function () {
-    let {
+    const {
       spaceSize,
       status,
     } = this.getProperties('spaceSize', 'status');
@@ -184,7 +184,7 @@ export default Component.extend({
    * @type {computed.number}
    */
   _toReleaseSpace: computed('_target', 'status.spaceOccupancy', function () {
-    let {
+    const {
       _target,
       status,
     } = this.getProperties('_target', 'status');
@@ -200,7 +200,7 @@ export default Component.extend({
     'status.spaceOccupancy',
     '_target',
     function () {
-      let {
+      const {
         spaceSize,
         status,
         _target,
@@ -218,7 +218,7 @@ export default Component.extend({
     '_target',
     '_usedBelowSoftQuotaPercent',
     function () {
-      let {
+      const {
         spaceSize,
         _target,
         _usedBelowSoftQuotaPercent,
@@ -237,13 +237,13 @@ export default Component.extend({
     '_target',
     '_threshold',
     function () {
-      let {
+      const {
         spaceSize,
         status,
         _target,
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_target', '_threshold');
-      let spaceOccupancy = get(status, 'spaceOccupancy');
+      const spaceOccupancy = get(status, 'spaceOccupancy');
       if (spaceOccupancy <= _target) {
         return 0;
       } else {
@@ -262,7 +262,7 @@ export default Component.extend({
     '_threshold',
     '_usedBelowHardQuotaPercent',
     function () {
-      let {
+      const {
         spaceSize,
         _target,
         _threshold,
@@ -287,12 +287,12 @@ export default Component.extend({
     'status.spaceOccupancy',
     '_threshold',
     function () {
-      let {
+      const {
         spaceSize,
         status,
         _threshold,
       } = this.getProperties('spaceSize', 'status', '_threshold');
-      let spaceOccupancy = Math.min(get(status, 'spaceOccupancy'), spaceSize);
+      const spaceOccupancy = Math.min(get(status, 'spaceOccupancy'), spaceSize);
       return (Math.max(spaceOccupancy - _threshold, 0) / spaceSize) * 100;
     }
   ),
@@ -306,7 +306,7 @@ export default Component.extend({
     '_threshold',
     '_usedOverHardQuotaPercent',
     function () {
-      let {
+      const {
         spaceSize,
         _threshold,
         _usedOverHardQuotaPercent,
@@ -328,7 +328,7 @@ export default Component.extend({
     '_usedOverHardQuotaPercent',
     '_notUsedOverHardQuotaPercent',
     function () {
-      let properties = [
+      const properties = [
         '_usedBelowSoftQuotaPercent',
         '_notUsedBelowSoftQuotaPercent',
         '_usedBelowHardQuotaPercent',
@@ -336,7 +336,7 @@ export default Component.extend({
         '_usedOverHardQuotaPercent',
         '_notUsedOverHardQuotaPercent',
       ];
-      let classes = [
+      const classes = [
         'used-below-soft-quota',
         'not-used-below-soft-quota',
         'used-below-hard-quota',
@@ -344,7 +344,7 @@ export default Component.extend({
         'used-over-hard-quota',
         'not-used-over-hard-quota',
       ];
-      let {
+      const {
         _allowBarAnimations,
         _usedPercent,
         _oldPercentValues,
@@ -385,15 +385,15 @@ export default Component.extend({
       });
       let percentSum = 0;
       properties.forEach((property, index) => {
-        let element = this.$('.' + classes[index]);
-        let propertyValue = this.get(property);
+        const element = this.$('.' + classes[index]);
+        const propertyValue = this.get(property);
         element.css({
           width: propertyValue + '%',
           left: percentSum + '%',
         });
         percentSum += propertyValue;
       });
-      let usedWidth = { width: _usedPercent + '%' };
+      const usedWidth = { width: _usedPercent + '%' };
       let standardBarAnimation;
       if (_allowBarAnimations) {
         standardBarAnimation = {
@@ -427,12 +427,12 @@ export default Component.extend({
    * Sends data
    */
   _change() {
-    let {
+    const {
       _target,
       _threshold,
       onChange,
     } = this.getProperties('_target', '_threshold', 'onChange');
-    let values = {
+    const values = {
       target: _target,
       threshold: _threshold,
     };
@@ -492,11 +492,11 @@ export default Component.extend({
      * @param {number} value value
      */
     valueChanged(name, value) {
-      let {
+      const {
         spaceSize,
         settings,
       } = this.getProperties('spaceSize', 'settings');
-      let {
+      const {
         target,
         threshold,
       } = getProperties(settings, 'target', 'threshold');

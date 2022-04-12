@@ -39,7 +39,7 @@ describe('Unit | Service | deployment manager', function () {
   });
 
   it('converts API cluster info to array of ClusterHostInfo', function () {
-    let service = this.subject();
+    const service = this.subject();
 
     const CLUSTER = {
       databases: {
@@ -54,7 +54,7 @@ describe('Unit | Service | deployment manager', function () {
       },
     };
 
-    let {
+    const {
       mainManagerHostname,
       clusterHostsInfo,
     } = service._clusterConfigurationToHostsInfo(CLUSTER);

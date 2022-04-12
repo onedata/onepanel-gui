@@ -15,6 +15,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import { all as allFulfilled } from 'rsvp';
 
 export default Component.extend(
   I18n,
@@ -47,7 +48,7 @@ export default Component.extend(
       if (selectedSpaceId) {
         return PromiseObject.create({
           promise: this.get('spacesProxy').then(spacesProxies =>
-            Promise.all(spacesProxies).then(spaces =>
+            allFulfilled(spacesProxies).then(spaces =>
               spaces.findBy('id', selectedSpaceId)
             )
           ),
@@ -108,8 +109,8 @@ export default Component.extend(
       },
       modifySpace(space, data) {
         const globalNotify = this.get('globalNotify');
-        let spaceName = get(space, 'name');
-        let spaceId = get(space, 'id');
+        const spaceName = get(space, 'name');
+        const spaceId = get(space, 'id');
         return this.modifySpace(spaceId, data)
           .then(() => {
             globalNotify.info(this.t('configurationChanged', { spaceName }));

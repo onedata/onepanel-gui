@@ -77,7 +77,7 @@ export default StorageImportChartBase.extend({
    * @type {computed.Object}
    */
   chartData: computed('_queueData.values.[]', 'chartLabel', function () {
-    let {
+    const {
       _queueData,
       chartSeriesLabel,
       _chartValues,

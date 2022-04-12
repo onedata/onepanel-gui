@@ -65,7 +65,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       clusterModelManager,
     } = this.getProperties('onepanelServiceType', 'cephManager', 'clusterModelManager');
 
-    let clusterStep, hasCephDeployed;
+    let clusterStep;
+    let hasCephDeployed;
 
     return this._getThisClusterInitStep()
       .then(step => {
@@ -148,8 +149,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
     });
 
     // TODO use Array.prototype.values if available
-    let clusterHostsInfoArray = [];
-    for (let host in clusterHostsInfo) {
+    const clusterHostsInfoArray = [];
+    for (const host in clusterHostsInfo) {
       clusterHostsInfoArray.push(clusterHostsInfo[host]);
     }
 
@@ -173,7 +174,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
       'onepanelServer',
       'onepanelServiceType'
     );
-    let requestFun =
+    const requestFun =
       (validateData ? onepanelServer.requestValidData : onepanelServer.request)
       .bind(onepanelServer);
     return requestFun(
@@ -195,8 +196,8 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   },
 
   /**
-   * @param {Object} hostsData 
-   * @return {Promise<Object>}
+   * @param {Object} hostsData
+   * @returns {Promise<Object>}
    */
   modifyClusterIps(hostsData) {
     const {
@@ -246,7 +247,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    * @returns {Promise}
    */
   _getThisClusterInitStep() {
-    let {
+    const {
       onepanelServer,
       onepanelServiceType,
       onepanelConfiguration,
@@ -267,7 +268,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                 return resolve(installationStepsMap.done);
               } else {
                 // We have no exact indicator if earlier step -
-                // IPs configuration - has been finished, because it 
+                // IPs configuration - has been finished, because it
                 // has default values which are undistinguishable from user input
                 return resolve(installationStepsMap.ips);
               }
@@ -295,7 +296,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                     });
                 } else {
                   // We have no exact indicator if earlier step -
-                  // IPs configuration - has been finished, because it 
+                  // IPs configuration - has been finished, because it
                   // has default values which are undistinguishable from
                   // user input
                   return resolve(installationStepsMap.ips);
@@ -316,7 +317,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * @param {string} type
-   * @return {Promise} resolves with Array.{ hostname: string }
+   * @returns {Promise} resolves with Array.{ hostname: string }
    */
   getHosts(type = 'known') {
     return this.getHostNames(type).then(({ data: hostnames }) => {

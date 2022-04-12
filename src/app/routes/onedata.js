@@ -1,6 +1,6 @@
 /**
  * Adds Onepanel/Cluster specific data wait and resolve for `onedata` route
- * 
+ *
  * @module routes/onedata
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
@@ -11,6 +11,7 @@ import { inject as service } from '@ember/service';
 import { get, set, setProperties } from '@ember/object';
 import OnedataRoute from 'onedata-gui-common/routes/onedata';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { all as allFulfilled } from 'rsvp';
 
 export default OnedataRoute.extend(I18n, {
   clusterModelManager: service(),
@@ -36,7 +37,7 @@ export default OnedataRoute.extend(I18n, {
 
   model() {
     const isEmergency = this.get('onepanelServer.isEmergency');
-    return Promise.all([
+    return allFulfilled([
       this._super(...arguments),
       this.get('deploymentManager').getInstallationDetailsProxy(),
     ]).then(([model, installDetails]) => {

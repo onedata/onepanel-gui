@@ -83,7 +83,7 @@ export default Component.extend({
 
   actions: {
     startEdition() {
-      let {
+      const {
         allowEdition,
         _readableValue,
       } = this.getProperties('allowEdition', '_readableValue');
@@ -99,7 +99,7 @@ export default Component.extend({
       this.set('_inEditionMode', false);
     },
     saveEdition() {
-      let {
+      const {
         _editorValue,
         onSave,
         _readableValue,

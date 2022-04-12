@@ -73,7 +73,7 @@ export default EmberObject.extend({
    * @type {computed.number}
    */
   spaceSize: computed('supportingProviders', function () {
-    let providers = this.get('supportingProviders');
+    const providers = this.get('supportingProviders');
     if (providers) {
       return Object.keys(providers)
         .reduce((sum, id) => sum + get(providers, id), 0);

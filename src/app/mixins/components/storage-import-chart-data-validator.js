@@ -43,8 +43,8 @@ export default Mixin.create({
    * @returns {string|undefined} description of error if validation failed or nothing
    */
   validateImportChartData() {
-    let usedMetrics = this.get('usedMetrics');
-    let errors = _.concat(
+    const usedMetrics = this.get('usedMetrics');
+    const errors = _.concat(
       this.validateAnyMetric(usedMetrics),
       this.validateAllMetricsValidOrNull(usedMetrics)
     );
@@ -56,8 +56,8 @@ export default Mixin.create({
    * @returns {string[]} error messages
    */
   validateAnyMetric(metrics) {
-    let timeStats = this.get('timeStats');
-    let anyMetric = metrics.some(metric =>
+    const timeStats = this.get('timeStats');
+    const anyMetric = metrics.some(metric =>
       _.find(timeStats, ts => ts && ts.name === metric) != null
     );
     return anyMetric ? [] : [
@@ -71,10 +71,10 @@ export default Mixin.create({
    * @returns {string[]}
    */
   validateAllMetricsValidOrNull(metrics) {
-    let timeStats = this.get('timeStats');
-    let errors = [];
+    const timeStats = this.get('timeStats');
+    const errors = [];
     metrics.forEach(metric => {
-      let stat = _.find(timeStats, ts => ts && ts.name === metric);
+      const stat = _.find(timeStats, ts => ts && ts.name === metric);
       if (stat) {
         if (!validateTimeStats(stat)) {
           errors.push(`time stats record for "${metric}" is not valid`);

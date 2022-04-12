@@ -12,7 +12,7 @@ describe('Integration | Mixin | components/space item supports', function () {
   setupTest('mixin:components/space-item-supports', {
     integration: true,
     subject() {
-      let SpaceSupportsObject = EmberObject.extend(
+      const SpaceSupportsObject = EmberObject.extend(
         ComponentsSpaceItemSupportsMixin
       );
       this.register('test-container:space-support-object', SpaceSupportsObject);
@@ -26,7 +26,7 @@ describe('Integration | Mixin | components/space item supports', function () {
   });
 
   it('converts supportingProviders object to spaceSupporters format', function (done) {
-    let providerManager = getOwner(this).lookup('service:provider-manager');
+    const providerManager = getOwner(this).lookup('service:provider-manager');
     sinon.stub(providerManager, 'getRemoteProvider').rejects();
     sinon.stub(lookupService(this, 'i18n'), 't')
       .withArgs('supportInfo.provider')
@@ -34,7 +34,7 @@ describe('Integration | Mixin | components/space item supports', function () {
     providerManager.set('__providerDetails.id', 'id1');
     providerManager.set('__providerDetails.name', 'My provider');
 
-    let subject = this.subject();
+    const subject = this.subject();
 
     subject.set('space', {
       supportingProviders: {

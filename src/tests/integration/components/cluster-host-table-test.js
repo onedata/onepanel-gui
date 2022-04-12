@@ -27,7 +27,7 @@ describe('Integration | Component | cluster host table', function () {
   });
 
   it('renders table with host rows', function () {
-    let hosts = [
+    const hosts = [
       ClusterHostInfo.create({
         hostname: 'host.one.com',
       }),
@@ -39,15 +39,15 @@ describe('Integration | Component | cluster host table', function () {
 
     this.render(hbs `{{cluster-host-table hosts=hosts}}`);
 
-    let $hostTable = $('.cluster-host-table');
-    let helper = new HostTableHelper($hostTable);
+    const $hostTable = $('.cluster-host-table');
+    const helper = new HostTableHelper($hostTable);
     expect($hostTable).to.exist;
     expect(helper.getRow('host.one.com')).to.exist;
     expect(helper.getRow('host.second.com')).to.exist;
   });
 
   it('renders checked toggle for enabled services', function () {
-    let hosts = [
+    const hosts = [
       ClusterHostInfo.create({
         hostname: 'host.one.com',
         database: true,
@@ -58,14 +58,14 @@ describe('Integration | Component | cluster host table', function () {
 
     this.render(hbs `{{cluster-host-table hosts=hosts}}`);
 
-    let $hostTable = $('.cluster-host-table');
-    let helper = new HostTableHelper($hostTable);
+    const $hostTable = $('.cluster-host-table');
+    const helper = new HostTableHelper($hostTable);
 
-    let $databaseToggle = helper.getToggle('host.one.com', 'database');
+    const $databaseToggle = helper.getToggle('host.one.com', 'database');
     expect($databaseToggle, 'database toggle').to.exist;
     expect(new ToggleHelper($databaseToggle).isChecked()).to.be.true;
 
-    let $clusterManagerToggle = helper.getToggle('host.one.com', 'clusterManager');
+    const $clusterManagerToggle = helper.getToggle('host.one.com', 'clusterManager');
     expect($clusterManagerToggle, 'cluster manager toggle').to.exist;
     expect(new ToggleHelper($clusterManagerToggle).isChecked()).to.be.false;
   });

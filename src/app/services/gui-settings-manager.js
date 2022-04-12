@@ -15,7 +15,7 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { resolve } from 'rsvp';
+import { resolve, all as allFulfilled } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { and, not } from 'ember-awesome-macros';
 import { setProperties } from '@ember/object';
@@ -91,7 +91,7 @@ export default Service.extend(...mixins, {
       'cookieConsentNotificationProxy'
     );
 
-    return Promise.all([
+    return allFulfilled([
       signInNotificationProxy,
       privacyPolicyProxy,
       termsOfUseProxy,

@@ -127,8 +127,8 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
    * @type {Array.Object}
    */
   _timeUnits: computed(function () {
-    let i18n = this.get('i18n');
-    let tPrefix = 'components.spaceCleaningConditionsForm.timeUnits.';
+    const i18n = this.get('i18n');
+    const tPrefix = 'components.spaceCleaningConditionsForm.timeUnits.';
     return [{
       name: i18n.t(tPrefix + 'hours'),
       multiplicator: 1,
@@ -158,9 +158,9 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
    * @override
    */
   formFieldsErrors: computed('validations.errors.[]', 'sourceFieldNames', function () {
-    let sourceFieldNames = this.get('sourceFieldNames');
-    let errors = this.get('validations.errors');
-    let fieldsErrors = {};
+    const sourceFieldNames = this.get('sourceFieldNames');
+    const errors = this.get('validations.errors');
+    const fieldsErrors = {};
     sourceFieldNames
       .forEach((fieldName) => {
         fieldsErrors[fieldName] =
@@ -193,7 +193,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
     if (!data) {
       data = {};
     }
-    let formData = EmberObject.create();
+    const formData = EmberObject.create();
     [
       'minFileSize',
       'maxFileSize',
@@ -306,7 +306,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
    * @override
    */
   isValid() {
-    let {
+    const {
       formFieldsErrors,
       formFieldsModified: modified,
       formData,

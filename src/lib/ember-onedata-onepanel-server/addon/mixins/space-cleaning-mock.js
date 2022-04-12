@@ -81,7 +81,7 @@ export default Mixin.create({
   willDestroy() {
     try {
       const cleanStatesCache = this.get('cleanStatesCache');
-      for (let sid in cleanStatesCache) {
+      for (const sid in cleanStatesCache) {
         cleanStatesCache[sid].stop();
       }
     } finally {

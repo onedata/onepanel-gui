@@ -51,7 +51,7 @@ export default Component.extend({
    * @type {Array.Onepanel.SpaceDetails}
    */
   supportedSpaces: computed('spaces.@each.isFulfilled', function () {
-    let {
+    const {
       spaces,
       storageId,
     } = this.getProperties('spaces', 'storageId');
@@ -60,7 +60,7 @@ export default Component.extend({
       if (spaceProxy.get('isFulfilled')) {
         // if there will be more than one local storage per space,
         // localStorages array can be used instead of storageId
-        let localStorage = spaceProxy.get('content.storageId');
+        const localStorage = spaceProxy.get('content.storageId');
         return localStorage && localStorage === storageId;
       } else {
         return false;

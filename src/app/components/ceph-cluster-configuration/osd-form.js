@@ -1,6 +1,9 @@
+// TODO: VFS-9257 fix eslint issues in this file
+/* eslint-disable no-param-reassign */
+
 /**
  * Provides form for showing and creating osd settings.
- * 
+ *
  * @module components/ceph-cluster-configuration/osd-form
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -363,10 +366,10 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
 
   /**
    * Sets up classes, translations etc. for given field.
-   * @param {FieldType} field 
-   * @param {string} prefix 
+   * @param {FieldType} field
+   * @param {string} prefix
    * @param {boolean} isStatic
-   * @return {FieldType}
+   * @returns {FieldType}
    */
   prepareField(field, prefix, isStatic = false) {
     const {
@@ -397,7 +400,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
   /**
    * Returns translation of the static field value (static fields does not format
    * value like edition fields).
-   * @param {string} fieldName 
+   * @param {string} fieldName
    * @param {string} value
    * @returns {string} translation
    */

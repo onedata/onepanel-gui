@@ -888,7 +888,7 @@ export default OneForm.extend(I18n, Validations, {
     } = this.getProperties('createFields', 'staticFields');
 
     this.set('editorFields', createFields.map((createField, index) => {
-      let field = EmberObject.create(
+      const field = EmberObject.create(
         createField.get('notEditable') ? staticFields[index] : createField
       );
       field.set('name', this._addToFieldPrefix(field, '_editor'));
@@ -1049,7 +1049,7 @@ export default OneForm.extend(I18n, Validations, {
     },
 
     submit() {
-      let {
+      const {
         formValues,
         currentFields,
         selectedStorageType,
@@ -1070,7 +1070,7 @@ export default OneForm.extend(I18n, Validations, {
       let formData = {};
 
       currentFields.forEach(({ name }) => {
-        let prefixlessName = this.cutOffPrefix(name);
+        const prefixlessName = this.cutOffPrefix(name);
         formData[prefixlessName] = formValues.get(name);
       });
       formData = stripObject(formData, [undefined, null]);
@@ -1086,7 +1086,7 @@ export default OneForm.extend(I18n, Validations, {
             formData[key] = null;
           }
           // remove not modified data
-          let storageValue = storage[key] === undefined || storage[key] === '' ?
+          const storageValue = storage[key] === undefined || storage[key] === '' ?
             null : storage[key];
           if ((storageValue === null && formData[key] === null) ||
             (JSON.stringify(storageValue) === JSON.stringify(formData[key]) &&

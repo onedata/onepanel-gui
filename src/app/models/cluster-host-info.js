@@ -27,7 +27,7 @@ export default EmberObject.extend({
   clusterManager: false,
 
   isUsed: computed('database', 'clusterWorker', 'clusterManager', function () {
-    let {
+    const {
       database,
       clusterWorker,
       clusterManager,
