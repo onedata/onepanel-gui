@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9207 Removed usage of local OpenSans fonts
 * VFS-9013 Updated commons - using new color generator
 * VFS-7717 Upgraded Babel to version 7.3, using EcmaScript 2019 for development
 * VFS-8874 Removed bower and ember-spin-button
