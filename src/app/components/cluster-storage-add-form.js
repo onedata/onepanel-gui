@@ -10,7 +10,13 @@
 
 import { run } from '@ember/runloop';
 
-import EmberObject, { observer, computed, set, get, setProperties } from '@ember/object';
+import EmberObject, {
+  observer,
+  computed,
+  set,
+  get,
+  setProperties,
+} from '@ember/object';
 import { equal, union } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { buildValidations } from 'ember-cp-validations';

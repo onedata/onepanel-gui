@@ -1,5 +1,10 @@
 import { expect } from 'chai';
-import { describe, it, beforeEach, afterEach } from 'mocha';
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+} from 'mocha';
 import { setupComponentTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';

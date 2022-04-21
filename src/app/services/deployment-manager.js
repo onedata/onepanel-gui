@@ -15,7 +15,9 @@ import { reads, alias } from '@ember/object/computed';
 import ObjectProxy from '@ember/object/proxy';
 import { camelize, capitalize } from '@ember/string';
 import ClusterInfo from 'onepanel-gui/models/cluster-info';
-import InstallationDetails, { installationStepsMap } from 'onepanel-gui/models/installation-details';
+import InstallationDetails, {
+  installationStepsMap,
+} from 'onepanel-gui/models/installation-details';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';

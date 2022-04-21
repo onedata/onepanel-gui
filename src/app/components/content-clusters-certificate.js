@@ -11,13 +11,16 @@ import Component from '@ember/component';
 import { reads } from '@ember/object/computed';
 
 import { inject as service } from '@ember/service';
-import EmberObject, { computed, setProperties, observer } from '@ember/object';
+import EmberObject, {
+  computed,
+  setProperties,
+  observer,
+} from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import Looper from 'onedata-gui-common/utils/looper';
-import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
 
 /**
  * @type {Number} interval in ms
@@ -98,7 +101,9 @@ export default Component.extend(I18n, GlobalActions, {
   /**
    * @type {EmberObject<Onepanel.WebCert>}
    */
-  webCert: computedPipe('webCertProxy.content', EmberObject.create.bind(EmberObject)),
+  webCert: computed('webCertProxy.content', function webCert() {
+    return EmberObject.create(this.get('webCertProxy.content') || {});
+  }),
 
   _formTitle: computed(function _formTitle() {
     return this.t('formTitleStatic');

@@ -1,8 +1,12 @@
 import resolver from './helpers/resolver';
 import './helpers/responsive';
 import { mocha, afterEach } from 'mocha';
-import { setResolver } from 'ember-mocha';
+import { start, setResolver } from 'ember-mocha';
 import handleHidepassed from './handle-hidepassed';
+// import silenceDeprecations from 'onedata-gui-common/utils/silence-deprecations';
+
+// TODO: VFS-8903 remove
+// silenceDeprecations();
 
 setResolver(resolver);
 
@@ -11,3 +15,4 @@ mocha.setup({
 });
 
 handleHidepassed(afterEach);
+start();

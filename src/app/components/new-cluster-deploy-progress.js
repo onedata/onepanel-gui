@@ -9,7 +9,12 @@
 
 import Component from '@ember/component';
 import { reads } from '@ember/object/computed';
-import { observer, computed, getProperties, get } from '@ember/object';
+import {
+  observer,
+  computed,
+  getProperties,
+  get,
+} from '@ember/object';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';

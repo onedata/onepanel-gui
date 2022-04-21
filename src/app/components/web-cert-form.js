@@ -17,7 +17,14 @@ import notImplementedReject from 'onedata-gui-common/utils/not-implemented-rejec
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
-import { tag, raw, conditional, notEqual, getBy, equal } from 'ember-awesome-macros';
+import {
+  tag,
+  raw,
+  conditional,
+  notEqual,
+  getBy,
+  equal,
+} from 'ember-awesome-macros';
 import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
 import DatetimeField from 'onedata-gui-common/utils/form-component/datetime-field';
 import { scheduleOnce } from '@ember/runloop';
