@@ -1,15 +1,14 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
 describe('Integration | Component | cluster host ip form/host row', function () {
-  setupComponentTest('cluster-host-ip-form/host-row', {
-    integration: true,
-  });
+  setupRenderingTest();
 
-  it('renders static text if readonly flag is true', function () {
-    this.render(hbs `{{cluster-host-ip-form/host-row
+  it('renders static text if readonly flag is true', async function() {
+    await render(hbs `{{cluster-host-ip-form/host-row
       isReadOnly=true
       hostname="hostname.one"
       ip="172.17.0.1"
@@ -20,8 +19,8 @@ describe('Integration | Component | cluster host ip form/host row', function () 
       .to.match(/.*172\.17\.0\.1.*/);
   });
 
-  it('renders input if readonly flag is false', function () {
-    this.render(hbs `{{cluster-host-ip-form/host-row
+  it('renders input if readonly flag is false', async function() {
+    await render(hbs `{{cluster-host-ip-form/host-row
       isReadOnly=false
       hostname="hostname.one"
       ip="172.17.0.1"

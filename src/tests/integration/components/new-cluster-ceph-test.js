@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
@@ -12,9 +13,7 @@ import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 
 describe('Integration | Component | new cluster ceph', function () {
-  setupComponentTest('new-cluster-ceph', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'onepanel-server', OnepanelServerStub);
@@ -71,13 +70,13 @@ describe('Integration | Component | new cluster ceph', function () {
 
   it(
     'shows "block device warning" modal before deploy, when there are osds with block device',
-    function () {
+    async function () {
       const startDeploySpy = sinon.spy(
         this.get('stepData.clusterDeployProcess'),
         'startDeploy'
       );
 
-      this.render(hbs `{{new-cluster-ceph stepData=stepData}}`);
+      await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       return click('.btn-deploy-cluster')
         .then(() => {
@@ -100,7 +99,7 @@ describe('Integration | Component | new cluster ceph', function () {
     }
   );
 
-  it('allows to start deploy in "block device warning" modal', function () {
+  it('allows to start deploy in "block device warning" modal', async function () {
     let resolveDeployCallback;
     const startDeploySpy = sinon.stub(
       this.get('stepData.clusterDeployProcess'),
@@ -109,7 +108,7 @@ describe('Integration | Component | new cluster ceph', function () {
       resolveDeployCallback = resolve;
     }));
 
-    this.render(hbs `{{new-cluster-ceph stepData=stepData}}`);
+    await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
     return click('.btn-deploy-cluster')
       .then(() => click($('.block-device-format-warning-modal.in .proceed')[0]))
@@ -127,13 +126,13 @@ describe('Integration | Component | new cluster ceph', function () {
 
   it(
     'allows to cancel deployment start in block device warning modal',
-    function () {
+    async function () {
       const startDeploySpy = sinon.spy(
         this.get('stepData.clusterDeployProcess'),
         'startDeploy'
       );
 
-      this.render(hbs `{{new-cluster-ceph stepData=stepData}}`);
+      await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       return click('.btn-deploy-cluster')
         .then(() => click($('.block-device-format-warning-modal.in .cancel')[0]))
@@ -146,7 +145,7 @@ describe('Integration | Component | new cluster ceph', function () {
 
   it(
     'does not show "block device warning" modal before deploy when there are no osds with block device',
-    function () {
+    async function () {
       const deployData = this.get('stepData.clusterDeployProcess');
       const osds = get(deployData, 'configuration.ceph.osds');
       set(
@@ -156,7 +155,7 @@ describe('Integration | Component | new cluster ceph', function () {
       );
       const startDeploySpy = sinon.spy(deployData, 'startDeploy');
 
-      this.render(hbs `{{new-cluster-ceph stepData=stepData}}`);
+      await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       return click('.btn-deploy-cluster')
         .then(() => {

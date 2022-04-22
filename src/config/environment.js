@@ -49,7 +49,7 @@ module.exports = function (environment) {
       { id: 'groups', icon: 'groups' },
       { id: 'tokens', icon: 'tokens' },
       { id: 'harvesters', icon: 'light-bulb' },
-      { id: 'atmInventories', icon: 'atm-inventory'},
+      { id: 'atmInventories', icon: 'atm-inventory' },
       {
         id: 'clusters',
         icon: 'cluster',
@@ -114,12 +114,13 @@ module.exports = function (environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+    ENV.APP.autoboot = false;
 
     ENV.APP.MOCK_BACKEND = true;
   }
 
   if (environment === 'production') {
-    // empty 
+    // empty
   }
 
   return ENV;

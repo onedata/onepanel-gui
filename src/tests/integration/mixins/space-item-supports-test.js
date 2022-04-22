@@ -1,32 +1,27 @@
 import EmberObject from '@ember/object';
-import { getOwner } from '@ember/application';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import ComponentsSpaceItemSupportsMixin from 'onepanel-gui/mixins/components/space-item-supports';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
-import { lookupService } from '../../helpers/stub-service';
+import { registerService, lookupService } from '../../helpers/stub-service';
+import OwnerInjector from 'onedata-gui-common/mixins/owner-injector';
 import sinon from 'sinon';
 
+const SpaceSupportsObject = EmberObject.extend(
+  ComponentsSpaceItemSupportsMixin,
+  OwnerInjector
+);
+
 describe('Integration | Mixin | components/space item supports', function () {
-  setupTest('mixin:components/space-item-supports', {
-    integration: true,
-    subject() {
-      const SpaceSupportsObject = EmberObject.extend(
-        ComponentsSpaceItemSupportsMixin
-      );
-      this.register('test-container:space-support-object', SpaceSupportsObject);
-      return getOwner(this).lookup('test-container:space-support-object');
-    },
-  });
+  setupTest();
 
   beforeEach(function () {
-    this.register('service:provider-manager', ProviderManagerStub);
-    this.inject.service('provider-manager', { as: 'providerManager' });
+    registerService(this, 'provider-manager', ProviderManagerStub);
   });
 
   it('converts supportingProviders object to spaceSupporters format', function (done) {
-    const providerManager = getOwner(this).lookup('service:provider-manager');
+    const providerManager = lookupService(this, 'provider-manager');
     sinon.stub(providerManager, 'getRemoteProvider').rejects();
     sinon.stub(lookupService(this, 'i18n'), 't')
       .withArgs('supportInfo.provider')
@@ -34,13 +29,14 @@ describe('Integration | Mixin | components/space item supports', function () {
     providerManager.set('__providerDetails.id', 'id1');
     providerManager.set('__providerDetails.name', 'My provider');
 
-    const subject = this.subject();
-
-    subject.set('space', {
-      supportingProviders: {
-        id1: 100,
-        id2: 200,
-        id3: 300,
+    const subject = SpaceSupportsObject.create({
+      ownerSource: this.owner,
+      space: {
+        supportingProviders: {
+          id1: 100,
+          id2: 200,
+          id3: 300,
+        },
       },
     });
 

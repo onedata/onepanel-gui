@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import Service from '@ember/service';
@@ -35,9 +36,7 @@ const noNodesInstallationDetails = {
 };
 
 describe('Integration | Component | content clusters overview', function () {
-  setupComponentTest('content-clusters-overview', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'provider-manager', ProviderManager);
@@ -45,7 +44,7 @@ describe('Integration | Component | content clusters overview', function () {
     registerService(this, 'storage-manager', StorageManager);
   });
 
-  it('does not use providerManager if cluster is not Oneprovider', function () {
+  it('does not use providerManager if cluster is not Oneprovider', async function() {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -67,7 +66,7 @@ describe('Integration | Component | content clusters overview', function () {
       fetchInstallationDetails,
     });
 
-    this.render(hbs `{{content-clusters-overview
+    await render(hbs `{{content-clusters-overview
       cluster=cluster
       fetchInstallationDetails=fetchInstallationDetails
       fetchStorages=fetchStorages
@@ -81,7 +80,7 @@ describe('Integration | Component | content clusters overview', function () {
     });
   });
 
-  it('does uses providerManager if cluster is Oneprovider', function () {
+  it('does uses providerManager if cluster is Oneprovider', async function() {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -103,7 +102,7 @@ describe('Integration | Component | content clusters overview', function () {
       fetchInstallationDetails,
     });
 
-    this.render(hbs `{{content-clusters-overview
+    await render(hbs `{{content-clusters-overview
       cluster=cluster
       fetchInstallationDetails=fetchInstallationDetails
     }}`);

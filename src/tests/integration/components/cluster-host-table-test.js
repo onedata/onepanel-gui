@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import $ from 'jquery';
 
@@ -22,11 +23,9 @@ class HostTableHelper {
 }
 
 describe('Integration | Component | cluster host table', function () {
-  setupComponentTest('cluster-host-table', {
-    integration: true,
-  });
+  setupRenderingTest();
 
-  it('renders table with host rows', function () {
+  it('renders table with host rows', async function() {
     const hosts = [
       ClusterHostInfo.create({
         hostname: 'host.one.com',
@@ -37,7 +36,7 @@ describe('Integration | Component | cluster host table', function () {
     ];
     this.set('hosts', hosts);
 
-    this.render(hbs `{{cluster-host-table hosts=hosts}}`);
+    await render(hbs `{{cluster-host-table hosts=hosts}}`);
 
     const $hostTable = $('.cluster-host-table');
     const helper = new HostTableHelper($hostTable);
@@ -46,7 +45,7 @@ describe('Integration | Component | cluster host table', function () {
     expect(helper.getRow('host.second.com')).to.exist;
   });
 
-  it('renders checked toggle for enabled services', function () {
+  it('renders checked toggle for enabled services', async function() {
     const hosts = [
       ClusterHostInfo.create({
         hostname: 'host.one.com',
@@ -56,7 +55,7 @@ describe('Integration | Component | cluster host table', function () {
     ];
     this.set('hosts', hosts);
 
-    this.render(hbs `{{cluster-host-table hosts=hosts}}`);
+    await render(hbs `{{cluster-host-table hosts=hosts}}`);
 
     const $hostTable = $('.cluster-host-table');
     const helper = new HostTableHelper($hostTable);

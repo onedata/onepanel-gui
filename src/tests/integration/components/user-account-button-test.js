@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import OnepanelServerStub from '../../helpers/onepanel-server-stub';
@@ -25,9 +26,7 @@ const ProviderManager = Service.extend({
 const GuiUtils = Service.extend({});
 
 describe('Integration | Component | user account button', function () {
-  setupComponentTest('user-account-button', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'onepanel-server', OnepanelServer);
@@ -35,7 +34,7 @@ describe('Integration | Component | user account button', function () {
     registerService(this, 'gui-utils', GuiUtils);
   });
 
-  it('renders username got from onepanel server', function () {
+  it('renders username got from onepanel server', async function() {
     const onepanelServer = lookupService(this, 'onepanelServer');
     const providerManager = lookupService(this, 'providerManager');
 
@@ -49,7 +48,7 @@ describe('Integration | Component | user account button', function () {
         promise: resolve({}),
       }));
 
-    this.render(hbs `{{user-account-button}}`);
+    await render(hbs `{{user-account-button}}`);
     return wait().then(() => {
       expect(this.$().text()).to.match(new RegExp(someUsername));
     });

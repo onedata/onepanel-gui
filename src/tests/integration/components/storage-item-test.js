@@ -3,7 +3,8 @@ import ObjectProxy from '@ember/object/proxy';
 import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
@@ -19,9 +20,7 @@ const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
 const PromiseObject = ObjectProxy.extend(PromiseProxyMixin);
 
 describe('Integration | Component | storage item', function () {
-  setupComponentTest('storage-item', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'provider-manager', ProviderManagerStub);
@@ -29,7 +28,7 @@ describe('Integration | Component | storage item', function () {
     registerService(this, 'ceph-manager', Service);
   });
 
-  it('renders storage name', function (done) {
+  it('renders storage name', async function(done) {
     const name = 'Storage One';
     this.set('storages', [PromiseObject.create({
       promise: resolve({
@@ -39,7 +38,7 @@ describe('Integration | Component | storage item', function () {
       }),
     })]);
 
-    this.render(hbs `
+    await render(hbs `
     {{#one-collapsible-list as |list|}}
       {{#each storages as |storage|}}
         {{#list.item as |listItem|}}
@@ -56,7 +55,7 @@ describe('Integration | Component | storage item', function () {
     });
   });
 
-  it('shows total support size', function (done) {
+  it('shows total support size', async function(done) {
     const providerManager = lookupService(this, 'providerManager');
     const providerId = providerManager.get('__providerDetails.id');
     const storageId = 'storage1';
@@ -95,7 +94,7 @@ describe('Integration | Component | storage item', function () {
 
     const totalSupport = 400000;
 
-    this.render(hbs `
+    await render(hbs `
     {{#one-collapsible-list as |list|}}
       {{#each storages as |storage|}}
         {{#list.item as |listItem|}}

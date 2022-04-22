@@ -17,10 +17,7 @@ const GuiUtils = Service.extend();
 const OnepanelConfiguration = Service.extend();
 
 describe('Unit | Service | deployment manager', function () {
-  setupTest('service:deployment-manager', {
-    // Specify the other units that are required for this test.
-    // needs: ['service:foo']
-  });
+  setupTest();
 
   beforeEach(function () {
     registerService(this, 'cephManager', Service);
@@ -39,7 +36,7 @@ describe('Unit | Service | deployment manager', function () {
   });
 
   it('converts API cluster info to array of ClusterHostInfo', function () {
-    const service = this.subject();
+    const service = this.owner.lookup('service:deployment-manager');
 
     const CLUSTER = {
       databases: {

@@ -3,25 +3,21 @@ import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupTest } from 'ember-mocha';
 import wait from 'ember-test-helpers/wait';
+import { registerService, lookupService } from '../../helpers/stub-service';
 
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
 
 describe('Unit | Service | storage manager', function () {
-  setupTest('service:storage-manager', {
-    // Specify the other units that are required for this test.
-    // needs: ['service:foo']
-  });
+  setupTest();
 
   beforeEach(function () {
-    this.register('service:onepanel-server', onepanelServerStub);
-    this.inject.service('onepanel-server', { as: 'onepanelServer' });
+    this.onepanelServer = registerService(this, 'onepanel-server', onepanelServerStub);
   });
 
   it('can return single storage promise proxy', function (done) {
     const SOME_ID = 'some_id_1';
 
-    const onepanelServer = this.container.lookup('service:onepanelServer');
-    onepanelServer.requestValidData = function (api, method, ...params) {
+    this.onepanelServer.requestValidData = function (api, method, ...params) {
       if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
           if (params[0] === SOME_ID) {
@@ -37,7 +33,7 @@ describe('Unit | Service | storage manager', function () {
       }
     };
 
-    const service = this.subject();
+    const service = lookupService(this, 'storage-manager');
 
     const storageProxy = service.getStorageDetails(SOME_ID);
 
@@ -54,8 +50,7 @@ describe('Unit | Service | storage manager', function () {
   it('can return the same record proxy when using cache', function (done) {
     const SOME_ID = 'some_id_2';
 
-    const onepanelServer = this.container.lookup('service:onepanelServer');
-    onepanelServer.requestValidData = function (api, method, ...params) {
+    this.onepanelServer.requestValidData = function (api, method, ...params) {
       if (api === 'StoragesApi') {
         if (method === 'getStorageDetails') {
           if (params[0] === SOME_ID) {
@@ -71,7 +66,7 @@ describe('Unit | Service | storage manager', function () {
       }
     };
 
-    const service = this.subject();
+    const service = lookupService(this, 'storage-manager');
 
     const storageProxy1 = service.getStorageDetails(SOME_ID);
     storageProxy1.get('promise').then(() => {

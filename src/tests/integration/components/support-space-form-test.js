@@ -5,18 +5,19 @@ import {
   it,
   beforeEach,
 } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
-// import { reject } from 'rsvp';
+import { reject } from 'rsvp';
 import StorageManagerStub from '../../helpers/storage-manager-stub';
 import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import { click, fillIn } from 'ember-native-dom-helpers';
-// import { suppressRejections } from '../../../helpers/suppress-rejections';
+import { suppressRejections } from '../../helpers/suppress-rejections';
 
 const UNITS = {
   mib: Math.pow(1024, 2),
@@ -25,8 +26,8 @@ const UNITS = {
 };
 
 class SupportSpaceFormHelper extends FormHelper {
-  constructor($template) {
-    super($template, '.support-space-form');
+  constructor(template) {
+    super(template, '.support-space-form');
   }
 }
 
@@ -37,9 +38,7 @@ class StorageSelectHelper extends EmberPowerSelectHelper {
 }
 
 describe('Integration | Component | support space form', function () {
-  setupComponentTest('support-space-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'storage-manager', StorageManagerStub);
@@ -86,8 +85,8 @@ describe('Integration | Component | support space form', function () {
 
   it(
     'does not disable storages with importedStorage equals false',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+    async function () {
+      await render(hbs `{{support-space-form}}`);
 
       let storagesSelectHelper;
       return wait()
@@ -105,8 +104,8 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it('does not disable storage without support and with importedStorage', function () {
-    this.render(hbs `{{support-space-form}}`);
+  it('does not disable storage without support and with importedStorage', async function () {
+    await render(hbs `{{support-space-form}}`);
 
     let storagesSelectHelper;
     return wait()
@@ -126,8 +125,8 @@ describe('Integration | Component | support space form', function () {
 
   it(
     'disables storages with support and importedStorage equals true',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+    async function () {
+      await render(hbs `{{support-space-form}}`);
 
       let storagesSelectHelper;
       return wait()
@@ -145,8 +144,8 @@ describe('Integration | Component | support space form', function () {
   );
 
   it('does not show import section if storage is not imported',
-    function () {
-      this.render(hbs `{{support-space-form}}`);
+    async function () {
+      await render(hbs `{{support-space-form}}`);
 
       return wait().then(() =>
         expect(this.$('.storage-import-form')).to.have.class('collapse-hidden')
@@ -154,8 +153,8 @@ describe('Integration | Component | support space form', function () {
     }
   );
 
-  it('renders import section if storage is imported', function () {
-    this.render(hbs `{{support-space-form}}`);
+  it('renders import section if storage is imported', async function () {
+    await render(hbs `{{support-space-form}}`);
 
     return wait()
       .then(() => selectStorageWithImport(this))
@@ -164,28 +163,28 @@ describe('Integration | Component | support space form', function () {
       );
   });
 
-  it('submits size multiplicated by chosen unit', function () {
+  it('submits size multiplicated by chosen unit', async function () {
     const sizeToInput = 30;
     const unit = 'tib';
     const sizeOutput = sizeToInput * UNITS[unit];
     const submitStub = sinon.stub().resolves();
-    this.on('submit', submitStub);
+    this.set('submit', submitStub);
     this.prepareAllFields();
 
-    this.render(hbs `
+    await render(hbs `
       {{support-space-form
-        submitSupportSpace=(action "submit")
+        submitSupportSpace=(action submit)
       }}
     `);
 
     let helper;
     return wait()
       .then(() => {
-        helper = new SupportSpaceFormHelper(this.$());
-        return fillIn(helper.getInput('main-token')[0], 'some token');
+        helper = new SupportSpaceFormHelper(this.element);
+        return fillIn(helper.getInput('main-token'), 'some token');
       })
-      .then(() => fillIn(helper.getInput('main-size')[0], sizeToInput.toString()))
-      .then(() => click(helper.getInput('main-sizeUnit-' + unit)[0]))
+      .then(() => fillIn(helper.getInput('main-size'), sizeToInput.toString()))
+      .then(() => click(helper.getInput('main-sizeUnit-' + unit)))
       .then(() => helper.submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
@@ -193,29 +192,28 @@ describe('Integration | Component | support space form', function () {
       });
   });
 
-  // TODO: VFS-8903 use again
-  // it('shows a global error notify when submit fails', function () {
-  //   suppressRejections();
-  //   const globalNotify = lookupService(this, 'global-notify');
-  //   const backendError = sinon.spy(globalNotify, 'backendError');
-  //   this.prepareAllFields();
+  it('shows a global error notify when submit fails', function () {
+    suppressRejections();
+    const globalNotify = lookupService(this, 'global-notify');
+    const backendError = sinon.spy(globalNotify, 'backendError');
+    this.prepareAllFields();
 
-  //   this.on('submit', sinon.stub().returns(reject('some error')));
+    this.set('submit', sinon.stub().returns(reject('some error')));
 
-  //   this.render(hbs `
-  //     {{support-space-form
-  //       submitSupportSpace=(action "submit")
-  //       values=formValues
-  //     }}
-  //   `);
+    this.render(hbs `
+      {{support-space-form
+        submitSupportSpace=submit
+        values=formValues
+      }}
+    `);
 
-  //   return wait()
-  //     .then(() => click('button[type=submit]'))
-  //     .then(() => expect(backendError).to.be.calledOnce);
-  // });
+    return wait()
+      .then(() => click('button[type=submit]'))
+      .then(() => expect(backendError).to.be.calledOnce);
+  });
 
-  it('hides import form when selected storage is not imported', function () {
-    this.render(hbs `{{support-space-form}}`);
+  it('hides import form when selected storage is not imported', async function () {
+    await render(hbs `{{support-space-form}}`);
 
     return wait().then(() => {
       expect(
@@ -224,8 +222,8 @@ describe('Integration | Component | support space form', function () {
     });
   });
 
-  it('shows import form when selected storage is imported', function () {
-    this.render(hbs `{{support-space-form}}`);
+  it('shows import form when selected storage is imported', async function () {
+    await render(hbs `{{support-space-form}}`);
 
     return wait()
       .then(() => selectStorageWithImport(this))
@@ -236,10 +234,10 @@ describe('Integration | Component | support space form', function () {
       });
   });
 
-  it('reacts to invalid data in import form', function () {
+  it('reacts to invalid data in import form', async function () {
     this.prepareAllFields();
 
-    this.render(hbs `{{support-space-form values=formValues}}`);
+    await render(hbs `{{support-space-form values=formValues}}`);
 
     return wait()
       .then(() => selectStorageWithImport(this))
@@ -247,14 +245,14 @@ describe('Integration | Component | support space form', function () {
       .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
   });
 
-  it('submits data from import form', function () {
+  it('submits data from import form', async function () {
     const submitStub = sinon.stub().resolves();
     this.prepareAllFields();
-    this.on('submit', submitStub);
+    this.set('submit', submitStub);
 
-    this.render(hbs `
+    await render(hbs `
       {{support-space-form
-        submitSupportSpace=(action "submit")
+        submitSupportSpace=(action submit)
         values=formValues
       }}
     `);
@@ -262,7 +260,7 @@ describe('Integration | Component | support space form', function () {
     return wait()
       .then(() => selectStorageWithImport(this))
       .then(() => click('.toggle-field-generic-continuousScan'))
-      .then(() => new SupportSpaceFormHelper(this.$()).submit())
+      .then(() => new SupportSpaceFormHelper(this.element).submit())
       .then(() => {
         expect(submitStub).to.be.calledOnce;
         expect(submitStub).to.be.calledWith(sinon.match.hasNested(
