@@ -19,7 +19,10 @@ import { inject as service } from '@ember/service';
 import { readOnly } from '@ember/object/computed';
 import { get, set, computed } from '@ember/object';
 import Onepanel from 'npm:onepanel';
-import { installationStepsMap, installationStepsArray } from 'onepanel-gui/models/installation-details';
+import {
+  installationStepsMap,
+  installationStepsArray,
+} from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 import { array, raw } from 'ember-awesome-macros';

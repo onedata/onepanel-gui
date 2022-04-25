@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { describe, it, context } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 import { click, fillIn } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import _ from 'lodash';
@@ -19,98 +19,93 @@ const exampleFormValues = {
   },
 };
 
-function fillInWholeForm() {
-  return click('.field-mode-mode-auto')
-    .then(() => fillIn(
-      '.field-generic-maxDepth',
-      exampleFormValues.autoStorageImportConfig.maxDepth))
-    .then(() => click('.toggle-field-generic-syncAcl'))
-    .then(() => fillIn(
-      '.field-continuous-scanInterval',
-      exampleFormValues.autoStorageImportConfig.scanInterval
-    ))
-    .then(() => click('.toggle-field-generic-detectModifications'));
+async function fillInWholeForm() {
+  await click('.field-mode-mode-auto');
+  await fillIn(
+    '.field-generic-maxDepth',
+    exampleFormValues.autoStorageImportConfig.maxDepth
+  );
+  await click('.toggle-field-generic-syncAcl');
+  await fillIn(
+    '.field-continuous-scanInterval',
+    exampleFormValues.autoStorageImportConfig.scanInterval
+  );
+  await click('.toggle-field-generic-detectModifications');
 }
 
 describe('Integration | Component | storage import form', function () {
-  setupComponentTest('storage-import-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
-  it('hides submit button if neccessary', function () {
-    this.render(hbs `
+  it('hides submit button if neccessary', async function () {
+    await render(hbs `
       {{storage-import-form
         showSubmitButton=false
       }}
     `);
 
-    return wait().then(() => expect(this.$('button[type=submit]')).to.not.exist);
+    expect(this.$('button[type=submit]')).to.not.exist;
   });
 
-  it('has preselected "auto" mode on init', function () {
-    this.render(hbs `{{storage-import-form}}`);
+  it('has preselected "auto" mode on init', async function () {
+    await render(hbs `{{storage-import-form}}`);
 
-    return wait()
-      .then(() =>
-        expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true)
-      );
+    expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true);
   });
 
   context('when import mode is "auto"', function () {
-    it('shows auto storage import fields with default values', function () {
-      this.render(hbs `{{storage-import-form}}`);
+    it('shows auto storage import fields with default values', async function (done) {
+      await render(hbs `{{storage-import-form}}`);
 
-      return wait()
-        .then(() => click('.field-mode-mode-auto'))
-        .then(() => {
-          expect(this.$('.toggle-field-generic-continuousScan'))
-            .to.have.class('checked');
-          expect(this.$('.field-generic-maxDepth').val()).to.equal('');
-          expect(this.$('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
-          expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-          expect(this.$('.toggle-field-generic-detectModifications'))
-            .to.have.class('checked');
-          expect(this.$('.toggle-field-generic-detectDeletions'))
-            .to.have.class('checked');
-        });
+      await click('.field-mode-mode-auto');
+      expect(this.$('.toggle-field-generic-continuousScan'))
+        .to.have.class('checked');
+      expect(this.$('.field-generic-maxDepth').val()).to.equal('');
+      expect(this.$('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
+      expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
+      expect(this.$('.toggle-field-generic-detectModifications'))
+        .to.have.class('checked');
+      expect(this.$('.toggle-field-generic-detectDeletions'))
+        .to.have.class('checked');
+      done();
     });
 
     it(
       'does not show any continuous scan fields if continuous scan is disabled',
-      function () {
-        this.render(hbs `{{storage-import-form}}`);
+      async function (done) {
+        await render(hbs `{{storage-import-form}}`);
 
-        return wait()
-          .then(() => click('.field-mode-mode-auto'))
-          .then(() => click('.toggle-field-generic-continuousScan'))
-          .then(() => checkContinuousFieldsNotExist(this));
+        await click('.field-mode-mode-auto');
+        await click('.toggle-field-generic-continuousScan');
+        checkContinuousFieldsNotExist(this);
+        done();
       }
     );
 
-    it('shows continuous scan fields if continuous scan is enabled', function () {
-      this.render(hbs `
+    it('shows continuous scan fields if continuous scan is enabled',
+      async function (done) {
+        await render(hbs `
+          {{storage-import-form}}
+        `);
+
+        await click('.field-mode-mode-auto');
+        checkContinuousFieldsExist(this);
+        done();
+      });
+
+    it('disables submit button when data is incorrect', async function (done) {
+      await render(hbs `
         {{storage-import-form}}
       `);
 
-      return wait()
-        .then(() => click('.field-mode-mode-auto'))
-        .then(() => checkContinuousFieldsExist(this));
-    });
-
-    it('disables submit button when data is incorrect', function () {
-      this.render(hbs `
-        {{storage-import-form}}
-      `);
-
-      return wait()
-        .then(() => click('.field-mode-mode-auto'))
-        .then(() => fillIn('.field-generic-maxDepth', 'bad value'))
-        .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
+      await click('.field-mode-mode-auto');
+      await fillIn('.field-generic-maxDepth', 'bad value');
+      expect(this.$('button[type=submit]')).to.be.disabled;
+      done();
     });
 
     it(
       'shows continuous scan fields if continuous scan is enabled in defaultValues',
-      function () {
+      async function (done) {
         const formValues = {
           mode: 'auto',
           autoStorageImportConfig: {
@@ -119,231 +114,212 @@ describe('Integration | Component | storage import form', function () {
         };
         this.set('formValues', formValues);
 
-        this.render(hbs `{{storage-import-form defaultValues=formValues}}`);
+        await render(hbs `{{storage-import-form defaultValues=formValues}}`);
 
-        return wait().then(() => checkContinuousFieldsExist(this));
+        checkContinuousFieldsExist(this);
+        done();
       }
     );
 
     it(
       'notifies about form data modification in "new" mode ("initial" scan)',
-      function () {
+      async function (done) {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
-        this.render(hbs `
+        await render(hbs `
           {{storage-import-form mode="new" valuesChanged=changedSpy}}
         `);
 
-        return wait()
-          .then(() => fillInWholeForm())
-          // disable continuous
-          .then(() => click('.toggle-field-generic-continuousScan'))
-          .then(() => {
-            const correctData = _.cloneDeep(exampleFormValues);
-            correctData.autoStorageImportConfig.continuousScan = false;
-            delete correctData.autoStorageImportConfig.scanInterval;
+        await fillInWholeForm();
+        // disable continuous
+        await click('.toggle-field-generic-continuousScan');
+        const correctData = _.cloneDeep(exampleFormValues);
+        correctData.autoStorageImportConfig.continuousScan = false;
+        delete correctData.autoStorageImportConfig.scanInterval;
 
-            const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
-            expect(lastValues).to.deep.equal(correctData);
-            expect(lastValuesAreValid).to.be.true;
-          });
+        const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
+        expect(lastValues).to.deep.equal(correctData);
+        expect(lastValuesAreValid).to.be.true;
+        done();
       }
     );
 
     it(
       'notifies about form data modification in "new" mode ("continuous" scan)',
-      function () {
+      async function (done) {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
-        this.render(hbs `
+        await render(hbs `
           {{storage-import-form mode="new" valuesChanged=changedSpy}}
         `);
 
-        return wait()
-          .then(() => fillInWholeForm())
-          .then(() => {
-            const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
-            expect(lastValues).to.deep.equal(exampleFormValues);
-            expect(lastValuesAreValid).to.be.true;
-          });
+        await fillInWholeForm();
+        const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
+        expect(lastValues).to.deep.equal(exampleFormValues);
+        expect(lastValuesAreValid).to.be.true;
+        done();
       }
     );
 
     it(
       'fills in "continuous"-only fields with default values after "continuous" scan turned on in "edit" form mode',
-      function () {
+      async function (done) {
         this.setProperties({
           defaultValues: { mode: 'auto' },
         });
-        this.render(hbs `
+        await render(hbs `
           {{storage-import-form mode="edit" defaultValues=defaultValues}}
         `);
 
-        return wait()
-          .then(() => click('.toggle-field-generic-continuousScan'))
-          .then(() => {
-            expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-          });
+        await click('.toggle-field-generic-continuousScan');
+        expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
+        done();
       }
     );
 
     it(
       'shows correct "continuous mode" info message when "continuous scan" is enabled',
-      function () {
-        this.render(hbs `{{storage-import-form}}`);
+      async function (done) {
+        await render(hbs `{{storage-import-form}}`);
 
-        return wait()
-          .then(() => click('.field-mode-mode-auto'))
-          .then(() =>
-            expect(this.$('.continuous-info-msg').text())
-            .to.contain('Continuous scan enabled')
-          );
+        await click('.field-mode-mode-auto');
+        expect(this.$('.continuous-info-msg').text())
+          .to.contain('Continuous scan enabled');
+        done();
       }
     );
 
     it(
       'shows correct "continuous mode" info message when "continuous scan" is disabled',
-      function () {
-        this.render(hbs `{{storage-import-form}}`);
+      async function (done) {
+        await render(hbs `{{storage-import-form}}`);
 
-        return wait()
-          .then(() => click('.field-mode-mode-auto'))
-          .then(() => click('.toggle-field-generic-continuousScan'))
-          .then(() =>
-            expect(this.$('.continuous-info-msg').text())
-            .to.contain('Continuous scan disabled')
-          );
+        await click('.field-mode-mode-auto');
+        await click('.toggle-field-generic-continuousScan');
+        expect(this.$('.continuous-info-msg').text())
+          .to.contain('Continuous scan disabled');
+        done();
       }
     );
 
     it(
       'shows existing import config',
-      function () {
+      async function (done) {
         this.set('exampleConfig', exampleFormValues);
-        this.render(hbs `
+        await render(hbs `
           {{storage-import-form defaultValues=exampleConfig}}
         `);
 
-        return wait()
-          .then(() => {
-            expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true);
-            expect(this.$('.toggle-field-generic-continuousScan'))
-              .to.have.class('checked');
-            expect(this.$('.field-generic-maxDepth').val()).to.equal('10');
-            expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
-            expect(this.$('.field-continuous-scanInterval').val()).to.equal('20');
-            expect(this.$('.toggle-field-generic-detectModifications'))
-              .to.not.have.class('checked');
-            expect(this.$('.toggle-field-generic-detectDeletions'))
-              .to.have.class('checked');
-          });
+        expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true);
+        expect(this.$('.toggle-field-generic-continuousScan'))
+          .to.have.class('checked');
+        expect(this.$('.field-generic-maxDepth').val()).to.equal('10');
+        expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
+        expect(this.$('.field-continuous-scanInterval').val()).to.equal('20');
+        expect(this.$('.toggle-field-generic-detectModifications'))
+          .to.not.have.class('checked');
+        expect(this.$('.toggle-field-generic-detectDeletions'))
+          .to.have.class('checked');
+        done();
       }
     );
   });
 
   context('when import mode is "manual"', function () {
-    it('does not show any auto storage import fields', function () {
+    it('does not show any auto storage import fields', async function (done) {
       // enforcing "new" form mode to allow "mode" field change
-      this.render(hbs `{{storage-import-form mode="new"}}`);
+      await render(hbs `{{storage-import-form mode="new"}}`);
 
-      return wait()
-        .then(() => click('.field-mode-mode-manual'))
-        .then(() => {
-          [
-            '.toggle-field-generic-continuousScan',
-            '.field-generic-maxDepth',
-            '.toggle-field-generic-syncAcl',
-            '.field-continuous-scanInterval',
-            '.toggle-field-continuous-detectModifications',
-            '.toggle-field-continuous-detectDeletions',
-          ].forEach(selector => expect(this.$(selector)).to.not.exist);
-        });
+      await click('.field-mode-mode-manual');
+      [
+        '.toggle-field-generic-continuousScan',
+        '.field-generic-maxDepth',
+        '.toggle-field-generic-syncAcl',
+        '.field-continuous-scanInterval',
+        '.toggle-field-continuous-detectModifications',
+        '.toggle-field-continuous-detectDeletions',
+      ].forEach(selector => expect(this.$(selector)).to.not.exist);
+      done();
     });
 
-    it('does not show "continuous mode" info message', function () {
+    it('does not show "continuous mode" info message', async function (done) {
       // enforcing "new" form mode to allow "mode" field change
-      this.render(hbs `{{storage-import-form mode="new"}}`);
+      await render(hbs `{{storage-import-form mode="new"}}`);
 
-      return wait()
-        .then(() => click('.field-mode-mode-manual'))
-        .then(() => expect(this.$('.continuous-info-msg')).to.not.exist);
+      await click('.field-mode-mode-manual');
+      expect(this.$('.continuous-info-msg')).to.not.exist;
+      done();
     });
 
     it(
       'shows existing import config',
-      function () {
+      async function (done) {
         this.set('exampleConfig', { mode: 'manual' });
-        this.render(hbs `
+        await render(hbs `
           {{storage-import-form defaultValues=exampleConfig}}
         `);
 
-        return wait()
-          .then(() =>
-            expect(this.$('.field-mode-mode-manual')).to.have.prop('checked', true)
-          );
+        expect(this.$('.field-mode-mode-manual')).to.have.prop('checked', true);
+        done();
       }
     );
 
-    it('allows to submit', function () {
+    it('allows to submit', async function (done) {
       const submitSpy = this.set('submitSpy', sinon.spy());
 
       // enforcing "new" form mode to allow "mode" field change
-      this.render(hbs `{{storage-import-form mode="new" submit=submitSpy}}`);
+      await render(hbs `{{storage-import-form mode="new" submit=submitSpy}}`);
 
-      return wait()
-        .then(() => click('.field-mode-mode-manual'))
-        .then(() => click('.submit-import'))
-        .then(() => expect(submitSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
-          mode: 'manual',
-        })));
+      await click('.field-mode-mode-manual');
+      await click('.submit-import');
+      expect(submitSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
+        mode: 'manual',
+      }));
+      done();
     });
   });
 
-  it('notifies about initial values on init', function () {
+  it('notifies about initial values on init', async function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
-    this.render(hbs `
+    await render(hbs `
       {{storage-import-form valuesChanged=changedSpy mode="new"}}
     `);
 
-    return wait()
-      .then(() => expect(changedSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
-        mode: 'auto',
-        autoStorageImportConfig: sinon.match({
-          continuousScan: true,
-          syncAcl: false,
-          scanInterval: '60',
-          detectModifications: true,
-          detectDeletions: true,
-        }),
-      })));
+    expect(changedSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
+      mode: 'auto',
+      autoStorageImportConfig: sinon.match({
+        continuousScan: true,
+        syncAcl: false,
+        scanInterval: '60',
+        detectModifications: true,
+        detectDeletions: true,
+      }),
+    }));
   });
 
-  it('notifies about mode changed to "manual"', function () {
+  it('notifies about mode changed to "manual"', async function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
     // enforcing "new" form mode to allow "mode" field change
-    this.render(hbs `{{storage-import-form mode="new" valuesChanged=changedSpy}}`);
+    await render(hbs `{{storage-import-form mode="new" valuesChanged=changedSpy}}`);
 
-    return wait()
-      .then(() => click('.field-mode-mode-manual'))
-      .then(() => expect(changedSpy).to.be.calledTwice.and.to.be.calledWith(sinon.match({
-        mode: 'manual',
-      })));
+    await click('.field-mode-mode-manual');
+    expect(changedSpy).to.be.calledTwice.and.to.be.calledWith(sinon.match({
+      mode: 'manual',
+    }));
   });
 
-  it('has enabled "mode" field in "new" form mode', function () {
-    this.render(hbs `{{storage-import-form mode="new"}}`);
+  it('has enabled "mode" field in "new" form mode', async function () {
+    await render(hbs `{{storage-import-form mode="new"}}`);
 
-    return wait()
-      .then(() => expect(this.$('.field-mode-mode input')).to.not.have.attr('disabled'));
+    expect(this.$('.field-mode-mode input')).to.not.have.attr('disabled');
   });
 
-  it('has disabled "mode" field in "edit" form mode', function () {
-    this.render(hbs `{{storage-import-form mode="edit"}}`);
+  it('has disabled "mode" field in "edit" form mode', async function () {
+    await render(hbs `{{storage-import-form mode="edit"}}`);
 
-    return wait()
-      .then(() => expect(this.$('.field-mode-mode input')).to.have.attr('disabled'));
+    expect(this.$('.field-mode-mode input')).to.have.attr('disabled');
   });
 });
 

@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { getProperties } from '@ember/object';
 
@@ -10,9 +11,7 @@ function approxEquals(value, targetValue) {
 }
 
 describe('Integration | Component | space cleaning bar chart', function () {
-  setupComponentTest('space-cleaning-bar-chart', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     this.setProperties({
@@ -28,8 +27,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     });
   });
 
-  it('renders pacman if cleaning is working', function () {
-    this.render(hbs `
+  it('renders pacman if cleaning is working', async function() {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -40,9 +39,9 @@ describe('Integration | Component | space cleaning bar chart', function () {
     expect(this.$('.pacman')).to.exist;
   });
 
-  it('does not render pacman if cleaning is not working', function () {
+  it('does not render pacman if cleaning is not working', async function() {
     this.set('status.lastRunStatus', 'completed');
-    this.render(hbs `
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -53,8 +52,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     expect(this.$('.pacman')).not.to.exist;
   });
 
-  it('renders valid indicators', function () {
-    this.render(hbs `
+  it('renders valid indicators', async function() {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -69,8 +68,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     expect(indicators.find('.to-release')).to.contain('1 MiB');
   });
 
-  it('renders valid slider values', function () {
-    this.render(hbs `
+  it('renders valid slider values', async function() {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -82,8 +81,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     expect(this.$('.hard-quota-editor')).to.contain('8 MiB');
   });
 
-  it('renders valid bars', function () {
-    this.render(hbs `
+  it('renders valid bars', async function() {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings

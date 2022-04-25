@@ -18,7 +18,14 @@ import { inject as service } from '@ember/service';
 import { Promise, reject } from 'rsvp';
 import { readOnly, sort, and } from '@ember/object/computed';
 import { scheduleOnce, later } from '@ember/runloop';
-import { observer, computed, get, set, getProperties, setProperties } from '@ember/object';
+import {
+  observer,
+  computed,
+  get,
+  set,
+  getProperties,
+  setProperties,
+} from '@ember/object';
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';

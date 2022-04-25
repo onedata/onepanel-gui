@@ -1,6 +1,11 @@
 import { expect } from 'chai';
-import { describe, it, beforeEach, afterEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import {
+  describe,
+  it,
+  beforeEach,
+} from 'mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import { registerService, lookupService } from '../../helpers/stub-service';
@@ -37,9 +42,7 @@ const ProviderManager = Service.extend({
 const reloadDelay = 5000;
 
 describe('Integration | Component | new cluster web cert', function () {
-  setupComponentTest('new-cluster-web-cert', {
-    integration: true,
-  });
+  const { afterEach } = setupRenderingTest();
 
   beforeEach(function () {
     const _location = {
@@ -93,7 +96,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           _location.hostname = '127.0.0.1';
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.btn-cert-next');
@@ -121,7 +124,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           _location.hostname = beforeReloadDomain;
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.btn-cert-next');
@@ -141,7 +144,7 @@ describe('Integration | Component | new cluster web cert', function () {
           const _location = this.get('_location');
           const oldHostname = _location.hostname;
           const nextStep = this.set('nextStep', sinon.spy());
-          this.render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
           await wait();
           await click('.toggle-field-letsEncrypt');

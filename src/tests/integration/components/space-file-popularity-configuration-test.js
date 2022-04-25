@@ -1,17 +1,16 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import { resolve } from 'rsvp';
 import { fillIn, blur } from 'ember-native-dom-helpers';
 
 describe('Integration | Component | space file popularity configuration', function () {
-  setupComponentTest('space-file-popularity-configuration', {
-    integration: true,
-  });
+  setupRenderingTest();
 
-  it('is filled with injected data', function () {
+  it('is filled with injected data', async function() {
     this.set('configuration', {
       id: 'space_id',
       enabled: true,
@@ -21,7 +20,7 @@ describe('Integration | Component | space file popularity configuration', functi
       maxAvgOpenCountPerDay: 4,
     });
 
-    this.render(hbs `
+    await render(hbs `
       {{space-file-popularity-configuration configuration=configuration}}
     `);
 
@@ -39,9 +38,9 @@ describe('Integration | Component | space file popularity configuration', functi
     ).to.have.value('4');
   });
 
-  it('debounce changes save', function (done) {
+  it('debounce changes save', async function(done) {
     const saveSpy = sinon.spy(() => resolve());
-    this.on('onSave', saveSpy);
+    this.set('onSave', saveSpy);
     this.set('configuration', {
       id: 'space_id',
       enabled: true,
@@ -50,10 +49,10 @@ describe('Integration | Component | space file popularity configuration', functi
       avgOpenCountPerDayWeight: 3,
       maxAvgOpenCountPerDay: 4,
     });
-    this.render(hbs `
+    await render(hbs `
       {{space-file-popularity-configuration
         configuration=configuration
-        onSave=(action "onSave")
+        onSave=(action onSave)
         formSendDebounceTime=0
         formSavedInfoHideTimeout=0
       }}

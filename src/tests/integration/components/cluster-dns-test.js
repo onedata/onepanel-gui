@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve, reject } from 'rsvp';
@@ -23,9 +24,7 @@ const GuiUtils = Service.extend({
 });
 
 describe('Integration | Component | cluster dns', function () {
-  setupComponentTest('cluster-dns', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
@@ -37,7 +36,7 @@ describe('Integration | Component | cluster dns', function () {
       .resolves('18.03.1');
   });
 
-  it('renders DNS server IPs fetched from server', function () {
+  it('renders DNS server IPs fetched from server', async function() {
     const dnsCheck = {
       domain: {
         summary: 'ok',
@@ -64,7 +63,7 @@ describe('Integration | Component | cluster dns', function () {
         },
       });
 
-    this.render(hbs `{{cluster-dns
+    await render(hbs `{{cluster-dns
       onepanelServiceType="oneprovider"
       dnsCheckProxy=dnsCheckProxy
       zonePoliciesProxy=zonePoliciesProxy

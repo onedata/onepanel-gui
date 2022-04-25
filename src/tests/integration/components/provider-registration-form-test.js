@@ -1,32 +1,31 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { click, fillIn } from 'ember-native-dom-helpers';
 import FormHelper from '../../helpers/form';
 import wait from 'ember-test-helpers/wait';
 
 class ProviderRegistrationHelper extends FormHelper {
-  constructor($template) {
-    super($template, '.provider-registration-form');
+  constructor(template) {
+    super(template, '.provider-registration-form');
   }
 }
 
 describe('Integration | Component | provider registration form', function () {
-  setupComponentTest('provider-registration-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   it(
     'renders name, domain, latitude and logitude fields in new mode',
-    function () {
-      this.on('submit', function () {});
+    async function () {
+      this.set('submit', function () {});
 
-      this.render(hbs `
-        {{provider-registration-form mode="new" submit=(action "submit")}}
+      await render(hbs `
+        {{provider-registration-form mode="new" submit=(action submit)}}
       `);
 
-      const helper = new ProviderRegistrationHelper(this.$());
+      const helper = new ProviderRegistrationHelper(this.element);
       return wait().then(() => {
         [
           'editTop-name',
@@ -42,8 +41,8 @@ describe('Integration | Component | provider registration form', function () {
     }
   );
 
-  it('changes hostname/subdomain visibility with toggle', function () {
-    this.render(hbs `
+  it('changes hostname/subdomain visibility with toggle', async function () {
+    await render(hbs `
       {{provider-registration-form
         mode="new"
         subdomainDelegationSupported=true
@@ -71,10 +70,10 @@ describe('Integration | Component | provider registration form', function () {
     });
   });
 
-  it('checks for excluded subdomains', function () {
+  it('checks for excluded subdomains', async function () {
     const excludedSubdomains = ['a', 'b'];
     this.set('excludedSubdomains', excludedSubdomains);
-    this.render(hbs `
+    await render(hbs `
       {{provider-registration-form
         mode="new"
         subdomainDelegationSupported=true
@@ -93,8 +92,8 @@ describe('Integration | Component | provider registration form', function () {
   });
 
   it('accepts IP address in provider domain fields',
-    function () {
-      this.render(hbs `
+    async function () {
+      await render(hbs `
         {{provider-registration-form
           subdomainDelegationSupported=true
           mode="new"}}`);
@@ -110,8 +109,8 @@ describe('Integration | Component | provider registration form', function () {
   );
 
   it('accepts domain name in provider domain fields',
-    function () {
-      this.render(hbs `
+    async function () {
+      await render(hbs `
         {{provider-registration-form
           mode="new"}}`);
       return wait().then(() => {
@@ -122,8 +121,8 @@ describe('Integration | Component | provider registration form', function () {
     }
   );
 
-  it('accepts valid subdomain field value', function () {
-    this.render(hbs `
+  it('accepts valid subdomain field value', async function () {
+    await render(hbs `
       {{provider-registration-form
         subdomainDelegationSupported=true
         mode="new"}}`);

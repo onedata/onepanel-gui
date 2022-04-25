@@ -11,7 +11,7 @@ import { A } from '@ember/array';
 
 import ObjectProxy from '@ember/object/proxy';
 import ArrayProxy from '@ember/array/proxy';
-import { observer } from '@ember/object';
+import { observer, get } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
@@ -139,7 +139,7 @@ export default Service.extend({
           record.set('content', data);
           if (!batch) {
             const indexInCollection =
-              collectionCache.toArray().findIndex(record => record.id === id);
+              collectionCache.toArray().findIndex(record => get(record, 'id') === id);
             if (indexInCollection > -1) {
               collectionCache[indexInCollection] = record;
             } else {

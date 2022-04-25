@@ -13,7 +13,10 @@ import _ from 'lodash';
 import { getOwner } from '@ember/application';
 import { get } from '@ember/object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import { all as allFulfilled, hash as promiseHash } from 'rsvp';
+import {
+  all as allFulfilled,
+  hash as promiseHash,
+} from 'rsvp';
 
 export default Service.extend({
   onepanelServer: service(),

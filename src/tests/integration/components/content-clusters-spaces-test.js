@@ -1,7 +1,8 @@
 import Service from '@ember/service';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import spaceManagerStub from '../../helpers/space-manager-stub';
@@ -38,9 +39,7 @@ const i18nStub = Service.extend({
 });
 
 describe('Integration | Component | content clusters spaces', function () {
-  setupComponentTest('content-clusters-spaces', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'space-manager', spaceManagerStub);
@@ -70,8 +69,8 @@ describe('Integration | Component | content clusters spaces', function () {
     spaceManager.set('__spaces', SPACES);
   });
 
-  it('shows support space form when clicking on support space button', function (done) {
-    this.render(hbs `
+  it('shows support space form when clicking on support space button', async function(done) {
+    await render(hbs `
       <button class="collapsible-toolbar-global-toggle"></button>
       {{content-clusters-spaces}}
     `);

@@ -1,27 +1,26 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import wait from 'ember-test-helpers/wait';
 
 describe('Integration | Component | cluster host ip form', function () {
-  setupComponentTest('cluster-host-ip-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
-  it('invokes hostDataChanged action when host data changes', function () {
+  it('invokes hostDataChanged action when host data changes', async function() {
     const spyHostDataChanged = sinon.spy();
-    this.on('spyHostDataChanged', spyHostDataChanged);
+    this.set('spyHostDataChanged', spyHostDataChanged);
 
     const hosts = Object.freeze({
       'Host One': '172.17.0.1',
     });
     this.set('hosts', hosts);
 
-    this.render(hbs `{{cluster-host-ip-form
+    await render(hbs `{{cluster-host-ip-form
       hosts=hosts
-      hostDataChanged=(action "spyHostDataChanged")
+      hostDataChanged=(action spyHostDataChanged)
     }}`);
 
     const $form = this.$('.cluster-host-ip-form');
@@ -34,22 +33,22 @@ describe('Integration | Component | cluster host ip form', function () {
     });
   });
 
-  it('invokes allValidChanged action when host data is invalid', function () {
+  it('invokes allValidChanged action when host data is invalid', async function() {
     const spyAllValidChanged = sinon.spy();
-    this.on('spyAllValidChanged', spyAllValidChanged);
+    this.set('spyAllValidChanged', spyAllValidChanged);
 
     const hosts = {
       'Host One': '172.17.0.1',
     };
     this.set('hosts', hosts);
-    this.on('hostDataChanged', (key, value) => {
+    this.set('hostDataChanged', (key, value) => {
       hosts[key] = value;
     });
 
-    this.render(hbs `{{cluster-host-ip-form
+    await render(hbs `{{cluster-host-ip-form
       hosts=hosts
-      hostDataChanged=(action "hostDataChanged")
-      allValidChanged=(action "spyAllValidChanged")
+      hostDataChanged=(action hostDataChanged)
+      allValidChanged=(action spyAllValidChanged)
     }}`);
 
     const $form = this.$('.cluster-host-ip-form');

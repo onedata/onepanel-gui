@@ -1,10 +1,11 @@
 import Application from '@ember/application';
-import Ember from 'ember';
 import Resolver from './resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
+import silenceDeprecations from 'onedata-gui-common/utils/silence-deprecations';
 
-Ember.MODEL_FACTORY_INJECTIONS = true;
+// TODO: VFS-8903 Remove silenceDeprecations call
+silenceDeprecations();
 
 const App = Application.extend({
   modulePrefix: config.modulePrefix,

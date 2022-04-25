@@ -7,10 +7,7 @@ import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 
 describe('Unit | Service | user manager', function () {
-  setupTest('service:user-manager', {
-    // a onepanelServer is mocked in beforeEach
-    // needs: ['service:onepanelServer']
-  });
+  setupTest();
 
   beforeEach(function () {
     registerService(this, 'onepanelServer', onepanelServerStub);
@@ -25,7 +22,7 @@ describe('Unit | Service | user manager', function () {
     const onepanelServer = lookupService(this, 'onepanelServer');
     sinon.stub(onepanelServer, 'getCurrentUser').resolves(currentUser);
 
-    const service = this.subject();
+    const service = this.owner.lookup('service:user-manager');
     const currentUserResult = service.getCurrentUser();
     return currentUserResult.then(user => {
       const userBasicProps = getProperties(

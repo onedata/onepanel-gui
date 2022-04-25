@@ -10,7 +10,12 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import EmberObject, { computed, observer, get, set } from '@ember/object';
+import EmberObject, {
+  computed,
+  observer,
+  get,
+  set,
+} from '@ember/object';
 import { reads } from '@ember/object/computed';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';

@@ -11,9 +11,7 @@ const OnepanelServer = Service.extend({
 });
 
 describe('Unit | Service | dns manager', function () {
-  setupTest('service:dns-manager', {
-    needs: [],
-  });
+  setupTest();
 
   beforeEach(function beforeEach() {
     registerService(this, 'onepanelServer', OnepanelServer);
@@ -30,7 +28,7 @@ describe('Unit | Service | dns manager', function () {
       .withArgs('DNSApi', 'checkDns')
       .resolves({ data: checkDnsData });
 
-    const service = this.subject();
+    const service = this.owner.lookup('service:dns-manager');
     service.getDnsCheckProxy();
 
     return wait().then(() => {
@@ -49,7 +47,7 @@ describe('Unit | Service | dns manager', function () {
       .withArgs('DNSApi', 'checkDns')
       .resolves({ data: checkDnsData });
 
-    const service = this.subject();
+    const service = this.owner.lookup('service:dns-manager');
     service.getDnsCheckProxy();
 
     return wait().then(() => {

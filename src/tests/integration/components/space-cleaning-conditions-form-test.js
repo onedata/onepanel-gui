@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import { fillIn, blur, click } from 'ember-native-dom-helpers';
@@ -20,16 +21,14 @@ const globalData = Object.freeze({
 });
 
 describe('Integration | Component | space cleaning conditions form', function () {
-  setupComponentTest('space-cleaning-conditions-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     this.set('data', globalData);
   });
 
-  it('is filled in with injected data', function () {
-    this.render(hbs `
+  it('is filled in with injected data', async function() {
+    await render(hbs `
       {{space-cleaning-conditions-form
         data=data
         formSendDebounceTime=0
@@ -75,8 +74,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
     'maxDailyMovingAverage',
     'maxMonthlyMovingAverage',
   ].forEach((fieldName) => {
-    it(`does not accept letters in ${fieldName} input`, function (done) {
-      this.render(hbs `
+    it(`does not accept letters in ${fieldName} input`, async function(done) {
+      await render(hbs `
           {{space-cleaning-conditions-form
             data=data
             formSendDebounceTime=0
@@ -89,8 +88,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
       });
     });
 
-    it(`does not accept negative numbers in ${fieldName} input`, function (done) {
-      this.render(hbs `
+    it(`does not accept negative numbers in ${fieldName} input`, async function(done) {
+      await render(hbs `
                 {{space-cleaning-conditions-form
                   data=data
                   formSendDebounceTime=0
@@ -104,8 +103,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
         });
     });
 
-    it(`accepts positive numbers in ${fieldName} input`, function (done) {
-      this.render(hbs `
+    it(`accepts positive numbers in ${fieldName} input`, async function(done) {
+      await render(hbs `
                 {{space-cleaning-conditions-form
                   data=data
                   formSendDebounceTime=0
@@ -118,15 +117,15 @@ describe('Integration | Component | space cleaning conditions form', function ()
       });
     });
 
-    it(`sends data after ${fieldName} input focus lost`, function (done) {
+    it(`sends data after ${fieldName} input focus lost`, async function(done) {
       const saveSpy = sinon.spy(() => resolve());
-      this.on('onSave', saveSpy);
-      this.render(hbs `
+      this.set('onSave', saveSpy);
+      await render(hbs `
                 {{space-cleaning-conditions-form
                   formSendDebounceTime=0
                   formSavedInfoHideTimeout=0
                   data=data
-                  onSave=(action "onSave")}}`);
+                  onSave=(action onSave)}}`);
 
       const saveArg = {};
 
@@ -146,8 +145,8 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not accept float numbers in minHoursSinceLastOpen input', function (done) {
-    this.render(hbs `
+  it('does not accept float numbers in minHoursSinceLastOpen input', async function(done) {
+    await render(hbs `
               {{space-cleaning-conditions-form
                 data=data
                 formSendDebounceTime=0
@@ -160,15 +159,15 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('debounce changes save', function (done) {
+  it('debounce changes save', async function(done) {
     const saveSpy = sinon.spy(() => resolve());
-    this.on('onSave', saveSpy);
-    this.render(hbs `
+    this.set('onSave', saveSpy);
+    await render(hbs `
               {{space-cleaning-conditions-form
                 formSendDebounceTime=0
                 formSavedInfoHideTimeout=0
                 data=data
-                onSave=(action "onSave")}}`);
+                onSave=(action onSave)}}`);
 
     const saveArg = {
       minFileSize: { value: 2097152 },
@@ -189,21 +188,21 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not clear number value when disabling and enabling field', function () {
+  it('does not clear number value when disabling and enabling field', async function() {
     const localData = _.cloneDeep(globalData);
     const saveSpy = sinon.spy(data => {
       _.merge(localData, data);
       return resolve();
     });
-    this.on('onSave', saveSpy);
+    this.set('onSave', saveSpy);
 
     this.set('localData', localData);
-    this.render(hbs `
+    await render(hbs `
               {{space-cleaning-conditions-form
                 formSendDebounceTime=0
                 formSavedInfoHideTimeout=0
                 data=localData
-                onSave=(action "onSave")}}`);
+                onSave=(action onSave)}}`);
 
     const greaterInputSelector =
       '.minFileSizeGroup input.condition-number-input';

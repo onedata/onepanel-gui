@@ -17,7 +17,12 @@ import { A } from '@ember/array';
 import { Promise } from 'rsvp';
 import { readOnly, reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import EmberObject, { set, get, setProperties, computed } from '@ember/object';
+import EmberObject, {
+  set,
+  get,
+  setProperties,
+  computed,
+} from '@ember/object';
 import { run } from '@ember/runloop';
 
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';

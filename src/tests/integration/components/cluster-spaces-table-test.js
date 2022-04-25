@@ -1,7 +1,8 @@
 import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import Service from '@ember/service';
 import SpaceDetails from 'onepanel-gui/models/space-details';
@@ -15,9 +16,7 @@ const OnepanelServer = Service.extend({
 });
 
 describe('Integration | Component | cluster spaces table', function () {
-  setupComponentTest('cluster-spaces-table', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'storage-manager', StorageManagerStub);
@@ -43,7 +42,7 @@ describe('Integration | Component | cluster spaces table', function () {
   });
 
   it('renders error message when at least one space details fetch was rejected',
-    function () {
+    async function() {
       const spaces = [
         EmberObject.create({
           isSettled: true,
@@ -72,12 +71,12 @@ describe('Integration | Component | cluster spaces table', function () {
       this.set('spaces', spaces);
       this.set('provider', { id: '123' });
 
-      this.render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
+      await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
       expect(this.$('.alert-some-spaces-rejected')).to.exist;
     });
 
   it('does not render error message when all spaces are fetched successfully',
-    function () {
+    async function() {
       const spaces = [
         EmberObject.create({
           isSettled: true,
@@ -102,7 +101,7 @@ describe('Integration | Component | cluster spaces table', function () {
       this.set('spaces', spaces);
       this.set('provider', { id: '123' });
 
-      this.render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
+      await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
       expect(this.$('.alert-some-spaces-rejected')).to.not.exist;
     });
 });

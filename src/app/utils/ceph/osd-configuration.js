@@ -7,7 +7,11 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import EmberObject, { set, get, setProperties } from '@ember/object';
+import EmberObject, {
+  set,
+  get,
+  setProperties,
+} from '@ember/object';
 
 const osdFields = [
   'id',

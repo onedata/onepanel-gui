@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import moment from 'moment';
 import { resolve } from 'rsvp';
@@ -50,9 +51,7 @@ const SpaceManager = Service.extend({
 });
 
 describe('Integration | Component | space cleaning reports', function () {
-  setupComponentTest('space-cleaning-reports', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'spaceManager', SpaceManager);
@@ -66,7 +65,7 @@ describe('Integration | Component | space cleaning reports', function () {
   it('renders reports in desktop mode', async function () {
     this.set('_window.innerWidth', 1366);
 
-    this.render(hbs `<div class="col-content">
+    await render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
@@ -96,7 +95,7 @@ describe('Integration | Component | space cleaning reports', function () {
   it('renders reports in mobile view', async function () {
     this.set('_window.innerWidth', 600);
 
-    this.render(hbs `<div class="col-content">
+    await render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
@@ -134,7 +133,7 @@ describe('Integration | Component | space cleaning reports', function () {
     sinon
       .stub(lookupService(this, 'spaceManager'), 'getAutoCleaningReports').resolves([]);
 
-    this.render(hbs `<div class="col-content">
+    await render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
