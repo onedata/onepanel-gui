@@ -5,14 +5,13 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import Service from '@ember/service';
-import { click } from 'ember-native-dom-helpers';
 import { resolve } from 'rsvp';
 import { set } from '@ember/object';
 

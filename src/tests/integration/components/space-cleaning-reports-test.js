@@ -1,12 +1,11 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import moment from 'moment';
 import { resolve } from 'rsvp';
 import wait from 'ember-test-helpers/wait';
-import { click } from 'ember-native-dom-helpers';
 import { get } from '@ember/object';
 import _ from 'lodash';
 import Service from '@ember/service';

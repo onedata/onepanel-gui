@@ -6,7 +6,7 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click, fillIn } from '@ember/test-helpers';
 import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
@@ -16,7 +16,6 @@ import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { registerService, lookupService } from '../../helpers/stub-service';
-import { click, fillIn } from 'ember-native-dom-helpers';
 import { suppressRejections } from '../../helpers/suppress-rejections';
 
 const UNITS = {
@@ -192,7 +191,7 @@ describe('Integration | Component | support space form', function () {
       });
   });
 
-  it('shows a global error notify when submit fails', function () {
+  it('shows a global error notify when submit fails', async function () {
     suppressRejections();
     const globalNotify = lookupService(this, 'global-notify');
     const backendError = sinon.spy(globalNotify, 'backendError');
@@ -200,7 +199,7 @@ describe('Integration | Component | support space form', function () {
 
     this.set('submit', sinon.stub().returns(reject('some error')));
 
-    this.render(hbs `
+    await render(hbs `
       {{support-space-form
         submitSupportSpace=submit
         values=formValues

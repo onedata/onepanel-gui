@@ -1,13 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import { registerService, lookupService } from '../../../helpers/stub-service';
 import Service from '@ember/service';
 import sinon from 'sinon';
-import { click } from 'ember-native-dom-helpers';
 
 const OnezoneGui = Service.extend({
   getCanEnterViaOnezoneProxy() {},

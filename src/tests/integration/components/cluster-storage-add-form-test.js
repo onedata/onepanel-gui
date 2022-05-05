@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach, context } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import wait from 'ember-test-helpers/wait';
 import hbs from 'htmlbars-inline-precompile';
 import _ from 'lodash';
@@ -9,7 +9,6 @@ import { registerService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import { resolve } from 'rsvp';
 import $ from 'jquery';
-import { click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import FormHelper from '../../helpers/form';
 import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';

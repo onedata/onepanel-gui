@@ -1,10 +1,9 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, fillIn, blur, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-import { fillIn, blur, click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import _ from 'lodash';
 import { resolve } from 'rsvp';
