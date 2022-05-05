@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 
@@ -10,7 +10,7 @@ describe(
   function () {
     setupRenderingTest();
 
-    it('shows secret password field by default', async function() {
+    it('shows secret password field by default', async function () {
       await render(hbs `{{content-clusters-emergency-passphrase}}`);
 
       expect(this.$('.field-static-secretPassword'), 'secret pass').to.exist;
@@ -18,10 +18,10 @@ describe(
 
     it(
       'shows old password, new password and retype new password fields when clicked change password',
-      async function() {
+      async function () {
         await render(hbs `{{content-clusters-emergency-passphrase}}`);
 
-        this.$('.btn-change-passphrase').click();
+        await click('.btn-change-passphrase');
 
         return wait().then(() => {
           expect(this.$('.field-verify-currentPassword'), 'current pass')

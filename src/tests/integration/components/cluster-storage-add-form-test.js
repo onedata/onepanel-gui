@@ -156,7 +156,7 @@ async function testAllowCertainPathTypeCreate({
     const radio = $radio[0];
     if ($radio.length) {
       if (allow) {
-        radio.click();
+        await click(radio);
         await wait();
         expect(radio.checked).to.equal(allow);
       } else {
