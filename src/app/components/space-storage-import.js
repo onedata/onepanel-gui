@@ -20,6 +20,7 @@ import { storageImportStatusDescription } from 'onepanel-gui/components/space-st
 import { dateFormat } from 'onedata-gui-common/helpers/date-format';
 import { inject as service } from '@ember/service';
 import { formatNumber } from 'onedata-gui-common/helpers/format-number';
+import $ from 'jquery';
 
 const componentMixins = [
   I18n,
@@ -210,7 +211,8 @@ export default Component.extend(...componentMixins, {
     toggleImportDetailsHovered(isHovered, event) {
       const hoverTargetClass = event.target.getAttribute('data-highlight-on-hover');
       if (hoverTargetClass) {
-        this.$(`.${hoverTargetClass}`).toggleClass('detail-highlighted', isHovered);
+        $(this.get('element')).find(`.${hoverTargetClass}`)
+          .toggleClass('detail-highlighted', isHovered);
       }
     },
   },

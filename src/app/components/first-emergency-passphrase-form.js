@@ -15,6 +15,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { computed } from '@ember/object';
 import _ from 'lodash';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
+import $ from 'jquery';
 
 export default Component.extend(I18n, {
   classNames: ['first-emergency-passphrase-form', 'basicauth-login-form'],
@@ -27,25 +28,25 @@ export default Component.extend(I18n, {
   i18nPrefix: 'components.firstEmergencyPassphraseForm.',
 
   /**
-   * @virtual 
+   * @virtual
    * @type {Function}
    */
   settingPassphraseStarted: notImplementedWarn,
 
   /**
-   * @virtual 
+   * @virtual
    * @type {Function}
    */
   settingPassphraseFailure: notImplementedWarn,
 
   /**
-   * @virtual 
+   * @virtual
    * @type {Function}
    */
   settingPassphraseSuccess: notImplementedWarn,
 
   /**
-   * @virtual 
+   * @virtual
    * @type {Function}
    */
   back: notImplementedWarn,
@@ -116,17 +117,18 @@ export default Component.extend(I18n, {
     }),
 
   didInsertElement() {
-    this.$('.passphrase').on('focusout', () => {
+    const $element = $(this.get('element'));
+    $element.find('.passphrase').on('focusout', () => {
       if (!this.get('passphraseEntered')) {
         safeExec(this, 'set', 'passphraseEntered', true);
       }
     });
-    this.$('.confirm-passphrase').on('focusout', () => {
+    $element.find('.confirm-passphrase').on('focusout', () => {
       if (!this.get('confirmEntered')) {
         safeExec(this, 'set', 'confirmEntered', true);
       }
     });
-    this.$('.confirm-passphrase').on('keydown', () => {
+    $element.find('.confirm-passphrase').on('keydown', () => {
       if (!this.get('confirmTyped')) {
         safeExec(this, 'set', 'confirmTyped', true);
       }
@@ -146,7 +148,7 @@ export default Component.extend(I18n, {
                 this.tt('settingPassphraseBackendError'),
                 error
               );
-              safeExec(this,  'settingPassphraseFailure');
+              safeExec(this, 'settingPassphraseFailure');
               throw error;
             });
         } else {

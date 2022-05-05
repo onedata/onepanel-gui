@@ -28,6 +28,7 @@ import {
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';
+import $ from 'jquery';
 
 const FILE_SIZE_LT_FIELD = {
   type: 'number',
@@ -346,7 +347,8 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
           fieldName.substring(0, fieldName.length - 'Enabled'.length);
         run.next(() => {
           if (!this.isDestroyed && !this.isDestroying) {
-            this.$(`#${this.get('elementId')}${numberField}`).focus();
+            $(this.get('element'))
+              .find(`#${this.get('elementId')}${numberField}`).focus();
           }
         });
       }

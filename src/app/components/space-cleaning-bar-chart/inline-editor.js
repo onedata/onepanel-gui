@@ -12,6 +12,7 @@ import Component from '@ember/component';
 import { observer, computed } from '@ember/object';
 import { next } from '@ember/runloop';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
+import $ from 'jquery';
 
 export default Component.extend({
   classNames: ['inline-editor'],
@@ -64,9 +65,12 @@ export default Component.extend({
   }),
 
   positionObserver: observer('position', function () {
-    this.$().css({
-      left: this.get('position') + '%',
-    });
+    const element = this.get('element');
+    if (element) {
+      $(element).css({
+        left: this.get('position') + '%',
+      });
+    }
   }),
 
   allowEditionObserver: observer('allowEdition', function () {
@@ -86,13 +90,14 @@ export default Component.extend({
       const {
         allowEdition,
         _readableValue,
-      } = this.getProperties('allowEdition', '_readableValue');
+        element,
+      } = this.getProperties('allowEdition', '_readableValue', 'element');
       if (allowEdition) {
         this.setProperties({
           _editorValue: _readableValue.number,
           _inEditionMode: true,
         });
-        next(() => this.$('input').focus().select());
+        next(() => $(element).find('input').focus().select());
       }
     },
     cancelEdition() {

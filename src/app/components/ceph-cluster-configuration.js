@@ -1,6 +1,6 @@
 /**
  * Shows information about ceph cluster configuration. Allows setup of the cluster.
- * 
+ *
  * @module components/ceph-cluster-configuration
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -12,6 +12,7 @@ import { sort } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import $ from 'jquery';
 
 export default Component.extend(I18n, {
   classNames: ['ceph-cluster-configuration'],
@@ -43,7 +44,7 @@ export default Component.extend(I18n, {
 
   init() {
     this._super(...arguments);
-    
+
     next(() => safeExec(this, 'expandNodesInDeployment'));
   },
 
@@ -52,8 +53,13 @@ export default Component.extend(I18n, {
    * @returns {undefined}
    */
   expandNodesInDeployment() {
-    if (!this.get('isCephDeployed')) {
-      this.$('.ceph-node-header').click();
+    const {
+      isCephDeployed,
+      element,
+    } = this.getProperties('isCephDeployed', 'element');
+
+    if (!isCephDeployed) {
+      $(element).find('.ceph-node-header').click();
     }
   },
 });
