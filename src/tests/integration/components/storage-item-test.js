@@ -6,7 +6,6 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
 import SpaceDetails from 'onepanel-gui/models/space-details';
@@ -28,7 +27,7 @@ describe('Integration | Component | storage item', function () {
     registerService(this, 'ceph-manager', Service);
   });
 
-  it('renders storage name', async function(done) {
+  it('renders storage name', async function () {
     const name = 'Storage One';
     this.set('storages', [PromiseObject.create({
       promise: resolve({
@@ -47,15 +46,11 @@ describe('Integration | Component | storage item', function () {
       {{/each}}
     {{/one-collapsible-list}}`);
 
-    wait().then(() => {
-      expect(this.$('.storage-name')).to.exist;
-      expect(this.$('.storage-name')).to.contain(name);
-
-      done();
-    });
+    expect(this.$('.storage-name')).to.exist;
+    expect(this.$('.storage-name')).to.contain(name);
   });
 
-  it('shows total support size', async function(done) {
+  it('shows total support size', async function () {
     const providerManager = lookupService(this, 'providerManager');
     const providerId = providerManager.get('__providerDetails.id');
     const storageId = 'storage1';
@@ -104,10 +99,7 @@ describe('Integration | Component | storage item', function () {
     {{/one-collapsible-list}}
     `);
 
-    wait().then(() => {
-      const header = this.$('.support-size');
-      expect(header).to.contain(b2s(totalSupport));
-      done();
-    });
+    const header = this.$('.support-size');
+    expect(header).to.contain(b2s(totalSupport));
   });
 });

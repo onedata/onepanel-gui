@@ -4,7 +4,6 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
 import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
 import providerManagerStub from '../../helpers/provider-manager-stub';
@@ -69,17 +68,14 @@ describe('Integration | Component | content clusters spaces', function () {
     spaceManager.set('__spaces', SPACES);
   });
 
-  it('shows support space form when clicking on support space button', async function (done) {
+  it('shows support space form when clicking on support space button', async function () {
     await render(hbs `
       <button class="collapsible-toolbar-global-toggle"></button>
       {{content-clusters-spaces}}
     `);
 
-    await click('.button.btn-support-space');
+    await click('button.btn-support-space');
 
-    wait().then(() => {
-      expect(this.$('.support-space-form')).to.exist;
-      done();
-    });
+    expect(this.$('.support-space-form')).to.exist;
   });
 });

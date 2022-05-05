@@ -4,7 +4,6 @@ import { setupTest } from 'ember-mocha';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
-import wait from 'ember-test-helpers/wait';
 
 const OnepanelServer = Service.extend({
   request() {},
@@ -17,7 +16,7 @@ describe('Unit | Service | dns manager', function () {
     registerService(this, 'onepanelServer', OnepanelServer);
   });
 
-  it('computes dnsValid to true', function () {
+  it('computes dnsValid to true', async function () {
     const checkDnsData = {
       domain: {
         summary: 'ok',
@@ -29,14 +28,12 @@ describe('Unit | Service | dns manager', function () {
       .resolves({ data: checkDnsData });
 
     const service = this.owner.lookup('service:dns-manager');
-    service.getDnsCheckProxy();
+    await service.getDnsCheckProxy();
 
-    return wait().then(() => {
-      expect(service.get('dnsValid')).to.be.true;
-    });
+    expect(service.get('dnsValid')).to.be.true;
   });
 
-  it('computes dnsValid to false', function () {
+  it('computes dnsValid to false', async function () {
     const checkDnsData = {
       domain: {
         summary: 'bad_records',
@@ -48,10 +45,8 @@ describe('Unit | Service | dns manager', function () {
       .resolves({ data: checkDnsData });
 
     const service = this.owner.lookup('service:dns-manager');
-    service.getDnsCheckProxy();
+    await service.getDnsCheckProxy();
 
-    return wait().then(() => {
-      expect(service.get('dnsValid')).to.be.false;
-    });
+    expect(service.get('dnsValid')).to.be.false;
   });
 });

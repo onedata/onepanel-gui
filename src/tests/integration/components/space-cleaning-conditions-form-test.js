@@ -3,7 +3,6 @@ import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
 import { render, fillIn, blur, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import _ from 'lodash';
 import { resolve } from 'rsvp';
@@ -26,7 +25,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     this.set('data', globalData);
   });
 
-  it('is filled in with injected data', async function() {
+  it('is filled in with injected data', async function () {
     await render(hbs `
       {{space-cleaning-conditions-form
         data=data
@@ -53,14 +52,12 @@ describe('Integration | Component | space cleaning conditions form', function ()
       .to.have.value('15');
     expect(maxMonthlyMovingAverageGroup.find('input.condition-number-input'))
       .to.have.value('16');
-    return wait().then(() => {
-      expect(minFileSizeGroup.find('.ember-power-select-selected-item'))
-        .to.contain('MiB');
-      expect(maxFileSizeGroup.find('.ember-power-select-selected-item'))
-        .to.contain('MiB');
-      expect(timeGroup.find('.ember-power-select-selected-item'))
-        .to.contain('Hours');
-    });
+    expect(minFileSizeGroup.find('.ember-power-select-selected-item'))
+      .to.contain('MiB');
+    expect(maxFileSizeGroup.find('.ember-power-select-selected-item'))
+      .to.contain('MiB');
+    expect(timeGroup.find('.ember-power-select-selected-item'))
+      .to.contain('Hours');
   });
 
   [
@@ -73,7 +70,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     'maxDailyMovingAverage',
     'maxMonthlyMovingAverage',
   ].forEach((fieldName) => {
-    it(`does not accept letters in ${fieldName} input`, async function(done) {
+    it(`does not accept letters in ${fieldName} input`, async function (done) {
       await render(hbs `
           {{space-cleaning-conditions-form
             data=data
@@ -87,7 +84,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
       });
     });
 
-    it(`does not accept negative numbers in ${fieldName} input`, async function(done) {
+    it(`does not accept negative numbers in ${fieldName} input`, async function (done) {
       await render(hbs `
                 {{space-cleaning-conditions-form
                   data=data
@@ -102,7 +99,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
         });
     });
 
-    it(`accepts positive numbers in ${fieldName} input`, async function(done) {
+    it(`accepts positive numbers in ${fieldName} input`, async function (done) {
       await render(hbs `
                 {{space-cleaning-conditions-form
                   data=data
@@ -116,7 +113,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
       });
     });
 
-    it(`sends data after ${fieldName} input focus lost`, async function(done) {
+    it(`sends data after ${fieldName} input focus lost`, async function (done) {
       const saveSpy = sinon.spy(() => resolve());
       this.set('onSave', saveSpy);
       await render(hbs `
@@ -144,7 +141,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not accept float numbers in minHoursSinceLastOpen input', async function(done) {
+  it('does not accept float numbers in minHoursSinceLastOpen input', async function (done) {
     await render(hbs `
               {{space-cleaning-conditions-form
                 data=data
@@ -158,7 +155,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('debounce changes save', async function(done) {
+  it('debounce changes save', async function (done) {
     const saveSpy = sinon.spy(() => resolve());
     this.set('onSave', saveSpy);
     await render(hbs `
@@ -187,7 +184,7 @@ describe('Integration | Component | space cleaning conditions form', function ()
     });
   });
 
-  it('does not clear number value when disabling and enabling field', async function() {
+  it('does not clear number value when disabling and enabling field', async function () {
     const localData = _.cloneDeep(globalData);
     const saveSpy = sinon.spy(data => {
       _.merge(localData, data);

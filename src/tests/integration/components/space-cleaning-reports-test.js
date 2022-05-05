@@ -5,7 +5,6 @@ import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import moment from 'moment';
 import { resolve } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
 import { get } from '@ember/object';
 import _ from 'lodash';
 import Service from '@ember/service';
@@ -72,8 +71,6 @@ describe('Integration | Component | space cleaning reports', function () {
       }}
     </div>`);
 
-    await wait();
-
     expect(this.$('tbody tr.data-row'), 'data rows').to.have.length(2);
     const cells = this.$('tbody tr.data-row:first td');
     const cellsValues = [
@@ -101,8 +98,6 @@ describe('Integration | Component | space cleaning reports', function () {
         _window=_window
       }}
     </div>`);
-
-    await wait();
 
     expect(this.$('.one-collapsible-list .data-row')).to.have.length(2);
 
@@ -139,7 +134,6 @@ describe('Integration | Component | space cleaning reports', function () {
         _window=_window
       }}
     </div>`);
-    await wait();
 
     const $noDataRow = this.$('.no-data-row');
     expect($noDataRow).to.exist;

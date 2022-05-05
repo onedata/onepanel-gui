@@ -5,11 +5,10 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click } from '@ember/test-helpers';
+import { render, click, settled } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import { registerService, lookupService } from '../../helpers/stub-service';
-import wait from 'ember-test-helpers/wait';
 import sinon from 'sinon';
 import Service from '@ember/service';
 import { resolve } from 'rsvp';
@@ -97,10 +96,9 @@ describe('Integration | Component | new cluster web cert', function () {
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
-          await wait();
           await click('.btn-cert-next');
           this.get('fakeClock').tick(reloadDelay);
-          await wait();
+          await settled();
 
           if (isEmergencyGui || serviceType === 'onezone') {
             expect(_location.hostname).to.equal(reloadedDomain);
@@ -125,10 +123,9 @@ describe('Integration | Component | new cluster web cert', function () {
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
-          await wait();
           await click('.btn-cert-next');
           this.get('fakeClock').tick(reloadDelay);
-          await wait();
+          await settled();
 
           expect(_location.hostname).to.equal(reloadedDomain);
           expect(_location.reload).to.be.calledOnce;
@@ -145,11 +142,10 @@ describe('Integration | Component | new cluster web cert', function () {
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
-          await wait();
           await click('.toggle-field-letsEncrypt');
           await click('.btn-cert-next');
           this.get('fakeClock').tick(reloadDelay);
-          await wait();
+          await settled();
 
           expect(_location.hostname).to.equal(oldHostname);
           expect(this.get('_location.reload')).to.be.not.called;

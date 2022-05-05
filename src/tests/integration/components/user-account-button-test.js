@@ -10,7 +10,6 @@ import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
 import { set } from '@ember/object';
 
 const OnepanelServer = OnepanelServerStub.extend({
@@ -34,7 +33,7 @@ describe('Integration | Component | user account button', function () {
     registerService(this, 'gui-utils', GuiUtils);
   });
 
-  it('renders username got from onepanel server', async function() {
+  it('renders username got from onepanel server', async function () {
     const onepanelServer = lookupService(this, 'onepanelServer');
     const providerManager = lookupService(this, 'providerManager');
 
@@ -49,8 +48,6 @@ describe('Integration | Component | user account button', function () {
       }));
 
     await render(hbs `{{user-account-button}}`);
-    return wait().then(() => {
-      expect(this.$().text()).to.match(new RegExp(someUsername));
-    });
+    expect(this.$().text()).to.match(new RegExp(someUsername));
   });
 });
