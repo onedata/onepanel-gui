@@ -4,7 +4,7 @@ import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
@@ -46,8 +46,7 @@ describe('Integration | Component | storage item', function () {
       {{/each}}
     {{/one-collapsible-list}}`);
 
-    expect(this.$('.storage-name')).to.exist;
-    expect(this.$('.storage-name')).to.contain(name);
+    expect(find('.storage-name')).to.contain.text(name);
   });
 
   it('shows total support size', async function () {
@@ -99,7 +98,7 @@ describe('Integration | Component | storage item', function () {
     {{/one-collapsible-list}}
     `);
 
-    const header = this.$('.support-size');
-    expect(header).to.contain(b2s(totalSupport));
+    const header = find('.support-size');
+    expect(header).to.contain.text(b2s(totalSupport));
   });
 });

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
@@ -34,6 +34,6 @@ describe('Integration | Component | space auto cleaning', function () {
       }}
     </div>`);
 
-    expect(this.$('.space-cleaning-settings')).to.not.exist;
+    expect(find('.space-cleaning-settings')).to.not.exist;
   });
 });

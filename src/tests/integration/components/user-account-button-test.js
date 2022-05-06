@@ -48,6 +48,6 @@ describe('Integration | Component | user account button', function () {
       }));
 
     await render(hbs `{{user-account-button}}`);
-    expect(this.$().text()).to.match(new RegExp(someUsername));
+    expect(this.element).to.contain.text(someUsername);
   });
 });

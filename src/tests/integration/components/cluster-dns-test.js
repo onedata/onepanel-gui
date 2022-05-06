@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve, reject } from 'rsvp';
@@ -68,9 +68,9 @@ describe('Integration | Component | cluster dns', function () {
       zonePoliciesProxy=zonePoliciesProxy
     }}`);
 
-    const $clusterDns = this.$('.cluster-dns');
-    expect($clusterDns).to.exist;
-    expect($clusterDns).to.contain('8.8.8.8');
-    expect($clusterDns).to.contain('192.168.0.1');
+    const clusterDns = find('.cluster-dns');
+    expect(clusterDns).to.exist;
+    expect(clusterDns).to.contain.text('8.8.8.8');
+    expect(clusterDns).to.contain.text('192.168.0.1');
   });
 });

@@ -2,7 +2,7 @@ import Service from '@ember/service';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click } from '@ember/test-helpers';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import spaceManagerStub from '../../helpers/space-manager-stub';
 import storageManagerStub from '../../helpers/storage-manager-stub';
@@ -76,6 +76,6 @@ describe('Integration | Component | content clusters spaces', function () {
 
     await click('button.btn-support-space');
 
-    expect(this.$('.support-space-form')).to.exist;
+    expect(find('.support-space-form')).to.exist;
   });
 });

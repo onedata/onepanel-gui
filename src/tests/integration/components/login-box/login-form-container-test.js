@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click } from '@ember/test-helpers';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { registerService, lookupService } from '../../../helpers/stub-service';
 import Service from '@ember/service';
@@ -28,17 +28,17 @@ describe('Integration | Component | login box/login form container', function ()
 
       await render(hbs `{{login-box/login-form-container}}`);
 
-      const $onezoneButtonContainer = this.$('.onezone-button-container');
-      expect($onezoneButtonContainer).to.exist;
-      expect($onezoneButtonContainer).to.not.have.class('hide');
-      expect($onezoneButtonContainer.find('.btn-login-onezone').attr('href'))
-        .to.equal(onezoneUrl);
-      const $basicauthContainer = this.$('.basicauth-login-form-container');
-      expect($basicauthContainer).to.have.class('hide');
+      const onezoneButtonContainer = find('.onezone-button-container');
+      expect(onezoneButtonContainer).to.exist;
+      expect(onezoneButtonContainer).to.not.have.class('hide');
+      expect(onezoneButtonContainer.querySelector('.btn-login-onezone'))
+        .to.have.attr('href', onezoneUrl);
+      const basicauthContainer = find('.basicauth-login-form-container');
+      expect(basicauthContainer).to.have.class('hide');
 
       await click('.username-login-toggle');
-      expect($onezoneButtonContainer).to.have.class('fadeOut');
-      expect($basicauthContainer).to.not.have.class('hide');
+      expect(onezoneButtonContainer).to.have.class('fadeOut');
+      expect(basicauthContainer).to.not.have.class('hide');
     });
 
   it('renders Onezone button as disabled when cannot enter via Onezone',
@@ -48,7 +48,7 @@ describe('Integration | Component | login box/login form container', function ()
 
       await render(hbs `{{login-box/login-form-container}}`);
 
-      const $onezoneButton = this.$('.btn-login-onezone');
-      expect($onezoneButton).to.have.attr('disabled');
+      const onezoneButton = find('.btn-login-onezone');
+      expect(onezoneButton).to.have.attr('disabled');
     });
 });

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import I18nStub from '../../../helpers/i18n-stub';
 import { registerService } from '../../../helpers/stub-service';
@@ -27,12 +27,12 @@ describe('Integration | Component | cluster dns check table/check item', functio
       onepanelServiceType="provider"
     }}`);
 
-    const $checkItem = this.$('.check-item');
+    const checkItem = find('.check-item');
 
-    expect($checkItem, 'check item').to.exist;
-    const $icon = $checkItem.find('.check-state .one-icon');
-    expect($icon, 'icon').to.exist;
-    expect($icon).to.have.class('warning');
+    expect(checkItem, 'check item').to.exist;
+    const icon = checkItem.querySelector('.check-state .one-icon');
+    expect(icon, 'icon').to.exist;
+    expect(icon).to.have.class('warning');
   });
 
   it('renders success icon if status is ok', async function () {
@@ -49,12 +49,12 @@ describe('Integration | Component | cluster dns check table/check item', functio
       onepanelServiceType="provider"
     }}`);
 
-    const $checkItem = this.$('.check-item');
+    const checkItem = find('.check-item');
 
-    expect($checkItem, 'check item').to.exist;
-    const $icon = $checkItem.find('.check-state .one-icon');
-    expect($icon, 'icon').to.exist;
-    expect($icon).to.have.class('success');
+    expect(checkItem, 'check item').to.exist;
+    const icon = checkItem.querySelector('.check-state .one-icon');
+    expect(icon, 'icon').to.exist;
+    expect(icon).to.have.class('success');
   });
 
   it('does not render additional text when not ok and there are additional ips',
@@ -85,8 +85,8 @@ describe('Integration | Component | cluster dns check table/check item', functio
         onepanelServiceType="provider"
       }}`);
 
-      const $checkItem = this.$('.check-item');
-      expect($checkItem).to.not.contain(additionalText);
+      const checkItem = find('.check-item');
+      expect(checkItem).to.not.contain.text(additionalText);
     });
 
   it('shows list of additional IP adresses', async function () {
@@ -106,10 +106,10 @@ describe('Integration | Component | cluster dns check table/check item', functio
       onepanelServiceType="provider"
     }}`);
 
-    const $checkItem = this.$('.check-item');
+    const checkItem = find('.check-item');
 
-    expect($checkItem, 'check item').to.exist;
-    additionalIps.forEach(ip => expect($checkItem).to.contain(ip));
+    expect(checkItem, 'check item').to.exist;
+    additionalIps.forEach(ip => expect(checkItem).to.contain.text(ip));
   });
 
   it('shows list of missing IP adresses', async function () {
@@ -129,9 +129,9 @@ describe('Integration | Component | cluster dns check table/check item', functio
       onepanelServiceType="provider"
     }}`);
 
-    const $checkItem = this.$('.check-item');
+    const checkItem = find('.check-item');
 
-    expect($checkItem, 'check item').to.exist;
-    ['192.168.0.1', '192.168.0.2'].forEach(ip => expect($checkItem).to.contain(ip));
+    expect(checkItem, 'check item').to.exist;
+    ['192.168.0.1', '192.168.0.2'].forEach(ip => expect(checkItem).to.contain.text(ip));
   });
 });

@@ -4,7 +4,6 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, click, settled } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
-import $ from 'jquery';
 import { get, set } from '@ember/object';
 import { resolve, Promise } from 'rsvp';
 import Service from '@ember/service';
@@ -78,20 +77,20 @@ describe('Integration | Component | new cluster ceph', function () {
 
       await click('.btn-deploy-cluster');
 
-      const $modal = $('.block-device-format-warning-modal.in');
-      const $proceedBtn = $modal.find('.proceed');
-      expect($modal).to.exist;
-      expect($modal.find('.modal-header').text()).to.contain('Warning');
-      expect($modal.find('.modal-header .one-icon'))
+      const modal = document.querySelector('.block-device-format-warning-modal.in');
+      const proceedBtn = modal.querySelector('.proceed');
+      expect(modal).to.exist;
+      expect(modal.querySelector('.modal-header')).to.contain.text('Warning');
+      expect(modal.querySelector('.modal-header .one-icon'))
         .to.have.class('oneicon-sign-warning-rounded');
-      expect($modal.find('.message').text().trim()).to.equal(
+      expect(modal.querySelector('.message')).to.have.trimmed.text(
         'Creating Object Storage Deamons will erase all data on the following block devices:'
       );
-      expect($modal.find('.node')).to.have.length(1);
-      expect($modal.find('.node').eq(0).text())
+      expect(modal.querySelectorAll('.node')).to.have.length(1);
+      expect(modal.querySelector('.node').textContent)
         .to.match(/^[\s]*example.com:[\s]*a,[\s]*b[\s]*$/);
-      expect($proceedBtn.text().trim()).to.equal('Deploy');
-      expect($proceedBtn).to.have.class('btn-warning');
+      expect(proceedBtn).to.have.trimmed.text('Deploy');
+      expect(proceedBtn).to.have.class('btn-warning');
       expect(startDeploySpy).to.not.be.called;
     }
   );
@@ -108,15 +107,15 @@ describe('Integration | Component | new cluster ceph', function () {
     await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
     await click('.btn-deploy-cluster');
-    await click($('.block-device-format-warning-modal.in .proceed')[0]);
+    await click(document.querySelector('.block-device-format-warning-modal.in .proceed'));
 
     expect(startDeploySpy).to.be.called;
-    expect($('.block-device-format-warning-modal.in .proceed'))
+    expect(document.querySelector('.block-device-format-warning-modal.in .proceed'))
       .to.have.class('pending');
     resolveDeployCallback();
     await settled();
 
-    expect($('.block-device-format-warning-modal.in')).to.not.exist;
+    expect(document.querySelector('.block-device-format-warning-modal.in')).to.not.exist;
   });
 
   it(
@@ -130,10 +129,13 @@ describe('Integration | Component | new cluster ceph', function () {
       await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       await click('.btn-deploy-cluster');
-      await click($('.block-device-format-warning-modal.in .cancel')[0]);
+      await click(
+        document.querySelector('.block-device-format-warning-modal.in .cancel')
+      );
 
       expect(startDeploySpy).to.not.be.called;
-      expect($('.block-device-format-warning-modal.in')).to.not.exist;
+      expect(document.querySelector('.block-device-format-warning-modal.in'))
+        .to.not.exist;
     }
   );
 
@@ -152,7 +154,8 @@ describe('Integration | Component | new cluster ceph', function () {
       await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       await click('.btn-deploy-cluster');
-      expect($('.block-device-format-warning-modal.in')).to.not.exist;
+      expect(document.querySelector('.block-device-format-warning-modal.in'))
+        .to.not.exist;
       expect(startDeploySpy).to.be.called;
     }
   );

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click, fillIn } from '@ember/test-helpers';
+import { render, click, fillIn, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import FormHelper from '../../helpers/form';
 
@@ -48,20 +48,20 @@ describe('Integration | Component | provider registration form', function () {
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     const hostnameInputSelector = '.field-editDomain-domain';
 
-    expect(this.$(toggleSelector), 'subdomain toggle')
+    expect(find(toggleSelector), 'subdomain toggle')
       .to.have.class('checked');
-    expect(this.$(subdomainInputSelector)).to.exist;
-    expect(this.$(hostnameInputSelector)).not.to.exist;
+    expect(find(subdomainInputSelector)).to.exist;
+    expect(find(hostnameInputSelector)).not.to.exist;
 
     await click(toggleSelector);
-    expect(this.$(toggleSelector)).not.to.have.class('checked');
-    expect(this.$(subdomainInputSelector)).not.to.exist;
-    expect(this.$(hostnameInputSelector)).to.exist;
+    expect(find(toggleSelector)).not.to.have.class('checked');
+    expect(find(subdomainInputSelector)).not.to.exist;
+    expect(find(hostnameInputSelector)).to.exist;
 
     await click(toggleSelector);
-    expect(this.$(toggleSelector)).to.have.class('checked');
-    expect(this.$(subdomainInputSelector)).to.exist;
-    expect(this.$(hostnameInputSelector)).not.to.exist;
+    expect(find(toggleSelector)).to.have.class('checked');
+    expect(find(subdomainInputSelector)).to.exist;
+    expect(find(hostnameInputSelector)).not.to.exist;
   });
 
   it('checks for excluded subdomains', async function () {
@@ -74,11 +74,11 @@ describe('Integration | Component | provider registration form', function () {
         excludedSubdomains=excludedSubdomains}}`);
 
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
-    expect(this.$('.has-error')).not.to.exist;
+    expect(find('.has-error')).not.to.exist;
     await fillIn(subdomainInputSelector, 'a');
-    expect(this.$('.has-error')).to.contain('Subdomain');
+    expect(this.element.querySelectorAll('.has-error')).to.contain.text('Subdomain');
     await fillIn(subdomainInputSelector, 'ab');
-    expect(this.$('.has-success')).to.contain('Subdomain');
+    expect(this.element.querySelectorAll('.has-success')).to.contain.text('Subdomain');
   });
 
   it('accepts IP address in provider domain fields', async function () {
@@ -90,7 +90,7 @@ describe('Integration | Component | provider registration form', function () {
 
     await click('.toggle-field-editTop-subdomainDelegation');
     await fillIn('.field-editDomain-domain', '12.12.12.12');
-    expect(this.$('.has-error')).not.to.exist;
+    expect(find('.has-error')).not.to.exist;
   });
 
   it('accepts domain name in provider domain fields', async function () {
@@ -100,7 +100,7 @@ describe('Integration | Component | provider registration form', function () {
       }}`);
 
     await fillIn('.field-editDomain-domain', 'xyz.com');
-    expect(this.$('.has-error')).not.to.exist;
+    expect(find('.has-error')).not.to.exist;
   });
 
   it('accepts valid subdomain field value', async function () {
@@ -111,6 +111,6 @@ describe('Integration | Component | provider registration form', function () {
       }}`);
 
     await fillIn('.field-editSubdomain-subdomain', 'test');
-    expect(this.$('.has-error')).not.to.exist;
+    expect(find('.has-error')).not.to.exist;
   });
 });

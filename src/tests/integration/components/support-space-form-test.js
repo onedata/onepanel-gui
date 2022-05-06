@@ -6,7 +6,7 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click, fillIn } from '@ember/test-helpers';
+import { render, click, fillIn, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import { reject } from 'rsvp';
@@ -130,15 +130,15 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      expect(this.$('.storage-import-form')).to.have.class('collapse-hidden');
+      expect(find('.storage-import-form')).to.have.class('collapse-hidden');
     }
   );
 
   it('renders import section if storage is imported', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    await selectStorageWithImport(this);
-    expect(this.$('.storage-import-form')).to.not.have.class('collapse-hidden');
+    await selectStorageWithImport();
+    expect(find('.storage-import-form')).to.not.have.class('collapse-hidden');
   });
 
   it('submits size multiplicated by chosen unit', async function () {
@@ -188,16 +188,16 @@ describe('Integration | Component | support space form', function () {
     await render(hbs `{{support-space-form}}`);
 
     expect(
-      this.$('.import-configuration-section').parents('.collapse-hidden')
+      find('.import-configuration-section').closest('.collapse-hidden')
     ).to.exist;
   });
 
   it('shows import form when selected storage is imported', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    await selectStorageWithImport(this);
+    await selectStorageWithImport();
     expect(
-      this.$('.import-configuration-section').parents('.collapse-hidden')
+      find('.import-configuration-section').closest('.collapse-hidden')
     ).to.not.exist;
   });
 
@@ -206,9 +206,9 @@ describe('Integration | Component | support space form', function () {
 
     await render(hbs `{{support-space-form values=formValues}}`);
 
-    await selectStorageWithImport(this);
+    await selectStorageWithImport();
     await fillIn('.field-generic-maxDepth', 'bad value');
-    expect(this.$('button[type=submit]')).to.be.disabled;
+    expect(find('button[type=submit]')).to.have.attr('disabled');
   });
 
   it('submits data from import form', async function () {
@@ -223,7 +223,7 @@ describe('Integration | Component | support space form', function () {
       }}
     `);
 
-    await selectStorageWithImport(this);
+    await selectStorageWithImport();
     await click('.toggle-field-generic-continuousScan');
     await new SupportSpaceFormHelper(this.element).submit();
 
@@ -235,7 +235,7 @@ describe('Integration | Component | support space form', function () {
   });
 });
 
-function selectStorageWithImport(testCase) {
-  const storagesHelper = new StorageSelectHelper(testCase.$());
+function selectStorageWithImport() {
+  const storagesHelper = new StorageSelectHelper();
   return storagesHelper.selectOption(2);
 }

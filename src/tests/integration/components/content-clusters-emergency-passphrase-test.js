@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click } from '@ember/test-helpers';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
 describe(
@@ -12,7 +12,7 @@ describe(
     it('shows secret password field by default', async function () {
       await render(hbs `{{content-clusters-emergency-passphrase}}`);
 
-      expect(this.$('.field-static-secretPassword'), 'secret pass').to.exist;
+      expect(find('.field-static-secretPassword'), 'secret pass').to.exist;
     });
 
     it(
@@ -22,11 +22,11 @@ describe(
 
         await click('.btn-change-passphrase');
 
-        expect(this.$('.field-verify-currentPassword'), 'current pass')
+        expect(find('.field-verify-currentPassword'), 'current pass')
           .to.exist;
-        expect(this.$('.field-change-newPassword'), 'new pass')
+        expect(find('.field-change-newPassword'), 'new pass')
           .to.exist;
-        expect(this.$('.field-change-newPasswordRetype'), 'retype pass')
+        expect(find('.field-change-newPasswordRetype'), 'retype pass')
           .to.exist;
       });
   }
