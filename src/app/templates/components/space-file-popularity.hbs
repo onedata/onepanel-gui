@@ -10,8 +10,8 @@
     {{one-way-toggle
       inputId="file-popularity-enabled"
       checked=filePopularityConfiguration.enabled
-      class=(if media.isMobile "pull-right right" "toggle-right-side")
-      spinnerSide=(if media.isMobile "left" "right")
+      class=(if (media "isMobile") "pull-right right" "toggle-right-side")
+      spinnerSide=(if (media "isMobile") "left" "right")
       update=(action "configureFilePopularity")
     }}
   </h1>
@@ -50,16 +50,16 @@
       {{/listItem.content}}
     {{/list.item}}
   {{/one-collapsible-list}}
-  
+
   <div class="row content-row no-border no-padding-top extra-padding-bottom">
     <h1>
-      {{tt this "restApi"}} 
+      {{tt this "restApi"}}
       {{one-label-tip title=(tt this "restApiHint")}}
     </h1>
     <textarea
       spellcheck="false"
       class="file-popularity-example-query form-control code-textarea"
-      rows={{or (and media.isMobile 7) (and media.isTablet 6) 4}}
+      rows={{or (and (media "isMobile") 7) (and (media "isTablet") 6) 4}}
       readonly="true">{{filePopularityConfiguration.exampleQuery}}</textarea>
     <div class="btn-container text-right">
       <div class="btn-row">

@@ -424,7 +424,7 @@ export default Component.extend(
     setLastCheckAsCurrent() {
       const newCheckIsNeededNotify = this.get('newCheckIsNeededNotify');
       if (newCheckIsNeededNotify) {
-        newCheckIsNeededNotify.set('visible', false);
+        newCheckIsNeededNotify.close();
         this.set('newCheckIsNeededNotify', undefined);
       }
     },

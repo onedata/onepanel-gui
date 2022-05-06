@@ -72,7 +72,6 @@ const VALIDATORS = {
 export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm, {
   classNames: ['space-cleaning-conditions-form', 'auto-save-form'],
 
-  media: service(),
   i18n: service(),
   onepanelServer: service(),
   globalNotify: service(),
