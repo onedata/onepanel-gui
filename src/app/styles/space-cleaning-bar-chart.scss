@@ -112,7 +112,7 @@
         border: 0;
         box-shadow: none;
         .noUi-handle {
-          right: -14px;
+          right: -$slider-width;
           height: $bar-height + 12px;
           width: $slider-width;
           border: 2px solid $main-border-color;

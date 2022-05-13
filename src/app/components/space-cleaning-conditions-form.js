@@ -207,8 +207,10 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
       formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(bytesValue.number),
-        [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) || { multiplicator: 1,
-          name: 'B' },
+        [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) || {
+          multiplicator: 1,
+          name: 'B',
+        },
       });
     });
 
