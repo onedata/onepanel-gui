@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 
 import sinon from 'sinon';
 
@@ -11,7 +10,7 @@ describe('Integration | Component | space storage import', function () {
   setupRenderingTest();
 
   it('invokes importIntervalChanged injected function on importInterval change',
-    async function(done) {
+    async function () {
       const importIntervalChanged = sinon.spy();
       this.set('importIntervalChanged', importIntervalChanged);
 
@@ -20,12 +19,9 @@ describe('Integration | Component | space storage import', function () {
         importIntervalChanged=(action importIntervalChanged)
       }}`);
 
-      this.$('.btn-import-interval-day').click();
+      await click('.btn-import-interval-day');
 
-      wait().then(() => {
-        expect(importIntervalChanged).to.be.calledOnce;
-        expect(importIntervalChanged).to.be.calledWith('day');
-        done();
-      });
+      expect(importIntervalChanged).to.be.calledOnce;
+      expect(importIntervalChanged).to.be.calledWith('day');
     });
 });

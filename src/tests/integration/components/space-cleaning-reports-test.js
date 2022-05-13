@@ -1,12 +1,10 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click, find, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import moment from 'moment';
 import { resolve } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
-import { click } from 'ember-native-dom-helpers';
 import { get } from '@ember/object';
 import _ from 'lodash';
 import Service from '@ember/service';
@@ -73,10 +71,8 @@ describe('Integration | Component | space cleaning reports', function () {
       }}
     </div>`);
 
-    await wait();
-
-    expect(this.$('tbody tr.data-row'), 'data rows').to.have.length(2);
-    const cells = this.$('tbody tr.data-row:first td');
+    expect(findAll('tbody tr.data-row'), 'data rows').to.have.length(2);
+    const cells = find('tbody tr.data-row').querySelectorAll('td');
     const cellsValues = [
       moment(data[0].startedAt).format(START_END_TIME_FORMAT),
       moment(data[0].stoppedAt).format(START_END_TIME_FORMAT),
@@ -84,10 +80,10 @@ describe('Integration | Component | space cleaning reports', function () {
       String(data[0].filesNumber),
     ];
     cellsValues.forEach((value, index) =>
-      expect(cells.eq(index).text().trim()).to.be.equal(value)
+      expect(cells[index]).to.have.trimmed.text(value)
     );
-    expect(cells.eq(4).find('.oneicon.oneicon-checkbox-filled-x')).to.exist;
-    expect(this.$(
+    expect(cells[4]).to.have.descendant('.oneicon.oneicon-checkbox-filled-x');
+    expect(find(
       'tbody tr:last-child td:last-child .oneicon.oneicon-checkbox-filled'
     )).to.exist;
   });
@@ -103,15 +99,13 @@ describe('Integration | Component | space cleaning reports', function () {
       }}
     </div>`);
 
-    await wait();
-
-    expect(this.$('.one-collapsible-list .data-row')).to.have.length(2);
+    expect(findAll('.one-collapsible-list .data-row')).to.have.length(2);
 
     await click(
       '.one-collapsible-list-item:last-child .one-collapsible-list-item-header'
     );
 
-    const cells = this.$(
+    const cells = findAll(
       '.one-collapsible-list-item:last-child .one-collapsible-list-item-content .one-label'
     );
     const cellsValues = [
@@ -121,9 +115,9 @@ describe('Integration | Component | space cleaning reports', function () {
       String(data[1].filesNumber),
     ];
     cellsValues.forEach((value, index) =>
-      expect(cells.eq(index).text().trim()).to.be.equal(value)
+      expect(cells[index]).to.have.trimmed.text(value)
     );
-    expect(this.$('.one-collapsible-list-item:last-child' +
+    expect(find('.one-collapsible-list-item:last-child' +
         ' .one-collapsible-list-item-header .oneicon.oneicon-checkbox-filled'
       ))
       .to.exist;
@@ -140,11 +134,10 @@ describe('Integration | Component | space cleaning reports', function () {
         _window=_window
       }}
     </div>`);
-    await wait();
 
-    const $noDataRow = this.$('.no-data-row');
-    expect($noDataRow).to.exist;
-    expect($noDataRow).to.contain('No reports available.');
+    const noDataRow = find('.no-data-row');
+    expect(noDataRow).to.exist;
+    expect(noDataRow).to.contain.text('No reports available.');
   });
 
 });

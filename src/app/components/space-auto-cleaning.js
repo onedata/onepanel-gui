@@ -32,7 +32,6 @@ const BLANK_AUTO_CLEANING = {
 const autoCleaningButtonTimeout = 1000;
 
 export default Component.extend(I18n, {
-  media: service(),
   spaceManager: service(),
   globalNotify: service(),
 

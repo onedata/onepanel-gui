@@ -8,10 +8,8 @@ import {
 } from 'mocha';
 import ComponentsStorageImportChartDataValidatorMixin from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
-import wait from 'ember-test-helpers/wait';
-
 describe('Unit | Mixin | components/space import chart data validator', function () {
-  it('recomputes validation when timeStats changes', function (done) {
+  it('recomputes validation when timeStats changes', function () {
     const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin);
 
@@ -25,12 +23,7 @@ describe('Unit | Mixin | components/space import chart data validator', function
 
     subject.set('timeStats', []);
 
-    wait().then(() => {
-      expect(subject.get('importChartDataError')).to.equal('hello');
-      done();
-    });
-
-    expect(subject).to.be.ok;
+    expect(subject.get('importChartDataError')).to.equal('hello');
   });
 
   it('can check if there is at least one required metric', function () {

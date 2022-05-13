@@ -7,7 +7,6 @@ import sinon from 'sinon';
 import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
-import wait from 'ember-test-helpers/wait';
 
 const ProviderManager = Service.extend({
   getProviderDetailsProxy: notImplementedReject,
@@ -44,7 +43,7 @@ describe('Integration | Component | content clusters overview', function () {
     registerService(this, 'storage-manager', StorageManager);
   });
 
-  it('does not use providerManager if cluster is not Oneprovider', async function() {
+  it('does not use providerManager if cluster is not Oneprovider', async function () {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -73,14 +72,12 @@ describe('Integration | Component | content clusters overview', function () {
       fetchSpaces=fetchSpaces
     }}`);
 
-    return wait().then(() => {
-      expect(getProviderDetailsProxy).to.be.not.called;
-      expect(getSpaces).to.be.not.called;
-      expect(getStorages).to.be.not.called;
-    });
+    expect(getProviderDetailsProxy).to.be.not.called;
+    expect(getSpaces).to.be.not.called;
+    expect(getStorages).to.be.not.called;
   });
 
-  it('does uses providerManager if cluster is Oneprovider', async function() {
+  it('does uses providerManager if cluster is Oneprovider', async function () {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -107,10 +104,8 @@ describe('Integration | Component | content clusters overview', function () {
       fetchInstallationDetails=fetchInstallationDetails
     }}`);
 
-    return wait().then(() => {
-      expect(getProviderDetailsProxy).to.be.calledOnce;
-      expect(getSpaces).to.be.calledOnce;
-      expect(getStorages).to.be.calledOnce;
-    });
+    expect(getProviderDetailsProxy).to.be.calledOnce;
+    expect(getSpaces).to.be.calledOnce;
+    expect(getStorages).to.be.calledOnce;
   });
 });

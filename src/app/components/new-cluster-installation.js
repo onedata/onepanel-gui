@@ -284,7 +284,7 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * Create an object of cluster deployment configuration compatible with 
+   * Create an object of cluster deployment configuration compatible with
    * Onepanel.ProviderConfiguration|Onepanel.ZoneConfiguration
    * @returns {Object}
    */
@@ -331,7 +331,7 @@ export default Component.extend(I18n, {
       },
     };
 
-    // in zone mode, add zone name    
+    // in zone mode, add zone name
     if (onepanelServiceType === 'onezone') {
       configProto.onezone = {
         name: _zoneName,
@@ -344,8 +344,8 @@ export default Component.extend(I18n, {
 
   /**
    * Extracts cluster configuration data from JSON config
-   * @param {Object} configProto 
-   * @param {Array<string>} cephNodes 
+   * @param {Object} configProto
+   * @param {Array<string>} cephNodes
    */
   extractConfiguration(configProto, cephNodes = []) {
     const hosts = this.get('hosts');
@@ -380,7 +380,12 @@ export default Component.extend(I18n, {
 
   observeResetNewHostname: observer('addingNewHost', function () {
     if (this.get('addingNewHost')) {
-      scheduleOnce('afterRender', () => this.$('.input-add-host')[0].focus());
+      scheduleOnce('afterRender', () => {
+        const element = this.get('element');
+        if (element) {
+          element.querySelector('.input-add-host').focus();
+        }
+      });
     } else {
       this.set('_newHostname', '');
     }
@@ -388,7 +393,7 @@ export default Component.extend(I18n, {
 
   /**
    * Temporary adds host to newHosts array
-   * @param {ClusterHostInfo} host 
+   * @param {ClusterHostInfo} host
    */
   markHostAsNew(host) {
     const {
@@ -455,7 +460,7 @@ export default Component.extend(I18n, {
     },
 
     /**
-     * Handle new validation state of user options in hosts table. 
+     * Handle new validation state of user options in hosts table.
      *
      * @param {boolean} isValid
      * @returns {undefined}

@@ -18,6 +18,7 @@ import {
 import { Promise } from 'rsvp';
 import { run } from '@ember/runloop';
 import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
+import $ from 'jquery';
 
 // Bar animation time (in seconds).
 const ANIMATION_TIME = 2;
@@ -345,14 +346,17 @@ export default Component.extend({
         'not-used-over-hard-quota',
       ];
       const {
+        element,
         _allowBarAnimations,
         _usedPercent,
         _oldPercentValues,
       } = this.getProperties(
+        'element',
         '_allowBarAnimations',
         '_usedPercent',
         '_oldPercentValues'
       );
+      const $element = $(element);
       const deltaUsedPercent = _usedPercent - _oldPercentValues._usedPercent;
       const transitions = {};
       const transitionElements = deltaUsedPercent > 0 ?
@@ -381,11 +385,11 @@ export default Component.extend({
         transitions[transitionElements[i + 1]] = transition;
       }
       properties.forEach((prop, index) => {
-        this.$('.' + classes[index]).css(transitions[prop]);
+        $element.find('.' + classes[index]).css(transitions[prop]);
       });
       let percentSum = 0;
       properties.forEach((property, index) => {
-        const element = this.$('.' + classes[index]);
+        const element = $element.find('.' + classes[index]);
         const propertyValue = this.get(property);
         element.css({
           width: propertyValue + '%',
@@ -404,9 +408,9 @@ export default Component.extend({
           transition: 'none',
         };
       }
-      this.$('.used, .pacman-row .used-space, .pacman-cell')
+      $element.find('.used, .pacman-row .used-space, .pacman-cell')
         .css(standardBarAnimation);
-      this.$('.used, .pacman-row .used-space').css(usedWidth);
+      $element.find('.used, .pacman-row .used-space').css(usedWidth);
       properties.forEach((prop) => _oldPercentValues[prop] = this.get(prop));
       _oldPercentValues._usedPercent = _usedPercent;
       this.set('_oldPercentValues', _oldPercentValues);
@@ -461,7 +465,7 @@ export default Component.extend({
   actions: {
     /**
      * On slider move
-     * @param {Array.number} values 
+     * @param {Array.number} values
      */
     slide(values) {
       this.setProperties({
@@ -474,7 +478,7 @@ export default Component.extend({
 
     /**
      * On slider move end
-     * @param {Array.number} values 
+     * @param {Array.number} values
      */
     sliderChanged(values) {
       this.setProperties({

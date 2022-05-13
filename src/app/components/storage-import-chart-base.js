@@ -17,6 +17,7 @@ import Component from '@ember/component';
 import { computed } from '@ember/object';
 import moment from 'moment';
 import _ from 'lodash';
+import $ from 'jquery';
 
 import StorageImportChartDataValidator from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
@@ -84,15 +85,19 @@ export default Component.extend(StorageImportChartDataValidator, {
 
   didInsertElement() {
     this._super(...arguments);
-    this.$('.scrollable-row').scroll(this.get('chartScrollHandler'));
+    this.getScrollableRow().scroll(this.get('chartScrollHandler'));
   },
 
   willDestroyElement() {
     try {
-      this.$('.scrollable-row').off('scroll', this.get('chartScrollHandler'));
+      this.getScrollableRow().off('scroll', this.get('chartScrollHandler'));
     } finally {
       this._super(...arguments);
     }
+  },
+
+  getScrollableRow() {
+    return $(this.get('element')).find('.scrollable-row');
   },
 
   getChartLabel(offset) {
@@ -120,9 +125,8 @@ export default Component.extend(StorageImportChartDataValidator, {
    * according to x-scroll.
    */
   handleChartScroll() {
-    const scrollableRow = this.$('.scrollable-row');
-    const offsetX = scrollableRow.scrollLeft();
-    this.$('.chart-tooltip').css({
+    const offsetX = this.getScrollableRow().scrollLeft();
+    $(this.get('element')).find('.chart-tooltip').css({
       transform: `translateY(-100%) translateX(-50%) translateX(${-offsetX}px)`,
     }).removeClass('active');
   },

@@ -1,7 +1,7 @@
 /**
  * View for configuring built-in DNS server, subdomain delegation and perform
  * DNS checks both for deployment and as cluster aspect.
- * 
+ *
  * @module components/cluster-dns
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -409,7 +409,7 @@ export default Component.extend(
       } else {
         this.updateProviderProxy();
       }
-      // enable isIpDomainObserver 
+      // enable isIpDomainObserver
       this.get('isIpDomain');
     },
 
@@ -424,7 +424,7 @@ export default Component.extend(
     setLastCheckAsCurrent() {
       const newCheckIsNeededNotify = this.get('newCheckIsNeededNotify');
       if (newCheckIsNeededNotify) {
-        newCheckIsNeededNotify.set('visible', false);
+        newCheckIsNeededNotify.close();
         this.set('newCheckIsNeededNotify', undefined);
       }
     },
@@ -566,7 +566,10 @@ export default Component.extend(
           })
           .then(() => {
             scheduleOnce('afterRender',
-              () => $('.col-content').scrollTo(this.$('.row-dns-check-results'), 250)
+              () => $('.col-content').scrollTo(
+                $(this.get('element')).find('.row-dns-check-results'),
+                250
+              )
             );
             safeExec(this, 'setLastCheckAsCurrent');
           });

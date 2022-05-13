@@ -6,8 +6,7 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
-import wait from 'ember-test-helpers/wait';
+import { render, click, fillIn, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import { reject } from 'rsvp';
@@ -16,7 +15,6 @@ import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
 import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
 import { registerService, lookupService } from '../../helpers/stub-service';
-import { click, fillIn } from 'ember-native-dom-helpers';
 import { suppressRejections } from '../../helpers/suppress-rejections';
 
 const UNITS = {
@@ -88,39 +86,29 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      let storagesSelectHelper;
-      return wait()
-        .then(() => {
-          storagesSelectHelper = new StorageSelectHelper();
-          return storagesSelectHelper.open();
-        })
-        .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthOption(1);
-          expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
-          expect(firstStorageItem.querySelector('.imported-used-storage'))
-            .to.be.null;
-          expect(firstStorageItem.querySelector('.imported-storage')).to.be.null;
-        });
+      const storagesSelectHelper = new StorageSelectHelper();
+      await storagesSelectHelper.open();
+
+      const firstStorageItem = storagesSelectHelper.getNthOption(1);
+      expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
+      expect(firstStorageItem.querySelector('.imported-used-storage'))
+        .to.be.null;
+      expect(firstStorageItem.querySelector('.imported-storage')).to.be.null;
     }
   );
 
   it('does not disable storage without support and with importedStorage', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    let storagesSelectHelper;
-    return wait()
-      .then(() => {
-        storagesSelectHelper = new StorageSelectHelper();
-        return storagesSelectHelper.open();
-      })
-      .then(() => {
-        const firstStorageItem = storagesSelectHelper.getNthOption(2);
-        expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
-        expect(firstStorageItem.querySelector('.imported-used-storage'))
-          .to.be.null;
-        expect(firstStorageItem.querySelector('.imported-storage').innerText)
-          .to.equal('(import-enabled)');
-      });
+    const storagesSelectHelper = new StorageSelectHelper();
+    await storagesSelectHelper.open();
+
+    const firstStorageItem = storagesSelectHelper.getNthOption(2);
+    expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
+    expect(firstStorageItem.querySelector('.imported-used-storage'))
+      .to.be.null;
+    expect(firstStorageItem.querySelector('.imported-storage').innerText)
+      .to.equal('(import-enabled)');
   });
 
   it(
@@ -128,18 +116,13 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      let storagesSelectHelper;
-      return wait()
-        .then(() => {
-          storagesSelectHelper = new StorageSelectHelper();
-          return storagesSelectHelper.open();
-        })
-        .then(() => {
-          const firstStorageItem = storagesSelectHelper.getNthOption(3);
-          expect(firstStorageItem.getAttribute('aria-disabled')).to.equal('true');
-          expect(firstStorageItem.querySelector('.imported-used-storage').innerText)
-            .to.equal('(import-enabled, already in use)');
-        });
+      const storagesSelectHelper = new StorageSelectHelper();
+      await storagesSelectHelper.open();
+
+      const firstStorageItem = storagesSelectHelper.getNthOption(3);
+      expect(firstStorageItem.getAttribute('aria-disabled')).to.equal('true');
+      expect(firstStorageItem.querySelector('.imported-used-storage').innerText)
+        .to.equal('(import-enabled, already in use)');
     }
   );
 
@@ -147,20 +130,15 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      return wait().then(() =>
-        expect(this.$('.storage-import-form')).to.have.class('collapse-hidden')
-      );
+      expect(find('.storage-import-form')).to.have.class('collapse-hidden');
     }
   );
 
   it('renders import section if storage is imported', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    return wait()
-      .then(() => selectStorageWithImport(this))
-      .then(() =>
-        expect(this.$('.storage-import-form')).to.not.have.class('collapse-hidden')
-      );
+    await selectStorageWithImport();
+    expect(find('.storage-import-form')).to.not.have.class('collapse-hidden');
   });
 
   it('submits size multiplicated by chosen unit', async function () {
@@ -177,22 +155,17 @@ describe('Integration | Component | support space form', function () {
       }}
     `);
 
-    let helper;
-    return wait()
-      .then(() => {
-        helper = new SupportSpaceFormHelper(this.element);
-        return fillIn(helper.getInput('main-token'), 'some token');
-      })
-      .then(() => fillIn(helper.getInput('main-size'), sizeToInput.toString()))
-      .then(() => click(helper.getInput('main-sizeUnit-' + unit)))
-      .then(() => helper.submit())
-      .then(() => {
-        expect(submitStub).to.be.calledOnce;
-        expect(submitStub).to.be.calledWith(sinon.match.has('size', sizeOutput));
-      });
+    const helper = new SupportSpaceFormHelper(this.element);
+    await fillIn(helper.getInput('main-token'), 'some token');
+    await fillIn(helper.getInput('main-size'), sizeToInput.toString());
+    await click(helper.getInput('main-sizeUnit-' + unit));
+    await helper.submit();
+
+    expect(submitStub).to.be.calledOnce;
+    expect(submitStub).to.be.calledWith(sinon.match.has('size', sizeOutput));
   });
 
-  it('shows a global error notify when submit fails', function () {
+  it('shows a global error notify when submit fails', async function () {
     suppressRejections();
     const globalNotify = lookupService(this, 'global-notify');
     const backendError = sinon.spy(globalNotify, 'backendError');
@@ -200,38 +173,32 @@ describe('Integration | Component | support space form', function () {
 
     this.set('submit', sinon.stub().returns(reject('some error')));
 
-    this.render(hbs `
+    await render(hbs `
       {{support-space-form
         submitSupportSpace=submit
         values=formValues
       }}
     `);
 
-    return wait()
-      .then(() => click('button[type=submit]'))
-      .then(() => expect(backendError).to.be.calledOnce);
+    await click('button[type=submit]');
+    expect(backendError).to.be.calledOnce;
   });
 
   it('hides import form when selected storage is not imported', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    return wait().then(() => {
-      expect(
-        this.$('.import-configuration-section').parents('.collapse-hidden')
-      ).to.exist;
-    });
+    expect(
+      find('.import-configuration-section').closest('.collapse-hidden')
+    ).to.exist;
   });
 
   it('shows import form when selected storage is imported', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    return wait()
-      .then(() => selectStorageWithImport(this))
-      .then(() => {
-        expect(
-          this.$('.import-configuration-section').parents('.collapse-hidden')
-        ).to.not.exist;
-      });
+    await selectStorageWithImport();
+    expect(
+      find('.import-configuration-section').closest('.collapse-hidden')
+    ).to.not.exist;
   });
 
   it('reacts to invalid data in import form', async function () {
@@ -239,10 +206,9 @@ describe('Integration | Component | support space form', function () {
 
     await render(hbs `{{support-space-form values=formValues}}`);
 
-    return wait()
-      .then(() => selectStorageWithImport(this))
-      .then(() => fillIn('.field-generic-maxDepth', 'bad value'))
-      .then(() => expect(this.$('button[type=submit]')).to.be.disabled);
+    await selectStorageWithImport();
+    await fillIn('.field-generic-maxDepth', 'bad value');
+    expect(find('button[type=submit]')).to.have.attr('disabled');
   });
 
   it('submits data from import form', async function () {
@@ -257,21 +223,19 @@ describe('Integration | Component | support space form', function () {
       }}
     `);
 
-    return wait()
-      .then(() => selectStorageWithImport(this))
-      .then(() => click('.toggle-field-generic-continuousScan'))
-      .then(() => new SupportSpaceFormHelper(this.element).submit())
-      .then(() => {
-        expect(submitStub).to.be.calledOnce;
-        expect(submitStub).to.be.calledWith(sinon.match.hasNested(
-          'storageImport.autoStorageImportConfig.continuousScan',
-          false
-        ));
-      });
+    await selectStorageWithImport();
+    await click('.toggle-field-generic-continuousScan');
+    await new SupportSpaceFormHelper(this.element).submit();
+
+    expect(submitStub).to.be.calledOnce;
+    expect(submitStub).to.be.calledWith(sinon.match.hasNested(
+      'storageImport.autoStorageImportConfig.continuousScan',
+      false
+    ));
   });
 });
 
-function selectStorageWithImport(testCase) {
-  const storagesHelper = new StorageSelectHelper(testCase.$());
+function selectStorageWithImport() {
+  const storagesHelper = new StorageSelectHelper();
   return storagesHelper.selectOption(2);
 }

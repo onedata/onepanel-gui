@@ -15,6 +15,7 @@ import { next } from '@ember/runloop';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import $ from 'jquery';
 
 const levelToAlertLevel = {
   ok: 'success',
@@ -124,10 +125,13 @@ export default Component.extend(
      * @returns {undefined}
      */
     autoexpandOsds() {
-      const autoexpandOsdsWhenNodesBelow = this.get('autoexpandOsdsWhenNodesBelow');
+      const {
+        element,
+        autoexpandOsdsWhenNodesBelow,
+      } = this.getProperties('element', 'autoexpandOsdsWhenNodesBelow');
       for (let i = 1; i < autoexpandOsdsWhenNodesBelow; i++) {
         const ithItemSelector = `.one-collapsible-list-item:nth-child(${i})`;
-        this.$(
+        $(element).find(
           `.osds-usage-container ${ithItemSelector} .one-collapsible-list-item-header`
         ).click();
       }

@@ -1,14 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import { set } from '@ember/object';
 import { resolve } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
-import { click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -49,9 +47,7 @@ describe('Integration | Component | cluster host table row', function () {
       isMobile=false
     }}`);
 
-    return wait().then(() => {
-      expect(this.$('.btn-remove-node')).to.have.class('disabled');
-    });
+    expect(find('.btn-remove-node')).to.have.class('disabled');
   });
 
   it('renders remove button as enabled if this is not the current host', async function () {
@@ -78,11 +74,8 @@ describe('Integration | Component | cluster host table row', function () {
       isMobile=false
     }}`);
 
-    return wait().then(() => {
-      expect(this.$('.btn-remove-node')).to.not.have.class('disabled');
-      return click('.btn-remove-node').then(() => {
-        expect(removeHost).to.be.calledOnce;
-      });
-    });
+    expect(find('.btn-remove-node')).to.not.have.class('disabled');
+    await click('.btn-remove-node');
+    expect(removeHost).to.be.calledOnce;
   });
 });

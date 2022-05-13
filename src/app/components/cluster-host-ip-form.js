@@ -1,6 +1,6 @@
 /**
  * A responsive table with hostname -> IP address to set
- * 
+ *
  * @module components/cluster-host-ip-form
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
@@ -15,6 +15,7 @@ import { next } from '@ember/runloop';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import _ from 'lodash';
+import $ from 'jquery';
 
 export default BasicTable.extend(I18n, {
   tagName: 'table',
@@ -55,7 +56,7 @@ export default BasicTable.extend(I18n, {
    */
   hostDataChanged: notImplementedWarn,
 
-  /** 
+  /**
    * @type {EmberArray<{ip: string, hostname: string}>}
    */
   _hostsData: undefined,
@@ -109,7 +110,7 @@ export default BasicTable.extend(I18n, {
   didInsertElement() {
     this._super(...arguments);
     next(() => {
-      this.$('tbody .row-header').click();
+      $(this.get('element')).find('tbody .row-header').click();
     });
 
   },
@@ -124,8 +125,8 @@ export default BasicTable.extend(I18n, {
     },
 
     /**
-     * @param {string} hostname 
-     * @param {EmberObject} validation 
+     * @param {string} hostname
+     * @param {EmberObject} validation
      * @param {boolean} validation.isValid
      * @param {Array<string>} validation.messages
      * @param {Array<string>} validation.errors

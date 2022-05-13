@@ -2,7 +2,7 @@ import EmberObject from '@ember/object';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import Service from '@ember/service';
 import SpaceDetails from 'onepanel-gui/models/space-details';
@@ -42,7 +42,7 @@ describe('Integration | Component | cluster spaces table', function () {
   });
 
   it('renders error message when at least one space details fetch was rejected',
-    async function() {
+    async function () {
       const spaces = [
         EmberObject.create({
           isSettled: true,
@@ -72,11 +72,11 @@ describe('Integration | Component | cluster spaces table', function () {
       this.set('provider', { id: '123' });
 
       await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
-      expect(this.$('.alert-some-spaces-rejected')).to.exist;
+      expect(find('.alert-some-spaces-rejected')).to.exist;
     });
 
   it('does not render error message when all spaces are fetched successfully',
-    async function() {
+    async function () {
       const spaces = [
         EmberObject.create({
           isSettled: true,
@@ -102,6 +102,6 @@ describe('Integration | Component | cluster spaces table', function () {
       this.set('provider', { id: '123' });
 
       await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
-      expect(this.$('.alert-some-spaces-rejected')).to.not.exist;
+      expect(find('.alert-some-spaces-rejected')).to.not.exist;
     });
 });

@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import { describe, it, context } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render } from '@ember/test-helpers';
+import { render, click, fillIn, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import { click, fillIn } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -43,13 +42,13 @@ describe('Integration | Component | storage import form', function () {
       }}
     `);
 
-    expect(this.$('button[type=submit]')).to.not.exist;
+    expect(find('button[type=submit]')).to.not.exist;
   });
 
   it('has preselected "auto" mode on init', async function () {
     await render(hbs `{{storage-import-form}}`);
 
-    expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true);
+    expect(find('.field-mode-mode-auto')).to.be.checked;
   });
 
   context('when import mode is "auto"', function () {
@@ -57,14 +56,14 @@ describe('Integration | Component | storage import form', function () {
       await render(hbs `{{storage-import-form}}`);
 
       await click('.field-mode-mode-auto');
-      expect(this.$('.toggle-field-generic-continuousScan'))
+      expect(find('.toggle-field-generic-continuousScan'))
         .to.have.class('checked');
-      expect(this.$('.field-generic-maxDepth').val()).to.equal('');
-      expect(this.$('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
-      expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
-      expect(this.$('.toggle-field-generic-detectModifications'))
+      expect(find('.field-generic-maxDepth')).to.have.value('');
+      expect(find('.toggle-field-generic-syncAcl')).to.not.have.class('checked');
+      expect(find('.field-continuous-scanInterval')).to.have.value('60');
+      expect(find('.toggle-field-generic-detectModifications'))
         .to.have.class('checked');
-      expect(this.$('.toggle-field-generic-detectDeletions'))
+      expect(find('.toggle-field-generic-detectDeletions'))
         .to.have.class('checked');
       done();
     });
@@ -76,7 +75,7 @@ describe('Integration | Component | storage import form', function () {
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
-        checkContinuousFieldsNotExist(this);
+        checkContinuousFieldsNotExist();
         done();
       }
     );
@@ -88,7 +87,7 @@ describe('Integration | Component | storage import form', function () {
         `);
 
         await click('.field-mode-mode-auto');
-        checkContinuousFieldsExist(this);
+        checkContinuousFieldsExist();
         done();
       });
 
@@ -99,7 +98,7 @@ describe('Integration | Component | storage import form', function () {
 
       await click('.field-mode-mode-auto');
       await fillIn('.field-generic-maxDepth', 'bad value');
-      expect(this.$('button[type=submit]')).to.be.disabled;
+      expect(find('button[type=submit]')).to.have.attr('disabled');
       done();
     });
 
@@ -116,7 +115,7 @@ describe('Integration | Component | storage import form', function () {
 
         await render(hbs `{{storage-import-form defaultValues=formValues}}`);
 
-        checkContinuousFieldsExist(this);
+        checkContinuousFieldsExist();
         done();
       }
     );
@@ -172,7 +171,7 @@ describe('Integration | Component | storage import form', function () {
         `);
 
         await click('.toggle-field-generic-continuousScan');
-        expect(this.$('.field-continuous-scanInterval')).to.have.value('60');
+        expect(find('.field-continuous-scanInterval')).to.have.value('60');
         done();
       }
     );
@@ -183,8 +182,8 @@ describe('Integration | Component | storage import form', function () {
         await render(hbs `{{storage-import-form}}`);
 
         await click('.field-mode-mode-auto');
-        expect(this.$('.continuous-info-msg').text())
-          .to.contain('Continuous scan enabled');
+        expect(find('.continuous-info-msg'))
+          .to.contain.text('Continuous scan enabled');
         done();
       }
     );
@@ -196,8 +195,8 @@ describe('Integration | Component | storage import form', function () {
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
-        expect(this.$('.continuous-info-msg').text())
-          .to.contain('Continuous scan disabled');
+        expect(find('.continuous-info-msg'))
+          .to.contain.text('Continuous scan disabled');
         done();
       }
     );
@@ -210,15 +209,15 @@ describe('Integration | Component | storage import form', function () {
           {{storage-import-form defaultValues=exampleConfig}}
         `);
 
-        expect(this.$('.field-mode-mode-auto')).to.have.prop('checked', true);
-        expect(this.$('.toggle-field-generic-continuousScan'))
+        expect(find('.field-mode-mode-auto')).to.be.checked;
+        expect(find('.toggle-field-generic-continuousScan'))
           .to.have.class('checked');
-        expect(this.$('.field-generic-maxDepth').val()).to.equal('10');
-        expect(this.$('.toggle-field-generic-syncAcl')).to.have.class('checked');
-        expect(this.$('.field-continuous-scanInterval').val()).to.equal('20');
-        expect(this.$('.toggle-field-generic-detectModifications'))
+        expect(find('.field-generic-maxDepth')).to.have.value('10');
+        expect(find('.toggle-field-generic-syncAcl')).to.have.class('checked');
+        expect(find('.field-continuous-scanInterval')).to.have.value('20');
+        expect(find('.toggle-field-generic-detectModifications'))
           .to.not.have.class('checked');
-        expect(this.$('.toggle-field-generic-detectDeletions'))
+        expect(find('.toggle-field-generic-detectDeletions'))
           .to.have.class('checked');
         done();
       }
@@ -238,7 +237,7 @@ describe('Integration | Component | storage import form', function () {
         '.field-continuous-scanInterval',
         '.toggle-field-continuous-detectModifications',
         '.toggle-field-continuous-detectDeletions',
-      ].forEach(selector => expect(this.$(selector)).to.not.exist);
+      ].forEach(selector => expect(find(selector)).to.not.exist);
       done();
     });
 
@@ -247,7 +246,7 @@ describe('Integration | Component | storage import form', function () {
       await render(hbs `{{storage-import-form mode="new"}}`);
 
       await click('.field-mode-mode-manual');
-      expect(this.$('.continuous-info-msg')).to.not.exist;
+      expect(find('.continuous-info-msg')).to.not.exist;
       done();
     });
 
@@ -259,7 +258,7 @@ describe('Integration | Component | storage import form', function () {
           {{storage-import-form defaultValues=exampleConfig}}
         `);
 
-        expect(this.$('.field-mode-mode-manual')).to.have.prop('checked', true);
+        expect(find('.field-mode-mode-manual')).to.be.checked;
         done();
       }
     );
@@ -313,13 +312,13 @@ describe('Integration | Component | storage import form', function () {
   it('has enabled "mode" field in "new" form mode', async function () {
     await render(hbs `{{storage-import-form mode="new"}}`);
 
-    expect(this.$('.field-mode-mode input')).to.not.have.attr('disabled');
+    expect(find('.field-mode-mode input')).to.not.have.attr('disabled');
   });
 
   it('has disabled "mode" field in "edit" form mode', async function () {
     await render(hbs `{{storage-import-form mode="edit"}}`);
 
-    expect(this.$('.field-mode-mode input')).to.have.attr('disabled');
+    expect(find('.field-mode-mode input')).to.have.attr('disabled');
   });
 });
 
@@ -327,14 +326,14 @@ const continuousFieldsSelectors = [
   '.field-continuous-scanInterval',
 ];
 
-function checkContinuousFieldsExist(testCase) {
+function checkContinuousFieldsExist() {
   continuousFieldsSelectors.forEach(selector =>
-    expect(testCase.$(selector)).to.exist
+    expect(find(selector)).to.exist
   );
 }
 
-function checkContinuousFieldsNotExist(testCase) {
+function checkContinuousFieldsNotExist() {
   continuousFieldsSelectors.forEach(selector =>
-    expect(testCase.$(selector)).to.not.exist
+    expect(find(selector)).to.not.exist
   );
 }
