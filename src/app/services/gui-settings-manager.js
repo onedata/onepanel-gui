@@ -139,7 +139,7 @@ export default Service.extend(...mixins, {
     if (this.get('guiUtils.serviceType') === 'onezone') {
       return this.get('onepanelServer')
         .request('ServiceConfigurationApi', 'getGuiMessage', 'privacy_policy')
-        .then(({ data }) => this.sanitizeGuiMessage(data));
+        .then(({ data }) => this.sanitizeGuiMessage(data, true));
     } else {
       return resolve();
     }
@@ -151,7 +151,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   savePrivacyPolicy(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
@@ -172,7 +172,7 @@ export default Service.extend(...mixins, {
     if (this.get('guiUtils.serviceType') === 'onezone') {
       return this.get('onepanelServer')
         .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
-        .then(({ data }) => this.sanitizeGuiMessage(data));
+        .then(({ data }) => this.sanitizeGuiMessage(data, true));
     } else {
       return resolve();
     }
@@ -184,7 +184,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   saveTermsOfUse(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message);
+    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
