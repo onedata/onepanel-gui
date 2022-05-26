@@ -12,6 +12,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import GuiMessageEditorBase from 'onepanel-gui/components/content-clusters-gui-settings/gui-message-editor-base';
 import { reads } from '@ember/object/computed';
+import { computed } from '@ember/object';
 
 export default GuiMessageEditorBase.extend(I18n, {
   classNames: ['privacy-policy'],
@@ -36,4 +37,12 @@ export default GuiMessageEditorBase.extend(I18n, {
   save(message) {
     return this.get('guiSettingsActions').savePrivacyPolicy(message);
   },
+
+  isBodyEmpty: computed('body', function isBodyEmpty() {
+    const {
+      guiSettingsManager,
+      body,
+    } = this.getProperties('guiSettingsManager', 'body');
+    return guiSettingsManager.isBodyEmpty(body);
+  }),
 });

@@ -18,7 +18,7 @@ import Service, { inject as service } from '@ember/service';
 import { resolve, all as allFulfilled } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { and, not } from 'ember-awesome-macros';
-import { setProperties } from '@ember/object';
+import { setProperties, computed } from '@ember/object';
 import DOMPurify from 'npm:dompurify';
 
 const mixins = [
@@ -44,17 +44,25 @@ export default Service.extend(...mixins, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  privacyPolicyEmptyError: and(
-    'privacyPolicy.enabled',
-    not('privacyPolicy.body')
+  privacyPolicyEmptyError: computed(
+    'privacyPolicy.{body,enabled}',
+    function privacyPolicyEmptyError() {
+      const enabled = this.get('privacyPolicy.enabled');
+      const body = this.get('privacyPolicy.body');
+      return enabled && this.isBodyEmpty(body);
+    }
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  termsOfUseEmptyError: and(
-    'termsOfUse.enabled',
-    not('termsOfUse.body')
+  termsOfUseEmptyError: computed(
+    'termsOfUse.{body,enabled}',
+    function termsOfUseEmptyError() {
+      const enabled = this.get('termsOfUse.enabled');
+      const body = this.get('termsOfUse.body');
+      return enabled && this.isBodyEmpty(body);
+    }
   ),
 
   /**
@@ -139,7 +147,7 @@ export default Service.extend(...mixins, {
     if (this.get('guiUtils.serviceType') === 'onezone') {
       return this.get('onepanelServer')
         .request('ServiceConfigurationApi', 'getGuiMessage', 'privacy_policy')
-        .then(({ data }) => this.sanitizeGuiMessage(data, true));
+        .then(({ data }) => this.sanitizeGuiMessage(data));
     } else {
       return resolve();
     }
@@ -151,7 +159,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   savePrivacyPolicy(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
@@ -172,7 +180,7 @@ export default Service.extend(...mixins, {
     if (this.get('guiUtils.serviceType') === 'onezone') {
       return this.get('onepanelServer')
         .request('ServiceConfigurationApi', 'getGuiMessage', 'terms_of_use')
-        .then(({ data }) => this.sanitizeGuiMessage(data, true));
+        .then(({ data }) => this.sanitizeGuiMessage(data));
     } else {
       return resolve();
     }
@@ -184,7 +192,7 @@ export default Service.extend(...mixins, {
    * @returns {Promise}
    */
   saveTermsOfUse(message) {
-    const sanitizedMessage = this.sanitizeGuiMessage(message, true);
+    const sanitizedMessage = this.sanitizeGuiMessage(message);
     return this.get('onepanelServer')
       .request(
         'ServiceConfigurationApi',
@@ -259,5 +267,12 @@ export default Service.extend(...mixins, {
       DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }) :
       DOMPurify.sanitize(body);
     return sanitizedBody.toString();
+  },
+
+  isBodyEmpty(body) {
+    const span = document.createElement('span');
+    span.innerHTML = body;
+    const text = span.textContent || span.innerText || '';
+    return !text.trim();
   },
 });
