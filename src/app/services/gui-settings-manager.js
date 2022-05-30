@@ -36,9 +36,13 @@ export default Service.extend(...mixins, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  signInNotificationEmptyError: and(
-    'signInNotification.enabled',
-    not('signInNotification.body')
+  signInNotificationEmptyError: computed(
+    'signInNotification.{body,enabled}',
+    function signInNotificationEmptyError() {
+      const enabled = this.get('signInNotification.enabled');
+      const body = this.get('signInNotification.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
@@ -49,7 +53,7 @@ export default Service.extend(...mixins, {
     function privacyPolicyEmptyError() {
       const enabled = this.get('privacyPolicy.enabled');
       const body = this.get('privacyPolicy.body');
-      return enabled && this.isBodyEmpty(body);
+      return enabled && this.isGuiMessageBodyEmpty(body);
     }
   ),
 
@@ -61,16 +65,20 @@ export default Service.extend(...mixins, {
     function termsOfUseEmptyError() {
       const enabled = this.get('termsOfUse.enabled');
       const body = this.get('termsOfUse.body');
-      return enabled && this.isBodyEmpty(body);
+      return enabled && this.isGuiMessageBodyEmpty(body);
     }
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  cookieConsentNotificationEmptyError: and(
-    'cookieConsentNotification.enabled',
-    not('cookieConsentNotification.body')
+  cookieConsentNotificationEmptyError: computed(
+    'cookieConsentNotification.{body,enabled}',
+    function cookieConsentNotificationEmptyError() {
+      const enabled = this.get('cookieConsentNotification.enabled');
+      const body = this.get('cookieConsentNotification.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
@@ -266,10 +274,11 @@ export default Service.extend(...mixins, {
     const sanitizedBody = textOnly ?
       DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }) :
       DOMPurify.sanitize(body);
-    return sanitizedBody.toString();
+    const sanitizedBodyText = sanitizedBody.toString();
+    return this.isGuiMessageBodyEmpty(sanitizedBodyText) ? '' : sanitizedBodyText;
   },
 
-  isBodyEmpty(body) {
+  isGuiMessageBodyEmpty(body) {
     const span = document.createElement('span');
     span.innerHTML = body;
     const text = span.textContent || span.innerText || '';
