@@ -18,7 +18,7 @@ import Service, { inject as service } from '@ember/service';
 import { resolve, all as allFulfilled } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { and, not } from 'ember-awesome-macros';
-import { setProperties } from '@ember/object';
+import { setProperties, computed } from '@ember/object';
 import DOMPurify from 'npm:dompurify';
 
 const mixins = [
@@ -36,33 +36,49 @@ export default Service.extend(...mixins, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  signInNotificationEmptyError: and(
-    'signInNotification.enabled',
-    not('signInNotification.body')
+  signInNotificationEmptyError: computed(
+    'signInNotification.{body,enabled}',
+    function signInNotificationEmptyError() {
+      const enabled = this.get('signInNotification.enabled');
+      const body = this.get('signInNotification.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  privacyPolicyEmptyError: and(
-    'privacyPolicy.enabled',
-    not('privacyPolicy.body')
+  privacyPolicyEmptyError: computed(
+    'privacyPolicy.{body,enabled}',
+    function privacyPolicyEmptyError() {
+      const enabled = this.get('privacyPolicy.enabled');
+      const body = this.get('privacyPolicy.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  termsOfUseEmptyError: and(
-    'termsOfUse.enabled',
-    not('termsOfUse.body')
+  termsOfUseEmptyError: computed(
+    'termsOfUse.{body,enabled}',
+    function termsOfUseEmptyError() {
+      const enabled = this.get('termsOfUse.enabled');
+      const body = this.get('termsOfUse.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  cookieConsentNotificationEmptyError: and(
-    'cookieConsentNotification.enabled',
-    not('cookieConsentNotification.body')
+  cookieConsentNotificationEmptyError: computed(
+    'cookieConsentNotification.{body,enabled}',
+    function cookieConsentNotificationEmptyError() {
+      const enabled = this.get('cookieConsentNotification.enabled');
+      const body = this.get('cookieConsentNotification.body');
+      return enabled && this.isGuiMessageBodyEmpty(body);
+    }
   ),
 
   /**
@@ -258,6 +274,14 @@ export default Service.extend(...mixins, {
     const sanitizedBody = textOnly ?
       DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }) :
       DOMPurify.sanitize(body);
-    return sanitizedBody.toString();
+    const sanitizedBodyText = sanitizedBody.toString();
+    return this.isGuiMessageBodyEmpty(sanitizedBodyText) ? '' : sanitizedBodyText;
+  },
+
+  isGuiMessageBodyEmpty(body) {
+    const span = document.createElement('span');
+    span.innerHTML = body;
+    const text = span.textContent || span.innerText || '';
+    return !text.trim();
   },
 });

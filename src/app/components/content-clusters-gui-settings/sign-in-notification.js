@@ -18,7 +18,6 @@ export default GuiMessageEditorBase.extend(I18n, {
 
   i18n: service(),
   guiSettingsActions: service(),
-  guiSettingsManager: service(),
 
   /**
    * @override
