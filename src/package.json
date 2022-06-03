@@ -17,6 +17,7 @@
     "clean": "rm -rf tmp dist rel node_modules .sass-cache tests/test-results.xml"
   },
   "devDependencies": {
+    "@babel/runtime": "7.12.5",
     "@ember/jquery": "2.0.0",
     "@ember/optional-features": "0.6.3",
     "autosize": "4.0.2",
