@@ -107,11 +107,16 @@ Run tests:
       interpreter: SHELL
       scripts:
       - |-
+        ./make.py -r ${bamboo.agentWorkingDirectory} lint
+        LINT_RESULT=$?
         ./make.py -r ${bamboo.agentWorkingDirectory} run_tests_xunit_output
-        TEST_EXITCODE=$?
-        echo "Trying to copy test results from legacy location... (do not bother when there will be cp error)"
-        cp src/tests/test-results.xml src/tmp/test-results.xml || true
-        exit $TEST_EXITCODE
+        TEST_CI_RESULT=$?
+        if [ $LINT_RESULT -ne 0 ]; then
+          exit $LINT_RESULT
+        fi
+        if [ $TEST_CI_RESULT -ne 0 ]; then
+          exit $TEST_CI_RESULT
+        fi
       working-dir: onepanel-gui
       description: Run tests
   final-tasks:

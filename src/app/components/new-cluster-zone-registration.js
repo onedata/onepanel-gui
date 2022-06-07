@@ -11,7 +11,7 @@ import { inject as service } from '@ember/service';
 import { not } from '@ember/object/computed';
 import { Promise, reject } from 'rsvp';
 import Component from '@ember/component';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
 import I18n from 'onedata-gui-common/mixins/components/i18n';

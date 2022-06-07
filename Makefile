@@ -5,18 +5,20 @@ REL_DIR	 ?= rel
 
 all: dev
 
-dev: deps build_dev
+dev: src/node_modules build_dev
 
-mock: deps build_mock
+mock: src/node_modules build_mock
 
-rel: deps build_prod
+rel: src/node_modules build_prod
 
-test: deps run_tests
+test: src/node_modules run_tests
 
-test_xunit_output: deps run_tests_xunit_output
+test_xunit_output: src/node_modules run_tests_xunit_output
 
-deps:
-	cd $(SRC_DIR) && npm install
+deps: src/node_modules
+
+src/node_modules: src/package.json
+	cd $(SRC_DIR) && npm run deps
 
 build_mock:
 	cd $(SRC_DIR) && ember build --environment=development --output-path=../$(REL_DIR)
@@ -35,6 +37,9 @@ run_tests:
 
 run_tests_xunit_output:
 	cd $(SRC_DIR) && xvfb-run ember test -r xunit
+
+lint: src/node_modules
+	cd $(SRC_DIR) && npm run-script lint
 
 ##
 ## Submodules

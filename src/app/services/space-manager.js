@@ -12,7 +12,7 @@ import { A } from '@ember/array';
 import Service, { inject as service } from '@ember/service';
 import { Promise, resolve } from 'rsvp';
 import { get } from '@ember/object';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';

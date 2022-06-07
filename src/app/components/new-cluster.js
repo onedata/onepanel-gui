@@ -18,7 +18,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { readOnly } from '@ember/object/computed';
 import { get, set, computed } from '@ember/object';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import {
   installationStepsMap,
   installationStepsArray,

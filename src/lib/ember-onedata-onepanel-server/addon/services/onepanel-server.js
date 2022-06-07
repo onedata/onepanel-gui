@@ -1,11 +1,11 @@
 /**
- * Ember-level interface for using onepanel API 
+ * Ember-level interface for using onepanel API
  *
  * It uses internally onepanel javascript client library.
  * API methods should be invoked by using ``request`` method.
  * The service wraps onepanel async requests into promises with additional
  * fields (see ``request`` method).
- * 
+ *
  * @module services/onepanel-server
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
@@ -19,7 +19,7 @@ import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import $ from 'jquery';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { Promise, resolve } from 'rsvp';
@@ -43,7 +43,7 @@ export default OnepanelServerBase.extend(
 
     /**
      * An Onepanel API Client that is used for making requests.
-     * 
+     *
      * @type {Onepanel.ApiClient}
      */
     client: null,
@@ -161,13 +161,13 @@ export default OnepanelServerBase.extend(
 
     /**
      * Checks if cookies-based session is valid by trying to get REST token.
-     * 
+     *
      * If the session is valid, it automatically (re)initializes the main client.
-     * 
+     *
      * Token fetching:
      * - if emergency, then just POST /gui-token without payload
      * - if hosted, then POST /gui-token with type and clusterId (both from URL)
-     * 
+     *
      * @returns {Promise<object>} an `initClient` promise if `getSession` succeeds,
      *    resolves object with: token (for Onepanel API), username
      */
@@ -224,9 +224,9 @@ export default OnepanelServerBase.extend(
 
     /**
      * Creates and sets main client used by this service.
-     * 
+     *
      * Must be invoked before using `request` method!
-     * 
+     *
      * @param {string} [token]
      * @param {string} [apiOrigin]
      * @returns {Promise}

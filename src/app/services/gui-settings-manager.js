@@ -19,7 +19,7 @@ import { resolve, all as allFulfilled } from 'rsvp';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { and, not } from 'ember-awesome-macros';
 import { setProperties } from '@ember/object';
-import DOMPurify from 'npm:dompurify';
+import DOMPurify from 'dompurify';
 
 const mixins = [
   createDataProxyMixin('signInNotification'),
