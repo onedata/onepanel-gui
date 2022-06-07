@@ -65,7 +65,7 @@ Fetch dependencies:
   - script:
       interpreter: SHELL
       scripts:
-      - ./make.py -r ${bamboo.agentWorkingDirectory} -i onedata/gui_builder:latest deps
+      - ./make.py -r ${bamboo.agentWorkingDirectory} deps
       working-dir: onepanel-gui
       description: Fetch dependencies
   - script:
