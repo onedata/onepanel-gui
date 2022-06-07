@@ -13,12 +13,6 @@ branches:
     after-deleted-days: 7
     after-inactive-days: 30
   link-to-jira: true
-notifications:
-- events:
-  - job-failed
-  recipients:
-  - users:
-    - plgjliput
 labels: []
 dependencies:
   require-all-stages-passing: false
@@ -65,13 +59,13 @@ Fetch dependencies:
   - script:
       interpreter: SHELL
       scripts:
-      - ./make.py -r ${bamboo.agentWorkingDirectory} -i onedata/gui_builder:latest deps
+      - ./make.py -r ${bamboo.agentWorkingDirectory} deps
       working-dir: onepanel-gui
       description: Fetch dependencies
   - script:
       interpreter: SHELL
       scripts:
-      - tar -czf deps.tar.gz $(ls -d onepanel-gui/src/node_modules onepanel-gui/src/bower_components 2>/dev/null)
+      - tar -czf deps.tar.gz onepanel-gui/src/node_modules
       description: Package dependencies
   final-tasks:
   - script: &clear-env
@@ -131,14 +125,12 @@ Run tests:
   artifact-subscriptions:
   - artifact: deps.tar.gz
 Build and publish:
-  key: JOB1
+  key: BAP
   other:
     clean-working-dir: true
     all-other-apps:
       custom:
         auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
   - checkout: *checkout
