@@ -15,6 +15,7 @@ import { or, notEqual } from 'ember-awesome-macros';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
+import hasEmptyHtmlContent from 'onedata-gui-common/utils/has-empty-html-content';
 
 export default Component.extend({
   guiSettingsManager: service(),
@@ -52,11 +53,8 @@ export default Component.extend({
    * @type {Ember.ComputedProperty<boolean>}
    */
   isGuiMessageBodyEmpty: computed('body', function isGuiMessageBodyEmpty() {
-    const {
-      guiSettingsManager,
-      body,
-    } = this.getProperties('guiSettingsManager', 'body');
-    return guiSettingsManager.isGuiMessageBodyEmpty(body);
+    const body = this.get('body');
+    return hasEmptyHtmlContent(body);
   }),
 
   init() {

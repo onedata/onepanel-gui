@@ -20,6 +20,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import { and, not } from 'ember-awesome-macros';
 import { setProperties, computed } from '@ember/object';
 import DOMPurify from 'npm:dompurify';
+import hasEmptyHtmlContent from 'onedata-gui-common/utils/has-empty-html-content';
 
 const mixins = [
   createDataProxyMixin('signInNotification'),
@@ -41,7 +42,7 @@ export default Service.extend(...mixins, {
     function signInNotificationEmptyError() {
       const enabled = this.get('signInNotification.enabled');
       const body = this.get('signInNotification.body');
-      return enabled && this.isGuiMessageBodyEmpty(body);
+      return enabled && hasEmptyHtmlContent(body);
     }
   ),
 
@@ -53,7 +54,7 @@ export default Service.extend(...mixins, {
     function privacyPolicyEmptyError() {
       const enabled = this.get('privacyPolicy.enabled');
       const body = this.get('privacyPolicy.body');
-      return enabled && this.isGuiMessageBodyEmpty(body);
+      return enabled && hasEmptyHtmlContent(body);
     }
   ),
 
@@ -65,7 +66,7 @@ export default Service.extend(...mixins, {
     function termsOfUseEmptyError() {
       const enabled = this.get('termsOfUse.enabled');
       const body = this.get('termsOfUse.body');
-      return enabled && this.isGuiMessageBodyEmpty(body);
+      return enabled && hasEmptyHtmlContent(body);
     }
   ),
 
@@ -77,7 +78,7 @@ export default Service.extend(...mixins, {
     function cookieConsentNotificationEmptyError() {
       const enabled = this.get('cookieConsentNotification.enabled');
       const body = this.get('cookieConsentNotification.body');
-      return enabled && this.isGuiMessageBodyEmpty(body);
+      return enabled && hasEmptyHtmlContent(body);
     }
   ),
 
@@ -275,13 +276,6 @@ export default Service.extend(...mixins, {
       DOMPurify.sanitize(body, { ALLOWED_TAGS: ['#text'] }) :
       DOMPurify.sanitize(body);
     const sanitizedBodyText = sanitizedBody.toString();
-    return this.isGuiMessageBodyEmpty(sanitizedBodyText) ? '' : sanitizedBodyText;
-  },
-
-  isGuiMessageBodyEmpty(body) {
-    const span = document.createElement('span');
-    span.innerHTML = body;
-    const text = span.textContent || span.innerText || '';
-    return !text.trim();
+    return hasEmptyHtmlContent(sanitizedBodyText) ? '' : sanitizedBodyText;
   },
 });
