@@ -36,7 +36,7 @@ stages:
     - Build and publish
 Fetch dependencies:
   key: FD
-  other:
+  other: &other-job-configuration
     clean-working-dir: true
     all-other-apps:
       custom:
@@ -83,12 +83,7 @@ Fetch dependencies:
   artifact-subscriptions: []
 Run tests:
   key: RT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        buildHangingConfig.enabled: 'false'
+  other: *other-job-configuration
   tasks:
   - checkout: *checkout
   - script: *init-submodules
@@ -103,14 +98,8 @@ Run tests:
       - |-
         ./make.py -r ${bamboo.agentWorkingDirectory} lint
         LINT_RESULT=$?
-        ./make.py -r ${bamboo.agentWorkingDirectory} run_tests_xunit_output
-        TEST_CI_RESULT=$?
-        if [ $LINT_RESULT -ne 0 ]; then
-          exit $LINT_RESULT
-        fi
-        if [ $TEST_CI_RESULT -ne 0 ]; then
-          exit $TEST_CI_RESULT
-        fi
+        ./make.py run_tests_xunit_output
+        return `expr $LINT_RESULT + $?`
       working-dir: onepanel-gui
       description: Run tests
   final-tasks:
@@ -126,12 +115,7 @@ Run tests:
   - artifact: deps.tar.gz
 Build and publish:
   key: BAP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        buildHangingConfig.enabled: 'false'
+  other: *other-job-configuration
   tasks:
   - checkout: *checkout
   - script: *init-submodules
