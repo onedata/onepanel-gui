@@ -1,6 +1,27 @@
 ---
 version: 2
 plan:
+  key: VFS-OPG
+plan-permissions:
+- groups:
+  - plggveildev
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+- users:
+  - plgborzecki
+  - plgjliput
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+---
+version: 2
+plan:
   project-key: VFS
   key: OPG
   name: onepanel-gui
@@ -13,12 +34,6 @@ branches:
     after-deleted-days: 7
     after-inactive-days: 30
   link-to-jira: true
-notifications:
-- events:
-  - job-failed
-  recipients:
-  - users:
-    - plgjliput
 labels: []
 dependencies:
   require-all-stages-passing: false
@@ -65,13 +80,13 @@ Fetch dependencies:
   - script:
       interpreter: SHELL
       scripts:
-      - ./make.py -r ${bamboo.agentWorkingDirectory} -i onedata/gui_builder:latest deps
+      - ./make.py -r ${bamboo.agentWorkingDirectory} deps
       working-dir: onepanel-gui
       description: Fetch dependencies
   - script:
       interpreter: SHELL
       scripts:
-      - tar -czf deps.tar.gz $(ls -d onepanel-gui/src/node_modules onepanel-gui/src/bower_components 2>/dev/null)
+      - tar -czf deps.tar.gz onepanel-gui/src/node_modules
       description: Package dependencies
   final-tasks:
   - script: &clear-env
@@ -108,10 +123,6 @@ Run tests:
       scripts:
       - |-
         ./make.py -r ${bamboo.agentWorkingDirectory} run_tests_xunit_output
-        TEST_EXITCODE=$?
-        echo "Trying to copy test results from legacy location... (do not bother when there will be cp error)"
-        cp src/tests/test-results.xml src/tmp/test-results.xml || true
-        exit $TEST_EXITCODE
       working-dir: onepanel-gui
       description: Run tests
   final-tasks:
@@ -126,14 +137,12 @@ Run tests:
   artifact-subscriptions:
   - artifact: deps.tar.gz
 Build and publish:
-  key: JOB1
+  key: BAP
   other:
     clean-working-dir: true
     all-other-apps:
       custom:
         auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
   - checkout: *checkout
@@ -166,44 +175,20 @@ Build and publish:
   final-tasks:
   - script: *clear-env
   artifacts:
-  - name: docker-build-list.json
+  - &art-item-build
+    name: docker-build-list.json
     location: onepanel-gui
     pattern: docker-build-list.json
     shared: true
     required: true
-  - name: docker-build-report.txt
-    location: onepanel-gui
+  - <<: *art-item-build
+    name: docker-build-report.txt
     pattern: docker-build-report.txt
-    shared: true
-    required: true
-  - name: gui-image.conf
-    location: onepanel-gui
+  - <<: *art-item-build
+    name: gui-image.conf
     pattern: gui-image.conf
-    shared: true
-    required: true
   requirements:
   - gui
   artifact-subscriptions:
   - artifact: deps.tar.gz
----
-version: 2
-plan:
-  key: VFS-OPG
-plan-permissions:
-- groups:
-  - plggveildev
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-- users:
-  - plgborzecki
-  - plgjliput
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
 ...
