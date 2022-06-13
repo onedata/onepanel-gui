@@ -120,7 +120,6 @@
     "jquery.scrollto": "2.1.2",
     "loader.js": "4.7.0",
     "sass": "1.17.0",
-    "showdown": "1.9.1",
     "sinon": "7.2.0",
     "sinon-chai": "3.7.0",
     "webpack": "5.72.1",
