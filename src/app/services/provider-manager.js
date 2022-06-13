@@ -8,7 +8,7 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { resolve } from 'rsvp';
 

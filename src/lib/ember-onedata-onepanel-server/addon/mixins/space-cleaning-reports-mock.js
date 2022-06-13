@@ -11,7 +11,7 @@
  */
 
 import Mixin from '@ember/object/mixin';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import moment from 'moment';
 import _ from 'lodash';
 import { get, set, setProperties } from '@ember/object';

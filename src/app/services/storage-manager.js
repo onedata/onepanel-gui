@@ -15,7 +15,7 @@ import { observer, get } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 

@@ -9,7 +9,7 @@
 
 import EmberObject, { computed, get } from '@ember/object';
 
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import generateClusterDeploySteps from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const {
@@ -42,7 +42,7 @@ export default EmberObject.extend({
    * Mocks getTaskStatus for cluster configuration operation.
    *
    * Every time it is invoked, it returns TaskStatus with more steps.
-   * 
+   *
    * @returns {Onepanel.TaskStatus}
    */
   getTaskStatusConfiguration() {

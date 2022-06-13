@@ -18,7 +18,7 @@ import { inject as service } from '@ember/service';
 import { camelize, capitalize } from '@ember/string';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { Promise } from 'rsvp';
