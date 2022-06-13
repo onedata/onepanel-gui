@@ -1,6 +1,27 @@
 ---
 version: 2
 plan:
+  key: VFS-OPG
+plan-permissions:
+- groups:
+  - plggveildev
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+- users:
+  - plgborzecki
+  - plgjliput
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+---
+version: 2
+plan:
   project-key: VFS
   key: OPG
   name: onepanel-gui
@@ -154,44 +175,20 @@ Build and publish:
   final-tasks:
   - script: *clear-env
   artifacts:
-  - name: docker-build-list.json
+  - &art-item-build
+    name: docker-build-list.json
     location: onepanel-gui
     pattern: docker-build-list.json
     shared: true
     required: true
-  - name: docker-build-report.txt
-    location: onepanel-gui
+  - <<: *art-item-build
+    name: docker-build-report.txt
     pattern: docker-build-report.txt
-    shared: true
-    required: true
-  - name: gui-image.conf
-    location: onepanel-gui
+  - <<: *art-item-build
+    name: gui-image.conf
     pattern: gui-image.conf
-    shared: true
-    required: true
   requirements:
   - gui
   artifact-subscriptions:
   - artifact: deps.tar.gz
----
-version: 2
-plan:
-  key: VFS-OPG
-plan-permissions:
-- groups:
-  - plggveildev
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-- users:
-  - plgborzecki
-  - plgjliput
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
 ...
