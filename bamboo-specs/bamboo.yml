@@ -13,12 +13,6 @@ branches:
     after-deleted-days: 7
     after-inactive-days: 30
   link-to-jira: true
-notifications:
-- events:
-  - job-failed
-  recipients:
-  - users:
-    - plgjliput
 labels: []
 dependencies:
   require-all-stages-passing: false
@@ -42,7 +36,7 @@ stages:
     - Build and publish
 Fetch dependencies:
   key: FD
-  other:
+  other: &other-job-configuration
     clean-working-dir: true
     all-other-apps:
       custom:
@@ -65,13 +59,13 @@ Fetch dependencies:
   - script:
       interpreter: SHELL
       scripts:
-      - ./make.py -r ${bamboo.agentWorkingDirectory} -i onedata/gui_builder:latest deps
+      - ./make.py -r ${bamboo.agentWorkingDirectory} deps
       working-dir: onepanel-gui
       description: Fetch dependencies
   - script:
       interpreter: SHELL
       scripts:
-      - tar -czf deps.tar.gz $(ls -d onepanel-gui/src/node_modules onepanel-gui/src/bower_components 2>/dev/null)
+      - tar -czf deps.tar.gz onepanel-gui/src/node_modules
       description: Package dependencies
   final-tasks:
   - script: &clear-env
@@ -89,12 +83,7 @@ Fetch dependencies:
   artifact-subscriptions: []
 Run tests:
   key: RT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        buildHangingConfig.enabled: 'false'
+  other: *other-job-configuration
   tasks:
   - checkout: *checkout
   - script: *init-submodules
@@ -107,11 +96,10 @@ Run tests:
       interpreter: SHELL
       scripts:
       - |-
-        ./make.py -r ${bamboo.agentWorkingDirectory} run_tests_xunit_output
-        TEST_EXITCODE=$?
-        echo "Trying to copy test results from legacy location... (do not bother when there will be cp error)"
-        cp src/tests/test-results.xml src/tmp/test-results.xml || true
-        exit $TEST_EXITCODE
+        ./make.py -r ${bamboo.agentWorkingDirectory} lint
+        LINT_RESULT=$?
+        ./make.py run_tests_xunit_output
+        return `expr $LINT_RESULT + $?`
       working-dir: onepanel-gui
       description: Run tests
   final-tasks:
@@ -126,15 +114,8 @@ Run tests:
   artifact-subscriptions:
   - artifact: deps.tar.gz
 Build and publish:
-  key: JOB1
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  key: BAP
+  other: *other-job-configuration
   tasks:
   - checkout: *checkout
   - script: *init-submodules

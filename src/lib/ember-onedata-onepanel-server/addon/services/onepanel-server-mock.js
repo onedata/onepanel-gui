@@ -39,7 +39,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { installationStepsMap } from 'onepanel-gui/models/installation-details';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
 const {

@@ -9,6 +9,7 @@
  */
 
 import Mixin from '@ember/object/mixin';
+import { computed } from '@ember/object';
 
 class MockState {
   constructor(target, threshold, steps) {
@@ -55,7 +56,7 @@ class MockState {
 }
 
 export default Mixin.create({
-  cleanStatesCache: {},
+  cleanStatesCache: computed(() => {}),
 
   _getAutoCleaningStatus(id, target, threshold, steps) {
     return this._getAutoCleaningStatusMock(id, target, threshold, steps).getData();
