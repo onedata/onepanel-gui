@@ -104,6 +104,11 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   }),
 
   /**
+   * @type {SpaceSupportAccountingFormValues}
+   */
+  accountingConfig: undefined,
+
+  /**
    * @type {boolean}
    */
   importEnabled: reads('selectedStorageItem.storage.importedStorage'),
@@ -201,10 +206,12 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         importEnabled,
         submitSupportSpace,
         globalNotify,
+        accountingConfig,
       } = this.getProperties(
         'importEnabled',
         'submitSupportSpace',
-        'globalNotify'
+        'globalNotify',
+        'accountingConfig'
       );
 
       let {
@@ -224,11 +231,11 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       size = size * _.find(units, { value: sizeUnit })._multiplicator;
       const storageId = this.get('selectedStorageItem.storage.id');
 
-      const supportRequestBody = {
+      const supportRequestBody = Object.assign({
         token: trimToken(token),
         size,
         storageId,
-      };
+      }, accountingConfig);
       if (importEnabled) {
         supportRequestBody.storageImport = storageImport;
       }
@@ -246,6 +253,9 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       if (areValuesValid) {
         this.set('formValues.main.storageImport', importFormValues);
       }
+    },
+    accountingConfigChanged(accountingConfig) {
+      this.set('accountingConfig', accountingConfig);
     },
   },
 });

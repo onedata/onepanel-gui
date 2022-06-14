@@ -1,0 +1,19 @@
+.support-space-form {
+  @media (min-width: $screen-sm-min) {
+    .space-support-accounting-form {
+      .control-label {
+        width: 5 / 12 * 100%;
+      }
+
+      .label-colon {
+        margin-right: -0.25em;
+      }
+
+      .form-field-tip {
+        position: absolute;
+        right: -$padding-small-horizontal;
+        transform: translateX(100%);
+      }
+    }
+  }
+}
