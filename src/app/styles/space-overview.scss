@@ -1,0 +1,32 @@
+.space-overview {
+  .space-support-accounting-form {
+    margin-left: $content-row-vertical-padding;
+
+    @media (min-width: $screen-sm-min) {
+      margin-left: $padding-large-horizontal + $content-row-vertical-padding;
+    }
+
+    .form {
+      margin-top: $content-row-vertical-padding * 1.5;
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      display: contents;
+    }
+
+    .toggle-field-renderer {
+      margin-bottom: $content-row-vertical-padding * 0.75;
+    }
+
+    .toggle-field {
+      flex-grow: 0;
+      margin-left: 1em;
+    }
+
+    .form-field-tip {
+      order: 1;
+      transform: translateY(0.1em);
+    }
+  }
+}

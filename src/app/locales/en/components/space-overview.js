@@ -3,6 +3,10 @@ import storageImport from './-space/storage-import';
 export default {
   storageImport,
   storageImportSection: 'Storage import',
+  accountingSettingsSection: 'Accounting settings',
+  startAccountingEdition: 'Modify',
+  cancelAccountingEdition: 'Cancel',
+  saveNewAccounting: 'Save',
   id: 'Id',
   name: 'Name',
   storage: 'Assigned storage',

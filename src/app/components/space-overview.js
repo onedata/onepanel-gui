@@ -1,6 +1,6 @@
 /**
  * Basic information about supported space
- * 
+ *
  * @module components/space-overview
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
@@ -16,8 +16,11 @@ import { inject as service } from '@ember/service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import Looper from 'onedata-gui-common/utils/looper';
 import { fields as importFields } from 'onepanel-gui/components/storage-import-form';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 export default Component.extend(I18n, spaceItemSupports, {
+  classNames: ['space-overview'],
+
   i18nPrefix: 'components.spaceOverview',
 
   spaceManager: service(),
@@ -47,6 +50,35 @@ export default Component.extend(I18n, spaceItemSupports, {
    * @type {Looper}
    */
   spaceUpdater: undefined,
+
+  /**
+   * @type {SpaceSupportAccountingFormValues}
+   */
+  newAccountingConfig: undefined,
+
+  /**
+   * @type {'view'|'edit'}
+   */
+  accountingFormMode: 'view',
+
+  /**
+   * @type {boolean}
+   */
+  isSavingNewAccountingConfig: false,
+
+  /**
+   * @type {SpaceSupportAccountingFormValues}
+   */
+  accountingConfig: computed(
+    'space.{accountingEnabled,dirStatsEnabled}',
+    function accountingConfig() {
+      return getProperties(
+        this.get('space'),
+        'accountingEnabled',
+        'dirStatsEnabled',
+      );
+    }
+  ),
 
   /**
    * List of storage import properties ready to show in template
@@ -174,6 +206,25 @@ export default Component.extend(I18n, spaceItemSupports, {
   },
 
   actions: {
+    accountingConfigChanged(accountingConfig) {
+      this.set('newAccountingConfig', accountingConfig);
+    },
+    toggleAccountingFormMode() {
+      this.set(
+        'accountingFormMode',
+        this.get('accountingFormMode') === 'view' ? 'edit' : 'view'
+      );
+    },
+    async saveNewAccounting() {
+      const newAccountingConfig = this.get('newAccountingConfig');
+      this.set('isSavingNewAccountingConfig', true);
+      try {
+        await this.get('submitModifySpace')(newAccountingConfig);
+        safeExec(this, () => this.set('accountingFormMode', 'view'));
+      } finally {
+        safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
+      }
+    },
     submitModifySpace(data) {
       return this.get('submitModifySpace')(data);
     },
