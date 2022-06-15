@@ -6,7 +6,7 @@ export default {
   accountingSettingsSection: 'Accounting settings',
   startAccountingEdition: 'Modify',
   cancelAccountingEdition: 'Cancel',
-  saveNewAccounting: 'Save',
+  saveNewAccountingConfig: 'Save',
   id: 'Id',
   name: 'Name',
   storage: 'Assigned storage',

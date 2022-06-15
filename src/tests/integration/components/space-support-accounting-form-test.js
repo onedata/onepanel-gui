@@ -36,7 +36,7 @@ describe('Integration | Component | space support accounting form', function () 
 
     expect(dirStatsEnabledField).to.exist;
     expect(dirStatsEnabledField.querySelector('label').textContent.trim())
-      .to.equal('Gather directories statistics:');
+      .to.equal('Gather directory statistics:');
     expect(dirStatsEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const dirStatsEnabledTip = await new OneTooltipHelper(

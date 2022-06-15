@@ -5,8 +5,9 @@ export default {
       tip: 'Accounting tip',
     },
     dirStatsEnabled: {
-      label: 'Gather directories statistics',
+      label: 'Gather directory statistics',
       tip: 'Dir stats tip',
+      disabledDueToAccountingTip: 'Gathering directory statistics must be turned on when accounting is enabled.',
     },
   },
 };

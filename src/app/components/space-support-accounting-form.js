@@ -82,11 +82,17 @@ export default Component.extend(I18n, {
     }
   ),
 
+  /**
+   * @override
+   */
   init() {
     this._super(...arguments);
     this.setupForm();
   },
 
+  /**
+   * @override
+   */
   willDestroyElement() {
     this._super(...arguments);
     this.get('fieldsRootGroup').destroy();
@@ -184,4 +190,12 @@ const AccountingEnabledToggle = ToggleField.extend({
 const DirStatsEnabledToggle = ToggleField.extend({
   name: 'dirStatsEnabled',
   isEnabled: not('valuesSource.accountingEnabled'),
+  disabledControlTip: computed(
+    'valuesSource.accountingEnabled',
+    function disabledControlTip() {
+      if (this.get('valuesSource.accountingEnabled')) {
+        return this.getTranslation('disabledDueToAccountingTip');
+      }
+    }
+  ),
 });

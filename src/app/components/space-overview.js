@@ -52,6 +52,8 @@ export default Component.extend(I18n, spaceItemSupports, {
   spaceUpdater: undefined,
 
   /**
+   * New, modified accounting config provided by the user through the accounting form.
+   * Will be sent to the backend when accepted via "Save" button.
    * @type {SpaceSupportAccountingFormValues}
    */
   newAccountingConfig: undefined,
@@ -67,6 +69,7 @@ export default Component.extend(I18n, spaceItemSupports, {
   isSavingNewAccountingConfig: false,
 
   /**
+   * Existing, unmodified accounting config
    * @type {SpaceSupportAccountingFormValues}
    */
   accountingConfig: computed(
@@ -215,7 +218,7 @@ export default Component.extend(I18n, spaceItemSupports, {
         this.get('accountingFormMode') === 'view' ? 'edit' : 'view'
       );
     },
-    async saveNewAccounting() {
+    async saveNewAccountingConfig() {
       const newAccountingConfig = this.get('newAccountingConfig');
       this.set('isSavingNewAccountingConfig', true);
       try {
