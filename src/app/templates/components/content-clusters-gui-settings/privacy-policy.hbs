@@ -1,5 +1,5 @@
 {{#promise-proxy-container proxy=savedMessageProxy}}
-  {{#if (and isEnabled (not body))}}
+  {{#if (and isEnabled isGuiMessageBodyEmpty)}}
     <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>

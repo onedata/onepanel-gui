@@ -13,8 +13,13 @@ import Component from '@ember/component';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { or, notEqual } from 'ember-awesome-macros';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import hasEmptyHtmlContent from 'onedata-gui-common/utils/has-empty-html-content';
 
 export default Component.extend({
+  guiSettingsManager: service(),
+
   /**
    * @type {boolean}
    */
@@ -43,6 +48,14 @@ export default Component.extend({
    * @type {boolean}
    */
   isSaving: false,
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
+  isGuiMessageBodyEmpty: computed('body', function isGuiMessageBodyEmpty() {
+    const body = this.get('body');
+    return hasEmptyHtmlContent(body);
+  }),
 
   init() {
     this._super(...arguments);
