@@ -1,13 +1,7 @@
 .space-overview {
   .space-support-accounting-form {
-    margin-left: $content-row-vertical-padding;
-
-    @media (min-width: $screen-sm-min) {
-      margin-left: $padding-large-horizontal + $content-row-vertical-padding;
-    }
-
     .form {
-      margin-top: $content-row-vertical-padding * 1.5;
+      margin-top: 0;
       margin-bottom: 0;
     }
 
@@ -17,6 +11,7 @@
 
     .toggle-field-renderer {
       margin-bottom: $content-row-vertical-padding * 0.75;
+      flex-wrap: wrap;
     }
 
     .toggle-field {
@@ -27,6 +22,11 @@
     .form-field-tip {
       order: 1;
       transform: translateY(0.1em);
+    }
+
+    .status-badge {
+      order: 2;
+      margin-left: 1em;
     }
   }
 }

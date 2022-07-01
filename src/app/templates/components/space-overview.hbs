@@ -20,12 +20,12 @@
       {{/promise-proxy-container}}
     </div>
     <div class="row content-row">
-      <strong class="property-label">{{tt this "accountingSettingsSection"}}:</strong>
       {{#space-support-accounting-form
         mode=accountingFormMode
         values=accountingConfig
         isDisabled=isSavingNewAccountingConfig
         onChange=(action "accountingConfigChanged")
+        dirStatsCollectingStatus=space.dirStatsCollectingStatus
       }}
         {{#if (eq accountingFormMode "edit")}}
           {{#one-button

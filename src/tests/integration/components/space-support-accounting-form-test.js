@@ -26,7 +26,7 @@ describe('Integration | Component | space support accounting form', function () 
 
     expect(accountingEnabledField).to.exist;
     expect(accountingEnabledField.querySelector('label').textContent.trim())
-      .to.equal('Accounting enabled:');
+      .to.equal('Accounting:');
     expect(accountingEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const accountingEnabledTip = await new OneTooltipHelper(
@@ -36,7 +36,7 @@ describe('Integration | Component | space support accounting form', function () 
 
     expect(dirStatsEnabledField).to.exist;
     expect(dirStatsEnabledField.querySelector('label').textContent.trim())
-      .to.equal('Gather directory statistics:');
+      .to.equal('Directory size statistics:');
     expect(dirStatsEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const dirStatsEnabledTip = await new OneTooltipHelper(
@@ -103,6 +103,15 @@ describe('Integration | Component | space support accounting form', function () 
       expect(accountingEnabledToggle.matches('.checked')).to.be.false;
       expect(dirStatsEnabledToggle.matches('.checked')).to.be.false;
 
+      done();
+    });
+
+    it('shows status badge', async function (done) {
+      this.set('dirStatsCollectingStatus', 'initializing');
+
+      await renderComponent(this);
+
+      expect(find('.status-badge.status-initializing')).to.exist;
       done();
     });
   });
@@ -211,6 +220,15 @@ describe('Integration | Component | space support accounting form', function () 
 
       done();
     });
+
+    it('does not show status badge', async function (done) {
+      this.set('dirStatsCollectingStatus', 'initializing');
+
+      await renderComponent(this);
+
+      expect(find('.status-badge')).to.not.exist;
+      done();
+    });
   });
 });
 
@@ -220,6 +238,7 @@ async function renderComponent(testCase) {
     mode=mode
     values=values
     onChange=changeSpy
+    dirStatsCollectingStatus=dirStatsCollectingStatus
   }}`);
   await wait();
 }

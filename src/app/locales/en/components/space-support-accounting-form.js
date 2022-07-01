@@ -1,13 +1,16 @@
+import statusBadge from './space-support-accounting-form/status-badge';
+
 export default {
+  statusBadge,
   fields: {
     accountingEnabled: {
-      label: 'Accounting enabled',
+      label: 'Accounting',
       tip: 'Accounting tip',
     },
     dirStatsEnabled: {
-      label: 'Gather directory statistics',
+      label: 'Directory size statistics',
       tip: 'Dir stats tip',
-      disabledDueToAccountingTip: 'Gathering directory statistics must be turned on when accounting is enabled.',
+      disabledDueToAccountingTip: 'Directory size statistics must be turned on when accounting is enabled.',
     },
   },
 };

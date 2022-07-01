@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { computed, observer, get, getProperties, set } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { scheduleOnce } from '@ember/runloop';
-import { tag, not } from 'ember-awesome-macros';
+import { tag, not, conditional, raw } from 'ember-awesome-macros';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
@@ -44,14 +44,22 @@ export default Component.extend(I18n, {
   mode: 'edit',
 
   /**
+   * @virtual optional
    * @type {SpaceSupportAccountingFormValues}
    */
   values: undefined,
 
   /**
+   * @virtual optional
    * @type {(values: SpaceSupportAccountingFormValues) => void}
    */
   onChange: undefined,
+
+  /**
+   * @virtual
+   * @type {DirStatsCollectingStatus}
+   */
+  dirStatsCollectingStatus: undefined,
 
   /**
    * @type {FormComponent.ValuesContainer}
@@ -198,4 +206,10 @@ const DirStatsEnabledToggle = ToggleField.extend({
       }
     }
   ),
+  afterComponentName: conditional(
+    'isInViewMode',
+    raw('space-support-accounting-form/status-badge'),
+    raw(undefined),
+  ),
+  dirStatsCollectingStatus: reads('parent.component.dirStatsCollectingStatus'),
 });
