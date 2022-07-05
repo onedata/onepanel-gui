@@ -308,7 +308,7 @@ describe('Integration | Component | support space form', function () {
     expect(accountingRootGroup.querySelector('.field-disabled')).to.not.exist;
     expect(find('.accountingEnabled-field .one-way-toggle').matches('.checked'))
       .to.be.false;
-    expect(find('.dirStatsEnabled-field .one-way-toggle').matches('.checked'))
+    expect(find('.dirStatsServiceEnabled-field .one-way-toggle').matches('.checked'))
       .to.be.false;
   });
 
@@ -326,7 +326,7 @@ describe('Integration | Component | support space form', function () {
     expect(submitSpy).to.be.calledOnce;
     expect(submitSpy).to.be.calledWith(sinon.match({
       accountingEnabled: false,
-      dirStatsEnabled: false,
+      dirStatsServiceEnabled: false,
     }));
   });
 
@@ -345,7 +345,7 @@ describe('Integration | Component | support space form', function () {
     expect(submitSpy).to.be.calledOnce;
     expect(submitSpy).to.be.calledWith(sinon.match({
       accountingEnabled: true,
-      dirStatsEnabled: true,
+      dirStatsServiceEnabled: true,
     }));
   });
 });

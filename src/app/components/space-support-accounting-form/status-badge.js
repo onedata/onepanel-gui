@@ -1,3 +1,13 @@
+/**
+ * Shows a small badge informing about the current status of the directory stats service.
+ * It's rendered only when the current status represents some type of a change in time
+ * (so the "finished" statuses are not visible at all).
+ *
+ * @author Michał Borzęcki
+ * @copyright (C) 2022 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { bool } from '@ember/object/computed';
@@ -25,10 +35,10 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<'initializing'|'stopping'|null>}
    */
   statusToRender: computed(
-    'field.dirStatsCollectingStatus',
+    'field.dirStatsServiceStatus',
     function statusToRender() {
       const status =
-        this.get('field.dirStatsCollectingStatus');
+        this.get('field.dirStatsServiceStatus');
       if (status === 'initializing' || status === 'stopping') {
         return status;
       }

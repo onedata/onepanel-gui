@@ -596,8 +596,8 @@ export default OnepanelServerBase.extend(
                 mode: 'manual',
               },
               accountingEnabled: true,
-              dirStatsEnabled: true,
-              dirStatsCollectingStatus: 'initializing',
+              dirStatsServiceEnabled: true,
+              dirStatsServiceStatus: 'initializing',
             });
             spacesFilePopularity.push({
               id: 'space1_verylongid',
@@ -629,8 +629,8 @@ export default OnepanelServerBase.extend(
               },
               supportingProviders: _genSupportingProviders(),
               accountingEnabled: false,
-              dirStatsEnabled: false,
-              dirStatsCollectingStatus: 'stopping',
+              dirStatsServiceEnabled: false,
+              dirStatsServiceStatus: 'stopping',
             });
             _.times(2, i => {
               spaces.push({
@@ -640,8 +640,8 @@ export default OnepanelServerBase.extend(
                 spaceOccupancy: 700000000,
                 supportingProviders: _genSupportingProviders(),
                 accountingEnabled: false,
-                dirStatsEnabled: false,
-                dirStatsCollectingStatus: 'disabled',
+                dirStatsServiceEnabled: false,
+                dirStatsServiceStatus: 'disabled',
               });
             });
           }

@@ -16,7 +16,7 @@ import EmberObject, { computed, get } from '@ember/object';
 import { and, equal, raw, or } from 'ember-awesome-macros';
 
 /**
- * @typedef {'initializing'|'enabled'|'stopping'|'disabled'} DirStatsCollectingStatus
+ * @typedef {'initializing'|'enabled'|'stopping'|'disabled'} DirStatsServiceStatus
  */
 
 export default EmberObject.extend({
@@ -54,12 +54,12 @@ export default EmberObject.extend({
   /**
    * @type {boolean}
    */
-  dirStatsEnabled: null,
+  dirStatsServiceEnabled: null,
 
   /**
-   * @type {DirStatsCollectingStatus}
+   * @type {DirStatsServiceStatus}
    */
-  dirStatsCollectingStatus: null,
+  dirStatsServiceStatus: null,
 
   /**
    * @type {ComputedProperty<boolean>}

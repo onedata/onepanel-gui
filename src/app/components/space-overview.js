@@ -73,12 +73,12 @@ export default Component.extend(I18n, spaceItemSupports, {
    * @type {SpaceSupportAccountingFormValues}
    */
   accountingConfig: computed(
-    'space.{accountingEnabled,dirStatsEnabled}',
+    'space.{accountingEnabled,dirStatsServiceEnabled}',
     function accountingConfig() {
       return getProperties(
         this.get('space'),
         'accountingEnabled',
-        'dirStatsEnabled',
+        'dirStatsServiceEnabled',
       );
     }
   ),

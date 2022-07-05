@@ -12,7 +12,7 @@ describe('Integration | Component | space support accounting form/status badge',
 
   beforeEach(function () {
     this.set('field', {
-      dirStatsCollectingStatus: null,
+      dirStatsServiceStatus: null,
     });
   });
 
@@ -21,7 +21,7 @@ describe('Integration | Component | space support accounting form/status badge',
     'stopping',
   ].forEach((status) => {
     it(`shows badge when status is ${JSON.stringify(status)}`, async function () {
-      this.set('field.dirStatsCollectingStatus', status);
+      this.set('field.dirStatsServiceStatus', status);
       await renderComponent(this);
 
       const badge = find('.status-badge');
@@ -36,7 +36,7 @@ describe('Integration | Component | space support accounting form/status badge',
     null,
   ].forEach((status) => {
     it(`does not show badge when status is ${JSON.stringify(status)}`, async function () {
-      this.set('field.dirStatsCollectingStatus', status);
+      this.set('field.dirStatsServiceStatus', status);
       await renderComponent(this);
 
       const badge = find('.status-badge');

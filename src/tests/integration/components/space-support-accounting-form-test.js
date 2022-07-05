@@ -22,7 +22,7 @@ describe('Integration | Component | space support accounting form', function () 
     await renderComponent(this);
 
     const accountingEnabledField = find('.accountingEnabled-field');
-    const dirStatsEnabledField = find('.dirStatsEnabled-field');
+    const dirStatsServiceEnabledField = find('.dirStatsServiceEnabled-field');
 
     expect(accountingEnabledField).to.exist;
     expect(accountingEnabledField.querySelector('label').textContent.trim())
@@ -32,17 +32,21 @@ describe('Integration | Component | space support accounting form', function () 
     const accountingEnabledTip = await new OneTooltipHelper(
       accountingEnabledField.querySelector('.one-label-tip .one-icon')
     ).getText();
-    expect(accountingEnabledTip.trim()).to.equal('Accounting tip');
+    expect(accountingEnabledTip.trim()).to.equal(
+      'If enabled, space usage statistics will be collected to provide information about it\'s current and historical load. In order to work properly it enforces directory size statistics collecting.'
+    );
 
-    expect(dirStatsEnabledField).to.exist;
-    expect(dirStatsEnabledField.querySelector('label').textContent.trim())
+    expect(dirStatsServiceEnabledField).to.exist;
+    expect(dirStatsServiceEnabledField.querySelector('label').textContent.trim())
       .to.equal('Directory size statistics:');
-    expect(dirStatsEnabledField.querySelector('.one-way-toggle'))
+    expect(dirStatsServiceEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
-    const dirStatsEnabledTip = await new OneTooltipHelper(
-      dirStatsEnabledField.querySelector('.one-label-tip .one-icon')
+    const dirStatsServiceEnabledTip = await new OneTooltipHelper(
+      dirStatsServiceEnabledField.querySelector('.one-label-tip .one-icon')
     ).getText();
-    expect(dirStatsEnabledTip.trim()).to.equal('Dir stats tip');
+    expect(dirStatsServiceEnabledTip.trim()).to.equal(
+      'If enabled, directory size statistics will be collected for each directory in this space. They include metrics with file count, logical byte size and physical byte size and track their changes in time.'
+    );
   });
 
   it('renders enabled fields when "isDisabled" is false', async function () {
@@ -72,42 +76,45 @@ describe('Integration | Component | space support accounting form', function () 
       done();
     });
 
-    it('shows values injected into component and changes them reactively', async function (done) {
-      this.set('values', {
-        accountingEnabled: true,
-        dirStatsEnabled: true,
+    it('shows values injected into component and changes them reactively',
+      async function (done) {
+        this.set('values', {
+          accountingEnabled: true,
+          dirStatsServiceEnabled: true,
+        });
+
+        await renderComponent(this);
+        const accountingEnabledToggle =
+          find('.accountingEnabled-field .one-way-toggle');
+        const dirStatsServiceEnabledToggle =
+          find('.dirStatsServiceEnabled-field .one-way-toggle');
+
+        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
+        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+
+        this.set('values', {
+          accountingEnabled: false,
+          dirStatsServiceEnabled: true,
+        });
+        await wait();
+
+        expect(accountingEnabledToggle.matches('.checked')).to.be.false;
+        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+
+        this.set('values', {
+          accountingEnabled: false,
+          dirStatsServiceEnabled: false,
+        });
+        await wait();
+
+        expect(accountingEnabledToggle.matches('.checked')).to.be.false;
+        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.false;
+
+        done();
       });
-
-      await renderComponent(this);
-      const accountingEnabledToggle = find('.accountingEnabled-field .one-way-toggle');
-      const dirStatsEnabledToggle = find('.dirStatsEnabled-field .one-way-toggle');
-
-      expect(accountingEnabledToggle.matches('.checked')).to.be.true;
-      expect(dirStatsEnabledToggle.matches('.checked')).to.be.true;
-
-      this.set('values', {
-        accountingEnabled: false,
-        dirStatsEnabled: true,
-      });
-      await wait();
-
-      expect(accountingEnabledToggle.matches('.checked')).to.be.false;
-      expect(dirStatsEnabledToggle.matches('.checked')).to.be.true;
-
-      this.set('values', {
-        accountingEnabled: false,
-        dirStatsEnabled: false,
-      });
-      await wait();
-
-      expect(accountingEnabledToggle.matches('.checked')).to.be.false;
-      expect(dirStatsEnabledToggle.matches('.checked')).to.be.false;
-
-      done();
-    });
 
     it('shows status badge', async function (done) {
-      this.set('dirStatsCollectingStatus', 'initializing');
+      this.set('dirStatsServiceStatus', 'initializing');
 
       await renderComponent(this);
 
@@ -132,97 +139,105 @@ describe('Integration | Component | space support accounting form', function () 
       done();
     });
 
-    it('shows values injected into component and does not change them reactively', async function (done) {
-      this.set('values', {
-        accountingEnabled: true,
-        dirStatsEnabled: true,
+    it('shows values injected into component and does not change them reactively',
+      async function (done) {
+        this.set('values', {
+          accountingEnabled: true,
+          dirStatsServiceEnabled: true,
+        });
+
+        await renderComponent(this);
+        const accountingEnabledToggle =
+          find('.accountingEnabled-field .one-way-toggle');
+        const dirStatsServiceEnabledToggle =
+          find('.dirStatsServiceEnabled-field .one-way-toggle');
+
+        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
+        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+
+        this.set('values', {
+          accountingEnabled: false,
+          dirStatsServiceEnabled: true,
+        });
+        await wait();
+
+        done();
       });
-
-      await renderComponent(this);
-      const accountingEnabledToggle = find('.accountingEnabled-field .one-way-toggle');
-      const dirStatsEnabledToggle = find('.dirStatsEnabled-field .one-way-toggle');
-
-      expect(accountingEnabledToggle.matches('.checked')).to.be.true;
-      expect(dirStatsEnabledToggle.matches('.checked')).to.be.true;
-
-      this.set('values', {
-        accountingEnabled: false,
-        dirStatsEnabled: true,
-      });
-      await wait();
-
-      done();
-    });
 
     it('allows changing of accounting toggle', async function (done) {
       const changeSpy = this.get('changeSpy');
       this.set('values', {
         accountingEnabled: false,
-        dirStatsEnabled: false,
+        dirStatsServiceEnabled: false,
       });
 
       await renderComponent(this);
-      const accountingEnabledToggle = find('.accountingEnabled-field .one-way-toggle');
+      const accountingEnabledToggle =
+        find('.accountingEnabled-field .one-way-toggle');
       changeSpy.reset();
 
       await click(accountingEnabledToggle);
       expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
         accountingEnabled: true,
-        dirStatsEnabled: true,
+        dirStatsServiceEnabled: true,
       });
       changeSpy.reset();
 
       await click(accountingEnabledToggle);
       expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
         accountingEnabled: false,
-        dirStatsEnabled: true,
+        dirStatsServiceEnabled: true,
       });
 
       done();
     });
 
-    it('allows changing of dir stats toggle when accounting is disabled', async function (done) {
-      const changeSpy = this.get('changeSpy');
-      this.set('values', {
-        accountingEnabled: false,
-        dirStatsEnabled: false,
+    it('allows changing of dir stats toggle when accounting is disabled',
+      async function (done) {
+        const changeSpy = this.get('changeSpy');
+        this.set('values', {
+          accountingEnabled: false,
+          dirStatsServiceEnabled: false,
+        });
+
+        await renderComponent(this);
+        const dirStatsServiceEnabledToggle =
+          find('.dirStatsServiceEnabled-field .one-way-toggle');
+        changeSpy.reset();
+
+        await click(dirStatsServiceEnabledToggle);
+        expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
+          accountingEnabled: false,
+          dirStatsServiceEnabled: true,
+        });
+        changeSpy.reset();
+
+        await click(dirStatsServiceEnabledToggle);
+        expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
+          accountingEnabled: false,
+          dirStatsServiceEnabled: false,
+        });
+
+        done();
       });
 
-      await renderComponent(this);
-      const dirStatsEnabledToggle = find('.dirStatsEnabled-field .one-way-toggle');
-      changeSpy.reset();
+    it('disallows changing of dir stats toggle when accounting is enabled',
+      async function (done) {
+        this.set('values', {
+          accountingEnabled: true,
+          dirStatsServiceEnabled: true,
+        });
 
-      await click(dirStatsEnabledToggle);
-      expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
-        accountingEnabled: false,
-        dirStatsEnabled: true,
+        await renderComponent(this);
+
+        expect(find('.dirStatsServiceEnabled-field').matches('.field-disabled'))
+          .to.be.true;
+
+        done();
       });
-      changeSpy.reset();
-
-      await click(dirStatsEnabledToggle);
-      expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
-        accountingEnabled: false,
-        dirStatsEnabled: false,
-      });
-
-      done();
-    });
-
-    it('disallows changing of dir stats toggle when accounting is enabled', async function (done) {
-      this.set('values', {
-        accountingEnabled: true,
-        dirStatsEnabled: true,
-      });
-
-      await renderComponent(this);
-
-      expect(find('.dirStatsEnabled-field').matches('.field-disabled')).to.be.true;
-
-      done();
-    });
 
     it('does not show status badge', async function (done) {
-      this.set('dirStatsCollectingStatus', 'initializing');
+      this.set('dirStatsServiceStatus', 'initializing');
 
       await renderComponent(this);
 
@@ -238,7 +253,7 @@ async function renderComponent(testCase) {
     mode=mode
     values=values
     onChange=changeSpy
-    dirStatsCollectingStatus=dirStatsCollectingStatus
+    dirStatsServiceStatus=dirStatsServiceStatus
   }}`);
   await wait();
 }

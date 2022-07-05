@@ -20,7 +20,7 @@ import { createValuesContainer } from 'onedata-gui-common/utils/form-component/v
 /**
  * @typedef {Object} SpaceSupportAccountingFormValues
  * @property {boolean} accountingEnabled
- * @property {boolean} dirStatsEnabled
+ * @property {boolean} dirStatsServiceEnabled
  */
 
 export default Component.extend(I18n, {
@@ -57,9 +57,9 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {DirStatsCollectingStatus}
+   * @type {DirStatsServiceStatus}
    */
-  dirStatsCollectingStatus: undefined,
+  dirStatsServiceStatus: undefined,
 
   /**
    * @type {FormComponent.ValuesContainer}
@@ -68,7 +68,7 @@ export default Component.extend(I18n, {
     const values = this.get('values') || {};
     return createValuesContainer({
       accountingEnabled: Boolean(values.accountingEnabled),
-      dirStatsEnabled: Boolean(values.dirStatsEnabled),
+      dirStatsServiceEnabled: Boolean(values.dirStatsServiceEnabled),
     });
   }),
 
@@ -157,7 +157,7 @@ export default Component.extend(I18n, {
     const dumpedValues = getProperties(
       fieldsRootGroup.dumpValue(),
       'accountingEnabled',
-      'dirStatsEnabled',
+      'dirStatsServiceEnabled',
     );
 
     onChange(dumpedValues);
@@ -172,7 +172,7 @@ const FieldsRootGroup = FormFieldsRootGroup.extend({
   fields: computed(function fields() {
     return [
       AccountingEnabledToggle.create(),
-      DirStatsEnabledToggle.create(),
+      DirStatsServiceEnabledToggle.create(),
     ];
   }),
   onValueChange(value, field) {
@@ -182,9 +182,9 @@ const FieldsRootGroup = FormFieldsRootGroup.extend({
     if (
       get(field, 'name') === 'accountingEnabled' &&
       value &&
-      !this.get('valuesSource.dirStatsEnabled')
+      !this.get('valuesSource.dirStatsServiceEnabled')
     ) {
-      this.getFieldByPath('dirStatsEnabled').valueChanged(true);
+      this.getFieldByPath('dirStatsServiceEnabled').valueChanged(true);
     }
 
     scheduleOnce('afterRender', this.get('component'), 'notifyAboutChange');
@@ -195,8 +195,8 @@ const AccountingEnabledToggle = ToggleField.extend({
   name: 'accountingEnabled',
 });
 
-const DirStatsEnabledToggle = ToggleField.extend({
-  name: 'dirStatsEnabled',
+const DirStatsServiceEnabledToggle = ToggleField.extend({
+  name: 'dirStatsServiceEnabled',
   isEnabled: not('valuesSource.accountingEnabled'),
   disabledControlTip: computed(
     'valuesSource.accountingEnabled',
@@ -211,5 +211,5 @@ const DirStatsEnabledToggle = ToggleField.extend({
     raw('space-support-accounting-form/status-badge'),
     raw(undefined),
   ),
-  dirStatsCollectingStatus: reads('parent.component.dirStatsCollectingStatus'),
+  dirStatsServiceStatus: reads('parent.component.dirStatsServiceStatus'),
 });
