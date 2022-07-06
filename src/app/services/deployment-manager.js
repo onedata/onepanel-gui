@@ -93,7 +93,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               configuration[onepanelServiceType].name;
             const thisCluster = ClusterInfo.create({
               id: currentClusterId,
-            }, configuration);
+            }, configuration || {});
 
             const installationDetails = InstallationDetails.create(
               getOwner(this).ownerInjection(), {
