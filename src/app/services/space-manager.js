@@ -108,15 +108,7 @@ export default Service.extend({
       'SpaceSupportApi',
       'getSpaceDetails',
       id
-    ).then(({ data }) => {
-      const details = SpaceDetails.create(data);
-      // We must convert these boolean flags because JS client does not work correcty
-      // and returns some `export {}` object when flag is true and `undefined` when
-      // it is false.
-      details.accountingEnabled = Boolean(details.accountingEnabled);
-      details.dirStatsServiceEnabled = Boolean(details.dirStatsServiceEnabled);
-      return details;
-    });
+    ).then(({ data }) => SpaceDetails.create(data));
   },
 
   /**

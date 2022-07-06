@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9419 Added accounting and directory statistics options to space support
 * VFS-9075 Fixed Term of use and privacy policy warnings
 * VFS-9163 Fixed one-way-toggle spinner position
 * VFS-9354 Fixed loading echarts library

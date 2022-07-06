@@ -2,6 +2,7 @@
   @media (min-width: $screen-sm-min) {
     .space-support-accounting-form {
       .control-label {
+        // 5 / 12 to simulate 5 bootstrap columns
         width: 5 / 12 * 100%;
       }
 

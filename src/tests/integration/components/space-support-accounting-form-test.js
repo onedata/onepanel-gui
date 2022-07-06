@@ -161,6 +161,9 @@ describe('Integration | Component | space support accounting form', function () 
         });
         await wait();
 
+        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
+        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+
         done();
       });
 
