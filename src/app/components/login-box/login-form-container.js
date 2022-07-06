@@ -1,7 +1,7 @@
 /**
  * Special version of login form container for Onepanel,
  * with "Login with Onezone" button.
- * 
+ *
  * @module components/login-box/login-form-container
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
@@ -14,6 +14,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { reads } from '@ember/object/computed';
+import $ from 'jquery';
 
 const animationTimeout = 333;
 
@@ -102,12 +103,15 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
       const {
         _formAnimationTimeoutId,
         _animationTimeout,
+        element,
       } = this.getProperties(
         '_formAnimationTimeoutId',
-        '_animationTimeout'
+        '_animationTimeout',
+        'element',
       );
-      const $loginForm = this.$('.basicauth-login-form-container');
-      const $onezoneButton = this.$('.onezone-button-container');
+      const $element = $(element);
+      const $loginForm = $element.find('.basicauth-login-form-container');
+      const $onezoneButton = $element.find('.onezone-button-container');
       clearTimeout(_formAnimationTimeoutId);
 
       this.toggleProperty('isEmergencyPassphraseLoginActive');
@@ -122,7 +126,7 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
       if (isEmergencyPassphraseLoginActive) {
         this._animateHide($onezoneButton);
         this._animateShow($loginForm, true);
-        this.$('.login-lock').focus();
+        $element.find('.login-lock').focus();
         // hide dropdown
         this.set('_formAnimationTimeoutId',
           setTimeout(() => $onezoneButton.addClass('hide'), _animationTimeout)

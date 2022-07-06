@@ -3,7 +3,7 @@ import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { get, computed } from '@ember/object';
+import { get, computed, defineProperty } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
@@ -74,12 +74,13 @@ export default Component.extend(
 
     init() {
       this._super(...arguments);
-      this.get('providerProxy').then(provider => {
-        this.set(
+      this.get('providerProxy').then(provider => safeExec(this, () => {
+        defineProperty(
+          this,
           'spaceSizeForProvider',
           reads(`space.supportingProviders.${get(provider, 'id')}`)
         );
-      });
+      }));
       this.updateAutoCleaningConfigurationProxy();
       this.updateFilePopularityConfigurationProxy();
     },

@@ -1,6 +1,6 @@
 /**
  * Adds a mocked "live" cleaning reports collection
- * 
+ *
  * When "collection starts work" it will generate new reports withe some interval
  * See `service:onepanel-server-mock` for example of usage.
  *
@@ -11,7 +11,7 @@
  */
 
 import Mixin from '@ember/object/mixin';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import moment from 'moment';
 import _ from 'lodash';
 import { get, set, setProperties } from '@ember/object';
@@ -44,7 +44,7 @@ class ReportsCollection {
         set(lastReport, 'stoppedAt', moment().subtract(2, 's'));
       }
       const [index, id] = genReportIndex();
-      const now = moment(index);
+      const now = moment(index).toISOString();
       const report = SpaceAutoCleaningReport.constructFromObject({
         id,
         index,
@@ -83,7 +83,7 @@ class ReportsCollection {
   }
   finishReport() {
     const firstReport = this.reports[0];
-    const now = moment(get(firstReport, 'index'));
+    const now = moment(Number(get(firstReport, 'index'))).toISOString();
     if (firstReport && firstReport.status === 'active') {
       setProperties(firstReport, {
         status: 'failed',

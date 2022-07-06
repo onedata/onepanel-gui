@@ -9,8 +9,8 @@
     }}
     {{one-way-toggle inputId="cleaning-enabled"
       checked=isCleanEnabled
-      class=(if media.isMobile "pull-right right" "toggle-right-side")
-      spinnerSide=(if media.isMobile "left" "right")
+      class=(if (media "isMobile") "pull-right right" "toggle-right-side")
+      spinnerSide=(if (media "isMobile") "left" "right")
       update=(action "toggleAutoCleaning")}}
   </h1>
 </div>
@@ -44,7 +44,7 @@
             }}
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
-            {{#if (and displayStartButton (not media.isMobile))}}
+            {{#if (and displayStartButton (not (media "isMobile")))}}
               {{one-label-tip
                 title=(tt this "startCleaningHint")
                 class="clean-now-tip"

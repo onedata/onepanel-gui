@@ -1,37 +1,33 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 
 describe(
   'Integration | Component | content clusters emergency passphrase',
   function () {
-    setupComponentTest('content-clusters-emergency-passphrase', {
-      integration: true,
-    });
+    setupRenderingTest();
 
-    it('shows secret password field by default', function () {
-      this.render(hbs `{{content-clusters-emergency-passphrase}}`);
+    it('shows secret password field by default', async function () {
+      await render(hbs `{{content-clusters-emergency-passphrase}}`);
 
-      expect(this.$('.field-static-secretPassword'), 'secret pass').to.exist;
+      expect(find('.field-static-secretPassword'), 'secret pass').to.exist;
     });
 
     it(
       'shows old password, new password and retype new password fields when clicked change password',
-      function () {
-        this.render(hbs `{{content-clusters-emergency-passphrase}}`);
+      async function () {
+        await render(hbs `{{content-clusters-emergency-passphrase}}`);
 
-        this.$('.btn-change-passphrase').click();
+        await click('.btn-change-passphrase');
 
-        return wait().then(() => {
-          expect(this.$('.field-verify-currentPassword'), 'current pass')
-            .to.exist;
-          expect(this.$('.field-change-newPassword'), 'new pass')
-            .to.exist;
-          expect(this.$('.field-change-newPasswordRetype'), 'retype pass')
-            .to.exist;
-        });
+        expect(find('.field-verify-currentPassword'), 'current pass')
+          .to.exist;
+        expect(find('.field-change-newPassword'), 'new pass')
+          .to.exist;
+        expect(find('.field-change-newPasswordRetype'), 'retype pass')
+          .to.exist;
       });
   }
 );

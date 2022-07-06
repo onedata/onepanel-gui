@@ -1,12 +1,11 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
 import { registerService, lookupService } from '../../../helpers/stub-service';
 import Service from '@ember/service';
 import sinon from 'sinon';
-import { click } from 'ember-native-dom-helpers';
 
 const OnezoneGui = Service.extend({
   getCanEnterViaOnezoneProxy() {},
@@ -14,50 +13,42 @@ const OnezoneGui = Service.extend({
 });
 
 describe('Integration | Component | login box/login form container', function () {
-  setupComponentTest('login-box/login-form-container', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'onezone-gui', OnezoneGui);
   });
 
   it('renders Onezone button when there is Onezone URL and allows to toggle auth view',
-    function () {
+    async function () {
       const onezoneUrl = 'https://example.com/visit';
       const onezoneGui = lookupService(this, 'onezone-gui');
       sinon.stub(onezoneGui, 'getCanEnterViaOnezoneProxy').resolves(true);
       sinon.stub(onezoneGui, 'getOnepanelNavUrlInOnezone').returns(onezoneUrl);
 
-      this.render(hbs `{{login-box/login-form-container}}`);
+      await render(hbs `{{login-box/login-form-container}}`);
 
-      return wait().then(() => {
-        const $onezoneButtonContainer = this.$('.onezone-button-container');
-        expect($onezoneButtonContainer).to.exist;
-        expect($onezoneButtonContainer).to.not.have.class('hide');
-        expect($onezoneButtonContainer.find('.btn-login-onezone').attr('href'))
-          .to.equal(onezoneUrl);
-        const $basicauthContainer = this.$('.basicauth-login-form-container');
-        expect($basicauthContainer).to.have.class('hide');
+      const onezoneButtonContainer = find('.onezone-button-container');
+      expect(onezoneButtonContainer).to.exist;
+      expect(onezoneButtonContainer).to.not.have.class('hide');
+      expect(onezoneButtonContainer.querySelector('.btn-login-onezone'))
+        .to.have.attr('href', onezoneUrl);
+      const basicauthContainer = find('.basicauth-login-form-container');
+      expect(basicauthContainer).to.have.class('hide');
 
-        return click('.username-login-toggle')
-          .then(() => {
-            expect($onezoneButtonContainer).to.have.class('fadeOut');
-            expect($basicauthContainer).to.not.have.class('hide');
-          });
-      });
+      await click('.username-login-toggle');
+      expect(onezoneButtonContainer).to.have.class('fadeOut');
+      expect(basicauthContainer).to.not.have.class('hide');
     });
 
   it('renders Onezone button as disabled when cannot enter via Onezone',
-    function () {
+    async function () {
       const onezoneGui = lookupService(this, 'onezone-gui');
       sinon.stub(onezoneGui, 'getCanEnterViaOnezoneProxy').resolves(false);
 
-      this.render(hbs `{{login-box/login-form-container}}`);
+      await render(hbs `{{login-box/login-form-container}}`);
 
-      return wait().then(() => {
-        const $onezoneButton = this.$('.btn-login-onezone');
-        expect($onezoneButton).to.have.attr('disabled');
-      });
+      const onezoneButton = find('.btn-login-onezone');
+      expect(onezoneButton).to.have.attr('disabled');
     });
 });

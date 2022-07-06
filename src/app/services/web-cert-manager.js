@@ -7,7 +7,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { default as Service, inject as service } from '@ember/service';
+import {
+  default as Service,
+  inject as service,
+} from '@ember/service';
 import { computed, get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';

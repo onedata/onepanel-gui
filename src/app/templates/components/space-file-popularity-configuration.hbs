@@ -1,6 +1,6 @@
 <div class="row content-row no-border no-padding-top">
   <h1>
-    
+
   </h1>
   <p>
     {{tt this "configurationText"}}
@@ -11,7 +11,7 @@
   </p>
   {{#bs-form class="space-file-popularity-configuration-form" as |form|}}
     {{#each sourceFieldNames as |fieldName|}}
-      {{#form.group 
+      {{#form.group
         class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
       }}
         <label for={{concat elementId fieldName}} class="label-column control-label">
@@ -21,13 +21,12 @@
           <input type="text"
             value={{get formData fieldName}}
             disabled={{eq formStatus "saving"}}
-            class="condition-number-input form-control"
+            class="condition-number-input form-control input-sm"
             oninput={{action "dataChanged" fieldName}}
             onkeyup={{action "inputOnKeyUp"}}
             onblur={{action "lostFocus"}}
             disabled={{whileSaving}}
             id={{concat elementId fieldName}}
-            class="input-sm"
           >
         </div>
         <div class="hint-column">

@@ -14,8 +14,8 @@
     {{one-way-toggle
       checked=isEnabled
       update=(action "configureEnabled")
-      class=(concat "selective-cleaning-toggle " (if media.isMobile "pull-right right" "toggle-right-side"))
-      spinnerSide=(if media.isMobile "left" "right")
+      class=(concat "selective-cleaning-toggle " (if (media "isMobile") "pull-right right" "toggle-right-side"))
+      spinnerSide=(if (media "isMobile") "left" "right")
     }}
     <span class="form-state">
       {{#if (eq formStatus "saving")}}
@@ -32,14 +32,14 @@
 </div>
 {{#bs-form class=(concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")) as |form|}}
   {{#each sourceFieldNames as |fieldName|}}
-    {{#form.group 
+    {{#form.group
       class=(concat-classes
         (concat fieldName "Group")
         (if (and (get formData (concat fieldName "Enabled")) (get formFieldsErrors fieldName)) "has-error")
       )
     }}
       <div class="toggle-column">
-        {{one-checkbox 
+        {{one-checkbox
           class="item-checkbox"
           isReadOnly=(eq formStatus "saving")
           checked=(get formData (concat fieldName "Enabled"))

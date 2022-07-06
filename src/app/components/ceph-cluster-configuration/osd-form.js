@@ -14,7 +14,13 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import OneForm from 'onedata-gui-common/components/one-form';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { buildValidations } from 'ember-cp-validations';
-import EmberObject, { computed, observer, get, set, getProperties } from '@ember/object';
+import EmberObject, {
+  computed,
+  observer,
+  get,
+  set,
+  getProperties,
+} from '@ember/object';
 import { union } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import _ from 'lodash';

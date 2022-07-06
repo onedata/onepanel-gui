@@ -7,7 +7,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 
 const {
   TaskStatus: {

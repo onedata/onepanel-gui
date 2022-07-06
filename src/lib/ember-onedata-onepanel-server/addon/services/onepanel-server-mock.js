@@ -17,7 +17,12 @@ import { A } from '@ember/array';
 import { Promise } from 'rsvp';
 import { readOnly, reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import EmberObject, { set, get, setProperties, computed } from '@ember/object';
+import EmberObject, {
+  set,
+  get,
+  setProperties,
+  computed,
+} from '@ember/object';
 import { run } from '@ember/runloop';
 
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
@@ -34,7 +39,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { installationStepsMap } from 'onepanel-gui/models/installation-details';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 
 const {

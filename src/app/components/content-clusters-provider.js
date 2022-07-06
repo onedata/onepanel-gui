@@ -19,7 +19,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import { get } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { reads, not } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { Promise } from 'rsvp';
 import computedT from 'onedata-gui-common/utils/computed-t';
@@ -86,7 +86,7 @@ export default Component.extend(
     /**
      * @type {Ember.ComputedProperty<boolean>}
      */
-    _editButtonEnabled: computed.not('_submitting'),
+    _editButtonEnabled: not('_submitting'),
 
     /**
      * @type {Ember.ComputedProperty<boolean>}

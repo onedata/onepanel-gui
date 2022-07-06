@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
-import wait from 'ember-test-helpers/wait';
 
 const ProviderManager = Service.extend({
   getProviderDetailsProxy: notImplementedReject,
@@ -35,9 +35,7 @@ const noNodesInstallationDetails = {
 };
 
 describe('Integration | Component | content clusters overview', function () {
-  setupComponentTest('content-clusters-overview', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'provider-manager', ProviderManager);
@@ -45,7 +43,7 @@ describe('Integration | Component | content clusters overview', function () {
     registerService(this, 'storage-manager', StorageManager);
   });
 
-  it('does not use providerManager if cluster is not Oneprovider', function () {
+  it('does not use providerManager if cluster is not Oneprovider', async function () {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -67,21 +65,19 @@ describe('Integration | Component | content clusters overview', function () {
       fetchInstallationDetails,
     });
 
-    this.render(hbs `{{content-clusters-overview
+    await render(hbs `{{content-clusters-overview
       cluster=cluster
       fetchInstallationDetails=fetchInstallationDetails
       fetchStorages=fetchStorages
       fetchSpaces=fetchSpaces
     }}`);
 
-    return wait().then(() => {
-      expect(getProviderDetailsProxy).to.be.not.called;
-      expect(getSpaces).to.be.not.called;
-      expect(getStorages).to.be.not.called;
-    });
+    expect(getProviderDetailsProxy).to.be.not.called;
+    expect(getSpaces).to.be.not.called;
+    expect(getStorages).to.be.not.called;
   });
 
-  it('does uses providerManager if cluster is Oneprovider', function () {
+  it('does uses providerManager if cluster is Oneprovider', async function () {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -103,15 +99,13 @@ describe('Integration | Component | content clusters overview', function () {
       fetchInstallationDetails,
     });
 
-    this.render(hbs `{{content-clusters-overview
+    await render(hbs `{{content-clusters-overview
       cluster=cluster
       fetchInstallationDetails=fetchInstallationDetails
     }}`);
 
-    return wait().then(() => {
-      expect(getProviderDetailsProxy).to.be.calledOnce;
-      expect(getSpaces).to.be.calledOnce;
-      expect(getStorages).to.be.calledOnce;
-    });
+    expect(getProviderDetailsProxy).to.be.calledOnce;
+    expect(getSpaces).to.be.calledOnce;
+    expect(getStorages).to.be.calledOnce;
   });
 });

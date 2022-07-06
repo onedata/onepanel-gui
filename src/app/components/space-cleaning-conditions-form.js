@@ -10,7 +10,7 @@
 import Component from '@ember/component';
 
 import { reads, union } from '@ember/object/computed';
-import EmberObject, { computed, get } from '@ember/object';
+import EmberObject, { computed, get, defineProperty } from '@ember/object';
 import { run } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import bytesToString, { iecUnits } from 'onedata-gui-common/utils/bytes-to-string';
@@ -28,6 +28,7 @@ import {
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';
+import $ from 'jquery';
 
 const FILE_SIZE_LT_FIELD = {
   type: 'number',
@@ -71,7 +72,6 @@ const VALIDATORS = {
 export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm, {
   classNames: ['space-cleaning-conditions-form', 'auto-save-form'],
 
-  media: service(),
   i18n: service(),
   onepanelServer: service(),
   globalNotify: service(),
@@ -207,8 +207,10 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
       formData.setProperties({
         [fieldName + 'Enabled']: enabled,
         [fieldName + 'Number']: String(bytesValue.number),
-        [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) ||
-        { multiplicator: 1, name: 'B' },
+        [fieldName + 'Unit']: _.find(_sizeUnits, { name: bytesValue.unit }) || {
+          multiplicator: 1,
+          name: 'B',
+        },
       });
     });
 
@@ -248,7 +250,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
 
     // Computing display number and units in form
     _sourceFieldWithUnitNames.forEach(fieldName => {
-      formData.set(fieldName, computed(
+      defineProperty(formData, fieldName, computed(
         `${fieldName}Number`,
         `${fieldName}Unit`,
         function () {
@@ -260,7 +262,7 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
         }));
     });
     _sourceFieldCountNames.forEach(fieldName => {
-      formData.set(fieldName, computed(
+      defineProperty(formData, fieldName, computed(
         `${fieldName}Number`,
         function () {
           const number = Math.floor(parseFloat(this.get(`${fieldName}Number`)));
@@ -346,7 +348,8 @@ export default Component.extend(buildValidations(VALIDATORS), I18n, AutoSaveForm
           fieldName.substring(0, fieldName.length - 'Enabled'.length);
         run.next(() => {
           if (!this.isDestroyed && !this.isDestroying) {
-            this.$(`#${this.get('elementId')}${numberField}`).focus();
+            $(this.get('element'))
+              .find(`#${this.get('elementId')}${numberField}`).focus();
           }
         });
       }

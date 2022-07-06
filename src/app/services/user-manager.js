@@ -11,7 +11,7 @@ import Service, { inject as service } from '@ember/service';
 import { getProperties } from '@ember/object';
 import { oneWay } from '@ember/object/computed';
 import UserDetails from 'onepanel-gui/models/user-details';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 const {
@@ -54,7 +54,7 @@ export default Service.extend({
   },
 
   /**
-   * @param {string} passphrase 
+   * @param {string} passphrase
    * @returns {Promise}
    */
   setFirstEmergencyPassphrase(passphrase) {

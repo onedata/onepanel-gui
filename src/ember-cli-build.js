@@ -10,6 +10,8 @@ const colors = require('./lib/onedata-gui-common/config/colors');
 const breakpoints = require('./lib/onedata-gui-common/config/breakpoints');
 const sass = require('sass');
 
+const environment = EmberApp.env();
+
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
     'fingerprint': {
@@ -69,6 +71,25 @@ module.exports = function (defaults) {
     'ember-cli-chartist': {
       useCustomCSS: true,
     },
+    'autoImport': {
+      publicAssetURL: environment === 'test' ? '/assets/' : './assets/',
+      webpack: {
+        module: {
+          // special rule for swagger-codegen generated lib
+          // see: https://github.com/swagger-api/swagger-codegen/issues/3466
+          // also not using old syntax (imports-loader=>define) but new config equivalent
+          rules: [{
+            test: /onepanel[/\\]+.*\.js$/,
+            use: [{
+              loader: 'imports-loader',
+              options: {
+                additionalCode: 'var define = false;',
+              },
+            }],
+          }],
+        },
+      },
+    },
   });
 
   defineSassColors(app, colors);
@@ -98,6 +119,8 @@ module.exports = function (defaults) {
     'perfect-scrollbar/css/perfect-scrollbar.css',
     'webui-popover/dist/jquery.webui-popover.css',
     'webui-popover/dist/jquery.webui-popover.js',
+    'jquery-datetimepicker/build/jquery.datetimepicker.min.css',
+    'jquery-datetimepicker/build/jquery.datetimepicker.full.js',
   ];
 
   NODE_ASSETS.forEach(path => app.import(`node_modules/${path}`));

@@ -1,13 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import Service from '@ember/service';
 import { set } from '@ember/object';
 import { resolve } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
-import { click } from 'ember-native-dom-helpers';
 import sinon from 'sinon';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -19,15 +18,13 @@ const OnepanelServer = Service.extend({
 });
 
 describe('Integration | Component | cluster host table row', function () {
-  setupComponentTest('cluster-host-table-row', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'onepanel-server', OnepanelServer);
   });
 
-  it('renders remove button as disabled if this is current host', function () {
+  it('renders remove button as disabled if this is current host', async function () {
     const removeHost = sinon.stub().resolves();
     const hostname = 'example.com';
     const node = {
@@ -44,17 +41,16 @@ describe('Integration | Component | cluster host table row', function () {
     );
     this.set('removeHost', removeHost);
     this.set('host', host);
-    this.render(hbs `{{cluster-host-table-row
+    await render(hbs `{{cluster-host-table-row
       removeHost=removeHost
       host=host
+      isMobile=false
     }}`);
 
-    return wait().then(() => {
-      expect(this.$('.btn-remove-node')).to.have.class('disabled');
-    });
+    expect(find('.btn-remove-node')).to.have.class('disabled');
   });
 
-  it('renders remove button as enabled if this is not the current host', function () {
+  it('renders remove button as enabled if this is not the current host', async function () {
     const removeHost = sinon.stub().resolves();
     const hostname1 = 'example1.com';
     const hostname2 = 'example2.com';
@@ -72,16 +68,14 @@ describe('Integration | Component | cluster host table row', function () {
     );
     this.set('removeHost', removeHost);
     this.set('host', host);
-    this.render(hbs `{{cluster-host-table-row
+    await render(hbs `{{cluster-host-table-row
       removeHost=removeHost
       host=host
+      isMobile=false
     }}`);
 
-    return wait().then(() => {
-      expect(this.$('.btn-remove-node')).to.not.have.class('disabled');
-      return click('.btn-remove-node').then(() => {
-        expect(removeHost).to.be.calledOnce;
-      });
-    });
+    expect(find('.btn-remove-node')).to.not.have.class('disabled');
+    await click('.btn-remove-node');
+    expect(removeHost).to.be.calledOnce;
   });
 });

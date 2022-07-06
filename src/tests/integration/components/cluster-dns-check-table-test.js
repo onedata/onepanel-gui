@@ -1,20 +1,19 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import OnepanelServer from 'onepanel-gui/services/onepanel-server';
 
 describe('Integration | Component | cluster dns check table', function () {
-  setupComponentTest('cluster-dns-check-table', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
-    this.register('service:onepanel-server', OnepanelServer);
-    this.inject.service('onepanel-server', { as: 'onepanelServer' });
+    this.owner.register('service:onepanel-server', OnepanelServer);
+    this.onepanelServer = this.owner.lookup('service:onepanel-server');
   });
 
-  it('renders table with 2 items for zone', function () {
+  it('renders table with 2 items for zone', async function () {
     this.set('checkResultItems', [{
       type: 'domain',
       summary: 'missing_records',
@@ -29,14 +28,14 @@ describe('Integration | Component | cluster dns check table', function () {
       recommended: [],
     }]);
 
-    this.render(hbs `{{cluster-dns-check-table
+    await render(hbs `{{cluster-dns-check-table
       onepanelServiceType="onezone"
       checkResultItems=checkResultItems
     }}`);
 
-    const $clusterDnsCheckTable = this.$('.cluster-dns-check-table');
+    const clusterDnsCheckTable = find('.cluster-dns-check-table');
 
-    expect($clusterDnsCheckTable).to.exist;
-    expect($clusterDnsCheckTable.find('.check-item')).to.have.length(2);
+    expect(clusterDnsCheckTable).to.exist;
+    expect(clusterDnsCheckTable.querySelectorAll('.check-item')).to.have.length(2);
   });
 });
