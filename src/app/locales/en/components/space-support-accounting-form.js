@@ -5,12 +5,12 @@ export default {
   fields: {
     accountingEnabled: {
       label: 'Accounting',
-      tip: 'If enabled, space usage statistics will be collected to provide information about it\'s current and historical load. In order to work properly it enforces directory size statistics collecting.',
+      tip: 'If enabled, statistics of quota usage over time will be collected for this space. Accounting relies on the directory statistics service and requires that they are enabled together.',
     },
     dirStatsServiceEnabled: {
-      label: 'Directory size statistics',
-      tip: 'If enabled, directory size statistics will be collected for each directory in this space. They include metrics with file count, logical byte size and physical byte size and track their changes in time.',
-      disabledDueToAccountingTip: 'Directory size statistics must be turned on when accounting is enabled.',
+      label: 'Directory statistics',
+      tip: 'If enabled, directory statistics will be collected for each directory in this space. They include metrics with file count, logical/physical byte size and track their changes in time.',
+      disabledDueToAccountingTip: 'Directory statistics are required for accounting and cannot be disabled independently.',
     },
   },
 };

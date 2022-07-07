@@ -30,19 +30,19 @@ describe('Integration | Component | space support accounting form', function () 
       accountingEnabledField.querySelector('.one-label-tip .one-icon')
     ).getText();
     expect(accountingEnabledTip.trim()).to.equal(
-      'If enabled, space usage statistics will be collected to provide information about it\'s current and historical load. In order to work properly it enforces directory size statistics collecting.'
+      'If enabled, statistics of quota usage over time will be collected for this space. Accounting relies on the directory statistics service and requires that they are enabled together.'
     );
 
     expect(dirStatsServiceEnabledField).to.exist;
     expect(dirStatsServiceEnabledField.querySelector('label'))
-      .to.have.trimmed.text('Directory size statistics:');
+      .to.have.trimmed.text('Directory statistics:');
     expect(dirStatsServiceEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const dirStatsServiceEnabledTip = await new OneTooltipHelper(
       dirStatsServiceEnabledField.querySelector('.one-label-tip .one-icon')
     ).getText();
     expect(dirStatsServiceEnabledTip.trim()).to.equal(
-      'If enabled, directory size statistics will be collected for each directory in this space. They include metrics with file count, logical byte size and physical byte size and track their changes in time.'
+      'If enabled, directory statistics will be collected for each directory in this space. They include metrics with file count, logical/physical byte size and track their changes in time.'
     );
   });
 
