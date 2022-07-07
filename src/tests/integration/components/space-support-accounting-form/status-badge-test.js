@@ -1,14 +1,12 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
 import _ from 'lodash';
-import { find } from 'ember-native-dom-helpers';
+import { render, find } from '@ember/test-helpers';
 
 describe('Integration | Component | space support accounting form/status badge', function () {
-  setupComponentTest('space-support-accounting-form/status-badge', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     this.set('field', {
@@ -22,11 +20,11 @@ describe('Integration | Component | space support accounting form/status badge',
   ].forEach((status) => {
     it(`shows badge when status is ${JSON.stringify(status)}`, async function () {
       this.set('field.dirStatsServiceStatus', status);
-      await renderComponent(this);
+      await renderComponent();
 
       const badge = find('.status-badge');
       expect(badge).to.exist;
-      expect(badge.textContent.trim()).to.equal(_.upperFirst(status) + '...');
+      expect(badge).to.have.trimmed.text(_.upperFirst(status) + '...');
     });
   });
 
@@ -37,7 +35,7 @@ describe('Integration | Component | space support accounting form/status badge',
   ].forEach((status) => {
     it(`does not show badge when status is ${JSON.stringify(status)}`, async function () {
       this.set('field.dirStatsServiceStatus', status);
-      await renderComponent(this);
+      await renderComponent();
 
       const badge = find('.status-badge');
       expect(badge).to.not.exist;
@@ -45,6 +43,6 @@ describe('Integration | Component | space support accounting form/status badge',
   });
 });
 
-async function renderComponent(testCase) {
-  testCase.render(hbs`{{space-support-accounting-form/status-badge field=field}}`);
+async function renderComponent() {
+  await render(hbs`{{space-support-accounting-form/status-badge field=field}}`);
 }

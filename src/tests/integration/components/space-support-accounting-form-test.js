@@ -1,32 +1,29 @@
 import { expect } from 'chai';
 import { describe, context, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import { find, click } from 'ember-native-dom-helpers';
-import wait from 'ember-test-helpers/wait';
+import { render, settled, find, click } from '@ember/test-helpers';
 import sinon from 'sinon';
 import OneTooltipHelper from '../../helpers/one-tooltip';
 
 describe('Integration | Component | space support accounting form', function () {
-  setupComponentTest('space-support-accounting-form', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   it('has class "space-support-accounting-form"', async function () {
-    await renderComponent(this);
+    await renderComponent();
 
     expect(find('.space-support-accounting-form')).to.exist;
   });
 
   it('renders two toggles - accounting and dirs stats', async function () {
-    await renderComponent(this);
+    await renderComponent();
 
     const accountingEnabledField = find('.accountingEnabled-field');
     const dirStatsServiceEnabledField = find('.dirStatsServiceEnabled-field');
 
     expect(accountingEnabledField).to.exist;
-    expect(accountingEnabledField.querySelector('label').textContent.trim())
-      .to.equal('Accounting:');
+    expect(accountingEnabledField.querySelector('label'))
+      .to.have.trimmed.text('Accounting:');
     expect(accountingEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const accountingEnabledTip = await new OneTooltipHelper(
@@ -37,8 +34,8 @@ describe('Integration | Component | space support accounting form', function () 
     );
 
     expect(dirStatsServiceEnabledField).to.exist;
-    expect(dirStatsServiceEnabledField.querySelector('label').textContent.trim())
-      .to.equal('Directory size statistics:');
+    expect(dirStatsServiceEnabledField.querySelector('label'))
+      .to.have.trimmed.text('Directory size statistics:');
     expect(dirStatsServiceEnabledField.querySelector('.one-way-toggle'))
       .to.exist;
     const dirStatsServiceEnabledTip = await new OneTooltipHelper(
@@ -51,14 +48,14 @@ describe('Integration | Component | space support accounting form', function () 
 
   it('renders enabled fields when "isDisabled" is false', async function () {
     this.set('isDisabled', false);
-    await renderComponent(this);
+    await renderComponent();
 
     expect(find('.field-disabled')).to.not.exist;
   });
 
   it('renders disabled fields when "isDisabled" is true', async function () {
     this.set('isDisabled', true);
-    await renderComponent(this);
+    await renderComponent();
 
     expect(find('.field-enabled')).to.not.exist;
   });
@@ -69,10 +66,10 @@ describe('Integration | Component | space support accounting form', function () 
     });
 
     it('renders fields in view mode', async function (done) {
-      await renderComponent(this);
+      await renderComponent();
 
-      expect(find('.accounting-fields-root-group').matches('.field-view-mode'))
-        .to.be.true;
+      expect(find('.accounting-fields-root-group'))
+        .to.have.class('field-view-mode');
       done();
     });
 
@@ -83,32 +80,32 @@ describe('Integration | Component | space support accounting form', function () 
           dirStatsServiceEnabled: true,
         });
 
-        await renderComponent(this);
+        await renderComponent();
         const accountingEnabledToggle =
           find('.accountingEnabled-field .one-way-toggle');
         const dirStatsServiceEnabledToggle =
           find('.dirStatsServiceEnabled-field .one-way-toggle');
 
-        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
-        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+        expect(accountingEnabledToggle).to.have.class('checked');
+        expect(dirStatsServiceEnabledToggle).to.have.class('checked');
 
         this.set('values', {
           accountingEnabled: false,
           dirStatsServiceEnabled: true,
         });
-        await wait();
+        await settled();
 
-        expect(accountingEnabledToggle.matches('.checked')).to.be.false;
-        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+        expect(accountingEnabledToggle).to.not.have.class('checked');
+        expect(dirStatsServiceEnabledToggle).to.have.class('checked');
 
         this.set('values', {
           accountingEnabled: false,
           dirStatsServiceEnabled: false,
         });
-        await wait();
+        await settled();
 
-        expect(accountingEnabledToggle.matches('.checked')).to.be.false;
-        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.false;
+        expect(accountingEnabledToggle).to.not.have.class('checked');
+        expect(dirStatsServiceEnabledToggle).to.not.have.class('checked');
 
         done();
       });
@@ -116,7 +113,7 @@ describe('Integration | Component | space support accounting form', function () 
     it('shows status badge', async function (done) {
       this.set('dirStatsServiceStatus', 'initializing');
 
-      await renderComponent(this);
+      await renderComponent();
 
       expect(find('.status-badge.status-initializing')).to.exist;
       done();
@@ -132,10 +129,10 @@ describe('Integration | Component | space support accounting form', function () 
     });
 
     it('renders fields in edit mode', async function (done) {
-      await renderComponent(this);
+      await renderComponent();
 
-      expect(find('.accounting-fields-root-group').matches('.field-edit-mode'))
-        .to.be.true;
+      expect(find('.accounting-fields-root-group'))
+        .to.have.class('field-edit-mode');
       done();
     });
 
@@ -146,23 +143,23 @@ describe('Integration | Component | space support accounting form', function () 
           dirStatsServiceEnabled: true,
         });
 
-        await renderComponent(this);
+        await renderComponent();
         const accountingEnabledToggle =
           find('.accountingEnabled-field .one-way-toggle');
         const dirStatsServiceEnabledToggle =
           find('.dirStatsServiceEnabled-field .one-way-toggle');
 
-        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
-        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+        expect(accountingEnabledToggle).to.have.class('checked');
+        expect(dirStatsServiceEnabledToggle).to.have.class('checked');
 
         this.set('values', {
           accountingEnabled: false,
           dirStatsServiceEnabled: true,
         });
-        await wait();
+        await settled();
 
-        expect(accountingEnabledToggle.matches('.checked')).to.be.true;
-        expect(dirStatsServiceEnabledToggle.matches('.checked')).to.be.true;
+        expect(accountingEnabledToggle).to.have.class('checked');
+        expect(dirStatsServiceEnabledToggle).to.have.class('checked');
 
         done();
       });
@@ -174,17 +171,17 @@ describe('Integration | Component | space support accounting form', function () 
         dirStatsServiceEnabled: false,
       });
 
-      await renderComponent(this);
+      await renderComponent();
       const accountingEnabledToggle =
         find('.accountingEnabled-field .one-way-toggle');
-      changeSpy.reset();
+      changeSpy.resetHistory();
 
       await click(accountingEnabledToggle);
       expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
         accountingEnabled: true,
         dirStatsServiceEnabled: true,
       });
-      changeSpy.reset();
+      changeSpy.resetHistory();
 
       await click(accountingEnabledToggle);
       expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
@@ -203,17 +200,17 @@ describe('Integration | Component | space support accounting form', function () 
           dirStatsServiceEnabled: false,
         });
 
-        await renderComponent(this);
+        await renderComponent();
         const dirStatsServiceEnabledToggle =
           find('.dirStatsServiceEnabled-field .one-way-toggle');
-        changeSpy.reset();
+        changeSpy.resetHistory();
 
         await click(dirStatsServiceEnabledToggle);
         expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
           accountingEnabled: false,
           dirStatsServiceEnabled: true,
         });
-        changeSpy.reset();
+        changeSpy.resetHistory();
 
         await click(dirStatsServiceEnabledToggle);
         expect(changeSpy).to.be.calledOnce.and.to.be.calledWith({
@@ -231,10 +228,10 @@ describe('Integration | Component | space support accounting form', function () 
           dirStatsServiceEnabled: true,
         });
 
-        await renderComponent(this);
+        await renderComponent();
 
-        expect(find('.dirStatsServiceEnabled-field').matches('.field-disabled'))
-          .to.be.true;
+        expect(find('.dirStatsServiceEnabled-field'))
+          .to.have.class('field-disabled');
 
         done();
       });
@@ -242,7 +239,7 @@ describe('Integration | Component | space support accounting form', function () 
     it('does not show status badge', async function (done) {
       this.set('dirStatsServiceStatus', 'initializing');
 
-      await renderComponent(this);
+      await renderComponent();
 
       expect(find('.status-badge')).to.not.exist;
       done();
@@ -250,13 +247,12 @@ describe('Integration | Component | space support accounting form', function () 
   });
 });
 
-async function renderComponent(testCase) {
-  testCase.render(hbs`{{space-support-accounting-form
+async function renderComponent() {
+  await render(hbs`{{space-support-accounting-form
     isDisabled=isDisabled
     mode=mode
     values=values
     onChange=changeSpy
     dirStatsServiceStatus=dirStatsServiceStatus
   }}`);
-  await wait();
 }

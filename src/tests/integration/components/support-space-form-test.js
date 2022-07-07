@@ -235,8 +235,7 @@ describe('Integration | Component | support space form', function () {
   });
 
   it('shows enabled and editable accounting section', async function () {
-    this.render(hbs`{{support-space-form}}`);
-    await wait();
+    await render(hbs`{{support-space-form}}`);
 
     expect(find('.space-support-accounting-form')).to.exist;
     const accountingRootGroup = find('.accounting-fields-root-group');
@@ -252,11 +251,10 @@ describe('Integration | Component | support space form', function () {
   it('submits default data from accounting form', async function () {
     const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
     this.prepareAllFields();
-    this.render(hbs`{{support-space-form
+    await render(hbs`{{support-space-form
       submitSupportSpace=submitSpy
       values=formValues
     }}`);
-    await wait();
 
     await click('button[type="submit"]');
 
@@ -270,11 +268,10 @@ describe('Integration | Component | support space form', function () {
   it('submits changed data from accounting form', async function () {
     const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
     this.prepareAllFields();
-    this.render(hbs`{{support-space-form
+    await render(hbs`{{support-space-form
       submitSupportSpace=submitSpy
       values=formValues
     }}`);
-    await wait();
 
     await click('.accountingEnabled-field .one-way-toggle');
     await click('button[type="submit"]');
