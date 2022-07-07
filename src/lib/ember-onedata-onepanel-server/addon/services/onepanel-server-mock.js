@@ -600,6 +600,9 @@ export default OnepanelServerBase.extend(
               storageImport: {
                 mode: 'manual',
               },
+              accountingEnabled: true,
+              dirStatsServiceEnabled: true,
+              dirStatsServiceStatus: 'initializing',
             });
             spacesFilePopularity.push({
               id: 'space1_verylongid',
@@ -630,6 +633,9 @@ export default OnepanelServerBase.extend(
                 },
               },
               supportingProviders: _genSupportingProviders(),
+              accountingEnabled: false,
+              dirStatsServiceEnabled: false,
+              dirStatsServiceStatus: 'stopping',
             });
             _.times(2, i => {
               spaces.push({
@@ -638,6 +644,9 @@ export default OnepanelServerBase.extend(
                 storageId: storage1.id,
                 spaceOccupancy: 700000000,
                 supportingProviders: _genSupportingProviders(),
+                accountingEnabled: false,
+                dirStatsServiceEnabled: false,
+                dirStatsServiceStatus: 'disabled',
               });
             });
           }

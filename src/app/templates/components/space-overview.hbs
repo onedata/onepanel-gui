@@ -19,6 +19,42 @@
         </span>
       {{/promise-proxy-container}}
     </div>
+    <div class="row content-row">
+      {{#space-support-accounting-form
+        mode=accountingFormMode
+        values=accountingConfig
+        isDisabled=isSavingNewAccountingConfig
+        onChange=(action "accountingConfigChanged")
+        dirStatsServiceStatus=space.dirStatsServiceStatus
+      }}
+        {{#if (eq accountingFormMode "edit")}}
+          {{#one-button
+            size="sm"
+            type="primary"
+            buttonType="submit"
+            disabled=isSavingNewAccountingConfig
+            onClick=(action "saveNewAccountingConfig")
+          }}
+            {{tt this "saveNewAccountingConfig"}}
+          {{/one-button}}
+          {{!-- Added space as HTML code because Ember trims all whitespaces between elements --}}
+          &#32;
+        {{/if}}
+        {{#one-button
+          size="sm"
+          disabled=isSavingNewAccountingConfig
+          onClick=(action "toggleAccountingFormMode")
+        }}
+          {{#if (eq accountingFormMode "view")}}
+            {{one-icon icon="rename"}}
+          {{/if}}
+          {{tt this (if (eq accountingFormMode "view")
+            "startAccountingEdition"
+            "cancelAccountingEdition"
+          )}}
+        {{/one-button}}
+      {{/space-support-accounting-form}}
+    </div>
     {{#if space.storageImportEnabled}}
       <div class="row content-row storage-import">
         <strong class="property-label">{{tt this "storageImportSection"}}:</strong>
@@ -31,14 +67,14 @@
       </div>
     {{/if}}
   </div>
-  
+
   <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-support">
     {{#promise-proxy-container proxy=spaceSupportersProxy}}
       {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
     {{/promise-proxy-container}}
     <div class="row content-row">
       {{#promise-proxy-container proxy=spaceSupportersProxy}}
-        {{cluster-spaces-table-item/support-size-this 
+        {{cluster-spaces-table-item/support-size-this
           providerSupportSize=_thisProviderSupportSize
           spaceOccupancy=_spaceOccupancy
           submitModifySpace=(action "submitModifySpace")
@@ -46,5 +82,5 @@
       {{/promise-proxy-container}}
     </div>
   </div>
-  
+
 </div>

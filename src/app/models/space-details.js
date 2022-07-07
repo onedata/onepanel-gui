@@ -15,6 +15,10 @@
 import EmberObject, { computed, get } from '@ember/object';
 import { and, equal, raw, or, writable } from 'ember-awesome-macros';
 
+/**
+ * @typedef {'initializing'|'enabled'|'stopping'|'disabled'} DirStatsServiceStatus
+ */
+
 export default EmberObject.extend({
   /**
    * @type {string}
@@ -41,6 +45,21 @@ export default EmberObject.extend({
    * @type {Onepanel.StorageImport}
    */
   storageImport: null,
+
+  /**
+   * @type {boolean}
+   */
+  accountingEnabled: null,
+
+  /**
+   * @type {boolean}
+   */
+  dirStatsServiceEnabled: null,
+
+  /**
+   * @type {DirStatsServiceStatus}
+   */
+  dirStatsServiceStatus: null,
 
   /**
    * @type {ComputedProperty<boolean>}
