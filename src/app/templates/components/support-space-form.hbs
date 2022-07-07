@@ -32,6 +32,11 @@
     onFocusOut=(action "focusOut")
   }}
 
+  {{space-support-accounting-form
+    mode="edit"
+    onChange=(action "accountingConfigChanged")
+  }}
+
   {{storage-import-form
     class=(concat-classes
       "col-xs-12 collapse-animation collapse-small"

@@ -31,7 +31,7 @@
     "ember-cli-htmlbars": "3.0.0",
     "insert-text-at-cursor": "0.3.0",
     "moment": "2.19.3",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#7b6d17b2651e842d543eccf251cc0c2e3fab7d81",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#f0ac07a7ca74b1d69bcf4624d0d1d735b79b3f25",
     "perfect-scrollbar": "1.4.0",
     "pupa": "2.1.1",
     "round10": "1.0.3",

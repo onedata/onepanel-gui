@@ -71,6 +71,7 @@ import registerOnezoneNotCompatible from './components/alerts/register-onezone-n
 import registerOnezoneOffline from './components/alerts/register-onezone-offline';
 import contentClustersMembers from './components/content-clusters-members';
 import contentClustersGuiSettings from './components/content-clusters-gui-settings';
+import spaceSupportAccountingForm from './components/space-support-accounting-form';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -165,6 +166,7 @@ const translations = {
     emergencyWarningBar,
     contentClustersMembers,
     contentClustersGuiSettings,
+    spaceSupportAccountingForm,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,

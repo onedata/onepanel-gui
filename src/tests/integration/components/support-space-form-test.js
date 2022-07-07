@@ -9,7 +9,7 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, click, fillIn, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
-import { reject } from 'rsvp';
+import { resolve, reject } from 'rsvp';
 import StorageManagerStub from '../../helpers/storage-manager-stub';
 import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
@@ -232,6 +232,55 @@ describe('Integration | Component | support space form', function () {
       'storageImport.autoStorageImportConfig.continuousScan',
       false
     ));
+  });
+
+  it('shows enabled and editable accounting section', async function () {
+    await render(hbs`{{support-space-form}}`);
+
+    expect(find('.space-support-accounting-form')).to.exist;
+    const accountingRootGroup = find('.accounting-fields-root-group');
+    expect(accountingRootGroup.matches('.field-edit-mode'))
+      .to.be.true;
+    expect(accountingRootGroup.querySelector('.field-disabled')).to.not.exist;
+    expect(find('.accountingEnabled-field .one-way-toggle').matches('.checked'))
+      .to.be.false;
+    expect(find('.dirStatsServiceEnabled-field .one-way-toggle').matches('.checked'))
+      .to.be.false;
+  });
+
+  it('submits default data from accounting form', async function () {
+    const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
+    this.prepareAllFields();
+    await render(hbs`{{support-space-form
+      submitSupportSpace=submitSpy
+      values=formValues
+    }}`);
+
+    await click('button[type="submit"]');
+
+    expect(submitSpy).to.be.calledOnce;
+    expect(submitSpy).to.be.calledWith(sinon.match({
+      accountingEnabled: false,
+      dirStatsServiceEnabled: false,
+    }));
+  });
+
+  it('submits changed data from accounting form', async function () {
+    const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
+    this.prepareAllFields();
+    await render(hbs`{{support-space-form
+      submitSupportSpace=submitSpy
+      values=formValues
+    }}`);
+
+    await click('.accountingEnabled-field .one-way-toggle');
+    await click('button[type="submit"]');
+
+    expect(submitSpy).to.be.calledOnce;
+    expect(submitSpy).to.be.calledWith(sinon.match({
+      accountingEnabled: true,
+      dirStatsServiceEnabled: true,
+    }));
   });
 });
 
