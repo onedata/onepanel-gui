@@ -6,14 +6,14 @@ import {
   beforeEach,
 } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click, fillIn, find } from '@ember/test-helpers';
+import { render, click, fillIn, find, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import { resolve, reject } from 'rsvp';
 import StorageManagerStub from '../../helpers/storage-manager-stub';
 import SpaceManagerStub from '../../helpers/space-manager-stub';
 import FormHelper from '../../helpers/form';
-import EmberPowerSelectHelper from '../../helpers/ember-power-select-helper';
+import { selectChoose, clickTrigger } from 'ember-power-select/test-support/helpers';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import { suppressRejections } from '../../helpers/suppress-rejections';
 
@@ -26,12 +26,6 @@ const UNITS = {
 class SupportSpaceFormHelper extends FormHelper {
   constructor(template) {
     super(template, '.support-space-form');
-  }
-}
-
-class StorageSelectHelper extends EmberPowerSelectHelper {
-  constructor() {
-    super('.form .form-group:first-child .ember-basic-dropdown');
   }
 }
 
@@ -86,10 +80,9 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      const storagesSelectHelper = new StorageSelectHelper();
-      await storagesSelectHelper.open();
+      await clickTrigger('.storage-field');
+      const firstStorageItem = findAll('.ember-power-select-option')[0];
 
-      const firstStorageItem = storagesSelectHelper.getNthOption(1);
       expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
       expect(firstStorageItem.querySelector('.imported-used-storage'))
         .to.be.null;
@@ -100,14 +93,13 @@ describe('Integration | Component | support space form', function () {
   it('does not disable storage without support and with importedStorage', async function () {
     await render(hbs `{{support-space-form}}`);
 
-    const storagesSelectHelper = new StorageSelectHelper();
-    await storagesSelectHelper.open();
+    await clickTrigger('.storage-field');
 
-    const firstStorageItem = storagesSelectHelper.getNthOption(2);
-    expect(firstStorageItem.getAttribute('aria-disabled')).to.be.null;
-    expect(firstStorageItem.querySelector('.imported-used-storage'))
+    const secondStorageItem = findAll('.ember-power-select-option')[1];
+    expect(secondStorageItem.getAttribute('aria-disabled')).to.be.null;
+    expect(secondStorageItem.querySelector('.imported-used-storage'))
       .to.be.null;
-    expect(firstStorageItem.querySelector('.imported-storage').innerText)
+    expect(secondStorageItem.querySelector('.imported-storage').innerText)
       .to.equal('(import-enabled)');
   });
 
@@ -116,12 +108,11 @@ describe('Integration | Component | support space form', function () {
     async function () {
       await render(hbs `{{support-space-form}}`);
 
-      const storagesSelectHelper = new StorageSelectHelper();
-      await storagesSelectHelper.open();
+      await clickTrigger('.storage-field');
 
-      const firstStorageItem = storagesSelectHelper.getNthOption(3);
-      expect(firstStorageItem.getAttribute('aria-disabled')).to.equal('true');
-      expect(firstStorageItem.querySelector('.imported-used-storage').innerText)
+      const thirdStorageItem = findAll('.ember-power-select-option')[2];
+      expect(thirdStorageItem.getAttribute('aria-disabled')).to.equal('true');
+      expect(thirdStorageItem.querySelector('.imported-used-storage').innerText)
         .to.equal('(import-enabled, already in use)');
     }
   );
@@ -284,7 +275,6 @@ describe('Integration | Component | support space form', function () {
   });
 });
 
-function selectStorageWithImport() {
-  const storagesHelper = new StorageSelectHelper();
-  return storagesHelper.selectOption(2);
+async function selectStorageWithImport() {
+  await selectChoose('.storage-field', 'Storage2');
 }
