@@ -14,7 +14,6 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 
 export default Component.extend(I18n, {
-  media: inject(),
   globalNotify: inject(),
 
   i18nPrefix: 'components.spaceFilePopularity',

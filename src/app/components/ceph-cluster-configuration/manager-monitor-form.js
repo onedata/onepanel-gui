@@ -9,7 +9,13 @@
 
 import OneForm from 'onedata-gui-common/components/one-form';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import EmberObject, { computed, get, set, observer, getProperties } from '@ember/object';
+import EmberObject, {
+  computed,
+  get,
+  set,
+  observer,
+  getProperties,
+} from '@ember/object';
 import { union } from '@ember/object/computed';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';

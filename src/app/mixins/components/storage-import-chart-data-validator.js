@@ -26,7 +26,7 @@ export default Mixin.create({
    * At least one metric from this collection is required for chart to render.
    * @type {string[]}
    */
-  usedMetrics: [],
+  usedMetrics: Object.freeze([]),
 
   importChartDataError: computed('timeStats', function () {
     return this.get('timeStats') ?

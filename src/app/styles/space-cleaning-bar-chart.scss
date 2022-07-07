@@ -23,7 +23,7 @@
       }
     }
   }
-  
+
   .bar-container {
     position: relative;
     margin: 0.3em 0 3em 0;
@@ -112,6 +112,7 @@
         border: 0;
         box-shadow: none;
         .noUi-handle {
+          right: -$slider-width;
           height: $bar-height + 12px;
           width: $slider-width;
           border: 2px solid $main-border-color;
@@ -128,7 +129,7 @@
             display: none;
           }
           &.noUi-handle-lower {
-            left: -$slider-width;
+            transform: translateX(#{-$slider-width});
             &::before {
               background-image: repeating-linear-gradient(
                 to bottom,
@@ -140,7 +141,6 @@
             }
           }
           &.noUi-handle-upper {
-            left: 0px;
             &::before {
               background-image: repeating-linear-gradient(
                 to bottom,
@@ -299,7 +299,7 @@
               }
             }
           }
-          
+
           .feed {
             width: ($pacman-size / 8);
             height: ($pacman-size / 8);
@@ -316,7 +316,7 @@
       50% {
         transform: rotate(45deg);
       }
-      
+
     }
     @keyframes pacman-spin2 {
       0% {
@@ -324,18 +324,18 @@
       }
       50% {
         transform: rotate(-45deg);
-      }	
+      }
     }
-    
+
     @keyframes pacman-eat {
-      0% { 
-        box-shadow: 
-          0px ($pacman-size * 0.4375) 0 0 transparent, 
+      0% {
+        box-shadow:
+          0px ($pacman-size * 0.4375) 0 0 transparent,
           15px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
       }
       100% {
-        box-shadow: 
-          15px ($pacman-size * 0.4375) 0 0 $pacman-food-color, 
+        box-shadow:
+          15px ($pacman-size * 0.4375) 0 0 $pacman-food-color,
           30px ($pacman-size * 0.4375) 0 0 $pacman-food-color;
       }
     }

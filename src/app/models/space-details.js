@@ -13,7 +13,7 @@
  */
 
 import EmberObject, { computed, get } from '@ember/object';
-import { and, equal, raw, or } from 'ember-awesome-macros';
+import { and, equal, raw, or, writable } from 'ember-awesome-macros';
 
 /**
  * @typedef {'initializing'|'enabled'|'stopping'|'disabled'} DirStatsServiceStatus
@@ -64,28 +64,28 @@ export default EmberObject.extend({
   /**
    * @type {ComputedProperty<boolean>}
    */
-  autoStorageImportEnabled: equal('storageImport.mode', raw('auto')),
+  autoStorageImportEnabled: writable(equal('storageImport.mode', raw('auto'))),
 
   /**
    * @type {ComputedProperty<boolean>}
    */
-  manualStorageImportEnabled: equal('storageImport.mode', raw('manual')),
+  manualStorageImportEnabled: writable(equal('storageImport.mode', raw('manual'))),
 
   /**
    * @type {ComputedProperty<boolean>}
    */
-  storageImportEnabled: or(
+  storageImportEnabled: writable(or(
     'autoStorageImportEnabled',
     'manualStorageImportEnabled'
-  ),
+  )),
 
   /**
    * @type {ComputedProperty<boolean>}
    */
-  continuousImportScanEnabled: and(
+  continuousImportScanEnabled: writable(and(
     'autoStorageImportEnabled',
     'storageImport.autoStorageImportConfig.continuousScan'
-  ),
+  )),
 
   /**
    * Space size.

@@ -13,7 +13,7 @@ import Component from '@ember/component';
 import { computed, get, observer } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { resolve, reject } from 'rsvp';
-import Onepanel from 'npm:onepanel';
+import Onepanel from 'onepanel';
 import { later } from '@ember/runloop';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
@@ -32,7 +32,6 @@ const BLANK_AUTO_CLEANING = {
 const autoCleaningButtonTimeout = 1000;
 
 export default Component.extend(I18n, {
-  media: service(),
   spaceManager: service(),
   globalNotify: service(),
 

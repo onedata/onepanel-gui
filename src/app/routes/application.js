@@ -1,6 +1,6 @@
 /**
  * Adds waiting for gui-context fetch
- * 
+ *
  * @module routes/application
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH

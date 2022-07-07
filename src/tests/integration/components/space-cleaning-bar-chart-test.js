@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { getProperties } from '@ember/object';
 
@@ -10,9 +11,7 @@ function approxEquals(value, targetValue) {
 }
 
 describe('Integration | Component | space cleaning bar chart', function () {
-  setupComponentTest('space-cleaning-bar-chart', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     this.setProperties({
@@ -28,8 +27,8 @@ describe('Integration | Component | space cleaning bar chart', function () {
     });
   });
 
-  it('renders pacman if cleaning is working', function () {
-    this.render(hbs `
+  it('renders pacman if cleaning is working', async function () {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -37,12 +36,12 @@ describe('Integration | Component | space cleaning bar chart', function () {
           spaceSize=spaceSize}}
       </div>
     `);
-    expect(this.$('.pacman')).to.exist;
+    expect(find('.pacman')).to.exist;
   });
 
-  it('does not render pacman if cleaning is not working', function () {
+  it('does not render pacman if cleaning is not working', async function () {
     this.set('status.lastRunStatus', 'completed');
-    this.render(hbs `
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -50,11 +49,11 @@ describe('Integration | Component | space cleaning bar chart', function () {
           spaceSize=spaceSize}}
       </div>
     `);
-    expect(this.$('.pacman')).not.to.exist;
+    expect(find('.pacman')).not.to.exist;
   });
 
-  it('renders valid indicators', function () {
-    this.render(hbs `
+  it('renders valid indicators', async function () {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -62,15 +61,15 @@ describe('Integration | Component | space cleaning bar chart', function () {
           spaceSize=spaceSize}}
       </div>
     `);
-    const indicators = this.$('.indicators');
-    expect(indicators.find('.total-space')).to.contain('10 MiB');
-    expect(indicators.find('.used-space')).to.contain('7 MiB');
-    expect(indicators.find('.free-space')).to.contain('3 MiB');
-    expect(indicators.find('.to-release')).to.contain('1 MiB');
+    const indicators = find('.indicators');
+    expect(indicators.querySelector('.total-space')).to.contain.text('10 MiB');
+    expect(indicators.querySelector('.used-space')).to.contain.text('7 MiB');
+    expect(indicators.querySelector('.free-space')).to.contain.text('3 MiB');
+    expect(indicators.querySelector('.to-release')).to.contain.text('1 MiB');
   });
 
-  it('renders valid slider values', function () {
-    this.render(hbs `
+  it('renders valid slider values', async function () {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -78,12 +77,12 @@ describe('Integration | Component | space cleaning bar chart', function () {
           spaceSize=spaceSize}}
       </div>
     `);
-    expect(this.$('.soft-quota-editor')).to.contain('6 MiB');
-    expect(this.$('.hard-quota-editor')).to.contain('8 MiB');
+    expect(find('.soft-quota-editor')).to.contain.text('6 MiB');
+    expect(find('.hard-quota-editor')).to.contain.text('8 MiB');
   });
 
-  it('renders valid bars', function () {
-    this.render(hbs `
+  it('renders valid bars', async function () {
+    await render(hbs `
       <div style="width: 500px">
         {{space-cleaning-bar-chart
           settings=settings
@@ -102,7 +101,7 @@ describe('Integration | Component | space cleaning bar chart', function () {
     } = getProperties(settings, 'threshold', 'target');
     const spaceOccupancy = status.spaceOccupancy;
     const barWidth = (name) => parseFloat(
-      this.$(name).attr('style').match(/width:\s+(\d+)%;/)[1]
+      find(name).getAttribute('style').match(/width:\s+(\d+)%;/)[1]
     );
     const usedBelowSoftQuota = target * 100 / spaceSize;
     const usedBelowHardQuota = (spaceOccupancy - target) * 100 / spaceSize;

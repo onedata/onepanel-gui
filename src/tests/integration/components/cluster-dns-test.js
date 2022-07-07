@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
-import { setupComponentTest } from 'ember-mocha';
+import { setupRenderingTest } from 'ember-mocha';
+import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve, reject } from 'rsvp';
-import wait from 'ember-test-helpers/wait';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
@@ -23,9 +23,7 @@ const GuiUtils = Service.extend({
 });
 
 describe('Integration | Component | cluster dns', function () {
-  setupComponentTest('cluster-dns', {
-    integration: true,
-  });
+  setupRenderingTest();
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
@@ -37,7 +35,7 @@ describe('Integration | Component | cluster dns', function () {
       .resolves('18.03.1');
   });
 
-  it('renders DNS server IPs fetched from server', function () {
+  it('renders DNS server IPs fetched from server', async function () {
     const dnsCheck = {
       domain: {
         summary: 'ok',
@@ -64,17 +62,15 @@ describe('Integration | Component | cluster dns', function () {
         },
       });
 
-    this.render(hbs `{{cluster-dns
+    await render(hbs `{{cluster-dns
       onepanelServiceType="oneprovider"
       dnsCheckProxy=dnsCheckProxy
       zonePoliciesProxy=zonePoliciesProxy
     }}`);
 
-    const $clusterDns = this.$('.cluster-dns');
-    return wait().then(() => {
-      expect($clusterDns).to.exist;
-      expect($clusterDns).to.contain('8.8.8.8');
-      expect($clusterDns).to.contain('192.168.0.1');
-    });
+    const clusterDns = find('.cluster-dns');
+    expect(clusterDns).to.exist;
+    expect(clusterDns).to.contain.text('8.8.8.8');
+    expect(clusterDns).to.contain.text('192.168.0.1');
   });
 });
