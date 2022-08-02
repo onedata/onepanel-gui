@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9625 Fixed hiding tooltip when it is controlled manually
 * VFS-9316 Removed usages of EmberPowerSelectHelper
 * VFS-9394 Removed ember-browser-info
 * VFS-9520 Changed sidebar look to be more compact
