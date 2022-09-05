@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9531 Updated gui common
 * VFS-9637 Updated gui common
 * VFS-9625 Fixed hiding tooltip when it is controlled manually
 * VFS-9316 Removed usages of EmberPowerSelectHelper
