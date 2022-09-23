@@ -65,7 +65,7 @@ $space-auto-cleaning-mobile-breakpoint: 1100px;
     padding-right: $padding-large-horizontal;
   }
   .clean-now-tip {
-    margin-right: $padding-large-horizontal / 2;
+    margin-right: $padding-large-horizontal * 0.5;
   }
   @media (max-width: $screen-xs-max) {
     .one-collapsible-list-item:last-child {

@@ -1,7 +1,7 @@
 
 .cluster-dns-check-table {
-  $-dns-check-description-padding-base: $padding-large-horizontal / 2;
-  $-dns-check-description-padding-small: $-dns-check-description-padding-base / 2;
+  $-dns-check-description-padding-base: $padding-large-horizontal * 0.5;
+  $-dns-check-description-padding-small: $-dns-check-description-padding-base * 0.5;
   $-dns-check-item-padding-vertical: $padding-small-vertical;
   
   .check-item {
