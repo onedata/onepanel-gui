@@ -250,16 +250,16 @@
                 content: '';
                 display: block;
                 background-color: $color-one-yellow;
-                height: $pacman-size / 2;
+                height: $pacman-size * 0.5;
                 width: $pacman-size;
                 border: $pacman-border;
                 border-bottom: 0;
-                border-radius: ($pacman-size / 2) ($pacman-size / 2) 0 0;
+                border-radius: ($pacman-size * 0.5) ($pacman-size * 0.5) 0 0;
               }
               &::after {
                 content: '';
                 display: block;
-                width: $pacman-size / 2 - 1px;
+                width: $pacman-size * 0.5 - 1px;
                 border-top: $pacman-border;
                 margin-bottom: -1px;
               }
@@ -267,8 +267,8 @@
                 position: absolute;
                 top: 25%;
                 left: 25%;
-                width: $pacman-size / 10;
-                height: $pacman-size / 10;
+                width: $pacman-size * 0.1;
+                height: $pacman-size * 0.1;
                 border-radius: 100%;
                 background-color: black;
               }
@@ -284,16 +284,16 @@
                 bottom: -50%;
                 display: block;
                 background-color:$color-one-yellow;
-                height: $pacman-size / 2;
+                height: $pacman-size * 0.5;
                 width: $pacman-size;
                 border: $pacman-border;
                 border-top: 0;
-                border-radius: 0 0 ($pacman-size / 2) ($pacman-size / 2);
+                border-radius: 0 0 ($pacman-size * 0.5) ($pacman-size * 0.5);
               }
               &::after {
                 content: '';
                 display: block;
-                width: $pacman-size / 2 - 1px;
+                width: $pacman-size * 0.5 - 1px;
                 border-top: $pacman-border;
                 margin-top: -1px;
               }
@@ -301,8 +301,8 @@
           }
 
           .feed {
-            width: ($pacman-size / 8);
-            height: ($pacman-size / 8);
+            width: ($pacman-size * 0.125);
+            height: ($pacman-size * 0.125);
             border-radius: 100%;
             animation: pacman-eat 0.5s linear 0s infinite;
           }

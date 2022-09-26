@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9623 Increased speed of SASS compilation and fixed its unnecessary recompilation
 * VFS-9531 Updated gui common
 * VFS-9637 Updated gui common
 * VFS-9625 Fixed hiding tooltip when it is controlled manually
