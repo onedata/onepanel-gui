@@ -72,10 +72,10 @@ export default Service.extend(
     },
 
     /**
-     * Returns url to specified place in Onepanel hosted by onezone
-     * @param {string} clusterId
-     * @param {string} [internalRoute='/'] Onezone application internal route
-     * @param {boolean} [redirectType='direct]
+     * Returns url to specified place in Onepanel hosted by Onezone.
+     * @param {string} [clusterId] If not provided, use this Onepanel cluster ID.
+     * @param {string} [internalRoute='/'] Onezone application internal route.
+     * @param {'direct'|'redirect'|'onezone_route'} [redirectType='direct']
      * @returns {string}
      */
     getOnepanelNavUrlInOnezone({
@@ -102,7 +102,8 @@ export default Service.extend(
           }
           return getOnezoneUrl(
             onezoneOrigin,
-            `/?redirect_url=/${onepanelAbbrev}/${clusterId}/i#${internalRoute}`
+            // NOTE: "#"" is encoded to %23 to be handled by transition query params
+            `/?redirect_url=/${onepanelAbbrev}/${clusterId}/i%23${internalRoute}`
           );
         case 'onezone_route':
           return getOnezoneUrl(onezoneOrigin, `onedata/clusters/${clusterId}`);

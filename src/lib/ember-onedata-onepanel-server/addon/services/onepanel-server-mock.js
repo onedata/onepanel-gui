@@ -392,7 +392,7 @@ export default OnepanelServerBase.extend(
         }
       });
 
-      promise.catch(error => this.handleRequestError(error));
+      promise.catch(async error => await this.handleRequestError(error));
 
       return promise;
     },
@@ -1521,7 +1521,7 @@ export default OnepanelServerBase.extend(
               mockServiceType === 'oneprovider' ?
               providerCluster1.id :
               zoneCluster.id
-            ) : this.get('guiContext.guiMode'),
+            ) : this.get('guiContext.clusterId'),
           version: '18.02.0-rc13',
           build: '2100',
           deployed: mockStep.gt(installationStepsMap.deploy),
