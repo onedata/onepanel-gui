@@ -1,9 +1,9 @@
 /**
- * Provides methods for handling backend request errors 
+ * Provides methods for handling backend request errors
  *
  * @module mixins/request-error-handler
  * @author Jakub Liput
- * @copyright (C) 2017 ACK CYFRONET AGH
+ * @copyright (C) 2017-2022 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -25,13 +25,17 @@ const workerUnavailableErrors = [
 
 export default Mixin.create({
   session: service(),
+  guiContext: service(),
+  onezoneGui: service(),
+  onepanelServer: service(),
+  router: service(),
 
   /**
    * @type {Storage}
    */
   _sessionStorage: sessionStorage,
 
-  handleRequestError(errorResponse) {
+  async handleRequestError(errorResponse) {
     if (errorResponse && errorResponse.response && errorResponse.response.statusCode) {
       const statusCode = errorResponse.response.statusCode;
       const body = errorResponse.response.body;
@@ -43,20 +47,39 @@ export default Mixin.create({
       } else if (statusCode === 401 && this.get('isInitialized') &&
         !isLogoutResponse(errorResponse.response)
       ) {
-        // 401 should not be present when isInitialized - it seems that session has expired
-        this._handleUnauhtorizedError();
+        // 401 should not be present when isInitialized - it seems that x-auth-token
+        // has expired
+        await this._handleUnauhtorizedError();
       }
     }
   },
 
-  _handleUnauhtorizedError() {
-    const session = this.get('session');
-    if (get(session, 'isAuthenticated')) {
-      const _sessionStorage = this.get('_sessionStorage');
-      _sessionStorage.setItem(sessionExpiredKey, '1');
+  async _handleUnauhtorizedError() {
+    const {
+      session,
+      router,
+      onezoneGui,
+      onepanelServer,
+      _sessionStorage,
+    } = this.getProperties(
+      'session',
+      'router',
+      'onezoneGui',
+      'onepanelServer',
+      '_sessionStorage'
+    );
+    if (get(onepanelServer, 'isEmergency')) {
+      if (get(session, 'isAuthenticated')) {
+        _sessionStorage.setItem(sessionExpiredKey, '1');
+      }
+      await session.invalidate();
+    } else {
+      const onezoneUrl = onezoneGui.getOnepanelNavUrlInOnezone({
+        redirectType: 'redirect',
+        internalRoute: get(router, 'currentURL'),
+      });
+      window.location = onezoneUrl;
     }
-    session.invalidate().then(() => {
-      this.destroyClient();
-    });
+    this.destroyClient();
   },
 });
