@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9795 Fixed user logout from Onezone GUI after remove from cluster members
 * VFS-9623 Increased speed of SASS compilation and fixed its unnecessary recompilation
 * VFS-9531 Updated gui common
 * VFS-9637 Updated gui common

@@ -146,8 +146,8 @@ export default OnepanelServerBase.extend(
 
           }
         })
-        .catch(error => {
-          this.handleRequestError(error);
+        .catch(async error => {
+          await this.handleRequestError(error);
           throw error;
         });
     },
