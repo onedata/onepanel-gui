@@ -6,7 +6,7 @@ import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import OneTooltipHelper from '../../helpers/one-tooltip';
 import moment from 'moment';
-import $ from 'jquery';
+import dom from 'onedata-gui-common/utils/dom';
 
 describe('Integration | Component | space status icons', function () {
   setupRenderingTest();
@@ -20,7 +20,7 @@ describe('Integration | Component | space status icons', function () {
 
       await render(hbs `{{space-status-icons space=space}}`);
 
-      expect($(find('.space-status-icons')).is(':hidden')).to.be.true;
+      expect(dom.isHidden(find('.space-status-icons'))).to.be.true;
     }
   );
 
@@ -33,7 +33,7 @@ describe('Integration | Component | space status icons', function () {
 
       await render(hbs `{{space-status-icons space=space}}`);
 
-      expect($(find('.oneicon-space-import')).is(':visible')).to.be.true;
+      expect(dom.isVisible(find('.oneicon-space-import'))).to.be.true;
     }
   );
 

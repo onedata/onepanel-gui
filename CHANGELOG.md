@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9313 Removed ":hidden" and ":visible" jQuery selectors usages
 * VFS-9310 Removed $.parents() usages
 * VFS-10107 Fixed smooth scroll in Chrome
 * VFS-9795 Fixed user logout from Onezone GUI after remove from cluster members
