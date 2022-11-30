@@ -12,7 +12,7 @@ import Component from '@ember/component';
 import { observer, computed } from '@ember/object';
 import { next } from '@ember/runloop';
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
-import $ from 'jquery';
+import dom from 'onedata-gui-common/utils/dom';
 
 export default Component.extend({
   classNames: ['inline-editor'],
@@ -60,20 +60,17 @@ export default Component.extend({
    * Formatted value.
    * @type {computed.object}
    */
-  _readableValue: computed('value', function () {
+  _readableValue: computed('value', function _readableValue() {
     return bytesToString(this.get('value'), { iecFormat: true, separated: true });
   }),
 
-  positionObserver: observer('position', function () {
-    const element = this.get('element');
-    if (element) {
-      $(element).css({
-        left: this.get('position') + '%',
-      });
+  positionObserver: observer('position', function positionObserver() {
+    if (this.element) {
+      dom.setStyle(this.element, 'left', `${this.position}%`);
     }
   }),
 
-  allowEditionObserver: observer('allowEdition', function () {
+  allowEditionObserver: observer('allowEdition', function allowEditionObserver() {
     if (this.get('_inEditionMode')) {
       this.send('cancelEdition');
     }
@@ -87,17 +84,18 @@ export default Component.extend({
 
   actions: {
     startEdition() {
-      const {
-        allowEdition,
-        _readableValue,
-        element,
-      } = this.getProperties('allowEdition', '_readableValue', 'element');
-      if (allowEdition) {
+      if (this.allowEdition) {
         this.setProperties({
-          _editorValue: _readableValue.number,
+          _editorValue: this._readableValue.number,
           _inEditionMode: true,
         });
-        next(() => $(element).find('input').focus().select());
+        next(() => {
+          const input = this.element?.querySelector('input');
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        });
       }
     },
     cancelEdition() {
