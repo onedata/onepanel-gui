@@ -16,6 +16,7 @@ import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fi
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { createValuesContainer } from 'onedata-gui-common/utils/form-component/values-container';
+import { inject as service } from '@ember/service';
 
 /**
  * @typedef {Object} SpaceSupportAccountingFormValues
@@ -25,6 +26,8 @@ import { createValuesContainer } from 'onedata-gui-common/utils/form-component/v
 
 export default Component.extend(I18n, {
   classNames: ['space-support-accounting-form'],
+
+  modalManager: service(),
 
   /**
    * @override

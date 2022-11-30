@@ -25,6 +25,7 @@ export default Component.extend(I18n, spaceItemSupports, {
 
   spaceManager: service(),
   storageManager: service(),
+  modalManager: service(),
 
   /**
    * @virtual
@@ -220,13 +221,32 @@ export default Component.extend(I18n, spaceItemSupports, {
     },
     async saveNewAccountingConfig() {
       const newAccountingConfig = this.get('newAccountingConfig');
-      this.set('isSavingNewAccountingConfig', true);
-      try {
-        await this.get('submitModifySpace')(newAccountingConfig);
-        safeExec(this, () => this.set('accountingFormMode', 'view'));
-      } finally {
-        safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
-      }
+      const translationPrefix = 'modal.' + 
+        (newAccountingConfig.dirStatsServiceEnabled ? 'enable' : 'disable');
+
+      this.modalManager
+      .show('question-modal', {
+        headerIcon: 'sign-warning-rounded',
+        headerText: this.t(`${translationPrefix}.header`),
+        descriptionParagraphs: [{
+          text: this.t(`${translationPrefix}.question`),
+        }, {
+          text: this.t(`${translationPrefix}.description`),
+        }],
+        yesButtonText: this.t(`${translationPrefix}.buttonConfirm`),
+        yesButtonType: 'danger',
+        onSubmit: async () => {
+          this.set('isSavingNewAccountingConfig', true);
+          try {
+            await this.get('submitModifySpace')(newAccountingConfig);
+            safeExec(this, () => this.set('accountingFormMode', 'view'));
+          } finally {
+            safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
+          }
+        },
+      }).hiddenPromise;
+
+      
     },
     submitModifySpace(data) {
       return this.get('submitModifySpace')(data);
