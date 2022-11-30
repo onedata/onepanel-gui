@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10130 Added additional modal when turning on/off dir stats
 * VFS-10107 Fixed smooth scroll in Chrome
 * VFS-9795 Fixed user logout from Onezone GUI after remove from cluster members
 * VFS-9623 Increased speed of SASS compilation and fixed its unnecessary recompilation
