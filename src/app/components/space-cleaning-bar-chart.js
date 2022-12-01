@@ -18,7 +18,7 @@ import {
 import { Promise } from 'rsvp';
 import { run } from '@ember/runloop';
 import oneWayModifiable from 'onedata-gui-common/utils/one-way-modifiable';
-import $ from 'jquery';
+import dom from 'onedata-gui-common/utils/dom';
 
 // Bar animation time (in seconds).
 const ANIMATION_TIME = 2;
@@ -346,17 +346,14 @@ export default Component.extend({
         'not-used-over-hard-quota',
       ];
       const {
-        element,
         _allowBarAnimations,
         _usedPercent,
         _oldPercentValues,
       } = this.getProperties(
-        'element',
         '_allowBarAnimations',
         '_usedPercent',
         '_oldPercentValues'
       );
-      const $element = $(element);
       const deltaUsedPercent = _usedPercent - _oldPercentValues._usedPercent;
       const transitions = {};
       const transitionElements = deltaUsedPercent > 0 ?
@@ -372,26 +369,28 @@ export default Component.extend({
           const delay = delaySum;
           delaySum += animationTime;
           transition = {
-            'transition': `width ${animationTime}s linear, left ${animationTime}s linear`,
-            'transition-delay': `${delay}s`,
+            transition: `width ${animationTime}s linear, left ${animationTime}s linear`,
+            transitionDelay: `${delay}s`,
           };
         } else {
           transition = {
-            'transition': 'none',
-            'transition-delay': '0s',
+            transition: 'none',
+            transitionDelay: '0s',
           };
         }
         transitions[transitionElements[i]] = transition;
         transitions[transitionElements[i + 1]] = transition;
       }
       properties.forEach((prop, index) => {
-        $element.find('.' + classes[index]).css(transitions[prop]);
+        dom.setStyles(
+          this.element?.querySelector('.' + classes[index]),
+          transitions[prop]
+        );
       });
       let percentSum = 0;
       properties.forEach((property, index) => {
-        const element = $element.find('.' + classes[index]);
         const propertyValue = this.get(property);
-        element.css({
+        dom.setStyles(this.element?.querySelector('.' + classes[index]), {
           width: propertyValue + '%',
           left: percentSum + '%',
         });
@@ -408,9 +407,14 @@ export default Component.extend({
           transition: 'none',
         };
       }
-      $element.find('.used, .pacman-row .used-space, .pacman-cell')
-        .css(standardBarAnimation);
-      $element.find('.used, .pacman-row .used-space').css(usedWidth);
+      dom.setStyles(
+        this.element?.querySelectorAll('.used, .pacman-row .used-space, .pacman-cell'),
+        standardBarAnimation
+      );
+      dom.setStyles(
+        this.element?.querySelectorAll('.used, .pacman-row .used-space'),
+        usedWidth
+      );
       properties.forEach((prop) => _oldPercentValues[prop] = this.get(prop));
       _oldPercentValues._usedPercent = _usedPercent;
       this.set('_oldPercentValues', _oldPercentValues);
