@@ -221,20 +221,11 @@ export default Component.extend(I18n, spaceItemSupports, {
     },
     async saveNewAccountingConfig() {
       const newAccountingConfig = this.get('newAccountingConfig');
-      const translationPrefix = 'modal.' + 
-        (newAccountingConfig.dirStatsServiceEnabled ? 'enable' : 'disable');
+      const nextDirStatsEnabledValue = newAccountingConfig.dirStatsServiceEnabled ? 
+        'enabled' : 'disabled';
 
-      this.modalManager
-      .show('question-modal', {
-        headerIcon: 'sign-warning-rounded',
-        headerText: this.t(`${translationPrefix}.header`),
-        descriptionParagraphs: [{
-          text: this.t(`${translationPrefix}.question`),
-        }, {
-          text: this.t(`${translationPrefix}.description`),
-        }],
-        yesButtonText: this.t(`${translationPrefix}.buttonConfirm`),
-        yesButtonType: 'danger',
+      return this.modalManager.show('toggle-dir-stats-question-modal', {
+        nextDirStatsEnabledValue,
         onSubmit: async () => {
           this.set('isSavingNewAccountingConfig', true);
           try {
@@ -244,7 +235,7 @@ export default Component.extend(I18n, spaceItemSupports, {
             safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
           }
         },
-      }).hiddenPromise;
+      });
 
       
     },
