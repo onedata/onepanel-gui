@@ -18,7 +18,6 @@ import { inject as service } from '@ember/service';
 import OnepanelServerBase from 'ember-onedata-onepanel-server/services/-onepanel-server-base';
 import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
-import $ from 'jquery';
 import Onepanel from 'onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -276,13 +275,27 @@ export default OnepanelServerBase.extend(
      * @param {string} password
      * @returns {Promise}
      */
-    login(password) {
-      return new Promise((resolve, reject) => {
-        $.ajax('/login', {
-          method: 'POST',
-          headers: { Authorization: 'Basic ' + btoa(password) },
-        }).then(resolve, reject);
-      }).then(() => this.validateSession());
+    async login(password) {
+      const response = await window.fetch('/login', {
+        method: 'POST',
+        headers: {
+          authorization: `Basic ${btoa(password)}`,
+        },
+      });
+
+      if (!response.ok) {
+        let loginError;
+        try {
+          loginError = (await response.json())?.error;
+        } catch (error) {
+          console.error('Cannot parse JSON from response due to error:', error);
+          throw response.status === 401 ? { id: 'unauthorized' } : { id: 'unknown' };
+        }
+
+        throw loginError;
+      }
+
+      return this.validateSession();
     },
 
     staticRequest(apiName, method, callArgs = [], {
@@ -325,8 +338,32 @@ export default OnepanelServerBase.extend(
      * Resolves to token for authorizing Onepanel REST calls
      * @returns {Promise<object>} object properties: token, ttl
      */
-    getOnepanelToken() {
-      return resolve($.post('./gui-preauthorize'));
+    async getOnepanelToken() {
+      const response = await window.fetch('./gui-preauthorize', {
+        method: 'POST',
+      });
+      let responseBody;
+      let responseBodyParseError;
+      try {
+        responseBody = await response.json();
+      } catch (error) {
+        responseBodyParseError = error;
+      }
+
+      if (response.ok) {
+        if (responseBodyParseError) {
+          console.error(
+            'Cannot parse JSON from response due to error:',
+            responseBodyParseError
+          );
+          throw { id: 'unknown' };
+        }
+        return responseBody;
+      } else if (!responseBody?.error && response.status === 401) {
+        throw { id: 'unauthorized' };
+      } else {
+        throw (responseBody?.error ?? { id: 'unknown' });
+      }
     },
   }
 );
