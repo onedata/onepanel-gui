@@ -56,7 +56,7 @@ class MockState {
 }
 
 export default Mixin.create({
-  cleanStatesCache: computed(() => {}),
+  cleanStatesCache: computed(() => ({})),
 
   _getAutoCleaningStatus(id, target, threshold, steps) {
     return this._getAutoCleaningStatusMock(id, target, threshold, steps).getData();
