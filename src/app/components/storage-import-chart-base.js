@@ -18,6 +18,7 @@ import { computed } from '@ember/object';
 import moment from 'moment';
 import _ from 'lodash';
 import $ from 'jquery';
+import dom from 'onedata-gui-common/utils/dom';
 
 import StorageImportChartDataValidator from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
@@ -126,8 +127,14 @@ export default Component.extend(StorageImportChartDataValidator, {
    */
   handleChartScroll() {
     const offsetX = this.getScrollableRow().scrollLeft();
-    $(this.get('element')).find('.chart-tooltip').css({
-      transform: `translateY(-100%) translateX(-50%) translateX(${-offsetX}px)`,
-    }).removeClass('active');
+    const chartTooltip = this.element?.querySelector('.chart-tooltip');
+    if (chartTooltip) {
+      dom.setStyle(
+        chartTooltip,
+        'transform',
+        `translateY(-100%) translateX(-50%) translateX(${-offsetX}px)`
+      );
+      chartTooltip.classList.remove('active');
+    }
   },
 });
