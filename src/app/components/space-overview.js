@@ -236,8 +236,6 @@ export default Component.extend(I18n, spaceItemSupports, {
           }
         },
       });
-
-      
     },
     submitModifySpace(data) {
       return this.get('submitModifySpace')(data);
