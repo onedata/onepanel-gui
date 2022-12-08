@@ -236,7 +236,7 @@ describe('Integration | Component | support space form', function () {
     expect(find('.accountingEnabled-field .one-way-toggle').matches('.checked'))
       .to.be.false;
     expect(find('.dirStatsServiceEnabled-field .one-way-toggle').matches('.checked'))
-      .to.be.false;
+      .to.be.true;
   });
 
   it('submits default data from accounting form', async function () {
@@ -252,7 +252,7 @@ describe('Integration | Component | support space form', function () {
     expect(submitSpy).to.be.calledOnce;
     expect(submitSpy).to.be.calledWith(sinon.match({
       accountingEnabled: false,
-      dirStatsServiceEnabled: false,
+      dirStatsServiceEnabled: true,
     }));
   });
 
