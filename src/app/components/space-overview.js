@@ -25,6 +25,7 @@ export default Component.extend(I18n, spaceItemSupports, {
 
   spaceManager: service(),
   storageManager: service(),
+  modalManager: service(),
 
   /**
    * @virtual
@@ -220,13 +221,21 @@ export default Component.extend(I18n, spaceItemSupports, {
     },
     async saveNewAccountingConfig() {
       const newAccountingConfig = this.get('newAccountingConfig');
-      this.set('isSavingNewAccountingConfig', true);
-      try {
-        await this.get('submitModifySpace')(newAccountingConfig);
-        safeExec(this, () => this.set('accountingFormMode', 'view'));
-      } finally {
-        safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
-      }
+      const nextDirStatsEnabledValue = newAccountingConfig.dirStatsServiceEnabled ? 
+        'enabled' : 'disabled';
+
+      return this.modalManager.show('toggle-dir-stats-question-modal', {
+        nextDirStatsEnabledValue,
+        onSubmit: async () => {
+          this.set('isSavingNewAccountingConfig', true);
+          try {
+            await this.get('submitModifySpace')(newAccountingConfig);
+            safeExec(this, () => this.set('accountingFormMode', 'view'));
+          } finally {
+            safeExec(this, () => this.set('isSavingNewAccountingConfig', false));
+          }
+        },
+      });
     },
     submitModifySpace(data) {
       return this.get('submitModifySpace')(data);
