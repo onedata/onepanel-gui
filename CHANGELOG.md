@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9311 Removed $.*width(), $.*height(), $.offset() and $.position() usages
 * VFS-10130 Added additional modal when turning on/off dir stats
 * VFS-9312 Removed $.css() usages
 * VFS-9313 Removed ":hidden" and ":visible" jQuery selectors usages
