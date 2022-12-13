@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10245 Added error translation for internal server error with reference
 * VFS-10234 Made directory statistics enabled by default
 * VFS-10092 Fixed randomly failing test in space cleaning reports
 * VFS-10130 Added additional modal when turning on/off dir stats
