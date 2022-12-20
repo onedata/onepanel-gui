@@ -56,7 +56,7 @@ export default Component.extend(I18n, {
   onChange: undefined,
 
   /**
-   * @virtual
+   * @virtual optional
    * @type {DirStatsServiceStatus}
    */
   dirStatsServiceStatus: undefined,
@@ -65,10 +65,10 @@ export default Component.extend(I18n, {
    * @type {FormComponent.ValuesContainer}
    */
   normalizedValues: computed('values', function normalizedValues() {
-    const values = this.get('values') || {};
     return createValuesContainer({
-      accountingEnabled: Boolean(values.accountingEnabled),
-      dirStatsServiceEnabled: Boolean(values.dirStatsServiceEnabled),
+      accountingEnabled: this.values ? Boolean(this.values.accountingEnabled) : false,
+      dirStatsServiceEnabled: this.values ?
+        Boolean(this.values.dirStatsServiceEnabled) : true,
     });
   }),
 

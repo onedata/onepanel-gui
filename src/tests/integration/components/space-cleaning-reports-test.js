@@ -10,6 +10,7 @@ import _ from 'lodash';
 import Service from '@ember/service';
 import { lookupService, registerService } from '../../helpers/stub-service';
 import sinon from 'sinon';
+import waitForRender from 'onedata-gui-common/utils/wait-for-render';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
@@ -134,6 +135,7 @@ describe('Integration | Component | space cleaning reports', function () {
         _window=_window
       }}
     </div>`);
+    await waitForRender();
 
     const noDataRow = find('.no-data-row');
     expect(noDataRow).to.exist;
