@@ -1,5 +1,5 @@
 /**
- * A table (or list in mobile view) for displaying information from space 
+ * A table (or list in mobile view) for displaying information from space
  * cleaning reports.
  *
  * @module components/space-cleaning-reports
@@ -21,6 +21,7 @@ import { htmlSafe } from '@ember/string';
 import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-cleaning-reports-updater';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { scheduleOnce } from '@ember/runloop';
+import dom from 'onedata-gui-common/utils/dom';
 
 function compareIndex(a, b) {
   const ai = get(a, 'index');
@@ -189,7 +190,7 @@ export default Component.extend(I18n, {
   },
 
   /**
-   * @param {Array<HTMLElement>} items 
+   * @param {Array<HTMLElement>} items
    * @param {boolean} headerVisible
    */
   onTableScroll(items, headerVisible) {
@@ -199,11 +200,12 @@ export default Component.extend(I18n, {
     const firstId = items[0] && items[0].getAttribute('data-row-id') || null;
     const lastId = items[items.length - 1] &&
       items[items.length - 1].getAttribute('data-row-id') || null;
-    const $firstRow = $('.first-row');
-    let startIndex; let endIndex;
-    if (firstId === null && get(sourceArray, 'length') !== 0 && $firstRow.length) {
+    const firstRow = this.element?.querySelector('.first-row');
+    let startIndex;
+    let endIndex;
+    if (firstId === null && get(sourceArray, 'length') !== 0 && firstRow) {
       const rowHeight = this.get('rowHeight');
-      const blankStart = $firstRow.offset().top * -1;
+      const blankStart = dom.offset(firstRow).top * -1;
       const blankEnd = blankStart + window.innerHeight;
       startIndex = Math.floor(blankStart / rowHeight);
       endIndex = Math.floor(blankEnd / rowHeight);
