@@ -3,7 +3,6 @@ export default {
   cleanReplicatedFiles: 'Selective cleaning',
   cleaningBoundaries: 'Cleaning boundaries',
   statusLoadError: 'Could not load status of space auto-cleaning.',
-  reportsLoadError: 'Could not load space cleaning reports.',
   headerHint: 'Enable or disable automatic cleaning of replicated files.  ',
   boundariesHint: 'Schedule auto-cleaning start and stop based on space usage. ' +
     'The process will start when storage usage exceeds threshold and stop when ' +
