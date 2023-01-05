@@ -4,7 +4,7 @@
  *
  * @module components/space-cleaning-reports
  * @author Michal Borzecki, Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -22,6 +22,7 @@ import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-clean
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { scheduleOnce } from '@ember/runloop';
 import dom from 'onedata-gui-common/utils/dom';
+import waitForRender from 'onedata-gui-common/utils/wait-for-render';
 
 function compareIndex(a, b) {
   const ai = get(a, 'index');
@@ -220,7 +221,11 @@ export default Component.extend(I18n, {
   didInsertElement() {
     this._super(...arguments);
     const listWatcher = this.set('listWatcher', this.createListWatcher());
-    listWatcher.scrollHandler();
+    (async () => {
+      await this.reportsArray.initialLoad;
+      await waitForRender();
+      listWatcher.scrollHandler();
+    })();
   },
 
   willDestroyElement() {

@@ -85,17 +85,11 @@
         }}
       </h1>
     </div>
-    <div class="loadable-row">
-      {{#loading-container
-        isLoading=spaceAutoCleaningReportsUpdater.isInitializing
-        errorReason=spaceAutoCleaningReportsUpdater.error
-        customErrorMessage=(tt this "reportsLoadError")
+    <div class="row space-cleaning-reports-row">
+      {{space-cleaning-reports
+        spaceId=spaceId
+        isCleanEnabled=isCleanEnabled
       }}
-        {{space-cleaning-reports
-          spaceId=spaceId
-          isCleanEnabled=isCleanEnabled
-        }}
-      {{/loading-container}}
     </div>
   </div>
 {{/if}}
