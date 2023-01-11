@@ -85,6 +85,7 @@ export default Component.extend({
       if (providerId && supportedSpaces.length) {
         return A(supportedSpaces.map((space, index) => EmberObject.create({
           id: String(index),
+          spaceId: get(space, 'id'),
           label: get(space, 'name'),
           value: get(space, `supportingProviders.${providerId}`),
           color: colorGenerator.generateColorForKey(get(space, 'id')),
