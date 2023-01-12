@@ -11,6 +11,7 @@ import SidebarContentRoute from 'onedata-gui-common/routes/onedata/sidebar/conte
 import { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import { Promise } from 'rsvp';
+import findRouteInfo from 'onedata-gui-common/utils/find-route-info';
 
 export default SidebarContentRoute.extend({
   onepanelServer: service(),
@@ -34,8 +35,8 @@ export default SidebarContentRoute.extend({
 
       const currentClusterId = get(clusterModelManager, 'currentClusterProxy.id') ||
         'new-cluster';
-      const urlClusterId =
-        get(transition, 'params')['onedata.sidebar.content']['resource_id'];
+      const contentRouteInfo = findRouteInfo(transition, 'onedata.sidebar.content');
+      const urlClusterId = contentRouteInfo.params['resource_id'];
       const clusterId = get(model, 'resourceId') ||
         (urlClusterId === 'new-cluster' ? urlClusterId : null);
 
