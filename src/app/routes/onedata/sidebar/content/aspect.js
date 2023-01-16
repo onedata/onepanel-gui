@@ -47,7 +47,7 @@ export default AspectRoute.extend({
    * @param {Ember.Transition} transition
    */
   _redirectClusterAspect(transition) {
-    const aspectRouteInfo = transition.to;
+    const aspectRouteInfo = findRouteInfo(transition, 'onedata.sidebar.content.aspect');
     const aspectId = aspectRouteInfo.params['aspect_id'];
     if (aspectId !== 'not-found' && aspectId !== 'installation') {
       const onepanelServiceType = this.get('onepanelServiceType');
