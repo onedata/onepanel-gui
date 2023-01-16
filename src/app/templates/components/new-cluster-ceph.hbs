@@ -40,12 +40,12 @@
 }}
   <p class="message">{{tt this "blockDeviceFormatWarn.message"}}</p>
   <ul class="info info-gray info-condensed">
-    {{#each-in usedBlockDevices as |host devices|}}
+    {{#each usedBlockDevices as |devicesInfo|}}
       <li class="node break-all">
-        <strong><span class="host">{{host}}</span>:</strong>
-        <span class="devices">{{join ", " (map-by "path" devices)}}</span>
+        <strong><span class="host">{{devicesInfo.host}}</span>:</strong>
+        <span class="devices">{{join ", " (map-by "path" devicesInfo.devices)}}</span>
       </li>
-    {{/each-in}}
+    {{/each}}
   </ul>
   <p>{{tt this "blockDeviceFormatWarn.areYouSure"}}</p>
 {{/proceed-process-modal}}

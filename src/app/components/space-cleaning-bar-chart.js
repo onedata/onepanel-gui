@@ -3,7 +3,7 @@
  *
  * @module components/space-cleaning-bar-chart
  * @author Michal Borzecki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2022 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -85,55 +85,55 @@ export default Component.extend({
    * Space soft quota value for bar chart.
    * @type {computed.boolean}
    */
-  _target: oneWayModifiable('settings.target'),
+  targetSoftQuota: oneWayModifiable('settings.target'),
 
   /**
    * Space hard quota value for bar chart.
    * @type {computed.boolean}
    */
-  _threshold: oneWayModifiable('settings.threshold'),
+  threshold: oneWayModifiable('settings.threshold'),
 
   /**
    * Space soft quota value for slider.
    * @type {computed.boolean}
    */
-  _targetForSlider: oneWayModifiable('settings.target'),
+  targetForSlider: oneWayModifiable('settings.target'),
 
   /**
    * Space hard quota value for slider.
    * @type {computed.boolean}
    */
-  _thresholdForSlider: oneWayModifiable('settings.threshold'),
+  thresholdForSlider: oneWayModifiable('settings.threshold'),
 
   /**
    * Space soft quota value for bar chart (in percents).
    * @type {computed.number}
    */
-  _targetPercent: computed('_target', 'spaceSize', function () {
+  targetPercent: computed('targetSoftQuota', 'spaceSize', function targetPercent() {
     const {
-      _target,
+      targetSoftQuota,
       spaceSize,
-    } = this.getProperties('_target', 'spaceSize');
-    return (_target / spaceSize) * 100;
+    } = this.getProperties('targetSoftQuota', 'spaceSize');
+    return (targetSoftQuota / spaceSize) * 100;
   }),
 
   /**
    * Space hard quota value for bar chart (in percents).
    * @type {computed.number}
    */
-  _thresholdPercent: computed('_threshold', 'spaceSize', function () {
+  thresholdPercent: computed('threshold', 'spaceSize', function thresholdPercent() {
     const {
-      _threshold,
+      threshold,
       spaceSize,
-    } = this.getProperties('_threshold', 'spaceSize');
-    return (_threshold / spaceSize) * 100;
+    } = this.getProperties('threshold', 'spaceSize');
+    return (threshold / spaceSize) * 100;
   }),
 
   /**
    * Slider range.
    * @type {computed.Object}
    */
-  _sliderRange: computed('spaceSize', function () {
+  sliderRange: computed('spaceSize', function sliderRange() {
     return {
       min: 0,
       max: this.get('spaceSize'),
@@ -144,15 +144,15 @@ export default Component.extend({
    * Slider values.
    * @type {computed.Array.number}
    */
-  _sliderStartValues: computed(
-    '_thresholdForSlider',
-    '_targetForSlider',
-    function () {
+  sliderStartValues: computed(
+    'thresholdForSlider',
+    'targetForSlider',
+    function sliderStartValues() {
       const {
-        _thresholdForSlider,
-        _targetForSlider,
-      } = this.getProperties('_thresholdForSlider', '_targetForSlider');
-      return [_targetForSlider, _thresholdForSlider];
+        thresholdForSlider,
+        targetForSlider,
+      } = this.getProperties('thresholdForSlider', 'targetForSlider');
+      return [targetForSlider, thresholdForSlider];
     }
   ),
 
@@ -160,7 +160,7 @@ export default Component.extend({
    * Percent of used space.
    * @type {computed.boolean}
    */
-  _usedPercent: computed('spaceSize', 'status.spaceOccupancy', function () {
+  usedPercent: computed('spaceSize', 'status.spaceOccupancy', function usedPercent() {
     const {
       spaceSize,
       status,
@@ -172,7 +172,7 @@ export default Component.extend({
    * Free space.
    * @type {computed.number}
    */
-  _freeSpace: computed('spaceSize', 'status.spaceOccupancy', function () {
+  freeSpace: computed('spaceSize', 'status.spaceOccupancy', function freeSpace() {
     const {
       spaceSize,
       status,
@@ -184,29 +184,33 @@ export default Component.extend({
    * Space to release.
    * @type {computed.number}
    */
-  _toReleaseSpace: computed('_target', 'status.spaceOccupancy', function () {
-    const {
-      _target,
-      status,
-    } = this.getProperties('_target', 'status');
-    return Math.max(0, get(status, 'spaceOccupancy') - _target);
-  }),
+  toReleaseSpace: computed(
+    'targetSoftQuota',
+    'status.spaceOccupancy',
+    function toReleaseSpace() {
+      const {
+        targetSoftQuota,
+        status,
+      } = this.getProperties('targetSoftQuota', 'status');
+      return Math.max(0, get(status, 'spaceOccupancy') - targetSoftQuota);
+    }
+  ),
 
   /**
    * Percent of used space below space soft quota.
    * @type {computed.number}
    */
-  _usedBelowSoftQuotaPercent: computed(
+  usedBelowSoftQuotaPercent: computed(
     'spaceSize',
     'status.spaceOccupancy',
-    '_target',
-    function () {
+    'targetSoftQuota',
+    function usedBelowSoftQuotaPercent() {
       const {
         spaceSize,
         status,
-        _target,
-      } = this.getProperties('spaceSize', 'status', '_target');
-      return (Math.min(get(status, 'spaceOccupancy'), _target) / spaceSize) * 100;
+        targetSoftQuota,
+      } = this.getProperties('spaceSize', 'status', 'targetSoftQuota');
+      return (Math.min(get(status, 'spaceOccupancy'), targetSoftQuota) / spaceSize) * 100;
     }
   ),
 
@@ -214,17 +218,17 @@ export default Component.extend({
    * Percent of not used space below space soft quota.
    * @type {computed.number}
    */
-  _notUsedBelowSoftQuotaPercent: computed(
+  notUsedBelowSoftQuotaPercent: computed(
     'spaceSize',
-    '_target',
-    '_usedBelowSoftQuotaPercent',
-    function () {
+    'targetSoftQuota',
+    'usedBelowSoftQuotaPercent',
+    function notUsedBelowSoftQuotaPercent() {
       const {
         spaceSize,
-        _target,
-        _usedBelowSoftQuotaPercent,
-      } = this.getProperties('spaceSize', '_target', '_usedBelowSoftQuotaPercent');
-      return (_target / spaceSize) * 100 - _usedBelowSoftQuotaPercent;
+        targetSoftQuota,
+        usedBelowSoftQuotaPercent,
+      } = this.getProperties('spaceSize', 'targetSoftQuota', 'usedBelowSoftQuotaPercent');
+      return (targetSoftQuota / spaceSize) * 100 - usedBelowSoftQuotaPercent;
     }
   ),
 
@@ -232,23 +236,25 @@ export default Component.extend({
    * Percent of used space below space hard quota and over space soft quota.
    * @type {computed.number}
    */
-  _usedBelowHardQuotaPercent: computed(
+  usedBelowHardQuotaPercent: computed(
     'spaceSize',
     'status.spaceOccupancy',
-    '_target',
-    '_threshold',
-    function () {
+    'targetSoftQuota',
+    'threshold',
+    function usedBelowHardQuotaPercent() {
       const {
         spaceSize,
         status,
-        _target,
-        _threshold,
-      } = this.getProperties('spaceSize', 'status', '_target', '_threshold');
+        targetSoftQuota,
+        threshold,
+      } = this.getProperties('spaceSize', 'status', 'targetSoftQuota', 'threshold');
       const spaceOccupancy = get(status, 'spaceOccupancy');
-      if (spaceOccupancy <= _target) {
+      if (spaceOccupancy <= targetSoftQuota) {
         return 0;
       } else {
-        return ((Math.min(_threshold, spaceOccupancy) - _target) / spaceSize) * 100;
+        return (
+          (Math.min(threshold, spaceOccupancy) - targetSoftQuota) / spaceSize
+        ) * 100;
       }
     }
   ),
@@ -257,25 +263,25 @@ export default Component.extend({
    * Percent of not used space below space hard quota and over space soft quota.
    * @type {computed.number}
    */
-  _notUsedBelowHardQuotaPercent: computed(
+  notUsedBelowHardQuotaPercent: computed(
     'spaceSize',
-    '_target',
-    '_threshold',
-    '_usedBelowHardQuotaPercent',
-    function () {
+    'targetSoftQuota',
+    'threshold',
+    'usedBelowHardQuotaPercent',
+    function notUsedBelowHardQuotaPercent() {
       const {
         spaceSize,
-        _target,
-        _threshold,
-        _usedBelowHardQuotaPercent,
+        targetSoftQuota,
+        threshold,
+        usedBelowHardQuotaPercent,
       } = this.getProperties(
         'spaceSize',
-        '_target',
-        '_threshold',
-        '_usedBelowHardQuotaPercent'
+        'targetSoftQuota',
+        'threshold',
+        'usedBelowHardQuotaPercent'
       );
-      return ((_threshold - _target) / spaceSize) * 100 -
-        _usedBelowHardQuotaPercent;
+      return ((threshold - targetSoftQuota) / spaceSize) * 100 -
+        usedBelowHardQuotaPercent;
     }
   ),
 
@@ -283,18 +289,18 @@ export default Component.extend({
    * Percent of used space over space hard quota.
    * @type {computed.number}
    */
-  _usedOverHardQuotaPercent: computed(
+  usedOverHardQuotaPercent: computed(
     'spaceSize',
     'status.spaceOccupancy',
-    '_threshold',
-    function () {
+    'threshold',
+    function usedOverHardQuotaPercent() {
       const {
         spaceSize,
         status,
-        _threshold,
-      } = this.getProperties('spaceSize', 'status', '_threshold');
+        threshold,
+      } = this.getProperties('spaceSize', 'status', 'threshold');
       const spaceOccupancy = Math.min(get(status, 'spaceOccupancy'), spaceSize);
-      return (Math.max(spaceOccupancy - _threshold, 0) / spaceSize) * 100;
+      return (Math.max(spaceOccupancy - threshold, 0) / spaceSize) * 100;
     }
   ),
 
@@ -302,18 +308,18 @@ export default Component.extend({
    * Percent of not used space below space soft quota.
    * @type {computed.number}
    */
-  _notUsedOverHardQuotaPercent: computed(
+  notUsedOverHardQuotaPercent: computed(
     'spaceSize',
-    '_threshold',
-    '_usedOverHardQuotaPercent',
-    function () {
+    'threshold',
+    'usedOverHardQuotaPercent',
+    function notUsedOverHardQuotaPercent() {
       const {
         spaceSize,
-        _threshold,
-        _usedOverHardQuotaPercent,
-      } = this.getProperties('spaceSize', '_threshold', '_usedOverHardQuotaPercent');
-      return ((spaceSize - _threshold) / spaceSize) * 100 -
-        _usedOverHardQuotaPercent;
+        threshold,
+        usedOverHardQuotaPercent,
+      } = this.getProperties('spaceSize', 'threshold', 'usedOverHardQuotaPercent');
+      return ((spaceSize - threshold) / spaceSize) * 100 -
+        usedOverHardQuotaPercent;
     }
   ),
 
@@ -321,21 +327,21 @@ export default Component.extend({
    * Sets chart elements styles.
    */
   valuesObserver: observer(
-    '_usedPercent',
-    '_usedBelowSoftQuotaPercent',
-    '_notUsedBelowSoftQuotaPercent',
-    '_usedBelowHardQuotaPercent',
-    '_notUsedBelowHardQuotaPercent',
-    '_usedOverHardQuotaPercent',
-    '_notUsedOverHardQuotaPercent',
-    function () {
+    'usedPercent',
+    'usedBelowSoftQuotaPercent',
+    'notUsedBelowSoftQuotaPercent',
+    'usedBelowHardQuotaPercent',
+    'notUsedBelowHardQuotaPercent',
+    'usedOverHardQuotaPercent',
+    'notUsedOverHardQuotaPercent',
+    function valuesObserver() {
       const properties = [
-        '_usedBelowSoftQuotaPercent',
-        '_notUsedBelowSoftQuotaPercent',
-        '_usedBelowHardQuotaPercent',
-        '_notUsedBelowHardQuotaPercent',
-        '_usedOverHardQuotaPercent',
-        '_notUsedOverHardQuotaPercent',
+        'usedBelowSoftQuotaPercent',
+        'notUsedBelowSoftQuotaPercent',
+        'usedBelowHardQuotaPercent',
+        'notUsedBelowHardQuotaPercent',
+        'usedOverHardQuotaPercent',
+        'notUsedOverHardQuotaPercent',
       ];
       const classes = [
         'used-below-soft-quota',
@@ -347,14 +353,14 @@ export default Component.extend({
       ];
       const {
         _allowBarAnimations,
-        _usedPercent,
+        usedPercent,
         _oldPercentValues,
       } = this.getProperties(
         '_allowBarAnimations',
-        '_usedPercent',
+        'usedPercent',
         '_oldPercentValues'
       );
-      const deltaUsedPercent = _usedPercent - _oldPercentValues._usedPercent;
+      const deltaUsedPercent = usedPercent - _oldPercentValues.usedPercent;
       const transitions = {};
       const transitionElements = deltaUsedPercent > 0 ?
         properties : properties.slice(0).reverse();
@@ -396,7 +402,7 @@ export default Component.extend({
         });
         percentSum += propertyValue;
       });
-      const usedWidth = { width: _usedPercent + '%' };
+      const usedWidth = { width: usedPercent + '%' };
       let standardBarAnimation;
       if (_allowBarAnimations) {
         standardBarAnimation = {
@@ -416,7 +422,7 @@ export default Component.extend({
         usedWidth
       );
       properties.forEach((prop) => _oldPercentValues[prop] = this.get(prop));
-      _oldPercentValues._usedPercent = _usedPercent;
+      _oldPercentValues.usedPercent = usedPercent;
       this.set('_oldPercentValues', _oldPercentValues);
     }
   ),
@@ -436,13 +442,13 @@ export default Component.extend({
    */
   _change() {
     const {
-      _target,
-      _threshold,
+      targetSoftQuota,
+      threshold,
       onChange,
-    } = this.getProperties('_target', '_threshold', 'onChange');
+    } = this.getProperties('targetSoftQuota', 'threshold', 'onChange');
     const values = {
-      target: _target,
-      threshold: _threshold,
+      target: targetSoftQuota,
+      threshold: threshold,
     };
     this.setProperties({
       _disabled: true,
@@ -455,10 +461,10 @@ export default Component.extend({
         threshold,
       } = getProperties(settings, 'target', 'threshold');
       this.setProperties({
-        _target: target,
-        _targetForSlider: target,
-        _threshold: threshold,
-        _thresholdForSlider: threshold,
+        targetSoftQuota: target,
+        targetForSlider: target,
+        threshold: threshold,
+        thresholdForSlider: threshold,
       });
     }).then(() => this.setProperties({
       _disabled: false,
@@ -473,8 +479,8 @@ export default Component.extend({
      */
     slide(values) {
       this.setProperties({
-        _threshold: Math.floor(values[1]),
-        _target: Math.floor(values[0]),
+        threshold: Math.floor(values[1]),
+        targetSoftQuota: Math.floor(values[0]),
         _allowLabelsEdition: false,
         _allowBarAnimations: false,
       });
@@ -486,8 +492,8 @@ export default Component.extend({
      */
     sliderChanged(values) {
       this.setProperties({
-        _targetForSlider: Math.floor(values[0]),
-        _thresholdForSlider: Math.floor(values[1]),
+        targetForSlider: Math.floor(values[0]),
+        thresholdForSlider: Math.floor(values[1]),
         _allowLabelsEdition: true,
         _allowBarAnimations: true,
       });
@@ -513,8 +519,8 @@ export default Component.extend({
         case 'target':
           if (value >= 0 && value < threshold) {
             this.setProperties({
-              _target: value,
-              _targetForSlider: value,
+              targetSoftQuota: value,
+              targetForSlider: value,
             });
             this._change();
           }
@@ -522,8 +528,8 @@ export default Component.extend({
         case 'threshold':
           if (value > target && value <= spaceSize) {
             this.setProperties({
-              _threshold: value,
-              _thresholdForSlider: value,
+              threshold: value,
+              thresholdForSlider: value,
             });
             this._change();
           }

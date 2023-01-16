@@ -11,6 +11,7 @@ import AspectRoute from 'onedata-gui-common/routes/onedata/sidebar/content/aspec
 import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
+import findRouteInfo from 'onedata-gui-common/utils/find-route-info';
 
 const onezoneAspects = new Set([
   'overview',
@@ -33,7 +34,7 @@ export default AspectRoute.extend({
    */
   beforeModel(transition) {
     const result = this._super(...arguments);
-    const resourceType = get(transition.params['onedata.sidebar'], 'type');
+    const resourceType = findRouteInfo(transition, 'onedata.sidebar').params['type'];
     if (resourceType === 'clusters') {
       this._redirectClusterAspect(transition);
     }
@@ -43,13 +44,11 @@ export default AspectRoute.extend({
   /**
    * Do not allow to go into clusters' aspects other than index if cluster
    * is not initialized yet or allow only nodes if in Zone
-   * @param {Ember.Transition} transition 
+   * @param {Ember.Transition} transition
    */
   _redirectClusterAspect(transition) {
-    const aspectId = get(
-      transition.params['onedata.sidebar.content.aspect'],
-      'aspect_id'
-    );
+    const aspectRouteInfo = findRouteInfo(transition, 'onedata.sidebar.content.aspect');
+    const aspectId = aspectRouteInfo.params['aspect_id'];
     if (aspectId !== 'not-found' && aspectId !== 'installation') {
       const onepanelServiceType = this.get('onepanelServiceType');
       const contentModel = this.modelFor('onedata.sidebar.content');
