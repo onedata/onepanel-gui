@@ -17,10 +17,19 @@ export default SpaceInfoContent.extend({
   guiUtils: service(),
   onezoneGui: service(),
 
+  /**
+   * @override
+   */
   showLinkToFileBrowser: true,
 
+  /**
+   * @override
+   */
   showLinkToSpace: true,
 
+  /**
+   * @override
+   */
   linkToSpace: computed('space', function link() {
     const {
       router,
@@ -32,7 +41,7 @@ export default SpaceInfoContent.extend({
       'spaces', {
         queryParams: {
           options: serializeAspectOptions({ space: spaceId, tab: 'overview' }),
-        }, 
+        },
       }
     );
   }),
