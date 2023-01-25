@@ -30,7 +30,7 @@ export default SpaceInfoContent.extend({
   /**
    * @override
    */
-  linkToSpace: computed('space', function link() {
+  linkToSpace: computed('space', function linkToSpace() {
     const {
       router,
       space,
@@ -46,15 +46,13 @@ export default SpaceInfoContent.extend({
     );
   }),
 
-  actions: {
-    openFileBrowser() {
-      const space = this.space;
-      const spaceId = space.entityId;
-      const onezoneOrigin = this.get('onezoneGui.onezoneOrigin');
-      return new Promise(() => {
-        const url = getOnezoneUrl(onezoneOrigin, `onedata/spaces/${spaceId}/data`);
-        window.location = url;
-      });
-    },
-  },
+  /**
+   * @override
+   */
+  linkToFileBrowser: computed('space', function linkToFileBrowser() {
+    const space = this.space;
+    const spaceId = space.entityId;
+    const onezoneOrigin = this.get('onezoneGui.onezoneOrigin');
+    return getOnezoneUrl(onezoneOrigin, `onedata/spaces/${spaceId}/data`);
+  }),
 });
