@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10312 Changed name conflict and disambiguation separator from "#" to "@"
 * VFS-10261 Fixed loading only first 9 space cleaning reports on large screens
 * VFS-9311 Removed `$.*width()`, `$.*height()`, `$.offset()` and `$.position()` usages
 * VFS-10245 Added error translation for internal server error with reference
