@@ -69,16 +69,16 @@ export default Component.extend(I18n, {
   warnAboutBlockDevicesVisible: false,
 
   /**
-   * Mapping cephNodeHost: string -> arrayOfBlockDevices: Array<Utils/Ceph/NodeDevice>.
+   * Array of (host, devices array) pairs.
    * If some host has block device osds, then devices assigned to those osds will
    * be listed in arrayOfBlockDevices. Otherwise there is no cephNodeHost key at all.
-   * @type {Object}
+   * @type {Array<{ host: string, devices: Array<Utils.Ceph.NodeDevice> }>}
    */
   usedBlockDevices: computed(
     'cephConfig.nodes.@each.usedDevices',
     function usedBlockDevices() {
       const nodes = this.get('cephConfig.nodes');
-      const usedDevices = {};
+      const usedDevices = [];
 
       nodes.forEach(node => {
         const {
@@ -94,7 +94,7 @@ export default Component.extend(I18n, {
           .filter(dev => usedNodeDevicesIds.includes(get(dev, 'id')));
 
         if (get(usedNodeDevices, 'length')) {
-          usedDevices[nodeHost] = usedNodeDevices;
+          usedDevices.push({ host: nodeHost, devices: usedNodeDevices });
         }
       });
 
@@ -172,7 +172,7 @@ export default Component.extend(I18n, {
       prevStep({ clusterDeployProcess });
     },
     checkBlockDevicesAndStartDeploy() {
-      if (get(Object.keys(this.get('usedBlockDevices')), 'length') > 0) {
+      if (this.usedBlockDevices?.length > 0) {
         this.set('warnAboutBlockDevicesVisible', true);
         return resolve();
       } else {
