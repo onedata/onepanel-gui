@@ -18,7 +18,7 @@ export default {
   dirCache: {
     name: 'Directory caching',
     // NOTE: there is no good explanantion of "dircache" parameter from
-    // https://github.com/sahlberg/libnfs - the tooltip is no added until someone finds
+    // https://github.com/sahlberg/libnfs — the tooltip is no added until someone finds
     // a good one
   },
   readAhead: {
