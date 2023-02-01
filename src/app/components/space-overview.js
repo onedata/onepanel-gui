@@ -185,7 +185,7 @@ export default Component.extend(I18n, spaceItemSupports, {
   init() {
     this._super(...arguments);
     const spaceUpdateInterval = this.get('spaceUpdateInterval');
-    const spaceUpdater = new Looper({
+    const spaceUpdater = Looper.create({
       immediate: true,
       interval: spaceUpdateInterval,
     });
@@ -221,7 +221,7 @@ export default Component.extend(I18n, spaceItemSupports, {
     },
     async saveNewAccountingConfig() {
       const newAccountingConfig = this.get('newAccountingConfig');
-      const nextDirStatsEnabledValue = newAccountingConfig.dirStatsServiceEnabled ? 
+      const nextDirStatsEnabledValue = newAccountingConfig.dirStatsServiceEnabled ?
         'enabled' : 'disabled';
 
       return this.modalManager.show('toggle-dir-stats-question-modal', {

@@ -7,6 +7,8 @@ CHANGELOG
 ### Latest changes
 
 * VFS-10442 Added eslint rule detecting wrong usage of hyphen in translations
+* VFS-10312 Changed name conflict and disambiguation separator from "#" to "@"
+* VFS-9129 Updated EmberJS to v3.8.3
 * VFS-10261 Fixed loading only first 9 space cleaning reports on large screens
 * VFS-9311 Removed `$.*width()`, `$.*height()`, `$.offset()` and `$.position()` usages
 * VFS-10245 Added error translation for internal server error with reference
