@@ -13,7 +13,6 @@ import { getOnezoneUrl } from 'onedata-gui-common/utils/onedata-urls';
 
 export default SpaceInfoContent.extend({
   router: service(),
-  guiUtils: service(),
   onezoneGui: service(),
 
   /**
