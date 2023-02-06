@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9999 Added detailed space details popovers with space information in various views
 * VFS-10486 Removed custom zoom in tests rendering
 * VFS-10442 Added eslint rule detecting wrong usage of hyphen in translations
 * VFS-10312 Changed name conflict and disambiguation separator from "#" to "@"
