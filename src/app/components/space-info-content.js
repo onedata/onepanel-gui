@@ -28,12 +28,12 @@ export default SpaceInfoContent.extend({
   /**
    * @override
    */
-  linkToSpace: computed('space', function linkToSpace() {
+  linkToSpace: computed('record', function linkToSpace() {
     const {
       router,
-      space,
-    } = this.getProperties('router', 'space');
-    const spaceId = space.entityId;
+      record,
+    } = this.getProperties('router', 'record');
+    const spaceId = record.entityId;
     return router.urlFor(
       'onedata.sidebar.content.aspect',
       'spaces', {
@@ -47,8 +47,8 @@ export default SpaceInfoContent.extend({
   /**
    * @override
    */
-  linkToFileBrowser: computed('space', function linkToFileBrowser() {
-    const space = this.space;
+  linkToFileBrowser: computed('record', function linkToFileBrowser() {
+    const space = this.record;
     const spaceId = space.entityId;
     const onezoneOrigin = this.get('onezoneGui.onezoneOrigin');
     return getOnezoneUrl(onezoneOrigin, `onedata/spaces/${spaceId}/data`);
