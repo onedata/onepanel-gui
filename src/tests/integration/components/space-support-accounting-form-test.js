@@ -65,16 +65,15 @@ describe('Integration | Component | space support accounting form', function () 
       this.set('mode', 'view');
     });
 
-    it('renders fields in view mode', async function (done) {
+    it('renders fields in view mode', async function () {
       await renderComponent();
 
       expect(find('.accounting-fields-root-group'))
         .to.have.class('field-view-mode');
-      done();
     });
 
     it('shows values injected into component and changes them reactively',
-      async function (done) {
+      async function () {
         this.set('values', {
           accountingEnabled: true,
           dirStatsServiceEnabled: true,
@@ -106,17 +105,14 @@ describe('Integration | Component | space support accounting form', function () 
 
         expect(accountingEnabledToggle).to.not.have.class('checked');
         expect(dirStatsServiceEnabledToggle).to.not.have.class('checked');
-
-        done();
       });
 
-    it('shows status badge', async function (done) {
+    it('shows status badge', async function () {
       this.set('dirStatsServiceStatus', 'initializing');
 
       await renderComponent();
 
       expect(find('.status-badge.status-initializing')).to.exist;
-      done();
     });
   });
 
@@ -128,16 +124,15 @@ describe('Integration | Component | space support accounting form', function () 
       });
     });
 
-    it('renders fields in edit mode', async function (done) {
+    it('renders fields in edit mode', async function () {
       await renderComponent();
 
       expect(find('.accounting-fields-root-group'))
         .to.have.class('field-edit-mode');
-      done();
     });
 
     it('shows values injected into component and does not change them reactively',
-      async function (done) {
+      async function () {
         this.set('values', {
           accountingEnabled: true,
           dirStatsServiceEnabled: true,
@@ -160,11 +155,9 @@ describe('Integration | Component | space support accounting form', function () 
 
         expect(accountingEnabledToggle).to.have.class('checked');
         expect(dirStatsServiceEnabledToggle).to.have.class('checked');
-
-        done();
       });
 
-    it('allows changing of accounting toggle', async function (done) {
+    it('allows changing of accounting toggle', async function () {
       const changeSpy = this.get('changeSpy');
       this.set('values', {
         accountingEnabled: false,
@@ -188,12 +181,10 @@ describe('Integration | Component | space support accounting form', function () 
         accountingEnabled: false,
         dirStatsServiceEnabled: true,
       });
-
-      done();
     });
 
     it('allows changing of dir stats toggle when accounting is disabled',
-      async function (done) {
+      async function () {
         const changeSpy = this.get('changeSpy');
         this.set('values', {
           accountingEnabled: false,
@@ -217,12 +208,10 @@ describe('Integration | Component | space support accounting form', function () 
           accountingEnabled: false,
           dirStatsServiceEnabled: false,
         });
-
-        done();
       });
 
     it('disallows changing of dir stats toggle when accounting is enabled',
-      async function (done) {
+      async function () {
         this.set('values', {
           accountingEnabled: true,
           dirStatsServiceEnabled: true,
@@ -232,17 +221,14 @@ describe('Integration | Component | space support accounting form', function () 
 
         expect(find('.dirStatsServiceEnabled-field'))
           .to.have.class('field-disabled');
-
-        done();
       });
 
-    it('does not show status badge', async function (done) {
+    it('does not show status badge', async function () {
       this.set('dirStatsServiceStatus', 'initializing');
 
       await renderComponent();
 
       expect(find('.status-badge')).to.not.exist;
-      done();
     });
   });
 });

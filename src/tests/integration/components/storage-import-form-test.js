@@ -52,7 +52,7 @@ describe('Integration | Component | storage import form', function () {
   });
 
   context('when import mode is "auto"', function () {
-    it('shows auto storage import fields with default values', async function (done) {
+    it('shows auto storage import fields with default values', async function () {
       await render(hbs `{{storage-import-form}}`);
 
       await click('.field-mode-mode-auto');
@@ -65,33 +65,30 @@ describe('Integration | Component | storage import form', function () {
         .to.have.class('checked');
       expect(find('.toggle-field-generic-detectDeletions'))
         .to.have.class('checked');
-      done();
     });
 
     it(
       'does not show any continuous scan fields if continuous scan is disabled',
-      async function (done) {
+      async function () {
         await render(hbs `{{storage-import-form}}`);
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
         checkContinuousFieldsNotExist();
-        done();
       }
     );
 
     it('shows continuous scan fields if continuous scan is enabled',
-      async function (done) {
+      async function () {
         await render(hbs `
           {{storage-import-form}}
         `);
 
         await click('.field-mode-mode-auto');
         checkContinuousFieldsExist();
-        done();
       });
 
-    it('disables submit button when data is incorrect', async function (done) {
+    it('disables submit button when data is incorrect', async function () {
       await render(hbs `
         {{storage-import-form}}
       `);
@@ -99,12 +96,11 @@ describe('Integration | Component | storage import form', function () {
       await click('.field-mode-mode-auto');
       await fillIn('.field-generic-maxDepth', 'bad value');
       expect(find('button[type=submit]')).to.have.attr('disabled');
-      done();
     });
 
     it(
       'shows continuous scan fields if continuous scan is enabled in defaultValues',
-      async function (done) {
+      async function () {
         const formValues = {
           mode: 'auto',
           autoStorageImportConfig: {
@@ -116,13 +112,12 @@ describe('Integration | Component | storage import form', function () {
         await render(hbs `{{storage-import-form defaultValues=formValues}}`);
 
         checkContinuousFieldsExist();
-        done();
       }
     );
 
     it(
       'notifies about form data modification in "new" mode ("initial" scan)',
-      async function (done) {
+      async function () {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
         await render(hbs `
@@ -139,13 +134,12 @@ describe('Integration | Component | storage import form', function () {
         const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
         expect(lastValues).to.deep.equal(correctData);
         expect(lastValuesAreValid).to.be.true;
-        done();
       }
     );
 
     it(
       'notifies about form data modification in "new" mode ("continuous" scan)',
-      async function (done) {
+      async function () {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
         await render(hbs `
@@ -156,13 +150,12 @@ describe('Integration | Component | storage import form', function () {
         const [lastValues, lastValuesAreValid] = changedSpy.lastCall.args;
         expect(lastValues).to.deep.equal(exampleFormValues);
         expect(lastValuesAreValid).to.be.true;
-        done();
       }
     );
 
     it(
       'fills in "continuous"-only fields with default values after "continuous" scan turned on in "edit" form mode',
-      async function (done) {
+      async function () {
         this.setProperties({
           defaultValues: { mode: 'auto' },
         });
@@ -172,38 +165,35 @@ describe('Integration | Component | storage import form', function () {
 
         await click('.toggle-field-generic-continuousScan');
         expect(find('.field-continuous-scanInterval')).to.have.value('60');
-        done();
       }
     );
 
     it(
       'shows correct "continuous mode" info message when "continuous scan" is enabled',
-      async function (done) {
+      async function () {
         await render(hbs `{{storage-import-form}}`);
 
         await click('.field-mode-mode-auto');
         expect(find('.continuous-info-msg'))
           .to.contain.text('Continuous scan enabled');
-        done();
       }
     );
 
     it(
       'shows correct "continuous mode" info message when "continuous scan" is disabled',
-      async function (done) {
+      async function () {
         await render(hbs `{{storage-import-form}}`);
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
         expect(find('.continuous-info-msg'))
           .to.contain.text('Continuous scan disabled');
-        done();
       }
     );
 
     it(
       'shows existing import config',
-      async function (done) {
+      async function () {
         this.set('exampleConfig', exampleFormValues);
         await render(hbs `
           {{storage-import-form defaultValues=exampleConfig}}
@@ -219,13 +209,12 @@ describe('Integration | Component | storage import form', function () {
           .to.not.have.class('checked');
         expect(find('.toggle-field-generic-detectDeletions'))
           .to.have.class('checked');
-        done();
       }
     );
   });
 
   context('when import mode is "manual"', function () {
-    it('does not show any auto storage import fields', async function (done) {
+    it('does not show any auto storage import fields', async function () {
       // enforcing "new" form mode to allow "mode" field change
       await render(hbs `{{storage-import-form mode="new"}}`);
 
@@ -238,32 +227,29 @@ describe('Integration | Component | storage import form', function () {
         '.toggle-field-continuous-detectModifications',
         '.toggle-field-continuous-detectDeletions',
       ].forEach(selector => expect(find(selector)).to.not.exist);
-      done();
     });
 
-    it('does not show "continuous mode" info message', async function (done) {
+    it('does not show "continuous mode" info message', async function () {
       // enforcing "new" form mode to allow "mode" field change
       await render(hbs `{{storage-import-form mode="new"}}`);
 
       await click('.field-mode-mode-manual');
       expect(find('.continuous-info-msg')).to.not.exist;
-      done();
     });
 
     it(
       'shows existing import config',
-      async function (done) {
+      async function () {
         this.set('exampleConfig', { mode: 'manual' });
         await render(hbs `
           {{storage-import-form defaultValues=exampleConfig}}
         `);
 
         expect(find('.field-mode-mode-manual')).to.be.checked;
-        done();
       }
     );
 
-    it('allows to submit', async function (done) {
+    it('allows to submit', async function () {
       const submitSpy = this.set('submitSpy', sinon.spy());
 
       // enforcing "new" form mode to allow "mode" field change
@@ -274,7 +260,6 @@ describe('Integration | Component | storage import form', function () {
       expect(submitSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
         mode: 'manual',
       }));
-      done();
     });
   });
 
