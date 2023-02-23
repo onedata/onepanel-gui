@@ -39,7 +39,7 @@ const ProviderManager = Service.extend({
 
 const reloadDelay = 5000;
 
-describe('Integration | Component | new cluster web cert', function () {
+describe('Integration | Component | new-cluster-web-cert', function () {
   const { afterEach } = setupRenderingTest();
 
   beforeEach(function () {

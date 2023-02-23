@@ -17,7 +17,7 @@ const OnepanelServer = Service.extend({
   nodeProxy: undefined,
 });
 
-describe('Integration | Component | cluster host table row', function () {
+describe('Integration | Component | cluster-host-table-row', function () {
   setupRenderingTest();
 
   beforeEach(function () {

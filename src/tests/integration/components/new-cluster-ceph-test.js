@@ -9,7 +9,7 @@ import { resolve, Promise } from 'rsvp';
 import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 
-describe('Integration | Component | new cluster ceph', function () {
+describe('Integration | Component | new-cluster-ceph', function () {
   setupRenderingTest();
 
   beforeEach(function () {

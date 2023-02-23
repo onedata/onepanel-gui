@@ -34,7 +34,7 @@ const noNodesInstallationDetails = {
   },
 };
 
-describe('Integration | Component | content clusters overview', function () {
+describe('Integration | Component | content-clusters-overview', function () {
   setupRenderingTest();
 
   beforeEach(function () {

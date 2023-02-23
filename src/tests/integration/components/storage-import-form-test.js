@@ -32,7 +32,7 @@ async function fillInWholeForm() {
   await click('.toggle-field-generic-detectModifications');
 }
 
-describe('Integration | Component | storage import form', function () {
+describe('Integration | Component | storage-import-form', function () {
   setupRenderingTest();
 
   it('hides submit button if neccessary', async function () {

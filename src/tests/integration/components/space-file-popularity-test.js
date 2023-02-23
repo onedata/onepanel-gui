@@ -4,7 +4,7 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-describe('Integration | Component | space file popularity', function () {
+describe('Integration | Component | space-file-popularity', function () {
   setupRenderingTest();
 
   it('shows exampleQuery if file popularity is enabled', async function () {

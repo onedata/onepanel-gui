@@ -8,7 +8,7 @@ import sinon from 'sinon';
 
 import spaceManagerStub from '../../helpers/space-manager-stub';
 
-describe('Integration | Component | space auto cleaning', function () {
+describe('Integration | Component | space-auto-cleaning', function () {
   setupRenderingTest();
 
   beforeEach(function () {

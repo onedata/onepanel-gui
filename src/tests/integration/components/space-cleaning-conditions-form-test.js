@@ -18,7 +18,7 @@ const globalData = Object.freeze({
   maxMonthlyMovingAverage: { enabled: true, value: 16 },
 });
 
-describe('Integration | Component | space cleaning conditions form', function () {
+describe('Integration | Component | space-cleaning-conditions-form', function () {
   setupRenderingTest();
 
   beforeEach(function () {

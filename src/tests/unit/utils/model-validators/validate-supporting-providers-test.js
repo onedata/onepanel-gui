@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
 
 describe(
-  'Unit | Utility | model validators/validate  model validators/supporting providers',
+  'Unit | Utility | model-validators/validate-model-validators/supporting-providers',
   function () {
     it('returns false for lack of supportingProviders at all', function () {
       const result = validateSupportingProviders(undefined);

@@ -6,7 +6,7 @@ import { render, settled, find, click } from '@ember/test-helpers';
 import sinon from 'sinon';
 import OneTooltipHelper from '../../helpers/one-tooltip';
 
-describe('Integration | Component | space support accounting form', function () {
+describe('Integration | Component | space-support-accounting-form', function () {
   setupRenderingTest();
 
   it('has class "space-support-accounting-form"', async function () {

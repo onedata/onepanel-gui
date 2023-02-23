@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 import { resolve } from 'rsvp';
 
-describe('Integration | Component | space file popularity configuration', function () {
+describe('Integration | Component | space-file-popularity-configuration', function () {
   setupRenderingTest();
 
   it('is filled with injected data', async function () {
