@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-10333 Unified naming of test suites
+* VFS-9688 Removed arrow placement from one-tooltip
 * VFS-10103 Changed showing clipboard in popovers info
 * VFS-9999 Added detailed space details popovers with space information in various views
 * VFS-10486 Removed custom zoom in tests rendering
