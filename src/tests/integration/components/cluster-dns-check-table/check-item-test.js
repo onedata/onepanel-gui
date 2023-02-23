@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 import I18nStub from '../../../helpers/i18n-stub';
 import { registerService } from '../../../helpers/stub-service';
 
-describe('Integration | Component | cluster dns check table/check item', function () {
+describe('Integration | Component | cluster-dns-check-table/check-item', function () {
   setupRenderingTest();
 
   beforeEach(function () {

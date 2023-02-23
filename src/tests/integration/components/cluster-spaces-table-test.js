@@ -15,7 +15,7 @@ const OnepanelServer = Service.extend({
   request() {},
 });
 
-describe('Integration | Component | cluster spaces table', function () {
+describe('Integration | Component | cluster-spaces-table', function () {
   setupRenderingTest();
 
   beforeEach(function () {

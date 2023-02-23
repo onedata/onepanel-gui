@@ -6,7 +6,7 @@ import { registerService, lookupService } from '../../helpers/stub-service';
 
 import onepanelServerStub from '../../helpers/onepanel-server-stub';
 
-describe('Unit | Service | storage manager', function () {
+describe('Unit | Service | storage-manager', function () {
   setupTest();
 
   beforeEach(function () {

@@ -22,7 +22,7 @@ class HostTableHelper {
   }
 }
 
-describe('Integration | Component | cluster host table', function () {
+describe('Integration | Component | cluster-host-table', function () {
   setupRenderingTest();
 
   it('renders table with host rows', async function () {

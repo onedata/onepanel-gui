@@ -8,7 +8,7 @@ import OneTooltipHelper from '../../helpers/one-tooltip';
 import moment from 'moment';
 import dom from 'onedata-gui-common/utils/dom';
 
-describe('Integration | Component | space status icons', function () {
+describe('Integration | Component | space-status-icons', function () {
   setupRenderingTest();
 
   it(

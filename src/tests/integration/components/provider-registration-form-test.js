@@ -11,7 +11,7 @@ class ProviderRegistrationHelper extends FormHelper {
   }
 }
 
-describe('Integration | Component | provider registration form', function () {
+describe('Integration | Component | provider-registration-form', function () {
   setupRenderingTest();
 
   it(

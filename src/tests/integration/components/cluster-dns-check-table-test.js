@@ -5,7 +5,7 @@ import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import OnepanelServer from 'onepanel-gui/services/onepanel-server';
 
-describe('Integration | Component | cluster dns check table', function () {
+describe('Integration | Component | cluster-dns-check-table', function () {
   setupRenderingTest();
 
   beforeEach(function () {

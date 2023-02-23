@@ -5,7 +5,7 @@ import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
 describe(
-  'Integration | Component | cluster spaces table item/support size this',
+  'Integration | Component | cluster-spaces-table-item/support-size-this',
   function () {
     setupRenderingTest();
 

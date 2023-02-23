@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 
 import sinon from 'sinon';
 
-describe('Integration | Component | space storage import', function () {
+describe('Integration | Component | space-storage-import', function () {
   setupRenderingTest();
 
   it('invokes importIntervalChanged injected function on importInterval change',

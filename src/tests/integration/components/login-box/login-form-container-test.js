@@ -12,7 +12,7 @@ const OnezoneGui = Service.extend({
   getOnepanelNavUrlInOnezone() {},
 });
 
-describe('Integration | Component | login box/login form container', function () {
+describe('Integration | Component | login-box/login-form-container', function () {
   setupRenderingTest();
 
   beforeEach(function () {

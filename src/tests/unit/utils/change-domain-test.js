@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 
-describe('Unit | Utility | change domain', function () {
+describe('Unit | Utility | change-domain', function () {
   it('changes the location after timeout', function () {
     const mockLocation = {
       reload() {},

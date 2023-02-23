@@ -4,7 +4,7 @@ import EmberObject from '@ember/object';
 import DomainNameProxyMixin from 'onepanel-gui/mixins/domain-name-proxy';
 import sinon from 'sinon';
 
-describe('Unit | Mixin | domain name proxy', function () {
+describe('Unit | Mixin | domain-name-proxy', function () {
 
   it('uses deployment manager to resolve onezone domain name', function () {
     const DomainNameProxyObject = EmberObject.extend(DomainNameProxyMixin);
