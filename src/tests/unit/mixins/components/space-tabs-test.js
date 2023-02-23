@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import ComponentsComponentsSpaceTabsMixin from 'onepanel-gui/mixins/components/space-tabs';
 
-describe('Unit | Mixin | components/space tabs', function () {
+describe('Unit | Mixin | components/space-tabs', function () {
   it('has tabPopular always enabled', function () {
     const ComponentsComponentsSpaceTabsObject =
       EmberObject.extend(ComponentsComponentsSpaceTabsMixin);

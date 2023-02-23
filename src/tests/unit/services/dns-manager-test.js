@@ -9,7 +9,7 @@ const OnepanelServer = Service.extend({
   request() {},
 });
 
-describe('Unit | Service | dns manager', function () {
+describe('Unit | Service | dns-manager', function () {
   setupTest();
 
   beforeEach(function beforeEach() {

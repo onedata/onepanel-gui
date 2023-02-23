@@ -153,7 +153,7 @@ async function testAllowCertainPathTypeCreate({
   });
 }
 
-describe('Integration | Component | cluster storage add form', function () {
+describe('Integration | Component | cluster-storage-add-form', function () {
   setupRenderingTest();
 
   beforeEach(function () {

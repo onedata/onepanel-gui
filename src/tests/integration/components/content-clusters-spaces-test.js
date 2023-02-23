@@ -37,7 +37,7 @@ const i18nStub = Service.extend({
   },
 });
 
-describe('Integration | Component | content clusters spaces', function () {
+describe('Integration | Component | content-clusters-spaces', function () {
   setupRenderingTest();
 
   beforeEach(function () {

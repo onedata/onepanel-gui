@@ -22,7 +22,7 @@ const GuiUtils = Service.extend({
   fetchGuiVersion: notImplementedReject,
 });
 
-describe('Integration | Component | cluster dns', function () {
+describe('Integration | Component | cluster-dns', function () {
   setupRenderingTest();
 
   beforeEach(function () {

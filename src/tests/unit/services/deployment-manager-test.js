@@ -16,7 +16,7 @@ const GuiUtils = Service.extend();
 
 const OnepanelConfiguration = Service.extend();
 
-describe('Unit | Service | deployment manager', function () {
+describe('Unit | Service | deployment-manager', function () {
   setupTest();
 
   beforeEach(function () {

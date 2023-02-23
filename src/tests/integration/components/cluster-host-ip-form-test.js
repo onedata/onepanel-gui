@@ -5,7 +5,7 @@ import { render, fillIn } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import sinon from 'sinon';
 
-describe('Integration | Component | cluster host ip form', function () {
+describe('Integration | Component | cluster-host-ip-form', function () {
   setupRenderingTest();
 
   it('invokes hostDataChanged action when host data changes', async function () {

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import dynamicRound from 'onedata-gui-common/utils/dynamic-round';
 
-describe('Unit | Utility | dynamic round', function () {
+describe('Unit | Utility | dynamic-round', function () {
   it('rounds numbers after point', function () {
     const result = dynamicRound(0.123456, 3);
     expect(result).to.equal('0.123');

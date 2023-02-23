@@ -49,7 +49,7 @@ const SpaceManager = Service.extend({
   getAutoCleaningReports: fetchReports,
 });
 
-describe('Integration | Component | space cleaning reports', function () {
+describe('Integration | Component | space-cleaning-reports', function () {
   setupRenderingTest();
 
   beforeEach(function () {

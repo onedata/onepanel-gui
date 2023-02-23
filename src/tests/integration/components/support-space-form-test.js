@@ -29,7 +29,7 @@ class SupportSpaceFormHelper extends FormHelper {
   }
 }
 
-describe('Integration | Component | support space form', function () {
+describe('Integration | Component | support-space-form', function () {
   setupRenderingTest();
 
   beforeEach(function () {

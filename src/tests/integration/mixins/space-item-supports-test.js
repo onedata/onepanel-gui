@@ -13,7 +13,7 @@ const SpaceSupportsObject = EmberObject.extend(
   OwnerInjector
 );
 
-describe('Integration | Mixin | components/space item supports', function () {
+describe('Integration | Mixin | components/space-item-supports', function () {
   setupTest();
 
   beforeEach(function () {

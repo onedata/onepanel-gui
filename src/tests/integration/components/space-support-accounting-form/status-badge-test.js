@@ -5,7 +5,7 @@ import hbs from 'htmlbars-inline-precompile';
 import _ from 'lodash';
 import { render, find } from '@ember/test-helpers';
 
-describe('Integration | Component | space support accounting form/status badge', function () {
+describe('Integration | Component | space-support-accounting-form/status-badge', function () {
   setupRenderingTest();
 
   beforeEach(function () {
