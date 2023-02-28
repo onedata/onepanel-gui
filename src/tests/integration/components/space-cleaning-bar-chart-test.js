@@ -10,7 +10,7 @@ function approxEquals(value, targetValue) {
   return value >= targetValue - delta && value <= targetValue + delta;
 }
 
-describe('Integration | Component | space cleaning bar chart', function () {
+describe('Integration | Component | space-cleaning-bar-chart', function () {
   setupRenderingTest();
 
   beforeEach(function () {

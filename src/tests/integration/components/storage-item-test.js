@@ -18,7 +18,7 @@ const b2s = (bytes) => bytesToString(bytes, { iecFormat: true });
 
 const PromiseObject = ObjectProxy.extend(PromiseProxyMixin);
 
-describe('Integration | Component | storage item', function () {
+describe('Integration | Component | storage-item', function () {
   setupRenderingTest();
 
   beforeEach(function () {

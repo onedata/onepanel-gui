@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import StorageImportStatsMockMixin from 'ember-onedata-onepanel-server/mixins/storage-import-stats-mock';
 
-describe('Unit | Mixin | storage import stats mock', function () {
+describe('Unit | Mixin | storage-import-stats-mock', function () {
   it('generates mock stats on init', function () {
     const StorageImportStatsMockObject = EmberObject.extend(StorageImportStatsMockMixin);
     const subject = StorageImportStatsMockObject.create();

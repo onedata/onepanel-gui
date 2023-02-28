@@ -4,7 +4,7 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-describe('Integration | Component | cluster host ip form/host row', function () {
+describe('Integration | Component | cluster-host-ip-form/host-row', function () {
   setupRenderingTest();
 
   it('renders static text if readonly flag is true', async function () {

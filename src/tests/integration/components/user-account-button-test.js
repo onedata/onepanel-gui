@@ -24,7 +24,7 @@ const ProviderManager = Service.extend({
 
 const GuiUtils = Service.extend({});
 
-describe('Integration | Component | user account button', function () {
+describe('Integration | Component | user-account-button', function () {
   setupRenderingTest();
 
   beforeEach(function () {

@@ -13,14 +13,14 @@ const SpaceSupportsObject = EmberObject.extend(
   OwnerInjector
 );
 
-describe('Integration | Mixin | components/space item supports', function () {
+describe('Integration | Mixin | components/space-item-supports', function () {
   setupTest();
 
   beforeEach(function () {
     registerService(this, 'provider-manager', ProviderManagerStub);
   });
 
-  it('converts supportingProviders object to spaceSupporters format', function (done) {
+  it('converts supportingProviders object to spaceSupporters format', async function () {
     const providerManager = lookupService(this, 'provider-manager');
     sinon.stub(providerManager, 'getRemoteProvider').rejects();
     sinon.stub(lookupService(this, 'i18n'), 't')
@@ -40,27 +40,24 @@ describe('Integration | Mixin | components/space item supports', function () {
       },
     });
 
-    subject.get('spaceSupportersProxy.promise').then((result) => {
-      expect(result).to.have.length(3);
+    const result = await subject.get('spaceSupportersProxy.promise');
+    expect(result).to.have.length(3);
 
-      // NOTE: name is generated from id with special prefix
+    // NOTE: name is generated from id with special prefix
 
-      expect(result[0]).to.have.property('name');
-      expect(result[0].name).to.equal('My provider');
-      expect(result[0]).to.have.property('size');
-      expect(result[0].size).to.equal(100);
+    expect(result[0]).to.have.property('name');
+    expect(result[0].name).to.equal('My provider');
+    expect(result[0]).to.have.property('size');
+    expect(result[0].size).to.equal(100);
 
-      expect(result[1]).to.have.property('name');
-      expect(result[1].name).to.equal('Provider#id2');
-      expect(result[1]).to.have.property('size');
-      expect(result[1].size).to.equal(200);
+    expect(result[1]).to.have.property('name');
+    expect(result[1].name).to.equal('Provider#id2');
+    expect(result[1]).to.have.property('size');
+    expect(result[1].size).to.equal(200);
 
-      expect(result[2]).to.have.property('name');
-      expect(result[2].name).to.equal('Provider#id3');
-      expect(result[2]).to.have.property('size');
-      expect(result[2].size).to.equal(300);
-
-      done();
-    });
+    expect(result[2]).to.have.property('name');
+    expect(result[2].name).to.equal('Provider#id3');
+    expect(result[2]).to.have.property('size');
+    expect(result[2].size).to.equal(300);
   });
 });

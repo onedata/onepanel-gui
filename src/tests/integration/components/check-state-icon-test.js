@@ -4,7 +4,7 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-describe('Integration | Component | check state icon', function () {
+describe('Integration | Component | check-state-icon', function () {
   setupRenderingTest();
 
   it('renders with success class and icon when success is true', async function () {

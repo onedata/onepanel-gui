@@ -6,7 +6,7 @@ import { get, getProperties } from '@ember/object';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 
-describe('Unit | Service | user manager', function () {
+describe('Unit | Service | user-manager', function () {
   setupTest();
 
   beforeEach(function () {

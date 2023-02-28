@@ -8,7 +8,7 @@ import {
 } from 'mocha';
 import ComponentsStorageImportChartDataValidatorMixin from 'onepanel-gui/mixins/components/storage-import-chart-data-validator';
 
-describe('Unit | Mixin | components/space import chart data validator', function () {
+describe('Unit | Mixin | components/space-import-chart-data-validator', function () {
   it('recomputes validation when timeStats changes', function () {
     const ComponentsStorageImportChartDataValidatorObject = EmberObject.extend(
       ComponentsStorageImportChartDataValidatorMixin);

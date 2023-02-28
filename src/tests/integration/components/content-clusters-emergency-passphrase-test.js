@@ -5,7 +5,7 @@ import { render, click, find } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
 describe(
-  'Integration | Component | content clusters emergency passphrase',
+  'Integration | Component | content-clusters-emergency-passphrase',
   function () {
     setupRenderingTest();
 
