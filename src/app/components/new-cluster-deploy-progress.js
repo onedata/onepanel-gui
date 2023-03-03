@@ -1,7 +1,6 @@
 /**
  * Shows status of cluster deployment process
  *
- * @module components/new-cluster-deploy-progress
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -35,7 +34,7 @@ export default Component.extend(I18n, {
    * @override
    */
   i18nPrefix: 'components.newClusterDeployProgress',
-  
+
   /**
    * Promise for watching deployment process.
    * @type {jQuery.Promise}
@@ -136,7 +135,7 @@ export default Component.extend(I18n, {
   ),
 
   /**
-   * Use `TaskStatus` from deployment promise progress callback. 
+   * Use `TaskStatus` from deployment promise progress callback.
    * @param {Onepanel.TaskStatus} taskStatus
    * @returns {undefined}
    */

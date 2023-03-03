@@ -1,7 +1,6 @@
 /**
  * Provides form for showing, creating and modifying global ceph parameters.
- * 
- * @module components/ceph-cluster-configuration/main-options-form
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

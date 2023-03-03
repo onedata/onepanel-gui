@@ -2,8 +2,7 @@
  * A space auto-cleaning tab with bar chart, file conditions form and
  * cleaning reports table.
  *
- * @module components/space-auto-cleaning
- * @author Michal Borzecki, Jakub Liput
+ * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

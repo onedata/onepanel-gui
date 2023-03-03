@@ -1,7 +1,6 @@
 /**
  * Show information about single node in ceph cluster.
- * 
- * @module components/ceph-cluster-configuration/node
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

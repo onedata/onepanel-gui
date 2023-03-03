@@ -4,7 +4,6 @@
  * When "collection starts work" it will generate new reports withe some interval
  * See `service:onepanel-server-mock` for example of usage.
  *
- * @module mixins/space-cleaning-reports-mock
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

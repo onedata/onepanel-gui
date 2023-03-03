@@ -2,8 +2,7 @@
  * A table (or list in mobile view) for displaying information from space
  * cleaning reports.
  *
- * @module components/space-cleaning-reports
- * @author Michal Borzecki, Jakub Liput
+ * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

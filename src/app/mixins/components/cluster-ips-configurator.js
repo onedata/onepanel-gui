@@ -1,8 +1,7 @@
 /**
  * Common logic used in components that implement configuration of cluster
  * IP adresses. Needs onepanelServer service.
- * 
- * @module mixins/components/cluster-ips-configurator
+ *
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -37,7 +36,7 @@ export default Mixin.create({
   deploymentManager: undefined,
 
   /**
-   * @virtual 
+   * @virtual
    * @type {PromiseObject<ProviderDetails>}
    */
   providerDetailsProxy: undefined,
@@ -125,7 +124,7 @@ export default Mixin.create({
     },
 
     /**
-     * @param {boolean} isValid 
+     * @param {boolean} isValid
      */
     hostsIpsFormValidChanged(isValid) {
       scheduleOnce(
@@ -142,7 +141,7 @@ export default Mixin.create({
     /**
      * Handle update of hostname -> ip mapping event from IPs table
      * @param {string} hostname can contain dots `.`
-     * @param {string} ip 
+     * @param {string} ip
      */
     hostsIpsDataChanged(hostname, ip) {
       this.get('_ipsFormData')[hostname] = ip;

@@ -1,7 +1,6 @@
 /**
  * Class that represents global ceph cluster parameters.
- * 
- * @module utils/ceph/cluster-main-configuration
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -22,7 +21,7 @@ export default EmberObject.extend({
 
   /**
    * Fills in configuration with given data.
-   * @param {Object} newConfig 
+   * @param {Object} newConfig
    * @param {boolean} isValid
    * @returns {undefined}
    */

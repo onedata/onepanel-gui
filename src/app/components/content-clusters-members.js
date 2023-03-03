@@ -2,7 +2,6 @@
  * Shows short information about members (emergency GUI) or redirects
  * to Onezone (hosted GUI).
  *
- * @module components/content-cluster-members
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

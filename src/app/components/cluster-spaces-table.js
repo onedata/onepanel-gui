@@ -1,7 +1,6 @@
 /**
  * Lists supported spaces
  *
- * @module components/cluster-spaces-table.js
  * @author Jakub Liput
  * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

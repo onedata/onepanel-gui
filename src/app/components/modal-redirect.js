@@ -1,7 +1,6 @@
 /**
- * A blocking modal that show information about redirecting to other domain 
+ * A blocking modal that show information about redirecting to other domain
  *
- * @module components/modal-redirect
  * @author Jakub Liput
  * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

@@ -3,7 +3,6 @@
  *
  * Please put it in ``cluster-storage-table``.
  *
- * @module components/storage-item
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -162,7 +161,7 @@ export default Component.extend(I18n, {
 
   /**
    * Starts/stops storage edition. Expands list item if necessary
-   * @returns {undefined} 
+   * @returns {undefined}
    */
   toggleEdition() {
     this.toggleProperty('whileEdition');
@@ -212,7 +211,7 @@ export default Component.extend(I18n, {
       } else {
         element = eventTarget.find('.form-control-static')[0];
       }
-      
+
       if (element) {
         const selection = window.getSelection();
         const range = document.createRange();

@@ -1,7 +1,6 @@
 /**
  * Opening this sidebar will cause to redirect into Onezone automation inventories view
- * 
- * @module components/sidebar-atm-inventories
+ *
  * @author Agnieszka Warchoł
  * @copyright (C) 2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

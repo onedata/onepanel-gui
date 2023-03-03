@@ -2,7 +2,6 @@
  * A form for adding new and modifying existing storage with all storage types
  * available.
  *
- * @module components/cluster-storage-add-form
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

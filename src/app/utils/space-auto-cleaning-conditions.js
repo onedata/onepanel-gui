@@ -5,7 +5,6 @@
  * Using Numbers instead of nulls because of lack of support for mixed
  * Number/null type in Swagger 2.0
  *
- * @module utils/space-auto-cleaning-conditions
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

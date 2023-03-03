@@ -1,7 +1,6 @@
 /**
  * Setup step for configuring web certificate settings
  *
- * @module components/new-cluster-web-cert
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

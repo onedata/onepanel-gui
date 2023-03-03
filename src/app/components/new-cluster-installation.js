@@ -4,7 +4,6 @@
  * Invokes passed actions:
  * - nextStep() - a next step of cluster init should be presented
  *
- * @module components/new-cluster-installation
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

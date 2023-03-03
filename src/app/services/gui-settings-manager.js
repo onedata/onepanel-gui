@@ -1,7 +1,6 @@
 /**
  * Provides GUI settings management functions.
  *
- * @module services/gui-settings-manager
  * @author Michał Borzęcki
  * @copyright (C) 2019-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

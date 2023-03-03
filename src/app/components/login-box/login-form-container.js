@@ -2,7 +2,6 @@
  * Special version of login form container for Onepanel,
  * with "Login with Onezone" button.
  *
- * @module components/login-box/login-form-container
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

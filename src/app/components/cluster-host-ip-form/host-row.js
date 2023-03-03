@@ -1,7 +1,6 @@
 /**
  * A row in IP form-table that allows to set IP address for single hostname
- * 
- * @module components/cluster-host-ip-form/host-row
+ *
  * @author Jakub Liput
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -61,7 +60,7 @@ export default Component.extend(Validations, I18n, {
   valueChanged: notImplementedWarn,
 
   /**
-   * @virtual 
+   * @virtual
    * @type {function} `(hostname: string, validation: ValidationObject) => any`
    */
   validationChanged: notImplementedWarn,
@@ -102,7 +101,7 @@ export default Component.extend(Validations, I18n, {
     },
 
     /**
-     * @param {Event} event 
+     * @param {Event} event
      */
     valueChanged(event) {
       this.get('valueChanged')(this.get('hostname'), event.target.value);

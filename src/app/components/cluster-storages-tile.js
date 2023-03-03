@@ -1,8 +1,7 @@
 /**
  * Renders a tile with storages number.
- * 
- * @module components/cluster-storages-tile
- * @author Michal Borzecki
+ *
+ * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

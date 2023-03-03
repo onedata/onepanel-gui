@@ -1,7 +1,6 @@
 /**
  * Implements emergency passphrase change operation
- * 
- * @module components/content-clusters-emergency-passphrase
+ *
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -38,7 +37,7 @@ export default Component.extend(I18n, {
     /**
      * Make an API call to change emergency passphrase and handles promise
      * resolve, reject
-     * 
+     *
      * @param {object} { currentPassword: string, newPassword: string }
      * @returns {Promise} an API call promise, resolves on change passphrase success
      */

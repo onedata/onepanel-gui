@@ -1,8 +1,7 @@
 /**
  * Content for alert modal showing error when trying to register Oneprovider
  * in Onezone that is not compatible with it.
- * 
- * @module components/alerts/register-onezone-not-compatible
+ *
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

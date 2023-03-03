@@ -1,8 +1,7 @@
 /**
  * Extended version of GuiMessageEditorBase component that allows to modify
  * sign-in notification. It allows only to input text without HTML tags.
- * 
- * @module components/content-clusters-gui-settings/sign-in-notification
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

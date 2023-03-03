@@ -1,7 +1,6 @@
 /**
- * Validates supportingProviders property of ``onepanel.SpaceDetails`` 
+ * Validates supportingProviders property of ``onepanel.SpaceDetails``
  *
- * @module utils/model-validators/supporting-providers-validator
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

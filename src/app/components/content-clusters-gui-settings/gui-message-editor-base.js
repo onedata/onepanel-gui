@@ -3,7 +3,6 @@
  *   - `savedMessageProxy`, `save()` must be overridden
  *   - template must be provided.
  *
- * @module components/content-clusters-gui-settings/gui-message-editor-base
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

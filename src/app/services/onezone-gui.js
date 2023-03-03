@@ -5,7 +5,6 @@
  * Provides information and methods for this app to cooperate with
  * Onezone GUI app hosted on the same domain.
  *
- * @module services/onezone-gui
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

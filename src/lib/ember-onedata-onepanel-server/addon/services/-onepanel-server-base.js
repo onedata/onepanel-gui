@@ -3,7 +3,6 @@
  *
  * It should not be used as a emergency service! (thus it's name is "private")
  *
- * @module services/-onepanel-server-base
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
