@@ -4,7 +4,6 @@
 /**
  * Mocks live statistics and status changes for storage import
  *
- * @module mixins/storage-import-stats-mock
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

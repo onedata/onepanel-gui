@@ -1,7 +1,6 @@
 /**
  * A component that displays a space import status as icon.
  *
- * @module components/space-status-icons
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

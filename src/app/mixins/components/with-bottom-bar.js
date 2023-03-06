@@ -1,7 +1,6 @@
 /**
  * Adds bottom bar layout feature
- * 
- * @module components/with-bottom-bar
+ *
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

@@ -6,7 +6,6 @@
  * This is because, we do not have any information about session in browser
  * (session_id cookie is server-only)
  *
- * @module session-stores/-base
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

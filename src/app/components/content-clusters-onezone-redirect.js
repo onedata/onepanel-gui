@@ -1,7 +1,6 @@
 /**
  * Redirects to to Onezone app on init showing loader spinner
  *
- * @module components/content-clusters-onezone-redirect
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

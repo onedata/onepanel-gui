@@ -1,7 +1,6 @@
 /**
  * Adds storage import statistics fetch capabilities to `cluster-spaces-table-item`
  *
- * @module mixins/space-item-import-stats
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -86,7 +85,7 @@ export default Mixin.create({
    * (without statistics)
    *
    * Initialized on init
-   * 
+   *
    * @type {Looper}
    */
   importInfoWatcher: null,

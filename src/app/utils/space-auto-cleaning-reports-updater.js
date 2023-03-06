@@ -2,7 +2,6 @@
  * A class for creating object that polls for auto-cleaning reports
  * To use in space auto-cleaning components (`component:space-auto-cleaning`)
  *
- * @module utils/space-auto-cleaning-reports-updater
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

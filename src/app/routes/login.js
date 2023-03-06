@@ -2,8 +2,7 @@
  * Adds checking if there is admin user and onezone is available before showing
  * login/register screen.
  *
- * @module routes/login
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

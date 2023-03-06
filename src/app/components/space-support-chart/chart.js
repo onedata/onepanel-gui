@@ -2,8 +2,7 @@
  * Internal component for displaying a chart that shows distribution of providers support
  * for some space
  *
- * @module components/space-support-chart/chart
- * @author Michal Borzecki
+ * @author Michał Borzęcki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

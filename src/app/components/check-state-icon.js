@@ -1,7 +1,6 @@
 /**
  * Renders icon for success or failure state (eg. for DNS check state table item)
- * 
- * @module components/check-state-icon
+ *
  * @author Jakub Liput
  * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

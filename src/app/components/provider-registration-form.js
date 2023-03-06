@@ -4,8 +4,7 @@
 /**
  * A view to create, show or edit registered provider details
  *
- * @module components/provider-registration-form
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

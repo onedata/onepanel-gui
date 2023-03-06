@@ -1,7 +1,6 @@
 /**
- * A content page for cluster deployment 
+ * A content page for cluster deployment
  *
- * @module component/content-clusters-installation
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

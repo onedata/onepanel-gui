@@ -1,7 +1,6 @@
 /**
  * Shows deployment table - used as a view for nodes aspect of cluster resource
  *
- * @module components/content-cluster-nodes
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

@@ -1,8 +1,7 @@
 /**
  * A component, that shows information about providers support size per space.
  *
- * @module components/cluster-spaces-table-item/supporte-size-info
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

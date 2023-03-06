@@ -1,8 +1,7 @@
 /**
  * Additional computed properties for backend and cluster-model-manager cluster
  * data.
- * 
- * @module models/cluster
+ *
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

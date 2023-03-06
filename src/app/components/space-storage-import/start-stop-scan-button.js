@@ -3,7 +3,6 @@
  * between start and stop mode (including disabled state in some cases) depending on import
  * status.
  *
- * @module components/space-storage-import/start-stop-scan-button
  * @author Michał Borzęcki
  * @copyright (C) 2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

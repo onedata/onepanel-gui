@@ -4,7 +4,6 @@
  * See `validators` property to add a validator for specific api method response
  * Validator functions are stored in `utils/response-validators/`
  *
- * @module mixins/response-validator
  * @author Jakub Liput
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -91,9 +90,9 @@ export default Mixin.create({
    * Makes a request that requires valid data to be fetched
    *
    * This is version of a request that rejects on invalid data returned
-   * 
-   * @param {string} api 
-   * @param {string} method 
+   *
+   * @param {string} api
+   * @param {string} method
    * @param {any} params
    * @returns {Promise}
    */

@@ -1,8 +1,7 @@
 /**
  * A table cell used to display report status using oneicon.
  *
- * @module components/space-cleaning-reports/status-cell
- * @author Michal Borzecki
+ * @author Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -32,7 +31,7 @@ export default Component.extend(I18n, {
   record: null,
 
   /**
-   * Column (object needs to have the same structure as the one used by 
+   * Column (object needs to have the same structure as the one used by
    * ember-models-table).
    * To inject.
    * @type {Object}

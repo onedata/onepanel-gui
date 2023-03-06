@@ -1,7 +1,6 @@
 /**
  * Cluster init step: DNS setup for Onezone cluster
  *
- * @module components/new-cluster-ips
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -28,8 +27,8 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   nextStep: undefined,
 
   /**
-   * @override 
-   * @param {Object} hosts 
+   * @override
+   * @param {Object} hosts
    */
   prepareHosts(hosts) {
     for (const hostname in hosts) {

@@ -1,7 +1,6 @@
 /**
- * Adds tools for rendering tabs in space view 
+ * Adds tools for rendering tabs in space view
  *
- * @module mixins/components/space-tabs
  * @author Jakub Liput
  * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

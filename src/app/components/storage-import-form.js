@@ -1,11 +1,11 @@
 /**
  * A form component for import configuration of storage.
  * It can work in two modes (mode property):
- * - new - intended to be a part of the support space form. It doesn't have 
+ * - new - intended to be a part of the support space form. It doesn't have
  * a header and a submit button.
  * - edit - emergency form component (with a header and a submit button).
  * For both of them defaultValues can be set (through defaultValues property).
- * 
+ *
  * Example of defaultValues object (submit result has the same format):
  * ```
  * {
@@ -20,7 +20,6 @@
  * }
  * ```
  *
- * @module components/storage-import-form
  * @author Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

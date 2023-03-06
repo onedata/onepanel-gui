@@ -1,7 +1,6 @@
 /**
  * Provides backend operations for spaces in onepanel
  *
- * @module services/space-manager
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

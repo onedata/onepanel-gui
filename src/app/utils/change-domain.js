@@ -1,7 +1,6 @@
 /**
  * Change domain in browser window with delay
  *
- * @module utils/change-domain
  * @author Jakub Liput
  * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

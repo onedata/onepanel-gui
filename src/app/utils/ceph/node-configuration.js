@@ -1,7 +1,6 @@
 /**
  * Class that represents Ceph node parameters.
- * 
- * @module utils/ceph/node-configuration
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -175,7 +174,7 @@ export default EmberObject.extend({
 
   /**
    * Removes OSD by uuid.
-   * @param {string} uuid 
+   * @param {string} uuid
    */
   removeOsd(uuid) {
     const osds = this.get('osds');

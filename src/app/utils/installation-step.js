@@ -1,7 +1,6 @@
 /**
  * Represents single deployment step.
- * 
- * @module utils/installation-step
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

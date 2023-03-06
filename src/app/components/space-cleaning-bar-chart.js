@@ -1,8 +1,7 @@
 /**
  * A bar chart with slider which shows soft and hard quota for space autocleaning.
  *
- * @module components/space-cleaning-bar-chart
- * @author Michal Borzecki
+ * @author Michał Borzęcki
  * @copyright (C) 2017-2022 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

@@ -1,8 +1,7 @@
 /**
  * A container for register provider form in installation steps
  *
- * @module components/new-cluster-zone-registration
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2020 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
