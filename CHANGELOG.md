@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-8701 Removed ember-one-way-controls
 * VFS-10289 Added info popover about group
 * VFS-10148 Removed redundant `done()` from tests
 * VFS-10333 Unified naming of test suites

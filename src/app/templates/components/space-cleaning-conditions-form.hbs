@@ -50,14 +50,16 @@
         {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
       </label>
       <div class="fields-column">
-        {{one-way-input
-          value=(get formData (concat fieldName "Number"))
-          disabled=(or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving"))
+        <input
+          id={{concat elementId fieldName}}
+          type="text"
           class="condition-number-input form-control input-sm"
-          focusOut=(action "lostFocus")
-          update=(action "dataChanged" (concat fieldName "Number"))
-          onenter=(action "forceSave")
-          id=(concat elementId fieldName)}}
+          value={{get formData (concat fieldName "Number")}}
+          disabled={{or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving")}}
+          oninput={{action (action "dataChanged" (concat fieldName "Number")) value="target.value"}}
+          onkeydown={{invoke-on-enter (action "forceSave")}}
+          onblur={{action "lostFocus"}}
+        />
         {{#if (get formData (concat fieldName "Unit"))}}
           {{#power-select
             triggerClass="small"
