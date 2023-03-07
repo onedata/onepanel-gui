@@ -10,12 +10,14 @@
           <div class="input-group-addon">
             {{one-icon icon="lock"}}
           </div>
-          {{one-way-password passphrase
+          <input
+            type="password"
             class="form-control login-lock passphrase"
-            update=(action (mut passphrase))
-            placeholder=(tt this "passphrase")
-            disabled=isDisabled
-          }}
+            value={{passphrase}}
+            placeholder={{tt this "passphrase"}}
+            disabled={{isDisabled}}
+            oninput={{action (mut passphrase) value="target.value"}}
+          />
         </div>
         {{#if (and passphraseInvalidMessage passphraseEntered)}}
           <div class="form-message">
@@ -30,12 +32,14 @@
           <div class="input-group-addon">
             {{one-icon icon="lock-checked"}}
           </div>
-          {{one-way-password confirmPassphrase
+          <input
+            type="password"
             class="form-control login-lock confirm-passphrase"
-            update=(action (mut confirmPassphrase))
-            placeholder=(tt this "confirmPassphrase")
-            disabled=isDisabled
-          }}
+            value={{confirmPassphrase}}
+            placeholder={{tt this "confirmPassphrase"}}
+            disabled={{isDisabled}}
+            oninput={{action (mut confirmPassphrase) value="target.value"}}
+          />
         </div>
         {{#if confirmInvalid}}
           <div class="form-message">{{tt this "passphrasesNotMatch"}}</div>

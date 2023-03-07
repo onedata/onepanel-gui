@@ -1,9 +1,14 @@
 {{#if _inEditionMode}}
-  {{one-way-input _editorValue
+  <input
+    type="text"
     class="form-control input-sm"
-    update=(action (mut _editorValue))
-    onenter=(action "saveEdition")
-    onescape=(action "cancelEdition")}}
+    value={{_editorValue}}
+    oninput={{action (mut _editorValue) value="target.value"}}
+    onkeydown={{invoke-on-key (hash
+      Enter=(action "saveEdition")
+      Escape=(action "cancelEdition")
+    )}}
+  />
   <span class="one-label">{{_readableValue.unit}}</span>
   <span class="action-icons {{if (gt position 80) "actions-left"}}">
     {{one-icon icon="checked" click=(action "saveEdition")}}
