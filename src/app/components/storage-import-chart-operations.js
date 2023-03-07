@@ -1,8 +1,7 @@
 /**
  * A chart component for a space import/update operations statistics.
  *
- * @module components/storage-import-chart-operations
- * @author Michal Borzecki
+ * @author Michał Borzęcki
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

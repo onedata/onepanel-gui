@@ -5,7 +5,6 @@
  * It's result will be available in ``importChartDataError`` computed property
  * everytime ``timeStats`` property changes.
  *
- * @module mixins/components/storage-import-chart-data-validator
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

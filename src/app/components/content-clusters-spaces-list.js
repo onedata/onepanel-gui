@@ -1,7 +1,6 @@
 /**
  * List of supported spaces
- * 
- * @module components/content-clusters-spaces-list
+ *
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cd in 'LICENSE.txt'.

@@ -1,8 +1,7 @@
 /**
  * Content for alert modal showing error when Onezone to register in
  * is offline
- * 
- * @module components/alerts/register-onezone-offline
+ *
  * @author Jakub Liput
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

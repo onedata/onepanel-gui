@@ -1,8 +1,7 @@
 /**
  * A form for file properties edition for space auto-cleaning functionality.
  *
- * @module components/space-cleaning-conditions-form
- * @author Michal Borzecki, Jakub Liput
+ * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

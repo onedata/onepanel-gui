@@ -1,7 +1,6 @@
 /**
- * Function to check if TimeStats can be used in chart 
+ * Function to check if TimeStats can be used in chart
  *
- * @module utils/model-validators/validate-time-stats
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

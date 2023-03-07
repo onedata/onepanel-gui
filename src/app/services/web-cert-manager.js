@@ -1,8 +1,7 @@
 /**
  * Provides methods for getting and modifying web cert
  *
- * @module services/web-cert-manager
- * @author Jakub Liput, Michal Borzecki
+ * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */

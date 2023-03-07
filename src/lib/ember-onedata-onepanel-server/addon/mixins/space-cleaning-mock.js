@@ -2,7 +2,6 @@
  * Adds a mocked "live" cleaning statistics (cleaning will start and will
  * consume space bytes). See `service:onepanel-server-mock` for example of usage.
  *
- * @module mixins/space-cleaning-mock
  * @author Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

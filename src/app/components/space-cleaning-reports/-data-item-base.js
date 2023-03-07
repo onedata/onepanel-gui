@@ -1,7 +1,6 @@
 /**
  * Base component for creating report items in desktop or mobile mode
- * 
- * @module components/space-cleaning-reports/-data-item-base
+ *
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

@@ -4,8 +4,7 @@ import { array } from 'ember-awesome-macros';
 
 /**
  * Creates component for displaying cluster storages.
- * 
- * @module components/cluster-storage-table.js
+ *
  * @author Michał Borzęcki, Jakub Liput
  * @copyright (C) 2017 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

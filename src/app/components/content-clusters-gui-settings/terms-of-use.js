@@ -1,8 +1,7 @@
 /**
  * Extended version of GuiMessageEditorBase component that allows to modify
  * Terms of Use. It allows only to input text with HTML tags (using WYSIWIG editor).
- * 
- * @module components/content-clusters-gui-settings/terms-of-use
+ *
  * @author Agnieszka Warchoł
  * @copyright (C) 2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

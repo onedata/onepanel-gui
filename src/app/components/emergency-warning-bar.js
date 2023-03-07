@@ -1,7 +1,6 @@
 /**
  * Renders a bottom bar that informs user about being on the emergency Onepanel
- * 
- * @module components/emergency-warning-bar
+ *
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

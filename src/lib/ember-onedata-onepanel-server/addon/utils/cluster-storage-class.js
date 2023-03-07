@@ -2,7 +2,6 @@
  * Exports function, that maps storageType to corresponding class from
  * Onepanel JS client.
  *
- * @module utils/cluster-storage-class
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

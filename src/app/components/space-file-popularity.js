@@ -2,7 +2,6 @@
  * Configuration of space Files Popularity feature
  * Used mainly in space file popularity tab
  *
- * @module components/space-file-popularity
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

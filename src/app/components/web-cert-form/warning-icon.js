@@ -1,7 +1,6 @@
 /**
  * Renders warning icon in web cert form
- * 
- * @module components/web-cert-form/warning-icon
+ *
  * @author Agnieszka Warchoł
  * @copyright (C) 2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

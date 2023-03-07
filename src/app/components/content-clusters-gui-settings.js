@@ -1,8 +1,7 @@
 /**
  * A component that allows to configure Onezone GUI. Especially GUI messages like
  * sign-in notification, privacy policy content and cookie consent notification.
- * 
- * @module components/content-clusters-gui-settings
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

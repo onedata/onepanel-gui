@@ -1,7 +1,6 @@
 /**
  * Information about Ceph cluster
  *
- * @module components/content-cluster-ceph
  * @author Michał Borzęcki
  * @copyright (C) 2018-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

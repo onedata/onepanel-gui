@@ -1,7 +1,6 @@
 /**
  * Class that represents whole ceph cluster configuration.
- * 
- * @module utils/ceph/cluster-configuration
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -73,7 +72,7 @@ export default EmberObject.extend({
 
   /**
    * Creates new cluster node and adds it to the configuration.
-   * @param {string} host 
+   * @param {string} host
    * @returns {Utils/Ceph/NodeConfiguration}
    */
   addNode(host) {
@@ -106,7 +105,7 @@ export default EmberObject.extend({
 
   /**
    * Fills in configuration with given data.
-   * @param {Object} newConfig 
+   * @param {Object} newConfig
    * @returns {undefined}
    */
   fillIn(newConfig) {
@@ -116,7 +115,7 @@ export default EmberObject.extend({
     } = this.getProperties('nodes', 'mainConfiguration');
 
     mainConfiguration.fillIn(newConfig);
-    
+
     const hosts = extractHostsFromCephConfiguration(newConfig);
     hosts.forEach(host => {
       const node = this.addNode(host);

@@ -1,7 +1,6 @@
 /**
  * DNS aspect of cluster
- * 
- * @module components/content-clusters-dns
+ *
  * @author Jakub Liput
  * @copyright (C) 2018 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

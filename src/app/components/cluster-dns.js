@@ -2,7 +2,6 @@
  * View for configuring built-in DNS server, subdomain delegation and perform
  * DNS checks both for deployment and as cluster aspect.
  *
- * @module components/cluster-dns
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

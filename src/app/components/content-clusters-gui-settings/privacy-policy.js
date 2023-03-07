@@ -1,8 +1,7 @@
 /**
  * Extended version of GuiMessageEditorBase component that allows to modify
  * privacy policy. It allows only to input text with HTML tags (using WYSIWIG editor).
- * 
- * @module components/content-clusters-gui-settings/privacy-policy
+ *
  * @author Michał Borzęcki
  * @copyright (C) 2019 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.

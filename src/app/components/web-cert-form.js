@@ -1,7 +1,6 @@
 /**
  * A view to show or edit web certificate details
  *
- * @module components/web-cert-form
  * @author Jakub Liput, Agnieszka Warchoł
  * @copyright (C) 2018-2021 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
@@ -90,7 +89,7 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<boolean>}
    */
   letsEncrypt: reads('webCert.letsEncrypt'),
-  
+
   /**
    * Domain of service for this onepanel
    * @type {String}
@@ -130,7 +129,7 @@ export default Component.extend(I18n, {
       return expirationTime.fromNow();
     }
   }),
-    
+
   /**
    * @type {ComputedProperty<Utils.FormComponent.FormFieldsRootGroup>}
    */
@@ -220,7 +219,7 @@ export default Component.extend(I18n, {
       name: 'lastRenewalSuccess',
     });
   }),
-  
+
   /**
    * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
    */
@@ -240,7 +239,7 @@ export default Component.extend(I18n, {
       component,
       name: 'lastRenewalFailure',
     });
-  }), 
+  }),
 
   /**
    * @type {ComputedProperty<Utils.FormComponent.DatetimeField>}
@@ -415,7 +414,7 @@ export default Component.extend(I18n, {
       const willReloadAfterSubmit =
         formLetsEncryptValue !== letsEncrypt &&
         formLetsEncryptValue;
- 
+
       /** @type {Onepanel.WebCert} */
       const webCertChange = {
         letsEncrypt: formLetsEncryptValue,
