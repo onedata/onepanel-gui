@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9309 Removed usages of `:contains` jQuery selector
 * VFS-8701 Removed ember-one-way-controls
 * VFS-9196 Removed @module jsdoc
 * VFS-10289 Added info popover about group
