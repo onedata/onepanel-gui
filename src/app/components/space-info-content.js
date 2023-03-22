@@ -28,6 +28,11 @@ export default SpaceInfoContent.extend({
   /**
    * @override
    */
+  showCreator: false,
+
+  /**
+   * @override
+   */
   linkToSpace: computed('record', function linkToSpace() {
     const {
       router,
