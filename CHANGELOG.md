@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10285 Added info popovers to membership
 * VFS-8647 Moved component styles into dedicated directory
 * VFS-9309 Removed usages of `:contains` jQuery selector
 * VFS-8701 Removed ember-one-way-controls
