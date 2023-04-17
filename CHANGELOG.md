@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-9014 Migrated to getting globals from `globals` util
 * VFS-10126 Using common addons from Marketplace branch
 * VFS-10285 Added info popovers to membership
 * VFS-8647 Moved component styles into dedicated directory
