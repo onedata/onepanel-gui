@@ -11,6 +11,7 @@ import Service from '@ember/service';
 import { lookupService, registerService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import waitForRender from 'onedata-gui-common/utils/wait-for-render';
+import globals from 'onedata-gui-common/utils/globals';
 
 const START_END_TIME_FORMAT = 'D MMM YYYY H:mm:ss';
 
@@ -54,21 +55,18 @@ describe('Integration | Component | space-cleaning-reports', function () {
 
   beforeEach(function () {
     registerService(this, 'spaceManager', SpaceManager);
-    this.set('_window', {
+    globals.mock('window', {
       innerWidth: 1366,
-      addEventListener() {},
-      removeEventListener() {},
     });
   });
 
   it('renders reports in desktop mode', async function () {
-    this.set('_window.innerWidth', 1366);
+    globals.window.innerWidth = 1366;
 
     await render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        _window=_window
       }}
     </div>`);
 
@@ -90,13 +88,12 @@ describe('Integration | Component | space-cleaning-reports', function () {
   });
 
   it('renders reports in mobile view', async function () {
-    this.set('_window.innerWidth', 600);
+    globals.window.innerWidth = 600;
 
     await render(hbs `<div class="col-content">
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        _window=_window
       }}
     </div>`);
 
@@ -132,7 +129,6 @@ describe('Integration | Component | space-cleaning-reports', function () {
       {{space-cleaning-reports
         spaceId="space_id1"
         isCleanEnabled=true
-        _window=_window
       }}
     </div>`);
     await waitForRender();

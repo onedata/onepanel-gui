@@ -11,16 +11,12 @@ import { computed } from '@ember/object';
 import ClusterActions from 'onedata-gui-common/services/cluster-actions';
 import { equal, collect } from '@ember/object/computed';
 import { conditional, raw } from 'ember-awesome-macros';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default ClusterActions.extend({
   onezoneGui: service(),
   clusterModelManager: service(),
   onepanelServer: service(),
-
-  /**
-   * @type {Window}
-   */
-  _window: window,
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
@@ -40,12 +36,8 @@ export default ClusterActions.extend({
    * @override
    */
   addAction: computed(function addAction() {
-    const {
-      _window,
-      onezoneGui,
-    } = this.getProperties('_window', 'onezoneGui');
     return () =>
-      _window.location = onezoneGui.getUrlInOnezone('onedata/clusters/add');
+      globals.window.location = this.onezoneGui.getUrlInOnezone('onedata/clusters/add');
   }),
 
   /**

@@ -17,6 +17,7 @@ import {
   onepanelAbbrev,
 } from 'onedata-gui-common/utils/onedata-urls';
 import $ from 'jquery';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default EmberObject.extend(
   createDataProxyMixin('isOnline'),
@@ -84,7 +85,7 @@ export default EmberObject.extend(
         );
       } else {
         const guiContextPath =
-          `${location.origin}/${onepanelAbbrev}/${this.get('id')}/gui-context`;
+          `${globals.location.origin}/${onepanelAbbrev}/${this.get('id')}/gui-context`;
         return resolve($.get(guiContextPath));
       }
     },

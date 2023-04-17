@@ -16,6 +16,7 @@ import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mix
 import { reject, resolve } from 'rsvp';
 import config from 'ember-get-config';
 import changeDomain from 'onepanel-gui/utils/change-domain';
+import globals from 'onedata-gui-common/utils/globals';
 
 const {
   time: {
@@ -28,11 +29,6 @@ export default Service.extend(createDataProxyMixin('webCert'), {
   guiUtils: service(),
   deploymentManager: service(),
   providerManager: service(),
-
-  /**
-   * @type {Location}
-   */
-  _location: location,
 
   /**
    * @type {ComputedProperty<String>}
@@ -81,7 +77,6 @@ export default Service.extend(createDataProxyMixin('webCert'), {
   reloadPageAfterWebCertChange() {
     return this.getDomainForRedirectAfterWebCertChange()
       .then(domain => changeDomain(domain, {
-        location: this.get('_location'),
         delay: reloadDelayForCertificateChange,
       }));
   },
@@ -93,8 +88,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
     const {
       onepanelServiceType,
       isEmergencyOnepanel,
-      _location,
-    } = this.getProperties('onepanelServiceType', 'isEmergencyOnepanel', '_location');
+    } = this.getProperties('onepanelServiceType', 'isEmergencyOnepanel');
 
     if (isEmergencyOnepanel || onepanelServiceType === 'onezone') {
       switch (onepanelServiceType) {
@@ -108,7 +102,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
           return reject(`Invalid onepanelServiceType: ${onepanelServiceType}`);
       }
     } else {
-      return resolve(_location.hostname);
+      return resolve(globals.location.hostname);
     }
   },
 });

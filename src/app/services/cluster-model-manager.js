@@ -15,6 +15,7 @@ import { resolve, all as allFulfilled } from 'rsvp';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import Cluster from 'onepanel-gui/models/cluster';
 import { getOwner } from '@ember/application';
+import globals from 'onedata-gui-common/utils/globals';
 
 const GuiOneproviderCluster = Cluster.extend({
   name: reads('providerManager.providerDetails.name').readOnly(),
@@ -91,7 +92,7 @@ export default Service.extend(
       const type = this.get('guiUtils.serviceType');
       return {
         id: 'new-cluster',
-        domain: location.hostname,
+        domain: globals.location.hostname,
         type,
         isLocal: true,
         isNotDeployed: true,

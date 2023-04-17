@@ -11,6 +11,7 @@ import { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import { Promise } from 'rsvp';
 import findRouteInfo from 'onedata-gui-common/utils/find-route-info';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default SidebarContentRoute.extend({
   onepanelServer: service(),
@@ -46,7 +47,7 @@ export default SidebarContentRoute.extend({
           return this.transitionTo('onedata.sidebar.index');
         } else if (!get(model, 'resource')) {
           return new Promise(() => {
-            window.location.replace(onezoneGui.getUrlInOnezone(
+            globals.location.replace(onezoneGui.getUrlInOnezone(
               `onedata/clusters/${urlClusterId}/not-found`
             ));
           });

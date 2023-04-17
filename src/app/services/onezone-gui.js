@@ -29,8 +29,6 @@ export default Service.extend(
     providerManager: service(),
     onepanelConfiguration: service(),
 
-    _location: location,
-
     /**
      * @type {Ember.ComputedProperty<PromiseObject<string>>}
      */

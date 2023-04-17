@@ -18,6 +18,7 @@ import _ from 'lodash';
 import config from 'ember-get-config';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
 import $ from 'jquery';
+import globals from 'onedata-gui-common/utils/globals';
 
 const {
   layoutConfig,
@@ -213,8 +214,8 @@ export default Component.extend(I18n, {
       }
 
       if (element) {
-        const selection = window.getSelection();
-        const range = document.createRange();
+        const selection = globals.window.getSelection();
+        const range = globals.document.createRange();
         range.selectNodeContents(element);
         selection.removeAllRanges();
         selection.addRange(range);

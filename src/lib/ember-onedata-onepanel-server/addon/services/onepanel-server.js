@@ -21,6 +21,7 @@ import Onepanel from 'onepanel';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { Promise, resolve } from 'rsvp';
+import globals from 'onedata-gui-common/utils/globals';
 
 function replaceUrlOrigin(url, newOrigin) {
   return url.replace(/(https?:\/\/).*?(\/.*)/, `$1${newOrigin}$2`);
@@ -208,14 +209,13 @@ export default OnepanelServerBase.extend(
      * @returns {Onepanel.ApiClient}
      */
     createClient({ token, apiOrigin, ttl } = {}) {
-      const location = this.get('_location');
       const client = new Onepanel.ApiClient();
       if (token) {
         setClientToken(client, token, ttl);
       }
       client.basePath = replaceUrlOrigin(
         client.basePath,
-        apiOrigin || location.host
+        apiOrigin || globals.location.host
       );
       return client;
     },
@@ -275,7 +275,7 @@ export default OnepanelServerBase.extend(
      * @returns {Promise}
      */
     async login(password) {
-      const response = await window.fetch('/login', {
+      const response = await globals.fetch('/login', {
         method: 'POST',
         headers: {
           authorization: `Basic ${btoa(password)}`,
@@ -338,7 +338,7 @@ export default OnepanelServerBase.extend(
      * @returns {Promise<object>} object properties: token, ttl
      */
     async getOnepanelToken() {
-      const response = await window.fetch('./gui-preauthorize', {
+      const response = await globals.fetch('./gui-preauthorize', {
         method: 'POST',
       });
       let responseBody;

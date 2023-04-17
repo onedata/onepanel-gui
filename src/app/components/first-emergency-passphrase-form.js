@@ -15,6 +15,7 @@ import { computed } from '@ember/object';
 import _ from 'lodash';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import $ from 'jquery';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend(I18n, {
   classNames: ['first-emergency-passphrase-form', 'basicauth-login-form'],
@@ -161,7 +162,7 @@ export default Component.extend(I18n, {
                 password: passphrase,
               }).catch(() => {
               // in very rare cases cannot login immediately
-              window.location.reload();
+              globals.location.reload();
             });
           })
           .finally(() => safeExec(this, 'set', 'isDisabled', false));

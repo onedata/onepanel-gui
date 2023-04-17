@@ -9,6 +9,7 @@
 import { inject as service } from '@ember/service';
 import ContentClustersOnepanelRedirect from 'onedata-gui-common/components/content-clusters-onepanel-redirect';
 import { Promise } from 'rsvp';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default ContentClustersOnepanelRedirect.extend({
   onezoneGui: service(),
@@ -22,7 +23,7 @@ export default ContentClustersOnepanelRedirect.extend({
       clusterId,
     } = this.getProperties('onezoneGui', 'clusterId');
     return new Promise(() => {
-      window.location.replace(onezoneGui.getUrlInOnezone(
+      globals.location.replace(onezoneGui.getUrlInOnezone(
         `/onedata/clusters/${clusterId}/endpoint-error`
       ));
     });

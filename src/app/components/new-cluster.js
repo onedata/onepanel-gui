@@ -26,6 +26,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import $ from 'jquery';
 import { array, raw } from 'ember-awesome-macros';
 import { resolve } from 'rsvp';
+import globals from 'onedata-gui-common/utils/globals';
 
 const {
   TaskStatus: {
@@ -108,11 +109,6 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
   visibleSteps: array.rejectBy('steps', raw('isHiddenStep')),
-
-  /**
-   * @type {Window.Location}
-   */
-  _location: location,
 
   wizardIndex: computed(
     'steps.[]',
@@ -225,11 +221,9 @@ export default Component.extend(I18n, {
     const {
       currentStep,
       guiUtils,
-      _location,
     } = this.getProperties(
       'currentStep',
       'guiUtils',
-      '_location',
     );
 
     const serviceType = get(guiUtils, 'serviceType');
@@ -241,7 +235,7 @@ export default Component.extend(I18n, {
 
     if (isOneproviderAfterRegister || isOnezoneAfterDeploy) {
       // Reload whole application to fetch info about newly deployed cluster
-      _location.reload();
+      globals.location.reload();
     } else {
       const nextStep = this.getNextStep(currentStep);
       this.set('cluster.initStep', nextStep);

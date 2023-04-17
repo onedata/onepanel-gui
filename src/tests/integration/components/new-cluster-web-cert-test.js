@@ -13,6 +13,7 @@ import sinon from 'sinon';
 import Service from '@ember/service';
 import { resolve } from 'rsvp';
 import { set } from '@ember/object';
+import globals from 'onedata-gui-common/utils/globals';
 
 const onezoneDomain = 'onezone.org';
 const oneproviderDomain = `somedomain.${onezoneDomain}`;
@@ -43,10 +44,10 @@ describe('Integration | Component | new-cluster-web-cert', function () {
   const { afterEach } = setupRenderingTest();
 
   beforeEach(function () {
-    const _location = {
+    globals.mock('location', {
       reload: sinon.spy(),
       hostname: '127.0.0.1',
-    };
+    });
 
     registerService(this, 'deployment-manager', DeploymentManager);
     registerService(this, 'provider-manager', ProviderManager);
@@ -56,13 +57,11 @@ describe('Integration | Component | new-cluster-web-cert', function () {
     const webCertManager = lookupService(this, 'web-cert-manager');
     sinon.stub(webCertManager, 'fetchWebCert').resolves({ letsEncrypt: false });
     sinon.stub(webCertManager, 'modifyWebCert').resolves();
-    set(webCertManager, '_location', _location);
 
     const onepanelServer = lookupService(this, 'onepanel-server');
     set(onepanelServer, 'isEmergency', true);
 
     this.setProperties({
-      _location,
       fakeClock: sinon.useFakeTimers({
         now: Date.now(),
         shouldAdvanceTime: true,
@@ -91,8 +90,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
         async function () {
           set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
-          const _location = this.get('_location');
-          _location.hostname = '127.0.0.1';
+          globals.location.hostname = '127.0.0.1';
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
@@ -101,13 +99,13 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           await settled();
 
           if (isEmergencyGui || serviceType === 'onezone') {
-            expect(_location.hostname).to.equal(reloadedDomain);
-            expect(_location.reload).to.not.be.called;
+            expect(globals.location.hostname).to.equal(reloadedDomain);
+            expect(globals.location.reload).to.not.be.called;
           } else {
             // During the Oneprovider certificate change in hosted GUI we don't change
             // Onezone IP to domain.
-            expect(_location.hostname).to.equal('127.0.0.1');
-            expect(_location.reload).to.be.calledOnce;
+            expect(globals.location.hostname).to.equal('127.0.0.1');
+            expect(globals.location.reload).to.be.calledOnce;
           }
           expect(nextStep).to.be.not.called;
         }
@@ -118,8 +116,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
         async function () {
           set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
-          const _location = this.get('_location');
-          _location.hostname = beforeReloadDomain;
+          globals.location.hostname = beforeReloadDomain;
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
@@ -127,8 +124,8 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           this.get('fakeClock').tick(reloadDelay);
           await settled();
 
-          expect(_location.hostname).to.equal(reloadedDomain);
-          expect(_location.reload).to.be.calledOnce;
+          expect(globals.location.hostname).to.equal(reloadedDomain);
+          expect(globals.location.reload).to.be.calledOnce;
           expect(nextStep).to.be.not.called;
         }
       );
@@ -137,8 +134,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
         async function () {
           set(lookupService(this, 'guiUtils'), 'serviceType', serviceType);
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
-          const _location = this.get('_location');
-          const oldHostname = _location.hostname;
+          const oldHostname = globals.location.hostname;
           const nextStep = this.set('nextStep', sinon.spy());
           await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
 
@@ -147,8 +143,8 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           this.get('fakeClock').tick(reloadDelay);
           await settled();
 
-          expect(_location.hostname).to.equal(oldHostname);
-          expect(this.get('_location.reload')).to.be.not.called;
+          expect(globals.location.hostname).to.equal(oldHostname);
+          expect(globals.location.reload).to.be.not.called;
           expect(nextStep, 'nextStep').to.be.called;
         });
     });
