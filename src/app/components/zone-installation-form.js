@@ -11,6 +11,7 @@ import layout from 'onedata-gui-common/templates/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import _array from 'lodash/array';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
+import globals from 'onedata-gui-common/utils/globals';
 
 // TODO i18n
 const FORM_FIELDS = [{
@@ -25,7 +26,7 @@ const FORM_FIELDS = [{
     name: 'domainName',
     type: 'text',
     label: 'Onezone domain name',
-    example: window.location.hostname,
+    example: globals.location.hostname,
     tip: 'The domain of this Onezone as seen by the users, the same as ' +
       'the domain name in your web server SSL certificates. ' +
       'Required for proper functioning of Onezone server.',

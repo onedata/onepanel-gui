@@ -12,6 +12,7 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend(I18n, {
   classNames: ['new-cluster-summary'],
@@ -44,7 +45,7 @@ export default Component.extend(I18n, {
 
   onepanelUrl: computed(function onepanelUrl() {
     if (this.get('isEmergencyOnepanel')) {
-      return location.origin;
+      return globals.location.origin;
     } else {
       return 'https://' + this.get('onepanelServer.apiOrigin') + ':9443';
     }

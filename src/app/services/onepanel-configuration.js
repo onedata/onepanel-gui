@@ -10,15 +10,11 @@ import Service, { inject as service } from '@ember/service';
 import { get } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Service.extend(
   createDataProxyMixin('configuration'), {
     onepanelServer: service(),
-
-    /**
-     * @type {Window.Location}
-     */
-    _location: location,
 
     /**
      * Common field.
@@ -94,18 +90,13 @@ export default Service.extend(
     init() {
       this._super(...arguments);
 
-      const {
-        onepanelServer,
-        _location,
-      } = this.getProperties('onepanelServer', '_location');
-
       // Fill some already known data if Onepanel is hosted
-      const isHosted = (get(onepanelServer, 'guiContext.guiMode') === 'unified');
+      const isHosted = (get(this.onepanelServer, 'guiContext.guiMode') === 'unified');
       if (isHosted) {
         this.setProperties({
-          zoneDomain: _location.host,
-          serviceType: get(onepanelServer, 'guiContext.clusterType'),
-          clusterId: get(onepanelServer, 'guiContext.clusterId'),
+          zoneDomain: globals.location.host,
+          serviceType: get(this.onepanelServer, 'guiContext.clusterType'),
+          clusterId: get(this.onepanelServer, 'guiContext.clusterId'),
           isRegistered: true,
         });
       }

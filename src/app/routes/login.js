@@ -12,6 +12,7 @@ import { setProperties } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { Promise, resolve } from 'rsvp';
 import { get } from '@ember/object';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default LoginRoute.extend({
   userManager: service(),
@@ -63,8 +64,8 @@ export default LoginRoute.extend({
       });
     } else {
       return new Promise(() => {
-        sessionStorage.setItem('authRedirect', '1');
-        window.location =
+        globals.sessionStorage.setItem('authRedirect', '1');
+        globals.window.location =
           onezoneGui.getOnepanelNavUrlInOnezone({
             internalRoute: `/clusters/${clusterId}`,
             redirectType: 'redirect',

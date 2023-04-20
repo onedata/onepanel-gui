@@ -22,6 +22,7 @@ import { reads, not } from '@ember/object/computed';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { Promise } from 'rsvp';
 import computedT from 'onedata-gui-common/utils/computed-t';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend(
   I18n,
@@ -200,7 +201,7 @@ export default Component.extend(
 
     redirectToDeregisterInOnezone() {
       const clusterId = this.get('cluster.id');
-      window.location = this.get('onezoneGui')
+      globals.window.location = this.get('onezoneGui')
         .getUrlInOnezone(`onedata/clusters/${clusterId}/deregister`);
     },
 
@@ -241,7 +242,7 @@ export default Component.extend(
         });
         deregistering.then(() => {
           globalNotify.info(this.t('deregisterSuccess'));
-          setTimeout(() => window.location.reload(), 1000);
+          setTimeout(() => globals.location.reload(), 1000);
         });
         return deregistering;
       },

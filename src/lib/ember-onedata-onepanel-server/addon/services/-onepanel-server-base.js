@@ -24,11 +24,6 @@ export default Service.extend(
   createDataProxyMixin('node'),
   createDataProxyMixin('guiContext'), {
     /**
-     * @type {Window.Location}
-     */
-    _location: location,
-
-    /**
      * False if op-worker and/or oz-worker are not available
      * @type {boolean}
      */

@@ -10,6 +10,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { Promise, resolve } from 'rsvp';
 import { getOnezoneUrl } from 'onedata-gui-common/utils/onedata-urls';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend({
   onezoneGui: service(),
@@ -39,9 +40,9 @@ export default Component.extend({
     return new Promise(() => {
       const url = getOnezoneUrl(onezoneOrigin, this.get('path'));
       if (this.get('replace')) {
-        window.location.replace(url);
+        globals.location.replace(url);
       } else {
-        window.location = url;
+        globals.window.location = url;
       }
     });
   },

@@ -13,6 +13,7 @@ import { reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { Promise } from 'rsvp';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend(
   I18n,
@@ -70,7 +71,7 @@ export default Component.extend(
           redirectType: 'onezone_route',
         }) + '/members';
         return new Promise(() => {
-          window.location = url;
+          globals.window.location = url;
         });
       },
       showUserToken() {

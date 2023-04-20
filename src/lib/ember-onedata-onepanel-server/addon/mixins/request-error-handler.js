@@ -11,6 +11,7 @@ import { inject as service } from '@ember/service';
 import { sessionExpiredKey } from 'onedata-gui-common/components/login-box';
 import { get } from '@ember/object';
 import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
+import globals from 'onedata-gui-common/utils/globals';
 
 function isLogoutResponse(response) {
   return response && response.req.method === 'DELETE' &&
@@ -28,11 +29,6 @@ export default Mixin.create({
   onezoneGui: service(),
   onepanelServer: service(),
   router: service(),
-
-  /**
-   * @type {Storage}
-   */
-  _sessionStorage: sessionStorage,
 
   async handleRequestError(errorResponse) {
     if (errorResponse && errorResponse.response && errorResponse.response.statusCode) {
@@ -59,17 +55,15 @@ export default Mixin.create({
       router,
       onezoneGui,
       onepanelServer,
-      _sessionStorage,
     } = this.getProperties(
       'session',
       'router',
       'onezoneGui',
       'onepanelServer',
-      '_sessionStorage'
     );
     if (get(onepanelServer, 'isEmergency')) {
       if (get(session, 'isAuthenticated')) {
-        _sessionStorage.setItem(sessionExpiredKey, '1');
+        globals.sessionStorage.setItem(sessionExpiredKey, '1');
       }
       await session.invalidate();
     } else {
@@ -77,7 +71,7 @@ export default Mixin.create({
         redirectType: 'redirect',
         internalRoute: get(router, 'currentURL'),
       });
-      window.location = onezoneUrl;
+      globals.window.location = onezoneUrl;
     }
     this.destroyClient();
   },

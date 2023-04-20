@@ -40,6 +40,7 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
+import globals from 'onedata-gui-common/utils/globals';
 
 const {
   TaskStatus,
@@ -72,14 +73,14 @@ const baseQosParameters = {
  * @returns {string} one of: onezone, oneprovider
  */
 function getMockServiceType() {
-  const url = location.toString();
+  const url = globals.location.toString();
   if (/https:\/\/onezone.*(9443|\/onepanel)/.test(url)) {
     return 'onezone';
   } else if (/https:\/\/oneprovider.*(9443|\/onepanel)/.test(url)) {
     return 'oneprovider';
   } else {
     const clusterMatch = url.match(new RegExp(
-      `${location.origin}\\/${onepanelAbbrev}\\/(.*?)\\/.*`));
+      `${globals.location.origin}\\/${onepanelAbbrev}\\/(.*?)\\/.*`));
     if (clusterMatch) {
       return /oneprovider/.test(clusterMatch[1]) ? 'oneprovider' : 'onezone';
     } else {
@@ -238,7 +239,7 @@ const provider1 = PlainableObject.create({
  * @returns {Object} mocked cluster record object
  */
 function getCurrentProviderClusterFromUrl() {
-  const url = location.toString();
+  const url = globals.location.toString();
   const me = /https:\/\/(oneprovider.*?)\..*9443/.exec(url);
   const mh = new RegExp(`https://.*/${onepanelAbbrev}/(.*?)/.*/`).exec(url);
   const id = me && me[1] || mh && mh[1] || 'oneprovider1';
@@ -702,7 +703,7 @@ export default OnepanelServerBase.extend(
      * @returns {string}
      */
     getConfigurationEndpointUrl() {
-      return location.origin + '/configuration';
+      return globals.location.origin + '/configuration';
     },
 
     progressMock: computed(function progressMock() {
@@ -1712,7 +1713,7 @@ export default OnepanelServerBase.extend(
           Object.assign(configuration, {
             onezone: {
               name: null,
-              domainName: window.location.hostname,
+              domainName: globals.location.hostname,
             },
           });
         }

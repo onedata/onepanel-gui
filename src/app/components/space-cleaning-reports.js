@@ -22,6 +22,7 @@ import I18n from 'onedata-gui-common/mixins/components/i18n';
 import { scheduleOnce } from '@ember/runloop';
 import dom from 'onedata-gui-common/utils/dom';
 import waitForRender from 'onedata-gui-common/utils/wait-for-render';
+import globals from 'onedata-gui-common/utils/globals';
 
 function compareIndex(a, b) {
   const ai = get(a, 'index');
@@ -57,12 +58,6 @@ export default Component.extend(I18n, {
   _mobileMode: false,
 
   /**
-   * Window object (for testing purposes).
-   * @type {Window}
-   */
-  _window: window,
-
-  /**
    * @type {boolean}
    */
   headerVisible: undefined,
@@ -73,7 +68,7 @@ export default Component.extend(I18n, {
    */
   _resizeEventHandler: computed(function () {
     return () => {
-      this.set('_mobileMode', this.get('_window.innerWidth') < 768);
+      this.set('_mobileMode', globals.window.innerWidth < 768);
     };
   }),
 
@@ -149,20 +144,18 @@ export default Component.extend(I18n, {
 
     const {
       _resizeEventHandler,
-      _window,
       spaceManager,
       spaceId,
       reportsArray,
     } = this.getProperties(
       '_resizeEventHandler',
-      '_window',
       'spaceManager',
       'spaceId',
       'reportsArray'
     );
 
     _resizeEventHandler();
-    _window.addEventListener('resize', _resizeEventHandler);
+    globals.window.addEventListener('resize', _resizeEventHandler);
 
     const spaceAutoCleaningReportsUpdater = SpaceAutoCleaningReportsUpdater.create({
       isEnabled: false,
@@ -206,7 +199,7 @@ export default Component.extend(I18n, {
     if (firstId === null && get(sourceArray, 'length') !== 0 && firstRow) {
       const rowHeight = this.get('rowHeight');
       const blankStart = dom.offset(firstRow).top * -1;
-      const blankEnd = blankStart + window.innerHeight;
+      const blankEnd = blankStart + globals.window.innerHeight;
       startIndex = Math.floor(blankStart / rowHeight);
       endIndex = Math.floor(blankEnd / rowHeight);
     } else {
@@ -229,11 +222,7 @@ export default Component.extend(I18n, {
 
   willDestroyElement() {
     try {
-      const {
-        _resizeEventHandler,
-        _window,
-      } = this.getProperties('_resizeEventHandler', '_window');
-      _window.removeEventListener('resize', _resizeEventHandler);
+      globals.window.removeEventListener('resize', this._resizeEventHandler);
       this.get('spaceAutoCleaningReportsUpdater').destroy();
       this.get('listWatcher').destroy();
     } finally {

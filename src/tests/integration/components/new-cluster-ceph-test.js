@@ -8,6 +8,7 @@ import { get, set } from '@ember/object';
 import { resolve, Promise } from 'rsvp';
 import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
+import globals from 'onedata-gui-common/utils/globals';
 
 describe('Integration | Component | new-cluster-ceph', function () {
   setupRenderingTest();
@@ -77,7 +78,7 @@ describe('Integration | Component | new-cluster-ceph', function () {
 
       await click('.btn-deploy-cluster');
 
-      const modal = document.querySelector('.block-device-format-warning-modal.in');
+      const modal = globals.document.querySelector('.block-device-format-warning-modal.in');
       const proceedBtn = modal.querySelector('.proceed');
       expect(modal).to.exist;
       expect(modal.querySelector('.modal-header')).to.contain.text('Warning');
@@ -107,15 +108,15 @@ describe('Integration | Component | new-cluster-ceph', function () {
     await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
     await click('.btn-deploy-cluster');
-    await click(document.querySelector('.block-device-format-warning-modal.in .proceed'));
+    await click(globals.document.querySelector('.block-device-format-warning-modal.in .proceed'));
 
     expect(startDeploySpy).to.be.called;
-    expect(document.querySelector('.block-device-format-warning-modal.in .proceed'))
+    expect(globals.document.querySelector('.block-device-format-warning-modal.in .proceed'))
       .to.have.class('pending');
     resolveDeployCallback();
     await settled();
 
-    expect(document.querySelector('.block-device-format-warning-modal.in')).to.not.exist;
+    expect(globals.document.querySelector('.block-device-format-warning-modal.in')).to.not.exist;
   });
 
   it(
@@ -130,11 +131,11 @@ describe('Integration | Component | new-cluster-ceph', function () {
 
       await click('.btn-deploy-cluster');
       await click(
-        document.querySelector('.block-device-format-warning-modal.in .cancel')
+        globals.document.querySelector('.block-device-format-warning-modal.in .cancel')
       );
 
       expect(startDeploySpy).to.not.be.called;
-      expect(document.querySelector('.block-device-format-warning-modal.in'))
+      expect(globals.document.querySelector('.block-device-format-warning-modal.in'))
         .to.not.exist;
     }
   );
@@ -154,7 +155,7 @@ describe('Integration | Component | new-cluster-ceph', function () {
       await render(hbs `{{new-cluster-ceph stepData=stepData}}`);
 
       await click('.btn-deploy-cluster');
-      expect(document.querySelector('.block-device-format-warning-modal.in'))
+      expect(globals.document.querySelector('.block-device-format-warning-modal.in'))
         .to.not.exist;
       expect(startDeploySpy).to.be.called;
     }

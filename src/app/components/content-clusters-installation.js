@@ -13,6 +13,7 @@ import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import globals from 'onedata-gui-common/utils/globals';
 
 export default Component.extend(
   createDataProxyMixin('installationDetails'), {
@@ -55,12 +56,12 @@ export default Component.extend(
           const clusterId = this.get('onepanelConfiguration.clusterId');
           safeExec(this, 'set', 'initProcess', false);
           if (this.get('onepanelServer.isEmergency')) {
-            window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
+            globals.window.location = this.get('onezoneGui').getOnepanelNavUrlInOnezone({
               clusterId,
               internalRoute: `/clusters/${clusterId}`,
             });
           } else {
-            window.location.reload();
+            globals.location.reload();
           }
         });
       },

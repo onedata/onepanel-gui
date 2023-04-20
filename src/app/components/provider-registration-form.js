@@ -27,6 +27,7 @@ import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
+import globals from 'onedata-gui-common/utils/globals';
 
 const DOMAIN_REGEX =
   /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/;
@@ -57,7 +58,7 @@ const HOSTNAME_FIELD = {
   type: 'text',
   regex: DOMAIN_REGEX,
   tip: true,
-  example: location.hostname,
+  example: globals.location.hostname,
 };
 
 const SUBDOMAIN_FIELD = {
