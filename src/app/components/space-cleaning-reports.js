@@ -130,7 +130,7 @@ export default Component.extend(I18n, {
    * Change of a start or end index could be needed after source array length change
    */
   sourceArrayLengthObserver: observer(
-    'filesArray.sourceArray.length',
+    'reportsArray.sourceArray.length',
     async function sourceArrayLengthObserver() {
       await waitForRender();
       this.listWatcher?.scrollHandler();
