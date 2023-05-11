@@ -19,7 +19,6 @@ import ReplacingChunksArray from 'onedata-gui-common/utils/replacing-chunks-arra
 import { htmlSafe } from '@ember/string';
 import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-cleaning-reports-updater';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import { scheduleOnce } from '@ember/runloop';
 import dom from 'onedata-gui-common/utils/dom';
 import waitForRender from 'onedata-gui-common/utils/wait-for-render';
 import globals from 'onedata-gui-common/utils/globals';
@@ -132,10 +131,9 @@ export default Component.extend(I18n, {
    */
   sourceArrayLengthObserver: observer(
     'reportsArray.sourceArray.length',
-    function sourceArrayLengthObserver() {
-      scheduleOnce('afterRender', () => {
-        this.get('listWatcher').scrollHandler();
-      });
+    async function sourceArrayLengthObserver() {
+      await waitForRender();
+      this.listWatcher?.scrollHandler();
     }
   ),
 
