@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10825 Fixed unnecessary scrollbars in Safari
 * VFS-10411 Updated onedata-gui-common for better infinite scroll support
 * VFS-9014 Migrated to getting globals from `globals` util
 * VFS-10126 Using common addons from Marketplace branch
