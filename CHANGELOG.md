@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10886 Replaced browser service usages with Browser util
 * VFS-10825 Fixed unnecessary scrollbars in Safari
 * VFS-10411 Updated onedata-gui-common for better infinite scroll support
 * VFS-9014 Migrated to getting globals from `globals` util
