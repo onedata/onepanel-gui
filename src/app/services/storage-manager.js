@@ -2,7 +2,7 @@
  * Provides backend model/operations for storages in onepanel
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -11,33 +11,33 @@ import { A } from '@ember/array';
 import ObjectProxy from '@ember/object/proxy';
 import ArrayProxy from '@ember/array/proxy';
 import { observer, get } from '@ember/object';
-import { alias } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
-import { Promise } from 'rsvp';
+import { Promise, resolve } from 'rsvp';
 import Onepanel from 'onepanel';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
+import batchResolve from 'onedata-gui-common/utils/batch-resolve';
 
 const {
   StorageCreateRequest,
   StorageModifyRequest,
 } = Onepanel;
 
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
-
 export default Service.extend({
   onepanelServer: service(),
 
   _collectionMap: undefined,
 
+  /**
+   * @type {Ember.ArrayProxy<ClusterStorage>}
+   */
   collectionCache: undefined,
 
   /**
    * @type {Boolean}
    */
   collectionCacheInitialized: false,
-
-  _collectionCache: alias('collectionCache.content'),
 
   conflictNameObserver: observer(
     'collectionCache.content.@each.name',
@@ -57,55 +57,68 @@ export default Service.extend({
   },
 
   /**
-   * Fetch collection of onepanel ClusterStorage
-   *
-   * @param {boolean} [reload=false] if true, force call to backend
-   * @returns {PromiseObject<Ember.ArrayProxy>} resolves ArrayProxy of SpaceDetails promise proxies
+   * @param {boolean} reload If true, even if there is collectionCache loaded, fetch
+   *   storages from backend.
+   * @returns {Promise<Ember.ArrayProxy<Ember.ObjectProxy<ClusterStorage>>>}
+   *   proxies.
    */
-  getStorages(reload = false) {
-    const {
-      onepanelServer,
-      collectionCache,
-      collectionCacheInitialized,
-    } = this.getProperties(
-      'onepanelServer',
-      'collectionCache',
-      'collectionCacheInitialized'
+  async getStoragesPromise(reload = false) {
+    if (!reload && this.collectionCacheInitialized) {
+      return this.collectionCache;
+    }
+
+    let ids = [];
+    try {
+      const storagesGetResult = await this.onepanelServer.requestValidData(
+        'StoragesApi',
+        'getStorages'
+      );
+      ids = storagesGetResult.data.ids;
+    } catch (error) {
+      if (error && error.response && error.response.statusCode === 404) {
+        safeExec(this, () => {
+          this.set('collectionCache.content', A());
+          this.set('collectionCacheInitialized', true);
+        });
+        return this.collectionCache;
+      } else {
+        throw error;
+      }
+    }
+
+    const storageFetchFunctions = ids.map((id) =>
+      () => this.getStorageDetails(id, reload, true)
     );
 
-    const promise = new Promise((resolve, reject) => {
-      if (!reload && collectionCacheInitialized) {
-        resolve(collectionCache);
+    try {
+      const storageRecords = await batchResolve(storageFetchFunctions, 5);
+      safeExec(this, () => {
+        const storageRecordsProxies = storageRecords.map(r => promiseObject(resolve(r)));
+        this.set('collectionCache.content', A(storageRecordsProxies));
+        this.set('collectionCacheInitialized', true);
+      });
+      return this.collectionCache;
+    } catch (error) {
+      if (error && error.response && error.response.statusCode === 404) {
+        safeExec(this, () => {
+          this.set('collectionCache.content', A());
+          this.set('collectionCacheInitialized', true);
+        });
+        return this.collectionCache;
       } else {
-        const getStorages = onepanelServer.requestValidData(
-          'StoragesApi',
-          'getStorages'
-        );
-
-        getStorages.then(({ data: { ids } }) => {
-          const storagesProxyArray = A(ids.map(id =>
-            this.getStorageDetails(id, reload, true)));
-          Promise.all(storagesProxyArray)
-            .finally(() => safeExec(this, () => {
-              this.set('collectionCache.content', storagesProxyArray);
-              this.set('collectionCacheInitialized', true);
-            }))
-            .then(() => resolve(collectionCache))
-            .catch(error => reject(error));
-        });
-        getStorages.catch(error => {
-          if (error && error.response && error.response.statusCode === 404) {
-            this.set('collectionCache.content', A());
-            this.set('collectionCacheInitialized', true);
-            resolve(collectionCache);
-          } else {
-            reject(error);
-          }
-        });
+        throw error;
       }
-    });
+    }
+  },
 
-    return PromiseObject.create({ promise });
+  /**
+   * Fetch collection of onepanel ClusterStorage
+   *
+   * @param {boolean} [reload=false] If true, force call to backend.
+   * @returns {PromiseObject<Ember.ArrayProxy<Ember.ObjectProxy<Onepanel.StorageGetDetails>>>}
+   */
+  getStorages(reload = false) {
+    return promiseObject(this.getStoragesPromise(reload));
   },
 
   /**
@@ -150,7 +163,7 @@ export default Service.extend({
         req.catch(reject);
       }
     });
-    return PromiseObject.create({ promise });
+    return promiseObject(promise);
   },
 
   /**
