@@ -2,10 +2,10 @@
   title=(tt this "title")
   aspect="storages"
   class="cluster-storages-tile text-center"}}
-  {{#promise-proxy-container proxy=storagesProxy}}
+  {{#promise-proxy-container proxy=storagesCountProxy}}
     <div class="circle">
       {{one-icon icon="support"}}
-      <span class="storages-number">{{storagesProxy.length}}</span>
+      <span class="storages-number">{{storagesCountProxy.content}}</span>
     </div>
   {{/promise-proxy-container}}
 {{/one-tile}}

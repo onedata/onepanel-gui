@@ -56,6 +56,13 @@ export default Service.extend({
     this.set('_collectionMap', {});
   },
 
+  async getStoragesIds() {
+    return (await this.onepanelServer.requestValidData(
+      'StoragesApi',
+      'getStorages'
+    ))?.data?.ids ?? [];
+  },
+
   /**
    * @param {boolean} reload If true, even if there is collectionCache loaded, fetch
    *   storages from backend.
@@ -69,11 +76,7 @@ export default Service.extend({
 
     let ids = [];
     try {
-      const storagesGetResult = await this.onepanelServer.requestValidData(
-        'StoragesApi',
-        'getStorages'
-      );
-      ids = storagesGetResult.data.ids;
+      ids = await this.getStoragesIds();
     } catch (error) {
       if (error && error.response && error.response.statusCode === 404) {
         safeExec(this, () => {

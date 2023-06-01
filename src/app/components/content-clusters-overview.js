@@ -13,7 +13,7 @@ import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { tag } from 'ember-awesome-macros';
+import { tag, promise } from 'ember-awesome-macros';
 import { Promise } from 'rsvp';
 
 export default Component.extend(
@@ -70,15 +70,11 @@ export default Component.extend(
     }),
 
     /**
-     * @type {Ember.ComputedProperty<PromiseArray<StorageDetails>>}
+     * @type {ComputedProperty<PromiseObject<number>>}
      */
-    storagesProxy: computed(function storagesProxy() {
-      return PromiseArray.create({
-        promise: this.get('storageManager').getStorages().then(list =>
-          get(list, 'content')
-        ),
-      });
-    }),
+    storagesCountProxy: promise.object(computed(async function storagesCountProxy() {
+      return (await this.storageManager.getStoragesIds()).length;
+    })),
 
     /**
      * @type {Ember.ComputedProperty<Array<string>>}
