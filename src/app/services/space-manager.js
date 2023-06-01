@@ -17,6 +17,7 @@ import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
 import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
 import _ from 'lodash';
+import batchResolve from 'onedata-gui-common/utils/batch-resolve';
 
 const {
   SpaceSupportRequest,
@@ -61,8 +62,15 @@ export default Service.extend({
     return onepanelServer.requestValidData(
       'SpaceSupportApi',
       'getProviderSpaces'
-    ).then(({ data: { ids } }) => {
-      return A(ids.map(id => this.getSpaceDetails(id)));
+    ).then(async ({ data: { ids } }) => {
+      const fetchFunctions = ids.map((id) =>
+        () => this.getSpaceDetails(id)
+      );
+      const spaces = await batchResolve(fetchFunctions, 5);
+      const spaceProxies = spaces.map(space =>
+        PromiseUpdatedObject.create({ promise: resolve(space) })
+      );
+      return A(spaceProxies);
     });
   },
 
