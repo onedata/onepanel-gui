@@ -5,7 +5,9 @@
   {{#promise-proxy-container proxy=storagesCountProxy}}
     <div class="circle">
       {{one-icon icon="support"}}
-      <span class="storages-number">{{storagesCountProxy.content}}</span>
+      <span class="storages-number {{storagesNumberClass}}">
+        {{storagesCountProxy.content}}
+      </span>
     </div>
   {{/promise-proxy-container}}
 {{/one-tile}}

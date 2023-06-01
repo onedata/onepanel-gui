@@ -3,6 +3,9 @@
     position: relative;
   }
   .circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     $-circle-size: 150px;
     @include absolute-align-middle-center();
     height: $-circle-size;
@@ -15,10 +18,12 @@
     white-space: nowrap;
     .one-icon {
       position: relative;
-      top: 25px;
       margin: 0 -10px;
       font-size: 2em;
       color: $color-one-blue-gray;
     }
+  }
+  .storages-number-many-digits {
+    font-size: 70%;
   }
 }

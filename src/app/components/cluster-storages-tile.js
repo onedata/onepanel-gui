@@ -8,6 +8,8 @@
 
 import Component from '@ember/component';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { reads } from '@ember/object/computed';
+import { gt, conditional, raw } from 'ember-awesome-macros';
 
 export default Component.extend(I18n, {
   tagName: '',
@@ -22,4 +24,12 @@ export default Component.extend(I18n, {
    * @type {PromiseObject<number>}
    */
   storagesCountProxy: undefined,
+
+  storagesCount: reads('storagesCountProxy.content'),
+
+  storagesNumberClass: conditional(
+    gt('storagesCount', raw(999)),
+    raw('storages-number-many-digits'),
+    raw('')
+  ),
 });
