@@ -18,7 +18,11 @@
     {{/if}}
   </div>
   {{#promise-proxy-container proxy=providerProxy}}
-    {{#loading-container isLoading=spacesListLoading errorReason=spacesProxy.reason}}
+    {{#loading-container
+      isLoading=spacesListLoading
+      errorReason=spacesProxy.reason
+      loadingLabel=(tt this "loadingSpaces")
+    }}
       {{cluster-spaces-table
         spaces=spaces
         provider=providerProxy.content

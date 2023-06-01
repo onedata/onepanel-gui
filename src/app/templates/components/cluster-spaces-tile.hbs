@@ -3,7 +3,10 @@
   aspect="spaces"
   class="cluster-spaces-tile text-center"}}
   {{#promise-proxy-container proxy=providerIdProxy}}
-    {{#promise-proxy-container proxy=spacesProxy}}
+    {{#promise-proxy-container
+      proxy=spacesProxy
+      loadingLabel=(tt this "loadingSupportData")
+    }}
       {{#if spacesProxy.length}}
         {{provider-spaces-support-chart
           spaces=spacesProxy
@@ -14,7 +17,7 @@
       {{else}}
         <figure class="main-figure">
           <img class="main-image" src="assets/images/space-get-support.svg">
-          <span class="one-label">{{tt this "supportSpace"}}</span>  
+          <span class="one-label">{{tt this "supportSpace"}}</span>
         </figure>
       {{/if}}
     {{/promise-proxy-container}}

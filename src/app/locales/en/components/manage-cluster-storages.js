@@ -10,4 +10,5 @@ export default {
   storageAdded: 'Storage "{{storageName}}" added',
   addingStorage: 'adding "{{storageName}}" storage',
   unknownError: 'Unknown error',
+  loadingStorages: 'Loading storages data...',
 };
