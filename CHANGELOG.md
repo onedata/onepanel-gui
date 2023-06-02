@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10563 Add record info with icon component to space table
 * VFS-10886 Replaced browser service usages with Browser util
 * VFS-10825 Fixed unnecessary scrollbars in Safari
 * VFS-10411 Updated onedata-gui-common for better infinite scroll support
