@@ -17,6 +17,9 @@ import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw'
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
+import { raw, or } from 'ember-awesome-macros';
+import { sort } from '@ember/object/computed';
 
 export default Component.extend(
   I18n,
@@ -52,9 +55,15 @@ export default Component.extend(
      */
     spacesProxy: undefined,
 
+    pageSize: 25,
+
     supportSpaceOpened: false,
 
     spaces: reads('spacesProxy.content'),
+
+    sorting: Object.freeze(['name:asc']),
+
+    spacesSorted: sort('spaces', 'sorting'),
 
     spacesListLoading: reads('spacesProxy.isPending'),
 
@@ -130,6 +139,16 @@ export default Component.extend(
         this.set('supportSpaceOpened', true);
       }
     }),
+
+    init() {
+      this._super(...arguments);
+      this.set('paginator', ArrayPaginator.extend({
+        array: or('parent.spacesSorted', raw([])),
+        pageSize: reads('parent.pageSize'),
+      }).create({
+        parent: this,
+      }));
+    },
 
     /**
      * @param {Object} supportSpaceData
