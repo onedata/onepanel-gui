@@ -18,6 +18,9 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 import computedT from 'onedata-gui-common/utils/computed-t';
+import { reads } from '@ember/object/computed';
+import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
+import { raw, or, array } from 'ember-awesome-macros';
 
 export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
@@ -25,6 +28,8 @@ export default Component.extend(I18n, GlobalActions, {
   spaceManager: service(),
   globalNotify: service(),
   i18n: service(),
+
+  classNames: ['manage-cluster-storages'],
 
   /**
    * @override
@@ -43,6 +48,11 @@ export default Component.extend(I18n, GlobalActions, {
   nextStep: undefined,
 
   /**
+   * @type {Utils.ArrayPaginator}
+   */
+  paginator: undefined,
+
+  /**
    * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
    */
   storagesProxy: null,
@@ -59,6 +69,8 @@ export default Component.extend(I18n, GlobalActions, {
    */
   createStorageFormTypeId: undefined,
 
+  pageSize: 10,
+
   /**
    * @type {boolean}
    */
@@ -68,6 +80,13 @@ export default Component.extend(I18n, GlobalActions, {
    * @type {boolean}
    */
   isRemovingStorage: false,
+
+  storages: reads('storagesProxy.content'),
+
+  /**
+   * @type {ComputedProperty<Array<PromiseObject<StorageDetails>>>}
+   */
+  storagesSorted: array.sort('storages', ['name', 'conflictLabel']),
 
   /**
    * If true, there are no storages
@@ -184,6 +203,12 @@ export default Component.extend(I18n, GlobalActions, {
 
   init() {
     this._super(...arguments);
+    this.set('paginator', ArrayPaginator.extend({
+      array: or('parent.storagesSorted', raw([])),
+      pageSize: reads('parent.pageSize'),
+    }).create({
+      parent: this,
+    }));
     this._updateStoragesProxy();
     this._updateSpacesProxy(true);
     if (this.get('createStorageFormType')) {

@@ -1,0 +1,20 @@
+.manage-cluster-storages {
+  h1.title-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  h1.title-header .pages-control {
+    text-transform: none;
+    font-size: 75%;
+    letter-spacing: initial;
+    flex-grow: 1;
+    margin-left: 2em;
+    @include font-regular;
+  }
+  .bottom-pages-control {
+    font-size: 90%;
+    justify-content: end;
+    margin-top: 3em;
+    margin-right: 2em;
+  }
+}
