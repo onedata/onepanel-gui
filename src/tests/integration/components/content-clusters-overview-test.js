@@ -17,7 +17,7 @@ const SpaceManager = Service.extend({
 });
 
 const StorageManager = Service.extend({
-  getStorages: notImplementedReject,
+  getStoragesIds: notImplementedReject,
 });
 
 const noNodesInstallationDetails = {
@@ -58,8 +58,8 @@ describe('Integration | Component | content-clusters-overview', function () {
     const getSpaces =
       sinon.stub(spaceManager, 'getSpaces').resolves([]);
     const storageManager = lookupService(this, 'storage-manager');
-    const getStorages =
-      sinon.stub(storageManager, 'getStorages').resolves([]);
+    const getStoragesIds =
+      sinon.stub(storageManager, 'getStoragesIds').resolves([]);
     this.setProperties({
       cluster,
       fetchInstallationDetails,
@@ -74,10 +74,10 @@ describe('Integration | Component | content-clusters-overview', function () {
 
     expect(getProviderDetailsProxy).to.be.not.called;
     expect(getSpaces).to.be.not.called;
-    expect(getStorages).to.be.not.called;
+    expect(getStoragesIds).to.be.not.called;
   });
 
-  it('does uses providerManager if cluster is Oneprovider', async function () {
+  it('uses providerManager if cluster is Oneprovider', async function () {
     const cluster = {
       id: 'cid',
       name: 'cname',
@@ -91,8 +91,8 @@ describe('Integration | Component | content-clusters-overview', function () {
     const getSpaces =
       sinon.stub(spaceManager, 'getSpaces').resolves([]);
     const storageManager = lookupService(this, 'storage-manager');
-    const getStorages =
-      sinon.stub(storageManager, 'getStorages').resolves([]);
+    const getStoragesIds =
+      sinon.stub(storageManager, 'getStoragesIds').resolves([]);
     const fetchInstallationDetails = sinon.stub().resolves(installationDetails);
     this.setProperties({
       cluster,
@@ -106,6 +106,6 @@ describe('Integration | Component | content-clusters-overview', function () {
 
     expect(getProviderDetailsProxy).to.be.calledOnce;
     expect(getSpaces).to.be.calledOnce;
-    expect(getStorages).to.be.calledOnce;
+    expect(getStoragesIds).to.be.calledOnce;
   });
 });
