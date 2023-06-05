@@ -1,4 +1,4 @@
-.manage-cluster-storages {
+  // FIXME: make generic
   .header-row h1.with-pages-control {
     display: flex;
     justify-content: space-between;
@@ -16,5 +16,26 @@
     justify-content: end;
     margin-top: 3em;
     margin-right: 2em;
+  }
+
+.manage-cluster-storages {
+  @media (max-width: 900px) {
+    .pages-control {
+      .pages-control-page-size {
+        display: none;
+      }
+    }
+  }
+  @media (max-width: 800px) {
+    h1.with-pages-control .pages-control {
+      display: none;
+    }
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .bottom-pages-control {
+      margin-right: 0;
+      justify-content: center;
+    }
   }
 }
