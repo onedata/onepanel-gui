@@ -24,7 +24,7 @@ import { sort } from '@ember/object/computed';
 export default Component.extend(
   I18n,
   GlobalActions, {
-    classNames: ['content-clusters-spaces-list'],
+    classNames: ['content-clusters-spaces-list', 'content-with-pages-control'],
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesList',

@@ -29,7 +29,7 @@ export default Component.extend(I18n, GlobalActions, {
   globalNotify: service(),
   i18n: service(),
 
-  classNames: ['manage-cluster-storages'],
+  classNames: ['manage-cluster-storages', 'content-with-pages-control'],
 
   /**
    * @override

@@ -1,11 +1,12 @@
 <div class="row content-row header-row hidden-xs">
-  <h1 class="with-menu with-pages-control">
+  <h1 class="with-pages-control">
     <span class="one-label">{{tt this "spaces"}}</span>
     {{#if (gt paginator.pagesCount 1)}}
       {{pages-control
         activePageNumber=paginator.activePageNumber
         pagesCount=paginator.pagesCount
         pageSize=paginator.pageSize
+        hasPageNumberInput=(not (or (media "isTablet") (media "isMobile")))
         onPageChange=paginator.changeActivePageNumber
       }}
     {{/if}}
