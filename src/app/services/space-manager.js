@@ -66,7 +66,7 @@ export default Service.extend({
       const fetchFunctions = ids.map((id) =>
         () => this.getSpaceDetails(id)
       );
-      const spaces = await batchResolve(fetchFunctions, 5);
+      const spaces = await batchResolve(fetchFunctions, 20);
       const spaceProxies = spaces.map(space =>
         PromiseUpdatedObject.create({ promise: resolve(space) })
       );

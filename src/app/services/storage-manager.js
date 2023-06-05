@@ -74,27 +74,14 @@ export default Service.extend({
       return this.collectionCache;
     }
 
-    let ids = [];
-    try {
-      ids = await this.getStoragesIds();
-    } catch (error) {
-      if (error && error.response && error.response.statusCode === 404) {
-        safeExec(this, () => {
-          this.set('collectionCache.content', A());
-          this.set('collectionCacheInitialized', true);
-        });
-        return this.collectionCache;
-      } else {
-        throw error;
-      }
-    }
+    const ids = await this.getStoragesIds();
 
     const storageFetchFunctions = ids.map((id) =>
       () => this.getStorageDetails(id, reload, true)
     );
 
     try {
-      const storageRecords = await batchResolve(storageFetchFunctions, 5);
+      const storageRecords = await batchResolve(storageFetchFunctions, 20);
       safeExec(this, () => {
         const storageRecordsProxies = storageRecords.map(r => promiseObject(resolve(r)));
         this.set('collectionCache.content', A(storageRecordsProxies));
