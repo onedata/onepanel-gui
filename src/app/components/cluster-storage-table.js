@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
-import { array } from 'ember-awesome-macros';
 
 /**
  * Creates component for displaying cluster storages.
