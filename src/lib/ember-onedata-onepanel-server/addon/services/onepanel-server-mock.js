@@ -271,8 +271,7 @@ export default OnepanelServerBase.extend(
     // mockStep: installationStepsMap.oneproviderRegistration,
     // mockStep: installationStepsMap.dns,
     // mockStep: installationStepsMap.oneproviderStorageAdd,
-    // FIXME: changed
-    mockStep: installationStepsMap.deploy,
+    mockStep: installationStepsMap.done,
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
 

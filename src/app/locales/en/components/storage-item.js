@@ -9,11 +9,13 @@ import nulldevice from './storage-item/nulldevice';
 import nfs from './storage-item/nfs';
 
 export default {
-  modifyBtn: 'Modify',
+  modifyBtn: 'Modify <script>alert("hello");</script>',
   modifyDisabledBtnTip: 'Current modifications have not been saved yet – use the buttons at the bottom of the form.',
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage',
+  // TODO: VFS-11005 Handle single load errors
+  unknown: 'unknown',
   generic: {
     id: 'Id',
     type: 'Type',

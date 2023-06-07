@@ -89,7 +89,18 @@ export default Service.extend({
       );
     const ids = providerSpacesData.data.ids;
     const fetchFunctions = ids.map((id) =>
-      () => this._getSpaceDetails(id)
+      async () => {
+        try {
+          return await this._getSpaceDetails(id);
+        } catch (error) {
+          // TODO: VFS-11005 Handle single load errors or remove this code
+          return SpaceDetails.create({
+            name: '<error>',
+            supportingProviders: {},
+            isRejected: true,
+          });
+        }
+      }
     );
     const batchResolver = BatchResolver.create({
       promiseFunctions: fetchFunctions,

@@ -31,8 +31,6 @@ export default Component.extend(I18n, {
    */
   spaces: null,
 
-  // FIXME: remove code for handling proxy or re-implement it
-
   anySpaceRejected: computed('spaces.content', function () {
     const spaces = this.get('spaces');
     if (spaces) {

@@ -1,7 +1,7 @@
-import { A } from '@ember/array';
 import Service from '@ember/service';
 import { Promise } from 'rsvp';
 import { get } from '@ember/object';
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 
 import _ from 'lodash';
 
@@ -15,16 +15,15 @@ export default Service.extend({
     this.set('__spaces', []);
   },
 
-  // FIXME: getSpaces does not exist anymore
-  getSpaces() {
-    return PromiseObject.create({
-      promise: new Promise(resolve => {
-        const spaceDetailsList = A();
-        this.get('__spaces').forEach(space => {
-          spaceDetailsList.push(this.getSpaceDetails(space.id));
-        });
-        resolve(spaceDetailsList);
-      }),
+  async getSpacesBatchResolver() {
+    const fetchFunctions = this.__spaces.map(space => {
+      return () => {
+        return this.getSpaceDetails(space.id);
+      };
+    });
+    return BatchResolver.create({
+      promiseFunctions: fetchFunctions,
+      chunkSize: 20,
     });
   },
 

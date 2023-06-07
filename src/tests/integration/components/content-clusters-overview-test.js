@@ -7,14 +7,14 @@ import sinon from 'sinon';
 import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 
 const ProviderManager = Service.extend({
   getProviderDetailsProxy: notImplementedReject,
 });
 
 const SpaceManager = Service.extend({
-  // FIXME: getSpaces does not exist anymore
-  getSpaces: notImplementedReject,
+  getSpacesBatchResolver: notImplementedReject,
 });
 
 const StorageManager = Service.extend({
@@ -42,6 +42,9 @@ describe('Integration | Component | content-clusters-overview', function () {
     registerService(this, 'provider-manager', ProviderManager);
     registerService(this, 'space-manager', SpaceManager);
     registerService(this, 'storage-manager', StorageManager);
+    this.emptyBatchResolver = BatchResolver.create({
+      promiseFunctions: [],
+    });
   });
 
   it('does not use providerManager if cluster is not Oneprovider', async function () {
@@ -56,8 +59,8 @@ describe('Integration | Component | content-clusters-overview', function () {
       sinon.spy(providerManager, 'getProviderDetailsProxy');
     const fetchInstallationDetails = sinon.stub().resolves(installationDetails);
     const spaceManager = lookupService(this, 'space-manager');
-    const getSpaces =
-      sinon.stub(spaceManager, 'getSpaces').resolves([]);
+    const getSpacesBatchResolver = sinon.stub(spaceManager, 'getSpacesBatchResolver')
+      .resolves(this.emptyBatchResolver);
     const storageManager = lookupService(this, 'storage-manager');
     const getStoragesIds =
       sinon.stub(storageManager, 'getStoragesIds').resolves([]);
@@ -74,7 +77,7 @@ describe('Integration | Component | content-clusters-overview', function () {
     }}`);
 
     expect(getProviderDetailsProxy).to.be.not.called;
-    expect(getSpaces).to.be.not.called;
+    expect(getSpacesBatchResolver).to.be.not.called;
     expect(getStoragesIds).to.be.not.called;
   });
 
@@ -89,8 +92,8 @@ describe('Integration | Component | content-clusters-overview', function () {
     const getProviderDetailsProxy =
       sinon.stub(providerManager, 'getProviderDetailsProxy').resolves({});
     const spaceManager = lookupService(this, 'space-manager');
-    const getSpaces =
-      sinon.stub(spaceManager, 'getSpaces').resolves([]);
+    const getSpacesBatchResolver = sinon.stub(spaceManager, 'getSpacesBatchResolver')
+      .resolves(this.emptyBatchResolver);
     const storageManager = lookupService(this, 'storage-manager');
     const getStoragesIds =
       sinon.stub(storageManager, 'getStoragesIds').resolves([]);
@@ -106,7 +109,7 @@ describe('Integration | Component | content-clusters-overview', function () {
     }}`);
 
     expect(getProviderDetailsProxy).to.be.calledOnce;
-    expect(getSpaces).to.be.calledOnce;
+    expect(getSpacesBatchResolver).to.be.calledOnce;
     expect(getStoragesIds).to.be.calledOnce;
   });
 });

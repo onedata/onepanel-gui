@@ -84,7 +84,15 @@ export default Service.extend({
   async _resolveStoragesBatchResolver() {
     const ids = await this.getStoragesIds();
     const storageFetchFunctions = ids.map((id) =>
-      () => this.getStorageDetails(id, true, true)
+      async () => {
+        try {
+          return await this.getStorageDetails(id, true, true);
+        } catch (error) {
+          return ObjectProxy.create({
+            isRejected: true,
+          });
+        }
+      }
     );
     const batchResolver = BatchResolver.create({
       promiseFunctions: storageFetchFunctions,
