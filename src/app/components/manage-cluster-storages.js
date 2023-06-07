@@ -2,13 +2,13 @@
  * Storage management for cluster - can be used both in wizard and after cluster deployment
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 
-import { equal, oneWay, alias } from '@ember/object/computed';
+import { equal, oneWay } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { get, computed } from '@ember/object';
@@ -21,6 +21,7 @@ import computedT from 'onedata-gui-common/utils/computed-t';
 import { reads } from '@ember/object/computed';
 import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
 import { raw, or, array } from 'ember-awesome-macros';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, GlobalActions, {
   storageManager: service(),
@@ -53,14 +54,14 @@ export default Component.extend(I18n, GlobalActions, {
   paginator: undefined,
 
   /**
-   * @type {PromiseObject} storagesProxy resolves with storages list ArrayProxy
+   * @type {PromiseObject<Utils.BatchResolver>}
    */
-  storagesProxy: null,
+  spacesBatchResolverProxy: undefined,
 
   /**
-   * @type {PromiseObject} spacesProxy resolves with spaces list ArrayProxy
+   * @type {PromiseObject<Utils.BatchResolver>}
    */
-  spacesProxy: null,
+  storagesBatchResolverProxy: undefined,
 
   /**
    * Id of the storage type, which should be passed to the
@@ -128,12 +129,18 @@ export default Component.extend(I18n, GlobalActions, {
   dataIsLoading: computed(
     'storagesProxy.isPending',
     'spacesProxy.isPending',
-    function () {
+    function dataIsLoading() {
       return this.get('storagesProxy.isPending') || this.get('spacesProxy.isPending');
     }
   ),
 
-  storagesError: alias('storagesProxy.reason'),
+  storagesProxy: reads('storagesBatchResolverProxy.content.promiseObject'),
+
+  spacesProxy: reads('spacesBatchResolverProxy.content.promiseObject'),
+
+  storagesError: reads('storagesProxy.reason'),
+
+  spacesError: reads('spacesProxy.reason'),
 
   someStorageIsLoading: computed('storagesProxy.content.@each.isSettled', function () {
     const storages = this.get('storagesProxy.content');
@@ -201,6 +208,14 @@ export default Component.extend(I18n, GlobalActions, {
     }
   ),
 
+  spacesBatchResolver: reads('spacesBatchResolverProxy.content'),
+
+  storagesBatchResolver: reads('storagesBatchResolverProxy.content'),
+
+  _addStorageButtonLabel: computed('addStorageOpened', function _addStorageButtonLabel() {
+    return this.addStorageOpened ? this.t('cancel') : this.t('addStorage');
+  }),
+
   init() {
     this._super(...arguments);
     this.set('paginator', ArrayPaginator.extend({
@@ -209,41 +224,25 @@ export default Component.extend(I18n, GlobalActions, {
     }).create({
       parent: this,
     }));
-    this._updateStoragesProxy();
-    this._updateSpacesProxy(true);
-    if (this.get('createStorageFormType')) {
+    this.initStoragesBatchResolver();
+    this.initSpacesBatchResolver();
+    if (this.createStorageFormType) {
       this.set('addStorageOpened', true);
     }
   },
 
-  /**
-   * Force update storages list - makes an API call
-   * @returns {undefined}
-   */
-  _updateStoragesProxy() {
-    const {
-      storageManager,
-      storagesProxy,
-    } = this.getProperties('storageManager', 'storagesProxy');
-
-    const newStoragesProxy = storageManager.getStorages(true);
-
-    // first update - initialize component storagesProxy field
-    if (!storagesProxy) {
-      this.set('storagesProxy', newStoragesProxy);
-    }
-
-    return newStoragesProxy;
+  initSpacesBatchResolver() {
+    const batchResolverProxy = promiseObject(
+      this.spaceManager.getSpacesBatchResolver()
+    );
+    this.set('spacesBatchResolverProxy', batchResolverProxy);
   },
 
-  /**
-   * Force update spaces list - makes an API call
-   * @param {boolean} reload if true, force reload storages from backend
-   * @returns {undefined}
-   */
-  _updateSpacesProxy(reload = true) {
-    const spaceManager = this.get('spaceManager');
-    this.set('spacesProxy', spaceManager.getSpaces(reload));
+  initStoragesBatchResolver() {
+    const batchResolverProxy = promiseObject(
+      this.storageManager.getStoragesBatchResolver()
+    );
+    this.set('storagesBatchResolverProxy', batchResolverProxy);
   },
 
   /**
@@ -263,17 +262,13 @@ export default Component.extend(I18n, GlobalActions, {
 
     return new Promise((resolve, reject) => {
       addingStorage.then(() => {
-        this._updateStoragesProxy();
+        this.initStoragesBatchResolver();
         this.set('addStorageOpened', false);
         resolve();
       });
       addingStorage.catch(reject);
     });
   },
-
-  _addStorageButtonLabel: computed('addStorageOpened', function () {
-    return this.get('addStorageOpened') ? 'Cancel' : 'Add storage';
-  }),
 
   actions: {
     next() {
@@ -323,7 +318,7 @@ export default Component.extend(I18n, GlobalActions, {
       const storageActions = this.get('storageActions');
       const newDetails = createClusterStorageModel(storageFormData, true);
       return storageActions.modifyStorage(storage, newDetails)
-        .then(result => this._updateStoragesProxy().then(() => result));
+        .then(result => this.initStoragesBatchResolver().then(() => result));
     },
     submitRemoveStorage() {
       const {
@@ -333,7 +328,7 @@ export default Component.extend(I18n, GlobalActions, {
       this.set('isRemovingStorage', true);
       return storageActions.removeStorage(storageToRemove)
         .then(() => {
-          this._updateStoragesProxy();
+          this.initStoragesBatchResolver();
         })
         .finally(() => {
           safeExec(this, () => {

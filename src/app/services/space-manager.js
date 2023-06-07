@@ -6,18 +6,16 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { A } from '@ember/array';
-
 import Service, { inject as service } from '@ember/service';
 import { Promise, resolve } from 'rsvp';
-import { get } from '@ember/object';
+import { get, computed } from '@ember/object';
 import Onepanel from 'onepanel';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
 import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
 import _ from 'lodash';
-import batchResolve from 'onedata-gui-common/utils/batch-resolve';
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 
 const {
   SpaceSupportRequest,
@@ -30,69 +28,102 @@ export default Service.extend({
   onepanelServer: service(),
 
   /**
-   * Stores collection of all fetched spaces
    * @type {PromiseObject}
    */
-  spacesCache: PromiseObject.create(),
+  spacesBatchResolverCache: undefined,
+
+  // spacesCache: reads('spacesBatchResolverCache.content.promiseObject'),
+
+  spacesCache: computed(
+    'spacesBatchResolverCache.content.promise',
+    function spacesCache() {
+      const spacePromiseObjectsArrayPromise = (async () => {
+        const spacesBatchResolver = await this.spacesBatchResolverCache;
+        const spaces = await spacesBatchResolver.promise;
+        return spaces.map((space) =>
+          PromiseUpdatedObject.create({ promise: resolve(space) })
+        );
+      })();
+
+      return PromiseUpdatedObject.create({
+        promise: resolve(spacePromiseObjectsArrayPromise),
+      });
+    }
+  ),
 
   reportsCache: Object.freeze({}),
+
+  /**
+   * @type {Utils.BatchResolver}
+   */
+  spacesBatchResolver: null,
 
   init() {
     this._super(...arguments);
     this.set('reportsCache', {});
+    this.set('spacesBatchResolverCache', PromiseObject.create());
   },
 
   /**
    * @param {boolean} reload if true, force request to server even if there is cache
-   * @returns {PromiseObject<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   * @returns {PromiseObject<Utils.BatchResolver>}
    */
-  getSpaces(reload = true) {
-    const spacesCache = this.get('spacesCache');
-    if (reload || !get(spacesCache, 'content')) {
-      spacesCache.set('promise', this._getSpaces());
+  async getSpacesBatchResolver(reload = true) {
+    let batchResolverPromise;
+    if (reload || !get(this.spacesBatchResolverCache, 'content')) {
+      batchResolverPromise = this._resolveSpacesBatchResolver();
+      this.spacesBatchResolverCache.set('promise', batchResolverPromise);
     }
-    return spacesCache;
+    return this.spacesBatchResolverCache;
   },
 
   /**
-   * @returns {Promise<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   * The batch resolver will resolve array of `OnepanelGui.SpaceDetails`.
+   * @returns {Utils.BatchResolver}
    */
-  _getSpaces() {
-    const onepanelServer = this.get('onepanelServer');
-    return onepanelServer.requestValidData(
-      'SpaceSupportApi',
-      'getProviderSpaces'
-    ).then(async ({ data: { ids } }) => {
-      const fetchFunctions = ids.map((id) =>
-        () => this.getSpaceDetails(id)
+  async _resolveSpacesBatchResolver() {
+    const providerSpacesData = await this.onepanelServer
+      .requestValidData(
+        'SpaceSupportApi',
+        'getProviderSpaces'
       );
-      const spaces = await batchResolve(fetchFunctions, 20);
-      const spaceProxies = spaces.map(space =>
-        PromiseUpdatedObject.create({ promise: resolve(space) })
-      );
-      return A(spaceProxies);
+    const ids = providerSpacesData.data.ids;
+    const fetchFunctions = ids.map((id) =>
+      () => this._getSpaceDetails(id)
+    );
+    const batchResolver = BatchResolver.create({
+      promiseFunctions: fetchFunctions,
+      chunkSize: 20,
     });
+    batchResolver.allFulfilled();
+    return batchResolver;
   },
 
   /**
    * Update record inside created spaces collection
-   * Requires former usage of `getSpaces`!
+   * Requires former usage of `getSpacesBatchResolver`!
    * @param {string} spaceId space with this ID will be updated
    * @returns {Promise<OnepanelGui.SpaceDetails>}
    */
-  updateSpaceDetailsCache(spaceId) {
+  async updateSpaceDetailsCache(spaceId) {
     const cacheArray = this.get('spacesCache.content');
+    if (!cacheArray) {
+      return;
+    }
     const spaceCacheProxy = _.find(
       cacheArray,
       s => get(s, 'content.id') === spaceId
     );
-    const spaceCache = get(spaceCacheProxy, 'content');
+    if (!spaceCacheProxy) {
+      return;
+    }
+    const spaceCacheContent = get(spaceCacheProxy, 'content');
     const promise = this._getSpaceDetails(spaceId)
       .then(spaceDetails => {
-        return emberObjectReplace(spaceCache, spaceDetails);
+        return emberObjectReplace(spaceCacheContent, spaceDetails);
       });
     spaceCacheProxy.set('promise', promise);
-    return promise;
+    return await promise;
   },
 
   /**

@@ -5,7 +5,10 @@
   {{#promise-proxy-container proxy=providerIdProxy}}
     {{#promise-proxy-container
       proxy=spacesProxy
-      loadingLabel=(tt this "loadingSupportData")
+      loadingLabel=(tt this "loadingSupportData"
+        loadedCount=loadedSpacesCount
+        totalCount=totalSpacesCount
+      )
     }}
       {{#if spacesProxy.length}}
         {{provider-spaces-support-chart

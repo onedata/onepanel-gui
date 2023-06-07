@@ -1,3 +1,4 @@
+{{!-- FIXME: coś z tym zrobić, a może przetestować, czy na developie to działało? --}}
 {{#if anySpaceRejected}}
   {{resource-load-error
     class="alert-some-spaces-rejected"
@@ -7,26 +8,20 @@
 {{/if}}
 
 {{#one-collapsible-list as |list|}}
-  {{#each spaces as |spaceProxy|}}
+  {{#each spaces as |space|}}
     {{!-- TODO: change to links, because we want to open in separate tabs --}}
-    {{#unless spaceProxy.isRejected}}
-      {{#list.item toggle=(action "spaceClicked" listItem) as |listItem|}}
-        {{#listItem.header
-          isCollapsible=false
-          click=(action "spaceClicked" spaceProxy.content.id)
-          class="hoverable spaces-list-item-header"
+    {{#list.item toggle=(action "spaceClicked" listItem) as |listItem|}}
+      {{#listItem.header
+        isCollapsible=false
+        click=(action "spaceClicked" space.id)
+        class="hoverable spaces-list-item-header"
+      }}
+        {{cluster-spaces-table-item
+          space=space
+          provider=provider
+          startRevokeSpace=(action "startRevokeSpace")
         }}
-          {{#if spaceProxy.isPending}}
-            {{spin-spinner-block sizeClass="xs" class="absolute-middle-centered"}}
-          {{else if spaceProxy.isFulfilled}}
-            {{cluster-spaces-table-item
-              space=spaceProxy.content
-              provider=provider
-              startRevokeSpace=(action "startRevokeSpace")
-            }}
-          {{/if}}
-        {{/listItem.header}}
-      {{/list.item}}
-    {{/unless}}
+      {{/listItem.header}}
+    {{/list.item}}
   {{/each}}
 {{/one-collapsible-list}}

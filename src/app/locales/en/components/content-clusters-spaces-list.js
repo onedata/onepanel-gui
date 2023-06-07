@@ -4,5 +4,5 @@ export default {
   cancelSupporting: 'Cancel supporting space',
   supportSpace: 'Support space',
   supportSuccess: 'Added a new support for space',
-  loadingSpaces: 'Loading spaces data...',
+  loadingSpaces: 'Loading space data...<br/>({{loadedCount}} out of {{totalCount}})',
 };

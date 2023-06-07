@@ -24,8 +24,13 @@
 <div class="row {{if dataIsLoading "min-height-100"}}">
   {{#loading-container
     isLoading=dataIsLoading
-    errorReason=(or storagesError spacesProxy.reason)
-    loadingLabel=(tt this "loadingStorages")
+    errorReason=(or storagesError spacesError)
+    loadingLabel=(tt this "loadingData"
+      loadedStorages=storagesBatchResolver.settledFunctionsCount
+      totalStorages=storagesBatchResolver.totalFunctionsCount
+      loadedSpaces=spacesBatchResolver.settledFunctionsCount
+      totalSpaces=spacesBatchResolver.totalFunctionsCount
+    )
   }}
     {{#unless noStorages}}
       {{cluster-storage-table

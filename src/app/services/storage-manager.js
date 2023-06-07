@@ -6,18 +6,15 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { A } from '@ember/array';
-
 import ObjectProxy from '@ember/object/proxy';
-import ArrayProxy from '@ember/array/proxy';
 import { observer, get } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import Service, { inject as service } from '@ember/service';
-import { Promise, resolve } from 'rsvp';
+import { Promise } from 'rsvp';
 import Onepanel from 'onepanel';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
-import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
-import batchResolve from 'onedata-gui-common/utils/batch-resolve';
+import PromiseObject, { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 
 const {
   StorageCreateRequest,
@@ -30,18 +27,23 @@ export default Service.extend({
   _collectionMap: undefined,
 
   /**
-   * @type {Ember.ArrayProxy<ClusterStorage>}
+   * @type {PromiseObject<Utils.BatchResolver>}
    */
-  collectionCache: undefined,
+  storagesBatchResolverCache: undefined,
 
   /**
-   * @type {Boolean}
+   * @type {PromiseObject<Utils.BatchResolver>}
    */
-  collectionCacheInitialized: false,
+  spacesBatchResolverCache: undefined,
+
+  collectionCache: reads('storagesBatchResolverCache.promiseObject'),
 
   conflictNameObserver: observer(
     'collectionCache.content.@each.name',
     function conflictNameObserver() {
+      if (!this.collectionCache?.content) {
+        return;
+      }
       addConflictLabels(
         this.get('collectionCache.content').filterBy('content').mapBy('content'),
         'name',
@@ -52,8 +54,11 @@ export default Service.extend({
 
   init() {
     this._super(...arguments);
-    this.set('collectionCache', ArrayProxy.create({ content: [] }));
-    this.set('_collectionMap', {});
+    this.setProperties({
+      storagesBatchResolverCache: PromiseObject.create(),
+      spacesBatchResolverCache: PromiseObject.create(),
+      _collectionMap: {},
+    });
   },
 
   async getStoragesIds() {
@@ -64,51 +69,29 @@ export default Service.extend({
   },
 
   /**
-   * @param {boolean} reload If true, even if there is collectionCache loaded, fetch
-   *   storages from backend.
-   * @returns {Promise<Ember.ArrayProxy<Ember.ObjectProxy<ClusterStorage>>>}
-   *   proxies.
+   * @param {boolean} [reload]
+   * @returns {PromiseObject<Utils.BatchResolver>}
    */
-  async getStoragesPromise(reload = false) {
-    if (!reload && this.collectionCacheInitialized) {
-      return this.collectionCache;
+  getStoragesBatchResolver(reload = true) {
+    let batchResolverPromise;
+    if (reload || !get(this.storagesBatchResolverCache, 'content')) {
+      batchResolverPromise = this._resolveStoragesBatchResolver();
+      this.storagesBatchResolverCache.set('promise', batchResolverPromise);
     }
-
-    const ids = await this.getStoragesIds();
-
-    const storageFetchFunctions = ids.map((id) =>
-      () => this.getStorageDetails(id, reload, true)
-    );
-
-    try {
-      const storageRecords = await batchResolve(storageFetchFunctions, 20);
-      safeExec(this, () => {
-        const storageRecordsProxies = storageRecords.map(r => promiseObject(resolve(r)));
-        this.set('collectionCache.content', A(storageRecordsProxies));
-        this.set('collectionCacheInitialized', true);
-      });
-      return this.collectionCache;
-    } catch (error) {
-      if (error && error.response && error.response.statusCode === 404) {
-        safeExec(this, () => {
-          this.set('collectionCache.content', A());
-          this.set('collectionCacheInitialized', true);
-        });
-        return this.collectionCache;
-      } else {
-        throw error;
-      }
-    }
+    return this.storagesBatchResolverCache;
   },
 
-  /**
-   * Fetch collection of onepanel ClusterStorage
-   *
-   * @param {boolean} [reload=false] If true, force call to backend.
-   * @returns {PromiseObject<Ember.ArrayProxy<Ember.ObjectProxy<Onepanel.StorageGetDetails>>>}
-   */
-  getStorages(reload = false) {
-    return promiseObject(this.getStoragesPromise(reload));
+  async _resolveStoragesBatchResolver() {
+    const ids = await this.getStoragesIds();
+    const storageFetchFunctions = ids.map((id) =>
+      () => this.getStorageDetails(id, true, true)
+    );
+    const batchResolver = BatchResolver.create({
+      promiseFunctions: storageFetchFunctions,
+      chunkSize: 20,
+    });
+    batchResolver.allFulfilled();
+    return batchResolver;
   },
 
   /**
@@ -120,32 +103,29 @@ export default Service.extend({
    * @returns {PromiseObject} resolves ClusterStorage ObjectProxy
    */
   getStorageDetails(id, reload = false, batch = false) {
-    const {
-      onepanelServer,
-      _collectionMap,
-      collectionCache,
-    } = this.getProperties('onepanelServer', '_collectionMap', 'collectionCache');
-    let record = _collectionMap[id];
+    let record = this._collectionMap[id];
     const promise = new Promise((resolve, reject) => {
       if (!reload && record != null && record.get('content') != null) {
         resolve(record);
       } else {
-        const req = onepanelServer.requestValidData(
+        const req = this.onepanelServer.requestValidData(
           'StoragesApi',
           'getStorageDetails',
           id
         );
         req.then(({ data }) => {
-          record = _collectionMap[id] =
-            (_collectionMap[id] || ObjectProxy.create({}));
+          record = this._collectionMap[id] =
+            (this._collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);
-          if (!batch) {
+          if (!batch && this.collectionCache) {
             const indexInCollection =
-              collectionCache.toArray().findIndex(record => get(record, 'id') === id);
+              this.collectionCache.toArray().findIndex(record =>
+                get(record, 'id') === id
+              );
             if (indexInCollection > -1) {
-              collectionCache[indexInCollection] = record;
+              this.collectionCache[indexInCollection] = record;
             } else {
-              collectionCache.pushObject(record);
+              this.collectionCache.pushObject(record);
             }
           }
           resolve(record);

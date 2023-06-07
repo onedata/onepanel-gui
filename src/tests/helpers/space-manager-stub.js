@@ -15,6 +15,7 @@ export default Service.extend({
     this.set('__spaces', []);
   },
 
+  // FIXME: getSpaces does not exist anymore
   getSpaces() {
     return PromiseObject.create({
       promise: new Promise(resolve => {

@@ -27,19 +27,17 @@
   {{#promise-proxy-container proxy=providerProxy}}
     {{#loading-container
       isLoading=spacesListLoading
-      errorReason=spacesProxy.reason
-      loadingLabel=(tt this "loadingSpaces")
+      errorReason=spacesBatchResolver.promiseObject.reason
+      loadingLabel=(tt this "loadingSpaces"
+        loadedCount=spacesBatchResolver.settledFunctionsCount
+        totalCount=spacesBatchResolver.totalFunctionsCount
+      )
     }}
       {{cluster-spaces-table
         spaces=paginator.activePageArray
         provider=providerProxy.content
         startRevokeSpace=(action "startRevokeSpace")
       }}
-      {{#if someSpaceIsLoading}}
-        <div class="loading-more-row">
-          {{spin-spinner-block sizeClass="sm" class="fill-middle-centered"}}
-        </div>
-      {{/if}}
       {{#if (gt paginator.pagesCount 1)}}
         {{pages-control
           class="bottom-pages-control"

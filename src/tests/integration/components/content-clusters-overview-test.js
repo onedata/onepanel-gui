@@ -13,6 +13,7 @@ const ProviderManager = Service.extend({
 });
 
 const SpaceManager = Service.extend({
+  // FIXME: getSpaces does not exist anymore
   getSpaces: notImplementedReject,
 });
 

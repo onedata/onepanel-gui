@@ -271,11 +271,12 @@ export default OnepanelServerBase.extend(
     // mockStep: installationStepsMap.oneproviderRegistration,
     // mockStep: installationStepsMap.dns,
     // mockStep: installationStepsMap.oneproviderStorageAdd,
-    mockStep: installationStepsMap.done,
+    // FIXME: changed
+    mockStep: installationStepsMap.deploy,
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
 
-    /**
+    /**kw
      * @type {computed<Boolean>}
      */
     isInitialized: false,
