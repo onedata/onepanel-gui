@@ -9,7 +9,7 @@ import nulldevice from './storage-item/nulldevice';
 import nfs from './storage-item/nfs';
 
 export default {
-  modifyBtn: 'Modify <script>alert("hello");</script>',
+  modifyBtn: 'Modify',
   modifyDisabledBtnTip: 'Current modifications have not been saved yet – use the buttons at the bottom of the form.',
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',

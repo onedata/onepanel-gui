@@ -2,7 +2,7 @@
  * A content page for managing cluster's spaces
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2021 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -12,7 +12,6 @@ import { inject as service } from '@ember/service';
 import { get, computed } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 
@@ -41,17 +40,18 @@ export default Component.extend(
     spaceToRevoke: undefined,
 
     /**
-     * @type {PromiseObject<Utils.batchResolver>}
+     * @type {PromiseObject<Utils.BatchResolver>}
      */
     spacesBatchResolverProxy: undefined,
 
+    /**
+     * @type {PromiseUpdatedObject<SpaceDetails>}
+     */
     selectedSpaceProxy: computed('selectedSpaceId', function selectedSpaceProxy() {
-      const selectedSpaceId = this.get('selectedSpaceId');
-      if (selectedSpaceId) {
-        return PromiseObject.create({
-          promise: this.spaceManager.getSpaceDetails(this.selectedSpaceId),
-        });
+      if (!this.selectedSpaceId) {
+        return;
       }
+      return this.spaceManager.getSpaceDetails(this.selectedSpaceId);
     }),
 
     /**
@@ -125,7 +125,7 @@ export default Component.extend(
         safeExec(this, 'set', 'spaceToRevoke', null);
       },
       updateSpacesData() {
-        return this.initSpacesBatchResolver();
+        return this.spaceManager.initSpacesBatchResolver();
       },
     },
   });

@@ -275,7 +275,7 @@ export default OnepanelServerBase.extend(
 
     mockInitializedCluster: reads('mockStep.isFinalStep'),
 
-    /**kw
+    /**
      * @type {computed<Boolean>}
      */
     isInitialized: false,
