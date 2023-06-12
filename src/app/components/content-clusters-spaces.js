@@ -125,7 +125,7 @@ export default Component.extend(
         safeExec(this, 'set', 'spaceToRevoke', null);
       },
       updateSpacesData() {
-        return this.spaceManager.initSpacesBatchResolver();
+        return this.initSpacesBatchResolver();
       },
     },
   });
