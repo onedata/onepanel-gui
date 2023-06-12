@@ -14,6 +14,8 @@ export default {
   modifyStorageDetails: 'Modify storage details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage',
+  // TODO: VFS-11005 Handle single load errors
+  unknown: 'unknown',
   generic: {
     id: 'Id',
     type: 'Type',

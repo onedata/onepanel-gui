@@ -2,19 +2,18 @@
  * A cluster overview page
  *
  * @author Michał Borzęcki, Jakub Liput
- * @copyright (C) 2019 ACK CYFRONET AGH
+ * @copyright (C) 2019-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 import { computed, get } from '@ember/object';
-import { union } from '@ember/object/computed';
+import { union, reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
-import { tag } from 'ember-awesome-macros';
-import { Promise } from 'rsvp';
+import { tag, promise } from 'ember-awesome-macros';
 
 export default Component.extend(
   I18n,
@@ -58,27 +57,32 @@ export default Component.extend(
      */
     providerIdInfoTriggerId: tag `${'elementId'}-provider-id-info-trigger`,
 
+    spacesBatchResolverProxy: promise.object(computed(
+      async function spacesBatchResolverProxy() {
+        return await this.spaceManager.getSpacesBatchResolver();
+      }
+    )),
+
+    spacesBatchResolver: reads('spacesBatchResolverProxy.content'),
+
     /**
      * @type {Ember.ComputedProperty<PromiseArray<SpaceDetails>>}
      */
-    spacesProxy: computed(function spacesProxy() {
+    spacesProxy: computed('spacesBatchResolverProxy', function spacesProxy() {
       return PromiseArray.create({
-        promise: this.get('spaceManager').getSpaces().then(list =>
-          Promise.all(list)
-        ),
+        promise: (async () => {
+          const spacesBatchResolver = await this.spacesBatchResolverProxy;
+          return spacesBatchResolver.promise;
+        })(),
       });
     }),
 
     /**
-     * @type {Ember.ComputedProperty<PromiseArray<StorageDetails>>}
+     * @type {ComputedProperty<PromiseObject<number>>}
      */
-    storagesProxy: computed(function storagesProxy() {
-      return PromiseArray.create({
-        promise: this.get('storageManager').getStorages().then(list =>
-          get(list, 'content')
-        ),
-      });
-    }),
+    storagesCountProxy: promise.object(computed(async function storagesCountProxy() {
+      return (await this.storageManager.getStoragesIds()).length;
+    })),
 
     /**
      * @type {Ember.ComputedProperty<Array<string>>}

@@ -2,7 +2,7 @@
  * A content page for managing cluster's spaces
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2021 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -12,14 +12,12 @@ import { inject as service } from '@ember/service';
 import { get, computed } from '@ember/object';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import { all as allFulfilled } from 'rsvp';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(
   I18n,
-  createDataProxyMixin('provider'),
-  createDataProxyMixin('spaces'), {
+  createDataProxyMixin('provider'), {
 
     classNames: ['content-clusters-spaces'],
 
@@ -41,18 +39,19 @@ export default Component.extend(
 
     spaceToRevoke: undefined,
 
-    // TODO: please forgive me for this code, it's because of lack of good cacheing
+    /**
+     * @type {PromiseObject<Utils.BatchResolver>}
+     */
+    spacesBatchResolverProxy: undefined,
+
+    /**
+     * @type {PromiseUpdatedObject<SpaceDetails>}
+     */
     selectedSpaceProxy: computed('selectedSpaceId', function selectedSpaceProxy() {
-      const selectedSpaceId = this.get('selectedSpaceId');
-      if (selectedSpaceId) {
-        return PromiseObject.create({
-          promise: this.get('spacesProxy').then(spacesProxies =>
-            allFulfilled(spacesProxies).then(spaces =>
-              spaces.findBy('id', selectedSpaceId)
-            )
-          ),
-        });
+      if (!this.selectedSpaceId) {
+        return;
       }
+      return this.spaceManager.getSpaceDetails(this.selectedSpaceId);
     }),
 
     /**
@@ -74,7 +73,7 @@ export default Component.extend(
     init() {
       this._super(...arguments);
       this.updateProviderProxy();
-      this.updateSpacesProxy();
+      this.initSpacesBatchResolver();
     },
 
     /**
@@ -84,11 +83,11 @@ export default Component.extend(
       return this.get('providerManager').getProviderDetailsProxy();
     },
 
-    /**
-     * @override
-     */
-    fetchSpaces() {
-      return this.get('spaceManager').getSpaces();
+    initSpacesBatchResolver() {
+      const batchResolverProxy = promiseObject(
+        this.spaceManager.getSpacesBatchResolver()
+      );
+      this.set('spacesBatchResolverProxy', batchResolverProxy);
     },
 
     modifySpace(id, data) {
@@ -125,8 +124,8 @@ export default Component.extend(
       closeCeaseSupportModal() {
         safeExec(this, 'set', 'spaceToRevoke', null);
       },
-      updateSpacesProxy() {
-        return this.updateSpacesProxy();
+      updateSpacesData() {
+        return this.initSpacesBatchResolver();
       },
     },
   });
