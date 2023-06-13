@@ -12,12 +12,17 @@
     }}
   {{/promise-proxy-container}}
 {{else}}
-  {{content-clusters-spaces-list
-    providerProxy=providerProxy
-    spacesProxy=spacesProxy
-    startRevokeSpace=(action "startRevokeSpace")
-    updateSpacesProxy=(action "updateSpacesProxy")
+  {{#promise-proxy-container
+    proxy=spacesBatchResolverProxy
+    spinnerBlockClass="absolute-middle-centered"
   }}
+    {{content-clusters-spaces-list
+      providerProxy=providerProxy
+      spacesBatchResolver=spacesBatchResolverProxy.content
+      startRevokeSpace=(action "startRevokeSpace")
+      updateSpacesData=(action "updateSpacesData")
+    }}
+  {{/promise-proxy-container}}
 {{/if}}
 
 {{#render-later triggerRender=spaceToRevoke}}

@@ -7,21 +7,24 @@
  */
 
 import Component from '@ember/component';
-import { observer, computed, get } from '@ember/object';
+import { observer, computed } from '@ember/object';
 import { isArray } from '@ember/array';
 import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
-import { reads, not, equal } from '@ember/object/computed';
+import { reads, equal } from '@ember/object/computed';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
+import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
+import { raw, or } from 'ember-awesome-macros';
+import { sort } from '@ember/object/computed';
 
 export default Component.extend(
   I18n,
   GlobalActions, {
-    classNames: ['content-clusters-spaces-list'],
+    classNames: ['content-clusters-spaces-list', 'content-with-pages-control'],
 
     /** @override */
     i18nPrefix: 'components.contentClustersSpacesList',
@@ -38,9 +41,9 @@ export default Component.extend(
 
     /**
      * @virtual
-     * @type {function}
+     * @type {Function}
      */
-    updateSpacesProxy: notImplementedThrow,
+    updateSpacesData: notImplementedThrow,
 
     /**
      * @virtual
@@ -49,30 +52,26 @@ export default Component.extend(
 
     /**
      * @virtual
+     * @type {Utils.BatchResolver}
      */
-    spacesProxy: undefined,
+    spacesBatchResolver: undefined,
+
+    pageSize: 25,
 
     supportSpaceOpened: false,
 
-    spaces: reads('spacesProxy.content'),
+    /**
+     * @type {Utils.ArrayPaginator}
+     */
+    paginator: undefined,
 
-    spacesListLoading: reads('spacesProxy.isPending'),
+    spaces: reads('spacesBatchResolver.promiseObject.content'),
 
-    // TODO: global list loader cannot base on someSpacesSettled because it causes
-    // to reload child components when changing single space (isLoading -> isSettled)
-    // not removing it for now, because it is a base for creating additional
-    // spinner on bottom
-    someSpaceSettled: computed('spaces.@each.isSettled', function someSpaceSettled() {
-      const spaces = this.get('spaces');
-      return spaces ? spaces.some(s => get(s, 'isSettled')) : false;
-    }),
+    sorting: Object.freeze(['name:asc']),
 
-    allSpacesSettled: computed('spaces.@each.isSettled', function allSpacesSettled() {
-      const spaces = this.get('spaces');
-      return spaces ? spaces.every(s => get(s, 'isSettled')) : false;
-    }),
+    spacesSorted: sort('spaces', 'sorting'),
 
-    someSpaceIsLoading: not('allSpacesSettled'),
+    spacesListLoading: reads('spacesBatchResolver.promiseObject.isPending'),
 
     _hasNoSpaces: equal('spaces.length', 0),
 
@@ -107,20 +106,11 @@ export default Component.extend(
      * the whole spaces list will be generated every time name and isSettled
      * are changed.
      */
-    addConflictLabels: observer(
-      'spaces.@each.{content.name}',
-      'allSpacesSettled',
-      function () {
-        const {
-          spaces,
-          allSpacesSettled,
-        } = this.getProperties('spaces', 'allSpacesSettled');
-        if (isArray(spaces) && allSpacesSettled) {
-          addConflictLabels(
-            spaces
-            .filterBy('isFulfilled')
-            .mapBy('content')
-          );
+    autoAddConflictLabels: observer(
+      'spaces.@each.name',
+      function autoAddConflictLabels() {
+        if (isArray(this.spaces)) {
+          addConflictLabels(this.spaces);
         }
       }
     ),
@@ -130,6 +120,16 @@ export default Component.extend(
         this.set('supportSpaceOpened', true);
       }
     }),
+
+    init() {
+      this._super(...arguments);
+      this.set('paginator', ArrayPaginator.extend({
+        array: or('parent.spacesSorted', raw([])),
+        pageSize: reads('parent.pageSize'),
+      }).create({
+        parent: this,
+      }));
+    },
 
     /**
      * @param {Object} supportSpaceData
@@ -151,7 +151,7 @@ export default Component.extend(
         return this.supportSpace(supportSpaceData)
           .then(() => {
             safeExec(this, 'set', 'supportSpaceOpened', false);
-            scheduleOnce('afterRender', () => this.get('updateSpacesProxy')());
+            scheduleOnce('afterRender', () => this.get('updateSpacesData')());
             globalNotify.info(
               this.t('supportSuccess')
             );

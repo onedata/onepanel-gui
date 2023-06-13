@@ -93,8 +93,13 @@
           customLink=(concat "/ozw/onezone/i#/onedata/data/" cluster.serviceId)
           moreText=(tt this "showOnMap")
           title=(tt this "oneproviderTileTitle")}} --}}
-        {{cluster-spaces-tile providerIdProxy=providerIdProxy spacesProxy=spacesProxy}}
-        {{cluster-storages-tile storagesProxy=storagesProxy}}
+        {{cluster-spaces-tile
+          providerIdProxy=providerIdProxy
+          spacesProxy=spacesProxy
+          loadedSpacesCount=spacesBatchResolver.settledFunctionsCount
+          totalSpacesCount=spacesBatchResolver.totalFunctionsCount
+        }}
+        {{cluster-storages-tile storagesCountProxy=storagesCountProxy}}
       {{/if}}
     </div>
   </div>

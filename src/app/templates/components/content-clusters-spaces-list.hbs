@@ -1,8 +1,15 @@
 <div class="row content-row header-row hidden-xs">
-  <h1 class="with-menu">
-    <span class="one-label">
-      {{tt this "spaces"}}
-    </span>
+  <h1 class="with-pages-control">
+    <span class="one-label">{{tt this "spaces"}}</span>
+    {{#if (gt paginator.pagesCount 1)}}
+      {{pages-control
+        activePageNumber=paginator.activePageNumber
+        pagesCount=paginator.pagesCount
+        pageSize=paginator.pageSize
+        hasPageNumberInput=(not (or (media "isTablet") (media "isMobile")))
+        onPageChange=paginator.changeActivePageNumber
+      }}
+    {{/if}}
     {{actions-toolbar actionsArray=globalActions}}
   </h1>
 </div>
@@ -18,16 +25,27 @@
     {{/if}}
   </div>
   {{#promise-proxy-container proxy=providerProxy}}
-    {{#loading-container isLoading=spacesListLoading errorReason=spacesProxy.reason}}
+    {{#loading-container
+      isLoading=spacesListLoading
+      errorReason=spacesBatchResolver.promiseObject.reason
+      loadingLabel=(tt this "loadingSpaces"
+        loadedCount=spacesBatchResolver.settledFunctionsCount
+        totalCount=spacesBatchResolver.totalFunctionsCount
+      )
+    }}
       {{cluster-spaces-table
-        spaces=spaces
+        spaces=paginator.activePageArray
         provider=providerProxy.content
         startRevokeSpace=(action "startRevokeSpace")
       }}
-      {{#if someSpaceIsLoading}}
-        <div class="loading-more-row">
-          {{spin-spinner-block sizeClass="sm" class="fill-middle-centered"}}
-        </div>
+      {{#if (gt paginator.pagesCount 1)}}
+        {{pages-control
+          class="bottom-pages-control"
+          activePageNumber=paginator.activePageNumber
+          pagesCount=paginator.pagesCount
+          pageSize=paginator.pageSize
+          onPageChange=paginator.changeActivePageNumber
+        }}
       {{/if}}
     {{/loading-container}}
   {{/promise-proxy-container}}

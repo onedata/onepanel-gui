@@ -17,16 +17,14 @@
 {{/if}}
 
 {{#one-collapsible-list as |list|}}
-  {{#each storagesSorted key="id" as |storageProxy|}}
-    {{#if storageProxy.isFulfilled}}
-      {{#list.item as |listItem|}}
-        {{storage-item
-          listItem=listItem
-          storageProxy=storageProxy.content
-          spaces=spaces
-          submitModifyStorage=submitModifyStorage
-          removeStorage=(action removeStorage storageProxy.content.content)}}
-      {{/list.item}}
-    {{/if}}
+  {{#each storages key="id" as |storage|}}
+    {{#list.item as |listItem|}}
+      {{storage-item
+        listItem=listItem
+        storageProxy=storage
+        spaces=spaces
+        submitModifyStorage=submitModifyStorage
+        removeStorage=(action removeStorage storage.content)}}
+    {{/list.item}}
   {{/each}}
 {{/one-collapsible-list}}
