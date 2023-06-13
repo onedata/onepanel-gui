@@ -2,13 +2,13 @@
  * List of spaces supported by some storage with support sizes
  *
  * @author Jakub Liput
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 
-import { oneWay } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import EmberObject, { get, computed } from '@ember/object';
 import { A } from '@ember/array';
@@ -29,7 +29,7 @@ export default Component.extend({
   /**
    * To inject.
    * List of spaces, can be full list of spaces or only supported by the storage
-   * @type {Array.Onepanel.SpaceDetails}
+   * @type {Array<Onepanel.SpaceDetails>}
    */
   spaces: null,
 
@@ -43,27 +43,19 @@ export default Component.extend({
    * Used for checking what support is local
    * @type {String}
    */
-  providerId: oneWay('providerManager.providerDetails.id'),
+  providerId: reads('providerManager.providerDetails.id'),
 
   /**
    * List of spaces supported by this storage (filtered list of spaces)
    * @type {Array.Onepanel.SpaceDetails}
    */
-  supportedSpaces: computed('spaces.@each.isFulfilled', function () {
-    const {
-      spaces,
-      storageId,
-    } = this.getProperties('spaces', 'storageId');
-
-    return spaces.filter(spaceProxy => {
-      if (spaceProxy.get('isFulfilled')) {
-        // if there will be more than one local storage per space,
-        // localStorages array can be used instead of storageId
-        const localStorage = spaceProxy.get('content.storageId');
-        return localStorage && localStorage === storageId;
-      } else {
-        return false;
-      }
+  supportedSpaces: computed('spaces', function () {
+    const storageId = this.storageId;
+    return this.spaces.filter(space => {
+      // if there will be more than one local storage per space,
+      // localStorages array can be used instead of storageId
+      const localStorageId = get(space, 'storageId');
+      return localStorageId && localStorageId === storageId;
     });
   }),
 

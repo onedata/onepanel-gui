@@ -4,14 +4,14 @@
  * Does not provide or invoke backend operations itself - invokes ``submit`` action.
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { inject as service } from '@ember/service';
 import { reads } from '@ember/object/computed';
 import { observer, getProperties } from '@ember/object';
-import { Promise } from 'rsvp';
+import { all as allFulfilled } from 'rsvp';
 import _ from 'lodash';
 
 import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
@@ -161,17 +161,22 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   },
 
   initStoragesProxy() {
-    const {
-      storageManager,
-      spaceManager,
-    } = this.getProperties('storageManager', 'spaceManager');
+    const storagesPromise = (async () => {
+      const batchResolver = await this.storageManager.getStoragesBatchResolver();
+      if (!batchResolver.promise) {
+        batchResolver.allFulfilled();
+      }
+      return batchResolver.promise;
+    })();
+    const spacesPromise = (async () => {
+      const batchResolver = await this.spaceManager.getSpacesBatchResolver();
+      if (!batchResolver.promise) {
+        batchResolver.allFulfilled();
+      }
+      return batchResolver.promise;
+    })();
 
-    const storagesPromise = storageManager.getStorages()
-      .then(list => Promise.all(list.toArray()));
-    const spacesPromise = spaceManager.getSpaces()
-      .then(list => Promise.all(list.toArray()));
-
-    const storagesProxyPromise = Promise.all([storagesPromise, spacesPromise])
+    const storagesProxyPromise = allFulfilled([storagesPromise, spacesPromise])
       .then(([storages, spaces]) => {
         const supportingStoragesIds = spaces.mapBy('storageId').compact();
 

@@ -1,8 +1,6 @@
-import { A } from '@ember/array';
 import Service from '@ember/service';
-import ArrayProxy from '@ember/array/proxy';
 import { Promise } from 'rsvp';
-
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Service.extend({
@@ -16,15 +14,15 @@ export default Service.extend({
     this.set('__storages', {});
   },
 
-  getStorages() {
-    return PromiseObject.create({
-      promise: new Promise(resolve => {
-        const storageDetailsList = A();
-        for (const storageId in this.get('__storages')) {
-          storageDetailsList.push(this.getStorageDetails(storageId));
-        }
-        resolve(ArrayProxy.create({ content: storageDetailsList }));
-      }),
+  async getStoragesBatchResolver() {
+    const fetchFunctions = Object.keys(this.__storages).map(storageId => {
+      return () => {
+        return this.getStorageDetails(storageId);
+      };
+    });
+    return BatchResolver.create({
+      promiseFunctions: fetchFunctions,
+      chunkSize: 20,
     });
   },
 

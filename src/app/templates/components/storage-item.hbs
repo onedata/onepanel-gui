@@ -9,7 +9,12 @@
     {{/one-tooltip}}
   </span>
   <span class="one-label storage-name">
-    {{name-conflict item=storage}}
+    {{#if storage.name}}
+      {{name-conflict item=storage}}
+    {{else}}
+     {{!-- TODO: VFS-11005 Handle single load errors  --}}
+      <em>{{tt this "unknown"}}</em>
+    {{/if}}
   </span>
   <div class="btn-toolbar">
     <span clas="btn-tooltip-container">

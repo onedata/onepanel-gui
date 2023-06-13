@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
-import { array } from 'ember-awesome-macros';
 
 /**
  * Creates component for displaying cluster storages.
@@ -14,7 +13,7 @@ export default Component.extend({
 
   /**
    * @virtual
-   * @type {ObjectProxy.Array.ObjectProxy.Onepanel.StorageDetails}
+   * @type {Ember.ArrayProxy<Ember.ObjectProxy<Onepanel.StorageGetDetails>>}
    */
   storages: null,
 
@@ -23,11 +22,6 @@ export default Component.extend({
    * @type {Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>}
    */
   spaces: null,
-
-  /**
-   * @type {ComputedProperty<Array<PromiseObject<StorageDetails>>>}
-   */
-  storagesSorted: array.sort('storages', ['name', 'conflictLabel']),
 
   spacesLoadError: computed('spaces.@each.isRejected', function () {
     const spaces = this.get('spaces');

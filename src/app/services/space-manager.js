@@ -2,21 +2,20 @@
  * Provides backend operations for spaces in onepanel
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { A } from '@ember/array';
-
 import Service, { inject as service } from '@ember/service';
 import { Promise, resolve } from 'rsvp';
-import { get } from '@ember/object';
+import { get, set, computed } from '@ember/object';
+import { bool } from 'ember-awesome-macros';
 import Onepanel from 'onepanel';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import PromiseUpdatedObject from 'onedata-gui-common/utils/promise-updated-object';
 import emberObjectReplace from 'onedata-gui-common/utils/ember-object-replace';
-import _ from 'lodash';
+import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
 
 const {
   SpaceSupportRequest,
@@ -29,72 +28,139 @@ export default Service.extend({
   onepanelServer: service(),
 
   /**
-   * Stores collection of all fetched spaces
-   * @type {PromiseObject}
+   * State of global `spacesBatchResolver` to use globally in application.
+   * It must be initialized first which is done by using `getSpacesBatchResolver` method.
+   * @type {PromiseObject<Utils.BatchResolver>}
    */
-  spacesCache: PromiseObject.create(),
+  spacesBatchResolverProxy: undefined,
+
+  isSpacesCacheInitialized: bool('spacesBatchResolverProxy'),
+
+  /**
+   * Global cache of loaded spaces.
+   * @type {ComputedProperty<PromiseUpdatedObject<Array<PromiseUpdatedObject<SpaceDetails>>>>}
+   */
+  spacesCache: computed(
+    'spacesBatchResolverProxy.content.promise',
+    function spacesCache() {
+      const spacePromiseObjectsArrayPromise = (async () => {
+        const spacesBatchResolver = await this.getSpacesBatchResolver(false);
+        const spaces = await spacesBatchResolver.promise;
+        return spaces.map((space) =>
+          PromiseUpdatedObject.create({ promise: resolve(space) })
+        );
+      })();
+
+      return PromiseUpdatedObject.create({
+        promise: spacePromiseObjectsArrayPromise,
+      });
+    }
+  ),
 
   reportsCache: Object.freeze({}),
+
+  /**
+   * @type {Utils.BatchResolver}
+   */
+  spacesBatchResolver: null,
 
   init() {
     this._super(...arguments);
     this.set('reportsCache', {});
+    this.set('spacesBatchResolverProxy', PromiseObject.create());
   },
 
   /**
    * @param {boolean} reload if true, force request to server even if there is cache
-   * @returns {PromiseObject<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   * @returns {PromiseObject<Utils.BatchResolver>}
    */
-  getSpaces(reload = true) {
-    const spacesCache = this.get('spacesCache');
-    if (reload || !get(spacesCache, 'content')) {
-      spacesCache.set('promise', this._getSpaces());
+  async getSpacesBatchResolver(reload = true) {
+    let batchResolverPromise;
+    if (reload || !get(this.spacesBatchResolverProxy, 'content')) {
+      batchResolverPromise = this._resolveSpacesBatchResolver();
+      this.spacesBatchResolverProxy.set('promise', batchResolverPromise);
     }
-    return spacesCache;
+    return this.spacesBatchResolverProxy;
   },
 
   /**
-   * @returns {Promise<Ember.Array<PromiseUpdatedObject<OnepanelGui.SpaceDetails>>>}
+   * The batch resolver will resolve array of `OnepanelGui.SpaceDetails`.
+   * @returns {Utils.BatchResolver}
    */
-  _getSpaces() {
-    const onepanelServer = this.get('onepanelServer');
-    return onepanelServer.requestValidData(
-      'SpaceSupportApi',
-      'getProviderSpaces'
-    ).then(({ data: { ids } }) => {
-      return A(ids.map(id => this.getSpaceDetails(id)));
+  async _resolveSpacesBatchResolver() {
+    const providerSpacesData = await this.onepanelServer
+      .requestValidData(
+        'SpaceSupportApi',
+        'getProviderSpaces'
+      );
+    const ids = providerSpacesData.data.ids;
+    const fetchFunctions = ids.map((id) =>
+      async () => {
+        try {
+          return await this._getSpaceDetails(id);
+        } catch (error) {
+          // TODO: VFS-11005 Handle single load errors or remove this code
+          return SpaceDetails.create({
+            name: '<error>',
+            supportingProviders: {},
+            isRejected: true,
+          });
+        }
+      }
+    );
+    const batchResolver = BatchResolver.create({
+      promiseFunctions: fetchFunctions,
+      chunkSize: 20,
     });
+    batchResolver.allFulfilled();
+    return batchResolver;
   },
 
   /**
    * Update record inside created spaces collection
-   * Requires former usage of `getSpaces`!
+   * Requires former usage of `getSpacesBatchResolver`!
    * @param {string} spaceId space with this ID will be updated
    * @returns {Promise<OnepanelGui.SpaceDetails>}
    */
-  updateSpaceDetailsCache(spaceId) {
-    const cacheArray = this.get('spacesCache.content');
-    const spaceCacheProxy = _.find(
-      cacheArray,
-      s => get(s, 'content.id') === spaceId
-    );
-    const spaceCache = get(spaceCacheProxy, 'content');
+  async updateSpaceDetailsCache(spaceId) {
+    /** @type {Array<PromiseUpdatedObject<SpaceDetails>>} */
+    const cacheArray = await this.spacesCache;
+    if (!cacheArray) {
+      return;
+    }
+    /** @type {PromiseUpdatedObject<SpaceDetails>} */
+    const spaceProxy = cacheArray.find(space => get(space, 'content.id') === spaceId);
+    if (!spaceProxy) {
+      return;
+    }
+    const cachedSpace = get(spaceProxy, 'content');
     const promise = this._getSpaceDetails(spaceId)
-      .then(spaceDetails => {
-        return emberObjectReplace(spaceCache, spaceDetails);
+      .then(freshSpaceDetails => {
+        return emberObjectReplace(cachedSpace, freshSpaceDetails);
       });
-    spaceCacheProxy.set('promise', promise);
-    return promise;
+    set(spaceProxy, 'promise', promise);
+    return await promise;
   },
 
   /**
    * Fetch details of space support with given ID
    *
    * @param {string} id
-   * @returns {PromiseUpdatedObject} resolves SpaceDetails object
+   * @returns {PromiseUpdatedObject<SpaceDetails>}
    */
   getSpaceDetails(id) {
-    return PromiseUpdatedObject.create({ promise: this._getSpaceDetails(id) });
+    if (this.isSpacesCacheInitialized) {
+      const spacePromiseObjectResolver = (async () => {
+        const spacesCache = await this.spacesCache;
+        const cachedSpace = spacesCache.find(spacePromiseObject =>
+          get(spacePromiseObject, 'id') === id
+        );
+        return cachedSpace ?? this._getSpaceDetails(id);
+      })();
+      return PromiseUpdatedObject.create({ promise: spacePromiseObjectResolver });
+    } else {
+      return PromiseUpdatedObject.create({ promise: this._getSpaceDetails(id) });
+    }
   },
 
   /**

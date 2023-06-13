@@ -16,7 +16,7 @@
           {{tt this "tabs.signInNotification.header"}}
           {{#if guiSettingsManager.signInNotificationEmptyError}}
             <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
-            {{#unless media.isMobile}}
+            {{#unless (media "isMobile")}}
               {{one-tooltip
                 title=(tt this "tabs.signInNotification.emptyContentTabWarning")
                 triggerElement=".sign-in-notification-item .warning-icon"
@@ -33,7 +33,7 @@
           {{tt this "tabs.privacyPolicy.header"}}
           {{#if guiSettingsManager.privacyPolicyEmptyError}}
             <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
-            {{#unless media.isMobile}}
+            {{#unless (media "isMobile")}}
               {{one-tooltip
                 title=(tt this "tabs.privacyPolicy.emptyContentTabWarning")
                 triggerElement=".privacy-policy-item .warning-icon"
@@ -50,7 +50,7 @@
           {{tt this "tabs.termsOfUse.header"}}
           {{#if guiSettingsManager.termsOfUseEmptyError}}
             <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
-            {{#unless media.isMobile}}
+            {{#unless (media "isMobile")}}
               {{one-tooltip
                 title=(tt this "tabs.termsOfUse.emptyContentTabWarning")
                 triggerElement=".terms-of-use-item .warning-icon"
@@ -65,7 +65,7 @@
           {{tt this "tabs.cookieConsentNotification.header"}}
           {{#if guiSettingsManager.cookieConsentNotificationEmptyError}}
             <img class="warning-icon" src={{root-url "assets/images/sign-warning-large.svg"}}>
-            {{#unless media.isMobile}}
+            {{#unless (media "isMobile")}}
               {{one-tooltip
                 title=(tt this "tabs.cookieConsentNotification.emptyContentTabWarning")
                 triggerElement=".cookie-consent-notification-item .warning-icon"
