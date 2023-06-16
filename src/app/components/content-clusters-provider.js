@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable promise/no-return-in-finally */
-
 /**
  * A content page for managing registration data of provider
  *
@@ -304,6 +301,7 @@ export default Component.extend(
             safeExec(this, 'set', '_editing', false);
             return this.updateProviderProxy();
           })
+          /* eslint-disable-next-line promise/no-return-in-finally */
           .finally(() => {
             safeExec(this, 'set', '_submitting', false);
             const {
