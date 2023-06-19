@@ -254,7 +254,7 @@ export default Component.extend(
        * @param {number} data.getLatitude
        * @returns {Promise<any>} ProviderManager.modifyProvider promise
        */
-      submitModify(data) {
+      async submitModify(data) {
         const {
           globalNotify,
           providerManager,
@@ -274,45 +274,43 @@ export default Component.extend(
           'geoLatitude'
         );
         this.set('_submitting', true);
-        return providerManager.modifyProvider(modifyProviderData)
-          .catch(errorResponse => {
-            const nestedError = extractNestedError(
-              get(errorResponse, 'response.body.error')
+
+        try {
+          await providerManager.modifyProvider(modifyProviderData);
+          globalNotify.info(this.t('modifySuccess'));
+          safeExec(this, 'set', '_editing', false);
+          await this.updateProviderProxy();
+        } catch (errorResponse) {
+          const nestedError = extractNestedError(
+            get(errorResponse, 'response.body.error')
+          );
+          const isSubdomainReservedError = nestedError &&
+            get(nestedError, 'id') === 'badValueIdentifierOccupied' &&
+            get(nestedError, 'details.key') === 'subdomain';
+          if (isSubdomainReservedError) {
+            safeExec(
+              this,
+              'set',
+              '_excludedSubdomains',
+              _excludedSubdomains.concat(data.subdomain)
             );
-            const isSubdomainReservedError = nestedError &&
-              get(nestedError, 'id') === 'badValueIdentifierOccupied' &&
-              get(nestedError, 'details.key') === 'subdomain';
-            if (isSubdomainReservedError) {
-              safeExec(
-                this,
-                'set',
-                '_excludedSubdomains',
-                _excludedSubdomains.concat(data.subdomain)
-              );
-            }
-            globalNotify.backendError(
-              this.t('providerDataModification'),
-              errorResponse
-            );
-            throw errorResponse;
-          })
-          .then(() => {
-            globalNotify.info(this.t('modifySuccess'));
-            safeExec(this, 'set', '_editing', false);
-            return this.updateProviderProxy();
-          })
-          /* eslint-disable-next-line promise/no-return-in-finally */
-          .finally(() => {
-            safeExec(this, 'set', '_submitting', false);
-            const {
-              guiUtils,
-              clusterModelManager,
-            } = this.getProperties('guiUtils', 'clusterModelManager');
-            return guiUtils.updateGuiNameProxy({ replace: true })
-              .then(() => clusterModelManager.updateClustersProxy({
-                replace: true,
-              }));
+          }
+          globalNotify.backendError(
+            this.t('providerDataModification'),
+            errorResponse
+          );
+          throw errorResponse;
+        } finally {
+          safeExec(this, 'set', '_submitting', false);
+          const {
+            guiUtils,
+            clusterModelManager,
+          } = this.getProperties('guiUtils', 'clusterModelManager');
+          await guiUtils.updateGuiNameProxy({ replace: true });
+          await clusterModelManager.updateClustersProxy({
+            replace: true,
           });
+        }
       },
 
       changeDomain() {
