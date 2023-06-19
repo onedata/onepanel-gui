@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * Mocks live statistics and status changes for storage import
  *
@@ -147,9 +144,7 @@ export default Mixin.create({
   },
 
   generateStorageImportStats(space, period, metrics) {
-    if (typeof metrics === 'string') {
-      metrics = metrics.split(',');
-    }
+    const metricsArray = typeof metrics === 'string' ? metrics.split(',') : metrics;
     if (get(space, 'storageImport') == null) {
       return null;
     } else {
@@ -161,8 +156,8 @@ export default Mixin.create({
         'lastValueDate'
       );
 
-      if (period && metrics) {
-        return _.zipObject(metrics, metrics.map(metric => ({
+      if (period && metricsArray) {
+        return _.zipObject(metricsArray, metricsArray.map(metric => ({
           values: allStats[period][metric],
           lastValueDate: lastValueDate.toJSON(),
         })));

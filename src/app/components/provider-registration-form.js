@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * A view to create, show or edit registered provider details
  *
@@ -499,25 +496,25 @@ export default OneForm.extend(Validations, I18n, {
       subdomainDelegationSupported,
     } = this.getProperties('provider', 'subdomainDelegationSupported');
 
-    field = EmberObject.create(field);
-    const name = field.get('name');
+    const preparedField = EmberObject.create(field);
+    const name = preparedField.get('name');
 
     if (name === 'subdomain') {
-      field.set('rightText', '.' + this.get('onezoneDomain'));
+      preparedField.set('rightText', '.' + this.get('onezoneDomain'));
     }
     if (provider) {
       const subdomainDelegation = get(provider, 'subdomainDelegation');
-      const value = get(provider, field.get('name'));
+      const value = get(provider, preparedField.get('name'));
       if (value === undefined) {
-        if (field.get('defaultValue') === undefined) {
-          field.set('defaultValue', null);
+        if (preparedField.get('defaultValue') === undefined) {
+          preparedField.set('defaultValue', null);
         }
       } else {
-        field.set('defaultValue', value);
+        preparedField.set('defaultValue', value);
       }
       if (name === 'subdomainDelegation') {
         if (!subdomainDelegation && subdomainDelegationSupported === false) {
-          field.setProperties({
+          preparedField.setProperties({
             defaultValue: false,
             disabled: true,
             lockHint: this.t('fields.subdomainDelegation.lockHint'),
@@ -525,22 +522,22 @@ export default OneForm.extend(Validations, I18n, {
         }
       }
       if (name === 'domain' && subdomainDelegation) {
-        field.set('defaultValue', null);
+        preparedField.set('defaultValue', null);
       }
     } else if (this.get('mode') === 'new') {
       if (name === 'subdomainDelegation') {
-        field.setProperties({
+        preparedField.setProperties({
           defaultValue: subdomainDelegationSupported,
           disabled: !subdomainDelegationSupported,
           lockHint: this.t('fields.subdomainDelegation.lockHint'),
         });
       }
     }
-    field.set('name', `${prefix}.${field.get('name')}`);
+    preparedField.set('name', `${prefix}.${preparedField.get('name')}`);
     if (isStatic) {
-      field.set('type', 'static');
+      preparedField.set('type', 'static');
     }
-    return field;
+    return preparedField;
   },
 
   /**
