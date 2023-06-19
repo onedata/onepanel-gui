@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * Provides form for showing and creating osd settings.
  *
@@ -383,7 +380,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       tip,
     } = getProperties(field, 'type', 'name', 'tip');
 
-    field = Object.assign({}, field, {
+    const preparedField = Object.assign({}, field, {
       name: `${prefix}.${name}`,
       label: this.t(`fields.${name}.label`),
       type: isStatic ? 'static' : type,
@@ -391,7 +388,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
       tip: (tip && !isStatic) ? this.t(`fields.${name}.tip`) : undefined,
     });
     if ((type === 'radio-group' || type === 'dropdown') && !isStatic) {
-      set(field, 'options', get(field, 'options').map(option => {
+      set(preparedField, 'options', get(preparedField, 'options').map(option => {
         const label = get(option, 'label');
         return Object.assign({}, option, {
           label: label ?
@@ -399,7 +396,7 @@ export default OneForm.extend(I18n, buildValidations(validationsProto), {
         });
       }));
     }
-    return EmberObject.create(field);
+    return EmberObject.create(preparedField);
   },
 
   /**

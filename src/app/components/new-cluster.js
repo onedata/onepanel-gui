@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * Renders new cluster deployment process (steps bar and their content)
  *
@@ -267,12 +264,13 @@ export default Component.extend(I18n, {
    */
   getNextStep(step) {
     const visibleSteps = this.get('visibleSteps');
+    let closestVisibleStep = step;
     if (!visibleSteps.includes(step)) {
       // If passed step is hidden, then fallback to the nearest previous visible
       // step
-      step = this.getPrevStep(step);
+      closestVisibleStep = this.getPrevStep(step);
     }
-    return visibleSteps[visibleSteps.indexOf(step) + 1];
+    return visibleSteps[visibleSteps.indexOf(closestVisibleStep) + 1];
   },
 
   /**

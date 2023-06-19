@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * Provides information and methods for this app to cooperate with
  * Onezone GUI app hosted on the same domain.
@@ -87,9 +84,7 @@ export default Service.extend(
       redirectType: 'onezone_route',
     }) {
       const onezoneOrigin = this.get('onezoneOrigin');
-      if (!clusterId) {
-        clusterId = this.get('onepanelConfiguration.clusterId');
-      }
+      const effClusterId = clusterId ?? this.get('onepanelConfiguration.clusterId');
 
       switch (redirectType) {
         case 'direct':
@@ -103,10 +98,10 @@ export default Service.extend(
           return getOnezoneUrl(
             onezoneOrigin,
             // NOTE: "#"" is encoded to %23 to be handled by transition query params
-            `/?redirect_url=/${onepanelAbbrev}/${clusterId}/i%23${internalRoute}`
+            `/?redirect_url=/${onepanelAbbrev}/${effClusterId}/i%23${internalRoute}`
           );
         case 'onezone_route':
-          return getOnezoneUrl(onezoneOrigin, `onedata/clusters/${clusterId}`);
+          return getOnezoneUrl(onezoneOrigin, `onedata/clusters/${effClusterId}`);
         default:
           throw new Error(
             `service: onezone-gui Unsupported redirectType: ${redirectType}`

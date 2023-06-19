@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * Mock for REST backend of onepanel
  *
@@ -1849,10 +1846,8 @@ function computedResourceGetHandler(storeProperty, defaultData) {
         if (record) {
           return record;
         } else {
-          if (typeof defaultData === 'function') {
-            defaultData = defaultData.bind(self)();
-          }
-          return defaultData;
+          return (typeof defaultData === 'function') ?
+            defaultData.bind(self)() : defaultData;
         }
       },
     };

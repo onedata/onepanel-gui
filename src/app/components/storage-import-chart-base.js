@@ -1,6 +1,3 @@
-// TODO: VFS-9257 fix eslint issues in this file
-/* eslint-disable no-param-reassign */
-
 /**
  * A base component for all space import/update import statistics charts.
  * Needs timeStats (chart data), lastUpdateTime and timeUnit to be injected.
@@ -101,7 +98,7 @@ export default Component.extend(StorageImportChartDataValidator, {
   },
 
   getChartLabel(offset) {
-    let {
+    const {
       lastUpdateTime,
       timeFormat,
       timePeriod,
@@ -110,13 +107,16 @@ export default Component.extend(StorageImportChartDataValidator, {
       'lastUpdateTime',
       'timeFormat',
       'timePeriod',
-      'timeUnit');
+      'timeUnit'
+    );
+    let effTimeUnit = timeUnit;
+    let effOffset = offset;
     if (timeUnit === 'day') {
-      timeUnit = 'hour';
-      offset *= 24;
+      effTimeUnit = 'hour';
+      effOffset *= 24;
     }
     return moment(lastUpdateTime)
-      .subtract(offset * timePeriod, timeUnit + 's')
+      .subtract(effOffset * timePeriod, effTimeUnit + 's')
       .format(timeFormat);
   },
 
