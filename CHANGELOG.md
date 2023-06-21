@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11081 Fixed incorrectly closing alert modals
 * VFS-8257 Added closing modal on transition
 * VFS-9257 Fixed ignored eslint issues
 * VFS-10875 Handling large amount of storages and spaces in Oneprovider panel
