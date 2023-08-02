@@ -81,7 +81,10 @@
                   onMouseLeave={{action "toggleImportDetailsHovered" false}}
                 >
                   <strong class="detail-label">
-                    {{detail.label}} {{one-label-tip title=detail.tip}}
+                    {{detail.label}}
+                    {{#if detail.tip}}
+                      {{one-label-tip title=detail.tip}}
+                    {{/if}}
                   </strong>
                   <span class="detail-value">{{detail.value}}</span>
                 </div>
