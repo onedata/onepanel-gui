@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-10480 Changed files to items in auto import scan report
 * VFS-9303 Removed "over-modals" class from popover usages
 * VFS-11081 Fixed incorrectly closing alert modals
 * VFS-8257 Added closing modal on transition
