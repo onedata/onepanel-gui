@@ -149,17 +149,17 @@ export default Component.extend(...componentMixins, {
         }
       });
       details.push({
-        label: this.t('importDetails.processedItems'),
+        label: this.t('importDetails.processedFiles'),
         value: formatNumber(
           [createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles]
         ),
-        tip: this.t('importDetails.processedItemsTip'),
+        tip: this.t('importDetails.processedFilesTip'),
         classNames: 'processed-counter-related',
         highlightOnHover: 'processed-counter-related',
       }, {
-        label: this.t('importDetails.totalStorageItems'),
+        label: this.t('importDetails.totalStorageFiles'),
         value: formatNumber([createdFiles + modifiedFiles + unmodifiedFiles]),
-        tip: this.t('importDetails.totalStorageItemsTip'),
+        tip: this.t('importDetails.totalStorageFilesTip'),
         classNames: 'storage-counter-related',
         highlightOnHover: 'storage-counter-related',
       });
