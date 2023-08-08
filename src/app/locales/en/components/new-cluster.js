@@ -8,7 +8,6 @@ export default {
   steps: {
     oneprovider: {
       deploy,
-      oneproviderCeph: 'ceph configuration',
       ips,
       oneproviderRegistration: 'Oneprovider registration',
       webCert,

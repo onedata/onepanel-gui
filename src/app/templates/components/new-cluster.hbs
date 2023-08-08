@@ -12,13 +12,6 @@
           nextStep=(action "next")
           stepData=stepData
           deploymentTaskId=deploymentTaskId
-          cephChanged=(action (mut showCephStep))
-        }}
-      {{else if (eq w.step.name "oneproviderCeph")}}
-        {{new-cluster-ceph
-          nextStep=(action "next")
-          prevStep=(action "prev")
-          stepData=stepData
         }}
       {{else if (eq w.step.name "ips")}}
         {{new-cluster-ips

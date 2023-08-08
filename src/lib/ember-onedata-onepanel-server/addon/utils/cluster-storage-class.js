@@ -18,8 +18,6 @@ const {
   CephModify,
   Cephrados,
   CephradosModify,
-  Embeddedceph,
-  EmbeddedcephModify,
   Swift,
   SwiftModify,
   Glusterfs,
@@ -50,8 +48,6 @@ function clusterStorageClass(storageType, modify = false) {
       return modify ? CephModify : Ceph;
     case 'cephrados':
       return modify ? CephradosModify : Cephrados;
-    case 'embeddedceph':
-      return modify ? EmbeddedcephModify : Embeddedceph;
     case 'posix':
       return modify ? PosixModify : Posix;
     case 'swift':

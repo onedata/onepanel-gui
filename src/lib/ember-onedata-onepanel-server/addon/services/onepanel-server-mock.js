@@ -1279,112 +1279,6 @@ export default OnepanelServerBase.extend(
       };
     }),
 
-    _req_CephApi_getCephStatus: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({
-            level: 'warning',
-            messages: [
-              'MON_DISK_LOW: mons dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local,dev-oneprovider-krakow-1.dev-oneprovider-krakow.default.svc.cluster.local are low on available space',
-            ],
-          }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephUsage: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({
-            osds: this.get('__cephOsdUsage'),
-            pools: this.get('__cephPoolsUsage'),
-          }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephManagers: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({ managers: this.get('__cephManagers').toArray() }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephMonitors: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({ monitors: this.get('__cephMonitors').toArray() }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephOsds: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({ osds: this.get('__cephOsds').toArray() }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephParams: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => this.get('__cephParams').plainCopy(),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getCephPools: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({ pools: this.get('__cephPools').toArray() }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
-    _req_CephApi_getBlockDevices: computed(function () {
-      return serviceTypeDependentResponse({
-        onezone: {
-          statusCode: () => 406,
-        },
-        oneprovider: {
-          success: () => ({
-            blockDevices: this.get('__blockDevices').toArray(),
-          }),
-          statusCode: () => 200,
-        },
-      });
-    }),
-
     // TODO: maybe implement real
     _req_OneproviderClusterApi_modifyProviderClusterIps() {
       return {
@@ -1664,59 +1558,37 @@ export default OnepanelServerBase.extend(
 
     __webCert: defaultWebCert,
 
-    __configuration: computed(
-      '__cephParams',
-      '__cephManagers',
-      '__cephMonitors',
-      '__cephOsds',
-      function __configuration() {
-        const {
-          __cephParams,
-          __cephManagers,
-          __cephMonitors,
-          __cephOsds,
-        } = this.getProperties(
-          '__cephParams',
-          '__cephManagers',
-          '__cephMonitors',
-          '__cephOsds'
-        );
-        const configuration = {
-          cluster: {
-            databases: {
-              hosts: ['node1.example.com'],
-            },
-            managers: {
-              mainHost: 'node2.example.com',
-              hosts: ['node1.example.com', 'node2.example.com'],
-            },
-            workers: {
-              hosts: ['node2.example.com'],
-            },
+    __configuration: computed(function __configuration() {
+      const configuration = {
+        cluster: {
+          databases: {
+            hosts: ['node1.example.com'],
           },
-        };
-        if (mockServiceType === 'oneprovider') {
-          Object.assign(configuration, {
-            oneprovider: {
-              name: null,
-            },
-            ceph: Object.assign(__cephParams.plainCopy(), {
-              managers: __cephManagers,
-              monitors: __cephMonitors,
-              osds: __cephOsds,
-            }),
-          });
-        } else {
-          Object.assign(configuration, {
-            onezone: {
-              name: null,
-              domainName: globals.location.hostname,
-            },
-          });
-        }
-        return PlainableObject.create(configuration);
+          managers: {
+            mainHost: 'node2.example.com',
+            hosts: ['node1.example.com', 'node2.example.com'],
+          },
+          workers: {
+            hosts: ['node2.example.com'],
+          },
+        },
+      };
+      if (mockServiceType === 'oneprovider') {
+        Object.assign(configuration, {
+          oneprovider: {
+            name: null,
+          },
+        });
+      } else {
+        Object.assign(configuration, {
+          onezone: {
+            name: null,
+            domainName: globals.location.hostname,
+          },
+        });
       }
-    ),
+      return PlainableObject.create(configuration);
+    }),
 
     __storages: undefined,
 
@@ -1743,78 +1615,6 @@ export default OnepanelServerBase.extend(
       size: 1073741312,
       mounted: true,
     }]),
-
-    __cephParams: PlainableObject.create({
-      name: 'ceph',
-    }),
-
-    __cephManagers: A([{
-      host: 'node1.example.com',
-    }]),
-
-    __cephMonitors: A([{
-      host: 'node1.example.com',
-    }]),
-
-    __cephOsds: A([{
-      id: 1,
-      uuid: '65b7d1ff-6133-40be-bb4f-acdb7163ec3b',
-      host: 'node1.example.com',
-      type: 'blockdevice',
-      device: 'c',
-    }, {
-      id: 2,
-      uuid: 'a77610ee-732b-43f5-be73-de54f21081db',
-      host: 'node1.example.com',
-      type: 'blockdevice',
-      device: 'b',
-    }, {
-      id: 3,
-      uuid: '610c7eb0-3117-4873-9e60-cd0d48aa419d',
-      host: 'node1.example.com',
-      type: 'loopdevice',
-      path: '/volumes/persistence/ceph-loopdevices/osd-610c7eb0-3117-4873-9e60-cd0d48aa419d.loop',
-      size: 3 * 1024 * 1024 * 1024,
-    }]),
-
-    __cephOsdUsage: Object.freeze({
-      1: {
-        total: 1000000,
-        used: 500000,
-        available: 500000,
-      },
-      2: {
-        total: 100000000,
-        used: 75000000,
-        available: 25000000,
-      },
-      3: {
-        total: 3 * 1024 * 1024 * 1024,
-        used: 1024 * 1024 * 1024,
-        available: 2 * 1024 * 1024 * 1024,
-      },
-    }),
-
-    __cephPools: A([{
-      name: 'pool1',
-      copiesNumber: 1,
-      minCopiesNumber: 1,
-    }, {
-      name: 'pool2',
-      copiesNumber: 2,
-      minCopiesNumber: 1,
-    }]),
-
-    __cephPoolsUsage: Object.freeze({
-      pool1: {
-        used: 500000,
-        maxAvailable: 5000000,
-      },
-      pool2: {
-        used: 75000000,
-        maxAvailable: 250000000,
-      },
-    }),
 
     __guiMessages: computed(() => ({
       signin_notification: {
@@ -1852,14 +1652,6 @@ function computedResourceGetHandler(storeProperty, defaultData) {
       },
     };
   });
-}
-
-function serviceTypeDependentResponse({ onezone, oneprovider }) {
-  if (mockServiceType === 'onezone') {
-    return onezone;
-  } else {
-    return oneprovider;
-  }
 }
 
 // TODO: not used now, but may be used in future

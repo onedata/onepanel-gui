@@ -8,9 +8,9 @@
         size="sm"
         class=(concat "btn-deploy-cluster btn-cluster-proceed")
         disabled=(not canDeploy)
-        onClick=(action (if cephEnabled "nextStep" "startDeploy"))
+        onClick=(action "startDeploy")
       }}
-        <span>{{tt this (if cephEnabled "proceed" "deploy")}}</span>{{one-icon icon="arrow-right"}}
+        <span>{{tt this "deploy"}}</span>{{one-icon icon="arrow-right"}}
         {{#unless canDeploy}}
           {{one-tooltip title="Configuration is invalid!" placement="left"}}
         {{/unless}}
@@ -43,7 +43,6 @@
       submitAddress=(action "submitNewHost")
       removeHost=(action "removeHost")
       blinkingHosts=newHosts
-      showCeph=(eq onepanelServiceType "oneprovider")
     }}
     {{#if addingNewHost}}
       <div class="row row-new-host pseudo-table-row cluster-host-table-row">

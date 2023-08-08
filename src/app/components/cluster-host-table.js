@@ -99,12 +99,6 @@ export default BasicTable.extend(
      */
     isReadOnly: false,
 
-    /**
-     * @type {boolean}
-     * @virtual
-     */
-    showCeph: false,
-
     primaryClusterManager: null,
 
     /**

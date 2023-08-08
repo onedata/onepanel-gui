@@ -52,11 +52,6 @@ import newClusterDns from './components/new-cluster-dns';
 import clusterDnsCheckTable from './components/cluster-dns-check-table';
 import contentClustersDns from './components/content-clusters-dns';
 import clusterDns from './components/cluster-dns';
-import newClusterCeph from './components/new-cluster-ceph';
-import cephClusterConfiguration from './components/ceph-cluster-configuration';
-import clusterCephStatus from './components/cluster-ceph-status';
-import clusterCephPools from './components/cluster-ceph-pools';
-import contentClustersCeph from './components/content-clusters-ceph';
 import contentClustersEmergencyPassphrase from './components/content-clusters-emergency-passphrase';
 import clusterNodesTile from './components/cluster-nodes-tile';
 import clusterSpacesTile from './components/cluster-spaces-tile';
@@ -149,11 +144,6 @@ const translations = {
     clusterDnsCheckTable,
     contentClustersDns,
     clusterDns,
-    newClusterCeph,
-    cephClusterConfiguration,
-    clusterCephStatus,
-    clusterCephPools,
-    contentClustersCeph,
     contentClustersEmergencyPassphrase,
     clusterNodesTile,
     clusterSpacesTile,
