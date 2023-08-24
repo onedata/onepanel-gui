@@ -32,7 +32,6 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import NewClusterDeployProcess from 'onepanel-gui/utils/new-cluster-deploy-process';
 import { getOwner } from '@ember/application';
-import { array, raw } from 'ember-awesome-macros';
 
 function getHostnamesOfType(hosts, type) {
   return hosts.filter(h => h[type]).map(h => h.hostname);
@@ -48,15 +47,6 @@ export default Component.extend(I18n, {
   guiUtils: service(),
 
   i18nPrefix: 'components.newClusterInstallation',
-
-  /**
-   * Notifies about ceph selection change
-   * @virtual
-   * @type {function}
-   * @param {boolean} cephEnabled
-   * @returns {undefined}
-   */
-  cephChanged: notImplementedIgnore,
 
   /**
    * @virtual
@@ -191,19 +181,10 @@ export default Component.extend(I18n, {
       ) : null;
   }),
 
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  cephEnabled: array.isAny('hosts', raw('ceph')),
-
   addingNewHostChanged: observer('addingNewHost', function () {
     if (!this.get('addingNewHost')) {
       this.set('_newHostname', '');
     }
-  }),
-
-  cephEnabledObserver: observer('cephEnabled', function cephEnabledObserver() {
-    this.get('cephChanged')(this.get('cephEnabled'));
   }),
 
   init() {
@@ -216,7 +197,6 @@ export default Component.extend(I18n, {
       deploymentManager,
       stepData,
     } = this.getProperties(
-      'cephEnabled',
       'deploymentTaskId',
       'onepanelServiceType',
       'deploymentManager',
@@ -243,8 +223,7 @@ export default Component.extend(I18n, {
       this.set('clusterDeployProcess', clusterDeployProcess);
       hostsProxy.then(() => {
         this.extractConfiguration(
-          get(clusterDeployProcess, 'configuration'),
-          get(clusterDeployProcess, 'cephNodes')
+          get(clusterDeployProcess, 'configuration')
         );
       });
     } else {
@@ -344,9 +323,8 @@ export default Component.extend(I18n, {
   /**
    * Extracts cluster configuration data from JSON config
    * @param {Object} configProto
-   * @param {Array<string>} cephNodes
    */
-  extractConfiguration(configProto, cephNodes = []) {
+  extractConfiguration(configProto) {
     const hosts = this.get('hosts');
     const {
       cluster,
@@ -361,7 +339,6 @@ export default Component.extend(I18n, {
       ['clusterManager', managers],
       ['clusterWorker', workers],
       ['database', databases],
-      ['ceph', { nodes: cephNodes }],
     ].forEach(([type, { nodes }]) => nodes.forEach(hostname => hosts
       .filterBy('hostname', hostname)
       .forEach(host => set(host, type, true))
@@ -412,21 +389,10 @@ export default Component.extend(I18n, {
    * @returns {undefined}
    */
   updateClusterDeployProcess() {
-    const {
-      clusterDeployProcess,
-      hosts,
-    } = this.getProperties('clusterDeployProcess', 'hosts');
     const configuration = this.createConfiguration();
 
-    const existingCephConfiguration =
-      get(clusterDeployProcess, 'configuration.ceph');
-    if (existingCephConfiguration) {
-      set(configuration, 'ceph', existingCephConfiguration);
-    }
-
-    setProperties(clusterDeployProcess, {
+    setProperties(this.clusterDeployProcess, {
       configuration,
-      cephNodes: getHostnamesOfType(hosts, 'ceph'),
     });
   },
 

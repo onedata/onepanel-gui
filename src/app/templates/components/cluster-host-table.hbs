@@ -5,14 +5,6 @@
     <th class="text-center column toggle-column">{{tt this "headers.clusterWorker"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.clusterManager"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
-    {{#if showCeph}}
-      <th class="text-center column toggle-column">
-        {{tt this "headers.ceph"}}
-        {{#unless isReadOnly}}
-          <span class="text-normal">{{tt this "headers.optional"}}</span>
-        {{/unless}}
-      </th>
-    {{/if}}
     {{#if removeHostAvailable}}
       <th class="text-center column btn-column"></th>
     {{/if}}
@@ -22,7 +14,7 @@
 {{!-- TODO use checkboxes values from above --}}
 <tbody>
   {{#each hosts as |host|}}
-    {{cluster-host-table-row 
+    {{cluster-host-table-row
       host=host
       isPrimaryClusterManager=(eq primaryClusterManager host.hostname)
       checkboxChanged=(action "checkboxChanged")
@@ -32,7 +24,6 @@
       removeAvailable=removeHostAvailable
       isMobile=_isMobile
       blinking=(contains host blinkingHosts)
-      showCeph=showCeph
     }}
   {{/each}}
 </tbody>

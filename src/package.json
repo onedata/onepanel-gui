@@ -32,7 +32,7 @@
     "insert-text-at-cursor": "0.3.0",
     "moment": "2.29.4",
     "number-formatter": "1.2.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#f0ac07a7ca74b1d69bcf4624d0d1d735b79b3f25",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#4097eed1424111c18d7bada8c70cd21ac18c5474",
     "perfect-scrollbar": "1.5.5",
     "pupa": "2.1.1",
     "round10": "1.0.3",

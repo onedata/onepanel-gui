@@ -1,79 +1,75 @@
-{{#promise-proxy-container proxy=cephOsdsProxy}}
-  {{#bs-form submitOnEnter=false class=(concat "form-horizontal row " (if (eq mode "show") "form-static" "")) as |form|}}
-    {{#if (eq mode "create")}}
-      {{#form.group}}
-        <label class={{concat "control-label " layoutConfig.formLabelColumns}}>{{tt this "storageType"}}:</label>
-        <div class={{concat-classes layoutConfig.formInputColumns "storage-type-select-group"}}>
-          {{#power-select
-            options=visibleStorageTypes
-            selected=selectedStorageType
-            onchange=(action "storageTypeChanged")
-            searchEnabled=false
-            renderInPlace=true
-            disabled=disableStorageTypeSelector
-            as |storageType|
-          }}
-            {{storageType.name}}
-          {{/power-select}}
-        </div>
-      {{/form.group}}
-    {{/if}}
+{{#bs-form submitOnEnter=false class=(concat "form-horizontal row " (if (eq mode "show") "form-static" "")) as |form|}}
+  {{#if (eq mode "create")}}
+    {{#form.group}}
+      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>{{tt this "storageType"}}:</label>
+      <div class={{concat-classes layoutConfig.formInputColumns "storage-type-select-group"}}>
+        {{#power-select
+          options=visibleStorageTypes
+          selected=selectedStorageType
+          onchange=(action "storageTypeChanged")
+          searchEnabled=false
+          renderInPlace=true
+          disabled=disableStorageTypeSelector
+          as |storageType|
+        }}
+          {{storageType.name}}
+        {{/power-select}}
+      </div>
+    {{/form.group}}
+  {{/if}}
 
-    {{one-form-fields
-      bsForm=form
-      fields=currentFields
-      formValues=formValues
-      inputChanged=(action "inputChanged")
-      onFocusOut=(action "focusOut")
-      layoutConfig=layoutConfig
-      disabled=showLoadingSpinner}}
-    {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
-      {{qos-params-editor
-        showHeader=true
-        mode=mode
-        qosParams=storage.qosParameters
-        readonlyKeys=(array "storageId" "providerId")
-        isFormOpened=isFormOpened
-        class=(concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static"))
-        onChange=(action "qosParamsChanged")
-        layoutConfig=layoutConfig}}
-    {{/unless}}
-    {{#unless (eq mode "show")}}
-      <div class="form-group submit-group col-xs-12">
-        <div class="row">
-          <div class="{{layoutConfig.formSubmitColumns}}">
-            {{#one-button
-              type="primary"
-              buttonType="submit"
-              disabled=(or (not isValid) showLoadingSpinner)
-              onClick=(action (if (eq mode "create") "submit" "showModifyModal"))
-            }}
-              {{tt this (if inEditionMode "save" "add")}}
-            {{/one-button}}
-            {{#if inEditionMode}}
-              <button
-                class="btn btn-warning cancel-storage-form-btn"
-                disabled={{showLoadingSpinner}}
-                {{action cancel}}>
-                {{tt this "cancel"}}
-              </button>
-            {{/if}}
-          </div>
+  {{one-form-fields
+    bsForm=form
+    fields=currentFields
+    formValues=formValues
+    inputChanged=(action "inputChanged")
+    onFocusOut=(action "focusOut")
+    layoutConfig=layoutConfig
+  }}
+  {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
+    {{qos-params-editor
+      showHeader=true
+      mode=mode
+      qosParams=storage.qosParameters
+      readonlyKeys=(array "storageId" "providerId")
+      isFormOpened=isFormOpened
+      class=(concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static"))
+      onChange=(action "qosParamsChanged")
+      layoutConfig=layoutConfig}}
+  {{/unless}}
+  {{#unless (eq mode "show")}}
+    <div class="form-group submit-group col-xs-12">
+      <div class="row">
+        <div class="{{layoutConfig.formSubmitColumns}}">
+          {{#one-button
+            type="primary"
+            buttonType="submit"
+            disabled=(not isValid)
+            onClick=(action (if (eq mode "create") "submit" "showModifyModal"))
+          }}
+            {{tt this (if inEditionMode "save" "add")}}
+          {{/one-button}}
+          {{#if inEditionMode}}
+            <button
+              class="btn btn-warning cancel-storage-form-btn"
+              {{action cancel}}>
+              {{tt this "cancel"}}
+            </button>
+          {{/if}}
         </div>
       </div>
-    {{/unless}}
-  {{/bs-form}}
-  {{loading-container isLoading=showLoadingSpinner}}
-  {{#if (eq mode "edit")}}
-    {{proceed-process-modal
-      opened=modifyModalVisible
-      processing=isSavingStorage
-      close=(action (mut modifyModalVisible) false)
-      proceed=(action "submit")
-      modalClass="modify-storage-modal"
-      modalIcon="sign-warning-rounded"
-      headerText=(tt this "modifyStorageModalHeader")
-      messageText=(tt this "modifyStorageModalMessage" name=storage.name)
-      proceedButtonClass="btn btn-warning proceed"}}
-  {{/if}}
-{{/promise-proxy-container}}
+    </div>
+  {{/unless}}
+{{/bs-form}}
+{{#if (eq mode "edit")}}
+  {{proceed-process-modal
+    opened=modifyModalVisible
+    processing=isSavingStorage
+    close=(action (mut modifyModalVisible) false)
+    proceed=(action "submit")
+    modalClass="modify-storage-modal"
+    modalIcon="sign-warning-rounded"
+    headerText=(tt this "modifyStorageModalHeader")
+    messageText=(tt this "modifyStorageModalMessage" name=storage.name)
+    proceedButtonClass="btn btn-warning proceed"}}
+{{/if}}

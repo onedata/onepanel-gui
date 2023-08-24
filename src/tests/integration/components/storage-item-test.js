@@ -10,7 +10,6 @@ import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
 import SpaceDetails from 'onepanel-gui/models/space-details';
 import { resolve } from 'rsvp';
-import Service from '@ember/service';
 import { registerService, lookupService } from '../../helpers/stub-service';
 
 import bytesToString from 'onedata-gui-common/utils/bytes-to-string';
@@ -24,7 +23,6 @@ describe('Integration | Component | storage-item', function () {
   beforeEach(function () {
     registerService(this, 'provider-manager', ProviderManagerStub);
     registerService(this, 'i18n', I18nStub);
-    registerService(this, 'ceph-manager', Service);
   });
 
   it('renders storage name', async function () {

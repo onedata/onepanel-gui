@@ -66,12 +66,6 @@ export default Component.extend(I18n, {
   isLoading: false,
 
   /**
-   * If true, ceph step will be visible (only oneprovider)
-   * @type {boolean}
-   */
-  showCephStep: false,
-
-  /**
    * Data passed to initialize step component. Used to persist step state
    * @type {any}
    */
@@ -85,20 +79,13 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  steps: computed('onepanelServiceType', 'showCephStep', function steps() {
-    const {
-      onepanelServiceType,
-      showCephStep,
-    } = this.getProperties('onepanelServiceType', 'showCephStep');
-    let stepsArray = onepanelServiceType === 'oneprovider' ?
+  steps: computed('onepanelServiceType', function steps() {
+    const stepsArray = this.onepanelServiceType === 'oneprovider' ?
       stepsOneprovider : stepsOnezone;
-    if (!showCephStep) {
-      stepsArray = stepsArray.without(installationStepsMap.oneproviderCeph);
-    }
     stepsArray.forEach(step => set(
       step,
       'title',
-      this.t(`steps.${onepanelServiceType}.${get(step, 'name')}`)));
+      this.t(`steps.${this.onepanelServiceType}.${get(step, 'name')}`)));
     return stepsArray;
   }),
 

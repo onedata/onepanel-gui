@@ -16,10 +16,6 @@ export const installationStepsArray = Object.freeze([
     name: 'deploy',
   }),
   InstallationStep.create({
-    name: 'oneproviderCeph',
-    inOnezone: false,
-  }),
-  InstallationStep.create({
     name: 'deploymentProgress',
     isHiddenStep: true,
   }),
@@ -79,12 +75,6 @@ export default ObjectProxy.extend({
    * @type {string|null}
    */
   name: null,
-
-  /**
-   * @type {boolean}
-   * @virtual
-   */
-  hasCephDeployed: false,
 
   type: reads('content.onepanelServiceType'),
 
