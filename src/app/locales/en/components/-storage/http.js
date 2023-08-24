@@ -17,7 +17,7 @@ export default {
   },
   onedataAccessToken: {
     name: 'Onedata access token',
-    tip: 'When registering storage with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the HTTP storage will be accessed by all users with access to any space supported by this storage.',
+    tip: 'When registering storage backend with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the HTTP storage will be accessed by all users with access to any space supported by this storage.',
   },
   verifyServerCertificate: {
     name: 'Verify server certificate',
@@ -29,7 +29,7 @@ export default {
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'Defines the maximum number of parallel connections for a single HTTP storage. Default: 25.',
+    tip: 'Defines the maximum number of parallel connections for a single HTTP storage backend. Default: 25.',
   },
   maxRequestsPerSession: {
     name: 'Max requests per session',

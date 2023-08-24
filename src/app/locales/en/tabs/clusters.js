@@ -10,7 +10,7 @@ export default {
     emergencyPassphrase: 'Emergency passphrase',
     provider: 'Provider',
     ceph: 'Ceph',
-    storages: 'Storages',
+    storages: 'Storage backends',
     spaces: 'Spaces',
     members: 'Members',
     guiSettings: 'GUI settings',

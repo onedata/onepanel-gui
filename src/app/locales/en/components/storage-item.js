@@ -11,9 +11,9 @@ import nfs from './storage-item/nfs';
 export default {
   modifyBtn: 'Modify',
   modifyDisabledBtnTip: 'Current modifications have not been saved yet – use the buttons at the bottom of the form.',
-  modifyStorageDetails: 'Modify storage details',
+  modifyStorageDetails: 'Modify storage backend details',
   cancelStorageModification: 'Cancel modification',
-  removeStorage: 'Remove storage',
+  removeStorage: 'Remove storage backend',
   // TODO: VFS-11005 Handle single load errors
   unknown: 'unknown',
   generic: {

@@ -21,7 +21,7 @@ export default {
   },
   onedataAccessToken: {
     name: 'Onedata access token',
-    tip: 'When registering storage with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
+    tip: 'When registering storage backend with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
   },
   authorizationHeader: {
     name: 'Authorization header',
@@ -33,7 +33,7 @@ export default {
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'Defines the maximum number of parallel connections for a single WebDAV storage. Default: 0.',
+    tip: 'Defines the maximum number of parallel connections for a single WebDAV storage backend. Default: 0.',
   },
   maximumUploadSize: {
     name: 'Maximum upload size [b]',

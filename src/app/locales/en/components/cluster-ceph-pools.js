@@ -8,7 +8,7 @@ export default {
   noPools: 'This Ceph cluster has no configured pools.',
   createPool: 'Create pool (as storage)',
   cancelCreatePool: 'Cancel',
-  storageCreateSuccess: 'Storage has been created successfully',
-  creatingStorage: 'creating storage',
+  storageCreateSuccess: 'Storage backend has been created successfully',
+  creatingStorage: 'creating storage backend',
   addNewStorage: 'Add new pool as storage',
 };
