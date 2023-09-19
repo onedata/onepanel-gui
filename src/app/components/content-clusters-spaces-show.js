@@ -57,7 +57,7 @@ export default Component.extend(
         return {
           action: () => startRevokeSpace(space),
           title: this.t('revokeSpaceSupport'),
-          icon: 'remove',
+          icon: 'browser-delete',
           class: 'btn-revoke-space-support',
           buttonStyle: 'danger',
         };
