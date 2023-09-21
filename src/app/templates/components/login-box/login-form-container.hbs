@@ -6,7 +6,7 @@
     <h2>
       {{t "components.loginBox.loginFormContainer.visitViaOnezoneHeader"}}
       <span class="subtitle-tip">
-        {{one-icon icon="sign-question"}}
+        {{one-icon icon="sign-question-rounded"}}
         {{one-tooltip title=(tt this "visitViaOnezoneHint")}}
       </span>
     </h2>
@@ -39,9 +39,9 @@
   </p>
   <div class="basicauth-login-form-container fading-login-method-container animated fast hide">
     <h2>
-      {{t "components.loginBox.loginFormContainer.signInWithCredentialsHeader"}} 
+      {{t "components.loginBox.loginFormContainer.signInWithCredentialsHeader"}}
       <span class="subtitle-tip">
-        {{one-icon icon="sign-question"}}
+        {{one-icon icon="sign-question-rounded"}}
         {{one-tooltip title=(tt this "signInWithCredentialsHint")}}
       </span>
     </h2>
@@ -57,7 +57,7 @@
 {{#if sessionHasExpired}}
   <div class="login-notification login-notification-sesion-expired login-notification-warning">
     <div class="inline-icon-container session-expired-icon-container">
-      {{one-icon icon="menu-recent" class="session-expired-icon"}}  
+      {{one-icon icon="time-outline" class="session-expired-icon"}}
     </div>
     {{tt this "sessionExpired"}}.
   </div>

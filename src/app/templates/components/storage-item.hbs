@@ -24,7 +24,8 @@
         disabled=whileEdition
         onClick=(action "turnOnModifyStorage")
       }}
-        {{one-icon icon="rename"}}<span class="text">{{tt this "modifyBtn"}}</span>
+        {{!-- single line to avoid spaces --}}
+        {{one-icon icon="browser-rename"}}<span class="text">{{tt this "modifyBtn"}}</span>
       {{/bs-button}}
       {{#if whileEdition}}
         {{one-tooltip title=(tt this "modifyDisabledBtnTip")}}
