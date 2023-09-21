@@ -34,7 +34,7 @@ export default {
   cancel: 'Cancel',
   modifyStorageModalHeader: 'Modify storage backend',
   modifyStorageModalMessage: 'Are you sure you want to modify storage backend details? Incorrect configuration can make your data unavailable.',
-  cannotReadonlyNotImported: 'This option is available only for imported storages.',
+  cannotReadonlyNotImported: 'This option is available only for imported storage backends.',
   cannotStorageDetectionReadonly: 'Storage detection is always skipped on readonly storage backends.',
   httpOnlyReadonly: 'HTTP storages are limited to readonly mode.',
   httpOnlyImported: 'HTTP storages are always treated as imported due to their readonly limitation.',
