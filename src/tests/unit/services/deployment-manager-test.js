@@ -20,7 +20,6 @@ describe('Unit | Service | deployment-manager', function () {
   setupTest();
 
   beforeEach(function () {
-    registerService(this, 'cephManager', Service);
     registerService(this, 'i18n', Service);
     registerService(this, 'onepanelServer', onepanelServerStub);
     registerService(this, 'clusterModelManager', ClusterModelManagerStub);

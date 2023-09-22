@@ -20,22 +20,18 @@ import InstallationDetails, {
 import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
-import { extractHostsFromCephConfiguration } from 'onepanel-gui/utils/ceph/cluster-configuration';
-import _ from 'lodash';
 import { getOwner } from '@ember/application';
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
   managers: 'clusterManager',
   workers: 'clusterWorker',
-  ceph: 'ceph',
 };
 
 export default Service.extend(createDataProxyMixin('installationDetails'), {
   clusterModelManager: service(),
   onepanelServer: service(),
   guiUtils: service(),
-  cephManager: service(),
   i18n: service(),
   onepanelConfiguration: service(),
 
@@ -62,22 +58,13 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   fetchInstallationDetails() {
     const {
       onepanelServiceType,
-      cephManager,
       clusterModelManager,
-    } = this.getProperties('onepanelServiceType', 'cephManager', 'clusterModelManager');
+    } = this.getProperties('onepanelServiceType', 'clusterModelManager');
 
     let clusterStep;
-    let hasCephDeployed;
-
     return this._getThisClusterInitStep()
       .then(step => {
         clusterStep = step;
-        return onepanelServiceType === 'oneprovider' ?
-          cephManager.isDeployed() : resolve(false);
-      })
-      .then(hasCeph => {
-        hasCephDeployed = hasCeph;
-
         return this.getClusterConfiguration()
           .then(({ data: configuration }) => configuration)
           .catch(() => null);
@@ -100,7 +87,6 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
                 onepanelServiceType: onepanelServiceType,
                 clusterInfo: thisCluster,
                 initStep: clusterStep,
-                hasCephDeployed,
               }
             );
 
@@ -116,30 +102,24 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    */
   getClusterHostsInfo() {
     return this.getClusterConfiguration(true)
-      .then(({ data: { cluster, ceph } }) =>
-        this._clusterConfigurationToHostsInfo(cluster, ceph)
+      .then(({ data: { cluster } }) =>
+        this._clusterConfigurationToHostsInfo(cluster)
       );
   },
 
   /**
    * Converts response data from API about clusters to array of ``ClusterHostInfo``
    * @param {object} cluster cluster attribute of GET configuration from API
-   * @param {object|undefined} ceph ceph attribute of GET configuration from API
    * @returns {object}
    *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
    */
-  _clusterConfigurationToHostsInfo(cluster, ceph) {
-    const types = ['databases', 'managers', 'workers', 'ceph'];
-    const services = _.assign({
-      ceph: {
-        hosts: extractHostsFromCephConfiguration(ceph),
-      },
-    }, cluster);
+  _clusterConfigurationToHostsInfo(cluster) {
+    const types = ['databases', 'managers', 'workers'];
 
     // maps: host -> ClusterHostInfo
     const clusterHostsInfo = {};
     types.forEach(type => {
-      services[type].hosts.forEach(host => {
+      cluster[type].hosts.forEach(host => {
         if (clusterHostsInfo[host] == null) {
           clusterHostsInfo[host] = ClusterHostInfo.create({
             hostname: host,

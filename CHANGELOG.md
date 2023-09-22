@@ -6,6 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11251 Removed unused oneicons
+* VFS-11202 Removed Embedded Ceph cluster configuration
 * VFS-10480 Changed files to items in auto import scan report
 * VFS-9303 Removed "over-modals" class from popover usages
 * VFS-11081 Fixed incorrectly closing alert modals

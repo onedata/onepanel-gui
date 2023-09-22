@@ -24,9 +24,8 @@ import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
 import { resolve } from 'rsvp';
-import { promise, raw, writable, or } from 'ember-awesome-macros';
+import { or } from 'ember-awesome-macros';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import OneForm from 'onedata-gui-common/components/one-form';
 import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
@@ -103,7 +102,6 @@ const storagePathTypeConfig = {
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
-  embeddedceph: { defaultValue: 'flat', disabled: true },
   s3: { defaultValue: 'flat' },
   swift: { defaultValue: 'flat' },
   xrootd: { defaultValue: 'canonical' },
@@ -116,11 +114,9 @@ export default OneForm.extend(I18n, Validations, {
   classNames: ['cluster-storage-add-form'],
   classNameBindings: [
     'inShowMode:form-static',
-    'showLoadingSpinner:is-loading',
   ],
 
   i18n: service(),
-  cephManager: service(),
 
   /**
    * @override
@@ -212,12 +208,6 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Object}
    */
   layoutConfig,
-
-  /**
-   * If true, shows loading spinner on top of the form (overlay)
-   * @type {boolean}
-   */
-  showLoadingSpinner: false,
 
   /**
    * @type {boolean}
@@ -442,38 +432,12 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
-   * Will be set in init()
-   * @type {Ember.ComputedProperty<PromiseArray<Onepanel.CephOsd>>}
-   */
-  cephOsdsProxy: writable(promise.array(raw(resolve([])))),
-
-  /**
    * @type {Ember.ComputedProperty<Array<Object>>}
    */
-  visibleStorageTypes: computed(
-    'storageTypes.[]',
-    'cephOsdsProxy.length',
-    function visibleStorageTypes() {
-      // Remove ceph storage, because it is deprecated
-      let visibleTypes = this.get('storageTypes').rejectBy('id', 'ceph');
-      // If no osds are present, remove embeddedceph storage type
-      if (!this.get('cephOsdsProxy.length')) {
-        visibleTypes = visibleTypes.rejectBy('id', 'embeddedceph');
-      }
-
-      return visibleTypes;
-    }
-  ),
-
-  osdsNumberObserver: observer(
-    'cephOsdsProxy.length',
-    function osdsNumberObserver() {
-      this.set(
-        'allFieldsValues.meta.osdsNumber',
-        this.get('cephOsdsProxy.length') || 1
-      );
-    }
-  ),
+  visibleStorageTypes: computed('storageTypes.[]', function visibleStorageTypes() {
+    // Remove ceph storage, because it is deprecated
+    return this.storageTypes.filter(({ id }) => id !== 'ceph');
+  }),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
@@ -530,7 +494,6 @@ export default OneForm.extend(I18n, Validations, {
       areQosParamsValid: true,
       editedQosParams: undefined,
     });
-    this.fetchCephOsds();
   }),
 
   init() {
@@ -582,24 +545,17 @@ export default OneForm.extend(I18n, Validations, {
       this.selectedStorageTypeObserver();
     }
 
-    this.fetchCephOsds();
-    this.osdsNumberObserver();
-
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
     this.readonlyObserver();
 
-    this.get('cephOsdsProxy')
-      .then(() => safeExec(this, () => {
-        this.introduceCephOsds();
-        // Select default (first) storage type if it is still empty
-        if (!this.get('selectedStorageType')) {
-          this.set(
-            'selectedStorageType',
-            this.get('visibleStorageTypes.firstObject')
-          );
-        }
-      }));
+    // Select default (first) storage type if it is still empty
+    if (!this.get('selectedStorageType')) {
+      this.set(
+        'selectedStorageType',
+        this.get('visibleStorageTypes.firstObject')
+      );
+    }
   },
 
   autoSettingsImportedStorage() {
@@ -686,38 +642,6 @@ export default OneForm.extend(I18n, Validations, {
     this.autoSettingsSkipStorageDetection();
   },
 
-  fetchCephOsds() {
-    const {
-      mode,
-      cephManager,
-      element,
-    } = this.getProperties('mode', 'cephManager', 'element');
-    if (mode === 'show') {
-      this.set('showLoadingSpinner', false);
-    } else {
-      if (
-        mode === 'create' ||
-        (mode === 'edit' && this.get('storage.type') === 'embeddedceph')
-      ) {
-        const osdProxy = PromiseArray.create({
-          promise: cephManager.suppressNotDeployed(cephManager.getOsds(), []),
-        });
-        if (!element) {
-          this.set('cephOsdsProxy', osdProxy);
-        } else {
-          this.set('showLoadingSpinner', true);
-          osdProxy
-            .finally(() =>
-              safeExec(this, () => this.setProperties({
-                cephOsdsProxy: osdProxy,
-                showLoadingSpinner: false,
-              }))
-            );
-        }
-      }
-    }
-  },
-
   lockToggle(fieldName, state, lockHint = null) {
     const mode = this.get('mode');
     if (mode === 'show') {
@@ -757,25 +681,6 @@ export default OneForm.extend(I18n, Validations, {
         lockHint: null,
       });
     }
-  },
-
-  /**
-   * Puts information about osds into form fields (sets default values for
-   * some fields).
-   * @returns {undefined}
-   */
-  introduceCephOsds() {
-    const {
-      cephOsdsProxy,
-      allFields,
-      allFieldsValues,
-    } = this.getProperties('cephOsdsProxy', 'allFields', 'allFieldsValues');
-    const osdsNumber = get(cephOsdsProxy, 'length') || 1;
-    const defaultPoolSize = osdsNumber > 1 ? 2 : 1;
-
-    const copiesNumberField = allFields.findBy('name', 'embeddedceph.copiesNumber');
-    set(copiesNumberField, 'defaultValue', defaultPoolSize);
-    set(allFieldsValues, 'embeddedceph.copiesNumber', defaultPoolSize);
   },
 
   /**
