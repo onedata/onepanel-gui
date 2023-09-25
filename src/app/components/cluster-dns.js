@@ -138,6 +138,11 @@ export default Component.extend(
     dnsCheckMode: 'autodetect',
 
     /**
+     * @type {null | Array<string>}
+     */
+    injectedDnsServers: null,
+
+    /**
      * @type {Ember.ComputedProperty<string>}
      */
     onepanelServiceType: reads('guiUtils.serviceType'),
@@ -273,9 +278,17 @@ export default Component.extend(
     /**
      * @type {Ember.ComputedProperty<Array<string>>}
      */
-    dnsServers: computed('dnsCheckConfiguration.dnsServers', function dnsServers() {
-      const dnsServersConfig = this.get('dnsCheckConfiguration.dnsServers');
-      return dnsServersConfig ? [...dnsServersConfig] : [];
+    dnsServers: computed('dnsCheckConfiguration.dnsServers', {
+      get() {
+        if (this.injectedDnsServers) {
+          return this.injectedDnsServers;
+        }
+        const dnsServersConfig = this.get('dnsCheckConfiguration.dnsServers');
+        return dnsServersConfig ? [...dnsServersConfig] : [];
+      },
+      set(key, value) {
+        return this.injectedDnsServers = value;
+      },
     }),
 
     /**
