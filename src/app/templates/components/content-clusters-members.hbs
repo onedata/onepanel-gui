@@ -67,7 +67,9 @@
             value={{userInvitationTokenProxy.token}}
             readonly="readonly"
             class="form-control invite-user-token-textarea token-textarea no-resize" />
-          <a {{action "generateAnotherToken"}}>{{tt this "generateAnotherToken"}}</a>
+          <a class="clickable" {{action "generateAnotherToken"}}>
+            {{tt this "generateAnotherToken"}}
+          </a>
           {{one-copy-button
             class="btn btn-default btn-sm pull-right"
             parentElementId=elementId
@@ -76,7 +78,9 @@
         {{/promise-proxy-container}}
       {{else}}
         <p class="text-center">
-          <a {{action "showUserToken"}}>{{tt this "inviteUserUsingToken"}}</a>
+          <a class="clickable" {{action "showUserToken"}}>
+            {{tt this "inviteUserUsingToken"}}
+          </a>
         </p>
       {{/if}}
     </div>
