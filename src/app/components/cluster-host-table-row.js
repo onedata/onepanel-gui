@@ -47,8 +47,16 @@ export default Component.extend({
    */
   isMobile: undefined,
 
-  removeAvailable: computed('removeHost', function () {
-    return this.get('removeHost') !== notImplementedReject;
+  /**
+   * @virtual optional
+   */
+  removeAvailable: computed('removeHost', {
+    get() {
+      return this.injectedRemoveAvailable ?? this.removeHost !== notImplementedReject;
+    },
+    set(key, value) {
+      return this.injectedRemoveAvailable = value;
+    },
   }),
 
   /**
@@ -65,6 +73,11 @@ export default Component.extend({
    * @type {ClusterHostInfo}
    */
   dataHostname: alias('host.hostname'),
+
+  /**
+   * @type {boolean | null}
+   */
+  injectedRemoveAvailable: null,
 
   /**
    * @type {boolean}

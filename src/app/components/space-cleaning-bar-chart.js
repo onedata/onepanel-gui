@@ -129,17 +129,6 @@ export default Component.extend({
   }),
 
   /**
-   * Slider range.
-   * @type {computed.Object}
-   */
-  sliderRange: computed('spaceSize', function sliderRange() {
-    return {
-      min: 0,
-      max: this.get('spaceSize'),
-    };
-  }),
-
-  /**
    * Slider values.
    * @type {computed.Array.number}
    */
