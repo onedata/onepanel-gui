@@ -9,11 +9,11 @@ export default {
   },
   skipStorageDetection: {
     name: 'Skip storage detection',
-    tip: 'If enabled, detecting whether storage is directly accessible by the Oneclient will not be performed. This option is always enabled on readonly storage backends.',
+    tip: 'If enabled, detecting whether the storage backend is directly accessible by the Oneclient will not be performed. This option is always enabled on readonly storage backends.',
   },
   readonly: {
     name: 'Readonly',
-    tip: 'Defines whether the storage backend is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage backend. Such storage can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
+    tip: 'Defines whether the storage backend is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage backend. Such storage backend can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
   },
   importedStorage: {
     name: 'Imported storage',

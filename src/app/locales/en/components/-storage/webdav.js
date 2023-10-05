@@ -21,7 +21,7 @@ export default {
   },
   onedataAccessToken: {
     name: 'Onedata access token',
-    tip: 'When registering storage backend with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage.',
+    tip: 'When registering storage backend with feed of LUMA DB set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token of the user on whose behalf the WebDAV storage will be accessed by all users with access to any space supported by this storage backend.',
   },
   authorizationHeader: {
     name: 'Authorization header',
