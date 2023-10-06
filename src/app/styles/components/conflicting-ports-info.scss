@@ -1,0 +1,14 @@
+.conflicting-ports-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+
+  .one-icon {
+    font-size: 2em;
+    display: inline-block;
+  }
+
+  .text {
+    min-width: 0;
+  }
+}

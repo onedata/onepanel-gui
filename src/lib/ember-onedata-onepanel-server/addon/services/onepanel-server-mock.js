@@ -1567,6 +1567,9 @@ export default OnepanelServerBase.extend(
           workers: {
             hosts: ['node2.example.com'],
           },
+          oneS3: {
+            hosts: ['node2.example.com'],
+          },
         },
       };
       if (mockServiceType === 'oneprovider') {

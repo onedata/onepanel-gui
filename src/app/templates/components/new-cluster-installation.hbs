@@ -33,6 +33,7 @@
 <div class="row content-row no-border">
   <h1>{{tt this "clusterHosts"}}</h1>
   {{#promise-proxy-container proxy=hostsProxy}}
+    {{conflicting-ports-info hosts=hosts}}
     {{cluster-host-table
       hosts=hostsSorted
       primaryClusterManager=primaryClusterManager

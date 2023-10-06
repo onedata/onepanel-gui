@@ -14,7 +14,7 @@ import { validator, buildValidations } from 'ember-cp-validations';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { scheduleOnce } from '@ember/runloop';
 
-const roles = ['database', 'clusterWorker', 'clusterManager'];
+const requiredRoles = ['database', 'clusterWorker', 'clusterManager'];
 
 function hostColumnPropertyName(role) {
   return `${role}Hosts`;
@@ -43,7 +43,7 @@ function generateColumnValidations(roles) {
   return columnValidations;
 }
 
-const Validations = buildValidations(generateColumnValidations(roles));
+const Validations = buildValidations(generateColumnValidations(requiredRoles));
 
 // TODO: validation TODO: is setting first options for some host, set this host
 // as a primary cluster manager
@@ -57,7 +57,7 @@ const Validations = buildValidations(generateColumnValidations(roles));
  */
 export default BasicTable.extend(
   I18n,
-  hostColumnComputedProperties(roles),
+  hostColumnComputedProperties(requiredRoles),
   Validations, {
     tagName: 'table',
     classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown-table-rows'],

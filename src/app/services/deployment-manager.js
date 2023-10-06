@@ -26,6 +26,7 @@ const _ROLE_COLLECTIONS = {
   databases: 'database',
   managers: 'clusterManager',
   workers: 'clusterWorker',
+  oneS3: 'oneS3',
 };
 
 export default Service.extend(createDataProxyMixin('installationDetails'), {
@@ -114,7 +115,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
    *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
    */
   _clusterConfigurationToHostsInfo(cluster) {
-    const types = ['databases', 'managers', 'workers'];
+    const types = ['databases', 'managers', 'workers', 'oneS3'];
 
     // maps: host -> ClusterHostInfo
     const clusterHostsInfo = {};
