@@ -116,6 +116,7 @@ export default EmberObject.extend(I18n, {
       'globalNotify'
     );
     const start = new Promise((resolve, reject) => {
+      console.log(configuration);
       const config = configurationClass.constructFromObject(configuration);
       const apiName = capitalize(onepanelServiceType) + 'ClusterApi';
       onepanelServer.request(

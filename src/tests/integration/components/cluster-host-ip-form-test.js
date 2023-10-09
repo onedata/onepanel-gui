@@ -12,18 +12,23 @@ describe('Integration | Component | cluster-host-ip-form', function () {
     const spyHostDataChanged = sinon.spy();
     this.set('spyHostDataChanged', spyHostDataChanged);
 
-    const hosts = Object.freeze({
-      'Host One': '172.17.0.1',
+    this.setProperties({
+      hostsIps: Object.freeze({
+        'Host One': '172.17.0.1',
+      }),
+      hostsInfo: Object.freeze([{
+        hostname: 'Host One',
+        clusterWorker: true,
+      }]),
     });
-    this.set('hosts', hosts);
 
     await render(hbs `{{cluster-host-ip-form
-      hosts=hosts
+      hostsIps=hostsIps
+      hostsInfo=hostsInfo
       hostDataChanged=(action spyHostDataChanged)
     }}`);
 
     await fillIn('input.input-host-ip', '172.18.0.2');
-
     expect(spyHostDataChanged).to.be.calledWith('Host One', '172.18.0.2');
   });
 
@@ -31,16 +36,22 @@ describe('Integration | Component | cluster-host-ip-form', function () {
     const spyAllValidChanged = sinon.spy();
     this.set('spyAllValidChanged', spyAllValidChanged);
 
-    const hosts = {
-      'Host One': '172.17.0.1',
-    };
-    this.set('hosts', hosts);
-    this.set('hostDataChanged', (key, value) => {
-      hosts[key] = value;
+    this.setProperties({
+      hostsIps: {
+        'Host One': '172.17.0.1',
+      },
+      hostsInfo: Object.freeze([{
+        hostname: 'Host One',
+        clusterWorker: true,
+      }]),
+      hostDataChanged: (key, value) => {
+        this.get('hostsIps')[key] = value;
+      },
     });
 
     await render(hbs `{{cluster-host-ip-form
-      hosts=hosts
+      hostsIps=hostsIps
+      hostsInfo=hostsInfo
       hostDataChanged=(action hostDataChanged)
       allValidChanged=(action spyAllValidChanged)
     }}`);

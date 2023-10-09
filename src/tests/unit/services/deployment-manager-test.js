@@ -48,6 +48,9 @@ describe('Unit | Service | deployment-manager', function () {
       workers: {
         hosts: ['node2.example.com'],
       },
+      oneS3: {
+        hosts: ['node1.example.com'],
+      },
     };
 
     const {
@@ -64,6 +67,8 @@ describe('Unit | Service | deployment-manager', function () {
       .to.be.equal(true);
     expect(get(clusterHostsInfo[0], 'clusterWorker'), '0 clusterWorker')
       .to.be.equal(false);
+    expect(get(clusterHostsInfo[0], 'oneS3'), '0 oneS3')
+      .to.be.equal(true);
 
     expect(get(clusterHostsInfo[1], 'hostname'))
       .to.be.equal('node2.example.com');
@@ -73,6 +78,8 @@ describe('Unit | Service | deployment-manager', function () {
       .to.be.equal(true);
     expect(get(clusterHostsInfo[1], 'clusterWorker'))
       .to.be.equal(true);
+    expect(get(clusterHostsInfo[1], 'oneS3'))
+      .to.be.equal(false);
 
     expect(mainManagerHostname).to.be.equal('node2.example.com');
   });

@@ -32,6 +32,7 @@ export default Component.extend(I18n, {
     'databases',
     'managers',
     'workers',
+    'oneS3',
   ]),
 
   /**
@@ -51,7 +52,8 @@ export default Component.extend(I18n, {
   allNodes: union(
     'clusterConfigurationProxy.cluster.databases.hosts',
     'clusterConfigurationProxy.cluster.managers.hosts',
-    'clusterConfigurationProxy.cluster.workers.hosts'
+    'clusterConfigurationProxy.cluster.workers.hosts',
+    'clusterConfigurationProxy.cluster.oneS3.hosts'
   ),
 
   /**
@@ -66,7 +68,7 @@ export default Component.extend(I18n, {
     'services',
     'serviceNames',
     'allNodes',
-    'clusterConfigurationProxy.cluster.{databases.hosts,managers.hosts,workers.hosts}',
+    'clusterConfigurationProxy.cluster.{databases.hosts,managers.hosts,workers.hosts,oneS3.hosts}',
     function serviceRows() {
       const {
         services,
