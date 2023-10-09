@@ -49,16 +49,18 @@
     isReadOnly=isReadOnly
   }}
 </td>
-<td class="text-center column toggle-column compact" data-option="oneS3">
-  {{one-way-toggle
-    checked=host.oneS3
-    update=(action "checkboxChanged")
-    hostHostname=host.hostname
-    hostOption="oneS3"
-    dataOption="oneS3"
-    isReadOnly=isReadOnly
-  }}
-</td>
+{{#if isOneS3Visible}}
+  <td class="text-center column toggle-column compact" data-option="oneS3">
+    {{one-way-toggle
+      checked=host.oneS3
+      update=(action "checkboxChanged")
+      hostHostname=host.hostname
+      hostOption="oneS3"
+      dataOption="oneS3"
+      isReadOnly=isReadOnly
+    }}
+  </td>
+{{/if}}
 {{#if removeAvailable}}
   <td class="text-center column btn-column compact">
     <div>

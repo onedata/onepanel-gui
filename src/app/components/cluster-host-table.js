@@ -8,6 +8,8 @@
 
 import { readOnly } from '@ember/object/computed';
 import { observer, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { eq, raw } from 'ember-awesome-macros';
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
@@ -62,6 +64,8 @@ export default BasicTable.extend(
     tagName: 'table',
     classNames: ['cluster-host-table', 'table', 'table-striped', 'dropdown-table-rows'],
 
+    guiUtils: service(),
+
     i18nPrefix: 'components.clusterHostTable',
 
     /**
@@ -106,6 +110,16 @@ export default BasicTable.extend(
      * @type {Array<ClusterHostInfo>}
      */
     blinkingHosts: Object.freeze([]),
+
+    /**
+     * @type {Ember.ComputedProperty<string>}
+     */
+    onepanelServiceType: readOnly('guiUtils.serviceType'),
+
+    /**
+     * @type {ComputedProperty<boolean>}
+     */
+    isOneS3Visible: eq('onepanelServiceType', raw('oneprovider')),
 
     allValid: readOnly('validations.isValid'),
     // TODO make/use valid properties for each column

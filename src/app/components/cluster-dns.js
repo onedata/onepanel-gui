@@ -446,7 +446,7 @@ export default Component.extend(
         const newCheckIsNeededNotify = this.get('globalNotify').info({
           html: this.t('dnsCheck.resultsObsoleteText'),
           oneTitle: this.t('dnsCheck.resultsObsoleteHead'),
-          oneIcon: 'sign-warning',
+          oneIcon: 'sign-warning-rounded',
           closeAfter: null,
         });
         this.set('newCheckIsNeededNotify', newCheckIsNeededNotify);

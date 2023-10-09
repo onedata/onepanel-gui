@@ -34,9 +34,10 @@
     {{tt this "infoAutoDetect"}}
   </p>
 
-  {{#promise-proxy-container proxy=hostsIpsProxy}}
+  {{#promise-proxy-container proxy=hostsLoadingProxy}}
     {{cluster-host-ip-form
-      hosts=hostsIpsProxy.content
+      hostsIps=hostsIpsProxy.content
+      hostsInfo=hostsInfoProxy.content
       hostDataChanged=(action "hostsIpsDataChanged")
       allValidChanged=(action "hostsIpsFormValidChanged")
       readonly=ipsSetupProxy.isPending

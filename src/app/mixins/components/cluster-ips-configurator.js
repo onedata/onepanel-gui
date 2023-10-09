@@ -83,6 +83,18 @@ export default Mixin.create({
     });
   })),
 
+  /**
+   * @type {PromiseObject<Models.ClusterHostInfo>}
+   */
+  hostsInfoProxy: promise.object(computed(async function hostsInfoProxy() {
+    return (await this.deploymentManager.getClusterHostsInfo()).clusterHostsInfo;
+  })),
+
+  /**
+   * @type {ComputedProperty<PromiseObject>}
+   */
+  hostsLoadingProxy: promise.object(promise.all('hostsIpsProxy', 'hostsInfoProxy')),
+
   init() {
     this._super(...arguments);
     this.get('hostsIpsProxy').then(hostsIps => {
