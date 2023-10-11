@@ -8,7 +8,7 @@ export default {
   saveNewAccountingConfig: 'Save',
   id: 'Id',
   name: 'Name',
-  storage: 'Assigned storage',
+  storage: 'Assigned storage backend',
   supportSizeThis: {
     spaceSupportOnThisProvider: 'Space support on this provider',
     modifyingSpaceSupportSize: 'modifying space support size',

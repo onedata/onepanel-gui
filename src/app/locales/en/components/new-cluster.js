@@ -12,7 +12,7 @@ export default {
       oneproviderRegistration: 'Oneprovider registration',
       webCert,
       dns,
-      oneproviderStorageAdd: 'storage configuration',
+      oneproviderStorageAdd: 'storage backend configuration',
       done,
     },
     onezone: {
