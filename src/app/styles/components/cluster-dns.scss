@@ -1,0 +1,11 @@
+.cluster-dns {
+  .configuration-conditions-list {
+    > li + li {
+      margin-top: 0.5em;
+    }
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}

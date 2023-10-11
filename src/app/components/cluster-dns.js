@@ -16,6 +16,8 @@ import EmberObject, {
   set,
 } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { promise } from 'ember-awesome-macros';
+import { all as allFulfilled } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
@@ -377,6 +379,49 @@ export default Component.extend(
       }];
     }),
 
+    /**
+     * @type {ComputedProperty<PromiseObject<{
+     *  clusterWorker: Array<{ hostname: string, ip: string }>,
+     *  oneS3: Array<{ hostname: string, ip: string }>,
+     * }>>}
+     */
+    hostsRequiringDnsProxy: promise.object(computed(async function hostsRequiringDns() {
+      const [
+        hostInfos,
+        hostIps,
+      ] = await allFulfilled([
+        this.deploymentManager.getClusterHostsInfo()
+        .then(({ clusterHostsInfo }) => clusterHostsInfo),
+        this.deploymentManager.getClusterIps()
+        .then(({ hosts }) => hosts),
+      ]);
+      const result = {};
+      ['clusterWorker', 'oneS3'].forEach((serviceName) => {
+        result[serviceName] = [];
+        hostInfos.filter((hostInfo) => hostInfo[serviceName])
+          .map(({ hostname }) => hostname)
+          .sort()
+          .forEach((hostname) => {
+            const ip = hostIps[hostname];
+            if (ip) {
+              result[serviceName].push({
+                hostname,
+                ip,
+              });
+            }
+          });
+      });
+      return result;
+    })),
+
+    /**
+     * @type {ComputedProperty<PromiseObject<unknown>>}
+     */
+    summaryDataLoadingProxy: promise.object(promise.all(
+      'domainProxy',
+      'hostsRequiringDnsProxy',
+    )),
+
     isIpDomainObserver: observer('isIpDomain', function isIpDomainObserver() {
       const {
         isIpDomainChanged,
@@ -423,6 +468,7 @@ export default Component.extend(
       }
       // enable isIpDomainObserver
       this.get('isIpDomain');
+      this.hostsRequiringDnsProxy;
     },
 
     willDestroyElement() {

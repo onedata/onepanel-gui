@@ -1,6 +1,6 @@
 <div class="row content-row no-border row-dns-intro">
   <div class="inner-row-content">
-    {{tt this "intro"}}
+    {{tt this "intro" serviceType=(tt this (concat "serviceType." onepanelServiceType))}}
     {{one-doc-see-more
       linkName=(tt this "documentation")
       topic="onezone-dns-config"
@@ -18,7 +18,7 @@
       }}
         <div class="inner-row-content">
           <div class="subheader-text">
-            {{tt this "onezoneBuiltInServer.text"}}
+            {{tt this "onezoneBuiltInServer.text" domain=domain}}
           </div>
           {{#if cannotUseBuiltInDnsServerReason}}
             <div class="alert alert-warning alert-cannot-use-built-in-dns-server">
@@ -93,35 +93,118 @@
 {{#promise-proxy-container
   absoluteCentered=false
   spinnerBlockClass="loadable-row lg"
+  proxy=summaryDataLoadingProxy
+}}
+  <div class="row content-row no-border row-summary">
+    <h1>{{tt this "summary.header"}}</h1>
+    <div class="inner-row-content">
+      <p>
+        {{#if (eq stateInfo "providerIp")}}
+          {{tt this "summary.intro.providerIp"}}
+        {{else if (eq stateInfo "providerSubdomainDelegation")}}
+          {{tt this "summary.intro.providerSubdomainDelegation"
+            domain=domain
+            providerOnezoneDomain=providerOnezoneDomain
+          }}
+        {{else if (eq stateInfo "providerNoSubdomainDelegation")}}
+          {{tt this "summary.intro.providerNoSubdomainDelegationPreHint" domain=domain}}
+          {{one-label-tip title=(tt this "summary.intro.domainHint")}}
+          <span class="space"></span>
+          {{tt this "summary.intro.providerNoSubdomainDelegationPostHint"}}
+        {{else if (eq stateInfo "zoneIp")}}
+          {{tt this "summary.intro.zoneIp"}}
+        {{else}}
+          {{tt this "summary.intro.zoneStandardPreHint" domain=domain}}
+          {{one-label-tip title=(tt this "dnsCheck.domainHint")}}
+          <span class="space"></span>
+          {{tt this "summary.intro.zoneStandardPostHint"}}
+        {{/if}}
+      </p>
+      {{#unless isIpDomain}}
+        <ol class="configuration-conditions-list">
+          {{#if (eq onepanelServiceType "onezone")}}
+            <li>
+              {{tt this
+                (concat
+                  "summary."
+                  (if builtInDnsServer "nsEntriesForEnabledBuiltInDns" "noNsEntriesForDisabledBuiltInDns")
+                )
+                domain=domain
+              }}
+            </li>
+            <li>
+              {{tt this
+                (concat
+                  "summary."
+                  (if builtInDnsServer "nsEntriesResolvedToIp" "domainShouldResolveToIp")
+                )
+                domain=domain
+                componentName=(tt this "componentNames.clusterWorker")
+              }}
+              <ul>
+                {{#each hostsRequiringDnsProxy.content.clusterWorker as |host|}}
+                  <li>{{host.ip}} ({{host.hostname}})</li>
+                {{/each}}
+              </ul>
+            </li>
+          {{else}}
+            <li>
+              {{tt this
+                (concat
+                  "summary."
+                  (if subdomainDelegation "domainResolvesToIp" "domainShouldResolveToIp")
+                )
+                domain=domain
+                componentName=(tt this "componentNames.clusterWorker")
+              }}
+              <ul>
+                {{#each hostsRequiringDnsProxy.content.clusterWorker as |host|}}
+                  <li>{{host.ip}} ({{host.hostname}})</li>
+                {{/each}}
+              </ul>
+            </li>
+            <li>
+              {{#if hostsRequiringDnsProxy.content.oneS3.length}}
+                {{tt this
+                  (concat
+                    "summary."
+                    (if subdomainDelegation "domainResolvesToIp" "domainShouldResolveToIp")
+                  )
+                  domain=(concat "s3." domain)
+                  componentName=(tt this "componentNames.oneS3")
+                }}
+                <ul>
+                  {{#each hostsRequiringDnsProxy.content.oneS3 as |host|}}
+                    <li>{{host.ip}} ({{host.hostname}})</li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                {{tt this "summary.oneS3Disabled" domain=domain}}
+              {{/if}}
+            </li>
+          {{/if}}
+        </ol>
+        <p>
+          {{tt this "summary.ipAddressesNoteStart"}}
+          {{#link-to
+            "onedata.sidebar.content.aspect"
+            "nodes"
+          }}{{tt this "summary.ipAddressesNoteLink"}}{{/link-to}}.
+        </p>
+      {{/unless}}
+    </div>
+  </div>
+{{/promise-proxy-container}}
+
+{{#promise-proxy-container
+  absoluteCentered=false
+  spinnerBlockClass="loadable-row lg"
   proxy=domainProxy
 }}
-  <div class="row content-row no-border row-dns-check">
-    <h1>{{tt this "dnsCheck.header"}}</h1>
-    <div class="inner-row-content">
-      <div class="subheader-text dns-check-state-info">
-        {{#if (eq stateInfo "providerIp")}}
-          {{tt this "dnsCheck.stateInfo.providerIp"}}
-        {{else if (eq stateInfo "providerSubdomainDelegation")}}
-          {{tt this "dnsCheck.stateInfo.providerSubdomainDelegation" providerOnezoneDomain=providerOnezoneDomain}}
-        {{else if (eq stateInfo "providerNoSubdomainDelegation")}}
-          {{tt this "dnsCheck.stateInfo.providerNoSubdomainDelegationPreHint" domain=domain}}
-          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
-          <span class="space"></span>
-          {{tt this "dnsCheck.stateInfo.providerNoSubdomainDelegationPostHint"}}
-        {{else if (eq stateInfo "zoneSubdomainDelegation")}}
-          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPreHint" domain=domain}}
-          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
-          {{tt this "dnsCheck.stateInfo.zoneSubdomainDelegationPostHint"}}
-        {{else if (eq stateInfo "zoneNoSubdomainDelegation")}}
-          {{tt this "dnsCheck.stateInfo.zoneNoSubdomainDelegationPreHint" domain=domain}}
-          {{one-label-tip title=(tt this "dnsCheck.stateHint")}}
-          <span class="space"></span>
-          {{tt this "dnsCheck.stateInfo.zoneNoSubdomainDelegationPostHint" domain=domain}}
-        {{else if (eq stateInfo "zoneIp")}}
-          {{tt this "dnsCheck.stateInfo.zoneIp"}}
-        {{/if}}
-      </div>
-      {{#unless isIpDomain}}
+  {{#unless isIpDomain}}
+    <div class="row content-row no-border row-dns-check">
+      <h1>{{tt this "dnsCheck.header"}}</h1>
+      <div class="inner-row-content">
         <p class="dns-servers-input-intro">
           {{tt this "dnsCheck.inputIntro" domain=domain serviceName=guiUtils.fullServiceName}}
         </p>
@@ -161,32 +244,32 @@
             {{/one-button}}
           </div>
         </div>
-      {{/unless}}
+      </div>
     </div>
-  </div>
 
-  {{#if (and (not (eq dnsCheckProxy undefined)) (not isIpDomain))}}
-    <div class="row content-row no-border row-dns-check-results">
-      {{#promise-proxy-container
-        absoluteCentered=false
-        spinnerBlockClass="loadable-row lg"
-        proxy=dnsCheckProxy
-      }}
-        <h1>{{tt this "dnsCheck.result.header"}}
-          <span class="header-addon">
-            ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
-          </span>
-        </h1>
-        {{cluster-dns-check-table
-          checkResultItems=checkResultItems
-          onepanelServiceType=onepanelServiceType
-          builtInDnsServer=builtInDnsServer
-          subdomainDelegation=subdomainDelegation
-          domain=domain
-          providerOnezoneDomain=providerOnezoneDomain
+    {{#if (not (eq dnsCheckProxy undefined))}}
+      <div class="row content-row no-border row-dns-check-results">
+        {{#promise-proxy-container
+          absoluteCentered=false
+          spinnerBlockClass="loadable-row lg"
+          proxy=dnsCheckProxy
         }}
-      {{/promise-proxy-container}}
-    </div>
-  {{/if}}
+          <h1>{{tt this "dnsCheck.result.header"}}
+            <span class="header-addon">
+              ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
+            </span>
+          </h1>
+          {{cluster-dns-check-table
+            checkResultItems=checkResultItems
+            onepanelServiceType=onepanelServiceType
+            builtInDnsServer=builtInDnsServer
+            subdomainDelegation=subdomainDelegation
+            domain=domain
+            providerOnezoneDomain=providerOnezoneDomain
+          }}
+        {{/promise-proxy-container}}
+      </div>
+    {{/if}}
+  {{/unless}}
 {{/promise-proxy-container}}
 
