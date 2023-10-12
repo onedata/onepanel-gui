@@ -2,7 +2,7 @@ export default {
   hostname: 'Hostname',
   ip: 'IP address',
   tags: {
-    clusterWorker: 'Cluster worker',
+    clusterWorker: 'Cluster Worker',
     oneS3: 'OneS3',
   },
   hostRow: {

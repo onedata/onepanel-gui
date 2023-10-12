@@ -39,10 +39,9 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<SafeString | null>}
    */
   textToShow: computed('hostsWithConflictedOneS3', function textToShow() {
-    if (!this.hostsWithConflictedOneS3.length) {
-      return null;
+    if (this.hostsWithConflictedOneS3.length) {
+      return this.t('conflictingOneS3Info');
     }
-
-    return this.t('conflictingOneS3Info');
+    return null;
   }),
 });
