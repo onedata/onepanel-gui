@@ -1,6 +1,6 @@
 export default {
-  storage: 'Storage',
-  storageSelectPlaceholder: 'Select a storage...',
+  storage: 'Storage backend',
+  storageSelectPlaceholder: 'Select a storage backend...',
   storageSelectLoading: 'Loading...',
   storageImported: '(import-enabled)',
   storageImportedAndUsed: '(import-enabled, already in use)',

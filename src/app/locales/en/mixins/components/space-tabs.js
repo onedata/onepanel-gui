@@ -10,7 +10,7 @@ export default {
       title: 'Storage import',
       hints: {
         enabled: 'Show information about storage import for this space',
-        disabled: 'This space has storage import disabled. These settings can only be changed when granting support, and only if the assigned storage is marked as "imported storage".',
+        disabled: 'This space has storage import disabled. These settings can only be changed when granting support, and only if the assigned storage backend is marked as "imported storage".',
       },
     },
     popular: {

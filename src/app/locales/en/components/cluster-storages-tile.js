@@ -1,3 +1,3 @@
 export default {
-  title: 'Storages',
+  title: 'Storage backends',
 };

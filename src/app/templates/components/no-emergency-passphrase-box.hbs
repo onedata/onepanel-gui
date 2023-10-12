@@ -4,9 +4,9 @@
     {{errorMessage}}
   {{else if isLoading}}
     {{!-- TODO loading --}}
-  {{else}}  
+  {{else}}
     {{login-box/header model=headerModel}}
-    
+
     <div class="row row-login-header text-center">
       <div class="col-xs-12">
         <h4>
@@ -14,7 +14,7 @@
             {{tt this (concat "headers." mode)}}
             {{#if (eq mode "create")}}
               <span class="subtitle-tip">
-                {{one-icon icon="sign-question"}}
+                {{one-icon icon="sign-question-rounded"}}
                 {{one-tooltip title=(tt this "createHint")}}
               </span>
             {{/if}}
@@ -68,7 +68,7 @@
           <p class="description join-description">
             {{tt this "descriptions.join"}}
           </p>
-          <div class="hostname-row {{unless hostnameProxy.isSettled "loadable-row"}}">            
+          <div class="hostname-row {{unless hostnameProxy.isSettled "loadable-row"}}">
             {{#promise-proxy-container proxy=hostnameProxy}}
               {{clipboard-line value=hostnameProxy.content btnType="primary"}}
             {{/promise-proxy-container}}
@@ -81,7 +81,7 @@
             }}
               {{one-icon icon="arrow-right"}}
               {{tt this "back"}}
-            {{/bs-button}}  
+            {{/bs-button}}
           </div>
         {{/if}}
       </div>

@@ -117,7 +117,7 @@ export default Component.extend(I18n, {
         whileEdition ? 'cancelStorageModification' : 'modifyStorageDetails'
       ),
       class: 'modify-storage-details hidden-lg hidden-md hidden-sm',
-      icon: 'rename',
+      icon: 'browser-rename',
     };
   }),
 

@@ -5,7 +5,7 @@
 }}
   {{#bar.modal.header}}
     <h1>
-      {{one-icon icon="sign-info"}}
+      {{one-icon icon="sign-info-rounded"}}
       <span class="one-label">{{if workerIsUnavailable workerIsUnavailableText (tt this "modal.emergency.header")}}</span>
     </h1>
   {{/bar.modal.header}}
@@ -21,7 +21,7 @@
         <p>{{tt this "modal.workerMalfunction.opMainMessage"}}</p>
         <ol class="info info-condensed info-gray">
           <li>
-            {{tt this "modal.workerMalfunction.opSuperiorOnezoneBeforeUrl"}}<a class="break-all" href={{onezoneOrigin}}>{{onezoneOrigin}}</a>{{tt this "modal.workerMalfunction.opSuperiorOnezoneAfterUrl"}}  
+            {{tt this "modal.workerMalfunction.opSuperiorOnezoneBeforeUrl"}}<a class="break-all" href={{onezoneOrigin}}>{{onezoneOrigin}}</a>{{tt this "modal.workerMalfunction.opSuperiorOnezoneAfterUrl"}}
           </li>
           <li>{{tt this "modal.workerMalfunction.opIsNotRunning"}}
             <ul class="info info-condensed info-gray">

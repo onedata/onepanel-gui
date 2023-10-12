@@ -2,7 +2,7 @@ export default {
   mode: {
     mode: {
       name: 'Mode',
-      tip: 'When "auto" mode is selected, the storage will be automatically scanned and data will be imported from storage into the assigned Onedata space. In case of "manual" mode, the files must be registered manually by the space users with REST API. Registration of directories is not supported. In both modes there is no need for copying the data.',
+      tip: 'When "auto" mode is selected, the storage will be automatically scanned and data will be imported from storage backend into the assigned Onedata space. In case of "manual" mode, the files must be registered manually by the space users with REST API. Registration of directories is not supported. In both modes there is no need for copying the data.',
       options: {
         auto: 'auto',
         manual: 'manual',
@@ -28,7 +28,7 @@ export default {
     },
     continuousScan: {
       name: 'Continuous scan',
-      tip: 'Indicates if the data on the storage should be imported into the space periodically. Continuous import guarantees data integrity if direct modifications on the storage are to be made during the space lifecycle.',
+      tip: 'Indicates if the data on the storage backend should be imported into the space periodically. Continuous import guarantees data integrity if direct modifications on the storage backend are to be made during the space lifecycle.',
     },
   },
   continuous: {
