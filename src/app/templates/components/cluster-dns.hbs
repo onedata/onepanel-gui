@@ -81,7 +81,10 @@
               checked=subdomainDelegation
               update=(action "changeSubdomainDelegation")
               isReadOnly=cannotUseSubdomainDelegationReason
-              lockHint=(tt this (concat "subdomainDelegation." cannotUseSubdomainDelegationReason))
+              lockHint=(tt
+                this
+                (concat "subdomainDelegation." cannotUseSubdomainDelegationReason)
+              )
             }}
           </div>
         </div>
@@ -125,10 +128,10 @@
           {{#if (eq onepanelServiceType "onezone")}}
             <li>
               {{tt this
-                (concat
-                  "summary."
-                  (if builtInDnsServer "nsEntriesForEnabledBuiltInDns" "noNsEntriesForDisabledBuiltInDns")
-                )
+                (concat "summary." (if builtInDnsServer
+                  "nsEntriesForEnabledBuiltInDns"
+                  "noNsEntriesForDisabledBuiltInDns"
+                ))
                 domain=domain
               }}
             </li>
@@ -166,10 +169,10 @@
             <li>
               {{#if hostsRequiringDnsProxy.content.oneS3.length}}
                 {{tt this
-                  (concat
-                    "summary."
-                    (if subdomainDelegation "domainResolvesToIp" "domainShouldResolveToIp")
-                  )
+                  (concat "summary." (if subdomainDelegation
+                    "domainResolvesToIp"
+                    "domainShouldResolveToIp"
+                  ))
                   domain=(concat "s3." domain)
                   componentName=(tt this "componentNames.oneS3")
                 }}
@@ -206,7 +209,10 @@
       <h1>{{tt this "dnsCheck.header"}}</h1>
       <div class="inner-row-content">
         <p class="dns-servers-input-intro">
-          {{tt this "dnsCheck.inputIntro" domain=domain serviceName=guiUtils.fullServiceName}}
+          {{tt this "dnsCheck.inputIntro"
+            domain=domain
+            serviceName=guiUtils.fullServiceName
+          }}
         </p>
         <p>
           {{one-way-radio-group
@@ -256,7 +262,8 @@
         }}
           <h1>{{tt this "dnsCheck.result.header"}}
             <span class="header-addon">
-              ({{tt this "dnsCheck.result.checkPerformed"}} {{time-from-now date=lastCheckMoment}})
+              ({{tt this "dnsCheck.result.checkPerformed"}}
+              {{time-from-now date=lastCheckMoment}})
             </span>
           </h1>
           {{cluster-dns-check-table

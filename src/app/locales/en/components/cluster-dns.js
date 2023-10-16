@@ -8,7 +8,7 @@ export default {
   onezoneBuiltInServer: {
     header: 'Onezone built-in DNS server',
     useToggleLabel: 'Use built-in DNS server',
-    text: 'Recommended option for optimal load balancing. The Onezone’s built-in DNS server will manage your domain, however it requires that you set up DNS Zone delegation in the DNS server responsible for your domain ("{{domain}}"). Then, DNS queries concerning this domain will be routed to the built-in DNS server within the Onezone service.',
+    text: 'Recommended option for optimal load balancing. The Onezone\'s built-in DNS server will manage your domain, however it requires that you set up DNS Zone delegation in the DNS server responsible for your domain ("{{domain}}"). Then, DNS queries concerning this domain will be routed to the built-in DNS server within the Onezone service.',
     wrongDomain: 'You need a proper domain to enable the built-in DNS server.',
     togglingBuiltInDnsServer: 'toggling built-in DNS server',
   },
@@ -39,7 +39,7 @@ export default {
     noNsEntriesForDisabledBuiltInDns: 'Since the built-in DNS server is disabled, no NS entries are required.',
     nsEntriesResolvedToIp: 'The NS entries (ns{}.{{domain}}) should resolve to the external IP addresses of nodes that host the Cluster Worker components:',
     ipAddressesNoteStart: 'Note: the expected IP addresses are determined based on your ',
-    ipAddressesNoteLink: 'Cluster nodes setup',
+    ipAddressesNoteLink: 'cluster nodes setup',
   },
   dnsCheck: {
     header: 'DNS check',

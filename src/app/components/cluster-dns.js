@@ -385,34 +385,36 @@ export default Component.extend(
      *  oneS3: Array<{ hostname: string, ip: string }>,
      * }>>}
      */
-    hostsRequiringDnsProxy: promise.object(computed(async function hostsRequiringDns() {
-      const [
-        hostInfos,
-        hostIps,
-      ] = await allFulfilled([
-        this.deploymentManager.getClusterHostsInfo()
-        .then(({ clusterHostsInfo }) => clusterHostsInfo),
-        this.deploymentManager.getClusterIps()
-        .then(({ hosts }) => hosts),
-      ]);
-      const result = {};
-      ['clusterWorker', 'oneS3'].forEach((serviceName) => {
-        result[serviceName] = [];
-        hostInfos.filter((hostInfo) => hostInfo[serviceName])
-          .map(({ hostname }) => hostname)
-          .sort()
-          .forEach((hostname) => {
-            const ip = hostIps[hostname];
-            if (ip) {
-              result[serviceName].push({
-                hostname,
-                ip,
-              });
-            }
-          });
-      });
-      return result;
-    })),
+    hostsRequiringDnsProxy: promise.object(computed(
+      async function hostsRequiringDnsProxy() {
+        const [
+          hostInfos,
+          hostIps,
+        ] = await allFulfilled([
+          this.deploymentManager.getClusterHostsInfo()
+          .then(({ clusterHostsInfo }) => clusterHostsInfo),
+          this.deploymentManager.getClusterIps()
+          .then(({ hosts }) => hosts),
+        ]);
+        const result = {};
+        ['clusterWorker', 'oneS3'].forEach((serviceName) => {
+          result[serviceName] = [];
+          hostInfos.filter((hostInfo) => hostInfo[serviceName])
+            .map(({ hostname }) => hostname)
+            .sort()
+            .forEach((hostname) => {
+              const ip = hostIps[hostname];
+              if (ip) {
+                result[serviceName].push({
+                  hostname,
+                  ip,
+                });
+              }
+            });
+        });
+        return result;
+      }
+    )),
 
     /**
      * @type {ComputedProperty<PromiseObject<unknown>>}
