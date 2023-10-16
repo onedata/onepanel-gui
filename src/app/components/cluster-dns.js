@@ -269,8 +269,10 @@ export default Component.extend(
           if (isIpDomain) {
             return 'zoneIp';
           } else if (subdomainDelegation) {
+            // This value is not used in hbs file. Left for code consistency
             return 'zoneSubdomainDelegation';
           } else {
+            // This value is not used in hbs file. Left for code consistency
             return 'zoneNoSubdomainDelegation';
           }
         }
