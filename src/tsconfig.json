@@ -1,0 +1,54 @@
+{
+  "extends": "@tsconfig/ember/tsconfig.json",
+  "compilerOptions": {
+
+    // The combination of `baseUrl` with `paths` allows Ember's classic package
+    // layout, which is not resolvable with the Node resolution algorithm, to
+    // work with TypeScript.
+    "baseUrl": ".",
+    "paths": {
+      "onepanel-gui/tests/*": [
+        "tests/*"
+      ],
+      "onepanel-gui/*": [
+        "app/*",
+        "lib/ember-onedata-onepanel-server/app/*",
+        "lib/onedata-gui-common/app/*"
+      ],
+      "ember-onedata-onepanel-server": [
+        "lib/ember-onedata-onepanel-server/addon"
+      ],
+      "ember-onedata-onepanel-server/*": [
+        "lib/ember-onedata-onepanel-server/addon/*"
+      ],
+      "ember-onedata-onepanel-server/test-support": [
+        "lib/ember-onedata-onepanel-server/addon-test-support"
+      ],
+      "ember-onedata-onepanel-server/test-support/*": [
+        "lib/ember-onedata-onepanel-server/addon-test-support/*"
+      ],
+      "onedata-gui-common": [
+        "lib/onedata-gui-common/addon"
+      ],
+      "onedata-gui-common/*": [
+        "lib/onedata-gui-common/addon/*"
+      ],
+      "onedata-gui-common/test-support": [
+        "lib/onedata-gui-common/addon-test-support"
+      ],
+      "onedata-gui-common/test-support/*": [
+        "lib/onedata-gui-common/addon-test-support/*"
+      ],
+      "*": [
+        "types/*"
+      ]
+    }
+  },
+  "include": [
+    "app/**/*",
+    "tests/**/*",
+    "types/**/*",
+    "lib/ember-onedata-onepanel-server/**/*",
+    "lib/onedata-gui-common/**/*"
+  ]
+}
