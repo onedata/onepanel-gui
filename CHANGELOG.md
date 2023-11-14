@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11465 Added `region` and `verifyServerCertificate` parameters to S3 storage
 * VFS-11251 Removed unused oneicons
 * VFS-11202 Removed Embedded Ceph cluster configuration
 * VFS-10480 Changed files to items in auto import scan report
