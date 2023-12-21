@@ -1,0 +1,50 @@
+{{#global-modal
+  classNames="save-storage-modification-ack-modal"
+  allowClose=(not isSubmitting)
+  modalId=modalId
+  as |modal|
+}}
+
+  {{#modal.header}}
+    <h1>
+      {{one-icon icon="sign-warning-rounded"}}
+      <span class="one-label">{{tt this "header"}}</span>
+    </h1>
+  {{/modal.header}}
+
+  {{#modal.body}}
+    <p>{{tt this "warningsIntro"}}</p>
+    <ul class="spaced-items">
+      {{#each warningTexts as |warningText index|}}
+        <li>
+          {{warningText}}{{evaluate-function
+            this.getWarningEndingChar
+            warningTexts.length
+            index
+          }}
+        </li>
+      {{/each}}
+    </ul>
+    <p class="text-danger"><strong>{{tt this "warningsEnding"}}</strong></p>
+  {{/modal.body}}
+
+  {{#modal.footer class="btn-toolbar"}}
+    {{#bs-button
+      type="default"
+      class="cancel"
+      onClick=modal.close
+      disabled=isSubmitting
+    }}
+      {{tt this "buttons.cancel"}}
+    {{/bs-button}}
+    {{#one-button
+      type="warning"
+      buttonType="submit"
+      class="proceed"
+      onClick=(action "submit" modal.submit)
+    }}
+      {{tt this "buttons.proceed"}}
+    {{/one-button}}
+  {{/modal.footer}}
+
+{{/global-modal}}
