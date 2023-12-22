@@ -11,7 +11,6 @@ import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import { selectChoose } from 'ember-power-select/test-support/helpers';
-import globals from 'onedata-gui-common/utils/globals';
 
 class ClusterStorageAddHelper extends FormHelper {
   constructor(template) {

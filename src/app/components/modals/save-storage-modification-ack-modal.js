@@ -47,6 +47,11 @@ export default Component.extend(I18n, {
   isSubmitting: false,
 
   /**
+   * @type {boolean}
+   */
+  isCheckboxChecked: false,
+
+  /**
    * @type {ComputedProperty<SaveStorageModificationAckModalOptions['warnings']>}
    */
   warnings: reads('modalOptions.warnings'),
@@ -59,10 +64,6 @@ export default Component.extend(I18n, {
       this.t(`warnings.${warningType}`)
     );
   }),
-
-  getWarningEndingChar(listLength, index) {
-    return index < listLength - 1 ? ',' : '.';
-  },
 
   actions: {
     submit(submitCallback) {

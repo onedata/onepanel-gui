@@ -24,6 +24,11 @@ const exampleStorage = {
   mountPoint: '/',
 };
 
+const qosWarning =
+  'Modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
+const restartWarning =
+  'The changes in storage configuration will not take effect until Oneprovider and attached Oneclient instances are restarted. This behaviour will be improved in future releases of Onedata.';
+
 const StorageManagerServiceMock = Service.extend({
   storageBeforeModification: exampleStorage,
   storageAfterModification: null,
@@ -164,19 +169,22 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       const { resultPromise } = await executeAction(this);
 
       expect(getModalHeader()).to.contain.text('Modify storage backend');
-      expect(getModalBody()).to.contain.text(
-        'Your modification can cause below issues and/or will need additional manual steps:'
-      ).and.to.contain.text(
-        'modification of QoS parameters will not trigger recalculation of the existing QoS requirements attached to your files. This will be improved in the next major release of Onedata,'
-      ).and.to.contain.text(
-        'this change will not take effect until Oneprovider and attached Oneclient instances are restarted.'
-      ).and.to.contain.text(
-        'Are you sure you want to modify storage backend details? Incorrect configuration can make your data unavailable.'
-      );
+      expect(getModalBody())
+        .to.contain.text(
+          'Your modification can cause below issues and/or will need additional manual steps:'
+        )
+        .and.to.contain.text(qosWarning)
+        .and.to.contain.text(restartWarning)
+        .and.to.contain.text(
+          'Are you sure you want to modify storage backend details? Incorrect configuration can make your data unavailable.'
+        )
+        .and.to.contain('.one-checkbox-understand input');
       const buttons = getModalFooter().querySelectorAll('button');
       expect(buttons[0]).to.contain.text('Cancel');
       expect(buttons[1]).to.contain.text('Proceed');
+      expect(buttons[1].disabled).to.be.true;
 
+      await click('.one-checkbox-understand input');
       await click(buttons[1]);
 
       const result = await resultPromise;
@@ -197,12 +205,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(
-        'modification of QoS parameters will not trigger recalculation of the existing QoS requirements attached to your files. This will be improved in the next major release of Onedata.'
-      ).and.to.not.contain.text(
-        'this change will not take effect until Oneprovider and attached Oneclient instances are restarted'
-      );
+      expect(getModalBody()).to.contain.text(qosWarning)
+        .and.to.not.contain.text(restartWarning);
 
+      await click('.one-checkbox-understand input');
       await click('.proceed');
 
       const result = await resultPromise;
@@ -223,12 +229,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(
-        'this change will not take effect until Oneprovider and attached Oneclient instances are restarted.'
-      ).and.to.not.contain.text(
-        'modification of QoS parameters will not trigger recalculation of the existing QoS requirements attached to your files. This will be improved in the next major release of Onedata'
-      );
+      expect(getModalBody()).to.contain.text(restartWarning)
+        .and.to.not.contain.text(qosWarning);
 
+      await click('.one-checkbox-understand input');
       await click('.proceed');
 
       const result = await resultPromise;

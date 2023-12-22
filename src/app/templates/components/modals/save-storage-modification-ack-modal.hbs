@@ -16,16 +16,22 @@
     <p>{{tt this "warningsIntro"}}</p>
     <ul class="spaced-items">
       {{#each warningTexts as |warningText index|}}
-        <li>
-          {{warningText}}{{evaluate-function
-            this.getWarningEndingChar
-            warningTexts.length
-            index
-          }}
-        </li>
+        <li>{{warningText}}</li>
       {{/each}}
     </ul>
-    <p class="text-danger"><strong>{{tt this "warningsEnding"}}</strong></p>
+    <div class="row content-row no-border row-understand-notice">
+      {{one-checkbox
+        class="danger one-checkbox-danger one-checkbox-understand"
+        checked=isCheckboxChecked
+        update=(action (mut isCheckboxChecked))
+      }}
+      <div
+        class="text-understand clickable"
+        {{action (mut isCheckboxChecked) (not isCheckboxChecked)}}
+      >
+        {{tt this "ackMessage"}}
+      </div>
+    </div>
   {{/modal.body}}
 
   {{#modal.footer class="btn-toolbar"}}
@@ -41,6 +47,7 @@
       type="warning"
       buttonType="submit"
       class="proceed"
+      disabled=(not isCheckboxChecked)
       onClick=(action "submit" modal.submit)
     }}
       {{tt this "buttons.proceed"}}
