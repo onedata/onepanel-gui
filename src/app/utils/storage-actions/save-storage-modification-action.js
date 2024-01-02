@@ -9,7 +9,7 @@
 
 import Action from 'onedata-gui-common/utils/action';
 import ActionResult from 'onedata-gui-common/utils/action-result';
-import { set, computed } from '@ember/object';
+import { set } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { resolve } from 'rsvp';
@@ -25,7 +25,6 @@ const WarningType = Object.freeze({
   Qos: 'qos',
 });
 
-const storageOptionCausingQosWarning = 'qosParameters';
 const storageOptionsNotCausingRestartWarning = Object.freeze([
   'name',
   'readonly',
@@ -33,7 +32,7 @@ const storageOptionsNotCausingRestartWarning = Object.freeze([
   'lumaFeed',
   'lumaFeedUrl',
   'lumaFeedApiKey',
-  storageOptionCausingQosWarning,
+  'qosParameters',
 ]);
 
 export default Action.extend({
@@ -70,35 +69,14 @@ export default Action.extend({
   modifiedStorageOptions: reads('context.modifiedStorageOptions'),
 
   /**
-   * @private
-   * @type {ComputedProperty<Array<WarningType>>}
-   */
-  warningsToShowBeforeSaving: computed(
-    'modifiedStorageOptions',
-    function warningsToShowBeforeSaving() {
-      const changedStorageOptions = Object.keys(this.modifiedStorageOptions);
-      const warnings = new Set();
-
-      changedStorageOptions.forEach((option) => {
-        if (!storageOptionsNotCausingRestartWarning.includes(option)) {
-          warnings.add(WarningType.Restart);
-        }
-        if (option === storageOptionCausingQosWarning) {
-          warnings.add(WarningType.Qos);
-        }
-      });
-
-      return [...warnings];
-    }
-  ),
-
-  /**
    * @override
    */
   async onExecute() {
     const result = ActionResult.create();
-    const { modifiedStorageOptions, warningsToShowBeforeSaving } = this;
     const storageBeforeModification = await this.getStorage();
+    const { modifiedStorageOptions } = this;
+    const warningsToShowBeforeSaving =
+      this.getWarningsToShowBeforeSaving(storageBeforeModification);
 
     const changedStorageOptions = Object.keys(modifiedStorageOptions);
     // Do real persistence only if there is sth to save.
@@ -155,5 +133,34 @@ export default Action.extend({
    */
   async getStorage() {
     return (await this.storageManager.getStorageDetails(this.storageId)).content;
+  },
+
+  /**
+   * @private
+   * @param {ClusterStorage} storageBeforeModification
+   * @returns {Array<WarningType>}
+   */
+  getWarningsToShowBeforeSaving(storageBeforeModification) {
+    const warnings = new Set();
+
+    Object.keys(this.modifiedStorageOptions).forEach((option) => {
+      if (!storageOptionsNotCausingRestartWarning.includes(option)) {
+        warnings.add(WarningType.Restart);
+      }
+    });
+
+    if (this.modifiedStorageOptions.qosParameters) {
+      Object.keys(storageBeforeModification?.qosParameters ?? {})
+        .forEach((qosParamName) => {
+          if (
+            this.modifiedStorageOptions.qosParameters[qosParamName] !==
+            storageBeforeModification.qosParameters[qosParamName]
+          ) {
+            warnings.add(WarningType.Qos);
+          }
+        });
+    }
+
+    return [...warnings];
   },
 });

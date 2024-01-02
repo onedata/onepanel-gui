@@ -129,6 +129,30 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         ));
     });
 
+  it('executes successfully without additional modal, when changed options contains only a new QoS parameter',
+    async function () {
+      this.modifiedStorageOptions.qosParameters = { a: 1 };
+      this.storageManagerMock.storageAfterModification = {
+        ...exampleStorage,
+        ...this.modifiedStorageOptions,
+      };
+
+      const { resultPromise } = await executeAction(this);
+      const result = await resultPromise;
+
+      expectResult(result, {
+        storageBeforeModification: exampleStorage,
+        storageAfterModification: this.storageManagerMock.storageAfterModification,
+        verificationPassed: true,
+      });
+      expect(this.storageManagerMock.modifyStorage)
+        .to.be.calledWith(this.storageId, this.modifiedStorageOptions);
+      expect(this.globalNotifyMock.success)
+        .to.be.calledWith(htmlSafe(
+          'Storage backend "my-storage" has been modified successfully.'
+        ));
+    });
+
   it('executes successfully with verification alert, when change didn\'t pass storage verification',
     async function () {
       this.modifiedStorageOptions.name = 'my-storage2';
@@ -159,10 +183,15 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
   it('executes successfully with ack modal, when changed options cause all possible issues',
     async function () {
-      this.modifiedStorageOptions.qosParameters = { a: 1 };
-      this.modifiedStorageOptions.mountPoint = '/sth';
-      this.storageManagerMock.storageAfterModification = {
+      const storageBeforeModification = {
         ...exampleStorage,
+        qosParameters: { a: 1 },
+      };
+      this.modifiedStorageOptions.qosParameters = { a: 2 };
+      this.modifiedStorageOptions.mountPoint = '/sth';
+      this.storageManagerMock.storageBeforeModification = storageBeforeModification;
+      this.storageManagerMock.storageAfterModification = {
+        ...storageBeforeModification,
         ...this.modifiedStorageOptions,
       };
 
@@ -176,7 +205,7 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         .and.to.contain.text(qosWarning)
         .and.to.contain.text(restartWarning)
         .and.to.contain.text(
-          'Are you sure you want to modify storage backend details? Incorrect configuration can make your data unavailable.'
+          'I understand that incorrect storage configuration can cause data loss, corruption, or discrepancies between file metadata and content in all supported spaces. '
         )
         .and.to.contain('.one-checkbox-understand input');
       const buttons = getModalFooter().querySelectorAll('button');
@@ -189,17 +218,22 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const result = await resultPromise;
       expectResult(result, {
-        storageBeforeModification: exampleStorage,
+        storageBeforeModification: storageBeforeModification,
         storageAfterModification: this.storageManagerMock.storageAfterModification,
         verificationPassed: true,
       });
     });
 
-  it('executes successfully with ack modal, when changed options cause only qos issue',
+  it('executes successfully with ack modal, when changed options cause only qos issue (modified qos parameter)',
     async function () {
-      this.modifiedStorageOptions.qosParameters = { a: 1 };
-      this.storageManagerMock.storageAfterModification = {
+      const storageBeforeModification = {
         ...exampleStorage,
+        qosParameters: { a: 1 },
+      };
+      this.modifiedStorageOptions.qosParameters = { a: 2 };
+      this.storageManagerMock.storageBeforeModification = storageBeforeModification;
+      this.storageManagerMock.storageAfterModification = {
+        ...storageBeforeModification,
         ...this.modifiedStorageOptions,
       };
 
@@ -213,7 +247,36 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const result = await resultPromise;
       expectResult(result, {
-        storageBeforeModification: exampleStorage,
+        storageBeforeModification: storageBeforeModification,
+        storageAfterModification: this.storageManagerMock.storageAfterModification,
+        verificationPassed: true,
+      });
+    });
+
+  it('executes successfully with ack modal, when changed options cause only qos issue (removed qos parameter)',
+    async function () {
+      const storageBeforeModification = {
+        ...exampleStorage,
+        qosParameters: { a: 1 },
+      };
+      this.modifiedStorageOptions.qosParameters = {};
+      this.storageManagerMock.storageBeforeModification = storageBeforeModification;
+      this.storageManagerMock.storageAfterModification = {
+        ...storageBeforeModification,
+        ...this.modifiedStorageOptions,
+      };
+
+      const { resultPromise } = await executeAction(this);
+
+      expect(getModalBody()).to.contain.text(qosWarning)
+        .and.to.not.contain.text(restartWarning);
+
+      await click('.one-checkbox-understand input');
+      await click('.proceed');
+
+      const result = await resultPromise;
+      expectResult(result, {
+        storageBeforeModification: storageBeforeModification,
         storageAfterModification: this.storageManagerMock.storageAfterModification,
         verificationPassed: true,
       });

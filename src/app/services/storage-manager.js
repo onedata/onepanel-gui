@@ -126,7 +126,7 @@ export default Service.extend({
           record = this._collectionMap[id] =
             (this._collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);
-          if (!batch && this.collectionCache) {
+          if (!batch && this.collectionCache?.content) {
             const indexInCollection =
               this.collectionCache.content.toArray().findIndex(record =>
                 get(record, 'id') === id
