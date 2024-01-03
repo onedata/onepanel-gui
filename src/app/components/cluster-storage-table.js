@@ -23,6 +23,12 @@ export default Component.extend({
    */
   spaces: null,
 
+  /**
+   * @virtual
+   * @type {() => void}
+   */
+  reloadStoragesList: undefined,
+
   spacesLoadError: computed('spaces.@each.isRejected', function () {
     const spaces = this.get('spaces');
     if (spaces) {

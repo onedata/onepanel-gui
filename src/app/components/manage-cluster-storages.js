@@ -287,14 +287,8 @@ export default Component.extend(I18n, GlobalActions, {
       });
       return submitting;
     },
-    submitModifyStorage(storage, storageFormData) {
-      const storageActions = this.get('storageActions');
-      const newDetails = createClusterStorageModel(storageFormData, true);
-      return storageActions.modifyStorage(storage, newDetails)
-        .then(result => {
-          this.initStoragesBatchResolver();
-          return result;
-        });
+    reloadStoragesList() {
+      this.initStoragesBatchResolver();
     },
     submitRemoveStorage() {
       const {

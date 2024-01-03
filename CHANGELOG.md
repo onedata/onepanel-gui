@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11624 Added a more comprehensive warning modal when changing storage options
 * VFS-11465 Added `region` and `verifyServerCertificate` parameters to S3 storage
 * VFS-11251 Removed unused oneicons
 * VFS-11202 Removed Embedded Ceph cluster configuration
