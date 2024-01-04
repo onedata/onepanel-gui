@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11653 Removed storage verification warning when there was no info about the verification result
 * VFS-11624 Added a more comprehensive warning modal when changing storage options
 * VFS-11465 Added `region` and `verifyServerCertificate` parameters to S3 storage
 * VFS-11251 Removed unused oneicons

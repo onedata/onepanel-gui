@@ -162,8 +162,9 @@ export default Service.extend({
   /**
    * @param {string} id
    * @param {Onepanel.StorageModifyRequest} storageData
-   * @returns {Promise<{ verificationPassed: boolean }>} resolves when storage
-   * has been successfully modified
+   * @returns {Promise<{ verificationPassed: boolean | null }>} Tells about
+   * storage verification status after modification. If is `null`, then
+   * we have no info about verification (probably verification was turned off).
    */
   async modifyStorage(id, storageData) {
     const storageBeforeModification = (await this.getStorageDetails(id)).content;
@@ -195,7 +196,7 @@ export default Service.extend({
     }
 
     return {
-      verificationPassed: result?.data?.verificationPassed ?? false,
+      verificationPassed: result?.data?.verificationPassed ?? null,
     };
   },
 
