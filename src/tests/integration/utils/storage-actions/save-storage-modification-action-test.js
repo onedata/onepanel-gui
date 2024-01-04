@@ -96,7 +96,7 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       expectResult(result, {
         storageBeforeModification: exampleStorage,
         storageAfterModification: exampleStorage,
-        verificationPassed: true,
+        verificationPassed: null,
       });
       expect(this.storageManagerMock.modifyStorage).to.be.not.called;
       expect(this.globalNotifyMock.success)

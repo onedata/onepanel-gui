@@ -94,7 +94,7 @@ export default Action.extend({
       }
     } else {
       // Nothing to save. We can say that everything is saved.
-      await result.interceptPromise(resolve({ verificationPassed: true }));
+      await result.interceptPromise(resolve({ verificationPassed: null }));
     }
 
     result.cancelIfPending();
@@ -106,7 +106,7 @@ export default Action.extend({
         verificationPassed: result.result.verificationPassed,
       });
 
-      if (!result.result.verificationPassed) {
+      if (result.result.verificationPassed === false) {
         this.globalNotify.warningAlert(this.t('warningStorageCheckFailed', {
           name: storageBeforeModification.name,
         }));
@@ -118,7 +118,7 @@ export default Action.extend({
 
   /**
    * @private
-   * @returns {Promise<{ verificationPassed: boolean }>}
+   * @returns {Promise<{ verificationPassed: boolean | null }>}
    */
   async saveStorageModification() {
     return await this.storageManager.modifyStorage(
