@@ -11,7 +11,6 @@ import GenericFields from 'onepanel-gui/utils/cluster-storage/generic-fields';
 import PosixFields from 'onepanel-gui/utils/cluster-storage/posix-fields';
 import LumaFields from 'onepanel-gui/utils/cluster-storage/luma-fields';
 import { selectChoose } from 'ember-power-select/test-support/helpers';
-import globals from 'onedata-gui-common/utils/globals';
 
 class ClusterStorageAddHelper extends FormHelper {
   constructor(template) {
@@ -611,7 +610,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       const storageName = 'newName';
       this.set('submit', (formData) => {
         submitOccurred = true;
-        expect(_.keys(formData)).to.have.length(2);
+        expect(_.keys(formData)).to.have.length(1);
         expect(formData.name).to.be.equal(storageName);
         return resolve();
       });
@@ -633,7 +632,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         POSIX_STORAGE.mountPoint
       );
       await helper.submit();
-      await click(globals.document.querySelector('.modify-storage-modal .proceed'));
       expect(submitOccurred).to.be.true;
     });
 
@@ -641,7 +639,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       let submitOccurred = false;
       this.set('submit', (formData) => {
         submitOccurred = true;
-        expect(_.keys(formData)).to.have.length(2);
+        expect(_.keys(formData)).to.have.length(1);
         expect(formData.lumaFeedApiKey).to.be.null;
         return resolve();
       });
@@ -657,7 +655,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       const helper = new ClusterStorageAddHelper(this.element);
       await fillIn(helper.getInput('luma_editor-lumaFeedApiKey'), '');
       await helper.submit();
-      await click(globals.document.querySelector('.modify-storage-modal .proceed'));
 
       expect(submitOccurred).to.be.true;
     });
@@ -750,7 +747,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         expect(helper.getToggleInput('generic_editor-importedStorage'))
           .to.have.class('checked');
         await helper.submit();
-        await click(globals.document.querySelector('.modify-storage-modal .proceed'));
         expect(submitStub).to.be.calledWith(
           sinon.match(formData => formData.importedStorage === undefined)
         );

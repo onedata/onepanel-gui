@@ -1,0 +1,57 @@
+{{#global-modal
+  classNames="save-storage-modification-ack-modal"
+  allowClose=(not isSubmitting)
+  modalId=modalId
+  as |modal|
+}}
+
+  {{#modal.header}}
+    <h1>
+      {{one-icon icon="sign-warning-rounded"}}
+      <span class="one-label">{{tt this "header"}}</span>
+    </h1>
+  {{/modal.header}}
+
+  {{#modal.body}}
+    <p>{{tt this "warningsIntro"}}</p>
+    <ul class="spaced-items">
+      {{#each warningTexts as |warningText index|}}
+        <li>{{warningText}}</li>
+      {{/each}}
+    </ul>
+    <div class="row content-row no-border row-understand-notice">
+      {{one-checkbox
+        class="danger one-checkbox-danger one-checkbox-understand"
+        checked=isCheckboxChecked
+        update=(action (mut isCheckboxChecked))
+      }}
+      <div
+        class="text-understand clickable"
+        {{action (mut isCheckboxChecked) (not isCheckboxChecked)}}
+      >
+        {{tt this "ackMessage"}}
+      </div>
+    </div>
+  {{/modal.body}}
+
+  {{#modal.footer class="btn-toolbar"}}
+    {{#bs-button
+      type="default"
+      class="cancel"
+      onClick=modal.close
+      disabled=isSubmitting
+    }}
+      {{tt this "buttons.cancel"}}
+    {{/bs-button}}
+    {{#one-button
+      type="warning"
+      buttonType="submit"
+      class="proceed"
+      disabled=(not isCheckboxChecked)
+      onClick=(action "submit" modal.submit)
+    }}
+      {{tt this "buttons.proceed"}}
+    {{/one-button}}
+  {{/modal.footer}}
+
+{{/global-modal}}

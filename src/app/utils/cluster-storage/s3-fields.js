@@ -13,6 +13,17 @@ export default [{
   name: 'bucketName',
   type: 'text',
 }, {
+  name: 'verifyServerCertificate',
+  type: 'checkbox',
+  defaultValue: true,
+  tip: true,
+}, {
+  name: 'region',
+  type: 'text',
+  optional: true,
+  tip: true,
+  example: 'us-east-1',
+}, {
   name: 'accessKey',
   type: 'text',
   optional: true,

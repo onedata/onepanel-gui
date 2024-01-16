@@ -987,6 +987,7 @@ export default OneForm.extend(I18n, Validations, {
       if (editedQosParams) {
         set(formData, 'qosParameters', editedQosParams);
       }
+      formData.type = selectedStorageType.id;
       if (!inEditionMode) {
         formData = stripObject(formData, ['']);
       } else {
@@ -1005,13 +1006,9 @@ export default OneForm.extend(I18n, Validations, {
           }
         });
       }
-      formData.type = selectedStorageType.id;
 
       return this.get('submit')(formData)
-        .finally(() => safeExec(this, () => this.setProperties({
-          modifyModalVisible: false,
-          isSavingStorage: false,
-        })));
+        .finally(() => safeExec(this, () => this.set('isSavingStorage', false)));
     },
   },
 });

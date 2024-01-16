@@ -8,12 +8,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 import Component from '@ember/component';
-import { computed, get } from '@ember/object';
+import { computed, trySet } from '@ember/object';
 import { reads, collect } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { resolve } from 'rsvp';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
-import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import _ from 'lodash';
 import config from 'ember-get-config';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';
@@ -51,10 +49,9 @@ export default Component.extend(I18n, {
   storageProxy: null,
 
   /**
-   * Modify storage action callback
-   * @type {Function}
+   * @type {() => void}
    */
-  submitModifyStorage: null,
+  reloadStoragesList: null,
 
   /**
    * @type {Onepanel.StorageDetails|null}
@@ -185,26 +182,17 @@ export default Component.extend(I18n, {
         this.toggleEdition();
       }
     },
-    saveEdition(storageFormData) {
-      // nothing to modify - close form
-      // <= 1 because "type" field is always sent by form
-      if (get(Object.keys(storageFormData), 'length') <= 1) {
-        this.set('whileEdition', false);
-        return resolve();
+    async saveEdition(storageFormData) {
+      const action = this.storageActionsService.createSaveStorageModificationAction({
+        storageId: this.storageId,
+        modifiedStorageOptions: storageFormData,
+      });
+      const result = await action.execute();
+
+      if (result.status === 'done') {
+        trySet(this, 'whileEdition', false);
+        this.reloadStoragesList();
       }
-
-      const {
-        submitModifyStorage,
-        storage,
-      } = this.getProperties(
-        'submitModifyStorage',
-        'storage'
-      );
-
-      return submitModifyStorage(storage, storageFormData)
-        .then(() =>
-          safeExec(this, 'set', 'whileEdition', false)
-        );
     },
     cancelEdition() {
       this.set('whileEdition', false);

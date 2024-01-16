@@ -67,6 +67,7 @@ import registerOnezoneOffline from './components/alerts/register-onezone-offline
 import contentClustersMembers from './components/content-clusters-members';
 import contentClustersGuiSettings from './components/content-clusters-gui-settings';
 import spaceSupportAccountingForm from './components/space-support-accounting-form';
+import modals from './components/modals';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -79,6 +80,7 @@ import guiSettingsActions from './services/gui-settings-actions';
 
 import onedata from './routes/onedata';
 
+import utilsStorageActions from './utils/storage-actions';
 import newClusterDeployProcess from './utils/new-cluster-deploy-process';
 
 import _ from 'lodash';
@@ -157,6 +159,7 @@ const translations = {
     contentClustersMembers,
     contentClustersGuiSettings,
     spaceSupportAccountingForm,
+    modals,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,
@@ -179,6 +182,7 @@ const translations = {
     onedata,
   },
   utils: {
+    storageActions: utilsStorageActions,
     newClusterDeployProcess,
   },
 };

@@ -36,7 +36,7 @@
       {{cluster-storage-table
         storages=paginator.activePageArray
         spaces=spacesProxy.content
-        submitModifyStorage=(action "submitModifyStorage")
+        reloadStoragesList=(action "reloadStoragesList")
         removeStorage=(action (mut storageToRemove))
       }}
       {{#if someStorageIsLoading}}

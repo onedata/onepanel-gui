@@ -44,14 +44,16 @@
             type="primary"
             buttonType="submit"
             disabled=(not isValid)
-            onClick=(action (if (eq mode "create") "submit" "showModifyModal"))
+            onClick=(action "submit")
           }}
             {{tt this (if inEditionMode "save" "add")}}
           {{/one-button}}
           {{#if inEditionMode}}
             <button
               class="btn btn-warning cancel-storage-form-btn"
-              {{action cancel}}>
+              disabled={{isSavingStorage}}
+              {{action cancel}}
+            >
               {{tt this "cancel"}}
             </button>
           {{/if}}
@@ -60,15 +62,3 @@
     </div>
   {{/unless}}
 {{/bs-form}}
-{{#if (eq mode "edit")}}
-  {{proceed-process-modal
-    opened=modifyModalVisible
-    processing=isSavingStorage
-    close=(action (mut modifyModalVisible) false)
-    proceed=(action "submit")
-    modalClass="modify-storage-modal"
-    modalIcon="sign-warning-rounded"
-    headerText=(tt this "modifyStorageModalHeader")
-    messageText=(tt this "modifyStorageModalMessage" name=storage.name)
-    proceedButtonClass="btn btn-warning proceed"}}
-{{/if}}

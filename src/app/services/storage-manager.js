@@ -15,6 +15,7 @@ import Onepanel from 'onepanel';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import PromiseObject, { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import BatchResolver from 'onedata-gui-common/utils/batch-resolver';
+import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 
 const {
   StorageCreateRequest,
@@ -125,15 +126,15 @@ export default Service.extend({
           record = this._collectionMap[id] =
             (this._collectionMap[id] || ObjectProxy.create({}));
           record.set('content', data);
-          if (!batch && this.collectionCache) {
+          if (!batch && this.collectionCache?.content) {
             const indexInCollection =
-              this.collectionCache.toArray().findIndex(record =>
+              this.collectionCache.content.toArray().findIndex(record =>
                 get(record, 'id') === id
               );
             if (indexInCollection > -1) {
-              this.collectionCache[indexInCollection] = record;
+              this.collectionCache.content[indexInCollection] = record;
             } else {
-              this.collectionCache.pushObject(record);
+              this.collectionCache.content.pushObject(record);
             }
           }
           resolve(record);
@@ -160,25 +161,43 @@ export default Service.extend({
 
   /**
    * @param {string} id
-   * @param {string} oldName not-modified version of storage name
    * @param {Onepanel.StorageModifyRequest} storageData
-   * @returns {Promise} resolves when storage has been successfully modified
+   * @returns {Promise<{ verificationPassed: boolean | null }>} Tells about
+   * storage verification status after modification. If is `null`, then
+   * we have no info about verification (probably verification was turned off).
    */
-  modifyStorage(id, oldName, storageData) {
-    const onepanelServer = this.get('onepanelServer');
+  async modifyStorage(id, storageData) {
+    const storageBeforeModification = (await this.getStorageDetails(id)).content;
+    const {
+      name: storageOldName,
+      type: storageType,
+    } = storageBeforeModification;
 
+    const storageModelUpdate = createClusterStorageModel({
+      ...storageData,
+      type: storageType,
+    }, true);
     const modifyRequestProto = {
-      [oldName]: storageData,
+      [storageOldName]: storageModelUpdate,
     };
     const modifyRequest =
       StorageModifyRequest.constructFromObject(modifyRequestProto);
 
-    return onepanelServer.request(
+    const result = await this.onepanelServer.request(
       'StoragesApi',
       'modifyStorage',
       id,
       modifyRequest
     );
+
+    // Reload current storage details if were fetched earlier.
+    if (this._collectionMap[id]) {
+      await this.getStorageDetails(id, true);
+    }
+
+    return {
+      verificationPassed: result?.data?.verificationPassed ?? null,
+    };
   },
 
   /**

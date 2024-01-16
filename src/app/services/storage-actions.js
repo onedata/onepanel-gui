@@ -7,8 +7,9 @@
  */
 
 import Service, { inject as service } from '@ember/service';
-import { getProperties, get } from '@ember/object';
+import { getProperties } from '@ember/object';
 import I18n from 'onedata-gui-common/mixins/components/i18n';
+import SaveStorageModificationAction from 'onepanel-gui/utils/storage-actions/save-storage-modification-action';
 
 export default Service.extend(I18n, {
   storageManager: service(),
@@ -18,33 +19,12 @@ export default Service.extend(I18n, {
   i18nPrefix: 'services.storageActions',
 
   /**
-   * Modifies storage
-   * @param {Onepanel.StorageDetails} storage
-   * @param {Onepanel.StorageDetails} newDetails
-   * @returns {Promise}
+   * @public
+   * @param {SaveStorageModificationActionContext} context
+   * @returns {Utils.StorageActions.SaveStorageModificationAction}
    */
-  modifyStorage(storage, newDetails) {
-    const {
-      storageManager,
-      globalNotify,
-    } = this.getProperties('storageManager', 'globalNotify');
-    const {
-      id,
-      name,
-    } = getProperties(storage, 'id', 'name');
-    return storageManager.modifyStorage(id, name, newDetails)
-      .then(result => {
-        globalNotify.info(this.t('storageModifiedSuccessfully', { name }));
-        const verificationPassed = get(result, 'data.verificationPassed');
-        if (verificationPassed === false) {
-          globalNotify.warningAlert(this.t('storageCheckFailed', { name }));
-        }
-        return result;
-      })
-      .catch(error => {
-        globalNotify.backendError(this.t('modifyingStorage'), error);
-        throw error;
-      });
+  createSaveStorageModificationAction(context) {
+    return SaveStorageModificationAction.create({ ownerSource: this, context });
   },
 
   /**
