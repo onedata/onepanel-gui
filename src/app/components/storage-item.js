@@ -66,9 +66,7 @@ export default Component.extend(I18n, {
   /**
    * @type {Array<ObjectProxy<OnepanelGui.SpaceDetails>>}
    */
-  spaces: computed(function spaces() {
-    return [];
-  }),
+  spaces: undefined,
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -156,6 +154,16 @@ export default Component.extend(I18n, {
     }
     return config;
   }),
+
+  /**
+   * @override
+   */
+  init() {
+    this._super(...arguments);
+    if (!this.spaces) {
+      this.set('spaces', []);
+    }
+  },
 
   /**
    * Starts/stops storage edition. Expands list item if necessary

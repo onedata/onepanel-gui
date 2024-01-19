@@ -4,23 +4,22 @@
       {{tt this "storage"}}:
     </label>
     <div class={{layoutConfig.formInputColumns}}>
-      {{#power-select
-        loadingMessage=(tt this "storageSelectLoading")
-        options=allStoragesItemsProxy
-        selected=selectedStorageItem
-        onchange=(action "storageChanged")
-        searchEnabled=false
-        renderInPlace=true
-        placeholder=(tt this "storageSelectPlaceholder")
+      <OneDropdown
+        @loadingMessage={{tt this "storageSelectLoading"}}
+        @options={{allStoragesItemsProxy}}
+        @selected={{selectedStorageItem}}
+        @onChange={{action "storageChanged"}}
+        @renderInPlace={{true}}
+        @placeholder={{tt this "storageSelectPlaceholder"}}
         as |storageItem|
-      }}
+      >
         {{name-conflict item=storageItem.storage}}
         {{#if storageItem.isImportedAndUsed}}
           <small class="imported-used-storage">{{tt this "storageImportedAndUsed"}}</small>
         {{else if storageItem.storage.importedStorage}}
           <small class="imported-storage">{{tt this "storageImported"}}</small>
         {{/if}}
-      {{/power-select}}
+      </OneDropdown>
     </div>
   {{/form.group}}
 

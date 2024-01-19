@@ -13,7 +13,11 @@
           {{/if}}
         </p>
         <p class="row-toggle-details">
-          <a role="button" class="link-toggle-details disable-user-select" {{action "toggleShowDetails"}}>
+          <a
+            role="button"
+            class="link-toggle-details clickable disable-user-select"
+            {{action "toggleShowDetails"}}
+          >
             {{tt this (if showDetails "hideDetails" "showDetails")}}
           </a>
         </p>

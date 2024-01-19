@@ -61,18 +61,18 @@
           onblur={{action "lostFocus"}}
         />
         {{#if (get formData (concat fieldName "Unit"))}}
-          {{#power-select
-            triggerClass="small"
-            dropdownClass="small"
-            disabled=(or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving"))
-            options=(if (eq fieldName "minHoursSinceLastOpen") _timeUnits _sizeUnits)
-            selected=(get formData (concat fieldName "Unit"))
-            onchange=(action "dataChanged" (concat fieldName "Unit"))
-            searchEnabled=false
-            renderInPlace=true
-            as |unit|}}
+          <OneDropdown
+            @triggerClass="small"
+            @dropdownClass="small"
+            @disabled={{or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving")}}
+            @options={{if (eq fieldName "minHoursSinceLastOpen") _timeUnits _sizeUnits}}
+            @selected={{get formData (concat fieldName "Unit")}}
+            @onChange={{action "dataChanged" (concat fieldName "Unit")}}
+            @renderInPlace=true
+            as |unit|
+          >
             {{unit.name}}
-          {{/power-select}}
+          </OneDropdown>
         {{else}}
           <div class={{concat "static-condition-unit " (if (or (not (get formData (concat fieldName "Enabled"))) (eq formStatus "saving")) "disabled")}}>
             {{t "components.spaceCleaningConditionsForm.times"}}
