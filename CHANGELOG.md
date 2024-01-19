@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-11667 Added version to documentation links
+* VFS-11617 Upgraded EmberJS to v3.12.4
 * VFS-11653 Removed storage verification warning when there was no info about the verification result
 * VFS-11624 Added a more comprehensive warning modal when changing storage options
 * VFS-11465 Added `region` and `verifyServerCertificate` parameters to S3 storage

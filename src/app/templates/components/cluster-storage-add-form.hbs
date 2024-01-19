@@ -3,17 +3,16 @@
     {{#form.group}}
       <label class={{concat "control-label " layoutConfig.formLabelColumns}}>{{tt this "storageType"}}:</label>
       <div class={{concat-classes layoutConfig.formInputColumns "storage-type-select-group"}}>
-        {{#power-select
-          options=visibleStorageTypes
-          selected=selectedStorageType
-          onchange=(action "storageTypeChanged")
-          searchEnabled=false
-          renderInPlace=true
-          disabled=disableStorageTypeSelector
+        <OneDropdown
+          @options={{visibleStorageTypes}}
+          @selected={{selectedStorageType}}
+          @onChange={{action "storageTypeChanged"}}
+          @renderInPlace={{true}}
+          @disabled={{disableStorageTypeSelector}}
           as |storageType|
-        }}
+        >
           {{storageType.name}}
-        {{/power-select}}
+        </OneDropdown>
       </div>
     {{/form.group}}
   {{/if}}
