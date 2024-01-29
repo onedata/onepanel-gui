@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11594 Fixed popovers broken position after their content size change
 * VFS-11667 Added version to documentation links
 * VFS-11617 Upgraded EmberJS to v3.12.4
 * VFS-11653 Removed storage verification warning when there was no info about the verification result
