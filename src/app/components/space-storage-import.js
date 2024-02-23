@@ -151,14 +151,14 @@ export default Component.extend(...componentMixins, {
       details.push({
         label: this.t('importDetails.processedFiles'),
         value: formatNumber(
-          [createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles]
+          createdFiles + modifiedFiles + unmodifiedFiles + deletedFiles + failedFiles
         ),
         tip: this.t('importDetails.processedFilesTip'),
         classNames: 'processed-counter-related',
         highlightOnHover: 'processed-counter-related',
       }, {
         label: this.t('importDetails.totalStorageFiles'),
-        value: formatNumber([createdFiles + modifiedFiles + unmodifiedFiles]),
+        value: formatNumber(createdFiles + modifiedFiles + unmodifiedFiles),
         tip: this.t('importDetails.totalStorageFilesTip'),
         classNames: 'storage-counter-related',
         highlightOnHover: 'storage-counter-related',
@@ -185,7 +185,7 @@ export default Component.extend(...componentMixins, {
         'failedFiles',
       ].map(detailName => ({
         label: this.t(`importDetails.${detailName}`),
-        value: formatNumber([get(autoImportInfo, detailName) || 0]),
+        value: formatNumber(get(autoImportInfo, detailName) || 0),
         tip: this.t(`importDetails.${detailName}Tip`, { spaceId }),
         classNames: 'processed-counter-related',
       }));

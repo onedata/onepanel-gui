@@ -14,10 +14,16 @@
             <div class="col-xs-12 col-sm-6">
               <ul class="info info-condensed info-gray">
                 <li class="li-spaces-count">
-                  {{tt this "directGroups"}}: <span class="direct-groups-number">{{membersProxy.groupsCount}}</span>
+                  {{tt this "directGroups"}}:
+                  <span class="direct-groups-number">
+                    {{format-number membersProxy.groupsCount}}
+                  </span>
                 </li>
                 <li class="li-groups-count">
-                  {{tt this "directUsers"}}: <span class="direct-users-number">{{membersProxy.usersCount}}</span>
+                  {{tt this "directUsers"}}:
+                  <span class="direct-users-number">
+                    {{format-number membersProxy.usersCount}}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -26,13 +32,13 @@
                 <li class="li-users-count">
                   {{tt this "effectiveGroups"}}:
                   <span class="effective-groups-number">
-                    {{membersProxy.effectiveGroupsCount}}
+                    {{format-number membersProxy.effectiveGroupsCount}}
                   </span>
                 </li>
                 <li class="li-creation-time-count">
                   {{tt this "effectiveUsers"}}:
                   <span class="effective-users-number">
-                    {{membersProxy.effectiveUsersCount}}
+                    {{format-number membersProxy.effectiveUsersCount}}
                   </span>
                 </li>
               </ul>
