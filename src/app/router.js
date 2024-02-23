@@ -8,10 +8,8 @@
 
 import OnedataRouter from 'onedata-gui-common/utils/onedata-router';
 import onedataRouterSetup from 'onedata-gui-common/utils/onedata-router-setup';
-import globals from 'onedata-gui-common/utils/globals';
 import config from './config/environment';
-
-const isInIframe = globals.window.parent !== globals.window;
+import isCrossOriginIframe from 'onedata-gui-common/utils/is-cross-origin-iframe';
 
 const Router = OnedataRouter.extend({
   location: config.locationType,
@@ -22,7 +20,7 @@ const Router = OnedataRouter.extend({
 Router.map(function () {
   // There are no public routes (available in the iframe embedded in foreign site)
   // in Onepanel.
-  if (!isInIframe) {
+  if (!isCrossOriginIframe()) {
     onedataRouterSetup(Router, this);
   }
 });
