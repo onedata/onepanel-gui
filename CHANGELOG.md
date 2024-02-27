@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11710 Added possibility to embed Onedata Web GUI in an iframe on foreign domain
 * VFS-11564 Removed ember-export-application-global dependency
 * VFS-11594 Fixed popovers broken position after their content size change
 * VFS-11595 Changed classnames that were blocked by Qwant browser add-on
