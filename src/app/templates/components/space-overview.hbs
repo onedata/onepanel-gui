@@ -48,10 +48,12 @@
           {{#if (eq accountingFormMode "view")}}
             {{one-icon icon="browser-rename"}}
           {{/if}}
-          {{tt this (if (eq accountingFormMode "view")
-            "startAccountingEdition"
-            "cancelAccountingEdition"
-          )}}
+          <span class="text">
+            {{tt this (if (eq accountingFormMode "view")
+              "startAccountingEdition"
+              "cancelAccountingEdition"
+            )}}
+          </span>
         {{/one-button}}
       {{/space-support-accounting-form}}
     </div>
