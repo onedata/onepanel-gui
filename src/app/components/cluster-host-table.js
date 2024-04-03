@@ -9,7 +9,7 @@
 import { readOnly } from '@ember/object/computed';
 import { observer, computed } from '@ember/object';
 import BasicTable from 'onedata-gui-common/components/basic-table';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { scheduleOnce } from '@ember/runloop';

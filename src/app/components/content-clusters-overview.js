@@ -11,7 +11,7 @@ import { computed, get } from '@ember/object';
 import { union, reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import PromiseArray from 'onedata-gui-common/utils/ember/promise-array';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { tag, promise } from 'ember-awesome-macros';
 

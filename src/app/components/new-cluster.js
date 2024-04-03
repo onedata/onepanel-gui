@@ -19,7 +19,7 @@ import {
   installationStepsMap,
   installationStepsArray,
 } from 'onepanel-gui/models/installation-details';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import $ from 'jquery';
 import { array, raw } from 'ember-awesome-macros';
 import { resolve } from 'rsvp';

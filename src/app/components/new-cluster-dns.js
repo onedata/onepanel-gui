@@ -11,7 +11,7 @@ import { inject as service } from '@ember/service';
 import { reads, notEmpty, or } from '@ember/object/computed';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { resolve, defer, reject } from 'rsvp';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 
 export default Component.extend(I18n, {

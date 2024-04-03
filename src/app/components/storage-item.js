@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { computed, trySet } from '@ember/object';
 import { reads, collect } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import _ from 'lodash';
 import config from 'ember-get-config';
 import STORAGE_TYPES from 'onepanel-gui/utils/cluster-storage/storage-types';

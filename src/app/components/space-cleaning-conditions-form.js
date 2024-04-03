@@ -25,7 +25,7 @@ import {
   MAX_MIN_HOURS_SINCE_LAST_OPEN,
   MAX_OPEN_COUNT,
 } from 'onepanel-gui/utils/space-auto-cleaning-conditions';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';
 import $ from 'jquery';
 

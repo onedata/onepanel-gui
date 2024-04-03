@@ -11,7 +11,7 @@ import { inject as service } from '@ember/service';
 import Component from '@ember/component';
 import layout from 'onedata-gui-common/templates/components/login-box';
 import safeMethodExecution from 'onedata-gui-common/utils/safe-method-execution';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 
 export default Component.extend(I18n, {

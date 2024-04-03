@@ -8,7 +8,7 @@
 
 import Service, { inject as service } from '@ember/service';
 import { getProperties } from '@ember/object';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import SaveStorageModificationAction from 'onepanel-gui/utils/storage-actions/save-storage-modification-action';
 
 export default Service.extend(I18n, {

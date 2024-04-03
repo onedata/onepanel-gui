@@ -11,7 +11,7 @@ import SecondLevelItems from 'onedata-gui-common/components/sidebar-clusters/sec
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
 export default SecondLevelItems.extend(I18n, {
   dnsManager: service(),

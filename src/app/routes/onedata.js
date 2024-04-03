@@ -9,7 +9,7 @@
 import { inject as service } from '@ember/service';
 import { get, set, setProperties } from '@ember/object';
 import OnedataRoute from 'onedata-gui-common/routes/onedata';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { all as allFulfilled } from 'rsvp';
 
 export default OnedataRoute.extend(I18n, {

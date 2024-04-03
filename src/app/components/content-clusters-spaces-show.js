@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import SpaceTabs from 'onepanel-gui/mixins/components/space-tabs';
 import SpaceItemImportStats from 'onepanel-gui/mixins/components/space-item-import-stats';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { get, computed, defineProperty } from '@ember/object';
 import { reads } from '@ember/object/computed';

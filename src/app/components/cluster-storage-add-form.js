@@ -23,7 +23,7 @@ import _ from 'lodash';
 import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { resolve } from 'rsvp';
 import { or } from 'ember-awesome-macros';
 import stripObject from 'onedata-gui-common/utils/strip-object';

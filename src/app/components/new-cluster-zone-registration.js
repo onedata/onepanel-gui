@@ -13,7 +13,7 @@ import Component from '@ember/component';
 import Onepanel from 'onepanel';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { get } from '@ember/object';
 import trimToken from 'onedata-gui-common/utils/trim-token';
