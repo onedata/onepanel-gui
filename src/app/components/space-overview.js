@@ -7,7 +7,7 @@
  */
 
 import Component from '@ember/component';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { computed, get, getProperties } from '@ember/object';
 import _ from 'lodash';
 import spaceItemSupports from 'onepanel-gui/mixins/components/space-item-supports';

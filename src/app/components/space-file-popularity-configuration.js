@@ -7,7 +7,7 @@
  */
 
 import Component from '@ember/component';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import { buildValidations } from 'ember-cp-validations';
 import AutoSaveForm from 'onedata-gui-common/mixins/components/auto-save-form';

@@ -13,7 +13,7 @@ import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 import ColorGenerator from 'onedata-gui-common/utils/color-generator';
 import validateSupportingProviders from 'onepanel-gui/utils/model-validators/validate-supporting-providers';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
 export default Component.extend(I18n, {
   classNames: ['chart-component', 'space-support-chart'],

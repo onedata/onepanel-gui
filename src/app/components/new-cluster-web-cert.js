@@ -8,7 +8,7 @@
 
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { reads, alias } from '@ember/object/computed';
 import {
   default as EmberObject,

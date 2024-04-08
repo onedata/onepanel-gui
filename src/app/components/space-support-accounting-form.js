@@ -14,7 +14,7 @@ import { scheduleOnce } from '@ember/runloop';
 import { tag, not, conditional, raw } from 'ember-awesome-macros';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
 import ToggleField from 'onedata-gui-common/utils/form-component/toggle-field';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { createValuesContainer } from 'onedata-gui-common/utils/form-component/values-container';
 
 /**

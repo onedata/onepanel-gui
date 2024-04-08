@@ -17,7 +17,7 @@ import {
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { KNOWN_STEPS } from 'ember-onedata-onepanel-server/utils/cluster-deploy-steps';
 
 const RE_STEP = /service_?(.*):(.*)/;

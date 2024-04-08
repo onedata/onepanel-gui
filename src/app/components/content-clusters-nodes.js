@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { promise } from 'ember-awesome-macros';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';

@@ -12,7 +12,7 @@ import Component from '@ember/component';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { reads } from '@ember/object/computed';
 import { array, raw, not } from 'ember-awesome-macros';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { inject as service } from '@ember/service';
 
 export default Component.extend(I18n, {

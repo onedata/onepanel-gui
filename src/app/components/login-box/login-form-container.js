@@ -9,7 +9,7 @@
 
 import LoginFormContainer from 'onedata-gui-common/components/login-box/login-form-container';
 import layout from '../../templates/components/login-box/login-form-container';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { inject as service } from '@ember/service';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import { reads } from '@ember/object/computed';

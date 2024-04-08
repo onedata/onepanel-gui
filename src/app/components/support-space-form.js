@@ -18,7 +18,7 @@ import OneFormSimple from 'onedata-gui-common/components/one-form-simple';
 import { buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import formFields from 'onepanel-gui/utils/support-space-fields';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { and, or, not, isEmpty } from 'ember-awesome-macros';
 import trimToken from 'onedata-gui-common/utils/trim-token';
