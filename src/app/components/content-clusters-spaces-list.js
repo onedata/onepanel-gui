@@ -14,7 +14,7 @@ import { inject as service } from '@ember/service';
 import { reads, equal } from '@ember/object/computed';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';

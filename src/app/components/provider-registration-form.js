@@ -21,7 +21,7 @@ import simplifyString from 'onedata-gui-common/utils/simplify-string';
 import { validator, buildValidations } from 'ember-cp-validations';
 import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
 import _ from 'lodash';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import globals from 'onedata-gui-common/utils/globals';

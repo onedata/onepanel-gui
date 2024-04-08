@@ -17,7 +17,7 @@ import { later } from '@ember/runloop';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import SpaceAutoCleaningStatusUpdater from 'onepanel-gui/utils/space-auto-cleaning-status-updater';
 import { getOwner } from '@ember/application';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {

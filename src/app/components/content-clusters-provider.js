@@ -11,7 +11,7 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import { next } from '@ember/runloop';
 import extractNestedError from 'onepanel-gui/utils/extract-nested-error';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import { get } from '@ember/object';

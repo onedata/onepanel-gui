@@ -10,7 +10,7 @@ import Component from '@ember/component';
 import { Promise } from 'rsvp';
 import { inject as service } from '@ember/service';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { computed } from '@ember/object';
 import _ from 'lodash';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';

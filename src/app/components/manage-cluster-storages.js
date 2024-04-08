@@ -13,7 +13,7 @@ import { inject as service } from '@ember/service';
 import { Promise } from 'rsvp';
 import { get, computed } from '@ember/object';
 import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import createClusterStorageModel from 'ember-onedata-onepanel-server/utils/create-cluster-storage-model';
 import computedT from 'onedata-gui-common/utils/computed-t';

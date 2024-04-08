@@ -13,7 +13,7 @@ import { inject as service } from '@ember/service';
 import { get, computed } from '@ember/object';
 import { resolve, all as allFulfilled } from 'rsvp';
 import _ from 'lodash';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 

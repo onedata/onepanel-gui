@@ -11,7 +11,7 @@ import { computed, get } from '@ember/object';
 import { reads, not } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';

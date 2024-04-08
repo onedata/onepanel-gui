@@ -10,7 +10,7 @@ import Component from '@ember/component';
 import { observer } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
 import { validator, buildValidations } from 'ember-cp-validations';
 

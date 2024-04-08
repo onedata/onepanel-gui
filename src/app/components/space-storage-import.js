@@ -10,7 +10,7 @@
 import Component from '@ember/component';
 import notImplementedWarn from 'onedata-gui-common/utils/not-implemented-warn';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { computed, get, getProperties } from '@ember/object';
 import { raw, equal } from 'ember-awesome-macros';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';

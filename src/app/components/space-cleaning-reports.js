@@ -18,7 +18,7 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import ReplacingChunksArray from 'onedata-gui-common/utils/replacing-chunks-array';
 import { htmlSafe } from '@ember/string';
 import SpaceAutoCleaningReportsUpdater from 'onepanel-gui/utils/space-auto-cleaning-reports-updater';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import dom from 'onedata-gui-common/utils/dom';
 import waitForRender from 'onedata-gui-common/utils/wait-for-render';
 import globals from 'onedata-gui-common/utils/globals';

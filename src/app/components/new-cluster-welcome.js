@@ -13,7 +13,7 @@ import { inject as service } from '@ember/service';
 import ContentInfo from 'onedata-gui-common/components/content-info';
 import layout from 'onedata-gui-common/templates/components/content-info';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import computedT from 'onedata-gui-common/utils/computed-t';
 import { capitalize } from '@ember/string';
 

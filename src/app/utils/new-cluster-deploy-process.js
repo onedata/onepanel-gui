@@ -19,7 +19,7 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import watchTaskStatus from 'ember-onedata-onepanel-server/utils/watch-task-status';
 import Onepanel from 'onepanel';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import { Promise } from 'rsvp';
 
 const {
