@@ -2,14 +2,12 @@ import letsEncrypt from './-lets-encrypt';
 
 export default {
   provider: 'Provider',
-  cancelModifying: 'Cancel modifying',
-  modifyProviderDetails: 'Modify provider details',
   deregisterProvider: 'Deregister provider',
   providerDataModification: 'provider data modification',
   providerDeregistration: 'provider deregistration',
   modifySuccess: 'Provider data has been modified',
   deregisterSuccess: 'Provider has been deregistered',
-  globalActionsTitle: 'Provider',
+  globalActionsTitle: 'Provider configuration',
   formTitles: {
     show: 'Registered to',
     edit: 'Modify registered provider details',

@@ -144,9 +144,16 @@ export default SecondLevelItems.extend(I18n, {
       if (isNotDeployedCluster || !isLocalCluster || !clusterType) {
         return [];
       } else {
+        /** @type {Array} */
         const items = this._super(...arguments);
         if (isEmergencyOnepanel) {
-          items.push(emergencyPassphraseItem);
+          // the "Provider configuration" item should be the last item (if present)
+          const providerItemIndex = items.findIndex(item => item.id === 'provider');
+          if (providerItemIndex !== -1) {
+            items.splice(providerItemIndex, 0, emergencyPassphraseItem);
+          } else {
+            items.push(emergencyPassphraseItem);
+          }
         }
         return items;
       }

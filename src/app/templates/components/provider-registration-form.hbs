@@ -16,9 +16,28 @@
       </div>
     </div>
   {{/if}}
-  {{#if (not (eq mode "show"))}}
+  {{#if (and (eq mode "show") onStartEdit)}}
     <div class="row">
       <div class={{layoutConfig.formSubmitColumns}}>
+        <OneButton @onClick={{action "startEdit"}}>
+          {{tt this "editSettings"}}
+        </OneButton>
+      </div>
+    </div>
+  {{else if (not-eq mode "show")}}
+    <div class="row">
+      <div class={{concat-classes
+        "submit-buttons-col"
+        formSubmitColumnsClassname
+      }}>
+        {{#if (eq mode "edit")}}
+          <OneButton
+            @type="warning"
+            @onClick={{action "cancelEdit"}}
+          >
+            {{tt this "discard"}}
+          </OneButton>
+        {{/if}}
         {{#one-button
           type="primary"
           buttonType="submit"
