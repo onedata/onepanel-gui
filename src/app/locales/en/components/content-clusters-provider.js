@@ -1,5 +1,10 @@
 import letsEncrypt from './-lets-encrypt';
 
+const existingRegistrationDescription =
+  'This provider is registered in Onezone with the following data:';
+
+const existingRegistrationRegisteredTo = 'Registered to';
+
 export default {
   provider: 'Provider',
   deregisterProvider: 'Deregister provider',
@@ -9,14 +14,13 @@ export default {
   deregisterSuccess: 'Provider has been deregistered',
   globalActionsTitle: 'Provider configuration',
   formTitles: {
-    show: 'Registered to',
-    edit: 'Modify registered provider details',
+    show: existingRegistrationRegisteredTo,
+    edit: existingRegistrationRegisteredTo,
     new: 'Provider registration',
   },
   formDescriptions: {
-    show: 'This provider was registered with following data',
-    edit: 'You can update registered provider details and submit the changes in ' +
-      'form below',
+    show: existingRegistrationDescription,
+    edit: existingRegistrationDescription,
     new: 'The provider is currently not registered in any Onezone. Please enter ' +
       'details of provider for registration.',
   },
