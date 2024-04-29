@@ -465,6 +465,17 @@ export default OnepanelServerBase.extend(
               'ns2.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
             ],
           },
+          oneS3Subdomain: {
+            summary: 'bad_records',
+            got: ['192.168.0.1', '1.1.1.2'],
+            expected: ['176.96.148.233', '192.168.0.1'],
+            recommended: [
+              'dev-onezone.default.svc.cluster.local. IN NS ns1.dev-onezone.default.svc.cluster.local',
+              'dev-onezone.default.svc.cluster.local. IN NS ns2.dev-onezone.default.svc.cluster.local',
+              'ns1.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+              'ns2.dev-onezone.default.svc.cluster.local. IN A 149.156.100.49',
+            ],
+          },
         });
         this.set('__dnsCheckConfiguration', {
           dnsServers: ['8.8.8.8', '192.168.1.10'],
@@ -1349,7 +1360,10 @@ export default OnepanelServerBase.extend(
     _req_DNSApi_checkDns() {
       const __dnsCheck = this.get('__dnsCheck');
       const builtInDnsServer = this.get('__dnsCheckConfiguration.builtInDnsServer');
-      const check = builtInDnsServer ? { domain: __dnsCheck.domain } : __dnsCheck;
+      const check = builtInDnsServer ? {
+        domain: __dnsCheck.domain,
+        oneS3Subdomain: __dnsCheck.oneS3Subdomain,
+      } : __dnsCheck;
       return {
         success: ({ forceCheck }) => {
           if (forceCheck) {

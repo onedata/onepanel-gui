@@ -24,6 +24,9 @@ const knownPartials = new Set([
   'own-domain/domain/unresolvable',
   'own-domain/domain/missing-records',
   'own-domain/domain/bad-records',
+  'own-domain/one-s3-subdomain/unresolvable',
+  'own-domain/one-s3-subdomain/missing-records',
+  'own-domain/one-s3-subdomain/bad-records',
   'own-domain/dns-zone/unresolvable',
   'own-domain/dns-zone/bad-records',
 ]);

@@ -9,10 +9,13 @@
 
 import Component from '@ember/component';
 import { computed } from '@ember/object';
-import I18n from 'onedata-gui-common/mixins/components/i18n';
+import { inject as service } from '@ember/service';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
 export default Component.extend(I18n, {
   tagName: '',
+
+  i18n: service(),
 
   /**
    * @override

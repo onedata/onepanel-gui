@@ -18,6 +18,8 @@ const commonDeployStepsInitial = [
   'service_cluster_manager:stop',
   'service_cluster_manager:start',
   'service_cluster_manager:status',
+  'service_ones3:create_service',
+  'service_ones3:add_service_host',
   // TODO: there are additional new steps AFTER worker steps, but these are very short
   // Oneprovider Panel
   // 'service_letsencrypt:create',

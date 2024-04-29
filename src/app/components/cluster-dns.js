@@ -325,7 +325,11 @@ export default Component.extend(
             Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
             undefined;
           if (onepanelServiceType === 'oneprovider') {
-            return [domain];
+            const oneS3Subdomain = get(dnsCheck, 'oneS3Subdomain') ? {
+              type: 'oneS3Subdomain',
+              ..._.cloneDeep(get(dnsCheck, 'oneS3Subdomain')),
+            } : undefined;
+            return [domain, oneS3Subdomain].filter((c) => c);
           } else {
             const dnsZone = get(dnsCheck, 'dnsZone') ?
               Object.assign({

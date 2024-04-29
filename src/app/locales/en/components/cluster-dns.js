@@ -47,6 +47,7 @@ export default {
     ipInputPlaceholder: 'Enter IP addresses…',
     modifyingDnsServers: 'modifying DNS check addresses',
     performCheck: 'Perform check',
+    stateHint: 'Configuring the DNS server for your domain depends on your environment. If you have a public domain, check the settings in its administration panel. If you are working in a cloud / virtual environment, contact your administrators to learn how can you modify the DNS server config.',
     result: {
       header: 'Results',
       checkPerformed: 'last check performed',
