@@ -2,7 +2,7 @@
  * A view to create, show or edit registered provider details
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2024 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -142,6 +142,18 @@ export default OneForm.extend(Validations, I18n, {
   i18nPrefix: 'components.providerRegistrationForm',
 
   /**
+   * @virtual
+   * @type {() => void}
+   */
+  onStartEdit: undefined,
+
+  /**
+   * @virtual
+   * @type {() => void}
+   */
+  onCancelEdit: undefined,
+
+  /**
    * @virtual optional
    * @type {string}
    */
@@ -208,6 +220,18 @@ export default OneForm.extend(Validations, I18n, {
    * * formData {Object} data from form
    */
   submit: () => {},
+
+  formSubmitColumnsClassname: computed(
+    'layoutConfig.formSubmitColumns',
+    function formSubmitColumnsClassname() {
+      if (this.mode === 'edit') {
+        // customize position of button row, because there are two buttons
+        return this.layoutConfig.formSubmitColumns.replace(/(col-sm-offset)-\d+/, '$1-3');
+      } else {
+        return this.layoutConfig.formSubmitColumns;
+      }
+    }
+  ),
 
   webCertProxy: computed(function webCertProxy() {
     const promise = this.get('webCertManager').fetchWebCert();
@@ -416,18 +440,14 @@ export default OneForm.extend(Validations, I18n, {
 
   /**
    * Submit button text
-   * @type {computed.string}
+   * @type {ComputedProperty<SafeString>}
    */
   submitText: computed('mode', function () {
-    const {
-      mode,
-      i18n,
-    } = this.getProperties('mode', 'i18n');
-    switch (mode) {
+    switch (this.mode) {
       case 'new':
-        return i18n.t('components.providerRegistrationForm.register');
+        return this.t('register');
       case 'edit':
-        return i18n.t('components.providerRegistrationForm.modifyProviderDetails');
+        return this.t('save');
       default:
         break;
     }
@@ -619,6 +639,14 @@ export default OneForm.extend(Validations, I18n, {
             this.recalculateErrors();
           });
         });
+    },
+
+    startEdit() {
+      this.onStartEdit?.();
+    },
+
+    cancelEdit() {
+      this.onCancelEdit?.();
     },
   },
 });

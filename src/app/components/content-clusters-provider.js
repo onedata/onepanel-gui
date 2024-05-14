@@ -153,34 +153,13 @@ export default Component.extend(
     }),
 
     /**
-     * @type {Ember.ComputedProperty<Action>}
-     */
-    _toggleModifyProviderAction: computed('_editing', function () {
-      const _editing = this.get('_editing');
-      return {
-        action: () => this.send('toggleModifyProvider'),
-        title: this.t(_editing ? 'cancelModifying' : 'modifyProviderDetails'),
-        class: 'btn-modify-provider',
-        buttonStyle: _editing ? 'default' : 'primary',
-      };
-    }),
-
-    /**
      * @override
      * @type {Ember.ComputedProperty<Array<Action>>}
      */
     globalActions: computed(
       '_openDeregisterAction',
-      '_toggleModifyProviderAction',
       function () {
-        const {
-          _openDeregisterAction,
-          _toggleModifyProviderAction,
-        } = this.getProperties(
-          '_openDeregisterAction',
-          '_toggleModifyProviderAction'
-        );
-        return [_openDeregisterAction, _toggleModifyProviderAction];
+        return [this._openDeregisterAction];
       }
     ),
 
@@ -202,9 +181,21 @@ export default Component.extend(
         .getUrlInOnezone(`onedata/clusters/${clusterId}/deregister`);
     },
 
+    startEdit() {
+      this.set('_editing', true);
+    },
+
+    cancelEdit() {
+      this.set('_editing', false);
+    },
+
     actions: {
-      toggleModifyProvider() {
-        this.toggleProperty('_editing');
+      startEdit() {
+        this.startEdit();
+      },
+
+      cancelEdit() {
+        this.cancelEdit();
       },
 
       deregisterInOnezone() {

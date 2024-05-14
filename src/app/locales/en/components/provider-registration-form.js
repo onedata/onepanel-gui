@@ -2,7 +2,9 @@ import { oneproviderCertInfo } from './-certificates';
 
 export default {
   register: 'Register',
-  modifyProviderDetails: 'Modify provider details',
+  discard: 'Discard changes',
+  save: 'Save',
+  editSettings: 'Edit settings',
   subdomainReserved: 'This subdomain is reserved.',
   redirectInfo: 'Upon successful modification of domain or subdomain, you will be asked to update your certificate.',
   fields: {

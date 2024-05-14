@@ -1,7 +1,7 @@
 {{!-- TODO i18n --}}
-  
+
 <div class="row content-row header-row hidden-xs">
-  <h1 class="with-menu">
+  <h1>
     <span class="one-label">{{tt this "provider"}}</span>
     {{actions-toolbar actionsArray=globalActions renderImmediately=true}}
   </h1>
@@ -33,7 +33,9 @@
           provider=providerProxy.content
           submit=(action "submitModify")
           changeDomain=(action "changeDomain")
-      }}
+          onStartEdit=(action "startEdit")
+          onCancelEdit=(action "cancelEdit")
+        }}
       {{/promise-proxy-container}}
     {{/promise-proxy-container}}
   </div>
