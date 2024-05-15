@@ -189,10 +189,14 @@
         </ol>
         <p>
           {{tt this "summary.ipAddressesNoteStart"}}
-          {{#link-to
-            "onedata.sidebar.content.aspect"
-            "nodes"
-          }}{{tt this "summary.ipAddressesNoteLink"}}{{/link-to}}.
+          {{#if isDuringDeployment}}
+            {{tt this "summary.ipAddressesNoteLink"}}.
+          {{else}}
+            {{#link-to
+              "onedata.sidebar.content.aspect"
+              "nodes"
+            }}{{tt this "summary.ipAddressesNoteLink"}}{{/link-to}}.
+          {{/if}}
         </p>
       {{/unless}}
     </div>

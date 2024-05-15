@@ -10,12 +10,11 @@
 import Mixin from '@ember/object/mixin';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { scheduleOnce } from '@ember/runloop';
-import { Promise } from 'rsvp';
+import { Promise, all as allFulfilled } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { promise } from 'ember-awesome-macros';
 import _ from 'lodash';
 
 export default Mixin.create({
@@ -77,23 +76,37 @@ export default Mixin.create({
     return promise ? PromiseObject.create({ promise }) : undefined;
   }),
 
-  hostsIpsProxy: promise.object(computed(function hostsIpsProxy() {
-    return this.get('deploymentManager').getClusterIps().then(({ hosts }) => {
+  hostsIpsProxy: computed(function hostsIpsProxy() {
+    const promise = this.get('deploymentManager').getClusterIps().then(({ hosts }) => {
       return this.prepareHosts(_.cloneDeep(hosts));
     });
-  })),
+    return PromiseObject.create({ promise });
+  }),
 
   /**
    * @type {PromiseObject<Models.ClusterHostInfo>}
    */
-  hostsInfoProxy: promise.object(computed(async function hostsInfoProxy() {
-    return (await this.deploymentManager.getClusterHostsInfo()).clusterHostsInfo;
-  })),
+  hostsInfoProxy: computed(function hostsInfoProxy() {
+    const promise = this.deploymentManager.getClusterHostsInfo()
+      .then(({ clusterHostsInfo }) => clusterHostsInfo);
+    return PromiseObject.create({ promise });
+  }),
 
   /**
-   * @type {ComputedProperty<PromiseObject>}
+   * @type {PromiseObject<Models.ClusterHostInfo>}
    */
-  hostsLoadingProxy: promise.object(promise.all('hostsIpsProxy', 'hostsInfoProxy')),
+  hostsLoadingProxy: computed(
+    'hostsIpsProxy',
+    'hostsInfoProxy',
+    function hostsLoadingProxy() {
+      return PromiseObject.create({
+        promise: allFulfilled([
+          this.hostsIpsProxy,
+          this.hostsInfoProxy,
+        ]),
+      });
+    }
+  ),
 
   init() {
     this._super(...arguments);

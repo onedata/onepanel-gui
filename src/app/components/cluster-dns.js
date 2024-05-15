@@ -16,7 +16,6 @@ import EmberObject, {
   set,
 } from '@ember/object';
 import { reads } from '@ember/object/computed';
-import { promise } from 'ember-awesome-macros';
 import { all as allFulfilled } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';
@@ -28,6 +27,7 @@ import $ from 'jquery';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import moment from 'moment';
 import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 
 const validIpRegexp =
   /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
@@ -57,6 +57,14 @@ export default Component.extend(
      * @type {boolean}
      */
     getDnsCheckProxyOnStart: false,
+
+    /**
+     * If set to true, then the view will be altered to the conditions required
+     * by the deployment process.
+     * @virtual optional
+     * @type {boolean}
+     */
+    isDuringDeployment: false,
 
     /**
      * @virtual optional
@@ -391,8 +399,8 @@ export default Component.extend(
      *  oneS3: Array<{ hostname: string, ip: string }>,
      * }>>}
      */
-    hostsRequiringDnsProxy: promise.object(computed(
-      async function hostsRequiringDnsProxy() {
+    hostsRequiringDnsProxy: computed(function hostsRequiringDnsProxy() {
+      const promise = (async () => {
         const [
           hostInfos,
           hostIps,
@@ -419,16 +427,23 @@ export default Component.extend(
             });
         });
         return result;
-      }
-    )),
+      })();
+      return promiseObject(promise);
+    }),
 
     /**
      * @type {ComputedProperty<PromiseObject<unknown>>}
      */
-    summaryDataLoadingProxy: promise.object(promise.all(
+    summaryDataLoadingProxy: computed(
       'domainProxy',
       'hostsRequiringDnsProxy',
-    )),
+      function summaryDataLoadingProxy() {
+        return promiseObject(allFulfilled([
+          this.domainProxy,
+          this.hostsRequiringDnsProxy,
+        ]));
+      }
+    ),
 
     isIpDomainObserver: observer('isIpDomain', function isIpDomainObserver() {
       const {

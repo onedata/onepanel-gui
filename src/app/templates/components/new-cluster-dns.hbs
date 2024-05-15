@@ -29,6 +29,7 @@
 </div>
 
 {{cluster-dns
+  isDuringDeployment=true
   getDnsCheckProxyOnStart=false
   isWorking=workProxy.isPending
   performCheckCalled=(action (mut lastCheckStatus))
