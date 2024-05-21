@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11764 Changed documentation links to use topics
 * VFS-11744 Changed UX of Oneprovider settings view
 * VFS-11845 Fixed exiting `ember serve` on error and SCSS hot reloading
 * VFS-10262 Added content names for special resources in mobile mode
