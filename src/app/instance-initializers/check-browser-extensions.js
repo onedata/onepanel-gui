@@ -7,10 +7,14 @@
  */
 
 import BlockingAddonDetector from 'onedata-gui-common/utils/blocking-addon-detector';
+import config from 'ember-get-config';
 
 export default {
   initialize(applicationInstance) {
-    if (applicationInstance.lookup('service:onepanelServer')?.isEmergency) {
+    if (
+      config.environment !== 'test' &&
+      applicationInstance.lookup('service:onepanelServer')?.isEmergency
+    ) {
       BlockingAddonDetector.create({ ownerSource: applicationInstance }).runCheck();
     }
   },
