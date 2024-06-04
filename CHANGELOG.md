@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-11707 Added detection of elements-blocking browser extensions with warning message
 * VFS-11681 Updated builder docker image and using "npx ember"
 * VFS-11744 Changed UX of Oneprovider settings view
 * VFS-11845 Fixed exiting `ember serve` on error and SCSS hot reloading

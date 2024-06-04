@@ -154,8 +154,8 @@ export default OnepanelServerBase.extend(
     /**
      * @override
      */
-    fetchApiOrigin() {
-      return this.getGuiContextProxy().then(({ apiOrigin }) => apiOrigin);
+    async fetchApiOrigin() {
+      return (await this.guiContextProxy)?.apiOrigin;
     },
 
     /**
