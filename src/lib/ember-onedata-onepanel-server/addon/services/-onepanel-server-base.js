@@ -21,8 +21,7 @@ export default Service.extend(
   RequestErrorHandler,
   ResponseValidator,
   createDataProxyMixin('configuration'),
-  createDataProxyMixin('node'),
-  createDataProxyMixin('guiContext'), {
+  createDataProxyMixin('node'), {
     /**
      * False if op-worker and/or oz-worker are not available
      * @type {boolean}
@@ -30,6 +29,14 @@ export default Service.extend(
     workerServicesAreAvailable: true,
 
     isHosted: not('isEmergency'),
+
+    guiContextProxy: computed(function guiContextProxy() {
+      return getOwner(this).application.guiContextProxy;
+    }),
+
+    guiContext: computed(function guiContext() {
+      return getOwner(this).application.guiContext;
+    }),
 
     isEmergency: computed(function isEmergency() {
       return this.get('guiContext.guiMode') === 'emergency';
@@ -54,16 +61,6 @@ export default Service.extend(
           hostname,
           clusterType,
         }));
-    },
-
-    /**
-     * @override
-     * Mocked environment requires now `onedata-gui-server-mock`,
-     * which has `./gui-context` method implemented.
-     * @returns {Object} properties: origin, clusterType, clusterId
-     */
-    fetchGuiContext() {
-      return getOwner(this).application.guiContextProxy;
     },
 
     /**

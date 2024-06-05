@@ -17,7 +17,7 @@ export default ApplicationRoute.extend({
     const superResult = this._super(...arguments);
     return resolve(superResult)
       .then(superResultContent => {
-        return this.get('onepanelServer').getGuiContextProxy()
+        return this.onepanelServer.guiContextProxy
           .then(guiContext => {
             if (superResultContent && typeof superResultContent === 'object') {
               return Object.assign({}, superResultContent, {
