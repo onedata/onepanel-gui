@@ -26,8 +26,6 @@ const exampleStorage = {
 
 const qosWarning =
   'Note: modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
-const restartWarning =
-  'The changes in storage configuration will not take effect until Oneprovider and attached Oneclient instances are restarted. This behaviour will be improved in future releases of Onedata.';
 
 const StorageManagerServiceMock = Service.extend({
   storageBeforeModification: exampleStorage,
