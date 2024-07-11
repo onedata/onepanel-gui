@@ -25,7 +25,7 @@ const exampleStorage = {
 };
 
 const qosWarning =
-  'Modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
+  'Note: modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
 const restartWarning =
   'The changes in storage configuration will not take effect until Oneprovider and attached Oneclient instances are restarted. This behaviour will be improved in future releases of Onedata.';
 
@@ -200,12 +200,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       expect(getModalHeader()).to.contain.text('Modify storage backend');
       expect(getModalBody())
         .to.contain.text(
-          'Your modification can cause below issues and/or will need additional manual steps:'
+          'Before proceeding, double-check the updated configuration.'
         )
         .and.to.contain.text(qosWarning)
-        .and.to.contain.text(restartWarning)
         .and.to.contain.text(
-          'I understand that incorrect storage configuration can cause data loss, corruption, or discrepancies between file metadata and content in all supported spaces. '
+          'I understand that an incorrect storage backend configuration can cause data loss, corruption, or discrepancies between file metadata and content in all supported spaces.'
         )
         .and.to.contain('.one-checkbox-understand input');
       const buttons = getModalFooter().querySelectorAll('button');
@@ -239,8 +238,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(qosWarning)
-        .and.to.not.contain.text(restartWarning);
+      expect(getModalBody())
+        .to.contain.text(
+          'Before proceeding, double-check the updated configuration.'
+        )
+        .and.to.contain.text(qosWarning);
 
       await click('.one-checkbox-understand input');
       await click('.proceed');
@@ -268,8 +270,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(qosWarning)
-        .and.to.not.contain.text(restartWarning);
+      expect(getModalBody())
+        .to.contain.text(
+          'Before proceeding, double-check the updated configuration.'
+        )
+        .and.to.contain.text(qosWarning);
 
       await click('.one-checkbox-understand input');
       await click('.proceed');
@@ -292,7 +297,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(restartWarning)
+      expect(getModalBody())
+        .to.contain.text(
+          'Before proceeding, double-check the updated configuration.'
+        )
         .and.to.not.contain.text(qosWarning);
 
       await click('.one-checkbox-understand input');
