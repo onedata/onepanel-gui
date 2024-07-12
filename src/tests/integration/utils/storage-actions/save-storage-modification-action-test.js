@@ -25,9 +25,7 @@ const exampleStorage = {
 };
 
 const qosWarning =
-  'Modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
-const restartWarning =
-  'The changes in storage configuration will not take effect until Oneprovider and attached Oneclient instances are restarted. This behaviour will be improved in future releases of Onedata.';
+  'Note: modification of QoS parameters will not trigger recalculation of the existing QoS requirements assigned to user files in the supported spaces. Only newly created requirements will use the new parameters. This behaviour will be improved in future releases of Onedata.';
 
 const StorageManagerServiceMock = Service.extend({
   storageBeforeModification: exampleStorage,
@@ -105,7 +103,7 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         ));
     });
 
-  it('executes successfully without additional modal, when changed options are non-critical',
+  it('executes successfully with ack modal, when there is something to save',
     async function () {
       this.modifiedStorageOptions.name = 'my-storage2';
       this.storageManagerMock.storageAfterModification = {
@@ -114,30 +112,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       };
 
       const { resultPromise } = await executeAction(this);
-      const result = await resultPromise;
 
-      expectResult(result, {
-        storageBeforeModification: exampleStorage,
-        storageAfterModification: this.storageManagerMock.storageAfterModification,
-        verificationPassed: true,
-      });
-      expect(this.storageManagerMock.modifyStorage)
-        .to.be.calledWith(this.storageId, this.modifiedStorageOptions);
-      expect(this.globalNotifyMock.success)
-        .to.be.calledWith(htmlSafe(
-          'Storage backend "my-storage" has been modified successfully.'
-        ));
-    });
+      await click('.one-checkbox-understand input');
+      await click('.proceed');
 
-  it('executes successfully without additional modal, when changed options contains only a new QoS parameter',
-    async function () {
-      this.modifiedStorageOptions.qosParameters = { a: 1 };
-      this.storageManagerMock.storageAfterModification = {
-        ...exampleStorage,
-        ...this.modifiedStorageOptions,
-      };
-
-      const { resultPromise } = await executeAction(this);
       const result = await resultPromise;
 
       expectResult(result, {
@@ -164,6 +142,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         resolve({ verificationPassed: false });
 
       const { resultPromise } = await executeAction(this);
+
+      await click('.one-checkbox-understand input');
+      await click('.proceed');
+
       const result = await resultPromise;
 
       expectResult(result, {
@@ -200,12 +182,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       expect(getModalHeader()).to.contain.text('Modify storage backend');
       expect(getModalBody())
         .to.contain.text(
-          'Your modification can cause below issues and/or will need additional manual steps:'
+          'Before proceeding, double-check the updated configuration.'
         )
         .and.to.contain.text(qosWarning)
-        .and.to.contain.text(restartWarning)
         .and.to.contain.text(
-          'I understand that incorrect storage configuration can cause data loss, corruption, or discrepancies between file metadata and content in all supported spaces. '
+          'I understand that an incorrect storage backend configuration can cause data loss, corruption, or discrepancies between file metadata and content in all supported spaces.'
         )
         .and.to.contain('.one-checkbox-understand input');
       const buttons = getModalFooter().querySelectorAll('button');
@@ -239,8 +220,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(qosWarning)
-        .and.to.not.contain.text(restartWarning);
+      expect(getModalBody())
+        .to.contain.text(
+          'Before proceeding, double-check the updated configuration.'
+        )
+        .and.to.contain.text(qosWarning);
 
       await click('.one-checkbox-understand input');
       await click('.proceed');
@@ -268,8 +252,11 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
 
       const { resultPromise } = await executeAction(this);
 
-      expect(getModalBody()).to.contain.text(qosWarning)
-        .and.to.not.contain.text(restartWarning);
+      expect(getModalBody())
+        .to.contain.text(
+          'Before proceeding, double-check the updated configuration.'
+        )
+        .and.to.contain.text(qosWarning);
 
       await click('.one-checkbox-understand input');
       await click('.proceed');
@@ -277,30 +264,6 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       const result = await resultPromise;
       expectResult(result, {
         storageBeforeModification: storageBeforeModification,
-        storageAfterModification: this.storageManagerMock.storageAfterModification,
-        verificationPassed: true,
-      });
-    });
-
-  it('executes successfully with ack modal, when changed options cause only restart issue',
-    async function () {
-      this.modifiedStorageOptions.mountPoint = '/sth';
-      this.storageManagerMock.storageAfterModification = {
-        ...exampleStorage,
-        ...this.modifiedStorageOptions,
-      };
-
-      const { resultPromise } = await executeAction(this);
-
-      expect(getModalBody()).to.contain.text(restartWarning)
-        .and.to.not.contain.text(qosWarning);
-
-      await click('.one-checkbox-understand input');
-      await click('.proceed');
-
-      const result = await resultPromise;
-      expectResult(result, {
-        storageBeforeModification: exampleStorage,
         storageAfterModification: this.storageManagerMock.storageAfterModification,
         verificationPassed: true,
       });
@@ -327,6 +290,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
     this.modifiedStorageOptions.name = 'my-storage2';
 
     const { resultPromise } = await executeAction(this);
+
+    await click('.one-checkbox-understand input');
+    await click('.proceed');
+
     const result = await resultPromise;
 
     expect(result.status).to.equal('failed');

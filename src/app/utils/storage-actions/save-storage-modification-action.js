@@ -21,19 +21,8 @@ import { resolve } from 'rsvp';
  */
 
 const WarningType = Object.freeze({
-  Restart: 'restart',
   Qos: 'qos',
 });
-
-const storageOptionsNotCausingRestartWarning = Object.freeze([
-  'name',
-  'readonly',
-  'importedStorage',
-  'lumaFeed',
-  'lumaFeedUrl',
-  'lumaFeedApiKey',
-  'qosParameters',
-]);
 
 export default Action.extend({
   modalManager: service(),
@@ -82,16 +71,12 @@ export default Action.extend({
     // Do real persistence only if there is sth to save.
     if (changedStorageOptions.length) {
       // We need to show warnings before saving.
-      if (warningsToShowBeforeSaving.length) {
-        await this.modalManager
-          .show('save-storage-modification-ack-modal', {
-            warnings: warningsToShowBeforeSaving,
-            onSubmit: () =>
-              result.interceptPromise(this.saveStorageModification()),
-          }).hiddenPromise;
-      } else {
-        await result.interceptPromise(this.saveStorageModification());
-      }
+      await this.modalManager
+        .show('save-storage-modification-ack-modal', {
+          warnings: warningsToShowBeforeSaving,
+          onSubmit: () =>
+            result.interceptPromise(this.saveStorageModification()),
+        }).hiddenPromise;
     } else {
       // Nothing to save. We can say that everything is saved.
       await result.interceptPromise(resolve({ verificationPassed: null }));
@@ -142,12 +127,6 @@ export default Action.extend({
    */
   getWarningsToShowBeforeSaving(storageBeforeModification) {
     const warnings = new Set();
-
-    Object.keys(this.modifiedStorageOptions).forEach((option) => {
-      if (!storageOptionsNotCausingRestartWarning.includes(option)) {
-        warnings.add(WarningType.Restart);
-      }
-    });
 
     if (this.modifiedStorageOptions.qosParameters) {
       Object.keys(storageBeforeModification?.qosParameters ?? {})

@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12052 Removed skipStorageDetection option
 * VFS-11764 Changed documentation links to use topics
 * VFS-11707 Added detection of elements-blocking browser extensions with warning message
 * VFS-11681 Updated builder docker image and using "npx ember"

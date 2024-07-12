@@ -467,17 +467,6 @@ export default OneForm.extend(I18n, Validations, {
   ),
 
   /**
-   * Lock skip storage detection to true if readonly is set, or unlock
-   */
-  readonlyObserver: observer(
-    'formValues.generic.readonly',
-    'formValues.generic_editor.readonly',
-    function readonlyObserver() {
-      this.autoSettingsSkipStorageDetection();
-    }
-  ),
-
-  /**
    * Unlock/lock readonly toggle
    */
   importedStorageObserver: observer(
@@ -547,7 +536,6 @@ export default OneForm.extend(I18n, Validations, {
 
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
-    this.readonlyObserver();
 
     // Select default (first) storage type if it is still empty
     if (!this.get('selectedStorageType')) {
@@ -621,25 +609,9 @@ export default OneForm.extend(I18n, Validations, {
     }
   },
 
-  autoSettingsSkipStorageDetection() {
-    const prefix = (this.get('mode') === 'edit' ? 'generic_editor' : 'generic');
-    const isReadonly = this.get(`formValues.${prefix}.readonly`);
-
-    if (isReadonly) {
-      this.lockToggle(
-        'skipStorageDetection',
-        true,
-        this.t('cannotStorageDetectionReadonly')
-      );
-    } else {
-      this.unlockToggle('skipStorageDetection');
-    }
-  },
-
   autoSettingsAll() {
     this.autoSettingsImportedStorage();
     this.autoSettingsReadonly();
-    this.autoSettingsSkipStorageDetection();
   },
 
   lockToggle(fieldName, state, lockHint = null) {

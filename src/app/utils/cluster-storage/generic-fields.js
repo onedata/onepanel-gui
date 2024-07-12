@@ -25,12 +25,6 @@ export default [
     tip: true,
   },
   {
-    name: 'skipStorageDetection',
-    type: 'checkbox',
-    optional: true,
-    tip: true,
-  },
-  {
     name: 'lumaFeed',
     type: 'radio-group',
     options: [

@@ -50,7 +50,6 @@ const POSIX_STORAGE = {
   rootUid: '1000',
   rootGid: '1001',
   timeout: 20,
-  skipStorageDetection: true,
   readonly: true,
   name: 'Some POSIX storage',
 };
@@ -65,7 +64,6 @@ const HTTP_STORAGE = {
   verifyServerCertificate: false,
   type: 'http',
   storagePathType: 'canonical',
-  skipStorageDetection: true,
   readonly: true,
   qosParameters: {
     storageId: 'e777476baf3418ed9861a97750be285ech9802',
@@ -170,7 +168,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       [
         'generic_static-importedStorage',
         'generic_static-readonly',
-        'generic_static-skipStorageDetection',
       ].forEach((fieldName) => {
         const toggle = helper.getInput(fieldName).querySelector('.one-way-toggle');
         const shouldBeChecked = POSIX_STORAGE[fieldName.split('-').pop()];
@@ -241,7 +238,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         [
           'generic-importedStorage',
           'generic-readonly',
-          'generic-skipStorageDetection',
         ].forEach(fieldName => {
           expect(helper.getToggleInput(fieldName)).to.exist;
           expect(helper.getToggleInput(fieldName).querySelector('input')).to.exist;
@@ -266,7 +262,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           expect(formData).to.have.property('mountPoint');
           expect(formData.mountPoint).to.be.equal('/mnt/st1');
           expect(formData).to.not.have.property('timeout');
-          expect(formData).to.not.have.property('skipStorageDetection');
           return resolve();
         },
       });
@@ -403,72 +398,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     );
 
     it(
-      'sets and locks Skip storage detection toggle to true after setting readonly to true',
-      async function () {
-        this.set('storage', POSIX_STORAGE);
-        await render(hbs `
-          {{cluster-storage-add-form
-            storage=storage
-            mode="create"
-          }}
-        `);
-
-        const helper = new ClusterStorageAddHelper(this.element);
-        await click(helper.getToggleInput('generic-importedStorage'));
-        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
-          .to.not.have.class('checked')
-          .and.not.have.class('disabled');
-        await click(helper.getToggleInput('generic-readonly'));
-        expect(helper.getToggleInput('generic-readonly'), 'readonly initial')
-          .to.have.class('checked')
-          .and.not.have.class('disabled');
-        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
-          .to.have.class('checked')
-          .and.have.class('disabled');
-      }
-    );
-
-    it(
-      'restores Skip storage detection value after setting readonly to false',
-      async function () {
-        this.set('storage', POSIX_STORAGE);
-        await render(hbs `
-          {{cluster-storage-add-form
-            storage=storage
-            mode="create"
-          }}
-        `);
-
-        const helper = new ClusterStorageAddHelper(this.element);
-        await click(helper.getToggleInput('generic-importedStorage'));
-        await click(helper.getToggleInput('generic-skipStorageDetection'));
-        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skip initial')
-          .to.have.class('checked')
-          .and.not.have.class('disabled');
-        await click(helper.getToggleInput('generic-readonly'));
-        expect(
-            helper.getToggleInput('generic-skipStorageDetection'),
-            'skip after check'
-          )
-          .to.have.class('checked')
-          .and.have.class('disabled');
-        await click(helper.getToggleInput('generic-readonly'));
-        expect(
-            helper.getToggleInput('generic-readonly'),
-            'readonly after uncheck'
-          )
-          .to.not.have.class('checked');
-        expect(
-            helper.getToggleInput('generic-skipStorageDetection'),
-            'skip after readonly uncheck'
-          )
-          .to.have.class('checked')
-          .and.not.have.class('disabled');
-      }
-    );
-
-    it(
-      'locks "imported stoarge", "readonly" and "skip storage detection" to true for HTTP storage',
+      'locks "imported stoarge" and "readonly" to true for HTTP storage',
       async function () {
         await render(hbs `{{cluster-storage-add-form}}`);
 
@@ -483,14 +413,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .to.have.class('checked')
           .and.have.class('disabled');
 
-        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skipStorageDet.')
-          .to.have.class('checked')
-          .and.have.class('disabled');
       }
     );
 
     it(
-      'unlocks "imported stoarge" and "skip storage detection" when changing type from HTTP',
+      'unlocks "imported stoarge" when changing type from HTTP',
       async function () {
         await render(hbs `{{cluster-storage-add-form}}`);
 
@@ -499,9 +426,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         await selectChoose('.storage-type-select-group', 'POSIX');
 
         expect(helper.getToggleInput('generic-importedStorage'), 'importedStorage')
-          .to.not.have.class('disabled');
-
-        expect(helper.getToggleInput('generic-skipStorageDetection'), 'skipStorageDet.')
           .to.not.have.class('disabled');
       }
     );
@@ -565,9 +489,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       [{
         input: 'generic_editor-importedStorage',
         field: 'importedStorage',
-      }, {
-        input: 'generic_editor-skipStorageDetection',
-        field: 'skipStorageDetection',
       }].forEach(({ input, field }) => {
         const toggle = helper.getToggleInput(input);
         const shouldBeChecked = POSIX_STORAGE[field];
@@ -754,7 +675,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     );
 
     it(
-      'locks "imported storage", "readonly" and "skip storage detection" to true for HTTP storage',
+      'locks "imported storage" and "readonly" to true for HTTP storage',
       async function () {
         this.set('storage', HTTP_STORAGE);
         await render(hbs `{{cluster-storage-add-form
@@ -772,14 +693,10 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .to.have.class('checked')
           .and.have.class('disabled');
 
-        expect(
-          helper.getToggleInput('generic_editor-skipStorageDetection'),
-          'skipStorageDet.'
-        ).to.have.class('checked').and.have.class('disabled');
       });
 
     it(
-      'locks "imported storage", "readonly" and "skip storage detection" to true for HTTP storage after change from show mode',
+      'locks "imported storage" and "readonly" to true for HTTP storage after change from show mode',
       async function () {
         this.setProperties({
           storage: HTTP_STORAGE,
@@ -804,10 +721,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .to.have.class('checked')
           .and.have.class('disabled');
 
-        expect(
-          helper.getToggleInput('generic_editor-skipStorageDetection'),
-          'skipStorageDet.'
-        ).to.have.class('checked').and.have.class('disabled');
       });
 
     it(
