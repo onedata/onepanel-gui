@@ -59,11 +59,10 @@ export default Component.extend(I18n, {
   /**
    * @type {ComputedProperty<Array<SafeString>>}
    */
-  warningText: computed('warnings', function warningText() {
-    if (this.warnings.includes('qos')) {
-      return this.t('warnings.qos');
-    }
-    return '';
+  warningTexts: computed('warnings', function warningTexts() {
+    return [...this.warnings].sort().map((warningType) =>
+      this.t(`warnings.${warningType}`)
+    );
   }),
 
   actions: {

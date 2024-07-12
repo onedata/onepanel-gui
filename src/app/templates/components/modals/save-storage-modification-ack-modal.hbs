@@ -13,11 +13,9 @@
   {{/modal.header}}
 
   {{#modal.body}}
-    {{#if warningText}}
-      <p class="spaced-items">
-        {{warningText}}
-      </p>
-    {{/if}}
+    {{#each warningTexts as |warningText index|}}
+      <p class="warning-text">{{warningText}}</p>
+    {{/each}}
     <p>{{tt this "warningsIntro"}}</p>
     <div class="row content-row no-border row-understand-notice">
       {{one-checkbox
