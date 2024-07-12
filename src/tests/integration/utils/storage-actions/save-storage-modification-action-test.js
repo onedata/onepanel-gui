@@ -103,54 +103,6 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         ));
     });
 
-  it('executes successfully without additional modal, when changed options are non-critical',
-    async function () {
-      this.modifiedStorageOptions.name = 'my-storage2';
-      this.storageManagerMock.storageAfterModification = {
-        ...exampleStorage,
-        ...this.modifiedStorageOptions,
-      };
-
-      const { resultPromise } = await executeAction(this);
-      const result = await resultPromise;
-
-      expectResult(result, {
-        storageBeforeModification: exampleStorage,
-        storageAfterModification: this.storageManagerMock.storageAfterModification,
-        verificationPassed: true,
-      });
-      expect(this.storageManagerMock.modifyStorage)
-        .to.be.calledWith(this.storageId, this.modifiedStorageOptions);
-      expect(this.globalNotifyMock.success)
-        .to.be.calledWith(htmlSafe(
-          'Storage backend "my-storage" has been modified successfully.'
-        ));
-    });
-
-  it('executes successfully without additional modal, when changed options contains only a new QoS parameter',
-    async function () {
-      this.modifiedStorageOptions.qosParameters = { a: 1 };
-      this.storageManagerMock.storageAfterModification = {
-        ...exampleStorage,
-        ...this.modifiedStorageOptions,
-      };
-
-      const { resultPromise } = await executeAction(this);
-      const result = await resultPromise;
-
-      expectResult(result, {
-        storageBeforeModification: exampleStorage,
-        storageAfterModification: this.storageManagerMock.storageAfterModification,
-        verificationPassed: true,
-      });
-      expect(this.storageManagerMock.modifyStorage)
-        .to.be.calledWith(this.storageId, this.modifiedStorageOptions);
-      expect(this.globalNotifyMock.success)
-        .to.be.calledWith(htmlSafe(
-          'Storage backend "my-storage" has been modified successfully.'
-        ));
-    });
-
   it('executes successfully with verification alert, when change didn\'t pass storage verification',
     async function () {
       this.modifiedStorageOptions.name = 'my-storage2';
@@ -162,6 +114,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         resolve({ verificationPassed: false });
 
       const { resultPromise } = await executeAction(this);
+
+      await click('.one-checkbox-understand input');
+      await click('.proceed');
+
       const result = await resultPromise;
 
       expectResult(result, {
@@ -333,6 +289,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
     this.modifiedStorageOptions.name = 'my-storage2';
 
     const { resultPromise } = await executeAction(this);
+
+    await click('.one-checkbox-understand input');
+    await click('.proceed');
+
     const result = await resultPromise;
 
     expect(result.status).to.equal('failed');
