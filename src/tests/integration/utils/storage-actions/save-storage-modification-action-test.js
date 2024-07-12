@@ -103,6 +103,34 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         ));
     });
 
+  it('executes successfully with ack modal, when there is something to save',
+    async function () {
+      this.modifiedStorageOptions.name = 'my-storage2';
+      this.storageManagerMock.storageAfterModification = {
+        ...exampleStorage,
+        ...this.modifiedStorageOptions,
+      };
+
+      const { resultPromise } = await executeAction(this);
+
+      await click('.one-checkbox-understand input');
+      await click('.proceed');
+
+      const result = await resultPromise;
+
+      expectResult(result, {
+        storageBeforeModification: exampleStorage,
+        storageAfterModification: this.storageManagerMock.storageAfterModification,
+        verificationPassed: true,
+      });
+      expect(this.storageManagerMock.modifyStorage)
+        .to.be.calledWith(this.storageId, this.modifiedStorageOptions);
+      expect(this.globalNotifyMock.success)
+        .to.be.calledWith(htmlSafe(
+          'Storage backend "my-storage" has been modified successfully.'
+        ));
+    });
+
   it('executes successfully with verification alert, when change didn\'t pass storage verification',
     async function () {
       this.modifiedStorageOptions.name = 'my-storage2';
@@ -236,33 +264,6 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       const result = await resultPromise;
       expectResult(result, {
         storageBeforeModification: storageBeforeModification,
-        storageAfterModification: this.storageManagerMock.storageAfterModification,
-        verificationPassed: true,
-      });
-    });
-
-  it('executes successfully with ack modal, when changed options cause only restart issue',
-    async function () {
-      this.modifiedStorageOptions.mountPoint = '/sth';
-      this.storageManagerMock.storageAfterModification = {
-        ...exampleStorage,
-        ...this.modifiedStorageOptions,
-      };
-
-      const { resultPromise } = await executeAction(this);
-
-      expect(getModalBody())
-        .to.contain.text(
-          'Before proceeding, double-check the updated configuration.'
-        )
-        .and.to.not.contain.text(qosWarning);
-
-      await click('.one-checkbox-understand input');
-      await click('.proceed');
-
-      const result = await resultPromise;
-      expectResult(result, {
-        storageBeforeModification: exampleStorage,
         storageAfterModification: this.storageManagerMock.storageAfterModification,
         verificationPassed: true,
       });
