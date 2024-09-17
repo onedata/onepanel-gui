@@ -8,8 +8,26 @@
  */
 
 import LoginViewModel from 'onedata-gui-common/utils/login-view-model';
-import { reads } from '@ember/object/computed';
+import globals from 'onedata-gui-common/utils/globals';
+import { sessionExpiredKey } from 'onedata-gui-common/components/login-box';
 
 export default LoginViewModel.extend({
-  sessionHasExpired: reads('session.data.hasExpired'),
+  /**
+   * @type {boolean}
+   */
+  sessionHasExpired: undefined,
+
+  init() {
+    this._super(...arguments);
+    this.set('sessionHasExpired', this.consumeSessionExpiredFlag());
+  },
+
+  consumeSessionExpiredFlag() {
+    if (globals.sessionStorage.getItem(sessionExpiredKey)) {
+      globals.sessionStorage.removeItem(sessionExpiredKey);
+      return true;
+    } else {
+      return false;
+    }
+  },
 });
