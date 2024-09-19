@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12080 Refactored code of login views
 * VFS-12052 Removed skipStorageDetection option
 * VFS-11764 Changed documentation links to use topics
 * VFS-11707 Added detection of elements-blocking browser extensions with warning message

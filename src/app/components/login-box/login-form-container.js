@@ -17,7 +17,12 @@ import $ from 'jquery';
 
 const animationTimeout = 333;
 
-export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOnezoneUrl'), {
+const mixins = [
+  I18n,
+  createDataProxyMixin('visitViaOnezoneUrl'),
+];
+
+export default LoginFormContainer.extend(...mixins, {
   layout,
 
   i18nPrefix: 'components.loginBox.loginFormContainer',
@@ -52,6 +57,8 @@ export default LoginFormContainer.extend(I18n, createDataProxyMixin('visitViaOne
   isEmergencyPassphraseLoginActive: false,
 
   onezoneOrigin: reads('onezoneGui.onezoneOrigin'),
+
+  sessionHasExpired: reads('loginViewModel.sessionHasExpired'),
 
   /**
    * @override
