@@ -207,8 +207,8 @@ export default Mixin.create({
 
   willDestroyElement() {
     try {
-      this.get('importChartStatsWatcher').stop();
-      this.get('importInfoWatcher').stop();
+      this.importChartStatsWatcher.destroy();
+      this.importInfoWatcher.destroy();
     } finally {
       this._super(...arguments);
     }

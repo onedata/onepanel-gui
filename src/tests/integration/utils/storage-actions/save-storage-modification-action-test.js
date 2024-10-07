@@ -55,7 +55,7 @@ const GlobalNotifyServiceMock = Service.extend({
 });
 
 describe('Integration | Utility | storage-actions/save-storage-modification-action', function () {
-  setupRenderingTest();
+  const { afterEach } = setupRenderingTest();
 
   beforeEach(function () {
     const storageId = 'storage-id';
@@ -80,6 +80,10 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
       storageManagerMock,
       globalNotifyMock,
     });
+  });
+
+  afterEach(function () {
+    this.action.destroy();
   });
 
   it('has correct className', function () {
