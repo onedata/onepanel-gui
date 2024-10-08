@@ -3,9 +3,14 @@
     {{tt this "header"}}
     {{#if (eq mode "form")}}
       <div class="btn-toolbar">
-        {{#bs-button type="default" size="sm" class="zone-registration-back" onClick=(action "back")}}
+        {{#one-button
+          type="default"
+          size="sm"
+          class="zone-registration-back"
+          onClick=(action "back")
+        }}
           {{one-icon icon="arrow-left"}}<span>{{tt this "back"}}</span>
-        {{/bs-button}}
+        {{/one-button}}
       </div>
     {{/if}}
   </h1>

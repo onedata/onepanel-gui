@@ -16,12 +16,12 @@
     <p>{{tt this "text"}}</p>
   {{/modal.body}}
   {{#modal.footer class="btn-toolbar"}}
-    {{#bs-button
+    {{#one-button
       type="default"
       onClick=(action modal.close)
     }}
       {{tt this "btnDiscard"}}
-    {{/bs-button}}
+    {{/one-button}}
     {{#link-to
       "onedata.sidebar.content.aspect"
       "certificate"

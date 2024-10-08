@@ -18,7 +18,7 @@
   </span>
   <div class="btn-toolbar">
     <span clas="btn-tooltip-container">
-      {{#bs-button
+      {{#one-button
         type="default"
         size="sm"
         disabled=whileEdition
@@ -26,7 +26,7 @@
       }}
         {{!-- single line to avoid spaces --}}
         {{one-icon icon="browser-rename"}} <span class="text">{{tt this "modifyBtn"}}</span>
-      {{/bs-button}}
+      {{/one-button}}
       {{#if whileEdition}}
         {{one-tooltip title=(tt this "modifyDisabledBtnTip")}}
       {{/if}}
