@@ -92,7 +92,9 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  visibleSteps: array.rejectBy('steps', raw('isHiddenStep')),
+  visibleSteps: computed('steps.@each.isHiddenStep', function visibleSteps() {
+    return this.steps?.filter(step => !step.isHiddenStep) ?? [];
+  }),
 
   wizardIndex: computed(
     'steps.[]',
