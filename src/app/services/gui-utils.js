@@ -157,7 +157,7 @@ export default GuiUtils.extend(
             return null;
           }
         } else {
-          return i18n.t('components.userAccountButton.manageAccount');
+          return i18n.t('components.userAccountButtonBase.manageAccount');
         }
       }
     ),
