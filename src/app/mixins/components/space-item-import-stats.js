@@ -8,7 +8,7 @@
 
 import Mixin from '@ember/object/mixin';
 import { inject as service } from '@ember/service';
-import { computed, observer, get } from '@ember/object';
+import { computed, observer, get, trySet } from '@ember/object';
 import _ from 'lodash';
 import moment from 'moment';
 import Looper from 'onedata-gui-common/utils/looper';
@@ -96,7 +96,7 @@ export default Mixin.create({
   timeStatsError: null,
 
   /**
-   * True if time stats have been loaded after importInterval change
+   * False if time stats have been loaded after importInterval change
    * at least once.
    * @type {boolean}
    */
@@ -106,8 +106,8 @@ export default Mixin.create({
    * importStats in form of Array
    */
   timeStats: computed('importStats', function timeStats() {
-    const importStats = this.get('importStats');
-    return Object.keys(this.get('importStats') || {}).reduce((arr, key) => {
+    const importStats = this.importStats;
+    return Object.keys(this.importStats || {}).reduce((arr, key) => {
       arr.push(Object.assign({}, importStats[key], { name: key }));
       return arr;
     }, []);
@@ -118,7 +118,7 @@ export default Mixin.create({
    * @type {Date}
    */
   lastValueDate: computed('timeStats.@each.lastValueDate', function () {
-    const timeStats = this.get('timeStats');
+    const timeStats = this.timeStats;
     if (timeStats) {
       return _.max(
         _.map(
@@ -130,7 +130,7 @@ export default Mixin.create({
   }).readOnly(),
 
   lastValueDateText: computed('lastValueDate', function () {
-    const lastValueDate = this.get('lastValueDate');
+    const lastValueDate = this.lastValueDate;
     return lastValueDate ?
       moment(lastValueDate).format('YYYY-MM-DD, HH:mm:ss') :
       undefined;
@@ -142,7 +142,7 @@ export default Mixin.create({
    * @type {Ember.ComputedProperty<boolean>}
    */
   importTabActive: computed('selectedTab', function importTabActive() {
-    const selectedTab = this.get('selectedTab');
+    const selectedTab = this.selectedTab;
     return selectedTab && selectedTab === 'import';
   }),
 
@@ -153,7 +153,7 @@ export default Mixin.create({
     'importInfoWatcher',
     'importInfoRefreshTime',
     'importTabActive',
-    function () {
+    function reconfigureImportWatchers() {
       const {
         autoImportActive,
         importInterval,
@@ -161,24 +161,15 @@ export default Mixin.create({
         importInfoWatcher,
         importInfoRefreshTime,
         importTabActive,
-      } = this.getProperties(
-        'autoImportActive',
-        'importInterval',
-        'importChartStatsWatcher',
-        'importInfoWatcher',
-        'importInfoRefreshTime',
-        'importTabActive',
-      );
+      } = this;
 
       if (autoImportActive) {
         importInfoWatcher.set('interval', importInfoRefreshTime);
       }
 
-      if (importTabActive && autoImportActive) {
-        importChartStatsWatcher.set('interval', WATCHER_INTERVAL[importInterval]);
-      } else {
-        importChartStatsWatcher.stop();
-      }
+      const interval = importTabActive && autoImportActive ?
+        WATCHER_INTERVAL[importInterval] : 0;
+      importChartStatsWatcher.set('interval', interval);
     }
   ),
 
@@ -187,13 +178,13 @@ export default Mixin.create({
 
     // interval of this Looper will be set in reconfigureImportWatchers observer
     const importChartStatsWatcher = Looper.create({ immediate: true });
-    importChartStatsWatcher.on('tick', () =>
-      safeExec(this, 'fetchImportStats')
-    );
+    importChartStatsWatcher.on('tick', () => {
+      safeExec(this, 'fetchImportStats');
+    });
 
     const importInfoWatcher = Looper.create({
       immediate: true,
-      interval: this.get('importInfoRefreshTime'),
+      interval: this.importInfoRefreshTime,
     });
     importInfoWatcher.on('tick', () =>
       safeExec(this, 'checkImportInfoUpdate')
@@ -219,13 +210,13 @@ export default Mixin.create({
    * @returns {undefined}
    */
   checkImportInfoUpdate() {
-    if (this.get('autoImportActive')) {
+    if (this.autoImportActive) {
       this.fetchImportInfo();
     }
   },
 
   fetchImportInfo() {
-    return this.get('spaceManager').getImportInfo(this.get('space.id'))
+    return this.spaceManager.getImportInfo(this.get('space.id'))
       .then(importInfo => {
         safeExec(this, 'set', 'importInfo', importInfo);
       })
@@ -236,20 +227,27 @@ export default Mixin.create({
     // TODO status fetch error handling
   },
 
-  fetchImportStats() {
+  async fetchImportStats() {
     const {
       importInterval,
       spaceManager,
-    } = this.getProperties('importInterval', 'spaceManager');
+    } = this;
     const spaceId = this.get('space.id');
 
-    return spaceManager.getImportStats(spaceId, importInterval)
-      .then(newImportStats => safeExec(this, () => this.setProperties({
-        importStats: newImportStats,
+    try {
+      const importStats = await spaceManager.getImportStats(spaceId, importInterval);
+      if (this.isDestroyed || this.isDestroying) {
+        return;
+      }
+      this.setProperties({
+        importStats,
         timeStatsError: null,
-      })))
-      .catch(error => safeExec(this, () => this.set('timeStatsError', error)))
-      .finally(() => safeExec(this, () => this.set('timeStatsLoading', false)));
+      });
+    } catch (error) {
+      trySet(this, 'timeStatsError', error);
+    } finally {
+      trySet(this, 'timeStatsLoading', false);
+    }
   },
 
   actions: {
@@ -258,7 +256,7 @@ export default Mixin.create({
      * @returns {undefined}
      */
     onImportIntervalChange(importInterval) {
-      const currentimportInterval = this.get('importInterval');
+      const currentimportInterval = this.importInterval;
       if (importInterval !== currentimportInterval) {
         this.setProperties({
           importStats: null,
