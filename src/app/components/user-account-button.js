@@ -63,7 +63,7 @@ export default Component.extend(I18n, {
   isEmergencyOnepanel: reads('onepanelServer.isEmergency'),
 
   menuItemClasses: computed('mobileMode', function menuItemClasses() {
-    return this.mobileModel ? menuItemClassesMobile : menuItemClassesDesktop;
+    return this.mobileMode ? menuItemClassesMobile : menuItemClassesDesktop;
   }),
 
   actions: {
