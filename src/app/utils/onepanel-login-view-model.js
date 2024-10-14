@@ -12,11 +12,6 @@ import globals from 'onedata-gui-common/utils/globals';
 import { sessionExpiredKey } from 'onedata-gui-common/components/login-box';
 
 export default LoginViewModel.extend({
-  /**
-   * @type {boolean}
-   */
-  sessionHasExpired: undefined,
-
   init() {
     this._super(...arguments);
     this.set('sessionHasExpired', this.consumeSessionExpiredFlag());
