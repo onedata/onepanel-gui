@@ -71,14 +71,14 @@
           }}
             {{tt this "save"}}
           {{/one-button}}
-          {{#bs-button
+          {{#one-button
             class="btn-cancel-new-host"
             size="sm"
             type="default"
             onClick=(action (mut addingNewHost) false)
           }}
             {{tt this "cancel"}}
-          {{/bs-button}}
+          {{/one-button}}
         </span>
         <div class="add-instructions">
           <a class="show-add-instructions" {{action (mut addMoreInfoVisible) (not addMoreInfoVisible)}}>
@@ -103,14 +103,14 @@
       </div>
     {{else}}
       <div class="row inner-row-content">
-        {{#bs-button
+        {{#one-button
           type="default"
           size="sm"
           onClick=(action (mut addingNewHost) true)
         }}
           {{one-icon icon="add-filled"}}
           <span class="text">{{tt this "addNewHost"}}</span>
-        {{/bs-button}}
+        {{/one-button}}
       </div>
     {{/if}}
   {{/promise-proxy-container}}

@@ -1,31 +1,25 @@
 {{#if isEmergencyOnepanel}}
   {{#if mobileMode}}
-    {{#one-collapsible-list as |list|}}
-      {{#list.item
+    <OneCollapsibleList as |list|>
+      <list.item
         class="user-account-button"
-        isCollapsible=false
-        click=(action "logout")
-        closeEventName="side-menu:close"
+        @isCollapsible={{false}}
+        @click={{action "logout"}}
+        @closeEventName="side-menu:close"
         as |listItem|
-      }}
-        {{#listItem.header class=(concat menuItemClasses (if isActive " active" ""))}}
-          {{one-icon
-            class="logout-icon item-icon"
-            icon="logout"
-          }}
+      >
+        <listItem.header class={{concat menuItemClasses (if isActive " active" "")}}>
+          <OneIcon class="logout-icon item-icon" @icon="logout" />
           <span class="one-label user-account-button-logout">
             {{tt this "logout"}}
           </span>
-        {{/listItem.header}}
-      {{/list.item}}
-    {{/one-collapsible-list}}
+        </listItem.header>
+      </list.item>
+    </OneCollapsibleList>
   {{else}}
     <div class={{menuItemClasses}} {{action "logout"}}>
       <div class="item-header truncate">
-        {{one-icon
-          class="logout-icon item-icon"
-          icon="logout"
-        }}
+        <OneIcon class="logout-icon item-icon" @icon="logout" />
         <span class="one-label user-account-button-logout">
           {{tt this "logout"}}
         </span>
@@ -33,6 +27,12 @@
     </div>
   {{/if}}
 {{else}}
-  {{partial "components/-user-account-button-common"}}
+  <UserAccountButtonBase
+    @isActive={{isActive}}
+    @mobileMode={{mobileMode}}
+    @username={{username}}
+    @onItemClick={{onItemClick}}
+    @onMenuOpened={{onMenuOpened}}
+  />
 {{/if}}
 

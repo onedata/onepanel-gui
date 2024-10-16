@@ -37,12 +37,12 @@
     {{/if}}
   {{/bar.modal.body}}
   {{#bar.modal.footer class="btn-toolbar"}}
-    {{#bs-button
+    {{#one-button
       type="default"
       onClick=(action bar.modal.close)
     }}
       {{tt this "modal.close"}}
-    {{/bs-button}}
+    {{/one-button}}
     {{#unless workerIsUnavailable}}
       <a
         href={{visitViaOnezoneUrl}}

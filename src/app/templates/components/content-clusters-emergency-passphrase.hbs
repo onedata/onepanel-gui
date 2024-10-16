@@ -3,13 +3,13 @@
     {{tt this "title"}}
     <div class="btn-toolbar">
       {{#unless isChangingPassphrase}}
-        {{#bs-button
+        {{#one-button
           type="primary"
           class="btn-sm btn-change-passphrase"
           onClick=(action "toggleChangePassphrase")
         }}
           {{tt this "changePassphrase"}}
-        {{/bs-button}}
+        {{/one-button}}
       {{/unless}}
     </div>
   </h1>
