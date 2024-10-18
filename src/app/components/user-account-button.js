@@ -36,21 +36,21 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual optional
-   * @type {(targetResourceType: string) => void}
+   * @type {boolean}
    */
-  onItemClick: undefined,
+  mobileMode: undefined,
 
   /**
-   * @virtual
+   * @virtual optional
    * @type {(opened: boolean) => void}
    */
   onMenuOpened: undefined,
 
   /**
-   * @virtual
-   * @type {boolean}
+   * @virtual optional
+   * @type {(targetResourceType: string) => void}
    */
-  mobileMode: undefined,
+  onItemClick: undefined,
 
   /**
    * @type {ComputedProperty<boolean>}

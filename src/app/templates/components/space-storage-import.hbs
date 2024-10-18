@@ -113,30 +113,21 @@
       @onChange={{importIntervalChanged}}
       as |bg|
     >
-      <bg.button
-        class="btn-sm btn-import-interval-minute"
-        @type="default"
-        @value="minute"
-      >
-        {{tt this "minute"}}
-        <OneTooltip @title="Show statistics for last minute" @triggerEvents="hover" />
-      </bg.button>
-      <bg.button
-        class="btn-sm btn-import-interval-hour"
-        @type="default"
-        @value="hour"
-      >
-        {{tt this "hour"}}
-        <OneTooltip @title="Show statistics for last hour" @triggerEvents="hover" />
-      </bg.button>
-      <bg.button
-        class="btn-sm btn-import-interval-day"
-        @type="default"
-        @value="day"
-      >
-        {{tt this "day"}}
-        <OneTooltip @title="Show statistics for last day" @triggerEvents="hover" />
-      </bg.button>
+      {{#each (array "minute" "hour" "day") as |selectedInterval|}}
+        <bg.button
+          class="btn-sm btn-import-interval-{{selectedInterval}}"
+          @type="default"
+          @value={{selectedInterval}}
+        >
+          {{tt this selectedInterval}}
+          <OneTooltip
+            @title={{tt this "showStatisticsFor"
+              interval=(tt this (concat "showStatisticsInterval." selectedInterval))
+            }}
+            @triggerEvents="hover"
+          />
+        </bg.button>
+      {{/each}}
     </BsButtonGroup>
 
     <LoadingContainer @isLoading={{timeStatsLoading}} @errorReason={{timeStatsError}}>
