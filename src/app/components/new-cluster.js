@@ -5,7 +5,7 @@
  * - transitionTo(*any) - passes the action down
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2024 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,7 +21,6 @@ import {
 } from 'onepanel-gui/models/installation-details';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import $ from 'jquery';
-import { array, raw } from 'ember-awesome-macros';
 import { resolve } from 'rsvp';
 import globals from 'onedata-gui-common/utils/globals';
 
@@ -92,7 +91,9 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<InstallationStep>>}
    */
-  visibleSteps: array.rejectBy('steps', raw('isHiddenStep')),
+  visibleSteps: computed('steps.@each.isHiddenStep', function visibleSteps() {
+    return this.steps?.filter(step => !step.isHiddenStep) ?? [];
+  }),
 
   wizardIndex: computed(
     'steps.[]',
