@@ -8,29 +8,34 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import AbstractNavigationTabsConfiguration from 'onedata-gui-common/services/navigation-tabs-configuration';
+import CommonNavigationTabsConfiguration from 'onedata-gui-common/services/navigation-tabs-configuration';
+import { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import _ from 'lodash';
 
-class OnepanelNavigationTabsConfiguration extends AbstractNavigationTabsConfiguration {
+class OnepanelNavigationTabsConfiguration extends CommonNavigationTabsConfiguration {
+  @service onepanelServer;
+
+  /**
+   * @override
+   */
+  get userId() {
+    return this.onepanelServer.userId;
+  }
+
   /**
    * @override
    * @returns {Array<OnedataTabModel>}
    */
-  getTabModels() {
-    return [
-      { id: 'spaces', icon: 'browser-directory' },
-      { id: 'shares', icon: 'browser-share' },
-      { id: 'providers', icon: 'provider' },
-      { id: 'groups', icon: 'groups' },
-      { id: 'tokens', icon: 'tokens' },
-      { id: 'harvesters', icon: 'light-bulb' },
-      { id: 'atmInventories', icon: 'atm-inventory' },
-      {
-        id: 'clusters',
-        icon: 'cluster',
-        isDefault: true,
-        defaultAspect: 'overview',
-      },
-    ];
+  @computed
+  get tabModels() {
+    const tabModels = _.cloneDeep(super.tabModels);
+    const clustersTab = tabModels.find(tab => tab.id === 'clusters');
+    Object.assign(clustersTab, {
+      isDefault: true,
+      defaultAspect: 'overview',
+    });
+    return tabModels;
   }
 }
 
