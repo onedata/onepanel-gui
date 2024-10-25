@@ -19,6 +19,7 @@ class OnepanelNavigationTabsConfiguration extends CommonNavigationTabsConfigurat
   /**
    * @override
    */
+  @computed
   get userId() {
     return this.onepanelServer.userId;
   }
