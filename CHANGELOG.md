@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12370 Refactored sidebar and tabs code
 * VFS-10341 Upgraded EmberJS to v3.16.10
 * VFS-12355 Applied minor code fixes
 * VFS-12080 Refactored code of login views
