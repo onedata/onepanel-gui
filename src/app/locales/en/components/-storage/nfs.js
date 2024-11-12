@@ -23,10 +23,10 @@ export default {
   },
   readAhead: {
     name: 'Readahead size [B]',
-    tip: 'The size of readahead in bytes. Default: 0.',
+    tip: 'The size of readahead in bytes.',
   },
   autoReconnect: {
     name: 'Auto-reconnect attempts',
-    tip: 'The number of automatic reconnect attempts to the server. Setting `-1` enables infinite number of reconnects. Default: 1.',
+    tip: 'The number of automatic reconnect attempts to the server. Setting `-1` enables infinite number of reconnects.',
   },
 };

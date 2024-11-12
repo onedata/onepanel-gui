@@ -43,9 +43,10 @@ export default [{
     integer: true,
     gte: 0,
     default: 0,
-    example: 1048576,
     optional: true,
     tip: true,
+    defaultPlaceholder: 0,
+    isDefault: true,
   },
   {
     name: 'autoReconnect',
@@ -53,8 +54,9 @@ export default [{
     integer: true,
     gte: 0,
     default: 1,
-    example: 3,
     optional: true,
     tip: true,
+    defaultPlaceholder: 1,
+    isDefault: true,
   },
 ];
