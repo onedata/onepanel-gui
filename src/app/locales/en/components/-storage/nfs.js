@@ -13,7 +13,7 @@ export default {
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'The size of NFS connection pool. Default: 10.',
+    tip: 'The size of NFS connection pool.',
   },
   dirCache: {
     name: 'Directory caching',
