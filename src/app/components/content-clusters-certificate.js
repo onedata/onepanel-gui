@@ -134,6 +134,17 @@ export default Component.extend(I18n, GlobalActions, {
   },
 
   /**
+   * @override
+   */
+  willDestroy() {
+    try {
+      this.webCertPollLooper?.destroy();
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
+  /**
    * Creates new promise object for `webCertProxy` property
    */
   updateWebCertProxy() {

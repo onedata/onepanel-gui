@@ -6,6 +6,10 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12370 Refactored sidebar and tabs code
+* VFS-10341 Upgraded EmberJS to v3.16.10
+* VFS-12355 Applied minor code fixes
+* VFS-12080 Refactored code of login views
 * VFS-12052 Removed skipStorageDetection option
 * VFS-11764 Changed documentation links to use topics
 * VFS-11707 Added detection of elements-blocking browser extensions with warning message

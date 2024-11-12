@@ -41,20 +41,20 @@
       <div class="col-xs-10 col-centered">
         {{#if (eq mode "first")}}
           <div class="row row-first-button">
-            {{#bs-button
+            {{#one-button
               type="primary"
               onClick=(action "changeMode" "create")
             }}
               {{tt this "createNewCluster"}}
-            {{/bs-button}}
+            {{/one-button}}
           </div>
           <div class="row row-first-button">
-            {{#bs-button
+            {{#one-button
               type="primary"
               onClick=(action "changeMode" "join")
             }}
               {{tt this "joinCluster"}}
-            {{/bs-button}}
+            {{/one-button}}
           </div>
         {{else if (eq mode "create")}}
           {{first-emergency-passphrase-form
@@ -74,14 +74,14 @@
             {{/promise-proxy-container}}
           </div>
           <div class="row text-center">
-            {{#bs-button
+            {{#one-button
               type="default"
               onClick=(action "changeMode" "first")
               class="btn-back"
             }}
               {{one-icon icon="arrow-right"}}
               <span class="text">{{tt this "back"}}</span>
-            {{/bs-button}}
+            {{/one-button}}
           </div>
         {{/if}}
       </div>

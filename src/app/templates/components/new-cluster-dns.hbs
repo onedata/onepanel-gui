@@ -1,12 +1,12 @@
 <div class="row content-row header-row">
   <h1>{{tt this "header"}}
     <div class="btn-toolbar">
-      {{#bs-button
+      {{#one-button
         class=(concat "btn btn-sm btn-default btn-dns-next")
         onClick=(action "back")
       }}
         {{one-icon icon="arrow-left"}}<span>{{tt this "backBtn"}}</span>
-      {{/bs-button}}
+      {{/one-button}}
       {{#one-button
         type="primary"
         buttonType="submit"

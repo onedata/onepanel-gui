@@ -46,14 +46,14 @@
                 }}
               {{/one-button}}
             {{/if}}
-            {{#bs-button
+            {{#one-button
               onClick=(action (if ipsEdit "cancelIpsEdit" "enableIpsEdit"))
               type="default"
               class="btn-sm"
               disabled=ipsSetupProxy.isPending
             }}
               {{tt this (if ipsEdit "cancelIpsEdit" "editIps")}}
-            {{/bs-button}}
+            {{/one-button}}
           </div>
         </h1>
       </div>

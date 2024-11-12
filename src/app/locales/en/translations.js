@@ -67,6 +67,7 @@ import registerOnezoneOffline from './components/alerts/register-onezone-offline
 import contentClustersMembers from './components/content-clusters-members';
 import contentClustersGuiSettings from './components/content-clusters-gui-settings';
 import spaceSupportAccountingForm from './components/space-support-accounting-form';
+import userAccountButton from './components/user-account-button';
 import modals from './components/modals';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
@@ -159,6 +160,7 @@ const translations = {
     contentClustersMembers,
     contentClustersGuiSettings,
     spaceSupportAccountingForm,
+    userAccountButton,
     modals,
     alerts: {
       registerOnezoneOffline,

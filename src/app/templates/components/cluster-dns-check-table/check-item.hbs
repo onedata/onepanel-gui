@@ -2,12 +2,14 @@
   <tbody>
     <tr>
       <td class="check-state">
-        {{check-state-icon success=success}}
+        <CheckStateIcon @success={{success}} />
       </td>
       <td class="check-description">
         <p class="text description">
           {{#if isUsingPartial}}
-            {{partial (concat "components/cluster-dns-check-table/messages/" summaryPathPartial)}}
+            {{component
+              (concat "cluster-dns-check-table/messages/" summaryPathPartial)
+            }}
           {{else}}
             {{descriptionText}}
           {{/if}}
@@ -61,11 +63,11 @@
                 readonly="true">{{recommendedDnsRecordsText}}</textarea>
               <div class="btn-container text-right">
                 <div class="btn-row">
-                  {{one-copy-button
-                    class="btn btn-default btn-sm"
-                    parentElementId=elementId
-                    localTarget=".recommended-dns-records"
-                  }}
+                  <OneCopyButton
+                    @class="btn btn-default btn-sm"
+                    @parentElementId={{elementId}}
+                    @localTarget=".recommended-dns-records"
+                  />
                 </div>
               </div>
             </div>

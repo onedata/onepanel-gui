@@ -22,6 +22,11 @@ import I18n from 'onedata-gui-common/mixins/i18n';
 import dom from 'onedata-gui-common/utils/dom';
 import waitForRender from 'onedata-gui-common/utils/wait-for-render';
 import globals from 'onedata-gui-common/utils/globals';
+import {
+  destroyDestroyableComputedValues,
+  destroyableComputed,
+  initDestroyableCache,
+} from 'onedata-gui-common/utils/destroyable-computed';
 
 function compareIndex(a, b) {
   const ai = get(a, 'index');
@@ -88,7 +93,7 @@ export default Component.extend(I18n, {
     return htmlSafe(`height: ${this.get('firstRowHeight')}px;`);
   }),
 
-  reportsArray: computed('spaceId', function reportsArray() {
+  reportsArray: destroyableComputed('spaceId', function reportsArray() {
     const spaceId = this.get('spaceId');
     return ReplacingChunksArray.create({
       fetch: (...fetchArgs) => this.fetchReports(spaceId, ...fetchArgs),
@@ -138,6 +143,7 @@ export default Component.extend(I18n, {
   ),
 
   init() {
+    initDestroyableCache(this);
     this._super(...arguments);
 
     const {
@@ -221,11 +227,21 @@ export default Component.extend(I18n, {
   willDestroyElement() {
     try {
       globals.window.removeEventListener('resize', this._resizeEventHandler);
-      this.get('spaceAutoCleaningReportsUpdater').destroy();
-      this.get('listWatcher').destroy();
     } finally {
       this._super(...arguments);
     }
   },
 
+  /**
+   * @override
+   */
+  willDestroy() {
+    try {
+      destroyDestroyableComputedValues(this);
+      this.spaceAutoCleaningReportsUpdater.destroy();
+      this.listWatcher.destroy();
+    } finally {
+      this._super(...arguments);
+    }
+  },
 });

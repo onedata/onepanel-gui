@@ -21,7 +21,6 @@ import {
   raw,
   conditional,
   notEqual,
-  getBy,
   equal,
 } from 'ember-awesome-macros';
 import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
@@ -146,18 +145,7 @@ export default Component.extend(I18n, {
       certPathField,
       keyPathField,
       chainPathField,
-    } = this.getProperties(
-      'letsEncryptField',
-      'lastRenewalSuccess',
-      'lastRenewalFailure',
-      'expirationTimeField',
-      'creationTimeField',
-      'domainField',
-      'issuerField',
-      'certPathField',
-      'keyPathField',
-      'chainPathField',
-    );
+    } = this;
 
     return FormFieldsRootGroup.extend({
       i18nPrefix: tag`${'component.i18nPrefix'}.fields`,
@@ -395,8 +383,19 @@ export default Component.extend(I18n, {
     });
   }),
 
+  /**
+   * @override
+   */
+  willDestroy() {
+    try {
+      this.cacheFor('fields')?.destroy();
+    } finally {
+      this._super(...arguments);
+    }
+  },
+
   computedDefaultValueFor(fieldName) {
-    return getBy('component.webCert', raw(pathFieldToProperty(fieldName)));
+    return reads(`component.webCert.${pathFieldToProperty(fieldName)}`);
   },
 
   notifyAboutChange() {

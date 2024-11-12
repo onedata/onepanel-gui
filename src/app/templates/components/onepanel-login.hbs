@@ -1,0 +1,14 @@
+{{#if isEmergencyWarningBarVisible}}
+  <EmergencyWarningBar />
+{{/if}}
+
+<LoginLayout
+  @loginViewModel={{loginViewModel}}
+  @withEmergencyWarningBar={{isEmergencyWarningBarVisible}}
+>
+  {{#if isEmergencyPassphraseSet}}
+    <LoginBox @loginViewModel={{loginViewModel}} />
+  {{else}}
+    <NoEmergencyPassphraseBox />
+  {{/if}}
+</LoginLayout>

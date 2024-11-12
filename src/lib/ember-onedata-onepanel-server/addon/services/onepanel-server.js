@@ -54,6 +54,12 @@ export default OnepanelServerBase.extend(
     username: null,
 
     /**
+     * ID of current user.
+     * @type {string}
+     */
+    userId: null,
+
+    /**
      * We cannot store `api` objects if client changes - they must be re-generated.
      */
     apiCache: computed('client', () => ({})),
@@ -187,8 +193,12 @@ export default OnepanelServerBase.extend(
                   .then(() => {
                     return this.getCurrentUser()
                       .then(userDetails => {
-                        const username = get(userDetails, 'username');
-                        safeExec(this, 'set', 'username', username);
+                        const username = userDetails.username;
+                        const userId = userDetails.userId;
+                        safeExec(this, 'setProperties', {
+                          username,
+                          userId,
+                        });
                         return { token: onepanelToken, username };
                       });
                   });

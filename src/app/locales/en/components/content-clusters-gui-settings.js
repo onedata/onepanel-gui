@@ -3,7 +3,7 @@ export default {
   tabs: {
     signInNotification: {
       header: 'Sign-in notification',
-      description: 'Sign-in notification is a short message that will be displayed to every user on the sign-in page. It can contain important announcements, such as possible downtime of the system or incoming upgrade. Only plain text without HTML tags is allowed.',
+      description: '<p>Sign-in notification is a short message that will be displayed to every user on the sign-in page. It can contain important announcements, such as possible downtime of the system or incoming upgrade.</p><p>Only plain text without HTML tags is allowed. Line breaks will be retained.</p>',
       signinNotificationEnabled: 'Sign-in notification enabled',
       save: 'Save',
       emptyContentWarning: 'Sign-in notification is enabled, but content is missing – please fill it in below.',

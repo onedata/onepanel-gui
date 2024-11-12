@@ -49,14 +49,14 @@
         {{tt this "error"}} {{if error error (tt this "unknownError")}}
       </div>
       <div class="row row-btn-spacing text-center">
-        {{#bs-button
+        {{#one-button
           type="default"
           onClick=(action "back")
           class="btn-back"
         }}
           {{one-icon icon="arrow-right"}}
           <span class="text">{{tt this "back"}}</span>
-        {{/bs-button}}
+        {{/one-button}}
         {{#one-button
           type="primary"
           buttonType="submit"

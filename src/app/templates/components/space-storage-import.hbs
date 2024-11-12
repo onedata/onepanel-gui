@@ -13,64 +13,60 @@
   </div>
   <h5 class="file-registration-header">{{tt this "fileRegistrationExample"}}:</h5>
   <div class="loadable-row">
-    {{#promise-proxy-container proxy=fileRegistrationExampleProxy sizeClass="sm"}}
-      {{one-clipboard-line
-        value=fileRegistrationExample
-        type="textarea"
-        inputClass="request-textarea code-textarea"
-        textareaRows=5
-      }}
-    {{/promise-proxy-container}}
+    <PromiseProxyContainer @proxy={{fileRegistrationExampleProxy}} @sizeClass="sm">
+      <OneClipboardLine
+        @value={{fileRegistrationExample}}
+        @type="textarea"
+        @inputClass="request-textarea code-textarea"
+        @textareaRows={{5}}
+      />
+    </PromiseProxyContainer>
   </div>
 {{else}}
   <div class="row no-border">
     <div class="col-xs-12">
-      {{#one-collapsible-list class="import-settings-list" as |list|}}
-        {{#list.item as |listItem|}}
-          {{#listItem.header
-            class="hoverable"
-          }}
+      <OneCollapsibleList class="import-settings-list" as |list|>
+        <list.item as |listItem|>
+          <listItem.header class="hoverable">
             <div class="item-icon-container">
-              {{one-icon class="item-icon" icon="settings"}}
+              <OneIcon class="item-icon" @icon="settings" />
             </div>
             <strong>{{tt this "configurationCollapse"}}</strong>
-          {{/listItem.header}}
-          {{#listItem.content}}
+          </listItem.header>
+          <listItem.content>
             <div class="row content-row row-medium">
               <h1 class="form-title">{{tt this "importFormHeader"}}</h1>
-              {{storage-import-form
+              <StorageImportForm
                 class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
-                defaultValues=space.storageImport
-                mode="edit"
-                isFormOpened=true
-                submit=(action "modifyStorageImport" (action listItem.toggle false))
-              }}
+                @defaultValues={{space.storageImport}}
+                @mode="edit"
+                @isFormOpened={{true}}
+                @submit={{action "modifyStorageImport" (action listItem.toggle false)}}
+              />
             </div>
-          {{/listItem.content}}
-        {{/list.item}}
-        {{#list.item as |listItem|}}
-          {{#listItem.header
-            class="hoverable import-info-header"
-          }}
+          </listItem.content>
+        </list.item>
+        <list.item as |listItem|>
+          <listItem.header class="hoverable import-info-header">
             <div class="item-icon-container">
-              {{one-icon class="item-icon" icon="space-import"}}
+              <OneIcon class="item-icon" @icon="space-import" />
             </div>
             {{importStatusDescription}}
             <div class="btn-toolbar hidden-xs">
-              {{space-storage-import/start-stop-scan-button
-                startScan=startScan
-                stopScan=stopScan
-                autoImportStatus=autoImportInfo.status
-              }}
+              <SpaceStorageImport::StartStopScanButton
+                @startScan={{startScan}}
+                @stopScan={{stopScan}}
+                @autoImportStatus={{autoImportInfo.status}}
+              />
             </div>
-          {{/listItem.header}}
-          {{#listItem.content class="import-info-content"}}
+          </listItem.header>
+          <listItem.content class="import-info-content">
             <div class="hidden-sm hidden-md hidden-lg text-center row content-row">
-              {{space-storage-import/start-stop-scan-button
-                startScan=startScan
-                stopScan=stopScan
-                autoImportStatus=autoImportInfo.status
-              }}
+              <SpaceStorageImport::StartStopScanButton
+                @startScan={{startScan}}
+                @stopScan={{stopScan}}
+                @autoImportStatus={{autoImportInfo.status}}
+              />
             </div>
             <div class="col-md-6 col-sm-12 import-info-details-first-col">
               {{#each importInfoDetailsCol1ToShow key="label" as |detail|}}
@@ -83,7 +79,7 @@
                   <strong class="detail-label">
                     {{detail.label}}
                     {{#if detail.tip}}
-                      {{one-label-tip title=detail.tip}}
+                      <OneLabelTip @title={{detail.tip}} />
                     {{/if}}
                   </strong>
                   <span class="detail-value">{{detail.value}}</span>
@@ -94,7 +90,7 @@
               {{#each importInfoDetailsCol2ToShow key="label" as |detail|}}
                 <div class="row content-row highlightable-subproperty {{detail.classNames}}">
                   <strong class="detail-label">
-                    {{detail.label}} {{one-label-tip title=detail.tip}}
+                    {{detail.label}} <OneLabelTip @title={{detail.tip}} />
                   </strong>
                   <span class="detail-value">{{detail.value}}</span>
                 </div>
@@ -103,52 +99,56 @@
             <p class="counters-notice col-md-6 col-sm-12">
               {{tt this "importDetails.countersNotice"}}
             </p>
-          {{/listItem.content}}
-        {{/list.item}}
-      {{/one-collapsible-list}}
+          </listItem.content>
+        </list.item>
+      </OneCollapsibleList>
     </div>
   </div>
 
   <div class="row row-time-stats-charts">
-    {{#bs-button-group
+    <BsButtonGroup
       class="btn-group-floating btn-group-3-btns"
-      value=importInterval
-      type="radio"
-      onChange=importIntervalChanged as |bg|
-    }}
-      {{#bg.button type="default" class="btn-sm btn-import-interval-minute" value="minute"}}
-        {{tt this "minute"}}
-        {{one-tooltip title="Show statistics for last minute" triggerEvents="hover"}}
-      {{/bg.button}}
-      {{#bg.button type="default" class="btn-sm btn-import-interval-hour" value="hour"}}
-        {{tt this "hour"}}
-        {{one-tooltip title="Show statistics for last hour" triggerEvents="hover"}}
-      {{/bg.button}}
-      {{#bg.button type="default" class="btn-sm btn-import-interval-day" value="day"}}
-        {{tt this "day"}}
-        {{one-tooltip title="Show statistics for last day" triggerEvents="hover"}}
-      {{/bg.button}}
-    {{/bs-button-group}}
+      @value={{importInterval}}
+      @type="radio"
+      @onChange={{importIntervalChanged}}
+      as |bg|
+    >
+      {{#each (array "minute" "hour" "day") as |selectedInterval|}}
+        <bg.button
+          class="btn-sm btn-import-interval-{{selectedInterval}}"
+          @type="default"
+          @value={{selectedInterval}}
+        >
+          {{tt this selectedInterval}}
+          <OneTooltip
+            @title={{tt this "showStatisticsFor"
+              interval=(tt this (concat "showStatisticsInterval." selectedInterval))
+            }}
+            @triggerEvents="hover"
+          />
+        </bg.button>
+      {{/each}}
+    </BsButtonGroup>
 
-    {{#loading-container isLoading=timeStatsLoading errorReason=timeStatsError}}
+    <LoadingContainer @isLoading={{timeStatsLoading}} @errorReason={{timeStatsError}}>
       <div class="col-xs-12 item-table-cell item-table-content-cell">
-        {{storage-import-chart-operations
-          timeStats=timeStats
-          timeUnit=importInterval
-        }}
+        <StorageImportChartOperations
+          @timeStats={{timeStats}}
+          @timeUnit={{importInterval}}
+        />
       </div>
       <div class="col-xs-12 item-table-cell item-table-content-cell">
-        {{storage-import-chart-queue
-          timeStats=timeStats
-          timeUnit=importInterval
-        }}
+        <StorageImportChartQueue
+          @timeStats={{timeStats}}
+          @timeUnit={{importInterval}}
+        />
       </div>
       <div class="col-xs-12 item-table-cell item-table-content-cell">
-        {{storage-import-chart-throughput
-          timeStats=timeStats
-          timeUnit=importInterval
-        }}
+        <StorageImportChartThroughput
+          @timeStats={{timeStats}}
+          @timeUnit={{importInterval}}
+        />
       </div>
-    {{/loading-container}}
+    </LoadingContainer>
   </div>
 {{/if}}

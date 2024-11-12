@@ -12,6 +12,12 @@ export default {
   minute: 'Minute',
   hour: 'Hour',
   day: 'Day',
+  showStatisticsFor: 'Show statistics for last {{interval}}',
+  showStatisticsInterval: {
+    minute: 'minute',
+    hour: 'hour',
+    day: 'day',
+  },
   importFormHeader: 'Configure auto storage import',
   importDetails: {
     start: 'Started',
