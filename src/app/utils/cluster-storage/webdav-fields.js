@@ -51,7 +51,7 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-    example: 'Authorization: Bearer <token>',
+    example: 'Authorization: Bearer {}',
   },
   {
     name: 'rangeWriteSupport',
