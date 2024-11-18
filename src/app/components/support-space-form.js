@@ -126,7 +126,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   canSubmit: and('selectedStorageItem', 'isValid'),
 
   /**
-   * @type {Ember.ComputedProperty<object>}
+   * @type {ComputedProperty<StorageDetails>}
    */
   selectedStorage: reads('selectedStorageItem.storage'),
 

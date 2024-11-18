@@ -63,6 +63,8 @@ export default [{
       { value: 'moddav', label: 'ModDAV' },
     ],
     tip: true,
+    errorMessage: 'Some option must be selected',
+    message: 'Some option must be selected',
   },
   {
     name: 'connectionPoolSize',

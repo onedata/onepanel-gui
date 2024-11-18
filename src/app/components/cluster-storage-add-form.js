@@ -491,6 +491,7 @@ export default OneForm.extend(I18n, Validations, {
 
   readonlyObserver: observer(
     'formValues.generic.readonly',
+    'formValues.generic_editor.readonly',
     function readonlyObserver() {
       this.autoSettingsRangeWriteSupport();
     }
@@ -647,8 +648,7 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   autoSettingsRangeWriteSupport() {
-    const mode = this.get('mode');
-    if (mode === 'show') {
+    if (this.mode === 'show' || this.currentStorageType !== 'webdav') {
       return;
     }
 
@@ -656,24 +656,24 @@ export default OneForm.extend(I18n, Validations, {
     const isReadonly = this.get(`formValues.${prefix}.readonly`);
     const fieldPath = 'webdav.rangeWriteSupport';
     const field = this.getField(fieldPath);
-    const current = this.get(`formValues.${fieldPath}`);
+    const currentValue = this.get(`formValues.${fieldPath}`);
 
-    if (this.currentStorageType === 'webdav' && isReadonly) {
+    if (isReadonly) {
       set(field, 'disabled', true);
-      if (current !== 'none') {
+      if (currentValue !== 'none') {
         this.send(
           'inputChanged',
           fieldPath,
           'none',
         );
       }
-    } else if (this.currentStorageType === 'webdav') {
+    } else {
       setProperties(field, {
         disabled: false,
         defaultValue: null,
       });
       set(field.options[0], 'disabled', true);
-      if (current === 'none') {
+      if (currentValue === 'none') {
         this.send(
           'inputChanged',
           fieldPath,
@@ -684,26 +684,20 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   autoSettingsBlockSize() {
-    const {
-      mode,
-      currentStorageType,
-    } = this.getProperties('mode', 'currentStorageType');
-    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
     const blockSize = this.get(`formValues.${prefix}.blockSize`);
     const fieldPath = 's3.blockSize';
 
-    if (currentStorageType === 's3' && storagePathType === 'canonical') {
+    if (storagePathType === 'canonical' || blockSize === 0) {
       this.send(
         'inputChanged',
         fieldPath,
-        0,
-      );
-    } else if (currentStorageType === 's3' && blockSize === 0) {
-      this.send(
-        'inputChanged',
-        fieldPath,
-        null,
+        storagePathType === 'canonical' ? 0 : null,
       );
     }
   },

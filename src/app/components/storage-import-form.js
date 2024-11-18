@@ -43,6 +43,7 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { equal, raw } from 'ember-awesome-macros';
 import _ from 'lodash';
+import { asyncObserver } from 'onedata-gui-common/utils/observer';
 
 const modeField = {
   name: 'mode',
@@ -143,7 +144,7 @@ export default OneForm.extend(I18n, Validations, {
 
   /**
    * @virtual
-   * @type {string}
+   * @type {StorageDetails}
    */
   selectedStorage: undefined,
 
@@ -310,7 +311,7 @@ export default OneForm.extend(I18n, Validations, {
     set(modeField, 'disabled', isInEditMode);
   }),
 
-  selectedStorageTypeObserver: observer(
+  selectedStorageTypeObserver: asyncObserver(
     'selectedStorageType',
     function selectedStorageTypeObserver() {
       const modeField = this.getField('mode.mode');

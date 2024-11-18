@@ -5,7 +5,7 @@ export default {
   },
   fileModeMask: {
     name: 'File mode mask',
-    tip: 'Defines the file permissions mask, which is used to map XRootD file mode to POSIX mode. For instance a mask "0664" for readable file on XRootD would result in a file which is readable for all users, but file which is writeable in  RootD will be only writeable by user and group.',
+    tip: 'Defines the file permissions mask, which is used to map XRootD file mode to POSIX mode. For instance a mask "0664" for readable file on XRootD would result in a file which is readable for all users, but file which is writeable in RootD will be only writeable by user and group.',
   },
   dirModeMask: {
     name: 'Directory mode mask',

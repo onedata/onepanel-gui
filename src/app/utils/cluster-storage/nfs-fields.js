@@ -27,10 +27,10 @@ export default [{
     type: 'number',
     integer: true,
     gte: 0,
-    example: 10,
-    defaultValue: 10,
     optional: true,
     tip: true,
+    defaultPlaceholder: 10,
+    isDefault: true,
   },
   {
     name: 'dirCache',
