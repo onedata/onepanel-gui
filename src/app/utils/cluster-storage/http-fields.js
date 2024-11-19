@@ -51,7 +51,8 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-    example: 'Authorization: Bearer <token>',
+    defaultPlaceholder: 'Authorization: Bearer {}',
+    isDefault: true,
   },
   {
     name: 'connectionPoolSize',
@@ -59,7 +60,8 @@ export default [{
     optional: true,
     gte: 0,
     tip: true,
-    example: 25,
+    defaultPlaceholder: 150,
+    isDefault: true,
   },
   {
     name: 'maxRequestsPerSession',
@@ -68,7 +70,8 @@ export default [{
     integer: true,
     gte: 0,
     tip: true,
-    example: 3,
+    defaultPlaceholder: 0,
+    isDefault: true,
   },
   {
     name: 'fileMode',
@@ -76,14 +79,17 @@ export default [{
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
-    example: '0664',
     optional: true,
     regexAllowBlank: true,
     notEditable: true,
+    defaultPlaceholder: '0664',
+    isDefault: true,
   },
   {
     name: 'timeout',
     type: 'number',
     optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
   },
 ];

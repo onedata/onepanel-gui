@@ -43,6 +43,7 @@ import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignor
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { equal, raw } from 'ember-awesome-macros';
 import _ from 'lodash';
+import { asyncObserver } from 'onedata-gui-common/utils/observer';
 
 const modeField = {
   name: 'mode',
@@ -91,6 +92,15 @@ const continuousFields = [{
   defaultValue: '60',
 }];
 
+const autoImportSupportedStorageTypes = [
+  'posix',
+  'glusterfs',
+  'nulldevice',
+  'webdav',
+  'xrootd',
+  'nfs',
+];
+
 function createValidations(genericFields, continuousFields) {
   const validations = {};
   genericFields.forEach(field => {
@@ -131,6 +141,12 @@ export default OneForm.extend(I18n, Validations, {
    * @type {boolean}
    */
   isFormOpened: false,
+
+  /**
+   * @virtual
+   * @type {StorageDetails}
+   */
+  selectedStorage: undefined,
 
   /**
    * One of: edit, new
@@ -205,6 +221,12 @@ export default OneForm.extend(I18n, Validations, {
    * @type {ComputedProperty<String>}
    */
   continuousScanEnabled: reads('allFieldsValues.generic.continuousScan'),
+
+  selectedStorageType: reads('selectedStorage.type'),
+
+  selectedStoragePathType: reads('selectedStorage.storagePathType'),
+
+  selectedStorageBlockSize: reads('selectedStorage.blockSize'),
 
   /**
    * @type {ComputedProperty<Array<FieldType>>}
@@ -289,12 +311,36 @@ export default OneForm.extend(I18n, Validations, {
     set(modeField, 'disabled', isInEditMode);
   }),
 
+  selectedStorageTypeObserver: asyncObserver(
+    'selectedStorageType',
+    function selectedStorageTypeObserver() {
+      const modeField = this.getField('mode.mode');
+
+      if (this.selectedStorageType) {
+        if (autoImportSupportedStorageTypes.includes(this.selectedStorageType) ||
+          (this.selectedStorageType === 's3' &&
+            this.selectedStoragePathType === 'canonical' &&
+            this.selectedStorageBlockSize === 0
+          )
+        ) {
+          set(modeField.options[0], 'disabled', false);
+          this.changeFormValue('mode.mode', 'auto');
+        } else {
+          set(modeField.options[0], 'disabled', true);
+          this.changeFormValue('mode.mode', 'manual');
+        }
+        this.triggerValuesChanged();
+      }
+    }
+  ),
+
   init() {
     this._super(...arguments);
 
     this.prepareFields();
     this.addFieldsTranslations();
     this.modeObserver();
+    this.selectedStorageTypeObserver();
     // next(() => {
     // this.loadDefaultValues();
     // });

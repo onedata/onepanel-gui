@@ -9,10 +9,12 @@ const cephBottom = cephFields.slice(separatorIndexNext, cephFields.length);
 const cephRadosSpecific = [{
   name: 'blockSize',
   type: 'number',
-  defaultValue: 4194304,
-  example: '4194304',
   gt: 0,
   notEditable: true,
+  defaultPlaceholder: 4194304,
+  isDefault: true,
+  tip: true,
+  optional: true,
 }];
 
 export default _.concat(cephTop, cephRadosSpecific, cephBottom);

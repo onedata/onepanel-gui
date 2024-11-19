@@ -25,7 +25,7 @@ export default {
   },
   authorizationHeader: {
     name: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. Default is  "Authorization: Bearer {}". The token will be placed where "{}" is provided.',
+    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
   },
   rangeWriteSupport: {
     name: 'Range write support',
@@ -33,19 +33,19 @@ export default {
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'Defines the maximum number of parallel connections for a single WebDAV storage backend. Default: 0.',
+    tip: 'Defines the maximum number of parallel connections for a single WebDAV storage backend.',
   },
   maximumUploadSize: {
     name: 'Maximum upload size [b]',
-    tip: 'Defines the maximum upload size for a single PUT or PATCH request. If set to 0, assumes that the WebDAV server has no upload limit. Default: 0.',
+    tip: 'Defines the maximum upload size for a single PUT or PATCH request. If set to 0, assumes that the WebDAV server has no upload limit.',
   },
   fileMode: {
     name: 'File mode',
-    tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0664". Default: 0664.',
+    tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
   },
   dirMode: {
     name: 'Directory mode',
-    tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".  Default: 0775.',
+    tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
   },
   timeout: { name: 'Timeout [ms]' },
 };

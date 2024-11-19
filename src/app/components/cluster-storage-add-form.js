@@ -456,6 +456,8 @@ export default OneForm.extend(I18n, Validations, {
       this._toggleLumaPrefix(false, false);
       this.autoSettingsImportedStorage();
       this.autoSettingsReadonly();
+      this.autoSettingsRangeWriteSupport();
+      this.autoSettingsBlockSize();
     }
   ),
 
@@ -463,6 +465,16 @@ export default OneForm.extend(I18n, Validations, {
     'storageProvidesSupport',
     function storageProvidesSupportObserver() {
       this.autoSettingsImportedStorage();
+    }
+  ),
+
+  storagePathTypeObserver: observer(
+    'formValues.generic.storagePathType',
+    'formValues.generic_editor.storagePathType',
+    function storagePathTypeObserver() {
+      this.autoSettingsImportedStorage();
+      this.autoSettingsReadonly();
+      this.autoSettingsBlockSize();
     }
   ),
 
@@ -474,7 +486,16 @@ export default OneForm.extend(I18n, Validations, {
     'formValues.generic_editor.importedStorage',
     function importedStorageObserver() {
       this.autoSettingsReadonly();
-    }),
+    }
+  ),
+
+  readonlyObserver: observer(
+    'formValues.generic.readonly',
+    'formValues.generic_editor.readonly',
+    function readonlyObserver() {
+      this.autoSettingsRangeWriteSupport();
+    }
+  ),
 
   modeObserver: observer('mode', function modeObserver() {
     this._fillInForm();
@@ -536,6 +557,7 @@ export default OneForm.extend(I18n, Validations, {
 
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
+    this.readonlyObserver();
 
     // Select default (first) storage type if it is still empty
     if (!this.get('selectedStorageType')) {
@@ -567,6 +589,13 @@ export default OneForm.extend(I18n, Validations, {
       lockHint = this.t('httpOnlyImported');
     }
 
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+    if (currentStorageType === 's3' && storagePathType === 'flat') {
+      disabled = true;
+      value = false;
+    }
+
     if (disabled) {
       this.lockToggle('importedStorage', value, lockHint);
     } else {
@@ -581,6 +610,7 @@ export default OneForm.extend(I18n, Validations, {
     } = this.getProperties('mode', 'currentStorageType');
     const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
     const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
+    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
 
     let locked;
     let value;
@@ -602,6 +632,14 @@ export default OneForm.extend(I18n, Validations, {
       hint = this.t('httpOnlyReadonly');
     }
 
+    if (currentStorageType === 's3' &&
+      storagePathType === 'canonical' &&
+      isImportedStorage
+    ) {
+      locked = true;
+      value = true;
+    }
+
     if (locked) {
       this.lockToggle('readonly', value, hint);
     } else {
@@ -609,9 +647,65 @@ export default OneForm.extend(I18n, Validations, {
     }
   },
 
+  autoSettingsRangeWriteSupport() {
+    if (this.mode === 'show' || this.currentStorageType !== 'webdav') {
+      return;
+    }
+
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const isReadonly = this.get(`formValues.${prefix}.readonly`);
+    const fieldPath = 'webdav.rangeWriteSupport';
+    const field = this.getField(fieldPath);
+    const currentValue = this.get(`formValues.${fieldPath}`);
+
+    if (isReadonly) {
+      set(field, 'disabled', true);
+      if (currentValue !== 'none') {
+        this.send(
+          'inputChanged',
+          fieldPath,
+          'none',
+        );
+      }
+    } else {
+      setProperties(field, {
+        disabled: false,
+        defaultValue: null,
+      });
+      set(field.options[0], 'disabled', true);
+      if (currentValue === 'none') {
+        this.send(
+          'inputChanged',
+          fieldPath,
+          null,
+        );
+      }
+    }
+  },
+
+  autoSettingsBlockSize() {
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+    const blockSize = this.get(`formValues.${prefix}.blockSize`);
+    const fieldPath = 's3.blockSize';
+
+    if (storagePathType === 'canonical' || blockSize === 0) {
+      this.send(
+        'inputChanged',
+        fieldPath,
+        storagePathType === 'canonical' ? 0 : null,
+      );
+    }
+  },
+
   autoSettingsAll() {
     this.autoSettingsImportedStorage();
     this.autoSettingsReadonly();
+    this.autoSettingsRangeWriteSupport();
   },
 
   lockToggle(fieldName, state, lockHint = null) {

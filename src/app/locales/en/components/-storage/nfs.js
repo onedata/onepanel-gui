@@ -9,11 +9,11 @@ export default {
   },
   volume: {
     name: 'Volume',
-    tip: 'The name of the NFS volume (export).',
+    tip: 'The name (path) of the NFS export.',
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'The size of NFS connection pool. Default: 10.',
+    tip: 'Number of simultaneous network connections that can be maintained with the NFS server.',
   },
   dirCache: {
     name: 'Directory caching',
@@ -23,10 +23,10 @@ export default {
   },
   readAhead: {
     name: 'Readahead size [B]',
-    tip: 'The size of readahead in bytes. Default: 0.',
+    tip: 'The amount of data that the system preloads into cache ahead of client requests.',
   },
   autoReconnect: {
     name: 'Auto-reconnect attempts',
-    tip: 'The number of automatic reconnect attempts to the server. Setting `-1` enables infinite number of reconnects. Default: 1.',
+    tip: 'The number of automatic reconnect attempts to the server. Setting `-1` enables infinite number of reconnects.',
   },
 };

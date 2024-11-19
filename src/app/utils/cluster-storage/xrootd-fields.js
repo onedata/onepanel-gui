@@ -13,10 +13,11 @@ export default [{
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
-    example: '0664',
     optional: true,
     regexAllowBlank: true,
     notEditable: true,
+    defaultPlaceholder: '0664',
+    isDefault: true,
   },
   {
     name: 'dirModeMask',
@@ -24,10 +25,11 @@ export default [{
     type: 'text',
     regex: posixRegexp,
     regexMessage: 'This field should be octal POSIX permissions',
-    example: '0775',
     optional: true,
     regexAllowBlank: true,
     notEditable: true,
+    defaultPlaceholder: '0775',
+    isDefault: true,
   },
   {
     name: 'credentialsType',
@@ -50,5 +52,7 @@ export default [{
     name: 'timeout',
     type: 'number',
     optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
   },
 ];

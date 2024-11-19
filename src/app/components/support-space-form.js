@@ -126,6 +126,11 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   canSubmit: and('selectedStorageItem', 'isValid'),
 
   /**
+   * @type {ComputedProperty<StorageDetails>}
+   */
+  selectedStorage: reads('selectedStorageItem.storage'),
+
+  /**
    * Resets field if form visibility changes (clears validation errors)
    */
   isFormOpenedObserver: observer('isFormOpened', function () {

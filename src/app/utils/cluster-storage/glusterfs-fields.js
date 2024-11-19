@@ -1,7 +1,13 @@
 export default [
   { name: 'volume', type: 'text' },
   { name: 'hostname', type: 'text' },
-  { name: 'port', type: 'number', optional: true },
+  {
+    name: 'port',
+    type: 'number',
+    optional: true,
+    defaultPlaceholder: '24007',
+    isDefault: true,
+  },
   {
     name: 'transport',
     type: 'radio-group',
@@ -14,5 +20,11 @@ export default [
   },
   { name: 'mountPoint', type: 'text', optional: true },
   { name: 'xlatorOptions', type: 'text', optional: true },
-  { name: 'timeout', type: 'number', optional: true },
+  {
+    name: 'timeout',
+    type: 'number',
+    optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
+  },
 ];

@@ -25,19 +25,19 @@ export default {
   },
   authorizationHeader: {
     name: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. Default is "Authorization: Bearer {}". The token will be placed where "{}" is provided.',
+    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
   },
   connectionPoolSize: {
     name: 'Connection pool size',
-    tip: 'Defines the maximum number of parallel connections for a single HTTP storage backend. Default: 25.',
+    tip: 'Defines the maximum number of parallel connections for a single HTTP storage backend.',
   },
   maxRequestsPerSession: {
     name: 'Max requests per session',
-    tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0, number of requests per session is unlimited, unless imposed by the server. Default: 0.',
+    tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0, number of requests per session is unlimited, unless imposed by the server.',
   },
   fileMode: {
     name: 'File mode',
-    tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664". Default: 0664.',
+    tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
   },
   timeout: { name: 'Timeout [ms]' },
 };

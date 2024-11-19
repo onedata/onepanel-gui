@@ -17,8 +17,9 @@ export default [{
   name: 'blockSize',
   type: 'number',
   optional: true,
-  example: '10485760',
   notEditable: true,
+  defaultPlaceholder: 10485760,
+  isDefault: true,
 }, {
   name: 'timeout',
   type: 'number',
