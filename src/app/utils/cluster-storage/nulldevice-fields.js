@@ -43,4 +43,6 @@ export default [{
   name: 'timeout',
   type: 'number',
   optional: true,
+  defaultPlaceholder: 300000,
+  isDefault: true,
 }];

@@ -20,5 +20,11 @@ export default [
     defaultPlaceholder: 0,
     isDefault: true,
   },
-  { name: 'timeout', type: 'number', optional: true },
+  {
+    name: 'timeout',
+    type: 'number',
+    optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
+  },
 ];

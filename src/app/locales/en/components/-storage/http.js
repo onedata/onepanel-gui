@@ -25,7 +25,7 @@ export default {
   },
   authorizationHeader: {
     name: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. Default is "Authorization: Bearer {}". The token will be placed where "{}" is provided.',
+    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
   },
   connectionPoolSize: {
     name: 'Connection pool size',

@@ -60,7 +60,7 @@ export default [{
     optional: true,
     gte: 0,
     tip: true,
-    defaultPlaceholder: 25,
+    defaultPlaceholder: 150,
     isDefault: true,
   },
   {
@@ -89,5 +89,7 @@ export default [{
     name: 'timeout',
     type: 'number',
     optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
   },
 ];

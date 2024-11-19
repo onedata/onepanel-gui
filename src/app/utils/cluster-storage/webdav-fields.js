@@ -51,7 +51,8 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-    example: 'Authorization: Bearer {}',
+    defaultPlaceholder: 'Authorization: Bearer {}',
+    isDefault: true,
   },
   {
     name: 'rangeWriteSupport',
@@ -63,8 +64,6 @@ export default [{
       { value: 'moddav', label: 'ModDAV' },
     ],
     tip: true,
-    errorMessage: 'Some option must be selected',
-    message: 'Some option must be selected',
   },
   {
     name: 'connectionPoolSize',
@@ -72,7 +71,7 @@ export default [{
     optional: true,
     gte: 0,
     tip: true,
-    defaultPlaceholder: 0,
+    defaultPlaceholder: 25,
     isDefault: true,
   },
   {
@@ -112,5 +111,7 @@ export default [{
     name: 'timeout',
     type: 'number',
     optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
   },
 ];

@@ -3,6 +3,7 @@
     display: flex;
     align-items: center;
   }
+  // TODO: VFS-12493 Remove that class and update it to use global error styles
   .radio-group-input.has-message .form-message {
     color: $state-danger-text;
   }

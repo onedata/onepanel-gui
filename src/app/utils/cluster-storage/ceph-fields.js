@@ -4,5 +4,11 @@ export default [
   { name: 'monitorHostname', type: 'text' },
   { name: 'clusterName', type: 'text' },
   { name: 'poolName', type: 'text' },
-  { name: 'timeout', type: 'number', optional: true },
+  {
+    name: 'timeout',
+    type: 'number',
+    optional: true,
+    defaultPlaceholder: 300000,
+    isDefault: true,
+  },
 ];
