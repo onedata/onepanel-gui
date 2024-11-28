@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12470 Changed resource resolving in routes according to general routing changes
 * VFS-12137 Added default placeholders, changed tooltips and few more changes in storage form
 * VFS-12370 Refactored sidebar and tabs code
 * VFS-10341 Upgraded EmberJS to v3.16.10
