@@ -2,14 +2,23 @@
  * An abstraction layer for getting data for sidebar of various tabs
  *
  * @author Jakub Liput
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2024 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { resolve, reject } from 'rsvp';
+import { reject } from 'rsvp';
 import { inject as service } from '@ember/service';
-import { get } from '@ember/object';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
+
+/** @type {SidebarCollection} */
+const emptyCollection = Object.freeze({
+  get array() {
+    return [];
+  },
+  get ids() {
+    return [];
+  },
+});
 
 export default SidebarResources.extend({
   onepanelServer: service(),
@@ -18,10 +27,11 @@ export default SidebarResources.extend({
   clusterActions: service(),
 
   /**
+   * @override
    * @param {string} type
-   * @returns {Promise|PromiseObject|PromiseArray}
+   * @returns {Promise<SidebarCollection>}
    */
-  getCollectionFor(type) {
+  async getCollectionFor(type) {
     switch (type) {
       case 'providers':
       case 'spaces':
@@ -31,26 +41,33 @@ export default SidebarResources.extend({
       case 'harvesters':
       case 'atm-inventories':
       case 'users': {
-        return resolve([]);
+        return emptyCollection;
       }
       case 'clusters': {
         const {
           onepanelServer,
           clusterModelManager,
-        } = this.getProperties('onepanelServer', 'clusterModelManager');
-        if (get(onepanelServer, 'isEmergency')) {
-          return clusterModelManager.getCurrentClusterProxy()
-            .then(currentCluster => {
-              if (currentCluster) {
-                return resolve([currentCluster]);
-              } else {
-                // cluster is not deployed yet - only in onepanel emergency mode
-                return resolve([clusterModelManager.getNotDeployedCluster()]);
-              }
-            });
+        } = this;
+        let array;
+        if (onepanelServer.isEmergency) {
+          const currentCluster = await clusterModelManager.getCurrentClusterProxy();
+          if (currentCluster) {
+            array = [currentCluster];
+          } else {
+            // cluster is not deployed yet - only in onepanel emergency mode
+            array = [clusterModelManager.getNotDeployedCluster()];
+          }
         } else {
-          return clusterModelManager.getClustersProxy();
+          array = await clusterModelManager.getClustersProxy();
         }
+        return {
+          get array() {
+            return array;
+          },
+          get ids() {
+            return this.array.map(cluster => cluster.id);
+          },
+        };
       }
       default:
         return reject('No such collection: ' + type);
