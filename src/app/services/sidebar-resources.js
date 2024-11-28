@@ -50,12 +50,10 @@ export default SidebarResources.extend({
         } = this;
         let array;
         if (onepanelServer.isEmergency) {
-          const currentCluster = clusterModelManager.getCurrentClusterProxy();
+          const currentCluster = await clusterModelManager.getCurrentClusterProxy();
           if (currentCluster) {
-            // FIXME: przetestować
             array = [currentCluster];
           } else {
-            // FIXME: przetestować
             // cluster is not deployed yet - only in onepanel emergency mode
             array = [clusterModelManager.getNotDeployedCluster()];
           }
