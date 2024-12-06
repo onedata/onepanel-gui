@@ -1,0 +1,13 @@
+<li class="warning-item-container alert alert-warning">
+  <OneIcon class="warning-icon" @icon="warning" />
+  {{#if field.warningText}}
+    <span class="warning-text">{{field.warningText}}</span>
+  {{/if}}
+  {{#if field.warningTip}}
+    <OneTooltip
+      @title={{field.warningTip}}
+      @triggerEvent="hover"
+      class="tooltip-lg"
+    />
+  {{/if}}
+</li>

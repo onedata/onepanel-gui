@@ -16,7 +16,19 @@
     }
   }
 
-  
+  .warning-item-container {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3em 0.6em 0.3em 0.3em;
+    .warning-icon + .warning-text {
+      margin-left: 0.3em
+    }
+    .warning-icon {
+      font-size: 1.5em;
+      color: $color-one-warning;
+    }
+  }
+
   .form-component .control-label {
     @media (min-width: $screen-sm-min) {
       width: 40%;
@@ -28,22 +40,39 @@
     flex-grow: 0;
   }
 
+  .dnsNames-field {
+    .static-list-field ul {
+      list-style: none;
+      margin-block: 0;
+      padding-inline: 0;
+      margin-bottom: 0.3em;
+    }
+
+    .static-list-field li + li {
+      margin-top: 0.3em;
+      &.warning-item-container {
+        margin-top: 0.6em;
+        margin-bottom: 0;
+      }
+    }
+  }
+
   @media (max-width: $screen-xs-max) {
     .warning-field {
       display: grid;
-      grid-template-areas: 
+      grid-template-areas:
         "label label"
         "value warning";
       grid-template-columns: auto 1fr;
-      
+
       .control-label {
         grid-area: label;
       }
-      
+
       .field-component  {
         grid-area: value;
       }
-      
+
       .warning-icon-container {
         grid-area: warning;
       }

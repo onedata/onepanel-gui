@@ -34,7 +34,7 @@
     "isuri": "2.0.3",
     "moment": "2.29.4",
     "number-formatter": "1.2.0",
-    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#f61f90e72239310e62debe908319613084d8545b",
+    "onepanel": "git+https://github.com/onedata/onepanel-javascript-client.git#6963b083dd5d8ee13cf882937ec7a0f284f2e583",
     "perfect-scrollbar": "1.5.5",
     "pupa": "2.1.1",
     "round10": "1.0.3",

@@ -2,7 +2,7 @@
  * A view to show or edit web certificate details
  *
  * @author Jakub Liput, Agnieszka Warchoł
- * @copyright (C) 2018-2021 ACK CYFRONET AGH
+ * @copyright (C) 2018-2024 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -20,15 +20,16 @@ import {
   tag,
   raw,
   conditional,
-  notEqual,
   equal,
 } from 'ember-awesome-macros';
 import StaticTextField from 'onedata-gui-common/utils/form-component/static-text-field';
+import StaticListField from 'onedata-gui-common/utils/form-component/static-list-field';
 import DatetimeField from 'onedata-gui-common/utils/form-component/datetime-field';
 import { scheduleOnce } from '@ember/runloop';
 import computedT from 'onedata-gui-common/utils/computed-t';
 import moment from 'moment';
 import { capitalize } from '@ember/string';
+import { ListFieldComponent } from 'onedata-gui-common/utils/form-component/static-list-field';
 
 const DATE_FORMAT = 'YYYY-MM-DD [at] H:mm ([UTC]Z)';
 
@@ -48,6 +49,7 @@ export default Component.extend(I18n, {
   i18n: service(),
   globalNotify: service(),
   guiUtils: service(),
+  webCertManager: service(),
 
   i18nPrefix: 'components.webCertForm',
 
@@ -104,17 +106,25 @@ export default Component.extend(I18n, {
   domainWarningTip: computed(
     'currentDomain',
     'currentServiceType',
+    // used by: this.webCertManager.isWebCertDomainValid
+    'webCert.dnsNames',
+    'guiUtils.serviceDomain',
     function domainWarningTip() {
+      if (this.webCertManager.isWebCertDomainValid(this.webCert)) {
+        return;
+      }
       const {
         currentDomain,
         currentServiceType,
-      } = this.getProperties('currentDomain', 'currentServiceType');
-      return this.t('fields.domain.warningTip', {
+      } = this;
+      return this.t('fields.dnsNames.warningTip', {
         currentServiceType: capitalize(currentServiceType),
         currentDomain,
       });
     }
   ),
+
+  domainWarningText: computedT('fields.dnsNames.noneMatchWarning'),
 
   /**
    * Time left until expired certificate
@@ -140,7 +150,7 @@ export default Component.extend(I18n, {
       lastRenewalFailure,
       expirationTimeField,
       creationTimeField,
-      domainField,
+      dnsNamesField,
       issuerField,
       certPathField,
       keyPathField,
@@ -165,7 +175,7 @@ export default Component.extend(I18n, {
         lastRenewalFailure,
         expirationTimeField,
         creationTimeField,
-        domainField,
+        dnsNamesField,
         issuerField,
         certPathField,
         keyPathField,
@@ -252,12 +262,7 @@ export default Component.extend(I18n, {
             expirationTime,
             isNearExpiration,
             isExpired,
-          } = this.getProperties(
-            'letsEncrypt',
-            'expirationTime',
-            'isNearExpiration',
-            'isExpired'
-          );
+          } = this;
           const lessThenMonths = moment().add(21, 'days').diff(moment(expirationTime)) > 0;
           return (letsEncrypt && isNearExpiration && lessThenMonths) ||
             (!letsEncrypt && lessThenMonths) ||
@@ -305,25 +310,25 @@ export default Component.extend(I18n, {
   /**
    * @type {ComputedProperty<Utils.FormComponent.StaticTextField>}
    */
-  domainField: computed(function domainField() {
+  dnsNamesField: computed(function dnsNamesField() {
     const component = this;
-    return StaticTextField.extend({
-      text: component.computedDefaultValueFor('domain'),
+    return StaticListField.extend({
+      dnsNames: component.computedDefaultValueFor('dnsNames'),
+      value: computed('dnsNames', 'warningTip', function value() {
+        const items = sortDnsNames(this.dnsNames);
+        if (this.warningTip) {
+          items.push(new ListFieldComponent('web-cert-form/warning-item'));
+        }
+        return items;
+      }),
+      /** for warning-item */
       warningTip: reads('component.domainWarningTip'),
-      classes: conditional(
-        notEqual('component.webCert.domain', 'component.guiUtils.serviceDomain'),
-        raw('warning-field'),
-        raw('')
-      ),
-      afterComponentName: conditional(
-        notEqual('component.webCert.domain', 'component.guiUtils.serviceDomain'),
-        raw('web-cert-form/warning-icon'),
-        raw(undefined),
-      ),
+      /** for warning-item */
+      warningText: reads('component.domainWarningText'),
       mode: 'view',
     }).create({
       component,
-      name: 'domain',
+      name: 'dnsNames',
     });
   }),
 
@@ -442,3 +447,12 @@ export default Component.extend(I18n, {
     },
   },
 });
+
+function sortDnsNames(dnsNames) {
+  const sortableNamesData = dnsNames.map(dnsName => ({
+    name: dnsName,
+    segmentsCount: dnsName.split('.').length,
+  }));
+  return _.orderBy(sortableNamesData, ['segmentsCount', 'dnsName'], ['asc', 'desc'])
+    .map(({ name }) => name);
+}

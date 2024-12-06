@@ -2,7 +2,7 @@
  * Provides methods for getting and modifying web cert
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2018-2019 ACK CYFRONET AGH
+ * @copyright (C) 2018-2024 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -44,10 +44,11 @@ export default Service.extend(createDataProxyMixin('webCert'), {
    * @type {Ember.ComputedProperty<boolean>}
    */
   webCertValid: computed('webCert.status', function webCertValid() {
-    const webCert = this.get('webCert');
-    return !webCert ||
-      (get(webCert, 'status') === 'valid' &&
-        get(webCert, 'domain') === this.get('guiUtils.serviceDomain'));
+    const { webCert } = this;
+    return !webCert || (
+      webCert.status === 'valid' &&
+      this.isWebCertDomainValid(webCert)
+    );
   }),
 
   /**
@@ -104,5 +105,18 @@ export default Service.extend(createDataProxyMixin('webCert'), {
     } else {
       return resolve(globals.location.hostname);
     }
+  },
+
+  /**
+   * Checks if domain for the service is included in the web cert DNS names.
+   * @param {Onepanel.WebCert} webCert
+   * @returns {boolean}
+   */
+  isWebCertDomainValid(webCert) {
+    const serviceDomain = this.guiUtils.serviceDomain;
+    if (!webCert || !serviceDomain) {
+      return false;
+    }
+    return webCert.dnsNames.includes(serviceDomain);
   },
 });

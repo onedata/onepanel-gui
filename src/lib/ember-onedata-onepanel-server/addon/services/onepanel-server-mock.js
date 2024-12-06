@@ -106,7 +106,12 @@ const defaultWebCert = {
     key: '/tmp/key.pem',
     chain: '/tmp/very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain.ca',
   },
-  domain: 'example.com',
+  // names are not ordered to test-out sorting in GUI
+  dnsNames: [
+    'rtransfer.dev-oneprovider-krakow.default.svc.cluster.local',
+    'dev-oneprovider-krakow.default.svc.cluster.local',
+    's3.dev-oneprovider-krakow.default.svc.cluster.local',
+  ],
   issuer: 'Example Inc.',
   lastRenewalSuccess: moment().subtract(1, 'week').toISOString(),
   lastRenewalFailure: null,
