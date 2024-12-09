@@ -31,6 +31,18 @@ export default Component.extend({
 
   /**
    * @virtual
+   * @type {boolean}
+   */
+  isPrimaryClusterManager: false,
+
+  /**
+   * @virtual
+   * @type {boolean}
+   */
+  isOneS3Visible: false,
+
+  /**
+   * @virtual
    * @type {Function}
    */
   checkboxChanged: notImplementedWarn,

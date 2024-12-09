@@ -7,12 +7,15 @@
  */
 
 import Component from '@ember/component';
+import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import { computed, get } from '@ember/object';
 import { union } from '@ember/object/computed';
 
 export default Component.extend(I18n, {
   tagName: '',
+
+  guiUtils: service(),
 
   /**
    * @override
@@ -32,6 +35,14 @@ export default Component.extend(I18n, {
     'databases',
     'managers',
     'workers',
+    'oneS3',
+  ]),
+
+  /**
+   * @type {Array<string>}
+   */
+  oneproviderOnlyServices: Object.freeze([
+    'oneS3',
   ]),
 
   /**
@@ -51,7 +62,8 @@ export default Component.extend(I18n, {
   allNodes: union(
     'clusterConfigurationProxy.cluster.databases.hosts',
     'clusterConfigurationProxy.cluster.managers.hosts',
-    'clusterConfigurationProxy.cluster.workers.hosts'
+    'clusterConfigurationProxy.cluster.workers.hosts',
+    'clusterConfigurationProxy.cluster.oneS3.hosts'
   ),
 
   /**
@@ -64,9 +76,11 @@ export default Component.extend(I18n, {
    */
   serviceRows: computed(
     'services',
+    'oneproviderOnlyServices',
     'serviceNames',
     'allNodes',
-    'clusterConfigurationProxy.cluster.{databases.hosts,managers.hosts,workers.hosts}',
+    'clusterConfigurationProxy.cluster.{databases.hosts,managers.hosts,workers.hosts,oneS3.hosts}',
+    'guiUtils.serviceType',
     function serviceRows() {
       const {
         services,
@@ -82,20 +96,25 @@ export default Component.extend(I18n, {
       if (!get(allNodes, 'length')) {
         return [];
       } else {
-        return services.map(service => ({
-          service,
-          serviceName: get(serviceNames, service),
-          boxes: allNodes.map(node => {
-            const hasService =
-              get(
-                clusterConfigurationProxy,
-                `cluster.${service}.hosts`
-              ).includes(node);
-            return {
-              type: hasService ? 'ok' : 'empty',
-            };
-          }),
-        }));
+        return services
+          .filter((service) =>
+            this.guiUtils.serviceType === 'oneprovider' ||
+            !this.oneproviderOnlyServices.includes(service)
+          )
+          .map(service => ({
+            service,
+            serviceName: get(serviceNames, service),
+            boxes: allNodes.map(node => {
+              const hasService =
+                get(
+                  clusterConfigurationProxy,
+                  `cluster.${service}.hosts`
+                ).includes(node);
+              return {
+                type: hasService ? 'ok' : 'empty',
+              };
+            }),
+          }));
       }
     }
   ),

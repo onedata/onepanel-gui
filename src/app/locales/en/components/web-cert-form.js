@@ -17,10 +17,11 @@ export default {
       label: 'Creation time',
       tip: 'Installed certificate\'s creation time.',
     },
-    domain: {
-      label: 'Domain',
-      tip: 'The domain (Common Name) for which current certificate was issued.',
-      warningTip: 'The domain for which the certificate was issued is different than the configured {{currentServiceType}} domain ({{currentDomain}}). Until this problem is resolved, the HTTPS connections with the service will be considered insecure and may not work at all.',
+    dnsNames: {
+      label: 'DNS names',
+      tip: 'List of DNS names included in certificate\'s Subject Alternative Name extension.',
+      warningTip: 'None of the certificate\'s DNS names matches the configured {{currentServiceType}} domain ({{currentDomain}}). Until this problem is resolved, HTTPS connections to the service will be considered insecure and the Web UI may malfunction.',
+      noneMatchWarning: 'None of the above match the service domain.',
     },
     issuer: {
       label: 'Issuer',

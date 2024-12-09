@@ -1,10 +1,14 @@
 export default {
   documentation: 'DNS setup',
-  intro: 'This page is intended to check the DNS configuration of your cluster.',
+  intro: 'This page serves to assist with the proper DNS configuration of your {{serviceType}} cluster.',
+  serviceType: {
+    onezone: 'Onezone',
+    oneprovider: 'Oneprovider',
+  },
   onezoneBuiltInServer: {
     header: 'Onezone built-in DNS server',
     useToggleLabel: 'Use built-in DNS server',
-    text: 'Recommended option for optimal load balancing. The Onezone’s built-in DNS server will manage your domain, however it requires proper configuration (see below).',
+    text: 'Recommended option for optimal load balancing. The Onezone\'s built-in DNS server will manage your domain, however it requires that you set up DNS Zone delegation in the DNS server responsible for your domain ("{{domain}}"). Then, DNS queries concerning this domain will be routed to the built-in DNS server within the Onezone service.',
     wrongDomain: 'You need a proper domain to enable the built-in DNS server.',
     togglingBuiltInDnsServer: 'toggling built-in DNS server',
   },
@@ -16,24 +20,34 @@ export default {
     noBuiltInDnsServer: 'Built-in DNS server must be enabled first.',
     togglingSubdomainDelegation: 'toggling subdomain delegation',
   },
+  summary: {
+    header: 'Summary',
+    intro: {
+      providerIp: 'This Oneprovider service is registered using an IP address rather than a domain. No DNS check is applicable.',
+      providerSubdomainDelegation: 'This Oneprovider service uses subdomain delegation and is registered under the domain "{{domain}}". The Onezone service ("{{providerOnezoneDomain}}"), if properly configured, will handle the DNS domain for this Oneprovider and ensure that:',
+      providerNoSubdomainDelegationPreHint: 'This Oneprovider service is registered under the domain "{{domain}}". Make sure that the DNS server responsible for the domain',
+      providerNoSubdomainDelegationPostHint: 'is properly configured, i.e.:',
+      zoneIp: 'This Onezone service is registered using an IP address rather than a domain. No DNS check is applicable.',
+      zoneStandardPreHint: 'This Onezone service is registered under the domain "{{domain}}". Make sure that the DNS server responsible for the domain',
+      zoneStandardPostHint: 'is properly configured, i.e.:',
+      domainHint: 'Configuring the DNS server for your domain depends on your environment. If you have a public domain, check the settings in its administration panel. If you are working in a cloud / virtual environment, contact your administrators to learn how can you modify the DNS server config.',
+    },
+    domainShouldResolveToIp: 'The domain "{{domain}}" should resolve to the external IP addresses of nodes that host the {{componentName}} components:',
+    domainResolvesToIp: 'The domain "{{domain}}" resolves to the external IP addresses of nodes that host the {{componentName}} components',
+    oneS3Disabled: 'Since the S3 data access protocol is disabled for this Oneprovider, the domain "s3.{{domain}}" is not needed to be configured.',
+    nsEntriesForEnabledBuiltInDns: 'Since the built-in DNS server is enabled, there should be proper NS entries (ns{}.{{domain}}) configured for the domain (as many as the cluster nodes that host the Cluster Worker components, but not less than two).',
+    noNsEntriesForDisabledBuiltInDns: 'Since the built-in DNS server is disabled, no NS entries are required.',
+    nsEntriesResolvedToIp: 'The NS entries (ns{}.{{domain}}) should resolve to the external IP addresses of nodes that host the Cluster Worker components:',
+    ipAddressesNoteStart: 'Note: the expected IP addresses are determined based on your ',
+    ipAddressesNoteLink: 'cluster nodes setup',
+  },
   dnsCheck: {
     header: 'DNS check',
-    inputIntro: 'By default Onepanel performs the DNS configuration check by resolving the domain based on the host system settings. If you prefer to configure specific DNS servers to be queried instead, provide their IPs below.',
+    inputIntro: 'By default, Onepanel performs the DNS configuration check by resolving the domain based on the host system settings. Alternatively, you may provide custom DNS servers to query.',
     ipInputPlaceholder: 'Enter IP addresses…',
     modifyingDnsServers: 'modifying DNS check addresses',
     performCheck: 'Perform check',
     stateHint: 'Configuring the DNS server for your domain depends on your environment. If you have a public domain, check the settings in its administration panel. If you are working in a cloud / virtual environment, contact your administrators to learn how can you modify the DNS server config.',
-    stateInfo: {
-      providerIp: 'This Oneprovider service is registered using an IP address rather than a domain. No DNS check is applicable.',
-      providerSubdomainDelegation: 'This Oneprovider service is using Subdomain Delegation – it was assigned a subdomain, which is managed completely by the Onezone service ({{providerOnezoneDomain}}). A DNS check should be performed to make sure that the Onezone service is properly configured to handle your subdomain.',
-      providerNoSubdomainDelegationPreHint: 'This Oneprovider service is registered under domain "{{domain}}". You should ensure that the DNS server responsible for your domain',
-      providerNoSubdomainDelegationPostHint: 'is properly configured.',
-      zoneIp: 'This Onezone service is registered using an IP address rather than a domain. No DNS check is applicable.',
-      zoneSubdomainDelegationPreHint: 'You have enabled Subdomain Delegation. To make sure it works properly, you must set up DNS Zone delegation in the DNS server responsible for your domain ({{domain}})',
-      zoneSubdomainDelegationPostHint: '. It will route DNS queries concerning this domain to the built-in DNS server within Onezone service.',
-      zoneNoSubdomainDelegationPreHint: 'This Onezone service is registered under domain "{{domain}}". You should ensure that the DNS server responsible for your domain',
-      zoneNoSubdomainDelegationPostHint: 'is properly configured. It is strongly recommended that you set up DNS Zone delegation in the DNS server responsible for your domain ({{domain}}). It will route DNS queries concerning this domain to the built-in DNS server within Onezone service.',
-    },
     result: {
       header: 'Results',
       checkPerformed: 'last check performed',
@@ -42,7 +56,7 @@ export default {
     resultsObsoleteText: 'Please perform a new DNS check to make sure your configuration works as expected.',
   },
   dnsServersText: 'Onepanel performs a DNS configuration check using public DNS servers. If your Onezone domain is not visible outside your local network, you can provide the IP address of your local DNS server (if any) to query during the check.',
-  dnsServersInputText: 'Type additional DNS IP adresses and hit enter',
+  dnsServersInputText: 'Type additional DNS IP addresses and hit enter',
   verifyTableHeader: 'DNS configuration status',
   form: {
     subdomainDelegationToggle: {
@@ -54,4 +68,8 @@ export default {
   disablingSubdomainDelegation: 'disabling Subdomain Delegation',
   dnsCheckAutodetect: 'Use system defaults',
   dnsCheckManual: 'Specify servers manually',
+  componentNames: {
+    clusterWorker: 'Cluster Worker',
+    oneS3: 'OneS3',
+  },
 };

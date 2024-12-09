@@ -1,4 +1,4 @@
-<td class="row-header truncate cell-hostname" {{action "headerClick" on="click"}} data-option="name">
+<td class="row-header cell-hostname" {{action "headerClick" on="click"}} data-option="name">
   <span class="item-icon-container">
     {{one-icon class="item-icon" icon="node"}}
     {{one-tooltip
@@ -7,7 +7,12 @@
       triggerEvents="hover"
     }}
   </span>
-  <span class="one-label">{{hostname}}</span>
+  <span class="record-info-container">
+    <span class="one-label">{{hostname}}</span>
+    {{#each tags as |tag|}}
+      <span class="label label-info">{{tag}}</span>
+    {{/each}}
+  </span>
 </td>
 <td class="cell-ip-address compact" data-option="ip-address">
   <div class="row">

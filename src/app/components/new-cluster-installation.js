@@ -303,6 +303,9 @@ export default Component.extend(I18n, {
         databases: {
           nodes: getHostnamesOfType(hostsUsed, 'database'),
         },
+        oneS3: {
+          nodes: getHostnamesOfType(hostsUsed, 'oneS3'),
+        },
       },
       onepanel: {
         interactiveDeployment: true,
@@ -334,11 +337,13 @@ export default Component.extend(I18n, {
       managers,
       workers,
       databases,
-    } = getProperties(cluster, 'managers', 'workers', 'databases');
+      oneS3,
+    } = getProperties(cluster, 'managers', 'workers', 'databases', 'oneS3');
     [
       ['clusterManager', managers],
       ['clusterWorker', workers],
       ['database', databases],
+      ['oneS3', oneS3],
     ].forEach(([type, { nodes }]) => nodes.forEach(hostname => hosts
       .filterBy('hostname', hostname)
       .forEach(host => set(host, type, true))

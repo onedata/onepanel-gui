@@ -1,0 +1,25 @@
+.cluster-host-ip-form {
+  .row-header {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .label {
+      position: relative;
+      top: -1px;
+    }
+  }
+
+  .bt-content {
+    display: flex;
+  }
+
+  .record-info-container {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .one-label {
+      margin-right: 1em;
+    }
+  }
+}

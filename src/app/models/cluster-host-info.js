@@ -16,6 +16,7 @@ import EmberObject, { computed } from '@ember/object';
  * @property {computed.boolean} database true if host will run database
  * @property {computed.boolean} clusterWorker true if host will run cluster worker
  * @property {computed.boolean} clusterManager true if host will run cluster manager
+ * @property {computed.boolean} oneS3 true if host will run oneS3
  */
 export default EmberObject.extend({
   hostname: null,
@@ -24,13 +25,15 @@ export default EmberObject.extend({
   database: false,
   clusterWorker: false,
   clusterManager: false,
+  oneS3: false,
 
-  isUsed: computed('database', 'clusterWorker', 'clusterManager', function () {
-    const {
-      database,
-      clusterWorker,
-      clusterManager,
-    } = this.getProperties('database', 'clusterWorker', 'clusterManager');
-    return database || clusterWorker || clusterManager;
-  }),
+  isUsed: computed(
+    'database',
+    'clusterWorker',
+    'clusterManager',
+    'oneS3',
+    function isUsed() {
+      return this.database || this.clusterWorker || this.clusterManager || this.oneS3;
+    }
+  ),
 });

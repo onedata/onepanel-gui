@@ -7,6 +7,7 @@
     {{#tab.pane title=(tt this "tabServices")}}
       <div class="row content-row">
         {{#promise-proxy-container proxy=clusterHostsInfoProxy}}
+          {{conflicting-ports-info hosts=clusterHostsInfoProxy.clusterHostsInfo}}
           {{cluster-host-table
             hosts=clusterHostsInfoProxy.clusterHostsInfo
             primaryClusterManager=primaryClusterManager
@@ -58,9 +59,10 @@
         </h1>
       </div>
       <div class="row content-row">
-        {{#promise-proxy-container proxy=clusterHostsInfoProxy}}
+        {{#promise-proxy-container proxy=hostsLoadingProxy}}
           {{cluster-host-ip-form
-            hosts=_ipsFormData
+            hostsIps=_ipsFormData
+            hostsInfo=hostsInfoProxy.content
             hostDataChanged=(action "hostsIpsDataChanged")
             allValidChanged=(action "hostsIpsFormValidChanged")
             isReadOnly=(or (not ipsEdit) ipsSetupProxy.isPending)

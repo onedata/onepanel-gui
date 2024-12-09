@@ -8,6 +8,12 @@ export default {
           badRecords: 'Resolved cluster IPs are different than expected. Please contact the administrator of your Onezone service ({{providerOnezoneDomain}}).',
           ok: 'All cluster IPs have corresponding DNS A records.',
         },
+        oneS3Subdomain: {
+          unresolvable: 'The OneS3 service domain could not be resolved. This error will make your S3 endpoint unreachable. Please contact the administrator of your Onezone service ({{providerOnezoneDomain}}).',
+          missingRecords: 'Some OneS3 service IPs do not have a corresponding DNS A record. Please contact the administrator of your Onezone service ({{providerOnezoneDomain}}).',
+          badRecords: 'Resolved OneS3 service IPs are different than expected. Please contact the administrator of your Onezone service ({{providerOnezoneDomain}}).',
+          ok: 'All OneS3 service IPs have corresponding DNS A records.',
+        },
       },
       ownDomain: {
         domain: {
@@ -18,6 +24,13 @@ export default {
           ok: 'All cluster IPs have corresponding DNS A records.',
           // a special case when using builtInDnsServer, summary is not ok, but dnsZone is ok
           delegationInvalidRecords: 'Although the DNS Zone delegation seems to be working, the cluster IPs (A records) are not resolved correctly. Please make sure that DNS queries are properly routed to the Onezone’s built-in server.',
+        },
+        oneS3Subdomain: {
+          unresolvable: 'The OneS3 service domain could not be resolved. This error will make your S3 endpoint unreachable. Please check the configuration of the DNS server responsible for your domain',
+          missingRecords: 'Some OneS3 service IPs do not have a corresponding DNS A record. To ensure proper load balancing, please add the missing records in the DNS server responsible for your domain',
+          badRecords1: 'Resolved OneS3 service IPs are different than expected. Please adjust the configuration in the DNS server responsible for your domain',
+          badRecords2: 'If you believe that expected OneS3 service IPs are not correct, please go back to the previous step and adjust them accordingly.',
+          ok: 'All OneS3 service IPs have corresponding DNS A records.',
         },
         dnsZone: {
           unresolvable: 'No nameservers could be resolved for the Onezone domain ({{domain}}). DNS Zone delegation is not configured properly. Please check the configuration of the DNS server responsible for your domain',

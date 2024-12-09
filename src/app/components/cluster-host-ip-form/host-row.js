@@ -48,6 +48,12 @@ export default Component.extend(Validations, I18n, {
   ip: undefined,
 
   /**
+   * @virtual optional
+   * @type {Array<SafeString>}
+   */
+  tags: undefined,
+
+  /**
    * @virtual
    * @type {boolean}
    */

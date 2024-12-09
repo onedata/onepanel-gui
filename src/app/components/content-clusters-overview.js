@@ -90,7 +90,8 @@ export default Component.extend(
     allNodes: union(
       'installationDetailsProxy.cluster.databases.hosts',
       'installationDetailsProxy.cluster.managers.hosts',
-      'installationDetailsProxy.cluster.workers.hosts'
+      'installationDetailsProxy.cluster.workers.hosts',
+      'installationDetailsProxy.cluster.oneS3.hosts'
     ),
 
     init() {

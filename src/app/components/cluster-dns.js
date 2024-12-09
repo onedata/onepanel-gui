@@ -16,6 +16,7 @@ import EmberObject, {
   set,
 } from '@ember/object';
 import { reads } from '@ember/object/computed';
+import { all as allFulfilled } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
@@ -26,6 +27,7 @@ import $ from 'jquery';
 import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import moment from 'moment';
 import computedPipe from 'onedata-gui-common/utils/ember/computed-pipe';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 
 const validIpRegexp =
   /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
@@ -55,6 +57,14 @@ export default Component.extend(
      * @type {boolean}
      */
     getDnsCheckProxyOnStart: false,
+
+    /**
+     * If set to true, then the view will be altered to the conditions required
+     * by the deployment process.
+     * @virtual optional
+     * @type {boolean}
+     */
+    isDuringDeployment: false,
 
     /**
      * @virtual optional
@@ -267,8 +277,10 @@ export default Component.extend(
           if (isIpDomain) {
             return 'zoneIp';
           } else if (subdomainDelegation) {
+            // This value is not used in hbs file. Left for code consistency
             return 'zoneSubdomainDelegation';
           } else {
+            // This value is not used in hbs file. Left for code consistency
             return 'zoneNoSubdomainDelegation';
           }
         }
@@ -321,7 +333,11 @@ export default Component.extend(
             Object.assign({ type: 'domain' }, _.cloneDeep(get(dnsCheck, 'domain'))) :
             undefined;
           if (onepanelServiceType === 'oneprovider') {
-            return [domain];
+            const oneS3Subdomain = get(dnsCheck, 'oneS3Subdomain') ? {
+              type: 'oneS3Subdomain',
+              ..._.cloneDeep(get(dnsCheck, 'oneS3Subdomain')),
+            } : undefined;
+            return [domain, oneS3Subdomain].filter((c) => c);
           } else {
             const dnsZone = get(dnsCheck, 'dnsZone') ?
               Object.assign({
@@ -377,6 +393,58 @@ export default Component.extend(
       }];
     }),
 
+    /**
+     * @type {ComputedProperty<PromiseObject<{
+     *  clusterWorker: Array<{ hostname: string, ip: string }>,
+     *  oneS3: Array<{ hostname: string, ip: string }>,
+     * }>>}
+     */
+    hostsRequiringDnsProxy: computed(function hostsRequiringDnsProxy() {
+      const promise = (async () => {
+        const [
+          hostInfos,
+          hostIps,
+        ] = await allFulfilled([
+          this.deploymentManager.getClusterHostsInfo()
+          .then(({ clusterHostsInfo }) => clusterHostsInfo),
+          this.deploymentManager.getClusterIps()
+          .then(({ hosts }) => hosts),
+        ]);
+        const result = {};
+        ['clusterWorker', 'oneS3'].forEach((serviceName) => {
+          result[serviceName] = [];
+          hostInfos.filter((hostInfo) => hostInfo[serviceName])
+            .map(({ hostname }) => hostname)
+            .sort()
+            .forEach((hostname) => {
+              const ip = hostIps[hostname];
+              if (ip) {
+                result[serviceName].push({
+                  hostname,
+                  ip,
+                });
+              }
+            });
+        });
+        return result;
+      })();
+      return promiseObject(promise);
+    }),
+
+    /**
+     * @type {ComputedProperty<PromiseObject<unknown>>}
+     */
+    summaryDataLoadingProxy: computed(
+      'domainProxy',
+      'hostsRequiringDnsProxy',
+      function summaryDataLoadingProxy() {
+        return promiseObject(allFulfilled([
+          this.domainProxy,
+          this.hostsRequiringDnsProxy,
+        ]));
+      }
+    ),
+
     isIpDomainObserver: observer('isIpDomain', function isIpDomainObserver() {
       const {
         isIpDomainChanged,
@@ -423,6 +491,7 @@ export default Component.extend(
       }
       // enable isIpDomainObserver
       this.get('isIpDomain');
+      this.hostsRequiringDnsProxy;
     },
 
     willDestroyElement() {
@@ -446,7 +515,7 @@ export default Component.extend(
         const newCheckIsNeededNotify = this.get('globalNotify').info({
           html: this.t('dnsCheck.resultsObsoleteText'),
           oneTitle: this.t('dnsCheck.resultsObsoleteHead'),
-          oneIcon: 'sign-warning',
+          oneIcon: 'sign-warning-rounded',
           closeAfter: null,
         });
         this.set('newCheckIsNeededNotify', newCheckIsNeededNotify);

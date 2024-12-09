@@ -79,8 +79,11 @@ export default Component.extend(I18n, {
     if (step) {
       const [, service, action] = RE_STEP.exec(step);
       if (_.includes(KNOWN_STEPS, step)) {
-        const tservice = service ? this.t(`steps.service.${service}`) : '';
-        return this.t(`steps.action.${action}`, { service: tservice });
+        const tservice = service ?
+          this.t(`steps.service.${service}`, {}, { defaultValue: '' }) : '';
+        return this.t(`steps.action.${action}`, { service: tservice }, {
+          defaultValue: step,
+        });
       } else {
         return step;
       }

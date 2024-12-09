@@ -5,6 +5,9 @@
     <th class="text-center column toggle-column">{{tt this "headers.clusterWorker"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.clusterManager"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
+    {{#if isOneS3Visible}}
+      <th class="text-center column toggle-column">{{tt this "headers.oneS3"}}</th>
+    {{/if}}
     {{#if removeHostAvailable}}
       <th class="text-center column btn-column"></th>
     {{/if}}
@@ -17,6 +20,7 @@
     {{cluster-host-table-row
       host=host
       isPrimaryClusterManager=(eq primaryClusterManager host.hostname)
+      isOneS3Visible=isOneS3Visible
       checkboxChanged=(action "checkboxChanged")
       removeHost=(action "removeHost")
       primaryClusterManagerChanged=(action "primaryClusterManagerChanged")

@@ -69,6 +69,7 @@ import contentClustersGuiSettings from './components/content-clusters-gui-settin
 import spaceSupportAccountingForm from './components/space-support-accounting-form';
 import userAccountButton from './components/user-account-button';
 import modals from './components/modals';
+import conflictingPortsInfo from './components/conflicting-ports-info';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -162,6 +163,7 @@ const translations = {
     spaceSupportAccountingForm,
     userAccountButton,
     modals,
+    conflictingPortsInfo,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,

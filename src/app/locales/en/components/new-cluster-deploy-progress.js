@@ -10,6 +10,7 @@ export default {
       op_worker: 'Oneprovider Worker',
       oneprovider: 'Oneprovider',
       onezone: 'Onezone',
+      ones3: 'OneS3',
     },
     action: {
       configure: 'configuring {{service}}',
@@ -21,6 +22,8 @@ export default {
       stop: 'stopping {{service}}',
       setup_certs: 'setting up {{service}} certificates',
       set_up_service_in_onezone: 'setting up web GUI',
+      create_service: 'creating service',
+      add_service_host: 'adding service host',
     },
   },
 };

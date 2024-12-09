@@ -9,6 +9,7 @@ import { registerService, lookupService } from '../../helpers/stub-service';
 import sinon from 'sinon';
 import Service from '@ember/service';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
+import { Promise } from 'rsvp';
 
 const ProviderManager = Service.extend({
   getProviderDetailsProxy() {},
@@ -16,6 +17,15 @@ const ProviderManager = Service.extend({
 
 const OnepanelServer = Service.extend({
   request() {},
+});
+
+const DeploymentManager = Service.extend({
+  getClusterHostsInfo() {
+    return new Promise(() => {});
+  },
+  getClusterIps() {
+    return new Promise(() => {});
+  },
 });
 
 const GuiUtils = Service.extend({
@@ -27,7 +37,7 @@ describe('Integration | Component | cluster-dns', function () {
 
   beforeEach(function () {
     registerService(this, 'providerManager', ProviderManager);
-    registerService(this, 'deploymentManager', Service);
+    registerService(this, 'deploymentManager', DeploymentManager);
     registerService(this, 'onepanelServer', OnepanelServer);
     registerService(this, 'guiUtils', GuiUtils);
 

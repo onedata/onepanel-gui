@@ -5,5 +5,6 @@ export default {
     databases: 'Databases',
     managers: 'Cluster man.',
     workers: 'Workers',
+    oneS3: 'OneS3',
   },
 };

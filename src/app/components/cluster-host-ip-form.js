@@ -35,7 +35,13 @@ export default BasicTable.extend(I18n, {
    * Maps hostname: string => IP address: string
    * @type {Object}
    */
-  hosts: Object.freeze({}),
+  hostsIps: Object.freeze({}),
+
+  /**
+   * @virtual
+   * @type {Array<Models.ClusterHostInfo>}
+   */
+  hostsInfo: undefined,
 
   /**
    * @virtual optional
@@ -56,7 +62,7 @@ export default BasicTable.extend(I18n, {
   hostDataChanged: notImplementedWarn,
 
   /**
-   * @type {EmberArray<{ip: string, hostname: string}>}
+   * @type {EmberArray<{ip: string, hostname: string, tags: Array<SafeString>}>}
    */
   _hostsData: undefined,
 
@@ -68,35 +74,20 @@ export default BasicTable.extend(I18n, {
     this.get('allValidChanged')(this.get('allValid'));
   }),
 
-  observeHosts: observer('hosts.[]', function observeHosts() {
-    const hostsArray = _.map(
-      this.get('hosts'),
-      (ip, hostname) => ({ hostname, ip })
-    );
-
-    this.set('_hostsData', A(
-      _.sortBy(hostsArray, ['hostname'])
-    ));
-  }),
-
-  /**
-   * We do not want to change `_hostsData` reference because it leads
-   * to rows re-render and thus corrupting the basic table.
-   * Istead observe if `hosts` instance changes after render and modify
-   * entries of `_hostsData`.
-   */
-  observeHostsData: observer('hosts', function updateExternalHostsData() {
-    const {
-      _hostsData,
-      hosts,
-    } = this.getProperties('_hostsData', 'hosts');
-    const hostsDataArray = _hostsData.toArray();
-    for (const hostname in hosts) {
-      const host = _.find(hostsDataArray, h => get(h, 'hostname') === hostname);
-      if (host) {
-        set(host, 'ip', hosts[hostname]);
-      }
-    }
+  observeHosts: observer('hostsIps', 'hostsInfo', function observeHosts() {
+    this.set('_hostsData', A(_.sortBy(
+      this.hostsInfo
+      .filter(({ clusterWorker, oneS3 }) => clusterWorker || oneS3)
+      .map(({ hostname, clusterWorker, oneS3 }) => ({
+        hostname: hostname,
+        ip: this.hostsIps[hostname] ?? '',
+        tags: [
+          (clusterWorker && this.t('tags.clusterWorker')),
+          (oneS3 && this.t('tags.oneS3')),
+        ].filter(Boolean),
+      })),
+      ['hostname']
+    )));
   }),
 
   init() {
