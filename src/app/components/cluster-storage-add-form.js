@@ -104,8 +104,8 @@ const storagePathTypeConfig = {
   cephrados: { defaultValue: 'flat', disabled: true },
   s3: { defaultValue: 'flat' },
   swift: { defaultValue: 'flat' },
-  xrootd: { defaultValue: 'canonical' },
-  http: { defaultValue: 'canonical' },
+  xrootd: { defaultValue: 'canonical', disabled: true },
+  http: { defaultValue: 'canonical', disabled: true },
   webdav: { defaultValue: 'canonical', disabled: true },
   nfs: { defaultValue: 'canonical', disabled: true },
 };

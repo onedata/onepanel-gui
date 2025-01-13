@@ -40,11 +40,11 @@ export default {
     tip: 'Defines the maximum upload size for a single PUT or PATCH request. If set to 0, assumes that the WebDAV server has no upload limit.',
   },
   fileMode: {
-    name: 'File mode',
+    name: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
   },
   dirMode: {
-    name: 'Directory mode',
+    name: 'Imported directory mode',
     tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
   },
   timeout: { name: 'Timeout [ms]' },

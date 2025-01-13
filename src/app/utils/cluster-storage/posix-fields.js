@@ -1,5 +1,5 @@
 export default [
-  { name: 'mountPoint', type: 'text' },
+  { name: 'mountPoint', type: 'text', example: '/mnt/volume0' },
   {
     name: 'rootUid',
     type: 'number',
