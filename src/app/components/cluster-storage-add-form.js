@@ -102,7 +102,7 @@ const storagePathTypeConfig = {
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
-  s3: { defaultValue: 'flat' },
+  s3: {},
   swift: { defaultValue: 'flat' },
   xrootd: { defaultValue: 'canonical', disabled: true },
   http: { defaultValue: 'canonical', disabled: true },
@@ -475,6 +475,7 @@ export default OneForm.extend(I18n, Validations, {
       this.autoSettingsImportedStorage();
       this.autoSettingsReadonly();
       this.autoSettingsBlockSize();
+      this.autoSettingsMaxCanonicalObjectSize();
     }
   ),
 
@@ -486,6 +487,8 @@ export default OneForm.extend(I18n, Validations, {
     'formValues.generic_editor.importedStorage',
     function importedStorageObserver() {
       this.autoSettingsReadonly();
+      this.autoSettingsSimulatedFilesystem();
+      this.autoSettingsImportedItemMode();
     }
   ),
 
@@ -505,6 +508,15 @@ export default OneForm.extend(I18n, Validations, {
       editedQosParams: undefined,
     });
   }),
+
+  credentialsTypeObserver: observer(
+    'formValues.xrootd.credentialsType',
+    'formValues.webdav.credentialsType',
+    'formValues.http.credentialsType',
+    function credentialsObserver() {
+      this.autoSettingsCredentials();
+    }
+  ),
 
   init() {
     this._super(...arguments);
@@ -558,6 +570,7 @@ export default OneForm.extend(I18n, Validations, {
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
     this.readonlyObserver();
+    this.credentialsTypeObserver();
 
     // Select default (first) storage type if it is still empty
     if (!this.get('selectedStorageType')) {
@@ -591,9 +604,9 @@ export default OneForm.extend(I18n, Validations, {
 
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    if (currentStorageType === 's3' && storagePathType === 'flat') {
+    if (currentStorageType === 's3') {
       disabled = true;
-      value = false;
+      value = storagePathType === 'canonical';
     }
 
     if (disabled) {
@@ -700,6 +713,78 @@ export default OneForm.extend(I18n, Validations, {
         storagePathType === 'canonical' ? 0 : null,
       );
     }
+  },
+
+  autoSettingsCredentials() {
+    if (this.currentStorageType !== 'xrootd' &&
+      this.currentStorageType !== 'webdav' &&
+      this.currentStorageType !== 'http'
+    ) {
+      return;
+    }
+
+    const credentialsType = this.get(
+      `formValues.${this.currentStorageType}.credentialsType`
+    );
+    const credentials = this.getField(`${this.currentStorageType}.credentials`);
+    set(credentials, 'disabled',
+      credentialsType === 'none' || credentialsType === 'token'
+    );
+
+    if (this.currentStorageType === 'webdav' || this.currentStorageType === 'http') {
+      const onedataAccessToken = this.getField(
+        `${this.currentStorageType}.onedataAccessToken`
+      );
+      set(onedataAccessToken, 'disabled', credentialsType !== 'token');
+
+      const authorizationHeader = this.getField(
+        `${this.currentStorageType}.authorizationHeader`
+      );
+      set(authorizationHeader, 'disabled', credentialsType !== 'token');
+    }
+    if (this.currentStorageType === 'webdav') {
+      const oauth2IdP = this.getField(`${this.currentStorageType}.oauth2IdP`);
+      set(oauth2IdP, 'disabled', credentialsType !== 'oauth2');
+    }
+  },
+
+  autoSettingsSimulatedFilesystem() {
+    if (this.currentStorageType !== 'nulldevice') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
+    const growSpeedFieldPath = 'nulldevice.simulatedFilesystemGrowSpeed';
+    const growSpeedField = this.getField(growSpeedFieldPath);
+    const paramsFieldPath = 'nulldevice.simulatedFilesystemParameters';
+    const paramsField = this.getField(paramsFieldPath);
+    set(growSpeedField, 'disabled', !importedStorage);
+    set(paramsField, 'disabled', !importedStorage);
+  },
+
+  autoSettingsMaxCanonicalObjectSize() {
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+    const fieldPath = 's3.maximumCanonicalObjectSize';
+    const field = this.getField(fieldPath);
+    set(field, 'disabled', storagePathType === 'flat');
+  },
+
+  autoSettingsImportedItemMode() {
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
+    const fileModeFieldPath = 's3.fileMode';
+    const fileModeField = this.getField(fileModeFieldPath);
+    const dirModeFieldPath = 's3.dirMode';
+    const dirModeField = this.getField(dirModeFieldPath);
+    set(fileModeField, 'disabled', !importedStorage);
+    set(dirModeField, 'disabled', !importedStorage);
   },
 
   autoSettingsAll() {

@@ -5,7 +5,7 @@ export default {
   },
   accessKey: { name: 'Admin access key' },
   secretKey: { name: 'Admin secret key' },
-  hostname: { name: 'Hostname' },
+  hostname: { name: 'Endpoint' },
   bucketName: { name: 'Bucket name' },
   verifyServerCertificate: {
     name: 'Verify server cert.',
@@ -24,11 +24,11 @@ export default {
     tip: 'Defines the maximum size for objects, which can be modified on the S3 storage in "canonical" path mode. In this mode, entire file needs to be downloaded to memory, modified and uploaded back, which is impractical for large files (default 64 MiB).',
   },
   fileMode: {
-    name: 'File mode',
+    name: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
   },
   dirMode: {
-    name: 'Directory mode',
+    name: 'Imported directory mode',
     tip: 'Defines the directory mode which directories imported from S3 storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
   },
   timeout: { name: 'Timeout [ms]' },

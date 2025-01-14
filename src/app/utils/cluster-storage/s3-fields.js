@@ -8,7 +8,7 @@ export default [{
 }, {
   name: 'hostname',
   type: 'text',
-  defaultValue: 'https://s3.amazonaws.com',
+  example: 'https://s3.amazonaws.com',
 }, {
   name: 'bucketName',
   type: 'text',

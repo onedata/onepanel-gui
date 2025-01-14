@@ -22,7 +22,6 @@ export default [{
       { value: 'none', label: 'none' },
       { value: 'basic', label: 'basic' },
       { value: 'token', label: 'token' },
-      { value: 'oauth2', label: 'OAuth2' },
     ],
     tip: true,
   },
@@ -31,13 +30,6 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-  },
-  {
-    name: 'oauth2IdP',
-    type: 'text',
-    tip: true,
-    optional: true,
-    notEditable: true,
   },
   {
     name: 'onedataAccessToken',
