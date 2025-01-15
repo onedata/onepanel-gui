@@ -703,9 +703,8 @@ export default OneForm.extend(I18n, Validations, {
 
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    const blockSize = this.get(`formValues.${prefix}.blockSize`);
+    const blockSize = this.get('formValues.s3.blockSize');
     const fieldPath = 's3.blockSize';
-
     if (storagePathType === 'canonical' || blockSize === 0) {
       this.send(
         'inputChanged',
@@ -713,6 +712,7 @@ export default OneForm.extend(I18n, Validations, {
         storagePathType === 'canonical' ? 0 : null,
       );
     }
+    set(this.getField(fieldPath), 'disabled', storagePathType === 'canonical');
   },
 
   autoSettingsCredentials() {
