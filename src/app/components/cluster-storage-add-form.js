@@ -510,10 +510,8 @@ export default OneForm.extend(I18n, Validations, {
   }),
 
   credentialsTypeObserver: observer(
-    'formValues.xrootd.credentialsType',
-    'formValues.webdav.credentialsType',
-    'formValues.http.credentialsType',
-    function credentialsObserver() {
+    'formValues.{xrootd,webdav,http}.credentialsType',
+    function credentialsTypeObserver() {
       this.autoSettingsCredentials();
     }
   ),
