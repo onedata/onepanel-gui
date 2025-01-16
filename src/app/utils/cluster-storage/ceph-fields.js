@@ -1,9 +1,9 @@
 export default [
   { name: 'username', type: 'text' },
   { name: 'key', type: 'password' },
-  { name: 'monitorHostname', type: 'text', example: 'monitor.example.com' },
-  { name: 'clusterName', type: 'text' },
-  { name: 'poolName', type: 'text' },
+  { name: 'monitorHostname', type: 'text', example: 'monitor.example.com', tip: true },
+  { name: 'clusterName', type: 'text', tip: true },
+  { name: 'poolName', type: 'text', tip: true },
   {
     name: 'timeout',
     type: 'number',

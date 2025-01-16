@@ -5,7 +5,10 @@ export default {
   },
   accessKey: { name: 'Admin access key' },
   secretKey: { name: 'Admin secret key' },
-  hostname: { name: 'Endpoint' },
+  hostname: {
+    name: 'Endpoint URL',
+    tip: 'The URL of the S3 service endpoint, including the scheme (http or https) and optionally a port (after a colon).',
+  },
   bucketName: { name: 'Bucket name' },
   verifyServerCertificate: {
     name: 'Verify server cert.',
@@ -17,7 +20,7 @@ export default {
   },
   blockSize: {
     name: 'Block size [bytes]',
-    tip: 'Storage block size in bytes. In case the block size is "0" and "canonical" path type is selected, each file is stored in a single S3 object. This value must be set to "0" to enable data import from an existing S3 bucket.',
+    tip: 'Storage block size in bytes i.e. the maximum object size. Files larger than one block will stripped and stored in a series of objects. Must be more than zero for non-imported storage. To enable import from an S3 storage, block size must be set to zero, together with "canonical" path type and the read-only mode.',
   },
   maximumCanonicalObjectSize: {
     name: 'Maximum canonical object size',

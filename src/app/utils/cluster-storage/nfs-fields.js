@@ -36,6 +36,7 @@ export default [{
     name: 'dirCache',
     type: 'checkbox',
     defaultValue: true,
+    tip: true,
   },
   {
     name: 'readAhead',
