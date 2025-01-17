@@ -10,7 +10,7 @@ export default [{
   type: 'text',
   example: 'https://s3.example.com',
   regex: /^https?:\/\/.*/,
-  regexMessage: 'This field should be an URL with http or https scheme',
+  regexMessage: 'This field should be a URL with http or https scheme',
   tip: true,
 }, {
   name: 'bucketName',

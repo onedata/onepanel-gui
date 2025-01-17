@@ -714,34 +714,37 @@ export default OneForm.extend(I18n, Validations, {
   },
 
   autoSettingsCredentials() {
-    if (this.currentStorageType !== 'xrootd' &&
-      this.currentStorageType !== 'webdav' &&
-      this.currentStorageType !== 'http'
+    const currentStorageType = this.currentStorageType;
+    if (currentStorageType !== 'xrootd' &&
+      currentStorageType !== 'webdav' &&
+      currentStorageType !== 'http'
     ) {
       return;
     }
 
     const credentialsType = this.get(
-      `formValues.${this.currentStorageType}.credentialsType`
+      `formValues.${currentStorageType}.credentialsType`
     );
-    const credentials = this.getField(`${this.currentStorageType}.credentials`);
-    set(credentials, 'disabled',
+    const credentials = this.getField(`${currentStorageType}.credentials`);
+    set(
+      credentials,
+      'disabled',
       credentialsType === 'none' || credentialsType === 'token'
     );
 
-    if (this.currentStorageType === 'webdav' || this.currentStorageType === 'http') {
+    if (currentStorageType === 'webdav' || currentStorageType === 'http') {
       const onedataAccessToken = this.getField(
-        `${this.currentStorageType}.onedataAccessToken`
+        `${currentStorageType}.onedataAccessToken`
       );
       set(onedataAccessToken, 'disabled', credentialsType !== 'token');
 
       const authorizationHeader = this.getField(
-        `${this.currentStorageType}.authorizationHeader`
+        `${currentStorageType}.authorizationHeader`
       );
       set(authorizationHeader, 'disabled', credentialsType !== 'token');
     }
-    if (this.currentStorageType === 'webdav') {
-      const oauth2IdP = this.getField(`${this.currentStorageType}.oauth2IdP`);
+    if (currentStorageType === 'webdav') {
+      const oauth2IdP = this.getField(`${currentStorageType}.oauth2IdP`);
       set(oauth2IdP, 'disabled', credentialsType !== 'oauth2');
     }
   },
@@ -752,10 +755,8 @@ export default OneForm.extend(I18n, Validations, {
     }
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
-    const growSpeedFieldPath = 'nulldevice.simulatedFilesystemGrowSpeed';
-    const growSpeedField = this.getField(growSpeedFieldPath);
-    const paramsFieldPath = 'nulldevice.simulatedFilesystemParameters';
-    const paramsField = this.getField(paramsFieldPath);
+    const growSpeedField = this.getField('nulldevice.simulatedFilesystemGrowSpeed');
+    const paramsField = this.getField('nulldevice.simulatedFilesystemParameters');
     set(growSpeedField, 'disabled', !importedStorage);
     set(paramsField, 'disabled', !importedStorage);
   },
@@ -766,8 +767,7 @@ export default OneForm.extend(I18n, Validations, {
     }
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    const fieldPath = 's3.maximumCanonicalObjectSize';
-    const field = this.getField(fieldPath);
+    const field = this.getField('s3.maximumCanonicalObjectSize');
     set(field, 'disabled', storagePathType === 'flat');
   },
 
@@ -777,10 +777,8 @@ export default OneForm.extend(I18n, Validations, {
     }
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
-    const fileModeFieldPath = 's3.fileMode';
-    const fileModeField = this.getField(fileModeFieldPath);
-    const dirModeFieldPath = 's3.dirMode';
-    const dirModeField = this.getField(dirModeFieldPath);
+    const fileModeField = this.getField('s3.fileMode');
+    const dirModeField = this.getField('s3.dirMode');
     set(fileModeField, 'disabled', !importedStorage);
     set(dirModeField, 'disabled', !importedStorage);
   },
