@@ -1051,7 +1051,16 @@ export default OneForm.extend(I18n, Validations, {
     }
     // load default values for luma fields in "create" mode
     if (isVisible && !inEditionMode) {
+      const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+      const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+
       this.resetFormValues(['luma']);
+
+      this.send(
+        'inputChanged',
+        `${prefix}.storagePathType`,
+        storagePathType,
+      );
     }
   },
 
