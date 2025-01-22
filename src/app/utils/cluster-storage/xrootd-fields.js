@@ -5,7 +5,7 @@ export default [{
     tip: true,
     type: 'text',
     regex: /^(https?|root):\/\/.*/,
-    regexMessage: 'This field should be an URL with http, https or root scheme',
+    regexMessage: 'This field should be a URL with http, https or root scheme',
     example: 'root://192.168.0.1//data',
   }, {
     name: 'fileModeMask',

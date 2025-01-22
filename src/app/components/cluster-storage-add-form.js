@@ -102,10 +102,10 @@ const storagePathTypeConfig = {
   nulldevice: { defaultValue: 'canonical' },
   ceph: { defaultValue: 'flat' },
   cephrados: { defaultValue: 'flat', disabled: true },
-  s3: { defaultValue: 'flat' },
+  s3: {},
   swift: { defaultValue: 'flat' },
-  xrootd: { defaultValue: 'canonical' },
-  http: { defaultValue: 'canonical' },
+  xrootd: { defaultValue: 'canonical', disabled: true },
+  http: { defaultValue: 'canonical', disabled: true },
   webdav: { defaultValue: 'canonical', disabled: true },
   nfs: { defaultValue: 'canonical', disabled: true },
 };
@@ -248,6 +248,16 @@ export default OneForm.extend(I18n, Validations, {
    * @type {Object}
    */
   selectedStorageType: undefined,
+
+  /**
+   * @type {string}
+   */
+  lastCredentialsType: undefined,
+
+  /**
+   * @type {string}
+   */
+  lastStorageTypeWithCredentials: undefined,
 
   /**
    * @type {String}
@@ -475,6 +485,7 @@ export default OneForm.extend(I18n, Validations, {
       this.autoSettingsImportedStorage();
       this.autoSettingsReadonly();
       this.autoSettingsBlockSize();
+      this.autoSettingsMaxCanonicalObjectSize();
     }
   ),
 
@@ -486,6 +497,8 @@ export default OneForm.extend(I18n, Validations, {
     'formValues.generic_editor.importedStorage',
     function importedStorageObserver() {
       this.autoSettingsReadonly();
+      this.autoSettingsSimulatedFilesystem();
+      this.autoSettingsImportedItemMode();
     }
   ),
 
@@ -505,6 +518,13 @@ export default OneForm.extend(I18n, Validations, {
       editedQosParams: undefined,
     });
   }),
+
+  credentialsTypeObserver: observer(
+    'formValues.{xrootd,webdav,http}.credentialsType',
+    function credentialsTypeObserver() {
+      this.autoSettingsCredentials();
+    }
+  ),
 
   init() {
     this._super(...arguments);
@@ -558,6 +578,7 @@ export default OneForm.extend(I18n, Validations, {
     this.storageProvidesSupportObserver();
     this.importedStorageObserver();
     this.readonlyObserver();
+    this.credentialsTypeObserver();
 
     // Select default (first) storage type if it is still empty
     if (!this.get('selectedStorageType')) {
@@ -591,9 +612,9 @@ export default OneForm.extend(I18n, Validations, {
 
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    if (currentStorageType === 's3' && storagePathType === 'flat') {
+    if (currentStorageType === 's3') {
       disabled = true;
-      value = false;
+      value = storagePathType === 'canonical';
     }
 
     if (disabled) {
@@ -690,14 +711,163 @@ export default OneForm.extend(I18n, Validations, {
 
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    const blockSize = this.get(`formValues.${prefix}.blockSize`);
+    const blockSize = this.get('formValues.s3.blockSize');
     const fieldPath = 's3.blockSize';
-
     if (storagePathType === 'canonical' || blockSize === 0) {
       this.send(
         'inputChanged',
         fieldPath,
         storagePathType === 'canonical' ? 0 : null,
+      );
+    }
+    set(this.getField(fieldPath), 'disabled', storagePathType === 'canonical');
+  },
+
+  autoSettingsCredentials() {
+    const currentStorageType = this.currentStorageType;
+    if (currentStorageType !== 'xrootd' &&
+      currentStorageType !== 'webdav' &&
+      currentStorageType !== 'http'
+    ) {
+      return;
+    }
+
+    const credentialsType = this.get(
+      `formValues.${currentStorageType}.credentialsType`
+    );
+    if (
+      !credentialsType ||
+      this.lastCredentialsType === credentialsType &&
+      this.lastStorageTypeWithCredentials === currentStorageType
+    ) {
+      return;
+    }
+    this.setProperties({
+      lastCredentialsType: credentialsType,
+      lastStorageTypeWithCredentials: currentStorageType,
+    });
+    const credentials = this.getField(`${currentStorageType}.credentials`);
+    const isCredentialsDisabled =
+      credentialsType === 'none' ||
+      credentialsType === 'token';
+    set(
+      credentials,
+      'disabled',
+      isCredentialsDisabled
+    );
+    if (isCredentialsDisabled) {
+      this.send(
+        'inputChanged',
+        `${currentStorageType}.credentials`,
+        null,
+      );
+    }
+
+    if (currentStorageType === 'webdav' || currentStorageType === 'http') {
+      const onedataAccessToken = this.getField(
+        `${currentStorageType}.onedataAccessToken`
+      );
+      const isNonTokenCredentialsType = credentialsType !== 'token';
+
+      set(onedataAccessToken, 'disabled', isNonTokenCredentialsType);
+
+      const authorizationHeader = this.getField(
+        `${currentStorageType}.authorizationHeader`
+      );
+      set(authorizationHeader, 'disabled', isNonTokenCredentialsType);
+
+      if (isNonTokenCredentialsType) {
+        this.send(
+          'inputChanged',
+          `${currentStorageType}.onedataAccessToken`,
+          null,
+        );
+        this.send(
+          'inputChanged',
+          `${currentStorageType}.authorizationHeader`,
+          null,
+        );
+      }
+    }
+    if (currentStorageType === 'webdav') {
+      const oauth2IdP = this.getField(`${currentStorageType}.oauth2IdP`);
+      const isOauth2IdPDisabled = credentialsType !== 'oauth2';
+      set(oauth2IdP, 'disabled', isOauth2IdPDisabled);
+
+      if (isOauth2IdPDisabled) {
+        this.send(
+          'inputChanged',
+          `${currentStorageType}.oauth2IdP`,
+          null,
+        );
+      }
+    }
+  },
+
+  autoSettingsSimulatedFilesystem() {
+    if (this.currentStorageType !== 'nulldevice') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
+    const growSpeedField = this.getField('nulldevice.simulatedFilesystemGrowSpeed');
+    const paramsField = this.getField('nulldevice.simulatedFilesystemParameters');
+    const areFieldsDisabled = !importedStorage;
+    set(growSpeedField, 'disabled', areFieldsDisabled);
+    set(paramsField, 'disabled', areFieldsDisabled);
+    if (areFieldsDisabled) {
+      this.send(
+        'inputChanged',
+        'nulldevice.simulatedFilesystemGrowSpeed',
+        null,
+      );
+      this.send(
+        'inputChanged',
+        'nulldevice.simulatedFilesystemParameters',
+        null,
+      );
+    }
+  },
+
+  autoSettingsMaxCanonicalObjectSize() {
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+    const field = this.getField('s3.maximumCanonicalObjectSize');
+    const isMaximumCanonicalObjectSizeDisabled = storagePathType === 'flat';
+    set(field, 'disabled', isMaximumCanonicalObjectSizeDisabled);
+    if (isMaximumCanonicalObjectSizeDisabled) {
+      this.send(
+        'inputChanged',
+        's3.maximumCanonicalObjectSize',
+        null,
+      );
+    }
+  },
+
+  autoSettingsImportedItemMode() {
+    if (this.currentStorageType !== 's3') {
+      return;
+    }
+    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
+    const fileModeField = this.getField('s3.fileMode');
+    const dirModeField = this.getField('s3.dirMode');
+    const areFieldsDisabled = !importedStorage;
+    set(fileModeField, 'disabled', areFieldsDisabled);
+    set(dirModeField, 'disabled', areFieldsDisabled);
+    if (areFieldsDisabled) {
+      this.send(
+        'inputChanged',
+        's3.fileMode',
+        null,
+      );
+      this.send(
+        'inputChanged',
+        's3.dirMode',
+        null,
       );
     }
   },
@@ -970,7 +1140,16 @@ export default OneForm.extend(I18n, Validations, {
     }
     // load default values for luma fields in "create" mode
     if (isVisible && !inEditionMode) {
+      const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
+      const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+
       this.resetFormValues(['luma']);
+
+      this.send(
+        'inputChanged',
+        `${prefix}.storagePathType`,
+        storagePathType,
+      );
     }
   },
 

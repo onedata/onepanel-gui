@@ -5,7 +5,7 @@ export default [{
     type: 'text',
     tip: true,
     regex: /^https?:\/\/.*/,
-    regexMessage: 'This field should be an URL with http or https scheme',
+    regexMessage: 'This field should be a URL with http or https scheme',
     example: 'https://192.168.1.2:8080/webdav',
   },
   {
@@ -64,6 +64,7 @@ export default [{
       { value: 'moddav', label: 'ModDAV' },
     ],
     tip: true,
+    message: 'Some option must be selected',
   },
   {
     name: 'connectionPoolSize',

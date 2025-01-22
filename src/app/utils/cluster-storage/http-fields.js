@@ -5,7 +5,7 @@ export default [{
     type: 'text',
     tip: true,
     regex: /^https?:\/\/.*/,
-    regexMessage: 'This field should be an URL with http or https scheme',
+    regexMessage: 'This field should be a URL with http or https scheme',
     example: 'https://192.168.1.2:8080/storage',
   },
   {
@@ -22,7 +22,6 @@ export default [{
       { value: 'none', label: 'none' },
       { value: 'basic', label: 'basic' },
       { value: 'token', label: 'token' },
-      { value: 'oauth2', label: 'OAuth2' },
     ],
     tip: true,
   },
@@ -31,13 +30,6 @@ export default [{
     type: 'text',
     tip: true,
     optional: true,
-  },
-  {
-    name: 'oauth2IdP',
-    type: 'text',
-    tip: true,
-    optional: true,
-    notEditable: true,
   },
   {
     name: 'onedataAccessToken',

@@ -17,6 +17,7 @@ export default {
   },
   dirCache: {
     name: 'Directory caching',
+    tip: 'Enables caching of directory metadata on the client side to improve performance by reducing requests to the NFS server. May cause temporary inconsistencies if the directory content changes on the server.',
     // NOTE: there is no good explanantion of "dircache" parameter from
     // https://github.com/sahlberg/libnfs — the tooltip is no added until someone finds
     // a good one

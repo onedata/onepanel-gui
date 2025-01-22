@@ -8,7 +8,10 @@ export default [{
 }, {
   name: 'hostname',
   type: 'text',
-  defaultValue: 'https://s3.amazonaws.com',
+  example: 'https://s3.example.com',
+  regex: /^https?:\/\/.*/,
+  regexMessage: 'This field should be a URL with http or https scheme',
+  tip: true,
 }, {
   name: 'bucketName',
   type: 'text',

@@ -11,6 +11,7 @@ export default [
     ],
     tip: true,
     notEditable: true,
+    message: 'Some option must be selected',
   },
   {
     name: 'importedStorage',

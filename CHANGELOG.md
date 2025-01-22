@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
 * VFS-11439 Added support for OneS3; added support for multiple DNS names in web certificate
 * VFS-12470 Changed resource resolving in routes according to general routing changes
 * VFS-12137 Added default placeholders, changed tooltips and few more changes in storage form
