@@ -252,7 +252,7 @@ export default OneForm.extend(I18n, Validations, {
   /**
    * @type {string}
    */
-  lastCredentialType: undefined,
+  lastCredentialsType: undefined,
 
   /**
    * @type {string}
@@ -735,22 +735,27 @@ export default OneForm.extend(I18n, Validations, {
     const credentialsType = this.get(
       `formValues.${currentStorageType}.credentialsType`
     );
-    if (!credentialsType ||
-      this.lastCredentialType === credentialsType &&
+    if (
+      !credentialsType ||
+      this.lastCredentialsType === credentialsType &&
       this.lastStorageTypeWithCredentials === currentStorageType
     ) {
       return;
     }
-    this.set('lastCredentialType', credentialsType);
-    this.set('lastStorageTypeWithCredentials', currentStorageType);
-
+    this.setProperties({
+      lastCredentialsType: credentialsType,
+      lastStorageTypeWithCredentials: currentStorageType,
+    });
     const credentials = this.getField(`${currentStorageType}.credentials`);
+    const isCredentialsDisabled =
+      credentialsType === 'none' ||
+      credentialsType === 'token';
     set(
       credentials,
       'disabled',
-      credentialsType === 'none' || credentialsType === 'token'
+      isCredentialsDisabled
     );
-    if (credentialsType === 'none' || credentialsType === 'token') {
+    if (isCredentialsDisabled) {
       this.send(
         'inputChanged',
         `${currentStorageType}.credentials`,
@@ -762,14 +767,16 @@ export default OneForm.extend(I18n, Validations, {
       const onedataAccessToken = this.getField(
         `${currentStorageType}.onedataAccessToken`
       );
-      set(onedataAccessToken, 'disabled', credentialsType !== 'token');
+      const isNonTokenCredentialsType = credentialsType !== 'token';
+
+      set(onedataAccessToken, 'disabled', isNonTokenCredentialsType);
 
       const authorizationHeader = this.getField(
         `${currentStorageType}.authorizationHeader`
       );
-      set(authorizationHeader, 'disabled', credentialsType !== 'token');
+      set(authorizationHeader, 'disabled', isNonTokenCredentialsType);
 
-      if (credentialsType !== 'token') {
+      if (isNonTokenCredentialsType) {
         this.send(
           'inputChanged',
           `${currentStorageType}.onedataAccessToken`,
@@ -784,9 +791,10 @@ export default OneForm.extend(I18n, Validations, {
     }
     if (currentStorageType === 'webdav') {
       const oauth2IdP = this.getField(`${currentStorageType}.oauth2IdP`);
-      set(oauth2IdP, 'disabled', credentialsType !== 'oauth2');
+      const isOauth2IdPDisabled = credentialsType !== 'oauth2';
+      set(oauth2IdP, 'disabled', isOauth2IdPDisabled);
 
-      if (credentialsType !== 'oauth2') {
+      if (isOauth2IdPDisabled) {
         this.send(
           'inputChanged',
           `${currentStorageType}.oauth2IdP`,
@@ -804,9 +812,10 @@ export default OneForm.extend(I18n, Validations, {
     const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
     const growSpeedField = this.getField('nulldevice.simulatedFilesystemGrowSpeed');
     const paramsField = this.getField('nulldevice.simulatedFilesystemParameters');
-    set(growSpeedField, 'disabled', !importedStorage);
-    set(paramsField, 'disabled', !importedStorage);
-    if (!importedStorage) {
+    const areFieldsDisabled = !importedStorage;
+    set(growSpeedField, 'disabled', areFieldsDisabled);
+    set(paramsField, 'disabled', areFieldsDisabled);
+    if (areFieldsDisabled) {
       this.send(
         'inputChanged',
         'nulldevice.simulatedFilesystemGrowSpeed',
@@ -827,8 +836,9 @@ export default OneForm.extend(I18n, Validations, {
     const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
     const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
     const field = this.getField('s3.maximumCanonicalObjectSize');
-    set(field, 'disabled', storagePathType === 'flat');
-    if (storagePathType === 'flat') {
+    const isMaximumCanonicalObjectSizeDisabled = storagePathType === 'flat';
+    set(field, 'disabled', isMaximumCanonicalObjectSizeDisabled);
+    if (isMaximumCanonicalObjectSizeDisabled) {
       this.send(
         'inputChanged',
         's3.maximumCanonicalObjectSize',
@@ -845,9 +855,10 @@ export default OneForm.extend(I18n, Validations, {
     const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
     const fileModeField = this.getField('s3.fileMode');
     const dirModeField = this.getField('s3.dirMode');
-    set(fileModeField, 'disabled', !importedStorage);
-    set(dirModeField, 'disabled', !importedStorage);
-    if (!importedStorage) {
+    const areFieldsDisabled = !importedStorage;
+    set(fileModeField, 'disabled', areFieldsDisabled);
+    set(dirModeField, 'disabled', areFieldsDisabled);
+    if (areFieldsDisabled) {
       this.send(
         'inputChanged',
         's3.fileMode',
