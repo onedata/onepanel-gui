@@ -211,7 +211,7 @@ export default Component.extend(I18n, {
       startIndex = reportsArrayIds.indexOf(firstId);
       endIndex = reportsArrayIds.indexOf(lastId, searchEndFrom);
     }
-    reportsArray.setProperties({ startIndex, endIndex });
+    reportsArray.setIndices(startIndex, endIndex);
     safeExec(this, 'set', 'headerVisible', headerVisible);
   },
 
