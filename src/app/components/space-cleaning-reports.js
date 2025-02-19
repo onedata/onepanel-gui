@@ -207,8 +207,8 @@ export default Component.extend(I18n, {
       startIndex = Math.floor(blankStart / rowHeight);
       endIndex = Math.floor(blankEnd / rowHeight);
     } else {
-      const searchEndFrom = firstId === -1 ? 0 : firstId;
       startIndex = reportsArrayIds.indexOf(firstId);
+      const searchEndFrom = startIndex === -1 ? 0 : startIndex;
       endIndex = reportsArrayIds.indexOf(lastId, searchEndFrom);
     }
     reportsArray.setIndices(startIndex, endIndex);
