@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12542 Added custom fingerprint hashes based on file content and current git revision for some assets
 * VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
 * VFS-11439 Added support for OneS3; added support for multiple DNS names in web certificate
 * VFS-12470 Changed resource resolving in routes according to general routing changes
