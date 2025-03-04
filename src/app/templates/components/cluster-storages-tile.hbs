@@ -1,13 +1,14 @@
-{{#one-tile
-  title=(tt this "title")
-  aspect="storages"
-  class="cluster-storages-tile text-center"}}
-  {{#promise-proxy-container proxy=storagesCountProxy}}
+<OneTile
+  @title={{tt this "title"}}
+  @aspect="storages"
+  class="cluster-storages-tile text-center"
+>
+  <PromiseProxyContainer @proxy={{storagesCountProxy}}>
     <div class="circle">
-      {{one-icon icon="support"}}
+      <OneIcon @icon="support" />
       <span class="storages-number {{storagesNumberClass}}">
         {{storagesCountProxy.content}}
       </span>
     </div>
-  {{/promise-proxy-container}}
-{{/one-tile}}
+  </PromiseProxyContainer>
+</OneTile>

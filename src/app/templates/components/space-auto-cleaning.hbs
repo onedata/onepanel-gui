@@ -3,62 +3,61 @@
     <label for="cleaning-enabled">
       {{tt this "enableAutoCleaning"}}
     </label>
-    {{one-label-tip
-      title=(tt this "headerHint")
-      placement="top"
-    }}
-    {{one-way-toggle inputId="cleaning-enabled"
-      checked=isCleanEnabled
-      class=(if (media "isMobile") "pull-right right" "toggle-right-side")
-      spinnerSide=(if (media "isMobile") "left" "right")
-      update=(action "toggleAutoCleaning")}}
+    <OneLabelTip @title={{tt this "headerHint"}} @placement="top" />
+    <OneWayToggle
+      @inputId="cleaning-enabled"
+      @checked={{isCleanEnabled}}
+      class={{if (media "isMobile") "pull-right right" "toggle-right-side"}}
+      @spinnerSide={{if (media "isMobile") "left" "right"}}
+      @update={{action "toggleAutoCleaning"}}
+    />
   </h1>
 </div>
 {{#if isCleanEnabled}}
   <div class="space-cleaning-settings auto-save-settings-row cleaning-settings-row">
     <div class="form-cell cell">
-      {{space-cleaning-conditions-form data=conditionsFormData onSave=(action "fileConditionsChanged")}}
+      <SpaceCleaningConditionsForm
+        @data={{conditionsFormData}}
+        @onSave={{action "fileConditionsChanged"}}
+      />
     </div>
     <div class="bar-cell cell">
       <div class="row content-row no-border no-padding-top">
         <h1 class="cleaning-boundaries-header">
           <label>{{tt this "cleaningBoundaries"}}</label>
-          {{one-label-tip
-            title=(tt this "boundariesHint")
-            placement="top"
-          }}
+          <OneLabelTip @title={{tt this "boundariesHint"}} @placement="top" />
         </h1>
       </div>
       <div class="row loadable-row content-row no-padding-top no-padding-bottom">
-        {{#loading-container
-          isLoading=spaceAutoCleaningStatusUpdater.isInitializing
-          errorReason=spaceAutoCleaningStatusUpdater.error
-          customErrorMessage=(tt this "statusLoadError")
-        }}
+        <LoadingContainer
+          @isLoading={{spaceAutoCleaningStatusUpdater.isInitializing}}
+          @errorReason={{spaceAutoCleaningStatusUpdater.error}}
+          @customErrorMessage={{tt this "statusLoadError"}}
+        >
           <div class="row content-row no-border no-padding-bottom">
-            {{space-cleaning-bar-chart
-              settings=autoCleaningConfiguration
-              spaceSize=spaceSize
-              status=status
-              onChange=(action "barValuesChanged")
-            }}
+            <SpaceCleaningBarChart
+              @settings={{autoCleaningConfiguration}}
+              @spaceSize={{spaceSize}}
+              @status={{status}}
+              @onChange={{action "barValuesChanged"}}
+            />
           </div>
           <div class="row content-row clean-now-row no-border no-padding-top">
             {{#if (and displayStartButton (not (media "isMobile")))}}
-              {{one-label-tip
-                title=(tt this "startCleaningHint")
+              <OneLabelTip
+                @title={{tt this "startCleaningHint"}}
                 class="clean-now-tip"
-                placement="top"
-              }}
+                @placement="top"
+              />
             {{/if}}
-            {{#one-button
-              type=(if displayStartButton "primary" "danger")
-              buttonType="submit"
-              size="sm"
-              onClick=(action (if displayStartButton "startCleaning" "stopCleaning"))
-              class=(if displayStartButton "btn-clean-now" "btn-stop-now")
-              disabled=disableManualCleaningButton
-            }}
+            <OneButton
+              @type={{if displayStartButton "primary" "danger"}}
+              @buttonType="submit"
+              @size="sm"
+              @onClick={{action (if displayStartButton "startCleaning" "stopCleaning")}}
+              class={{if displayStartButton "btn-clean-now" "btn-stop-now"}}
+              @disabled={{disableManualCleaningButton}}
+            >
               {{#if disableStartButton}}
                 {{tt this "startedCleaning"}}
               {{else}}
@@ -68,9 +67,9 @@
                   {{tt this (if displayStartButton "startCleaning" "stopCleaning")}}
                 {{/if}}
               {{/if}}
-            {{/one-button}}
+            </OneButton>
           </div>
-        {{/loading-container}}
+        </LoadingContainer>
       </div>
     </div>
   </div>
@@ -78,17 +77,11 @@
     <div class="row content-row no-border">
       <h1>
         <label>{{t "components.spaceCleaningReports.cleaningReports"}}</label>
-        {{one-label-tip
-          title=(tt this "reportsHint")
-          placement="top"
-        }}
+        <OneLabelTip @title={{tt this "reportsHint"}} @placement="top" />
       </h1>
     </div>
     <div class="row space-cleaning-reports-row">
-      {{space-cleaning-reports
-        spaceId=spaceId
-        isCleanEnabled=isCleanEnabled
-      }}
+      <SpaceCleaningReports @spaceId={{spaceId}} @isCleanEnabled={{isCleanEnabled}} />
     </div>
   </div>
 {{/if}}

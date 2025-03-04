@@ -1,6 +1,10 @@
-{{#bs-form submitOnEnter=false class=(concat "form-horizontal row " (if (eq mode "show") "form-static" "")) as |form|}}
+<BsForm
+  @submitOnEnter={{false}}
+  class={{concat "form-horizontal row " (if (eq mode "show") "form-static" "")}}
+  as |form|
+>
   {{#if (eq mode "create")}}
-    {{#form.group}}
+    <form.group>
       <label class={{concat "control-label " layoutConfig.formLabelColumns}}>{{tt this "storageType"}}:</label>
       <div class={{concat-classes layoutConfig.formInputColumns "storage-type-select-group"}}>
         <OneDropdown
@@ -14,40 +18,41 @@
           {{storageType.name}}
         </OneDropdown>
       </div>
-    {{/form.group}}
+    </form.group>
   {{/if}}
 
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-    layoutConfig=layoutConfig
-  }}
+  <OneFormFields
+    @bsForm={{form}}
+    @fields={{currentFields}}
+    @formValues={{formValues}}
+    @inputChanged={{action "inputChanged"}}
+    @onFocusOut={{action "focusOut"}}
+    @layoutConfig={{layoutConfig}}
+  />
   {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
-    {{qos-params-editor
-      showHeader=true
-      mode=mode
-      qosParams=storage.qosParameters
-      readonlyKeys=(array "storageId" "providerId")
-      isFormOpened=isFormOpened
-      class=(concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static"))
-      onChange=(action "qosParamsChanged")
-      layoutConfig=layoutConfig}}
+    <QosParamsEditor
+      @showHeader={{true}}
+      @mode={{mode}}
+      @qosParams={{storage.qosParameters}}
+      @readonlyKeys={{array "storageId" "providerId"}}
+      @isFormOpened={{isFormOpened}}
+      class={{concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static")}}
+      @onChange={{action "qosParamsChanged"}}
+      @layoutConfig={{layoutConfig}}
+    />
   {{/unless}}
   {{#unless (eq mode "show")}}
     <div class="form-group submit-group col-xs-12">
       <div class="row">
         <div class="{{layoutConfig.formSubmitColumns}}">
-          {{#one-button
-            type="primary"
-            buttonType="submit"
-            disabled=(not isValid)
-            onClick=(action "submit")
-          }}
+          <OneButton
+            @type="primary"
+            @buttonType="submit"
+            @disabled={{not isValid}}
+            @onClick={{action "submit"}}
+          >
             {{tt this (if inEditionMode "save" "add")}}
-          {{/one-button}}
+          </OneButton>
           {{#if inEditionMode}}
             <button
               class="btn btn-warning cancel-storage-form-btn"
@@ -61,4 +66,4 @@
       </div>
     </div>
   {{/unless}}
-{{/bs-form}}
+</BsForm>

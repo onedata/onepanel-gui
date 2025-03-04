@@ -2,22 +2,22 @@
   <h1>{{tt this "header"}}
     <div class="btn-toolbar">
       {{#if (not _redirectPage)}}
-        {{#one-button
-          type="primary"
-          buttonType="submit"
-          size="sm"
-          class=(concat "btn-cert-next " btnClass)
-          onClick=(action "proceed")
-        }}
-          <span>{{btnLabel}}</span>{{one-icon icon="arrow-right"}}
-        {{/one-button}}
+        <OneButton
+          @type="primary"
+          @buttonType="submit"
+          @size="sm"
+          class={{concat "btn-cert-next " btnClass}}
+          @onClick={{action "proceed"}}
+        >
+          <span>{{btnLabel}}</span><OneIcon @icon="arrow-right" />
+        </OneButton>
       {{/if}}
     </div>
   </h1>
 </div>
 
 <div class="row content-row no-border">
-  {{#promise-proxy-container proxy=webCertProxy}}
+  <PromiseProxyContainer @proxy={{webCertProxy}}>
     <p>
       {{tt this (concat "text.intro." onepanelServiceType)}}
       {{tt this "text.infoP1"}}
@@ -27,23 +27,23 @@
       (<a href="https://letsencrypt.org/repository">https://letsencrypt.org/repository</a>).
       {{tt this "text.infoP22"}}
     </p>
-  {{/promise-proxy-container}}
+  </PromiseProxyContainer>
 </div>
 
 <div class="row">
-  {{#bs-form
-    submitOnEnter=false
+  <BsForm
+    @submitOnEnter={{false}}
     class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
     as |form|
-  }}
-    {{one-form-fields
-      bsForm=form
-      fields=formFields
-      formValues=formValues
-      inputChanged=(action "changeFormValue")
-      disabled=isWorking
-    }}
-  {{/bs-form}}
+  >
+    <OneFormFields
+      @bsForm={{form}}
+      @fields={{formFields}}
+      @formValues={{formValues}}
+      @inputChanged={{action "changeFormValue"}}
+      @disabled={{isWorking}}
+    />
+  </BsForm>
 </div>
 
 {{#if letsEncrypt}}
@@ -53,11 +53,8 @@
 {{else}}
   <div class="alert alert-warning fade in">
     {{tt this "manualWarning"}}
-    {{one-doc-see-more
-      linkName=(tt this "certDocsLink")
-      topic="web-certificate"
-    }}
+    <OneDocSeeMore @linkName={{tt this "certDocsLink"}} @topic="web-certificate" />
   </div>
 {{/if}}
 
-{{modal-redirect open=_redirectPage}}
+<ModalRedirect @open={{_redirectPage}} />

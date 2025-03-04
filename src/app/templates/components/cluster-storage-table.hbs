@@ -1,30 +1,31 @@
 {{!-- TODO i18n --}}
 
 {{#if spacesLoadError}}
-  {{resource-load-error
+  <ResourceLoadError
     class="alert-some-storages-rejected"
-    message="Support information may be incomplete due to spaces data load error"
-    onClose=(action (mut spacesLoadError false))
-  }}
+    @message="Support information may be incomplete due to spaces data load error"
+    @onClose={{action (mut spacesLoadError false)}}
+  />
 {{/if}}
 
 {{#if anyStorageRejected}}
-  {{resource-load-error
+  <ResourceLoadError
     class="alert-some-storages-rejected"
-    message="Some of storage details cannot be loaded properly."
-    onClose=(action (mut anyStorageRejected false))
-  }}
+    @message="Some of storage details cannot be loaded properly."
+    @onClose={{action (mut anyStorageRejected false)}}
+  />
 {{/if}}
 
-{{#one-collapsible-list as |list|}}
+<OneCollapsibleList as |list|>
   {{#each storages key="id" as |storage|}}
-    {{#list.item as |listItem|}}
-      {{storage-item
-        listItem=listItem
-        storageProxy=storage
-        spaces=spaces
-        reloadStoragesList=reloadStoragesList
-        removeStorage=(action removeStorage storage.content)}}
-    {{/list.item}}
+    <list.item as |listItem|>
+      <StorageItem
+        @listItem={{listItem}}
+        @storageProxy={{storage}}
+        @spaces={{spaces}}
+        @reloadStoragesList={{reloadStoragesList}}
+        @removeStorage={{action removeStorage storage.content}}
+      />
+    </list.item>
   {{/each}}
-{{/one-collapsible-list}}
+</OneCollapsibleList>

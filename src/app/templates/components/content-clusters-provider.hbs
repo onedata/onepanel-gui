@@ -3,45 +3,47 @@
 <div class="row content-row header-row hidden-xs">
   <h1>
     <span class="one-label">{{tt this "provider"}}</span>
-    {{actions-toolbar actionsArray=globalActions renderImmediately=true}}
+    <ActionsToolbar @actionsArray={{globalActions}} @renderImmediately={{true}} />
   </h1>
   {{#if isOnepanelEmergency}}
-    {{#one-switchable-popover-modal
-      triggersConfiguration=_deregisterPopoverSelector
-      popoverClass="popover-deregister-provider"
-      submit=(action "deregister")
-      as |ospm|}}
-      {{deregister-provider-confirm
-        submitAction=ospm.submit
-        closeAction=ospm.close}}
-    {{/one-switchable-popover-modal}}
+    <OneSwitchablePopoverModal
+      @triggersConfiguration={{_deregisterPopoverSelector}}
+      @popoverClass="popover-deregister-provider"
+      @submit={{action "deregister"}}
+      as |ospm|
+    >
+      <DeregisterProviderConfirm
+        @submitAction={{ospm.submit}}
+        @closeAction={{ospm.close}}
+      />
+    </OneSwitchablePopoverModal>
   {{/if}}
 </div>
 
 <div class="row">
   <div class="row content-row row-small">
     <h1 class="form-title">{{_formTitle}}</h1>
-    {{#promise-proxy-container proxy=onezoneInfoProxy}}
-      {{#promise-proxy-container proxy=providerProxy}}
-        {{onezone-info-box onezoneInfo=onezoneInfoProxy.content}}
+    <PromiseProxyContainer @proxy={{onezoneInfoProxy}}>
+      <PromiseProxyContainer @proxy={{providerProxy}}>
+        <OnezoneInfoBox @onezoneInfo={{onezoneInfoProxy.content}} />
         <p class="form-description">{{_formDescription}}</p>
-        {{provider-registration-form
-          onezoneDomain=onezoneInfoProxy.domain
-          subdomainDelegationSupported=onezoneInfoProxy.subdomainDelegationSupported
-          excludedSubdomains=_excludedSubdomains
-          mode=_providerFormMode
-          provider=providerProxy.content
-          submit=(action "submitModify")
-          changeDomain=(action "changeDomain")
-          onStartEdit=(action "startEdit")
-          onCancelEdit=(action "cancelEdit")
-        }}
-      {{/promise-proxy-container}}
-    {{/promise-proxy-container}}
+        <ProviderRegistrationForm
+          @onezoneDomain={{onezoneInfoProxy.domain}}
+          @subdomainDelegationSupported={{onezoneInfoProxy.subdomainDelegationSupported}}
+          @excludedSubdomains={{_excludedSubdomains}}
+          @mode={{_providerFormMode}}
+          @provider={{providerProxy.content}}
+          @submit={{action "submitModify"}}
+          @changeDomain={{action "changeDomain"}}
+          @onStartEdit={{action "startEdit"}}
+          @onCancelEdit={{action "cancelEdit"}}
+        />
+      </PromiseProxyContainer>
+    </PromiseProxyContainer>
   </div>
 </div>
 
-{{modal-configure-web-cert
-  open=showConfigureWebCertModal
-  onHide=(action (mut showConfigureWebCertModal) false)
-}}
+<ModalConfigureWebCert
+  @open={{showConfigureWebCertModal}}
+  @onHide={{action (mut showConfigureWebCertModal) false}}
+/>

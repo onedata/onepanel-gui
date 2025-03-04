@@ -4,16 +4,16 @@
   </h1>
   <p>
     {{tt this "configurationText"}}
-    {{one-doc-see-more
-      linkName=(tt this "configurationTextDoc")
-      topic="file-popularity-function"
-    }}
+    <OneDocSeeMore
+      @linkName={{tt this "configurationTextDoc"}}
+      @topic="file-popularity-function"
+    />
   </p>
-  {{#bs-form class="space-file-popularity-configuration-form" as |form|}}
+  <BsForm class="space-file-popularity-configuration-form" as |form|>
     {{#each sourceFieldNames as |fieldName|}}
-      {{#form.group
-        class=(concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error"))
-      }}
+      <form.group
+        class={{concat-classes (concat fieldName "Group") (if (get formFieldsErrors fieldName) "has-error")}}
+      >
         <label for={{concat elementId fieldName}} class="label-column control-label">
           {{tt this fieldName}}
         </label>
@@ -30,11 +30,9 @@
           >
         </div>
         <div class="hint-column">
-          {{one-label-tip
-            title=(tt this (concat fieldName "Hint"))
-          }}
+          <OneLabelTip @title={{tt this (concat fieldName "Hint")}} />
         </div>
-      {{/form.group}}
+      </form.group>
     {{/each}}
-  {{/bs-form}}
+  </BsForm>
 </div>

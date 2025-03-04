@@ -1,10 +1,10 @@
-{{#one-button
-  type=(if showScanStop "danger" "success")
-  buttonType="submit"
-  size="sm"
-  disabled=(if showScanStop (not allowScanStop) (not allowScanStart))
-  onClick=(if showScanStop stopScan startScan)
-}}
-  {{one-icon icon=(if showScanStop "cancelled" "play")}}
+<OneButton
+  @type={{if showScanStop "danger" "success"}}
+  @buttonType="submit"
+  @size="sm"
+  @disabled={{if showScanStop (not allowScanStop) (not allowScanStart)}}
+  @onClick={{if showScanStop stopScan startScan}}
+>
+  <OneIcon @icon={{if showScanStop "cancelled" "play"}} />
   <span class="text">{{tt this (if showScanStop "stopScan" "startScan")}}</span>
-{{/one-button}}
+</OneButton>

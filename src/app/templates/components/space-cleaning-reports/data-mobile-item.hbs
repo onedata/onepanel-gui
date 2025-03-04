@@ -1,13 +1,13 @@
-{{#listItem.header}}
+<listItem.header>
   <div class="data-row" data-row-id={{dataRowId}}>
     <span class="item-icon-container">
-      {{space-cleaning-reports/status-cell record=item}}
+      <SpaceCleaningReports::StatusCell @record={{item}} />
     </span>
     <span class="one-label">{{startedAt}}</span>
   </div>
-{{/listItem.header}}
-{{#listItem.content}}
-  {{#render-later triggerRender=listItem.isActive}}
+</listItem.header>
+<listItem.content>
+  <RenderLater @triggerRender={{listItem.isActive}}>
     <div class="item-table">
       <div class="item-table-content-cell">
         <div class="row content-row">
@@ -28,5 +28,5 @@
         </div>
       </div>
     </div>
-  {{/render-later}}
-{{/listItem.content}}
+  </RenderLater>
+</listItem.content>

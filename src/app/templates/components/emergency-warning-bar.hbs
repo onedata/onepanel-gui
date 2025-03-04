@@ -1,15 +1,15 @@
-{{#one-warning-bar
-  text=(or workerIsUnavailableText (tt this "emergencyInterface"))
-  barClasses=(if workerIsUnavailable "one-warning-bar-danger")
+<OneWarningBar
+  @text={{or workerIsUnavailableText (tt this "emergencyInterface")}}
+  @barClasses={{if workerIsUnavailable "one-warning-bar-danger"}}
   as |bar|
-}}
-  {{#bar.modal.header}}
+>
+  <bar.modal.header>
     <h1>
-      {{one-icon icon="sign-info-rounded"}}
+      <OneIcon @icon="sign-info-rounded" />
       <span class="one-label">{{if workerIsUnavailable workerIsUnavailableText (tt this "modal.emergency.header")}}</span>
     </h1>
-  {{/bar.modal.header}}
-  {{#bar.modal.body}}
+  </bar.modal.header>
+  <bar.modal.body>
     {{#if workerIsUnavailable}}
       {{#if (eq onepanelServiceType "onezone")}}
         <p>{{tt this "modal.workerMalfunction.ozMainMessage"}}</p>
@@ -35,28 +35,25 @@
       <p>{{tt this "modal.emergency.text1"}}</p>
       <p>{{tt this "modal.emergency.text2"}}</p>
     {{/if}}
-  {{/bar.modal.body}}
-  {{#bar.modal.footer class="btn-toolbar"}}
-    {{#one-button
-      type="default"
-      onClick=(action bar.modal.close)
-    }}
+  </bar.modal.body>
+  <bar.modal.footer class="btn-toolbar">
+    <OneButton @type="default" @onClick={{action bar.modal.close}}>
       {{tt this "modal.close"}}
-    {{/one-button}}
+    </OneButton>
     {{#unless workerIsUnavailable}}
       <a
         href={{visitViaOnezoneUrl}}
         class="btn btn-primary"
         disabled={{or visitViaOnezoneUrlProxy.isPending (not visitViaOnezoneUrl)}}
       >
-        {{one-icon icon="onezone"}}
+        <OneIcon @icon="onezone" />
         {{tt this "modal.emergency.openInOnezone"}}
         {{#if (and visitViaOnezoneUrlProxy.isSettled (not visitViaOnezoneUrl))}}
-          {{#one-tooltip}}
+          <OneTooltip>
             {{t "services.onezoneGui.onezoneNotAvailable" onezoneOrigin=onezoneOrigin}}
-          {{/one-tooltip}}
+          </OneTooltip>
         {{/if}}
       </a>
     {{/unless}}
-  {{/bar.modal.footer}}
-{{/one-warning-bar}}
+  </bar.modal.footer>
+</OneWarningBar>

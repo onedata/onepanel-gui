@@ -1,15 +1,10 @@
 <h1>{{tt this "deregisterProviderHeaderEmergency"}}</h1>
 <p>{{tt this "deregistrationResults"}}</p>
 <div class="btn-toolbar">
-  {{#one-button class="btn btn-sm" type="info" onClick=closeAction}}
+  <OneButton class="btn btn-sm" @type="info" @onClick={{closeAction}}>
     {{tt this "keepItRegistered"}}
-  {{/one-button}}
-  {{#one-button
-    type="danger"
-    buttonType="submit"
-    size="sm"
-    onClick=submitAction
-  }}
-    {{one-icon icon="browser-delete"}} <span>{{tt this "yesDeregister"}}</span>
-  {{/one-button}}
+  </OneButton>
+  <OneButton @type="danger" @buttonType="submit" @size="sm" @onClick={{submitAction}}>
+    <OneIcon @icon="browser-delete" /> <span>{{tt this "yesDeregister"}}</span>
+  </OneButton>
 </div>

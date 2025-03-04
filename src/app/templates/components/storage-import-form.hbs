@@ -1,13 +1,13 @@
-{{#bs-form submitOnEnter=false class="form-horizontal" as |form|}}
+<BsForm @submitOnEnter={{false}} class="form-horizontal" as |form|>
   <div class="import-configuration-section">
     <h2 class="form-section-title">{{tt this "importConfiguration"}}</h2>
-    {{one-form-fields
-      bsForm=form
-      fields=currentFields
-      formValues=formValues
-      inputChanged=(action "inputChanged")
-      onFocusOut=(action "focusOut")
-    }}
+    <OneFormFields
+      @bsForm={{form}}
+      @fields={{currentFields}}
+      @formValues={{formValues}}
+      @inputChanged={{action "inputChanged"}}
+      @onFocusOut={{action "focusOut"}}
+    />
   </div>
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>
@@ -21,16 +21,16 @@
         </p>
       {{/if}}
       {{#if showSubmitButton}}
-        {{#one-button
-          type="primary"
-          buttonType="submit"
+        <OneButton
+          @type="primary"
+          @buttonType="submit"
           class="submit-import"
-          disabled=(not isValid)
-          onClick=(action "submit")
-        }}
+          @disabled={{not isValid}}
+          @onClick={{action "submit"}}
+        >
           {{tt this (if (eq mode "new") "submitNew" "submitModify")}}
-        {{/one-button}}
+        </OneButton>
       {{/if}}
     </div>
   </div>
-{{/bs-form}}
+</BsForm>

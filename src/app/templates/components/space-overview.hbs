@@ -2,51 +2,51 @@
   <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-info">
     <div class="row content-row">
       <strong class="property-label">{{tt this "name"}}:</strong>
-      {{name-conflict item=space tagName="span" class="one-label space-name"}}
+      <NameConflict @item={{space}} @tagName="span" class="one-label space-name" />
     </div>
     <div class="row content-row">
-      {{clipboard-line
-        value=space.id
-        size="sm"
-        label=(concat (tt this "id") ":")
-      }}
+      <ClipboardLine
+        @value={{space.id}}
+        @size="sm"
+        @label={{concat (tt this "id") ":"}}
+      />
     </div>
     <div class="row content-row">
-      {{#promise-proxy-container proxy=_storage}}
+      <PromiseProxyContainer @proxy={{_storage}}>
         <strong class="property-label">{{tt this "storage"}}:</strong>
         <span class="one-label space-provider-storage">
-          {{name-conflict item=_storage}}
+          <NameConflict @item={{_storage}} />
         </span>
-      {{/promise-proxy-container}}
+      </PromiseProxyContainer>
     </div>
     <div class="row content-row">
-      {{#space-support-accounting-form
-        mode=accountingFormMode
-        values=accountingConfig
-        isDisabled=isSavingNewAccountingConfig
-        onChange=(action "accountingConfigChanged")
-        dirStatsServiceStatus=space.dirStatsServiceStatus
-      }}
+      <SpaceSupportAccountingForm
+        @mode={{accountingFormMode}}
+        @values={{accountingConfig}}
+        @isDisabled={{isSavingNewAccountingConfig}}
+        @onChange={{action "accountingConfigChanged"}}
+        @dirStatsServiceStatus={{space.dirStatsServiceStatus}}
+      >
         {{#if (eq accountingFormMode "edit")}}
-          {{#one-button
-            size="sm"
-            type="primary"
-            buttonType="submit"
-            disabled=isSavingNewAccountingConfig
-            onClick=(action "saveNewAccountingConfig")
-          }}
+          <OneButton
+            @size="sm"
+            @type="primary"
+            @buttonType="submit"
+            @disabled={{isSavingNewAccountingConfig}}
+            @onClick={{action "saveNewAccountingConfig"}}
+          >
             {{tt this "saveNewAccountingConfig"}}
-          {{/one-button}}
+          </OneButton>
           {{!-- Added space as HTML code because Ember trims all whitespaces between elements --}}
           &#32;
         {{/if}}
-        {{#one-button
-          size="sm"
-          disabled=isSavingNewAccountingConfig
-          onClick=(action "toggleAccountingFormMode")
-        }}
+        <OneButton
+          @size="sm"
+          @disabled={{isSavingNewAccountingConfig}}
+          @onClick={{action "toggleAccountingFormMode"}}
+        >
           {{#if (eq accountingFormMode "view")}}
-            {{one-icon icon="browser-rename"}}
+            <OneIcon @icon="browser-rename" />
           {{/if}}
           <span class="text">
             {{tt this (if (eq accountingFormMode "view")
@@ -54,8 +54,8 @@
               "cancelAccountingEdition"
             )}}
           </span>
-        {{/one-button}}
-      {{/space-support-accounting-form}}
+        </OneButton>
+      </SpaceSupportAccountingForm>
     </div>
     {{#if space.storageImportEnabled}}
       <div class="row content-row storage-import">
@@ -71,17 +71,19 @@
   </div>
 
   <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell space-support">
-    {{#promise-proxy-container proxy=spaceSupportersProxy}}
-      {{cluster-spaces-table-item/support-size-info spaceSupporters=spaceSupportersProxy.content}}
-    {{/promise-proxy-container}}
+    <PromiseProxyContainer @proxy={{spaceSupportersProxy}}>
+      <ClusterSpacesTableItem::SupportSizeInfo
+        @spaceSupporters={{spaceSupportersProxy.content}}
+      />
+    </PromiseProxyContainer>
     <div class="row content-row">
-      {{#promise-proxy-container proxy=spaceSupportersProxy}}
-        {{cluster-spaces-table-item/support-size-this
-          providerSupportSize=_thisProviderSupportSize
-          spaceOccupancy=_spaceOccupancy
-          submitModifySpace=(action "submitModifySpace")
-        }}
-      {{/promise-proxy-container}}
+      <PromiseProxyContainer @proxy={{spaceSupportersProxy}}>
+        <ClusterSpacesTableItem::SupportSizeThis
+          @providerSupportSize={{_thisProviderSupportSize}}
+          @spaceOccupancy={{_spaceOccupancy}}
+          @submitModifySpace={{action "submitModifySpace"}}
+        />
+      </PromiseProxyContainer>
     </div>
   </div>
 

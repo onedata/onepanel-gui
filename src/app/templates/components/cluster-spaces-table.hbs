@@ -1,26 +1,26 @@
 {{#if anySpaceRejected}}
-  {{resource-load-error
+  <ResourceLoadError
     class="alert-some-spaces-rejected"
-    message=(tt this "someLoadError")
-    onClose=(action "closeRejectedError")
-  }}
+    @message={{tt this "someLoadError"}}
+    @onClose={{action "closeRejectedError"}}
+  />
 {{/if}}
 
-{{#one-collapsible-list as |list|}}
+<OneCollapsibleList as |list|>
   {{#each spaces as |space|}}
     {{!-- TODO: change to links, because we want to open in separate tabs --}}
-    {{#list.item toggle=(action "spaceClicked" listItem) as |listItem|}}
-      {{#listItem.header
-        isCollapsible=false
-        click=(action "spaceClicked" space.id)
+    <list.item @toggle={{action "spaceClicked" listItem}} as |listItem|>
+      <listItem.header
+        @isCollapsible={{false}}
+        @click={{action "spaceClicked" space.id}}
         class="hoverable spaces-list-item-header clickable"
-      }}
-        {{cluster-spaces-table-item
-          space=space
-          provider=provider
-          startRevokeSpace=(action "startRevokeSpace")
-        }}
-      {{/listItem.header}}
-    {{/list.item}}
+      >
+        <ClusterSpacesTableItem
+          @space={{space}}
+          @provider={{provider}}
+          @startRevokeSpace={{action "startRevokeSpace"}}
+        />
+      </listItem.header>
+    </list.item>
   {{/each}}
-{{/one-collapsible-list}}
+</OneCollapsibleList>

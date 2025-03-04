@@ -1,19 +1,19 @@
 <div class="row content-row header-row hidden-xs">
   <h1 class="with-menu with-back normal-case">
     <span class="one-label">
-      {{#truncated-string}}
-        {{#link-to (query-params options="") class="content-back-link"}}
-          {{one-icon
-            icon="space"
-            class="content-back-resource-icon"
-          }}{{one-icon icon="arrow-left" class="content-back-arrow-icon"}}
-        {{/link-to}}
+      <TruncatedString>
+        <LinkTo @query={{hash options=""}} class="content-back-link">
+          <OneIcon @icon="space" class="content-back-resource-icon" /><OneIcon
+            @icon="arrow-left"
+            class="content-back-arrow-icon"
+          />
+        </LinkTo>
         <span class="space-name resource-name">
-          {{name-conflict item=space tagName="span" class="one-label"}}
+          <NameConflict @item={{space}} @tagName="span" class="one-label" />
         </span>
-      {{/truncated-string}}
+      </TruncatedString>
     </span>
-    {{actions-toolbar isMinimized=true actionsArray=globalActions}}
+    <ActionsToolbar @isMinimized={{true}} @actionsArray={{globalActions}} />
   </h1>
 </div>
 
@@ -21,96 +21,97 @@
 
   <div class="col-xs-12 item-table-cell item-table-content-cell space-tabs">
     <div class="row content-row">
-      {{#bs-tab fade=false
-        customTabs=true
-        activeId=selectedTab
-        onChange=(action "changeTab")
+      <BsTab
+        @fade={{false}}
+        @customTabs={{true}}
+        @activeId={{selectedTab}}
+        @onChange={{action "changeTab"}}
         class="bs-tab-onedata bs-tab-modern"
         as |tab|
-      }}
-        {{#bs-nav type="tabs" as |nav|}}
-          {{#nav.item class=tabOverviewClass active=(eq tab.activeId tabOverviewId)}}
+      >
+        <BsNav @type="tabs" as |nav|>
+          <nav.item class={{tabOverviewClass}} @active={{eq tab.activeId tabOverviewId}}>
             <a class="nav-link" role="tab" {{action tab.select tabOverviewId}}>
               {{t "mixins.components.spaceTabs.tabs.overview.title"}}
             </a>
-            {{one-tooltip triggerEvents="hover" title=tabOverviewHint}}
-          {{/nav.item}}
-          {{#nav.item class=tabImportClass active=(eq tab.activeId tabImportId)}}
+            <OneTooltip @triggerEvents="hover" @title={{tabOverviewHint}} />
+          </nav.item>
+          <nav.item class={{tabImportClass}} @active={{eq tab.activeId tabImportId}}>
             <a class="nav-link" role="tab" {{action tab.select tabImportId}}>
               {{t "mixins.components.spaceTabs.tabs.import.title"}}
             </a>
-            {{one-tooltip triggerEvents="hover" title=tabImportHint}}
-          {{/nav.item}}
-          {{#nav.item class=tabPopularClass active=(eq tab.activeId tabPopularId)}}
+            <OneTooltip @triggerEvents="hover" @title={{tabImportHint}} />
+          </nav.item>
+          <nav.item class={{tabPopularClass}} @active={{eq tab.activeId tabPopularId}}>
             <a class="nav-link" role="tab" {{action tab.select tabPopularId}}>
               {{t "mixins.components.spaceTabs.tabs.popular.title"}}
             </a>
-            {{one-tooltip triggerEvents="hover" title=tabPopularHint}}
-          {{/nav.item}}
-          {{#nav.item class=tabCleanClass active=(eq tab.activeId tabCleanId)}}
+            <OneTooltip @triggerEvents="hover" @title={{tabPopularHint}} />
+          </nav.item>
+          <nav.item class={{tabCleanClass}} @active={{eq tab.activeId tabCleanId}}>
             <a class="nav-link" role="tab" {{action tab.select tabCleanId}}>
               {{t "mixins.components.spaceTabs.tabs.clean.title"}}
             </a>
-            {{one-tooltip triggerEvents="hover" title=tabCleanHint}}
-          {{/nav.item}}
-        {{/bs-nav}}
+            <OneTooltip @triggerEvents="hover" @title={{tabCleanHint}} />
+          </nav.item>
+        </BsNav>
 
         <div class="tab-content">
-          {{#tab.pane elementId=tabOverviewId class="no-padding"}}
+          <tab.pane @elementId={{tabOverviewId}} class="no-padding">
             {{#if (eq tab.activeId tabOverviewId)}}
-              {{space-overview
-                space=space
-                submitModifySpace=(action "modifySpace")
-              }}
+              <SpaceOverview
+                @space={{space}}
+                @submitModifySpace={{action "modifySpace"}}
+              />
             {{/if}}
-          {{/tab.pane}}
-          {{#tab.pane elementId=tabImportId}}
+          </tab.pane>
+          <tab.pane @elementId={{tabImportId}}>
             {{#if (and (eq tabImportClass "enabled") (eq tab.activeId tabImportId))}}
-              {{space-storage-import
-                importInterval=importInterval
-                timeStats=timeStats
-                autoImportInfo=importInfo
-                timeStatsError=timeStatsError
-                timeStatsLoading=timeStatsLoading
-                space=space
-                importIntervalChanged=(action "onImportIntervalChange")
-                modifySpace=(action "modifySpace")
-                stopScan=(action "stopImportScan")
-                startScan=(action "startImportScan")
-              }}
+              <SpaceStorageImport
+                @importInterval={{importInterval}}
+                @timeStats={{timeStats}}
+                @autoImportInfo={{importInfo}}
+                @timeStatsError={{timeStatsError}}
+                @timeStatsLoading={{timeStatsLoading}}
+                @space={{space}}
+                @importIntervalChanged={{action "onImportIntervalChange"}}
+                @modifySpace={{action "modifySpace"}}
+                @stopScan={{action "stopImportScan"}}
+                @startScan={{action "startImportScan"}}
+              />
             {{/if}}
-          {{/tab.pane}}
-          {{#tab.pane elementId=tabPopularId}}
+          </tab.pane>
+          <tab.pane @elementId={{tabPopularId}}>
             {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
               <div class="loadable-row lg">
-                {{#promise-proxy-container proxy=filePopularityConfigurationProxy}}
-                  {{space-file-popularity
-                    filePopularityConfiguration=filePopularityConfiguration
-                    configureFilePopularity=(action "configureFilePopularity")
-                  }}
-                {{/promise-proxy-container}}
+                <PromiseProxyContainer @proxy={{filePopularityConfigurationProxy}}>
+                  <SpaceFilePopularity
+                    @filePopularityConfiguration={{filePopularityConfiguration}}
+                    @configureFilePopularity={{action "configureFilePopularity"}}
+                  />
+                </PromiseProxyContainer>
               </div>
             {{/if}}
-          {{/tab.pane}}
-          {{#tab.pane elementId=tabCleanId}}
+          </tab.pane>
+          <tab.pane @elementId={{tabCleanId}}>
             {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
               <div class="loadable-row lg">
-                {{#promise-proxy-container proxy=providerProxy}}
-                  {{#promise-proxy-container proxy=autoCleaningConfigurationProxy}}
-                    {{space-auto-cleaning
-                      autoCleaningConfiguration=autoCleaningConfiguration
-                      spaceSize=spaceSizeForProvider
-                      spaceId=space.id
-                      configureSpaceAutoCleaning=(action "configureSpaceAutoCleaning")
-                      spaceOccupancyChanged=(action "spaceOccupancyChanged")
-                    }}
-                  {{/promise-proxy-container}}
-                {{/promise-proxy-container}}
+                <PromiseProxyContainer @proxy={{providerProxy}}>
+                  <PromiseProxyContainer @proxy={{autoCleaningConfigurationProxy}}>
+                    <SpaceAutoCleaning
+                      @autoCleaningConfiguration={{autoCleaningConfiguration}}
+                      @spaceSize={{spaceSizeForProvider}}
+                      @spaceId={{space.id}}
+                      @configureSpaceAutoCleaning={{action "configureSpaceAutoCleaning"}}
+                      @spaceOccupancyChanged={{action "spaceOccupancyChanged"}}
+                    />
+                  </PromiseProxyContainer>
+                </PromiseProxyContainer>
               </div>
             {{/if}}
-          {{/tab.pane}}
+          </tab.pane>
         </div>
-      {{/bs-tab}}
+      </BsTab>
     </div>
   </div>
 </div>

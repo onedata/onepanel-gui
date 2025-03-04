@@ -1,20 +1,21 @@
-{{#promise-proxy-container proxy=savedMessageProxy}}
+<PromiseProxyContainer @proxy={{savedMessageProxy}}>
   {{#if (and isEnabled isGuiMessageBodyEmpty)}}
     <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>
   <p class="clearfix">
     <label for="cookie-consent-notification-enabled" class="align-left">{{tt this "cookieConsentNotificationEnabled"}}:</label>
-    {{one-way-toggle
-      inputId="cookie-consent-notification-enabled"
-      checked=isEnabled
-      update=(action "isEnabledChanged")}}
+    <OneWayToggle
+      @inputId="cookie-consent-notification-enabled"
+      @checked={{isEnabled}}
+      @update={{action "isEnabledChanged"}}
+    />
     <button
       class="btn btn-sm btn-default pull-right insert-privacy-policy-link"
       disabled={{or isSaving (not isEnabled)}}
       {{action "insertPrivacyPolicyLink"}}
     >
-      {{one-icon icon="text-link"}}
+      <OneIcon @icon="text-link" />
       {{tt this "insertPrivacyPolicyLink"}}
     </button>
     <button
@@ -22,7 +23,7 @@
       disabled={{or isSaving (not isEnabled)}}
       {{action "insertTermsOfUseLink"}}
     >
-      {{one-icon icon="text-link"}}
+      <OneIcon @icon="text-link" />
       {{tt this "insertTermsOfUseLink"}}
     </button>
   </p>
@@ -35,15 +36,15 @@
       class="form-control cookie-consent-notification-input no-resize"></textarea>
   </p>
   <p class="clearfix">
-    {{#one-button
-      type="primary"
-      buttonType="submit"
+    <OneButton
+      @type="primary"
+      @buttonType="submit"
       class="btn-save pull-right"
-      onClick=(action "save")
-      disabled=(not isModified)
-    }}
+      @onClick={{action "save"}}
+      @disabled={{not isModified}}
+    >
       {{tt this "save"}}
-    {{/one-button}}
+    </OneButton>
   </p>
-{{/promise-proxy-container}}
+</PromiseProxyContainer>
 {{yield}}

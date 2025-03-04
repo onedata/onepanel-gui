@@ -1,14 +1,15 @@
-{{#promise-proxy-container proxy=savedMessageProxy}}
+<PromiseProxyContainer @proxy={{savedMessageProxy}}>
   {{#if (and isEnabled isGuiMessageBodyEmpty)}}
     <div class="alert alert-warning">{{tt this "emptyContentWarning"}}</div>
   {{/if}}
   <p class="subheader-text">{{tt this "description"}}</p>
   <p>
     <label for="signin-notification-enabled" class="align-left">{{tt this "signinNotificationEnabled"}}:</label>
-    {{one-way-toggle
-      inputId="signin-notification-enabled"
-      checked=isEnabled
-      update=(action "isEnabledChanged")}}
+    <OneWayToggle
+      @inputId="signin-notification-enabled"
+      @checked={{isEnabled}}
+      @update={{action "isEnabledChanged"}}
+    />
   </p>
   <p>
     <textarea
@@ -19,15 +20,15 @@
       class="form-control sign-in-notification-input no-resize"></textarea>
   </p>
   <p class="clearfix">
-    {{#one-button
-      type="primary"
-      buttonType="submit"
+    <OneButton
+      @type="primary"
+      @buttonType="submit"
       class="btn-save pull-right"
-      onClick=(action "save")
-      disabled=(not isModified)
-    }}
+      @onClick={{action "save"}}
+      @disabled={{not isModified}}
+    >
       {{tt this "save"}}
-    {{/one-button}}
+    </OneButton>
   </p>
-{{/promise-proxy-container}}
+</PromiseProxyContainer>
 {{yield}}
