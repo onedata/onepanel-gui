@@ -1,4 +1,4 @@
-<listItem.header @disableToggleIcon={{true}} as |itemHeader|>
+{{#listItem.header disableToggleIcon=true as |itemHeader|}}
   <span class="item-icon-container">
     <OneIcon class="item-icon" @icon="provider" />
     <OneTooltip @placement="top" @triggerEvents="hover">
@@ -36,9 +36,9 @@
     @dropdownPlacement="auto"
     @actionsArray={{storageActions}}
   />
-</listItem.header>
+{{/listItem.header}}
 
-<listItem.content>
+{{#listItem.content}}
   <div class="item-table row">
     <div class="row">
       <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
@@ -70,4 +70,4 @@
       {{/if}}
     </div>
   </div>
-</listItem.content>
+{{/listItem.content}}
