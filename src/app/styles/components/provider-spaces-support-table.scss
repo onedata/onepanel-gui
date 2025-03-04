@@ -6,6 +6,7 @@
   table.table-condensed {
     .property-name {
       font-weight: bold;
+      max-width: 160px;
     }
     td.rest-space {
       padding-top: $padding-base-vertical;

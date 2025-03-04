@@ -6,7 +6,7 @@
     {{#each spacesToShow as |space|}}
       <tr>
         <td class="property-name">
-          {{space.name}}
+          <TruncatedString>{{space.name}}</TruncatedString>
         </td>
         <td class="property-value">
           {{space.sizeToShow}}
