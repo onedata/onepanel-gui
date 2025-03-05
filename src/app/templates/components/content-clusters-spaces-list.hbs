@@ -25,10 +25,14 @@
     {{/if}}
   </div>
   <PromiseProxyContainer @proxy={{providerProxy}}>
-    <LoadingContainer @isLoading={{spacesListLoading}} @errorReason={{spacesBatchResolver.promiseObject.reason}} @loadingLabel={{tt this "loadingSpaces"
+    <LoadingContainer
+      @isLoading={{spacesListLoading}}
+      @errorReason={{spacesBatchResolver.promiseObject.reason}}
+      @loadingLabel={{tt this "loadingSpaces"
         loadedCount=spacesBatchResolver.settledFunctionsCount
         totalCount=spacesBatchResolver.totalFunctionsCount
-      }}>
+      }}
+    >
       <ClusterSpacesTable
         @spaces={{paginator.activePageArray}}
         @provider={{providerProxy.content}}
