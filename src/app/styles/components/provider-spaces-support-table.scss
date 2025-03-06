@@ -1,0 +1,17 @@
+.provider-spaces-support-table {
+  .total-size {
+    padding-bottom: $padding-base-vertical;
+    padding-top: 10px;
+  }
+  table.table-condensed {
+    .property-name {
+      font-weight: bold;
+      max-width: 160px;
+    }
+    td.rest-space {
+      padding-top: $padding-base-vertical;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}

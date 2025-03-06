@@ -70,6 +70,7 @@ import spaceSupportAccountingForm from './components/space-support-accounting-fo
 import userAccountButton from './components/user-account-button';
 import modals from './components/modals';
 import conflictingPortsInfo from './components/conflicting-ports-info';
+import providerSpacesSupportTable from './components/provider-spaces-support-table';
 
 import clusterIpsConfigurator from './mixins/components/cluster-ips-configurator';
 import spaceTabs from './mixins/components/space-tabs';
@@ -164,6 +165,7 @@ const translations = {
     userAccountButton,
     modals,
     conflictingPortsInfo,
+    providerSpacesSupportTable,
     alerts: {
       registerOnezoneOffline,
       registerOnezoneNotCompatible,
