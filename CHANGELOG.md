@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12622 Refactored OneIcon component to Glimmer
 * VFS-12543 Fixed possible infinite scroll list trimming after first item disappeared and list reload
 * VFS-12554 Using common code with infinite scroll sidebars
 * VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
