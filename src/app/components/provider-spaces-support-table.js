@@ -25,17 +25,17 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {PromiseArray<Spaces>}
+   * @type {Array<Space>}
    */
-  spacesProxy: undefined,
+  spaces: undefined,
 
   /**
    * @type {number}
    */
   maxDisplayedSpaces: 4,
 
-  sortedSpaces: computed('spacesProxy.content', function sortedSpaces() {
-    return [...this.spacesProxy.content].sort((a, b) =>
+  sortedSpaces: computed('spaces', function sortedSpaces() {
+    return [...this.spaces].sort((a, b) =>
       b.supportingProviders[this.providerId] - a.supportingProviders[this.providerId]
     );
   }),
@@ -44,10 +44,10 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<number>}
    */
   hiddenSpacesCount: computed(
-    'spacesProxy',
+    'spaces',
     'maxDisplayedSpaces',
     function hiddenSpacesCount() {
-      return this.spacesProxy.length - this.maxDisplayedSpaces;
+      return this.spaces.length - this.maxDisplayedSpaces;
     }
   ),
 

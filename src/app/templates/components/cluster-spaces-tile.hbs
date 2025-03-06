@@ -13,7 +13,7 @@
       {{#if spacesProxy.length}}
         {{#if (gt spacesProxy.length chartMaxSpaces)}}
           <ProviderSpacesSupportTable
-            @spacesProxy={{spacesProxy}}
+            @spaces={{spacesProxy.content}}
             @providerId={{providerIdProxy.content}}
           />
         {{else}}
