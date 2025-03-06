@@ -27,15 +27,15 @@ export default Component.extend(I18n, {
    * @virtual
    * @type {PromiseArray<Spaces>}
    */
-  spaces: undefined,
+  spacesProxy: undefined,
 
   /**
    * @type {number}
    */
   maxDisplayedSpaces: 4,
 
-  sortedSpaces: computed('spaces', function sortedSpaces() {
-    return this.spaces.content.sort((a, b) =>
+  sortedSpaces: computed('spacesProxy.content', function sortedSpaces() {
+    return [...this.spacesProxy.content].sort((a, b) =>
       b.supportingProviders[this.providerId] - a.supportingProviders[this.providerId]
     );
   }),
@@ -44,10 +44,10 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<number>}
    */
   hiddenSpacesCount: computed(
-    'spaces',
+    'spacesProxy',
     'maxDisplayedSpaces',
     function hiddenSpacesCount() {
-      return this.spaces.length - this.maxDisplayedSpaces;
+      return this.spacesProxy.length - this.maxDisplayedSpaces;
     }
   ),
 
@@ -55,8 +55,10 @@ export default Component.extend(I18n, {
    * @type {ComputedProperty<string>}
    */
   totalSize: computed('sortedSpaces', function totalSize() {
-    return this.formatValue(this.sortedSpaces.reduce((acc, b) =>
-      acc + b.supportingProviders[this.providerId], 0));
+    return this.formatSize(this.sortedSpaces.reduce(
+      (acc, b) => acc + b.supportingProviders[this.providerId],
+      0
+    ));
   }),
 
   spacesToShow: computed(
@@ -64,18 +66,21 @@ export default Component.extend(I18n, {
     'maxDisplayedSpaces',
     function spacesToShow() {
       return this.sortedSpaces.slice(0, this.maxDisplayedSpaces).map(space => {
-        space.sizeToShow = this.formatValue(space.supportingProviders[this.providerId]);
-        return space;
+        const sizeToShow = this.formatSize(space.supportingProviders[this.providerId]);
+        return {
+          name: space.name,
+          sizeToShow,
+        };
       });
     }
   ),
 
   /**
    * Returns size as a string.
-   * @param {number} value A size.
+   * @param {number} size
    * @returns {string} A size string representation.
    */
-  formatValue(value) {
-    return bytesToString(value, { iecFormat: true });
+  formatSize(size) {
+    return bytesToString(size, { iecFormat: true });
   },
 });
