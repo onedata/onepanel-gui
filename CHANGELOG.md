@@ -9,6 +9,7 @@ CHANGELOG
 * VFS-12622 Refactored OneIcon component to Glimmer
 * VFS-12543 Fixed possible infinite scroll list trimming after first item disappeared and list reload
 * VFS-12554 Using common code with infinite scroll sidebars
+* VFS-12542 Added custom fingerprint hashes based on file content and current git revision for some assets
 * VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
 * VFS-11439 Added support for OneS3; added support for multiple DNS names in web certificate
 * VFS-12470 Changed resource resolving in routes according to general routing changes
