@@ -11,12 +11,20 @@
       )
     }}
       {{#if spacesProxy.length}}
-        {{provider-spaces-support-chart
-          spaces=spacesProxy
-          providerId=providerIdProxy.content
-          forceMobile=true
-          hideLegend=true
-          supportInfoFieldName="supportingProviders"}}
+        {{#if (gt spacesProxy.length chartMaxSpaces)}}
+          <ProviderSpacesSupportTable
+            @spaces={{spacesProxy.content}}
+            @providerId={{providerIdProxy.content}}
+          />
+        {{else}}
+          <ProviderSpacesSupportChart
+            @spaces={{spacesProxy}}
+            @providerId={{providerIdProxy.content}}
+            @forceMobile={{true}}
+            @hideLegend={{true}}
+            @supportInfoFieldName="supportingProviders"
+          />
+        {{/if}}
       {{else}}
         <figure class="main-figure">
           <img class="main-image" src="assets/images/space-get-support.svg">

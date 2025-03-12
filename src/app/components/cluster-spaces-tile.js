@@ -28,4 +28,11 @@ export default Component.extend(I18n, {
    * @type {PromiseArray<Space>}
    */
   spacesProxy: undefined,
+
+  /**
+   * Defines the maximum number of spaces displayed in the chart view.
+   * If the number of spaces exceeds this limit, only the table version is displayed.
+   * @type {number}
+   */
+  chartMaxSpaces: 18,
 });
