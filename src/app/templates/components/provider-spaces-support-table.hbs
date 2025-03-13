@@ -1,0 +1,22 @@
+<div class="total-size">
+  <strong>{{tt this "total"}}</strong> {{totalSize}}
+</div>
+<table class="table table-condensed">
+  <tbody>
+    {{#each spacesToShow as |space|}}
+      <tr>
+        <td class="property-name">
+          <TruncatedString>{{space.name}}</TruncatedString>
+        </td>
+        <td class="property-value">
+          {{space.sizeToShow}}
+        </td>
+      </tr>
+    {{/each}}
+      <tr>
+        <td class="rest-space" colspan="2">
+          {{tt this "more" hiddenSpacesCount=hiddenSpacesCount}}
+        </td>
+      </tr>
+  </tbody>
+</table>
