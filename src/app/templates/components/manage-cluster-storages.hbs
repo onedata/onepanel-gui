@@ -22,12 +22,16 @@
     />
 </div>
 <div class="row {{if dataIsLoading "min-height-100"}}">
-  <LoadingContainer @isLoading={{dataIsLoading}} @errorReason={{or storagesError spacesError}} @loadingLabel={{tt this "loadingData"
+  <LoadingContainer
+    @isLoading={{dataIsLoading}}
+    @errorReason={{or storagesError spacesError}}
+    @loadingLabel={{tt this "loadingData"
       loadedStorages=storagesBatchResolver.settledFunctionsCount
       totalStorages=storagesBatchResolver.totalFunctionsCount
       loadedSpaces=spacesBatchResolver.settledFunctionsCount
       totalSpaces=spacesBatchResolver.totalFunctionsCount
-    }}>
+    }}
+  >
     {{#unless noStorages}}
       <ClusterStorageTable
         @storages={{paginator.activePageArray}}
