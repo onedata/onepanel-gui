@@ -5,13 +5,25 @@ export default [{
   name: 'password',
   type: 'password',
 }, {
+  name: 'projectName',
+  type: 'text',
+}, {
+  name: 'userDomainName',
+  type: 'text',
+  optional: true,
+  defaultPlaceholder: 'Default',
+  isDefault: true,
+}, {
+  name: 'projectDomainName',
+  type: 'text',
+  optional: true,
+  defaultPlaceholder: 'Default',
+  isDefault: true,
+}, {
   name: 'authUrl',
   type: 'text',
 }, {
   name: 'containerName',
-  type: 'text',
-}, {
-  name: 'tenantName',
   type: 'text',
 }, {
   name: 'blockSize',

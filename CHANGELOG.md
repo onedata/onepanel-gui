@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12716 Changed storage form fields for swift
 * VFS-12562 Added table display in the overview tile when the number of supported spaces exceeds a certain limit
 * VFS-12542 Added custom fingerprint hashes based on file content and current git revision for some assets
 * VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
