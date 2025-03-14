@@ -44,7 +44,7 @@ export default SidebarContentRoute.extend({
         if (clusterId === 'new-cluster') {
           return this.transitionTo('onedata.sidebar.content', currentClusterId);
         } else if (onepanelServer.get('isEmergency')) {
-          return this.transitionTo('onedata.sidebar.index');
+          return this.transitionTo('onedata.sidebar.content', 'new-cluster');
         } else if (!get(model, 'resource')) {
           return new Promise(() => {
             globals.location.replace(onezoneGui.getUrlInOnezone(

@@ -208,9 +208,10 @@ export default Component.extend(I18n, {
       endIndex = Math.floor(blankEnd / rowHeight);
     } else {
       startIndex = reportsArrayIds.indexOf(firstId);
-      endIndex = reportsArrayIds.indexOf(lastId, startIndex);
+      const searchEndFrom = startIndex === -1 ? 0 : startIndex;
+      endIndex = reportsArrayIds.indexOf(lastId, searchEndFrom);
     }
-    reportsArray.setProperties({ startIndex, endIndex });
+    reportsArray.setIndices(startIndex, endIndex);
     safeExec(this, 'set', 'headerVisible', headerVisible);
   },
 

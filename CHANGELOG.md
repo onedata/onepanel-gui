@@ -6,6 +6,8 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12543 Fixed possible infinite scroll list trimming after first item disappeared and list reload
+* VFS-12554 Using common code with infinite scroll sidebars
 * VFS-12562 Added table display in the overview tile when the number of supported spaces exceeds a certain limit
 * VFS-12542 Added custom fingerprint hashes based on file content and current git revision for some assets
 * VFS-12493 Changed storage form tooltips and added more conditions for disabling fields
