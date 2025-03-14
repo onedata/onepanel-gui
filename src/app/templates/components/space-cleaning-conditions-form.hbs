@@ -1,22 +1,19 @@
 <div class="row content-row no-border no-padding-top">
   <h1 class="selective-cleaning-header">
     <label>{{t "components.spaceAutoCleaning.cleanReplicatedFiles"}}</label>
-    {{#one-label-tip
-      class="selective-cleaning-hint"
-      placement="top"
-    }}
+    <OneLabelTip class="selective-cleaning-hint" @placement="top">
       {{tt this "conditionsHintEnabledBegin"}}
       <strong>{{tt this "conditionsHintEnabledStrong"}}</strong>
       {{tt this "conditionsHintEnabledEnd"}}
       <br>
       {{tt this "conditionsHintDisabled"}}
-    {{/one-label-tip}}
-    {{one-way-toggle
-      checked=isEnabled
-      update=(action "configureEnabled")
-      class=(concat "selective-cleaning-toggle " (if (media "isMobile") "pull-right right" "toggle-right-side"))
-      spinnerSide=(if (media "isMobile") "left" "right")
-    }}
+    </OneLabelTip>
+    <OneWayToggle
+      @checked={{isEnabled}}
+      @update={{action "configureEnabled"}}
+      class={{concat "selective-cleaning-toggle " (if (media "isMobile") "pull-right right" "toggle-right-side")}}
+      @spinnerSide={{if (media "isMobile") "left" "right"}}
+    />
     <span class="form-state">
       {{#if (eq formStatus "saving")}}
         <span class="animated infinite semi-hinge pulse-mint">{{t "mixins.components.autoSaveForm.saving"}}</span>
@@ -30,21 +27,21 @@
     </span>
   </h1>
 </div>
-{{#bs-form class=(concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")) as |form|}}
+<BsForm
+  class={{concat "selective-cleaning-rules-form collapse-animation collapse-small collapse-blurred " (unless isEnabled "collapse-hidden")}}
+  as |form|
+>
   {{#each sourceFieldNames as |fieldName|}}
-    {{#form.group
-      class=(concat-classes
-        (concat fieldName "Group")
-        (if (and (get formData (concat fieldName "Enabled")) (get formFieldsErrors fieldName)) "has-error")
-      )
-    }}
+    <form.group
+      class={{concat-classes (concat fieldName "Group") (if (and (get formData (concat fieldName "Enabled")) (get formFieldsErrors fieldName)) "has-error")}}
+    >
       <div class="toggle-column">
-        {{one-checkbox
+        <OneCheckbox
           class="item-checkbox"
-          isReadOnly=(eq formStatus "saving")
-          checked=(get formData (concat fieldName "Enabled"))
-          update=(action "dataChanged" (concat fieldName "Enabled"))
-        }}
+          @isReadOnly={{eq formStatus "saving"}}
+          @checked={{get formData (concat fieldName "Enabled")}}
+          @update={{action "dataChanged" (concat fieldName "Enabled")}}
+        />
       </div>
       <label for={{concat elementId fieldName}} class="label-column control-label {{if (not (get formData (concat fieldName "Enabled"))) "disabled"}}">
         {{t (concat "components.spaceCleaningConditionsForm." fieldName)}}
@@ -80,11 +77,11 @@
         {{/if}}
       </div>
       <div class="hint-column">
-        {{one-label-tip
-          title=(t (concat "components.spaceCleaningConditionsForm.hint." fieldName))
+        <OneLabelTip
+          @title={{t (concat "components.spaceCleaningConditionsForm.hint." fieldName)}}
           class="condition-hint"
-        }}
+        />
       </div>
-    {{/form.group}}
+    </form.group>
   {{/each}}
-{{/bs-form}}
+</BsForm>

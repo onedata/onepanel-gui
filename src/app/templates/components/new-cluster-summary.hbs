@@ -1,9 +1,9 @@
-{{#content-info
+<ContentInfo
   class="scroll-breakpoint-800"
-  header=(tt this "header")
-  buttonLabel=(tt this "buttonLabel")
-  buttonAction=(action "manageNewCluster")
-}}
+  @header={{tt this "header"}}
+  @buttonLabel={{tt this "buttonLabel"}}
+  @buttonAction={{action "manageNewCluster"}}
+>
   <p class="text-center">
     {{tt this "textFullyOperational"}}
   </p>
@@ -14,7 +14,7 @@
       <strong>({{tt this "wayOnezoneRecommended"}})</strong> –
       {{tt this "wayOnezoneInterface1"}}
       <div class="inline-icon-container">
-        {{one-icon icon="cluster"}}
+        <OneIcon @icon="cluster" />
       </div>
       <strong>{{tt this "wayOnezoneInterfaceClusters"}}</strong>
       {{tt this "wayOnezoneInterface3"}}
@@ -43,4 +43,4 @@
     {{tt this (concat "currentlyOn" (if isEmergencyOnepanel "Emergency" "Onezone"))}}
     {{tt this "currentlyOn2"}}.
   </p>
-{{/content-info}}
+</ContentInfo>

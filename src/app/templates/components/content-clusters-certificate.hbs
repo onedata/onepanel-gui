@@ -18,11 +18,11 @@
               <ul>
                 <li>
                   {{tt this "toRenewLi1"}}
-                  {{one-doc-see-more
-                    isSentencePart=true
-                    linkName=(tt this "certDocsLink")
-                    topic="web-certificate"
-                  }}
+                  <OneDocSeeMore
+                    @isSentencePart={{true}}
+                    @linkName={{tt this "certDocsLink"}}
+                    @topic="web-certificate"
+                  />
                 </li>
                 <li>{{tt this "toRenewLi2"}}</li>
               </ul>
@@ -30,13 +30,13 @@
           </div>
           {{#if letsEncrypt}}
             <div class="row alert-simple-info-btn">
-              {{#one-button
-                buttonType="submit"
-                size="sm"
-                onClick=(action "refreshCert")
-              }}
+              <OneButton
+                @buttonType="submit"
+                @size="sm"
+                @onClick={{action "refreshCert"}}
+              >
                 {{tt this "renewCertBtn"}}
-              {{/one-button}}
+              </OneButton>
             </div>
           {{/if}}
         </div>
@@ -52,11 +52,11 @@
               <ul>
                 <li>
                   {{tt this "toRenewLi1"}}
-                  {{one-doc-see-more
-                    isSentencePart=true
-                    linkName=(tt this "certDocsLink")
-                    topic="web-certificate"
-                  }}
+                  <OneDocSeeMore
+                    @isSentencePart={{true}}
+                    @linkName={{tt this "certDocsLink"}}
+                    @topic="web-certificate"
+                  />
                 </li>
                 <li>{{tt this "toRenewLi2"}}</li>
               </ul>
@@ -64,13 +64,13 @@
           </div>
           {{#if letsEncrypt}}
             <div class="row alert-simple-info-btn">
-              {{#one-button
-                buttonType="submit"
-                size="sm"
-                onClick=(action "refreshCert")
-              }}
+              <OneButton
+                @buttonType="submit"
+                @size="sm"
+                @onClick={{action "refreshCert"}}
+              >
                 {{tt this "renewCertBtn"}}
-              {{/one-button}}
+              </OneButton>
             </div>
           {{/if}}
         </div>
@@ -86,20 +86,20 @@
 <div class="row">
   {{#if shouldPollWebCert}}
     <div class="loadable-row lg">
-      {{spin-spinner-block sizeClass="md" class="absolute-middle-centered"}}
+      <SpinSpinnerBlock @sizeClass="md" class="absolute-middle-centered" />
     </div>
   {{else}}
     <div class="row content-row row-small">
       <h1 class="form-title">{{_formTitle}}</h1>
-      {{#promise-proxy-container proxy=webCertProxy}}
-        {{web-cert-form
-          isEditing=_editing
-          webCert=webCert
-          submit=(action "submitModify")
-        }}
-      {{/promise-proxy-container}}
+      <PromiseProxyContainer @proxy={{webCertProxy}}>
+        <WebCertForm
+          @isEditing={{_editing}}
+          @webCert={{webCert}}
+          @submit={{action "submitModify"}}
+        />
+      </PromiseProxyContainer>
     </div>
   {{/if}}
 </div>
 
-{{modal-redirect open=showRedirectPage}}
+<ModalRedirect @open={{showRedirectPage}} />

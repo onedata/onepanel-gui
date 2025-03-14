@@ -1,8 +1,8 @@
-{{#status-toolbar as |toolbar|}}
-  {{toolbar.icon
-    icon="space-import"
-    class=importStatusIconClasses
-    hint=importHint
-    enabled=storageImportEnabled
-  }}
-{{/status-toolbar}}
+<StatusToolbar as |toolbar|>
+  <toolbar.icon
+    @icon="space-import"
+    class={{importStatusIconClasses}}
+    @hint={{importHint}}
+    @enabled={{storageImportEnabled}}
+  />
+</StatusToolbar>

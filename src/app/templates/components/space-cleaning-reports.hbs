@@ -7,13 +7,13 @@
         {{t "components.spaceCleaningReports.noReportsAvailable"}}
       </div>
     {{else}}
-      {{#one-collapsible-list as |list|}}
+      <OneCollapsibleList as |list|>
         {{#each reportsArray as |item|}}
-          {{#list.item as |listItem|}}
-            {{space-cleaning-reports/data-mobile-item listItem=listItem item=item}}
-          {{/list.item}}
+          <list.item as |listItem|>
+            <SpaceCleaningReports::DataMobileItem @listItem={{listItem}} @item={{item}} />
+          </list.item>
         {{/each}}
-      {{/one-collapsible-list}}
+      </OneCollapsibleList>
     {{/if}}
   {{else}}
     <table class="table one-table one-infinite-list">
@@ -39,7 +39,7 @@
           </tr>
         {{else}}
           {{#each reportsArray as |item|}}
-            {{space-cleaning-reports/data-row item=item}}
+            <SpaceCleaningReports::DataRow @item={{item}} />
           {{/each}}
         {{/if}}
       </tbody>
@@ -48,5 +48,5 @@
 {{/if}}
 
 {{#if bottomLoading}}
-  {{spin-spinner-block sizeClass="sm" class="horizontal-align-middle"}}
+  <SpinSpinnerBlock @sizeClass="sm" class="horizontal-align-middle" />
 {{/if}}

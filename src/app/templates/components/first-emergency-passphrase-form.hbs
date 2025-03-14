@@ -1,14 +1,17 @@
 <div class="row text-center">
   <div class="col-xs-12">
-    {{#bs-form class="form-horizontal"
-      onSubmit=(action "submitPassphrase" passphrase confirmPassphrase)
-      formLayout="horizontal"
+    <BsForm
+      class="form-horizontal"
+      @onSubmit={{action "submitPassphrase" passphrase confirmPassphrase}}
+      @formLayout="horizontal"
       as |form|
-    }}
-      {{#form.group class=(if (and passphraseInvalidMessage passphraseEntered) "has-error")}}
+    >
+      <form.group
+        class={{if (and passphraseInvalidMessage passphraseEntered) "has-error"}}
+      >
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
-            {{one-icon icon="lock"}}
+            <OneIcon @icon="lock" />
           </div>
           <input
             type="password"
@@ -24,13 +27,13 @@
             {{tt this (concat "invalidPassphrase." passphraseInvalidMessage)}}
           </div>
         {{/if}}
-      {{/form.group}}
-      {{#form.group
-        class=(if confirmValid "has-success" (if confirmInvalid "has-error"))
-      }}
+      </form.group>
+      <form.group
+        class={{if confirmValid "has-success" (if confirmInvalid "has-error")}}
+      >
         <div class="input-group with-icon-addon">
           <div class="input-group-addon">
-            {{one-icon icon="lock-checked"}}
+            <OneIcon @icon="lock-checked" />
           </div>
           <input
             type="password"
@@ -44,28 +47,24 @@
         {{#if confirmInvalid}}
           <div class="form-message">{{tt this "passphrasesNotMatch"}}</div>
         {{/if}}
-      {{/form.group}}
+      </form.group>
       <div class="login-error-message {{if error "active" ""}}">
         {{tt this "error"}} {{if error error (tt this "unknownError")}}
       </div>
       <div class="row row-btn-spacing text-center">
-        {{#one-button
-          type="default"
-          onClick=(action "back")
-          class="btn-back"
-        }}
-          {{one-icon icon="arrow-right"}}
+        <OneButton @type="default" @onClick={{action "back"}} class="btn-back">
+          <OneIcon @icon="arrow-right" />
           <span class="text">{{tt this "back"}}</span>
-        {{/one-button}}
-        {{#one-button
-          type="primary"
-          buttonType="submit"
-          disabled=(not submitEnabled)
-          onClick=(action "submitPassphrase" passphrase confirmPassphrase)
-        }}
+        </OneButton>
+        <OneButton
+          @type="primary"
+          @buttonType="submit"
+          @disabled={{not submitEnabled}}
+          @onClick={{action "submitPassphrase" passphrase confirmPassphrase}}
+        >
           {{tt this "submit"}}
-        {{/one-button}}
+        </OneButton>
       </div>
-    {{/bs-form}}
+    </BsForm>
   </div>
 </div>

@@ -1,12 +1,16 @@
-{{#bs-form submitOnEnter=false class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal" as |form|}}
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-    disabled=_disabled
-  }}
+<BsForm
+  @submitOnEnter={{false}}
+  class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered form-horizontal"
+  as |form|
+>
+  <OneFormFields
+    @bsForm={{form}}
+    @fields={{currentFields}}
+    @formValues={{formValues}}
+    @inputChanged={{action "inputChanged"}}
+    @onFocusOut={{action "focusOut"}}
+    @disabled={{_disabled}}
+  />
   {{#if _willChangeDomainAfterSubmit}}
     <div class="row">
       <div class="col-xs-12">
@@ -38,15 +42,15 @@
             {{tt this "discard"}}
           </OneButton>
         {{/if}}
-        {{#one-button
-          type="primary"
-          buttonType="submit"
-          disabled=(not isValid)
-          onClick=(action "submit")
-        }}
+        <OneButton
+          @type="primary"
+          @buttonType="submit"
+          @disabled={{not isValid}}
+          @onClick={{action "submit"}}
+        >
           {{submitText}}
-        {{/one-button}}
+        </OneButton>
       </div>
     </div>
   {{/if}}
-{{/bs-form}}
+</BsForm>

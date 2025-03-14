@@ -1,86 +1,83 @@
 <td class="row-header truncate" {{action "headerClick" on="click"}} data-option="name">
   <span class="item-icon-container">
-    {{one-icon class="item-icon" icon="node"}}
-    {{one-tooltip
-      title=host.hostname
-      placement="top"
-      triggerEvents="hover"
-    }}
+    <OneIcon class="item-icon" @icon="node" />
+    <OneTooltip @title={{host.hostname}} @placement="top" @triggerEvents="hover" />
   </span>
   <span class="one-label">{{host.hostname}}</span>
 </td>
 <td class="text-center column toggle-column compact" data-option="database">
-  {{one-way-toggle
-    checked=host.database
-    update=(action "checkboxChanged")
-    hostHostname=host.hostname
-    hostOption="database"
-    dataOption="database"
-    isReadOnly=isReadOnly
-  }}
+  <OneWayToggle
+    @checked={{host.database}}
+    @update={{action "checkboxChanged"}}
+    @hostHostname={{host.hostname}}
+    @hostOption="database"
+    @dataOption="database"
+    @isReadOnly={{isReadOnly}}
+  />
 </td>
 <td class="text-center column toggle-column compact" data-option="clusterWorker">
-  {{one-way-toggle
-    checked=host.clusterWorker
-    update=(action "checkboxChanged")
-    hostHostname=host.hostname
-    hostOption="clusterWorker"
-    dataOption="clusterWorker"
-    isReadOnly=isReadOnly
-  }}
+  <OneWayToggle
+    @checked={{host.clusterWorker}}
+    @update={{action "checkboxChanged"}}
+    @hostHostname={{host.hostname}}
+    @hostOption="clusterWorker"
+    @dataOption="clusterWorker"
+    @isReadOnly={{isReadOnly}}
+  />
 </td>
 <td class="text-center column toggle-column compact" data-option="clusterManager">
-  {{one-way-toggle
-    checked=host.clusterManager
-    update=(action "checkboxChanged")
-    hostHostname=host.hostname
-    hostOption="clusterManager"
-    dataOption="clusterManager"
-    isReadOnly=isReadOnly
-  }}
+  <OneWayToggle
+    @checked={{host.clusterManager}}
+    @update={{action "checkboxChanged"}}
+    @hostHostname={{host.hostname}}
+    @hostOption="clusterManager"
+    @dataOption="clusterManager"
+    @isReadOnly={{isReadOnly}}
+  />
 </td>
 <td class="text-center column toggle-column compact" data-option="primaryClusterManager">
-  {{one-way-toggle
-    checked=isPrimaryClusterManager
-    update=(action "primaryClusterManagerChanged" host.hostname)
-    hostHostname=host.hostname
-    hostOption="primaryClusterManager"
-    dataOption="primaryClusterManager"
-    isReadOnly=isReadOnly
-  }}
+  <OneWayToggle
+    @checked={{isPrimaryClusterManager}}
+    @update={{action "primaryClusterManagerChanged" host.hostname}}
+    @hostHostname={{host.hostname}}
+    @hostOption="primaryClusterManager"
+    @dataOption="primaryClusterManager"
+    @isReadOnly={{isReadOnly}}
+  />
 </td>
 {{#if isOneS3Visible}}
   <td class="text-center column toggle-column compact" data-option="oneS3">
-    {{one-way-toggle
-      checked=host.oneS3
-      update=(action "checkboxChanged")
-      hostHostname=host.hostname
-      hostOption="oneS3"
-      dataOption="oneS3"
-      isReadOnly=isReadOnly
-    }}
+    <OneWayToggle
+      @checked={{host.oneS3}}
+      @update={{action "checkboxChanged"}}
+      @hostHostname={{host.hostname}}
+      @hostOption="oneS3"
+      @dataOption="oneS3"
+      @isReadOnly={{isReadOnly}}
+    />
   </td>
 {{/if}}
 {{#if removeAvailable}}
   <td class="text-center column btn-column compact">
     <div>
       {{#if isMobile}}
-        {{#one-button
-          type="danger"
-          buttonType="submit"
-          size="sm"
-          onClick=(action "removeHost")
-          disabled=isRemoveHostBtnDisabled
+        <OneButton
+          @type="danger"
+          @buttonType="submit"
+          @size="sm"
+          @onClick={{action "removeHost"}}
+          @disabled={{isRemoveHostBtnDisabled}}
           class="btn-remove-node"
-        }}
+        >
           {{t "components.clusterHostTableRow.removeBtn"}}
-        {{/one-button}}
+        </OneButton>
       {{else}}
-        {{remove-icon
-          tooltipText=(t "components.clusterHostTableRow.removeBtn")
-          onClick=(action "removeHost")
-          isDisabled=isRemoveHostBtnDisabled
-          class="btn-remove-node"}}
+        <RemoveIcon
+          @tooltipText={{t "components.clusterHostTableRow.removeBtn"}}
+          @onClick={{action "removeHost"}}
+          @isDisabled={{isRemoveHostBtnDisabled}}
+          class="btn-remove-node"
+        />
       {{/if}}
     </div>
   </td>

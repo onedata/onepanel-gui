@@ -1,10 +1,11 @@
 {{#if isOnepanelEmergency}}
-  {{#content-info
-    class=(if isUserTokenVisible "scroll-breakpoint-800" "scroll-breakpoint-600")
-    header=(tt this "header")
-    imagePath=(root-url "assets/images/cluster-members.svg")}}
+  <ContentInfo
+    class={{if isUserTokenVisible "scroll-breakpoint-800" "scroll-breakpoint-600"}}
+    @header={{tt this "header"}}
+    @imagePath={{root-url "assets/images/cluster-members.svg"}}
+  >
     <div class="row row-members-counter">
-      {{#promise-proxy-container proxy=membersProxy sizeClass="sm"}}
+      <PromiseProxyContainer @proxy={{membersProxy}} @sizeClass="sm">
         <p class="text-center">
           {{tt this "membersOf"}}
           <strong>{{cluster.name}}</strong>:
@@ -51,23 +52,23 @@
             <p>{{tt this "noConnectedUserWarning"}}</p>
           </div>
         {{/if}}
-      {{/promise-proxy-container}}
+      </PromiseProxyContainer>
     </div>
     <div class="text-center">
-      {{#one-button
-        type="primary"
-        buttonType="submit"
+      <OneButton
+        @type="primary"
+        @buttonType="submit"
         class="manage-via-onezone"
-        onClick=(action "manageViaOnezone")
-        disabled=(or membersProxy.isPending hasNoConnectedUser)
-      }}
+        @onClick={{action "manageViaOnezone"}}
+        @disabled={{or membersProxy.isPending hasNoConnectedUser}}
+      >
         {{tt this "openInOnezone"}}
-      {{/one-button}}
+      </OneButton>
     </div>
     <div class="user-token-container {{if isUserTokenVisible "expanded"}}">
       {{#if isUserTokenVisible}}
         <h2 class="text-center">{{tt this "inviteUserUsingToken"}}</h2>
-        {{#promise-proxy-container proxy=userInvitationTokenProxy}}
+        <PromiseProxyContainer @proxy={{userInvitationTokenProxy}}>
           <textarea
             rows="5"
             value={{userInvitationTokenProxy.token}}
@@ -76,12 +77,13 @@
           <a class="clickable" {{action "generateAnotherToken"}}>
             {{tt this "generateAnotherToken"}}
           </a>
-          {{one-copy-button
+          <OneCopyButton
             class="btn btn-default btn-sm pull-right"
-            parentElementId=elementId
-            localTarget=".invite-user-token-textarea"
-            textType=(tt this "token")}}
-        {{/promise-proxy-container}}
+            @parentElementId={{elementId}}
+            @localTarget=".invite-user-token-textarea"
+            @textType={{tt this "token"}}
+          />
+        </PromiseProxyContainer>
       {{else}}
         <p class="text-center">
           <a class="clickable" {{action "showUserToken"}}>
@@ -90,7 +92,10 @@
         </p>
       {{/if}}
     </div>
-  {{/content-info}}
+  </ContentInfo>
 {{else}}
-  {{content-clusters-onezone-redirect path=(concat "onedata/clusters/" cluster.id "/members") replace=true}}
+  <ContentClustersOnezoneRedirect
+    @path={{concat "onedata/clusters/" cluster.id "/members"}}
+    @replace={{true}}
+  />
 {{/if}}

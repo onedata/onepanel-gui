@@ -1,17 +1,13 @@
 <div class="row content-row header-row hidden-xs">
   <h1 class="normal-case">
-    {{#truncated-string class="one-label"}}{{cluster.name}}{{/truncated-string}}
+    <TruncatedString class="one-label">{{cluster.name}}</TruncatedString>
   </h1>
 </div>
 
-{{#promise-proxy-container proxy=installationDetailsProxy}}
+<PromiseProxyContainer @proxy={{installationDetailsProxy}}>
   <div class="row content-row">
     <div class="one-tile-container">
-      {{#one-tile
-        title=(tt this "info")
-        isLink=false
-        class="resource-info-tile"
-      }}
+      <OneTile @title={{tt this "info"}} @isLink={{false}} class="resource-info-tile">
         <table class="table table-condensed">
           <tbody>
             <tr>
@@ -24,34 +20,34 @@
               <td class="property-name">{{tt this "type"}}</td>
               <td class="property-value cluster-type">
                 {{#if (eq cluster.type "oneprovider")}}
-                  {{#link-to
-                    "onedata.sidebar.content.aspect"
-                    "provider"
+                  <LinkTo
+                    @route="onedata.sidebar.content.aspect"
+                    @model="provider"
                     class="cluster-type-text black"
-                  }}
+                  >
                     {{tt this (concat "clusterType." cluster.type)}}
-                  {{/link-to}}
-                  {{one-icon
-                    id=providerIdInfoTriggerId
-                    icon="circle-id"
+                  </LinkTo>
+                  <OneIcon
+                    id={{providerIdInfoTriggerId}}
+                    @icon="circle-id"
                     class="icon-trigger id-trigger clickable"
-                  }}
-                  {{#one-webui-popover
+                  />
+                  <OneWebuiPopover
                     class="id-info"
-                    popoverStyle="id-info"
-                    triggerSelector=(concat "#" providerIdInfoTriggerId)
+                    @popoverStyle="id-info"
+                    @triggerSelector={{concat "#" providerIdInfoTriggerId}}
                     as |popover|
-                  }}
+                  >
                     <div class="form-group without-margin">
                       <label class="control-label">{{tt this "providerId"}}:</label>
-                      {{one-clipboard-line
-                        size="sm"
-                        value=providerId
-                        showText=false
-                        btnType="default"
-                      }}
+                      <OneClipboardLine
+                        @size="sm"
+                        @value={{providerId}}
+                        @showText={{false}}
+                        @btnType="default"
+                      />
                     </div>
-                  {{/one-webui-popover}}
+                  </OneWebuiPopover>
                 {{else}}
                   <div class="cluster-type-text">
                     {{tt this (concat "clusterType." cluster.type)}}
@@ -63,28 +59,30 @@
             <tr>
               <td class="property-name">{{tt this "domain"}}</td>
               <td class="property-value domain">
-                {{one-clipboard-line
-                  size="sm"
-                  value=cluster.domain
-                  showText=false
-                  btnType="default"}}
+                <OneClipboardLine
+                  @size="sm"
+                  @value={{cluster.domain}}
+                  @showText={{false}}
+                  @btnType="default"
+                />
               </td>
             </tr>
             <tr>
               <td class="property-name">{{tt this "clusterId"}}</td>
               <td class="property-value id">
-                {{one-clipboard-line
-                  size="sm"
-                  value=cluster.id
-                  showText=false
-                  btnType="default"}}
+                <OneClipboardLine
+                  @size="sm"
+                  @value={{cluster.id}}
+                  @showText={{false}}
+                  @btnType="default"
+                />
               </td>
             </tr>
           </tbody>
         </table>
-      {{/one-tile}}
+      </OneTile>
       {{#if (gte allNodes.length 2)}}
-        {{cluster-nodes-tile clusterConfigurationProxy=installationDetailsProxy}}
+        <ClusterNodesTile @clusterConfigurationProxy={{installationDetailsProxy}} />
       {{/if}}
       {{#if (eq cluster.type "oneprovider")}}
         {{!-- TODO Uncomment when onezone map will render clusters, that can be accessed instead of only with our spaces --}}
@@ -93,14 +91,14 @@
           customLink=(concat "/ozw/onezone/i#/onedata/data/" cluster.serviceId)
           moreText=(tt this "showOnMap")
           title=(tt this "oneproviderTileTitle")}} --}}
-        {{cluster-spaces-tile
-          providerIdProxy=providerIdProxy
-          spacesProxy=spacesProxy
-          loadedSpacesCount=spacesBatchResolver.settledFunctionsCount
-          totalSpacesCount=spacesBatchResolver.totalFunctionsCount
-        }}
-        {{cluster-storages-tile storagesCountProxy=storagesCountProxy}}
+        <ClusterSpacesTile
+          @providerIdProxy={{providerIdProxy}}
+          @spacesProxy={{spacesProxy}}
+          @loadedSpacesCount={{spacesBatchResolver.settledFunctionsCount}}
+          @totalSpacesCount={{spacesBatchResolver.totalFunctionsCount}}
+        />
+        <ClusterStoragesTile @storagesCountProxy={{storagesCountProxy}} />
       {{/if}}
     </div>
   </div>
-{{/promise-proxy-container}}
+</PromiseProxyContainer>
