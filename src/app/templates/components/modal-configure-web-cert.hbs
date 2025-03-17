@@ -1,33 +1,30 @@
-{{#bs-modal
-  id="configure-web-cert"
-  open=open
-  onHide=(action "onHide")
-  keyboard=false
-  backdropClose=false
+<BsModal
+  @id="configure-web-cert"
+  @open={{open}}
+  @onHide={{action "onHide"}}
+  @keyboard={{false}}
+  @backdropClose={{false}}
   as |modal|
-}}
-  {{#modal.header}}
+>
+  <modal.header>
     <h1>
-      {{one-icon icon="sign-warning-rounded"}}
+      <OneIcon @icon="sign-warning-rounded" />
       <span class="one-lable">{{tt this "title"}}</span>
     </h1>
-  {{/modal.header}}
-  {{#modal.body}}
+  </modal.header>
+  <modal.body>
     <p>{{tt this "text"}}</p>
-  {{/modal.body}}
-  {{#modal.footer class="btn-toolbar"}}
-    {{#one-button
-      type="default"
-      onClick=(action modal.close)
-    }}
+  </modal.body>
+  <modal.footer class="btn-toolbar">
+    <OneButton @type="default" @onClick={{action modal.close}}>
       {{tt this "btnDiscard"}}
-    {{/one-button}}
-    {{#link-to
-      "onedata.sidebar.content.aspect"
-      "certificate"
+    </OneButton>
+    <LinkTo
+      @route="onedata.sidebar.content.aspect"
+      @model="certificate"
       class="btn btn-primary"
-    }}
+    >
       {{tt this "btnGoToCert"}}
-    {{/link-to}}
-  {{/modal.footer}}
-{{/bs-modal}}
+    </LinkTo>
+  </modal.footer>
+</BsModal>

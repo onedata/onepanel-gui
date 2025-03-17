@@ -1,43 +1,39 @@
-{{#loading-container isLoading=isLoading}}
+<LoadingContainer @isLoading={{isLoading}}>
 
   {{#unless _isInProcess}}
 
-    {{new-cluster-welcome start=(action (mut _isInProcess))}}
+    <NewClusterWelcome @start={{action (mut _isInProcess)}} />
 
   {{else}}
 
-    {{#one-wizard steps=visibleSteps currentIndex=wizardIndex as |w|}}
+    <OneWizard @steps={{visibleSteps}} @currentIndex={{wizardIndex}} as |w|>
       {{#if (eq w.step.name "deploy")}}
-        {{new-cluster-installation
-          nextStep=(action "next")
-          stepData=stepData
-          deploymentTaskId=deploymentTaskId
-        }}
+        <NewClusterInstallation
+          @nextStep={{action "next"}}
+          @stepData={{stepData}}
+          @deploymentTaskId={{deploymentTaskId}}
+        />
       {{else if (eq w.step.name "ips")}}
-        {{new-cluster-ips
-          nextStep=(action "next")
-          providerDetailsProxy=providerDetailsProxy
-        }}
+        <NewClusterIps
+          @nextStep={{action "next"}}
+          @providerDetailsProxy={{providerDetailsProxy}}
+        />
       {{else if (eq w.step.name "oneproviderRegistration")}}
-        {{new-cluster-zone-registration
-          nextStep=(action "next")
-        }}
+        <NewClusterZoneRegistration @nextStep={{action "next"}} />
       {{else if (eq w.step.name "dns")}}
-        {{new-cluster-dns
-          nextStep=(action "next")
-          prevStep=(action "prev")
-        }}
+        <NewClusterDns @nextStep={{action "next"}} @prevStep={{action "prev"}} />
       {{else if (eq w.step.name "webCert")}}
-        {{new-cluster-web-cert
-          nextStep=(action "next")
-        }}
+        <NewClusterWebCert @nextStep={{action "next"}} />
       {{else if (eq w.step.name "oneproviderStorageAdd")}}
-        {{manage-cluster-storages nextStep=(action "next")}}
+        <ManageClusterStorages @nextStep={{action "next"}} />
       {{else if (eq w.step.name "done")}}
-        {{new-cluster-summary clusterId=clusterId finish=(action "finishInitProcess")}}
+        <NewClusterSummary
+          @clusterId={{clusterId}}
+          @finish={{action "finishInitProcess"}}
+        />
       {{/if}}
-    {{/one-wizard}}
+    </OneWizard>
 
   {{/unless}}
 
-{{/loading-container}}
+</LoadingContainer>

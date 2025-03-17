@@ -31,18 +31,20 @@
   </p>
 </div>
 <div class="bar-container">
-  {{space-cleaning-bar-chart/inline-editor
+  <SpaceCleaningBarChart::InlineEditor
     class="soft-quota-editor"
-    position=targetPercent
-    value=targetSoftQuota
-    allowEdition=(and _allowLabelsEdition (not _disabled))
-    onSave=(action "valueChanged" "target")}}
-  {{space-cleaning-bar-chart/inline-editor
+    @position={{targetPercent}}
+    @value={{targetSoftQuota}}
+    @allowEdition={{and _allowLabelsEdition (not _disabled)}}
+    @onSave={{action "valueChanged" "target"}}
+  />
+  <SpaceCleaningBarChart::InlineEditor
     class="hard-quota-editor"
-    position=thresholdPercent
-    value=threshold
-    allowEdition=_allowLabelsEdition
-    onSave=(action "valueChanged" "threshold")}}
+    @position={{thresholdPercent}}
+    @value={{threshold}}
+    @allowEdition={{_allowLabelsEdition}}
+    @onSave={{action "valueChanged" "threshold"}}
+  />
   <div class="bar">
     <div class="chart-bar used-below-soft-quota"></div>
     <div class="chart-bar not-used-below-soft-quota not-used"></div>
@@ -67,13 +69,14 @@
         {{/if}}
       </div>
     </div>
-    {{range-slider
-      min=0
-      max=spaceSize
-      start=sliderStartValues
-      disabled=_disabled
-      step=1
-      on-slide=(action "slide")
-      on-change=(action "sliderChanged")}}
+    <RangeSlider
+      @min={{0}}
+      @max={{spaceSize}}
+      @start={{sliderStartValues}}
+      @disabled={{_disabled}}
+      @step={{1}}
+      slide={{action "slide"}}
+      change={{action "sliderChanged"}}
+    />
   </div>
 </div>

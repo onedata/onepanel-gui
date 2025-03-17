@@ -1,8 +1,9 @@
-{{#one-tile
-  title=(concat (tt this "title") (if clusterConfigurationProxy.isFulfilled (concat " (" allNodes.length ")") ""))
-  aspect="nodes"
-  class="cluster-nodes-tile"}}
-  {{#promise-proxy-container proxy=clusterConfigurationProxy}}
+<OneTile
+  @title={{concat (tt this "title") (if clusterConfigurationProxy.isFulfilled (concat " (" allNodes.length ")") "")}}
+  @aspect="nodes"
+  class="cluster-nodes-tile"
+>
+  <PromiseProxyContainer @proxy={{clusterConfigurationProxy}}>
     <div class="services-header">{{tt this "servicesHeader"}}:</div>
     {{#each serviceRows as |serviceRow|}}
       <div class="service-row">
@@ -14,5 +15,5 @@
         </div>
       </div>
     {{/each}}
-  {{/promise-proxy-container}}
-{{/one-tile}}
+  </PromiseProxyContainer>
+</OneTile>

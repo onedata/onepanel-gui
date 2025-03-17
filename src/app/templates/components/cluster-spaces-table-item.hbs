@@ -3,26 +3,22 @@
 
 <span class="list-header-content">
   <span class="item-icon-container">
-    {{one-icon class="item-icon" icon="space"}}
-    {{one-tooltip
-      title=space.name
-      placement="top"
-      triggerEvents="hover"
-    }}
+    <OneIcon class="item-icon" @icon="space" />
+    <OneTooltip @title={{space.name}} @placement="top" @triggerEvents="hover" />
   </span>
-  {{name-conflict item=space tagName="span" class="one-label space-name-header"}}
-  {{space-status-icons space=space importInfo=importInfo}}
-  {{#one-collapsible-toolbar
-    isMinimized=true
-    toggleBtnClass="btn-menu-toggle"
+  <NameConflict @item={{space}} @tagName="span" class="one-label space-name-header" />
+  <SpaceStatusIcons @space={{space}} @importInfo={{importInfo}} />
+  <OneCollapsibleToolbar
+    @isMinimized={{true}}
+    @toggleBtnClass="btn-menu-toggle"
     as |dropdown|
-  }}
-    {{#dropdown.item
-      itemAction=(action startRevokeSpace space)
-      triggerClasses="btn-revoke-space-support"
-    }}
-      {{one-icon icon="browser-delete"}}
+  >
+    <dropdown.item
+      @itemAction={{action startRevokeSpace space}}
+      @triggerClasses="btn-revoke-space-support"
+    >
+      <OneIcon @icon="browser-delete" />
       {{t "components.clusterSpacesTableItem.revokeSpaceSupport"}}
-    {{/dropdown.item}}
-  {{/one-collapsible-toolbar}}
+    </dropdown.item>
+  </OneCollapsibleToolbar>
 </span>

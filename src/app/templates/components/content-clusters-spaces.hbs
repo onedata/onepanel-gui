@@ -1,34 +1,34 @@
 {{#if selectedSpaceProxy}}
-  {{#promise-proxy-container
-    proxy=selectedSpaceProxy
-    spinnerBlockClass="absolute-middle-centered"
-  }}
-    {{content-clusters-spaces-show
-      space=selectedSpaceProxy.content
-      providerProxy=providerProxy
-      modifySpace=(action "modifySpace" selectedSpaceProxy.content)
-      startRevokeSpace=(action "startRevokeSpace")
-      selectedTab=selectedTab
-    }}
-  {{/promise-proxy-container}}
+  <PromiseProxyContainer
+    @proxy={{selectedSpaceProxy}}
+    @spinnerBlockClass="absolute-middle-centered"
+  >
+    <ContentClustersSpacesShow
+      @space={{selectedSpaceProxy.content}}
+      @providerProxy={{providerProxy}}
+      @modifySpace={{action "modifySpace" selectedSpaceProxy.content}}
+      @startRevokeSpace={{action "startRevokeSpace"}}
+      @selectedTab={{selectedTab}}
+    />
+  </PromiseProxyContainer>
 {{else}}
-  {{#promise-proxy-container
-    proxy=spacesBatchResolverProxy
-    spinnerBlockClass="absolute-middle-centered"
-  }}
-    {{content-clusters-spaces-list
-      providerProxy=providerProxy
-      spacesBatchResolver=spacesBatchResolverProxy.content
-      startRevokeSpace=(action "startRevokeSpace")
-      updateSpacesData=(action "updateSpacesData")
-    }}
-  {{/promise-proxy-container}}
+  <PromiseProxyContainer
+    @proxy={{spacesBatchResolverProxy}}
+    @spinnerBlockClass="absolute-middle-centered"
+  >
+    <ContentClustersSpacesList
+      @providerProxy={{providerProxy}}
+      @spacesBatchResolver={{spacesBatchResolverProxy.content}}
+      @startRevokeSpace={{action "startRevokeSpace"}}
+      @updateSpacesData={{action "updateSpacesData"}}
+    />
+  </PromiseProxyContainer>
 {{/if}}
 
-{{#render-later triggerRender=spaceToRevoke}}
-  {{cease-oneprovider-support-modal
-    opened=spaceToRevoke
-    removeSpaceUrl=removeSpaceToRevokeUrl
-    close=(action "closeCeaseSupportModal")
-  }}
-{{/render-later}}
+<RenderLater @triggerRender={{spaceToRevoke}}>
+  <CeaseOneproviderSupportModal
+    @opened={{spaceToRevoke}}
+    @removeSpaceUrl={{removeSpaceToRevokeUrl}}
+    @close={{action "closeCeaseSupportModal"}}
+  />
+</RenderLater>

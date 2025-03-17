@@ -1,11 +1,7 @@
 <td class="row-header cell-hostname" {{action "headerClick" on="click"}} data-option="name">
   <span class="item-icon-container">
-    {{one-icon class="item-icon" icon="node"}}
-    {{one-tooltip
-      title=hostname
-      placement="top"
-      triggerEvents="hover"
-    }}
+    <OneIcon class="item-icon" @icon="node" />
+    <OneTooltip @title={{hostname}} @placement="top" @triggerEvents="hover" />
   </span>
   <span class="record-info-container">
     <span class="one-label">{{hostname}}</span>
@@ -19,11 +15,11 @@
     {{#if isReadOnly}}
       <span>{{ip}}</span>
     {{else}}
-      {{#bs-form class="compact form-horizontal without-labels" as |form|}}
-        {{#form.group
-          validation=(if validationMessage "error" "success")
-          class=(if validationMessage "has-message")
-        }}
+      <BsForm class="compact form-horizontal without-labels" as |form|>
+        <form.group
+          @validation={{if validationMessage "error" "success"}}
+          class={{if validationMessage "has-message"}}
+        >
           <input
             class="form-control input-host-ip"
             value={{ip}}
@@ -34,8 +30,8 @@
           {{#if validationMessage}}
             <div class="form-message">{{validationMessage}}</div>
           {{/if}}
-        {{/form.group}}
-      {{/bs-form}}
+        </form.group>
+      </BsForm>
     {{/if}}
   </div>
 </td>

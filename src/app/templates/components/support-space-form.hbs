@@ -1,5 +1,5 @@
-{{#bs-form submitOnEnter=false class=_formClasses as |form|}}
-  {{#form.group class="storage-field"}}
+<BsForm @submitOnEnter={{false}} class={{_formClasses}} as |form|>
+  <form.group class="storage-field">
     <label class={{concat "control-label " layoutConfig.formLabelColumns}}>
       {{tt this "storage"}}:
     </label>
@@ -13,7 +13,7 @@
         @placeholder={{tt this "storageSelectPlaceholder"}}
         as |storageItem|
       >
-        {{name-conflict item=storageItem.storage}}
+        <NameConflict @item={{storageItem.storage}} />
         {{#if storageItem.isImportedAndUsed}}
           <small class="imported-used-storage">{{tt this "storageImportedAndUsed"}}</small>
         {{else if storageItem.storage.importedStorage}}
@@ -21,42 +21,39 @@
         {{/if}}
       </OneDropdown>
     </div>
-  {{/form.group}}
+  </form.group>
 
-  {{one-form-fields
-    bsForm=form
-    fields=currentFields
-    formValues=formValues
-    inputChanged=(action "inputChanged")
-    onFocusOut=(action "focusOut")
-  }}
+  <OneFormFields
+    @bsForm={{form}}
+    @fields={{currentFields}}
+    @formValues={{formValues}}
+    @inputChanged={{action "inputChanged"}}
+    @onFocusOut={{action "focusOut"}}
+  />
 
-  {{space-support-accounting-form
-    mode="edit"
-    onChange=(action "accountingConfigChanged")
-  }}
+  <SpaceSupportAccountingForm
+    @mode="edit"
+    @onChange={{action "accountingConfigChanged"}}
+  />
 
-  {{storage-import-form
-    class=(concat-classes
-      "col-xs-12 collapse-animation collapse-small"
-      (unless importEnabled "collapse-hidden")
-    )
-    mode="new"
-    isFormOpened=importEnabled
-    valuesChanged=(action "importFormChanged")
-    showSubmitButton=false
-    selectedStorage=selectedStorage
-  }}
+  <StorageImportForm
+    class={{concat-classes "col-xs-12 collapse-animation collapse-small" (unless importEnabled "collapse-hidden")}}
+    @mode="new"
+    @isFormOpened={{importEnabled}}
+    @valuesChanged={{action "importFormChanged"}}
+    @showSubmitButton={{false}}
+    @selectedStorage={{selectedStorage}}
+  />
   <div class="row">
     <div class={{layoutConfig.formSubmitColumns}}>
-      {{#one-button
-        type="primary"
-        buttonType="submit"
-        onClick=(action "submit")
-        disabled=(not canSubmit)
-      }}
+      <OneButton
+        @type="primary"
+        @buttonType="submit"
+        @onClick={{action "submit"}}
+        @disabled={{not canSubmit}}
+      >
         {{tt this "submitButton"}}
-      {{/one-button}}
+      </OneButton>
     </div>
   </div>
-{{/bs-form}}
+</BsForm>

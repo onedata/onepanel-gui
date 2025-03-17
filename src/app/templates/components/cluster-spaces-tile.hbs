@@ -1,15 +1,13 @@
-{{#one-tile
-  title=(tt this "title")
-  aspect="spaces"
-  class="cluster-spaces-tile text-center"}}
-  {{#promise-proxy-container proxy=providerIdProxy}}
-    {{#promise-proxy-container
-      proxy=spacesProxy
-      loadingLabel=(tt this "loadingSupportData"
+<OneTile
+  @title={{tt this "title"}}
+  @aspect="spaces"
+  class="cluster-spaces-tile text-center"
+>
+  <PromiseProxyContainer @proxy={{providerIdProxy}}>
+    <PromiseProxyContainer @proxy={{spacesProxy}} @loadingLabel={{tt this "loadingSupportData"
         loadedCount=loadedSpacesCount
         totalCount=totalSpacesCount
-      )
-    }}
+      }}>
       {{#if spacesProxy.length}}
         {{#if (gt spacesProxy.length chartMaxSpaces)}}
           <ProviderSpacesSupportTable
@@ -31,6 +29,6 @@
           <span class="one-label">{{tt this "supportSpace"}}</span>
         </figure>
       {{/if}}
-    {{/promise-proxy-container}}
-  {{/promise-proxy-container}}
-{{/one-tile}}
+    </PromiseProxyContainer>
+  </PromiseProxyContainer>
+</OneTile>

@@ -1,21 +1,21 @@
 <div class="form form-horizontal form-component">
-  {{form-component/field-renderer field=fields}}
+  <FormComponent::FieldRenderer @field={{fields}} />
 </div>
-{{#bs-modal
-  id="lets-encrypt-changed"
-  open=showLetsEncryptChangeModal
-  keyboard=true
-  backdropClose=true
-  onHide=(action "changedModalCanceled")
+<BsModal
+  @id="lets-encrypt-changed"
+  @open={{showLetsEncryptChangeModal}}
+  @keyboard={{true}}
+  @backdropClose={{true}}
+  @onHide={{action "changedModalCanceled"}}
   as |modal|
-}}
-  {{#modal.header}}
+>
+  <modal.header>
     <h1>
-      {{one-icon icon="sign-warning-rounded"}}
+      <OneIcon @icon="sign-warning-rounded" />
       <span class="one-lable">{{tt this "changedModal.title"}}</span>
     </h1>
-  {{/modal.header}}
-  {{#modal.body}}
+  </modal.header>
+  <modal.body>
     {{#if formLetsEncryptValue}}
       <p>
         {{tt this "changedModal.text.enableCertWillBeObtained"}}<br>
@@ -33,20 +33,13 @@
         {{tt this "changedModal.text.disable"}}
       </p>
     {{/if}}
-  {{/modal.body}}
-  {{#modal.footer class="btn-toolbar"}}
-    {{#one-button
-      type="default"
-      onClick=modal.close
-    }}
+  </modal.body>
+  <modal.footer class="btn-toolbar">
+    <OneButton @type="default" @onClick={{modal.close}}>
       {{tt this "changedModal.cancel"}}
-    {{/one-button}}
-    {{#one-button
-      type="primary"
-      buttonType="submit"
-      onClick=(action "submit")
-    }}
+    </OneButton>
+    <OneButton @type="primary" @buttonType="submit" @onClick={{action "submit"}}>
       {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
-    {{/one-button}}
-  {{/modal.footer}}
-{{/bs-modal}}
+    </OneButton>
+  </modal.footer>
+</BsModal>

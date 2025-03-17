@@ -46,13 +46,6 @@ export default Component.extend(
     startRevokeSpace: notImplementedReject,
 
     /**
-     * OneCollapsibleListItem that should be used to render this
-     * To inject.
-     * @type {Component.OneCollapsibleListItem}
-     */
-    listItem: null,
-
-    /**
      * @type {OnepanelGui.SpaceDetails}
      */
     space: null,

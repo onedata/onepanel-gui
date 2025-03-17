@@ -2,21 +2,21 @@
   <h1>{{tt this "header"}}
     <div class="btn-toolbar">
       {{!-- cannot use disabled attr on this button because we want the tooltip to work --}}
-      {{#one-button
-        type="primary"
-        buttonType="submit"
-        size="sm"
-        class=(concat "btn-setup-ips " (unless _hostsIpsFormValid "disabled"))
-        onClick=(action "startSetup")
-      }}
-        <span>{{tt this "setupIpsButton"}}</span>{{one-icon icon="arrow-right"}}
-        {{one-tooltip
-          title=(t "mixins.components.clusterIpsConfigurator.configurationInvalid")
-          placement="left"
-          class=(if _hostsIpsFormValid "hidden" "")
-          triggerElement=".btn-setup-ips"
-        }}
-      {{/one-button}}
+      <OneButton
+        @type="primary"
+        @buttonType="submit"
+        @size="sm"
+        class={{concat "btn-setup-ips " (unless _hostsIpsFormValid "disabled")}}
+        @onClick={{action "startSetup"}}
+      >
+        <span>{{tt this "setupIpsButton"}}</span><OneIcon @icon="arrow-right" />
+        <OneTooltip
+          @title={{t "mixins.components.clusterIpsConfigurator.configurationInvalid"}}
+          @placement="left"
+          class={{if _hostsIpsFormValid "hidden" ""}}
+          @triggerElement=".btn-setup-ips"
+        />
+      </OneButton>
     </div>
   </h1>
 </div>
@@ -34,13 +34,13 @@
     {{tt this "infoAutoDetect"}}
   </p>
 
-  {{#promise-proxy-container proxy=hostsLoadingProxy}}
-    {{cluster-host-ip-form
-      hostsIps=hostsIpsProxy.content
-      hostsInfo=hostsInfoProxy.content
-      hostDataChanged=(action "hostsIpsDataChanged")
-      allValidChanged=(action "hostsIpsFormValidChanged")
-      readonly=ipsSetupProxy.isPending
-    }}
-  {{/promise-proxy-container}}
+  <PromiseProxyContainer @proxy={{hostsLoadingProxy}}>
+    <ClusterHostIpForm
+      @hostsIps={{hostsIpsProxy.content}}
+      @hostsInfo={{hostsInfoProxy.content}}
+      @hostDataChanged={{action "hostsIpsDataChanged"}}
+      @allValidChanged={{action "hostsIpsFormValidChanged"}}
+      @isReadOnly={{ipsSetupProxy.isPending}}
+    />
+  </PromiseProxyContainer>
 </div>
