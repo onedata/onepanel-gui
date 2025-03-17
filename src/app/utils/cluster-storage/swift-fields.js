@@ -1,18 +1,38 @@
 export default [{
   name: 'username',
   type: 'text',
+  tip: true,
 }, {
   name: 'password',
   type: 'password',
+  tip: true,
+}, {
+  name: 'projectName',
+  type: 'text',
+  tip: true,
+}, {
+  name: 'userDomainName',
+  type: 'text',
+  optional: true,
+  defaultPlaceholder: 'Default',
+  isDefault: true,
+  tip: true,
+}, {
+  name: 'projectDomainName',
+  type: 'text',
+  optional: true,
+  defaultPlaceholder: 'Default',
+  isDefault: true,
+  tip: true,
 }, {
   name: 'authUrl',
   type: 'text',
+  tip: true,
+  example: 'http://example.com:5000/v3',
 }, {
   name: 'containerName',
   type: 'text',
-}, {
-  name: 'tenantName',
-  type: 'text',
+  tip: true,
 }, {
   name: 'blockSize',
   type: 'number',
