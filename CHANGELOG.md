@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12674 Added support for batch requests and sidebar loader
 * VFS-12716 Changed storage form fields for swift
 * VFS-12622 Refactored OneIcon component to Glimmer
 * VFS-12543 Fixed possible infinite scroll list trimming after first item disappeared and list reload
