@@ -1,32 +1,37 @@
-{{#listItem.header}}
-  <div class="data-row" data-row-id={{dataRowId}}>
-    <span class="item-icon-container">
-      <SpaceCleaningReports::StatusCell @record={{item}} />
-    </span>
-    <span class="one-label">{{startedAt}}</span>
-  </div>
-{{/listItem.header}}
-{{#listItem.content}}
-  <RenderLater @triggerRender={{listItem.isActive}}>
-    <div class="item-table">
-      <div class="item-table-content-cell">
-        <div class="row content-row">
-          <strong>{{t "components.spaceCleaningReports.start"}}:</strong>
-          <span class="one-label">{{startedAt}}</span>
-        </div>
-        <div class="row content-row">
-          <strong>{{t "components.spaceCleaningReports.stop"}}:</strong>
-          <span class="one-label">{{stoppedAt}}</span>
-        </div>
-        <div class="row content-row">
-          <strong>{{t "components.spaceCleaningReports.releasedBytes"}}:</strong>
-          <span class="one-label">{{releasedSize}}</span>
-        </div>
-        <div class="row content-row">
-          <strong>{{t "components.spaceCleaningReports.start"}}:</strong>
-          <span class="one-label">{{filesNumber}}</span>
+{{#let
+  (component listItem.header) (component listItem.content)
+  as |listItemHeader listItemContent|
+}}
+  <listItemHeader>
+    <div class="data-row" data-row-id={{dataRowId}}>
+      <span class="item-icon-container">
+        <SpaceCleaningReports::StatusCell @record={{item}} />
+      </span>
+      <span class="one-label">{{startedAt}}</span>
+    </div>
+  </listItemHeader>
+  <listItemContent>
+    <RenderLater @triggerRender={{listItem.isActive}}>
+      <div class="item-table">
+        <div class="item-table-content-cell">
+          <div class="row content-row">
+            <strong>{{t "components.spaceCleaningReports.start"}}:</strong>
+            <span class="one-label">{{startedAt}}</span>
+          </div>
+          <div class="row content-row">
+            <strong>{{t "components.spaceCleaningReports.stop"}}:</strong>
+            <span class="one-label">{{stoppedAt}}</span>
+          </div>
+          <div class="row content-row">
+            <strong>{{t "components.spaceCleaningReports.releasedBytes"}}:</strong>
+            <span class="one-label">{{releasedSize}}</span>
+          </div>
+          <div class="row content-row">
+            <strong>{{t "components.spaceCleaningReports.start"}}:</strong>
+            <span class="one-label">{{filesNumber}}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </RenderLater>
-{{/listItem.content}}
+    </RenderLater>
+  </listItemContent>
+{{/let}}
