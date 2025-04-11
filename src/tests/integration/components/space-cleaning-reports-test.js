@@ -64,10 +64,7 @@ describe('Integration | Component | space-cleaning-reports', function () {
     globals.window.innerWidth = 1366;
 
     await render(hbs `<div class="col-content">
-      {{space-cleaning-reports
-        spaceId="space_id1"
-        isCleanEnabled=true
-      }}
+      <SpaceCleaningReports @spaceId="space_id1" @isCleanEnabled={{true}} />
     </div>`);
 
     expect(findAll('tbody tr.data-row'), 'data rows').to.have.length(2);
@@ -91,10 +88,7 @@ describe('Integration | Component | space-cleaning-reports', function () {
     globals.window.innerWidth = 600;
 
     await render(hbs `<div class="col-content">
-      {{space-cleaning-reports
-        spaceId="space_id1"
-        isCleanEnabled=true
-      }}
+      <SpaceCleaningReports @spaceId="space_id1" @isCleanEnabled={{true}} />
     </div>`);
 
     expect(findAll('.one-collapsible-list .data-row')).to.have.length(2);
@@ -126,10 +120,7 @@ describe('Integration | Component | space-cleaning-reports', function () {
       .stub(lookupService(this, 'spaceManager'), 'getAutoCleaningReports').resolves([]);
 
     await render(hbs `<div class="col-content">
-      {{space-cleaning-reports
-        spaceId="space_id1"
-        isCleanEnabled=true
-      }}
+      <SpaceCleaningReports @spaceId="space_id1" @isCleanEnabled={{true}} />
     </div>`);
     await waitForRender();
 

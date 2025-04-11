@@ -36,7 +36,7 @@ describe('Integration | Component | cluster-host-table', function () {
     ];
     this.set('hosts', hosts);
 
-    await render(hbs `{{cluster-host-table hosts=hosts}}`);
+    await render(hbs `<ClusterHostTable @hosts={{hosts}} />`);
 
     const hostTable = find('.cluster-host-table');
     const helper = new HostTableHelper(hostTable);
@@ -55,7 +55,7 @@ describe('Integration | Component | cluster-host-table', function () {
     ];
     this.set('hosts', hosts);
 
-    await render(hbs `{{cluster-host-table hosts=hosts}}`);
+    await render(hbs `<ClusterHostTable @hosts={{hosts}} />`);
 
     const hostTable = find('.cluster-host-table');
     const helper = new HostTableHelper(hostTable);

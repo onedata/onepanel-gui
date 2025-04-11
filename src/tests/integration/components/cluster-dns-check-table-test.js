@@ -28,10 +28,10 @@ describe('Integration | Component | cluster-dns-check-table', function () {
       recommended: [],
     }]);
 
-    await render(hbs `{{cluster-dns-check-table
-      onepanelServiceType="onezone"
-      checkResultItems=checkResultItems
-    }}`);
+    await render(hbs `<ClusterDnsCheckTable
+      @onepanelServiceType="onezone"
+      @checkResultItems={{checkResultItems}}
+    />`);
 
     const clusterDnsCheckTable = find('.cluster-dns-check-table');
 

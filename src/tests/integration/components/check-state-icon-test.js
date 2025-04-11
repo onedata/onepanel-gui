@@ -8,7 +8,7 @@ describe('Integration | Component | check-state-icon', function () {
   setupRenderingTest();
 
   it('renders with success class and icon when success is true', async function () {
-    await render(hbs `{{check-state-icon success=true}}`);
+    await render(hbs `<CheckStateIcon @success={{true}} />`);
     const checkStateIcon = find('.check-state-icon');
     expect(checkStateIcon).to.exist;
     expect(checkStateIcon).to.have.class('success');
@@ -16,7 +16,7 @@ describe('Integration | Component | check-state-icon', function () {
   });
 
   it('renders with warning class and icon when success is false', async function () {
-    await render(hbs `{{check-state-icon success=false}}`);
+    await render(hbs `<CheckStateIcon @success={{false}} />`);
     const checkStateIcon = find('.check-state-icon');
     expect(checkStateIcon).to.exist;
     expect(checkStateIcon).to.have.class('warning');

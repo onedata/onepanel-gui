@@ -71,7 +71,7 @@ describe('Integration | Component | content-clusters-spaces', function () {
   it('shows support space form when clicking on support space button', async function () {
     await render(hbs `
       <button class="collapsible-toolbar-global-toggle"></button>
-      {{content-clusters-spaces}}
+      <ContentClustersSpaces />
     `);
 
     await click('button.btn-support-space');

@@ -37,23 +37,21 @@ describe('Integration | Component | storage-import-form', function () {
 
   it('hides submit button if neccessary', async function () {
     await render(hbs `
-      {{storage-import-form
-        showSubmitButton=false
-      }}
+      <StorageImportForm @showSubmitButton={{false}} />
     `);
 
     expect(find('button[type=submit]')).to.not.exist;
   });
 
   it('has preselected "auto" mode on init', async function () {
-    await render(hbs `{{storage-import-form}}`);
+    await render(hbs `<StorageImportForm />}`);
 
     expect(find('.field-mode-mode-auto')).to.be.checked;
   });
 
   context('when import mode is "auto"', function () {
     it('shows auto storage import fields with default values', async function () {
-      await render(hbs `{{storage-import-form}}`);
+      await render(hbs `<StorageImportForm />}`);
 
       await click('.field-mode-mode-auto');
       expect(find('.toggle-field-generic-continuousScan'))
@@ -70,7 +68,7 @@ describe('Integration | Component | storage-import-form', function () {
     it(
       'does not show any continuous scan fields if continuous scan is disabled',
       async function () {
-        await render(hbs `{{storage-import-form}}`);
+        await render(hbs `<StorageImportForm />}`);
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
@@ -81,7 +79,7 @@ describe('Integration | Component | storage-import-form', function () {
     it('shows continuous scan fields if continuous scan is enabled',
       async function () {
         await render(hbs `
-          {{storage-import-form}}
+          <StorageImportForm />}
         `);
 
         await click('.field-mode-mode-auto');
@@ -90,7 +88,7 @@ describe('Integration | Component | storage-import-form', function () {
 
     it('disables submit button when data is incorrect', async function () {
       await render(hbs `
-        {{storage-import-form}}
+        <StorageImportForm />}
       `);
 
       await click('.field-mode-mode-auto');
@@ -109,7 +107,7 @@ describe('Integration | Component | storage-import-form', function () {
         };
         this.set('formValues', formValues);
 
-        await render(hbs `{{storage-import-form defaultValues=formValues}}`);
+        await render(hbs `<StorageImportForm @defaultValues={{formValues}} />`);
 
         checkContinuousFieldsExist();
       }
@@ -121,7 +119,7 @@ describe('Integration | Component | storage-import-form', function () {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
         await render(hbs `
-          {{storage-import-form mode="new" valuesChanged=changedSpy}}
+          <StorageImportForm @mode="new" @valuesChanged={{changedSpy}} />
         `);
 
         await fillInWholeForm();
@@ -143,7 +141,7 @@ describe('Integration | Component | storage-import-form', function () {
         const changedSpy = sinon.spy();
         this.set('changedSpy', changedSpy);
         await render(hbs `
-          {{storage-import-form mode="new" valuesChanged=changedSpy}}
+          <StorageImportForm @mode="new" @valuesChanged={{changedSpy}} />
         `);
 
         await fillInWholeForm();
@@ -160,7 +158,7 @@ describe('Integration | Component | storage-import-form', function () {
           defaultValues: { mode: 'auto' },
         });
         await render(hbs `
-          {{storage-import-form mode="edit" defaultValues=defaultValues}}
+          <StorageImportForm @mode="edit" @defaultValues={{defaultValues}} />
         `);
 
         await click('.toggle-field-generic-continuousScan');
@@ -171,7 +169,7 @@ describe('Integration | Component | storage-import-form', function () {
     it(
       'shows correct "continuous mode" info message when "continuous scan" is enabled',
       async function () {
-        await render(hbs `{{storage-import-form}}`);
+        await render(hbs `<StorageImportForm />}`);
 
         await click('.field-mode-mode-auto');
         expect(find('.continuous-info-msg'))
@@ -182,7 +180,7 @@ describe('Integration | Component | storage-import-form', function () {
     it(
       'shows correct "continuous mode" info message when "continuous scan" is disabled',
       async function () {
-        await render(hbs `{{storage-import-form}}`);
+        await render(hbs `<StorageImportForm />}`);
 
         await click('.field-mode-mode-auto');
         await click('.toggle-field-generic-continuousScan');
@@ -196,7 +194,7 @@ describe('Integration | Component | storage-import-form', function () {
       async function () {
         this.set('exampleConfig', exampleFormValues);
         await render(hbs `
-          {{storage-import-form defaultValues=exampleConfig}}
+          <StorageImportForm @defaultValues={{exampleConfig}} />
         `);
 
         expect(find('.field-mode-mode-auto')).to.be.checked;
@@ -216,7 +214,7 @@ describe('Integration | Component | storage-import-form', function () {
   context('when import mode is "manual"', function () {
     it('does not show any auto storage import fields', async function () {
       // enforcing "new" form mode to allow "mode" field change
-      await render(hbs `{{storage-import-form mode="new"}}`);
+      await render(hbs `<StorageImportForm @mode="new" />`);
 
       await click('.field-mode-mode-manual');
       [
@@ -231,7 +229,7 @@ describe('Integration | Component | storage-import-form', function () {
 
     it('does not show "continuous mode" info message', async function () {
       // enforcing "new" form mode to allow "mode" field change
-      await render(hbs `{{storage-import-form mode="new"}}`);
+      await render(hbs `<StorageImportForm @mode="new" />`);
 
       await click('.field-mode-mode-manual');
       expect(find('.continuous-info-msg')).to.not.exist;
@@ -242,7 +240,7 @@ describe('Integration | Component | storage-import-form', function () {
       async function () {
         this.set('exampleConfig', { mode: 'manual' });
         await render(hbs `
-          {{storage-import-form defaultValues=exampleConfig}}
+          <StorageImportForm @defaultValues={{exampleConfig}} />
         `);
 
         expect(find('.field-mode-mode-manual')).to.be.checked;
@@ -253,7 +251,7 @@ describe('Integration | Component | storage-import-form', function () {
       const submitSpy = this.set('submitSpy', sinon.spy());
 
       // enforcing "new" form mode to allow "mode" field change
-      await render(hbs `{{storage-import-form mode="new" submit=submitSpy}}`);
+      await render(hbs `<StorageImportForm @mode="new" @submit={{submitSpy}} />`);
 
       await click('.field-mode-mode-manual');
       await click('.submit-import');
@@ -267,7 +265,7 @@ describe('Integration | Component | storage-import-form', function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
     await render(hbs `
-      {{storage-import-form valuesChanged=changedSpy mode="new"}}
+      <StorageImportForm @valuesChanged={{changedSpy}} @mode="new" />
     `);
 
     expect(changedSpy).to.be.calledOnce.and.to.be.calledWith(sinon.match({
@@ -286,7 +284,7 @@ describe('Integration | Component | storage-import-form', function () {
     const changedSpy = sinon.spy();
     this.set('changedSpy', changedSpy);
     // enforcing "new" form mode to allow "mode" field change
-    await render(hbs `{{storage-import-form mode="new" valuesChanged=changedSpy}}`);
+    await render(hbs `<StorageImportForm @mode="new" @valuesChanged={{changedSpy}} />`);
 
     await click('.field-mode-mode-manual');
     expect(changedSpy).to.be.calledTwice.and.to.be.calledWith(sinon.match({
@@ -295,13 +293,13 @@ describe('Integration | Component | storage-import-form', function () {
   });
 
   it('has enabled "mode" field in "new" form mode', async function () {
-    await render(hbs `{{storage-import-form mode="new"}}`);
+    await render(hbs `<StorageImportForm @mode="new" />`);
 
     expect(find('.field-mode-mode input')).to.not.have.attr('disabled');
   });
 
   it('has disabled "mode" field in "edit" form mode', async function () {
-    await render(hbs `{{storage-import-form mode="edit"}}`);
+    await render(hbs `<StorageImportForm @mode="edit" />`);
 
     expect(find('.field-mode-mode input')).to.have.attr('disabled');
   });

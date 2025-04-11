@@ -234,11 +234,11 @@ describe('Integration | Component | space-support-accounting-form', function () 
 });
 
 async function renderComponent() {
-  await render(hbs`{{space-support-accounting-form
-    isDisabled=isDisabled
-    mode=mode
-    values=values
-    onChange=changeSpy
-    dirStatsServiceStatus=dirStatsServiceStatus
-  }}`);
+  await render(hbs`<SpaceSupportAccountingForm
+    @isDisabled={{isDisabled}}
+    @mode={{mode}}
+    @values={{values}}
+    @onChange={{changeSpy}}
+    @dirStatsServiceStatus={{dirStatsServiceStatus}}
+  />`);
 }

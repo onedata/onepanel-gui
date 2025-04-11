@@ -20,7 +20,7 @@ describe('Integration | Component | provider-registration-form', function () {
       this.set('submit', function () {});
 
       await render(hbs `
-        {{provider-registration-form mode="new" submit=(action submit)}}
+        <ProviderRegistrationForm @mode="new" @submit={{action submit}} />
       `);
 
       const helper = new ProviderRegistrationHelper(this.element);
@@ -39,10 +39,7 @@ describe('Integration | Component | provider-registration-form', function () {
 
   it('changes hostname/subdomain visibility with toggle', async function () {
     await render(hbs `
-      {{provider-registration-form
-        mode="new"
-        subdomainDelegationSupported=true
-      }}`);
+      <ProviderRegistrationForm @mode="new" @subdomainDelegationSupported={{true}} />`);
 
     const toggleSelector = '.toggle-field-editTop-subdomainDelegation';
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
@@ -68,10 +65,11 @@ describe('Integration | Component | provider-registration-form', function () {
     const excludedSubdomains = ['a', 'b'];
     this.set('excludedSubdomains', excludedSubdomains);
     await render(hbs `
-      {{provider-registration-form
-        mode="new"
-        subdomainDelegationSupported=true
-        excludedSubdomains=excludedSubdomains}}`);
+      <ProviderRegistrationForm
+        @mode="new"
+        @subdomainDelegationSupported={{true}}
+        @excludedSubdomains={{excludedSubdomains}}
+      />`);
 
     const subdomainInputSelector = '.field-editSubdomain-subdomain';
     expect(find('.has-error')).not.to.exist;
@@ -83,10 +81,7 @@ describe('Integration | Component | provider-registration-form', function () {
 
   it('accepts IP address in provider domain fields', async function () {
     await render(hbs `
-      {{provider-registration-form
-        subdomainDelegationSupported=true
-        mode="new"
-      }}`);
+      <ProviderRegistrationForm @subdomainDelegationSupported={{true}} @mode="new" />`);
 
     await click('.toggle-field-editTop-subdomainDelegation');
     await fillIn('.field-editDomain-domain', '12.12.12.12');
@@ -95,9 +90,7 @@ describe('Integration | Component | provider-registration-form', function () {
 
   it('accepts domain name in provider domain fields', async function () {
     await render(hbs `
-      {{provider-registration-form
-        mode="new"
-      }}`);
+      <ProviderRegistrationForm @mode="new" />`);
 
     await fillIn('.field-editDomain-domain', 'xyz.com');
     expect(find('.has-error')).not.to.exist;
@@ -105,10 +98,7 @@ describe('Integration | Component | provider-registration-form', function () {
 
   it('accepts valid subdomain field value', async function () {
     await render(hbs `
-      {{provider-registration-form
-        subdomainDelegationSupported=true
-        mode="new"
-      }}`);
+      <ProviderRegistrationForm @subdomainDelegationSupported={{true}} @mode="new" />`);
 
     await fillIn('.field-editSubdomain-subdomain', 'test');
     expect(find('.has-error')).not.to.exist;

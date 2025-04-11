@@ -14,10 +14,10 @@ describe('Integration | Component | space-storage-import', function () {
       const importIntervalChanged = sinon.spy();
       this.set('importIntervalChanged', importIntervalChanged);
 
-      await render(hbs `{{space-storage-import
-        importEnabled=true
-        importIntervalChanged=(action importIntervalChanged)
-      }}`);
+      await render(hbs `<SpaceStorageImport
+        @importEnabled={{true}}
+        @importIntervalChanged={{action importIntervalChanged}}
+      />`);
 
       await click('.btn-import-interval-day');
 

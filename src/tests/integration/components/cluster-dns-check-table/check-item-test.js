@@ -21,11 +21,11 @@ describe('Integration | Component | cluster-dns-check-table/check-item', functio
       recommended: [],
     });
 
-    await render(hbs `{{cluster-dns-check-table/check-item
-      dnsCheckResult=dnsCheckResult
-      checkProperty="domain"
-      onepanelServiceType="provider"
-    }}`);
+    await render(hbs `<ClusterDnsCheckTable::CheckItem
+      @dnsCheckResult={{dnsCheckResult}}
+      @checkProperty="domain"
+      @onepanelServiceType="provider"
+    />`);
 
     const checkItem = find('.check-item');
 
@@ -43,11 +43,11 @@ describe('Integration | Component | cluster-dns-check-table/check-item', functio
       recommended: [],
     });
 
-    await render(hbs `{{cluster-dns-check-table/check-item
-      dnsCheckResult=dnsCheckResult
-      checkProperty="domain"
-      onepanelServiceType="provider"
-    }}`);
+    await render(hbs `<ClusterDnsCheckTable::CheckItem
+      @dnsCheckResult={{dnsCheckResult}}
+      @checkProperty="domain"
+      @onepanelServiceType="provider"
+    />`);
 
     const checkItem = find('.check-item');
 
@@ -79,11 +79,11 @@ describe('Integration | Component | cluster-dns-check-table/check-item', functio
         recommended: [],
       });
 
-      await render(hbs `{{cluster-dns-check-table/check-item
-        dnsCheckResult=dnsCheckResult
-        checkProperty="domain"
-        onepanelServiceType="provider"
-      }}`);
+      await render(hbs `<ClusterDnsCheckTable::CheckItem
+        @dnsCheckResult={{dnsCheckResult}}
+        @checkProperty="domain"
+        @onepanelServiceType="provider"
+      />`);
 
       const checkItem = find('.check-item');
       expect(checkItem).to.not.contain.text(additionalText);
@@ -100,11 +100,11 @@ describe('Integration | Component | cluster-dns-check-table/check-item', functio
       recommended: [],
     });
 
-    await render(hbs `{{cluster-dns-check-table/check-item
-      dnsCheckResult=dnsCheckResult
-      checkProperty="domain"
-      onepanelServiceType="provider"
-    }}`);
+    await render(hbs `<ClusterDnsCheckTable::CheckItem
+      @dnsCheckResult={{dnsCheckResult}}
+      @checkProperty="domain"
+      @onepanelServiceType="provider"
+    />`);
 
     const checkItem = find('.check-item');
 
@@ -123,11 +123,11 @@ describe('Integration | Component | cluster-dns-check-table/check-item', functio
       recommended: [],
     });
 
-    await render(hbs `{{cluster-dns-check-table/check-item
-      dnsCheckResult=dnsCheckResult
-      checkProperty="domain"
-      onepanelServiceType="provider"
-    }}`);
+    await render(hbs `<ClusterDnsCheckTable::CheckItem
+      @dnsCheckResult={{dnsCheckResult}}
+      @checkProperty="domain"
+      @onepanelServiceType="provider"
+    />`);
 
     const checkItem = find('.check-item');
 
