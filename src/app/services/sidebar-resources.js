@@ -1,14 +1,14 @@
 /**
- * An abstraction layer for getting data for sidebar of various tabs
+ * Implements resources for Onepanel GUI sidebar.
  *
  * @author Jakub Liput
- * @copyright (C) 2017-2024 ACK CYFRONET AGH
+ * @copyright (C) 2025 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { reject } from 'rsvp';
 import { inject as service } from '@ember/service';
 import SidebarResources from 'onedata-gui-common/services/sidebar-resources';
+import SidebarModelLoader from 'onedata-gui-common/utils/sidebar-model-loader';
 
 /** @type {SidebarCollection} */
 const emptyCollection = Object.freeze({
@@ -20,19 +20,21 @@ const emptyCollection = Object.freeze({
   },
 });
 
-export default SidebarResources.extend({
-  onepanelServer: service(),
-  clusterModelManager: service(),
-  guiUtils: service(),
-  clusterActions: service(),
+export default class SidebarResourcesService extends SidebarResources {
+  @service onepanelServer;
+  @service clusterModelManager;
+  @service guiUtils;
+  @service clusterActions;
 
   /**
    * @override
-   * @param {string} type
-   * @returns {Promise<SidebarCollection>}
+   * @param {OnedataResourceCategory} resourceCategory
+   * @returns {SidebarModelLoader}
    */
-  async getCollectionFor(type) {
-    switch (type) {
+  createSidebarModelLoader(resourceCategory) {
+    switch (resourceCategory) {
+      case 'clusters':
+        return this.createClustersSidebarModelLoader();
       case 'providers':
       case 'spaces':
       case 'shares':
@@ -41,38 +43,12 @@ export default SidebarResources.extend({
       case 'harvesters':
       case 'atm-inventories':
       case 'users': {
-        return emptyCollection;
-      }
-      case 'clusters': {
-        const {
-          onepanelServer,
-          clusterModelManager,
-        } = this;
-        let array;
-        if (onepanelServer.isEmergency) {
-          const currentCluster = await clusterModelManager.getCurrentClusterProxy();
-          if (currentCluster) {
-            array = [currentCluster];
-          } else {
-            // cluster is not deployed yet - only in onepanel emergency mode
-            array = [clusterModelManager.getNotDeployedCluster()];
-          }
-        } else {
-          array = await clusterModelManager.getClustersProxy();
-        }
-        return {
-          get array() {
-            return array;
-          },
-          get ids() {
-            return this.array.map(cluster => cluster.id);
-          },
-        };
+        return this.createEmptySidebarModelLoader();
       }
       default:
-        return reject('No such collection: ' + type);
+        throw new Error(`SidebarResources: no such collection: ${resourceCategory}`);
     }
-  },
+  }
 
   /**
    * Returns sidebar buttons definitions
@@ -86,5 +62,53 @@ export default SidebarResources.extend({
       default:
         return [];
     }
-  },
-});
+  }
+
+  /**
+   * @private
+   * @returns {SidebarModelLoader}
+   */
+  createClustersSidebarModelLoader() {
+    const {
+      onepanelServer,
+      clusterModelManager,
+    } = this;
+    let arrayResolver;
+    if (onepanelServer.isEmergency) {
+      arrayResolver = async () => {
+        const currentCluster = await clusterModelManager.getCurrentClusterProxy();
+        if (currentCluster) {
+          return [currentCluster];
+        } else {
+          // cluster is not deployed yet - only in onepanel emergency mode
+          return [clusterModelManager.getNotDeployedCluster()];
+        }
+      };
+    } else {
+      arrayResolver = async () => {
+        return await clusterModelManager.getClustersProxy();
+      };
+    }
+    const collectionResolver = async () => {
+      const array = await arrayResolver();
+      return {
+        get array() {
+          return array;
+        },
+        get ids() {
+          return this.array.map(cluster => cluster.id);
+        },
+      };
+    };
+    return new SidebarModelLoader('clusters', collectionResolver());
+  }
+
+  /**
+   * @private
+   * @returns {SidebarModelLoader}
+   */
+  createEmptySidebarModelLoader() {
+    const collectionResolver = async () => emptyCollection;
+    return new SidebarModelLoader('clusters', collectionResolver());
+  }
+}
