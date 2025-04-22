@@ -30,10 +30,11 @@ describe('Integration | Component | space-cleaning-bar-chart', function () {
   it('renders pacman if cleaning is working', async function () {
     await render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart
-          settings=settings
-          status=status
-          spaceSize=spaceSize}}
+        <SpaceCleaningBarChart
+          @settings={{settings}}
+          @status={{status}}
+          @spaceSize={{spaceSize}}
+        />
       </div>
     `);
     expect(find('.pacman')).to.exist;
@@ -43,10 +44,11 @@ describe('Integration | Component | space-cleaning-bar-chart', function () {
     this.set('status.lastRunStatus', 'completed');
     await render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart
-          settings=settings
-          status=status
-          spaceSize=spaceSize}}
+        <SpaceCleaningBarChart
+          @settings={{settings}}
+          @status={{status}}
+          @spaceSize={{spaceSize}}
+        />
       </div>
     `);
     expect(find('.pacman')).not.to.exist;
@@ -55,10 +57,11 @@ describe('Integration | Component | space-cleaning-bar-chart', function () {
   it('renders valid indicators', async function () {
     await render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart
-          settings=settings
-          status=status
-          spaceSize=spaceSize}}
+        <SpaceCleaningBarChart
+          @settings={{settings}}
+          @status={{status}}
+          @spaceSize={{spaceSize}}
+        />
       </div>
     `);
     const indicators = find('.indicators');
@@ -71,10 +74,11 @@ describe('Integration | Component | space-cleaning-bar-chart', function () {
   it('renders valid slider values', async function () {
     await render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart
-          settings=settings
-          status=status
-          spaceSize=spaceSize}}
+        <SpaceCleaningBarChart
+          @settings={{settings}}
+          @status={{status}}
+          @spaceSize={{spaceSize}}
+        />
       </div>
     `);
     expect(find('.soft-quota-editor')).to.contain.text('6 MiB');
@@ -84,10 +88,11 @@ describe('Integration | Component | space-cleaning-bar-chart', function () {
   it('renders valid bars', async function () {
     await render(hbs `
       <div style="width: 500px">
-        {{space-cleaning-bar-chart
-          settings=settings
-          status=status
-          spaceSize=spaceSize}}
+        <SpaceCleaningBarChart
+          @settings={{settings}}
+          @status={{status}}
+          @spaceSize={{spaceSize}}
+        />
       </div>
     `);
     const {

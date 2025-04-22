@@ -18,7 +18,7 @@ describe('Integration | Component | space-status-icons', function () {
         storageImportEnabled: false,
       }));
 
-      await render(hbs `{{space-status-icons space=space}}`);
+      await render(hbs `<SpaceStatusIcons @space={{space}} />`);
 
       expect(dom.isHidden(find('.space-status-icons'))).to.be.true;
     }
@@ -31,7 +31,7 @@ describe('Integration | Component | space-status-icons', function () {
         storageImportEnabled: true,
       }));
 
-      await render(hbs `{{space-status-icons space=space}}`);
+      await render(hbs `<SpaceStatusIcons @space={{space}} />`);
 
       expect(dom.isVisible(find('.oneicon-space-import'))).to.be.true;
     }
@@ -74,7 +74,10 @@ describe('Integration | Component | space-status-icons', function () {
         importInfo: { status },
       });
 
-      await render(hbs `{{space-status-icons space=space importInfo=importInfo}}`);
+      await render(hbs `<SpaceStatusIcons
+        @space={{space}}
+        @importInfo={{importInfo}}
+      />`);
 
       const importIcon = find('.status-toolbar-icon');
       const tipHelper = new OneTooltipHelper(importIcon);
@@ -93,7 +96,7 @@ describe('Integration | Component | space-status-icons', function () {
       }),
     });
 
-    await render(hbs `{{space-status-icons space=space}}`);
+    await render(hbs `<SpaceStatusIcons @space={{space}} />`);
 
     const tipHelper = new OneTooltipHelper(find('.status-toolbar-icon'));
     return tipHelper.getText()
@@ -110,7 +113,7 @@ describe('Integration | Component | space-status-icons', function () {
       importInfo: { status: 'completed', nextScan: nextScanMoment.unix() },
     });
 
-    await render(hbs `{{space-status-icons space=space importInfo=importInfo}}`);
+    await render(hbs `<SpaceStatusIcons @space={{space}} @importInfo={{importInfo}} />`);
 
     const tipHelper = new OneTooltipHelper(find('.status-toolbar-icon'));
     return tipHelper.getText()

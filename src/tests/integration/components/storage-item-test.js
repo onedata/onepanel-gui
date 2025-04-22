@@ -36,13 +36,13 @@ describe('Integration | Component | storage-item', function () {
     })]);
 
     await render(hbs `
-    {{#one-collapsible-list as |list|}}
+    <OneCollapsibleList as |list|>
       {{#each storages as |storage|}}
-        {{#list.item as |listItem|}}
-          {{storage-item listItem=listItem storageProxy=storage}}
-        {{/list.item}}
+        <list.item as |listItem|>
+          <StorageItem @listItem={{listItem}} @storageProxy={{storage}} />
+        </list.item>
       {{/each}}
-    {{/one-collapsible-list}}`);
+    </OneCollapsibleList>`);
 
     expect(find('.storage-name')).to.contain.text(name);
   });
@@ -87,13 +87,17 @@ describe('Integration | Component | storage-item', function () {
     const totalSupport = 400000;
 
     await render(hbs `
-    {{#one-collapsible-list as |list|}}
+    <OneCollapsibleList as |list|>
       {{#each storages as |storage|}}
-        {{#list.item as |listItem|}}
-          {{storage-item listItem=listItem spaces=spaces storageProxy=storage}}
-        {{/list.item}}
+        <list.item as |listItem|>
+          <StorageItem
+            @listItem={{listItem}}
+            @spaces={{spaces}}
+            @storageProxy={{storage}}
+          />
+        </list.item>
       {{/each}}
-    {{/one-collapsible-list}}
+    </OneCollapsibleList>
     `);
 
     const header = find('.support-size');

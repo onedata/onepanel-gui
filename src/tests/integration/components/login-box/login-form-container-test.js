@@ -26,7 +26,7 @@ describe('Integration | Component | login-box/login-form-container', function ()
       sinon.stub(onezoneGui, 'getCanEnterViaOnezoneProxy').resolves(true);
       sinon.stub(onezoneGui, 'getOnepanelNavUrlInOnezone').returns(onezoneUrl);
 
-      await render(hbs `{{login-box/login-form-container}}`);
+      await render(hbs `<LoginBox::LoginFormContainer />`);
 
       const onezoneButtonContainer = find('.onezone-button-container');
       expect(onezoneButtonContainer).to.exist;
@@ -46,7 +46,7 @@ describe('Integration | Component | login-box/login-form-container', function ()
       const onezoneGui = lookupService(this, 'onezone-gui');
       sinon.stub(onezoneGui, 'getCanEnterViaOnezoneProxy').resolves(false);
 
-      await render(hbs `{{login-box/login-form-container}}`);
+      await render(hbs `<LoginBox::LoginFormContainer />`);
 
       const onezoneButton = find('.btn-login-onezone');
       expect(onezoneButton).to.have.attr('disabled');

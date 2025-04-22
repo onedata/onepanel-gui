@@ -78,7 +78,7 @@ describe('Integration | Component | support-space-form', function () {
   it(
     'does not disable storages with importedStorage equals false',
     async function () {
-      await render(hbs `{{support-space-form}}`);
+      await render(hbs `<SupportSpaceForm />`);
 
       await clickTrigger('.storage-field');
       const firstStorageItem = findAll('.ember-power-select-option')[0];
@@ -91,7 +91,7 @@ describe('Integration | Component | support-space-form', function () {
   );
 
   it('does not disable storage without support and with importedStorage', async function () {
-    await render(hbs `{{support-space-form}}`);
+    await render(hbs `<SupportSpaceForm />`);
 
     await clickTrigger('.storage-field');
 
@@ -106,7 +106,7 @@ describe('Integration | Component | support-space-form', function () {
   it(
     'disables storages with support and importedStorage equals true',
     async function () {
-      await render(hbs `{{support-space-form}}`);
+      await render(hbs `<SupportSpaceForm />`);
 
       await clickTrigger('.storage-field');
 
@@ -119,14 +119,14 @@ describe('Integration | Component | support-space-form', function () {
 
   it('does not show import section if storage is not imported',
     async function () {
-      await render(hbs `{{support-space-form}}`);
+      await render(hbs `<SupportSpaceForm />`);
 
       expect(find('.storage-import-form')).to.have.class('collapse-hidden');
     }
   );
 
   it('renders import section if storage is imported', async function () {
-    await render(hbs `{{support-space-form}}`);
+    await render(hbs `<SupportSpaceForm />`);
 
     await selectStorageWithImport();
     expect(find('.storage-import-form')).to.not.have.class('collapse-hidden');
@@ -141,9 +141,7 @@ describe('Integration | Component | support-space-form', function () {
     this.prepareAllFields();
 
     await render(hbs `
-      {{support-space-form
-        submitSupportSpace=(action submit)
-      }}
+      <SupportSpaceForm @submitSupportSpace={{action submit}} />
     `);
 
     const helper = new SupportSpaceFormHelper(this.element);
@@ -165,10 +163,7 @@ describe('Integration | Component | support-space-form', function () {
     this.set('submit', sinon.stub().returns(reject('some error')));
 
     await render(hbs `
-      {{support-space-form
-        submitSupportSpace=submit
-        values=formValues
-      }}
+      <SupportSpaceForm @submitSupportSpace={{submit}} @values={{formValues}} />
     `);
 
     await click('button[type=submit]');
@@ -176,7 +171,7 @@ describe('Integration | Component | support-space-form', function () {
   });
 
   it('hides import form when selected storage is not imported', async function () {
-    await render(hbs `{{support-space-form}}`);
+    await render(hbs `<SupportSpaceForm />`);
 
     expect(
       find('.import-configuration-section').closest('.collapse-hidden')
@@ -184,7 +179,7 @@ describe('Integration | Component | support-space-form', function () {
   });
 
   it('shows import form when selected storage is imported', async function () {
-    await render(hbs `{{support-space-form}}`);
+    await render(hbs `<SupportSpaceForm />`);
 
     await selectStorageWithImport();
     expect(
@@ -195,7 +190,7 @@ describe('Integration | Component | support-space-form', function () {
   it('reacts to invalid data in import form', async function () {
     this.prepareAllFields();
 
-    await render(hbs `{{support-space-form values=formValues}}`);
+    await render(hbs `<SupportSpaceForm @values={{formValues}} />`);
 
     await selectStorageWithImport();
     await fillIn('.field-generic-maxDepth', 'bad value');
@@ -208,10 +203,7 @@ describe('Integration | Component | support-space-form', function () {
     this.set('submit', submitStub);
 
     await render(hbs `
-      {{support-space-form
-        submitSupportSpace=(action submit)
-        values=formValues
-      }}
+      <SupportSpaceForm @submitSupportSpace={{action submit}} @values={{formValues}} />
     `);
 
     await selectStorageWithImport();
@@ -226,7 +218,7 @@ describe('Integration | Component | support-space-form', function () {
   });
 
   it('shows enabled and editable accounting section', async function () {
-    await render(hbs`{{support-space-form}}`);
+    await render(hbs`<SupportSpaceForm />`);
 
     expect(find('.space-support-accounting-form')).to.exist;
     const accountingRootGroup = find('.accounting-fields-root-group');
@@ -242,10 +234,10 @@ describe('Integration | Component | support-space-form', function () {
   it('submits default data from accounting form', async function () {
     const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
     this.prepareAllFields();
-    await render(hbs`{{support-space-form
-      submitSupportSpace=submitSpy
-      values=formValues
-    }}`);
+    await render(hbs`<SupportSpaceForm
+      @submitSupportSpace={{submitSpy}}
+      @values={{formValues}}
+    />`);
 
     await click('button[type="submit"]');
 
@@ -259,10 +251,10 @@ describe('Integration | Component | support-space-form', function () {
   it('submits changed data from accounting form', async function () {
     const submitSpy = this.set('submitSpy', sinon.spy(() => resolve()));
     this.prepareAllFields();
-    await render(hbs`{{support-space-form
-      submitSupportSpace=submitSpy
-      values=formValues
-    }}`);
+    await render(hbs`<SupportSpaceForm
+      @submitSupportSpace={{submitSpy}}
+      @values={{formValues}}
+    />`);
 
     await click('.accountingEnabled-field .one-way-toggle');
     await click('button[type="submit"]');

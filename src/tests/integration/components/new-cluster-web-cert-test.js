@@ -92,7 +92,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
           globals.location.hostname = '127.0.0.1';
           const nextStep = this.set('nextStep', sinon.spy());
-          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `<NewClusterWebCert @nextStep={{nextStep}} />`);
 
           await click('.btn-cert-next');
           this.get('fakeClock').tick(reloadDelay);
@@ -118,7 +118,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
           globals.location.hostname = beforeReloadDomain;
           const nextStep = this.set('nextStep', sinon.spy());
-          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `<NewClusterWebCert @nextStep={{nextStep}} />`);
 
           await click('.btn-cert-next');
           this.get('fakeClock').tick(reloadDelay);
@@ -136,7 +136,7 @@ describe('Integration | Component | new-cluster-web-cert', function () {
           set(lookupService(this, 'onepanel-server'), 'isEmergency', isEmergencyGui);
           const oldHostname = globals.location.hostname;
           const nextStep = this.set('nextStep', sinon.spy());
-          await render(hbs `{{new-cluster-web-cert nextStep=nextStep}}`);
+          await render(hbs `<NewClusterWebCert @nextStep={{nextStep}} />`);
 
           await click('.toggle-field-letsEncrypt');
           await click('.btn-cert-next');

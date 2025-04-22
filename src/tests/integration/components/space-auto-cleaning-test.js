@@ -28,10 +28,7 @@ describe('Integration | Component | space-auto-cleaning', function () {
       autoCleaning,
     });
     await render(hbs `<div class="col-content">
-      {{space-auto-cleaning
-        spaceId=spaceId
-        autoCleaning=autoCleaning
-      }}
+      <SpaceAutoCleaning @spaceId={{spaceId}} @autoCleaning={{autoCleaning}} />
     </div>`);
 
     expect(find('.space-cleaning-settings')).to.not.exist;

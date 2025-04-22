@@ -44,5 +44,5 @@ describe('Integration | Component | space-support-accounting-form/status-badge',
 });
 
 async function renderComponent() {
-  await render(hbs`{{space-support-accounting-form/status-badge field=field}}`);
+  await render(hbs`<SpaceSupportAccountingForm::StatusBadge @field={{field}} />`);
 }

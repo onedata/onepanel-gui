@@ -71,7 +71,10 @@ describe('Integration | Component | cluster-spaces-table', function () {
       this.set('spaces', spaces);
       this.set('provider', { id: '123' });
 
-      await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
+      await render(hbs `<ClusterSpacesTable
+        @spaces={{spaces}}
+        @provider={{provider}}
+      />`);
       expect(find('.alert-some-spaces-rejected')).to.exist;
     });
 
@@ -101,7 +104,10 @@ describe('Integration | Component | cluster-spaces-table', function () {
       this.set('spaces', spaces);
       this.set('provider', { id: '123' });
 
-      await render(hbs `{{cluster-spaces-table spaces=spaces provider=provider}}`);
+      await render(hbs `<ClusterSpacesTable
+        @spaces={{spaces}}
+        @provider={{provider}}
+      />`);
       expect(find('.alert-some-spaces-rejected')).to.not.exist;
     });
 });

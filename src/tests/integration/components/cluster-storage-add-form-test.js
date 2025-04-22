@@ -85,11 +85,11 @@ async function testNotAllowPathTypeEdit(storageData, storageType = storageData.t
       storage: storageData,
       mode: 'edit',
     });
-    await render(hbs `{{cluster-storage-add-form
-      storage=storage
-      mode=mode
-      storageProvidesSupport=true
-    }}`);
+    await render(hbs `<ClusterStorageAddForm
+      @storage={{storage}}
+      @mode={{mode}}
+      @storageProvidesSupport={{true}}
+    />`);
 
     const helper = new ClusterStorageAddHelper(this.element);
 
@@ -113,10 +113,7 @@ async function testAllowCertainPathTypeCreate({
       storage: storageData,
       mode: 'create',
     });
-    await render(hbs `{{cluster-storage-add-form
-      storage=storage
-      mode=mode
-    }}`);
+    await render(hbs `<ClusterStorageAddForm @storage={{storage}} @mode={{mode}} />`);
 
     const helper = new ClusterStorageAddHelper(this.element);
 
@@ -143,7 +140,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
   context('in show mode', function () {
     it('shows storage details for POSIX type', async function () {
       this.set('storage', POSIX_STORAGE);
-      await render(hbs `{{cluster-storage-add-form storage=storage mode="show"}}`);
+      await render(hbs `<ClusterStorageAddForm @storage={{storage}} @mode="show" />`);
 
       const helper = new ClusterStorageAddHelper(this.element);
 
@@ -192,7 +189,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           this.set('selectedStorageType', CEPH_RADOS_TYPE);
 
           await render(hbs `
-            {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+            <ClusterStorageAddForm @selectedStorageType={{selectedStorageType}} />
           `);
 
           const helper = new ClusterStorageAddHelper(this.element);
@@ -216,7 +213,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
         this.set('selectedStorageType', POSIX_TYPE);
         await render(hbs `
-          {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+          <ClusterStorageAddForm @selectedStorageType={{selectedStorageType}} />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -267,10 +264,10 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       });
 
       await render(hbs `
-        {{cluster-storage-add-form
-          selectedStorageType=selectedStorageType
-          submit=submit
-        }}
+        <ClusterStorageAddForm
+          @selectedStorageType={{selectedStorageType}}
+          @submit={{submit}}
+        />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -282,7 +279,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     });
 
     it('shows and hides luma fields', async function () {
-      await render(hbs `{{cluster-storage-add-form}}`);
+      await render(hbs `<ClusterStorageAddForm />`);
 
       const lumaSelector = '[class*="field-luma"]';
       const helper = new ClusterStorageAddHelper(this.element);
@@ -309,7 +306,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it('resets fields values after storage type change', async function () {
       this.set('selectedStorageType', POSIX_TYPE);
       await render(hbs `
-        {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+        <ClusterStorageAddForm @selectedStorageType={{selectedStorageType}} />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -333,7 +330,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       async function () {
         this.set('selectedStorageType', POSIX_TYPE);
         await render(hbs `
-          {{cluster-storage-add-form selectedStorageType=selectedStorageType}}
+          <ClusterStorageAddForm @selectedStorageType={{selectedStorageType}} />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -348,7 +345,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
     it('resets fields values after form visibility toggle', async function () {
       this.set('isFormOpened', true);
-      await render(hbs `{{cluster-storage-add-form isFormOpened=isFormOpened}}`);
+      await render(hbs `<ClusterStorageAddForm @isFormOpened={{isFormOpened}} />`);
 
       const helper = new ClusterStorageAddHelper(this.element);
       await fillIn(helper.getInput('generic-name'), 'name');
@@ -369,10 +366,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       async function () {
         this.set('storage', POSIX_STORAGE);
         await render(hbs `
-          {{cluster-storage-add-form
-            storage=storage
-            mode="create"
-          }}
+          <ClusterStorageAddForm @storage={{storage}} @mode="create" />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -400,7 +394,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it(
       'locks "imported stoarge" and "readonly" to true for HTTP storage',
       async function () {
-        await render(hbs `{{cluster-storage-add-form}}`);
+        await render(hbs `<ClusterStorageAddForm />`);
 
         const helper = new ClusterStorageAddHelper(this.element);
         await selectChoose('.storage-type-select-group', 'HTTP');
@@ -419,7 +413,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it(
       'unlocks "imported stoarge" when changing type from HTTP',
       async function () {
-        await render(hbs `{{cluster-storage-add-form}}`);
+        await render(hbs `<ClusterStorageAddForm />`);
 
         const helper = new ClusterStorageAddHelper(this.element);
         await selectChoose('.storage-type-select-group', 'HTTP');
@@ -459,9 +453,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it('shows storage details for POSIX type', async function () {
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        {{cluster-storage-add-form
-          storage=storage
-          mode="edit"}}
+        <ClusterStorageAddForm @storage={{storage}} @mode="edit" />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -503,9 +495,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it('luma enabled toggle does not change luma fields values', async function () {
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        {{cluster-storage-add-form
-          storage=storage
-          mode="edit"}}
+        <ClusterStorageAddForm @storage={{storage}} @mode="edit" />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -538,11 +528,12 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        {{cluster-storage-add-form
-          storage=storage
-          mode="edit"
-          isFormOpened=true
-          submit=submit}}
+        <ClusterStorageAddForm
+          @storage={{storage}}
+          @mode="edit"
+          @isFormOpened={{true}}
+          @submit={{submit}}
+        />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -567,10 +558,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        {{cluster-storage-add-form
-          storage=storage
-          mode="edit"
-          submit=submit}}
+        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @submit={{submit}} />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -587,10 +575,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           mode: 'edit',
         });
         await render(hbs `
-          {{cluster-storage-add-form
-            storage=storage
-            mode=mode
-            submit=submit}}
+          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @submit={{submit}} />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -611,10 +596,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       async function () {
         this.set('storage', POSIX_STORAGE);
         await render(hbs `
-          {{cluster-storage-add-form
-            storageProvidesSupport=false
-            storage=storage
-            mode="edit"}}
+          <ClusterStorageAddForm
+            @storageProvidesSupport={{false}}
+            @storage={{storage}}
+            @mode="edit"
+          />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -627,10 +613,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       async function () {
         this.set('storage', POSIX_STORAGE);
         await render(hbs `
-          {{cluster-storage-add-form
-            storageProvidesSupport=true
-            storage=storage
-            mode="edit"}}
+          <ClusterStorageAddForm
+            @storageProvidesSupport={{true}}
+            @storage={{storage}}
+            @mode="edit"
+          />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -649,12 +636,12 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         const submitStub = sinon.stub().resolves();
         this.set('submit', submitStub);
         await render(hbs `
-          {{cluster-storage-add-form
-            storageProvidesSupport=storageProvidesSupport
-            storage=storage
-            mode="edit"
-            submit=submit
-          }}
+          <ClusterStorageAddForm
+            @storageProvidesSupport={{storageProvidesSupport}}
+            @storage={{storage}}
+            @mode="edit"
+            @submit={{submit}}
+          />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -678,10 +665,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       'locks "imported storage" and "readonly" to true for HTTP storage',
       async function () {
         this.set('storage', HTTP_STORAGE);
-        await render(hbs `{{cluster-storage-add-form
-          storage=storage
-          mode="edit"
-        }}`);
+        await render(hbs `<ClusterStorageAddForm @storage={{storage}} @mode="edit" />`);
 
         const helper = new ClusterStorageAddHelper(this.element);
 
@@ -702,10 +686,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           storage: HTTP_STORAGE,
           mode: 'show',
         });
-        await render(hbs `{{cluster-storage-add-form
-          storage=storage
-          mode=mode
-        }}`);
+        await render(hbs `<ClusterStorageAddForm @storage={{storage}} @mode={{mode}} />`);
 
         this.set('mode', 'edit');
 
@@ -730,11 +711,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           storage: POSIX_STORAGE,
           mode: 'show',
         });
-        await render(hbs `{{cluster-storage-add-form
-          storage=storage
-          mode=mode
-          storageProvidesSupport=true
-        }}`);
+        await render(hbs `<ClusterStorageAddForm
+          @storage={{storage}}
+          @mode={{mode}}
+          @storageProvidesSupport={{true}}
+        />`);
 
         const helper = new ClusterStorageAddHelper(this.element);
         expect(

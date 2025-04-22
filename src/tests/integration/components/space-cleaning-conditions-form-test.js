@@ -26,11 +26,11 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
   });
 
   it('is filled in with injected data', async function () {
-    await render(hbs `{{space-cleaning-conditions-form
-      data=data
-      formSendDebounceTime=0
-      formSavedInfoHideTimeout=0
-    }}`);
+    await render(hbs `<SpaceCleaningConditionsForm
+      @data={{data}}
+      @formSendDebounceTime={{0}}
+      @formSavedInfoHideTimeout={{0}}
+    />`);
 
     const minFileSizeGroup = find('.minFileSizeGroup');
     const maxFileSizeGroup = find('.maxFileSizeGroup');
@@ -72,11 +72,11 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
     'maxMonthlyMovingAverage',
   ].forEach((fieldName) => {
     it(`does not accept letters in ${fieldName} input`, async function () {
-      await render(hbs `{{space-cleaning-conditions-form
-        data=data
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-      }}`);
+      await render(hbs `<SpaceCleaningConditionsForm
+        @data={{data}}
+        @formSendDebounceTime={{0}}
+        @formSavedInfoHideTimeout={{0}}
+      />`);
 
       const group = find(`.${fieldName}Group`);
       await fillIn(group.querySelector('input.condition-number-input'), 'asdf');
@@ -84,11 +84,11 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
     });
 
     it(`does not accept negative numbers in ${fieldName} input`, async function () {
-      await render(hbs `{{space-cleaning-conditions-form
-        data=data
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-      }}`);
+      await render(hbs `<SpaceCleaningConditionsForm
+        @data={{data}}
+        @formSendDebounceTime={{0}}
+        @formSavedInfoHideTimeout={{0}}
+      />`);
 
       const group = find(`.${fieldName}Group`);
       await fillIn(group.querySelector('input.condition-number-input'), '-3');
@@ -96,11 +96,11 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
     });
 
     it(`accepts positive numbers in ${fieldName} input`, async function () {
-      await render(hbs `{{space-cleaning-conditions-form
-        data=data
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-      }}`);
+      await render(hbs `<SpaceCleaningConditionsForm
+        @data={{data}}
+        @formSendDebounceTime={{0}}
+        @formSavedInfoHideTimeout={{0}}
+      />`);
 
       const group = find(`.${fieldName}Group`);
       await fillIn(group.querySelector('input.condition-number-input'), '10');
@@ -110,12 +110,12 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
     it(`sends data after ${fieldName} input focus lost`, async function () {
       const saveSpy = sinon.spy(() => resolve());
       this.set('onSave', saveSpy);
-      await render(hbs `{{space-cleaning-conditions-form
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-        data=data
-        onSave=(action onSave)
-      }}`);
+      await render(hbs `<SpaceCleaningConditionsForm
+        @formSendDebounceTime={{0}}
+        @formSavedInfoHideTimeout={{0}}
+        @data={{data}}
+        @onSave={{action onSave}}
+      />`);
 
       const saveArg = {};
 
@@ -133,11 +133,11 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
   });
 
   it('does not accept float numbers in minHoursSinceLastOpen input', async function () {
-    await render(hbs `{{space-cleaning-conditions-form
-      data=data
-      formSendDebounceTime=0
-      formSavedInfoHideTimeout=0
-    }}`);
+    await render(hbs `<SpaceCleaningConditionsForm
+      @data={{data}}
+      @formSendDebounceTime={{0}}
+      @formSavedInfoHideTimeout={{0}}
+    />`);
 
     const group = find('.minHoursSinceLastOpenGroup');
     await fillIn(group.querySelector('input.condition-number-input'), '3.4');
@@ -147,12 +147,12 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
   it('debounce changes save', async function () {
     const saveSpy = sinon.spy(() => resolve());
     this.set('onSave', saveSpy);
-    await render(hbs `{{space-cleaning-conditions-form
-      formSendDebounceTime=0
-      formSavedInfoHideTimeout=0
-      data=data
-      onSave=(action onSave)
-    }}`);
+    await render(hbs `<SpaceCleaningConditionsForm
+      @formSendDebounceTime={{0}}
+      @formSavedInfoHideTimeout={{0}}
+      @data={{data}}
+      @onSave={{action onSave}}
+    />`);
 
     const saveArg = {
       minFileSize: { value: 2097152 },
@@ -178,12 +178,12 @@ describe('Integration | Component | space-cleaning-conditions-form', function ()
     this.set('onSave', saveSpy);
 
     this.set('localData', localData);
-    await render(hbs `{{space-cleaning-conditions-form
-      formSendDebounceTime=0
-      formSavedInfoHideTimeout=0
-      data=localData
-      onSave=(action onSave)
-    }}`);
+    await render(hbs `<SpaceCleaningConditionsForm
+      @formSendDebounceTime={{0}}
+      @formSavedInfoHideTimeout={{0}}
+      @data={{localData}}
+      @onSave={{action onSave}}
+    />`);
 
     const greaterInputSelector =
       '.minFileSizeGroup input.condition-number-input';

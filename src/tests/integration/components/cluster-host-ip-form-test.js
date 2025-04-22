@@ -22,11 +22,11 @@ describe('Integration | Component | cluster-host-ip-form', function () {
       }]),
     });
 
-    await render(hbs `{{cluster-host-ip-form
-      hostsIps=hostsIps
-      hostsInfo=hostsInfo
-      hostDataChanged=(action spyHostDataChanged)
-    }}`);
+    await render(hbs `<ClusterHostIpForm
+      @hostsIps={{hostsIps}}
+      @hostsInfo={{hostsInfo}}
+      @hostDataChanged={{action spyHostDataChanged}}
+    />`);
 
     await fillIn('input.input-host-ip', '172.18.0.2');
     expect(spyHostDataChanged).to.be.calledWith('Host One', '172.18.0.2');
@@ -49,12 +49,12 @@ describe('Integration | Component | cluster-host-ip-form', function () {
       },
     });
 
-    await render(hbs `{{cluster-host-ip-form
-      hostsIps=hostsIps
-      hostsInfo=hostsInfo
-      hostDataChanged=(action hostDataChanged)
-      allValidChanged=(action spyAllValidChanged)
-    }}`);
+    await render(hbs `<ClusterHostIpForm
+      @hostsIps={{hostsIps}}
+      @hostsInfo={{hostsInfo}}
+      @hostDataChanged={{action hostDataChanged}}
+      @allValidChanged={{action spyAllValidChanged}}
+    />`);
 
     await fillIn('input.input-host-ip', 'wrong');
     expect(spyAllValidChanged).to.be.calledWith(false);

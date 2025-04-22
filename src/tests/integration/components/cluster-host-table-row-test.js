@@ -41,11 +41,11 @@ describe('Integration | Component | cluster-host-table-row', function () {
     );
     this.set('removeHost', removeHost);
     this.set('host', host);
-    await render(hbs `{{cluster-host-table-row
-      removeHost=removeHost
-      host=host
-      isMobile=false
-    }}`);
+    await render(hbs `<ClusterHostTableRow
+      @removeHost={{removeHost}}
+      @host={{host}}
+      @isMobile={{false}}
+    />`);
 
     expect(find('.btn-remove-node')).to.have.class('disabled');
   });
@@ -68,11 +68,11 @@ describe('Integration | Component | cluster-host-table-row', function () {
     );
     this.set('removeHost', removeHost);
     this.set('host', host);
-    await render(hbs `{{cluster-host-table-row
-      removeHost=removeHost
-      host=host
-      isMobile=false
-    }}`);
+    await render(hbs `<ClusterHostTableRow
+      @removeHost={{removeHost}}
+      @host={{host}}
+      @isMobile={{false}}
+    />`);
 
     expect(find('.btn-remove-node')).to.not.have.class('disabled');
     await click('.btn-remove-node');

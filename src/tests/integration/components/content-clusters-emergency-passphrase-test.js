@@ -10,7 +10,7 @@ describe(
     setupRenderingTest();
 
     it('shows secret password field by default', async function () {
-      await render(hbs `{{content-clusters-emergency-passphrase}}`);
+      await render(hbs `<ContentClustersEmergencyPassphrase />`);
 
       expect(find('.field-static-secretPassword'), 'secret pass').to.exist;
     });
@@ -18,7 +18,7 @@ describe(
     it(
       'shows old password, new password and retype new password fields when clicked change password',
       async function () {
-        await render(hbs `{{content-clusters-emergency-passphrase}}`);
+        await render(hbs `<ContentClustersEmergencyPassphrase />`);
 
         await click('.btn-change-passphrase');
 

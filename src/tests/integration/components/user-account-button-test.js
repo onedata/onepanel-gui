@@ -47,7 +47,7 @@ describe('Integration | Component | user-account-button', function () {
         promise: resolve({}),
       }));
 
-    await render(hbs `{{user-account-button}}`);
+    await render(hbs `<UserAccountButton />`);
     expect(this.element).to.contain.text(someUsername);
   });
 });

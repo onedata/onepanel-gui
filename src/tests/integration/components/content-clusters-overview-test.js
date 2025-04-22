@@ -69,12 +69,12 @@ describe('Integration | Component | content-clusters-overview', function () {
       fetchInstallationDetails,
     });
 
-    await render(hbs `{{content-clusters-overview
-      cluster=cluster
-      fetchInstallationDetails=fetchInstallationDetails
-      fetchStorages=fetchStorages
-      fetchSpaces=fetchSpaces
-    }}`);
+    await render(hbs `<ContentClustersOverview
+      @cluster={{cluster}}
+      @fetchInstallationDetails={{fetchInstallationDetails}}
+      @fetchStorages={{fetchStorages}}
+      @fetchSpaces={{fetchSpaces}}
+    />`);
 
     expect(getProviderDetailsProxy).to.be.not.called;
     expect(getSpacesBatchResolver).to.be.not.called;
@@ -103,10 +103,10 @@ describe('Integration | Component | content-clusters-overview', function () {
       fetchInstallationDetails,
     });
 
-    await render(hbs `{{content-clusters-overview
-      cluster=cluster
-      fetchInstallationDetails=fetchInstallationDetails
-    }}`);
+    await render(hbs `<ContentClustersOverview
+      @cluster={{cluster}}
+      @fetchInstallationDetails={{fetchInstallationDetails}}
+    />`);
 
     expect(getProviderDetailsProxy).to.be.calledOnce;
     expect(getSpacesBatchResolver).to.be.calledOnce;

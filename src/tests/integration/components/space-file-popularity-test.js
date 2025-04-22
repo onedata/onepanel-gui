@@ -15,7 +15,7 @@ describe('Integration | Component | space-file-popularity', function () {
     };
     this.set('filePopularityConfiguration', filePopularityConfiguration);
     await render(hbs `
-      {{space-file-popularity filePopularityConfiguration=filePopularityConfiguration}}
+      <SpaceFilePopularity @filePopularityConfiguration={{filePopularityConfiguration}} />
     `);
     expect(find('.file-popularity-example-query')).to.have.value(exampleQuery);
   });
@@ -28,7 +28,7 @@ describe('Integration | Component | space-file-popularity', function () {
     };
     this.set('filePopularityConfiguration', filePopularityConfiguration);
     await render(hbs `
-      {{space-file-popularity filePopularityConfiguration=filePopularityConfiguration}}
+      <SpaceFilePopularity @filePopularityConfiguration={{filePopularityConfiguration}} />
     `);
     expect(find('.file-popularity-example-query')).to.not.exist;
   });

@@ -1,73 +1,80 @@
-{{#listItem.header disableToggleIcon=true as |itemHeader|}}
-  <span class="item-icon-container">
-    <OneIcon class="item-icon" @icon="provider" />
-    <OneTooltip @placement="top" @triggerEvents="hover">
-      <NameConflict @item={{storage}} />
-    </OneTooltip>
-  </span>
-  <span class="one-label storage-name">
-    {{#if storage.name}}
-      <NameConflict @item={{storage}} />
-    {{else}}
-     {{!-- TODO: VFS-11005 Handle single load errors  --}}
-      <em>{{tt this "unknown"}}</em>
-    {{/if}}
-  </span>
-  <div class="btn-toolbar">
-    <span clas="btn-tooltip-container">
-      <OneButton
-        @type="default"
-        @size="sm"
-        @disabled={{whileEdition}}
-        @onClick={{action "turnOnModifyStorage"}}
-      >
-        {{!-- single line to avoid spaces --}}
-        <OneIcon @icon="browser-rename" /> <span class="text">{{tt this "modifyBtn"}}</span>
-      </OneButton>
-      {{#if whileEdition}}
-        <OneTooltip @title={{tt this "modifyDisabledBtnTip"}} />
+{{#let
+  (component listItem.header) (component listItem.content)
+  as |listItemHeader listItemContent|
+}}
+  <listItemHeader @disableToggleIcon={{true}} as |itemHeader|>
+    <span class="item-icon-container">
+      <OneIcon class="item-icon" @icon="provider" />
+      <OneTooltip @placement="top" @triggerEvents="hover">
+        <NameConflict @item={{storage}} />
+      </OneTooltip>
+    </span>
+    <span class="one-label storage-name">
+      {{#if storage.name}}
+        <NameConflict @item={{storage}} />
+      {{else}}
+      {{!-- TODO: VFS-11005 Handle single load errors  --}}
+        <em>{{tt this "unknown"}}</em>
       {{/if}}
     </span>
-  </div>
-  <ActionsToolbar
-    @isMinimized={{true}}
-    @toolbarClasses=""
-    @toolbarToggleClasses="btn-menu-toggle"
-    @dropdownPlacement="auto"
-    @actionsArray={{storageActions}}
-  />
-{{/listItem.header}}
+    <div class="btn-toolbar">
+      <span clas="btn-tooltip-container">
+        <OneButton
+          @type="default"
+          @size="sm"
+          @disabled={{whileEdition}}
+          @onClick={{action "turnOnModifyStorage"}}
+        >
+          {{!-- single line to avoid spaces --}}
+          <OneIcon
+            @icon="browser-rename"
+          /> <span class="text">{{tt this "modifyBtn"}}</span>
+        </OneButton>
+        {{#if whileEdition}}
+          <OneTooltip @title={{tt this "modifyDisabledBtnTip"}} />
+        {{/if}}
+      </span>
+    </div>
+    <ActionsToolbar
+      @isMinimized={{true}}
+      @toolbarClasses=""
+      @toolbarToggleClasses="btn-menu-toggle"
+      @dropdownPlacement="auto"
+      @actionsArray={{storageActions}}
+    />
+  </listItemHeader>
 
-{{#listItem.content}}
-  <div class="item-table row">
-    <div class="row">
-      <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
-        <div class="row content-row">
-          <ClipboardLine
-            @value={{storageId}}
-            @size="sm"
-            class={{if whileEdition "id-edition-label"}}
-            @label={{concat (tt this "generic.id") ":"}}
+  <listItemContent>
+    <div class="item-table row">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
+          <div class="row content-row">
+            <ClipboardLine
+              @value={{storageId}}
+              @size="sm"
+              class={{if whileEdition "id-edition-label"}}
+              @label={{concat (tt this "generic.id") ":"}}
+            />
+          </div>
+          <ClusterStorageAddForm
+            class="clearfix"
+            @submit={{action "saveEdition"}}
+            @cancel={{action "cancelEdition"}}
+            @doubleClick={{action "selectText"}}
+            @mode={{if whileEdition "edit" "show"}}
+            @isFormOpened={{true}}
+            @storage={{storage}}
+            @storageProvidesSupport={{contains storage.id (map-by "storageId" spaces)}}
+            @layoutConfig={{formLayoutConfig}}
           />
         </div>
-        <ClusterStorageAddForm
-          class="clearfix"
-          @submit={{action "saveEdition"}}
-          @cancel={{action "cancelEdition"}}
-          @doubleClick={{action "selectText"}}
-          @mode={{if whileEdition "edit" "show"}}
-          @isFormOpened={{true}}
-          @storage={{storage}}
-          @storageProvidesSupport={{contains storage.id (map-by "storageId" spaces)}}
-          @layoutConfig={{formLayoutConfig}}
-        />
+        {{!-- TODO: maybe a placeholder when not loaded --}}
+        {{#if showSpacesSupport}}
+          <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
+            <StorageItem::SupportedSpaces @spaces={{spaces}} @storageId={{storageId}} />
+          </div>
+        {{/if}}
       </div>
-      {{!-- TODO: maybe a placeholder when not loaded --}}
-      {{#if showSpacesSupport}}
-        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
-          <StorageItem::SupportedSpaces @spaces={{spaces}} @storageId={{storageId}} />
-        </div>
-      {{/if}}
     </div>
-  </div>
-{{/listItem.content}}
+  </listItemContent>
+{{/let}}

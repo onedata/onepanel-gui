@@ -72,11 +72,11 @@ describe('Integration | Component | cluster-dns', function () {
         },
       });
 
-    await render(hbs `{{cluster-dns
-      onepanelServiceType="oneprovider"
-      dnsCheckProxy=dnsCheckProxy
-      zonePoliciesProxy=zonePoliciesProxy
-    }}`);
+    await render(hbs `<ClusterDns
+      @onepanelServiceType="oneprovider"
+      @dnsCheckProxy={{dnsCheckProxy}}
+      @zonePoliciesProxy={{zonePoliciesProxy}}
+    />`);
 
     const clusterDns = find('.cluster-dns');
     expect(clusterDns).to.exist;

@@ -20,7 +20,7 @@ describe('Integration | Component | space-file-popularity-configuration', functi
     });
 
     await render(hbs `
-      {{space-file-popularity-configuration configuration=configuration}}
+      <SpaceFilePopularityConfiguration @configuration={{configuration}} />
     `);
 
     expect(find('.lastOpenHourWeightGroup input')).to.have.value('2');
@@ -40,12 +40,12 @@ describe('Integration | Component | space-file-popularity-configuration', functi
       maxAvgOpenCountPerDay: 4,
     });
     await render(hbs `
-      {{space-file-popularity-configuration
-        configuration=configuration
-        onSave=(action onSave)
-        formSendDebounceTime=0
-        formSavedInfoHideTimeout=0
-      }}
+      <SpaceFilePopularityConfiguration
+        @configuration={{configuration}}
+        @onSave={{action onSave}}
+        @formSendDebounceTime={{0}}
+        @formSavedInfoHideTimeout={{0}}
+      />
     `);
 
     const saveArg = {
