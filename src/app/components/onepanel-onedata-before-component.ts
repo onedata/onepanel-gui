@@ -8,21 +8,23 @@
  */
 
 import Controller from '@ember/controller';
-import CommonOnedataBeforeComponent, { OnedataBeforeComponentArgs } from 'onedata-gui-common/components/onedata-before-component';
+import CommonOnedataBeforeComponent, {
+  OnedataBeforeComponentArgs,
+} from 'onedata-gui-common/components/onedata-before-component';
 import { computed } from '@ember/object';
 
 interface OnepanelOnedataController extends Controller {
   /** If true, renders the "Emergency Onepanel" info bar at the bottom.  */
-  emergencyWarningBarVisible: boolean
+  emergencyWarningBarVisible: boolean;
 }
 
 interface OnepanelOnedataBeforeComponentArgs extends OnedataBeforeComponentArgs {
-  controller: OnepanelOnedataController
+  controller: OnepanelOnedataController;
 }
 
-export default class OnepanelOnedataBeforeComponent extends CommonOnedataBeforeComponent<
-  OnepanelOnedataBeforeComponentArgs
-> {
+export default class OnepanelOnedataBeforeComponent //
+  extends CommonOnedataBeforeComponent<OnepanelOnedataBeforeComponentArgs>
+{
   @computed('args.controller.emergencyWarningBarVisible')
   get isEmergencyWarningBarVisible() {
     return this.args.controller.emergencyWarningBarVisible;
