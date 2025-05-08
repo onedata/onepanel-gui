@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12765 Using updated onedata-gui-common with removed ProviderMap components
 * VFS-12694 Refactored components tests to use angle brackets
 * VFS-12674 Added support for batch requests and sidebar loader
 * VFS-12716 Changed storage form fields for swift
