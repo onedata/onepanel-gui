@@ -1,7 +1,6 @@
 {
   "extends": "@tsconfig/ember/tsconfig.json",
   "compilerOptions": {
-
     // The combination of `baseUrl` with `paths` allows Ember's classic package
     // layout, which is not resolvable with the Node resolution algorithm, to
     // work with TypeScript.
@@ -12,20 +11,8 @@
       ],
       "onepanel-gui/*": [
         "app/*",
-        "lib/ember-onedata-onepanel-server/app/*",
-        "lib/onedata-gui-common/app/*"
-      ],
-      "ember-onedata-onepanel-server": [
-        "lib/ember-onedata-onepanel-server/addon"
-      ],
-      "ember-onedata-onepanel-server/*": [
-        "lib/ember-onedata-onepanel-server/addon/*"
-      ],
-      "ember-onedata-onepanel-server/test-support": [
-        "lib/ember-onedata-onepanel-server/addon-test-support"
-      ],
-      "ember-onedata-onepanel-server/test-support/*": [
-        "lib/ember-onedata-onepanel-server/addon-test-support/*"
+        "lib/onedata-gui-common/app/*",
+        "lib/onedata-gui-websocket-client/app/*"
       ],
       "onedata-gui-common": [
         "lib/onedata-gui-common/addon"
@@ -39,6 +26,18 @@
       "onedata-gui-common/test-support/*": [
         "lib/onedata-gui-common/addon-test-support/*"
       ],
+      "onedata-gui-websocket-client": [
+        "lib/onedata-gui-websocket-client/addon"
+      ],
+      "onedata-gui-websocket-client/*": [
+        "lib/onedata-gui-websocket-client/addon/*"
+      ],
+      "onedata-gui-websocket-client/test-support": [
+        "lib/onedata-gui-websocket-client/addon-test-support"
+      ],
+      "onedata-gui-websocket-client/test-support/*": [
+        "lib/onedata-gui-websocket-client/addon-test-support/*"
+      ],
       "*": [
         "types/*"
       ]
@@ -48,7 +47,13 @@
     "app/**/*",
     "tests/**/*",
     "types/**/*",
-    "lib/ember-onedata-onepanel-server/**/*",
-    "lib/onedata-gui-common/**/*"
+    "lib/onedata-gui-common/app/**/*",
+    "lib/onedata-gui-common/addon/**/*",
+    "lib/onedata-gui-common/tests/**/*",
+    "lib/onedata-gui-common/types/**/*",
+    "lib/onedata-gui-websocket-client/app/**/*",
+    "lib/onedata-gui-websocket-client/addon/**/*",
+    "lib/onedata-gui-websocket-client/tests/**/*",
+    "lib/onedata-gui-websocket-client/types/**/*",
   ]
 }
