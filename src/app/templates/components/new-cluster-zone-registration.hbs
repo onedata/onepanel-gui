@@ -105,7 +105,7 @@
       <ProviderRegistrationForm
         @mode="new"
         @excludedSubdomains={{_excludedSubdomains}}
-        @submit={{action "submit"}}
+        @onSubmit={{action "submit"}}
         @token={{trimmedToken}}
         @subdomainDelegationSupported={{onezoneInfo.subdomainDelegationSupported}}
         @onezoneDomain={{onezoneInfo.domain}}

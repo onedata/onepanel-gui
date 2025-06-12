@@ -58,7 +58,7 @@
           </div>
           <ClusterStorageAddForm
             class="clearfix"
-            @submit={{action "saveEdition"}}
+            @onSubmit={{action "saveEdition"}}
             @cancel={{action "cancelEdition"}}
             @doubleClick={{action "selectText"}}
             @mode={{if whileEdition "edit" "show"}}

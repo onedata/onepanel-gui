@@ -266,7 +266,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       await render(hbs `
         <ClusterStorageAddForm
           @selectedStorageType={{selectedStorageType}}
-          @submit={{submit}}
+          @onSubmit={{submit}}
         />
       `);
 
@@ -532,7 +532,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           @storage={{storage}}
           @mode="edit"
           @isFormOpened={{true}}
-          @submit={{submit}}
+          @onSubmit={{submit}}
         />
       `);
 
@@ -558,7 +558,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @submit={{submit}} />
+        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @onSubmit={{submit}} />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -575,7 +575,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           mode: 'edit',
         });
         await render(hbs `
-          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @submit={{submit}} />
+          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @onSubmit={{submit}} />
         `);
 
         const helper = new ClusterStorageAddHelper(this.element);
@@ -640,7 +640,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
             @storageProvidesSupport={{storageProvidesSupport}}
             @storage={{storage}}
             @mode="edit"
-            @submit={{submit}}
+            @onSubmit={{submit}}
           />
         `);
 

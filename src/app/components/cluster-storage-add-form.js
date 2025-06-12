@@ -129,6 +129,12 @@ export default OneForm.extend(I18n, Validations, {
   unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
 
   /**
+   * @virtual
+   * @type {(formData: Object) => Promise<void>}
+   */
+  onSubmit: undefined,
+
+  /**
    * Storage to show/edit
    * @virtual optional
    * @type {Onepanel.StorageDetails}
@@ -1203,7 +1209,7 @@ export default OneForm.extend(I18n, Validations, {
       });
     },
 
-    submit() {
+    async submit() {
       const {
         formValues,
         currentFields,
@@ -1211,14 +1217,7 @@ export default OneForm.extend(I18n, Validations, {
         inEditionMode,
         storage,
         editedQosParams,
-      } = this.getProperties(
-        'formValues',
-        'currentFields',
-        'selectedStorageType',
-        'inEditionMode',
-        'storage',
-        'editedQosParams'
-      );
+      } = this;
 
       this.set('isSavingStorage', true);
 
@@ -1252,8 +1251,11 @@ export default OneForm.extend(I18n, Validations, {
         });
       }
 
-      return this.get('submit')(formData)
-        .finally(() => safeExec(this, () => this.set('isSavingStorage', false)));
+      try {
+        await this.onSubmit?.(formData);
+      } finally {
+        this.set('isSavingStorage', false);
+      }
     },
   },
 });

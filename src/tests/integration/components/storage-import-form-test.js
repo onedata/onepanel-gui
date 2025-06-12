@@ -251,7 +251,7 @@ describe('Integration | Component | storage-import-form', function () {
       const submitSpy = this.set('submitSpy', sinon.spy());
 
       // enforcing "new" form mode to allow "mode" field change
-      await render(hbs `<StorageImportForm @mode="new" @submit={{submitSpy}} />`);
+      await render(hbs `<StorageImportForm @mode="new" @onSubmit={{submitSpy}} />`);
 
       await click('.field-mode-mode-manual');
       await click('.submit-import');
