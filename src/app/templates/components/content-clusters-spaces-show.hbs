@@ -57,7 +57,7 @@
         </BsNav>
 
         <div class="tab-content">
-          <tab.pane @elementId={{tabOverviewId}} class="no-padding">
+          <tab.pane @id={{tabOverviewId}} class="no-padding">
             {{#if (eq tab.activeId tabOverviewId)}}
               <SpaceOverview
                 @space={{space}}
@@ -65,7 +65,7 @@
               />
             {{/if}}
           </tab.pane>
-          <tab.pane @elementId={{tabImportId}}>
+          <tab.pane @id={{tabImportId}}>
             {{#if (and (eq tabImportClass "enabled") (eq tab.activeId tabImportId))}}
               <SpaceStorageImport
                 @importInterval={{importInterval}}
@@ -81,7 +81,7 @@
               />
             {{/if}}
           </tab.pane>
-          <tab.pane @elementId={{tabPopularId}}>
+          <tab.pane @id={{tabPopularId}}>
             {{#if (and (eq tabPopularClass "enabled") (eq tab.activeId tabPopularId))}}
               <div class="loadable-row lg">
                 <PromiseProxyContainer @proxy={{filePopularityConfigurationProxy}}>
@@ -93,7 +93,7 @@
               </div>
             {{/if}}
           </tab.pane>
-          <tab.pane @elementId={{tabCleanId}}>
+          <tab.pane @id={{tabCleanId}}>
             {{#if (and (eq tabCleanClass "enabled") (eq tab.activeId tabCleanId))}}
               <div class="loadable-row lg">
                 <PromiseProxyContainer @proxy={{providerProxy}}>
