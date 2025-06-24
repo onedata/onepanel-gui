@@ -1254,7 +1254,7 @@ export default OneForm.extend(I18n, Validations, {
       try {
         await this.onSubmit?.(formData);
       } finally {
-        this.set('isSavingStorage', false);
+        safeExec(this, () => this.set('isSavingStorage', false));
       }
     },
   },
