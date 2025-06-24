@@ -19,7 +19,7 @@
   <UserCredentialsForm
     @type="passphrase"
     @changingPassword={{isChangingPassphrase}}
-    @submit={{action "submitChangePassphrase"}}
+    @onSubmit={{action "submitChangePassphrase"}}
     @cancel={{action "toggleChangePassphrase"}}
   />
 </div>

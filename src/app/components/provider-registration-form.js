@@ -216,10 +216,11 @@ export default OneForm.extend(Validations, I18n, {
   changeDomain: () => {},
 
   /**
-   * Action called on form submit. Action arguments:
-   * * formData {Object} data from form
+   * Action called on form submit.
+   * @virtual
+   * @type {(formData:Object) => Promise<void>} Data from form.
    */
-  submit: () => {},
+  onSubmit: undefined,
 
   formSubmitColumnsClassname: computed(
     'layoutConfig.formSubmitColumns',
@@ -590,18 +591,13 @@ export default OneForm.extend(Validations, I18n, {
       this.recalculateErrors();
     },
 
-    submit() {
+    async submit() {
       const {
         formValues,
         allFields,
         token,
         _willChangeDomainAfterSubmit,
-      } = this.getProperties(
-        'formValues',
-        'allFields',
-        'token',
-        '_willChangeDomainAfterSubmit'
-      );
+      } = this;
 
       const values = EmberObject.create();
       Object.keys(formValues).forEach((prefix) => {
@@ -615,30 +611,29 @@ export default OneForm.extend(Validations, I18n, {
       }
 
       this.set('_disabled', true);
-      return this.get('submit')(values)
-        .then(() => {
-          if (_willChangeDomainAfterSubmit) {
-            const domain = this.get('provider.domain');
-            this.get('changeDomain')(domain);
+      try {
+        await this.onSubmit(values);
+        if (_willChangeDomainAfterSubmit) {
+          const domain = this.get('provider.domain');
+          this.get('changeDomain')(domain);
+        }
+      } finally {
+        safeExec(this, 'set', '_disabled', false);
+        next(() => {
+          if (this.isDestroyed) {
+            return;
           }
-        })
-        .finally(() => {
-          safeExec(this, 'set', '_disabled', false);
-          next(() => {
-            if (this.isDestroyed) {
-              return;
-            }
-            this.validateSync();
-            // subdomain field may throw errors, so it should be marked as
-            // changed to show that errors
-            const subdomainField = _.find(
-              allFields,
-              ((field) => field.get('name') === 'editSubdomain.subdomain')
-            );
-            subdomainField.set('changed', true);
-            this.recalculateErrors();
-          });
+          this.validateSync();
+          // subdomain field may throw errors, so it should be marked as
+          // changed to show that errors
+          const subdomainField = _.find(
+            allFields,
+            ((field) => field.get('name') === 'editSubdomain.subdomain')
+          );
+          subdomainField.set('changed', true);
+          this.recalculateErrors();
         });
+      }
     },
 
     startEdit() {
