@@ -1,0 +1,44 @@
+/**
+ * Definitions common for all fields of the cluster storage form.
+ *
+ * @author Agnieszka Warchoł
+ * @copyright (C) 2025 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
+import { computed } from '@ember/object';
+import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
+import { NameField } from './basic/name-field';
+import { PathTypeField } from './basic/path-type-field';
+import { ReadonlyField } from './basic/readonly-field';
+import { ImportedField } from './basic/imported-field';
+import { LUMAFeedField } from './basic/luma-feed-field';
+import { TypeField } from './basic/type-field';
+
+export const BasicGroup = FormFieldsGroup.extend({
+  /**
+   * @virtual
+   */
+  context: undefined,
+
+  /**
+   * @override
+   */
+  name: 'basic',
+
+  /**
+   * @virtual
+   */
+  fields: computed(function fields() {
+    return [
+      TypeField,
+      NameField,
+      PathTypeField,
+      ImportedField,
+      ReadonlyField,
+      LUMAFeedField,
+    ].map((caveatsGroupClass) => caveatsGroupClass.create({
+      context: this.context,
+    }));
+  }),
+});

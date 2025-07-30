@@ -1,0 +1,40 @@
+/**
+ * Definitions common for all fields of the cluster storage form.
+ *
+ * @author Agnieszka Warchoł
+ * @copyright (C) 2025 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
+import { computed } from '@ember/object';
+import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
+import { ApiKeyField } from './luma/api-key-field';
+import { UrlField } from './luma/url-field';
+
+export const LumaGroup = FormFieldsGroup.extend({
+  /**
+   * @virtual
+   */
+  context: undefined,
+
+  /**
+   * @override
+   */
+  name: 'luma',
+
+  /**
+   * @virtual
+   */
+  fields: computed(function fields() {
+    return [
+      UrlField,
+      ApiKeyField,
+    ].map((caveatsGroupClass) => caveatsGroupClass.create({
+      context: this.context,
+    }));
+  }),
+
+  isVisible: computed('context.component.basicGroup.value.lumaFeed', function isVisible() {
+    return this.context.component.basicGroup.value.lumaFeed === 'external';
+  }),
+});

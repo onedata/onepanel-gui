@@ -1,0 +1,40 @@
+<form class="form form-horizontal form-component">
+  <FormComponent::FieldRenderer @field={{fields}} />
+  {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
+    <QosParamsEditor
+      @showHeader={{true}}
+      @mode={{mode}}
+      @qosParams={{storage.qosParameters}}
+      @readonlyKeys={{array "storageId" "providerId"}}
+      @isFormOpened={{isFormOpened}}
+      class={{concat-classes "col-xs-12" (if (eq mode) "show" "form-group-static")}}
+      @onChange={{action "qosParamsChanged"}}
+      @layoutConfig={{layoutConfig}}
+    />
+  {{/unless}}
+  {{#unless (eq mode "show")}}
+    <div class="form-group submit-group col-xs-12">
+      <div class="row">
+        <div class="{{layoutConfig.formSubmitColumns}}">
+          <OneButton
+            @type="primary"
+            @buttonType="submit"
+            @disabled={{not isValid}}
+            @onClick={{action "submit"}}
+          >
+            {{tt this (if inEditionMode "save" "add")}}
+          </OneButton>
+          {{!-- {{#if inEditionMode}}
+            <button
+              class="btn btn-warning cancel-storage-form-btn"
+              disabled={{isSavingStorage}}
+              {{action cancel}}
+            >
+              {{tt this "cancel"}}
+            </button>
+          {{/if}} --}}
+        </div>
+      </div>
+    </div>
+  {{/unless}}
+</form>

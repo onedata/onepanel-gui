@@ -7,4 +7,8 @@
   .radio-group-input.has-message .form-message {
     color: $state-danger-text;
   }
+
+  .form-component .control-label {
+    width: 40%;
+  }
 }

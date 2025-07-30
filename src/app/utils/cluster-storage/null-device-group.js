@@ -1,0 +1,50 @@
+/**
+ * Definitions for null device fields of the cluster storage form.
+ *
+ * @author Agnieszka Warchoł
+ * @copyright (C) 2025 ACK CYFRONET AGH
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
+
+import { computed } from '@ember/object';
+import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
+import { TimeoutField } from './null-device/timeout-field';
+import { FilterField } from './null-device/filter-field';
+import { SimulatedFilesystemGrowSpeedField } from './null-device/simulated-filesystem-grow-speed-field';
+import { SimulatedFilesystemParametersField } from './null-device/simulated-filesystem-parameters-field';
+import { MinLatencyField } from './null-device/min-latency-field';
+import { MaxLatencyField } from './null-device/max-latency-field';
+import { TimeoutProbabilityField } from './null-device/timeout-probability-field';
+
+export const NullDeviceGroup = FormFieldsGroup.extend({
+  /**
+   * @virtual
+   */
+  context: undefined,
+
+  /**
+   * @override
+   */
+  name: 'nulldevice',
+
+  /**
+   * @virtual
+   */
+  fields: computed(function fields() {
+    return [
+      MinLatencyField,
+      MaxLatencyField,
+      TimeoutProbabilityField,
+      FilterField,
+      SimulatedFilesystemParametersField,
+      SimulatedFilesystemGrowSpeedField,
+      TimeoutField,
+    ].map((caveatsGroupClass) => caveatsGroupClass.create({
+      context: this.context,
+    }));
+  }),
+
+  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
+    return this.context.component.basicGroup.value.type === 'nulldevice';
+  }),
+});
