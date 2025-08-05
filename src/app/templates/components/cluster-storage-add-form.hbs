@@ -1,34 +1,5 @@
-<BsForm
-  @submitOnEnter={{false}}
-  class={{concat "form-horizontal row " (if (eq mode "show") "form-static" "")}}
-  as |form|
->
-  {{#if (eq mode "create")}}
-    <form.group>
-      <label class={{concat "control-label " layoutConfig.formLabelColumns}}>{{tt this "storageType"}}:</label>
-      <div class={{concat-classes layoutConfig.formInputColumns "storage-type-select-group"}}>
-        <OneDropdown
-          @options={{visibleStorageTypes}}
-          @selected={{selectedStorageType}}
-          @onChange={{action "storageTypeChanged"}}
-          @renderInPlace={{false}}
-          @disabled={{disableStorageTypeSelector}}
-          as |storageType|
-        >
-          {{storageType.name}}
-        </OneDropdown>
-      </div>
-    </form.group>
-  {{/if}}
-
-  <OneFormFields
-    @bsForm={{form}}
-    @fields={{currentFields}}
-    @formValues={{formValues}}
-    @inputChanged={{action "inputChanged"}}
-    @onFocusOut={{action "focusOut"}}
-    @layoutConfig={{layoutConfig}}
-  />
+<form class="form form-horizontal form-component">
+  <FormComponent::FieldRenderer @field={{fields}} />
   {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
     <QosParamsEditor
       @showHeader={{true}}
@@ -54,16 +25,17 @@
             {{tt this (if inEditionMode "save" "add")}}
           </OneButton>
           {{#if inEditionMode}}
-            <button
+            <OneButton
+              @type="warning"
               class="btn btn-warning cancel-storage-form-btn"
-              disabled={{isSavingStorage}}
-              {{action cancel}}
+              @disabled={{isSavingStorage}}
+              @onClick={{action "cancel"}}
             >
               {{tt this "cancel"}}
-            </button>
+            </OneButton>
           {{/if}}
         </div>
       </div>
     </div>
   {{/unless}}
-</BsForm>
+</form>

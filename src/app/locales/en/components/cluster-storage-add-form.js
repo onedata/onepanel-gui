@@ -1,6 +1,4 @@
-import generic from './cluster-storage-add-form/generic';
-import luma from './cluster-storage-add-form/luma';
-import ceph from './cluster-storage-add-form/ceph';
+import basic from './cluster-storage-add-form/generic';
 import cephrados from './cluster-storage-add-form/cephrados';
 import posix from './cluster-storage-add-form/posix';
 import s3 from './cluster-storage-add-form/s3';
@@ -11,21 +9,24 @@ import webdav from './cluster-storage-add-form/webdav';
 import http from './cluster-storage-add-form/http';
 import nulldevice from './cluster-storage-add-form/nulldevice';
 import nfs from './cluster-storage-add-form/nfs';
+import luma from './cluster-storage-add-form/luma';
 
 export default {
-  generic,
-  luma,
-  ceph,
-  cephrados,
-  posix,
-  s3,
-  swift,
-  glusterfs,
-  xrootd,
-  webdav,
-  http,
-  nulldevice,
-  nfs,
+  fields: {
+    basic,
+    cephrados,
+    posix,
+    s3,
+    swift,
+    glusterfs,
+    xrootd,
+    webdav,
+    http,
+    nulldevice,
+    nfs,
+    luma,
+  },
+
   storageType: 'Type',
   save: 'Save',
   add: 'Add',

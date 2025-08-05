@@ -9,7 +9,6 @@ import atmInventories from './tabs/atm-inventories';
 import users from './tabs/users';
 
 import clusterStorageAddForm from './components/cluster-storage-add-form';
-import clusterStorageAddForm2 from './components/cluster-storage-add-form2';
 import supportSpaceForm from './components/support-space-form';
 import storageItem from './components/storage-item';
 import clusterSpacesTableItem from './components/cluster-spaces-table-item';
@@ -107,7 +106,6 @@ const translations = {
   },
   components: {
     clusterStorageAddForm,
-    clusterStorageAddForm2,
     supportSpaceForm,
     storageItem,
     clusterSpacesTable,
