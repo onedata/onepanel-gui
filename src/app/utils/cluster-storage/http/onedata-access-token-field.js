@@ -24,4 +24,6 @@ export const OnedataAccessTokenField = StorageTextField.extend({
     const type = this.parent.value.credentialsType;
     return type === 'token';
   }),
+
+  notEditable: true,
 });

@@ -42,7 +42,7 @@ export default {
     tip: 'Defines the maximum number of requests performed in a single HTTP session. After the limit is reached, "Connection: close" header is sent to the server. When set to 0, number of requests per session is unlimited, unless imposed by the server.',
     placeholder: 'Default: 0',
   },
-  importedFileMode: {
+  fileMode: {
     label: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
     placeholder: 'Default: 0664',

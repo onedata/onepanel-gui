@@ -24,7 +24,7 @@ export default {
     label: 'Credentials',
     tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "userlabel:password", for "token" just the token. In case of "oauth2", this field should contain the userlabel for the WebDAV, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
   },
-  oauth2Idp: {
+  oauth2IdP: {
     label: 'OAuth2 IdP',
     tip: 'In case "oauth2" credential type is selected and Onezone is configured with support for multiple external IdP\'s, this field must contain the label of the IdP which authenticates requests to the WebDAV endpoint. If Onezone has only one external IdP, it will be selected automatically.',
   },
@@ -42,8 +42,8 @@ export default {
     tip: 'The type of partial write support enabled in the WebDAV server. Currently two types are supported: "sabredav" which assumes the server supports the SabreDAV PartialUpdate extension via PATCH method, and "moddav" which assumes server supports partial PUT requests with Content-Range header. If "none" is selected no write support is available for this WebDAV storage.',
     options: {
       none: { label: 'none' },
-      sabreDav: { label: 'SabreDAV' },
-      modDav: { label: 'ModDAV' },
+      sabredav: { label: 'SabreDAV' },
+      moddav: { label: 'ModDAV' },
     },
   },
   connectionPoolSize: {
@@ -56,12 +56,12 @@ export default {
     tip: 'Defines the maximum upload size for a single PUT or PATCH request. If set to 0, assumes that the WebDAV server has no upload limit.',
     placeholder: 'Default: 0',
   },
-  importedFileMode: {
+  fileMode: {
     label: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
     placeholder: 'Default: 0664',
   },
-  importedDirectoryMode: {
+  dirMode: {
     label: 'Imported directory mode',
     tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
     placeholder: 'Default: 0775',

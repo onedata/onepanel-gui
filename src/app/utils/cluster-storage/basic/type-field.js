@@ -30,6 +30,8 @@ export const TypeField = StorageDropdownField.extend({
     { value: 'nulldevice' },
   ]),
 
+  notEditable: true,
+
   /**
    * @override
    */

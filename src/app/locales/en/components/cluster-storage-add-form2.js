@@ -9,6 +9,7 @@ import webdav from './cluster-storage-add-form2/webdav';
 import http from './cluster-storage-add-form2/http';
 import nulldevice from './cluster-storage-add-form2/nulldevice';
 import nfs from './cluster-storage-add-form2/nfs';
+import luma from './cluster-storage-add-form2/luma';
 
 export default {
   fields: {
@@ -23,6 +24,7 @@ export default {
     http,
     nulldevice,
     nfs,
+    luma,
   },
 
   storageType: 'Type',

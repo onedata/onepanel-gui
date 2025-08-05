@@ -15,8 +15,13 @@ export const StorageDropdownField = DropdownField.extend({
    */
   context: undefined,
 
+  notEditable: false,
+
   mode: computed('context.component.mode', function mode() {
-    if (this.context.component.mode === 'show') {
+    if (this.context.component.mode === 'show' ||
+      (this.context.component.mode === 'edit' &&
+        this.notEditable)
+    ) {
       return 'view';
     } else {
       return 'edit';

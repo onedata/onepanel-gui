@@ -12,7 +12,7 @@ export const UrlField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'url',
+  name: 'lumaFeedUrl',
 
   /**
    * @override

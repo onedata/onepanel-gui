@@ -12,7 +12,7 @@ export const ApiKeyField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'apiKey',
+  name: 'lumaFeedApiKey',
 
   /**
    * @override

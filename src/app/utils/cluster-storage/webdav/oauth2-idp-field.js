@@ -13,7 +13,7 @@ export const Oauth2IdpField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'oauth2Idp',
+  name: 'oauth2IdP',
 
   /**
    * @override
@@ -24,4 +24,6 @@ export const Oauth2IdpField = StorageTextField.extend({
     const type = this.parent.value.credentialsType;
     return type === 'oauth2';
   }),
+
+  notEditable: true,
 });

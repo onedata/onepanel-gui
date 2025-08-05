@@ -24,15 +24,16 @@
           >
             {{tt this (if inEditionMode "save" "add")}}
           </OneButton>
-          {{!-- {{#if inEditionMode}}
-            <button
+          {{#if inEditionMode}}
+            <OneButton
+              @type="warning"
               class="btn btn-warning cancel-storage-form-btn"
-              disabled={{isSavingStorage}}
-              {{action cancel}}
+              @disabled={{isSavingStorage}}
+              @onClick={{action "cancel"}}
             >
               {{tt this "cancel"}}
-            </button>
-          {{/if}} --}}
+            </OneButton>
+          {{/if}}
         </div>
       </div>
     </div>

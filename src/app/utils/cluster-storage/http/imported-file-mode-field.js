@@ -6,13 +6,13 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { StorageNumberField } from '../base/storage-number-field';
+import { StorageTextField } from '../base/storage-text-field';
 
-export const ImportedFileModeField = StorageNumberField.extend({
+export const ImportedFileModeField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'importedFileMode',
+  name: 'fileMode',
 
   /**
    * @override
@@ -20,4 +20,6 @@ export const ImportedFileModeField = StorageNumberField.extend({
   isOptional: true,
 
   regex: /^[0-7][0-7][0-7][0-7]?$/,
+
+  notEditable: true,
 });

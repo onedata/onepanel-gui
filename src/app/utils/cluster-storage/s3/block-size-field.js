@@ -18,4 +18,6 @@ export const BlockSizeField = StorageNumberField.extend({
    * @override
    */
   isOptional: true,
+
+  notEditable: true,
 });

@@ -20,5 +20,7 @@ export const BlockSizeField = StorageNumberField.extend({
   // defaultValue: '300000',
   isOptional: true,
 
+  notEditable: true,
+
   gt: 0,
 });

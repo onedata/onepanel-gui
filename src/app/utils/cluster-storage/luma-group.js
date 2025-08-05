@@ -8,8 +8,8 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { ApiKeyField } from './luma/api-key-field';
-import { UrlField } from './luma/url-field';
+import { ApiKeyField } from './basic/luma/api-key-field';
+import { UrlField } from './basic/luma/url-field';
 
 export const LumaGroup = FormFieldsGroup.extend({
   /**

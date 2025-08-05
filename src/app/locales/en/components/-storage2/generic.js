@@ -45,7 +45,8 @@ export default {
       },
     },
   },
-  luma,
+  lumaFeedUrl: luma.lumaFeedUrl,
+  lumaFeedApiKey: luma.lumaFeedApiKey,
   type: {
     label: 'Type',
     options: {
