@@ -639,7 +639,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           @storage={{storage}}
           @mode="edit"
           @isFormOpened={{true}}
-          @submit={{submit}}
+          @onSubmit={{submit}}
         />
       `);
       // const helper = new ClusterStorageAddHelper(this.element);
@@ -663,7 +663,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @submit={{submit}} />
+        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @onSubmit={{submit}} />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -680,7 +680,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           mode: 'edit',
         });
         await render(hbs `
-          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @submit={{submit}} />
+          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @onSubmit={{submit}} />
         `);
 
         await fillIn('.name-field input', 'someVal');
@@ -736,7 +736,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
             @storageProvidesSupport={{storageProvidesSupport}}
             @storage={{storage}}
             @mode="edit"
-            @submit={{submit}}
+            @onSubmit={{submit}}
           />
         `);
 

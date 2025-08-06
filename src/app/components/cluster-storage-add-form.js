@@ -73,6 +73,12 @@ export default Component.extend(I18n, {
   submit: notImplementedThrow,
 
   /**
+   * @virtual
+   * @type {(formData: Object) => Promise<void>}
+   */
+  onSubmit: undefined,
+
+  /**
    * Storage to show/edit
    * @virtual optional
    * @type {Onepanel.StorageDetails}
@@ -574,7 +580,7 @@ export default Component.extend(I18n, {
       });
     },
 
-    submit() {
+    async submit() {
       const {
         selectedStorageType,
         inEditionMode,
@@ -624,8 +630,11 @@ export default Component.extend(I18n, {
         });
       }
 
-      return this.get('submit')(formData)
-        .finally(() => safeExec(this, () => this.set('isSavingStorage', false)));
+      try {
+        await this.onSubmit?.(formData);
+      } finally {
+        safeExec(this, () => this.set('isSavingStorage', false));
+      }
     },
 
     cancel() {

@@ -67,10 +67,10 @@ export default Component.extend(I18n, {
   disabled: false,
 
   /**
-   * Action called on form submit. Action arguments:
-   * * formData {Object} data from form
+   * Action called on form submit.
+   * @type {(formData: Object) => Promise<void>}
    */
-  submit: notImplementedReject,
+  onSubmit: notImplementedReject,
 
   /**
    * If true, lets encrypt change modal is visible
@@ -408,12 +408,13 @@ export default Component.extend(I18n, {
   },
 
   actions: {
-    submit() {
+    async submit() {
       const {
         formLetsEncryptValue,
         letsEncrypt,
-        submit,
-      } = this.getProperties('fields', 'formLetsEncryptValue', 'letsEncrypt', 'submit');
+        onSubmit,
+        globalNotify,
+      } = this;
 
       const willReloadAfterSubmit =
         formLetsEncryptValue !== letsEncrypt &&
@@ -424,20 +425,21 @@ export default Component.extend(I18n, {
         letsEncrypt: formLetsEncryptValue,
       };
       this.set('disabled', true);
-      return submit(webCertChange, willReloadAfterSubmit)
-        .catch(error => {
-          this.get('globalNotify').backendError(
-            this.t('modifyingWebCert'),
-            error,
-            ''
-          );
-        })
-        .finally(() => {
-          safeExec(this, 'setProperties', {
-            disabled: false,
-            showLetsEncryptChangeModal: false,
-          });
+
+      try {
+        await onSubmit(webCertChange, willReloadAfterSubmit);
+      } catch (error) {
+        globalNotify.backendError(
+          this.t('modifyingWebCert'),
+          error,
+          ''
+        );
+      } finally {
+        safeExec(this, 'setProperties', {
+          disabled: false,
+          showLetsEncryptChangeModal: false,
         });
+      }
     },
 
     changedModalCanceled() {

@@ -17,7 +17,7 @@
   <h1 class="form-title">{{tt this "addNewStorage"}}</h1>
     <ClusterStorageAddForm
       class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered"
-      @submit={{action "submitAddStorage"}}
+      @onSubmit={{action "submitAddStorage"}}
       @isFormOpened={{addStorageOpened}}
     />
 </div>

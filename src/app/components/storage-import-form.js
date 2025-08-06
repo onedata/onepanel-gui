@@ -185,7 +185,7 @@ export default OneForm.extend(I18n, Validations, {
    * @param {Object} values form values dump
    * @returns {Promise}
    */
-  submit: notImplementedReject,
+  onSubmit: notImplementedReject,
 
   /**
    * @override
@@ -490,7 +490,7 @@ export default OneForm.extend(I18n, Validations, {
     },
 
     submit() {
-      return this.get('submit')(this.getValues());
+      return this.onSubmit(this.getValues());
     },
   },
 });

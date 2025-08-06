@@ -14,13 +14,12 @@ class ProviderRegistrationHelper extends FormHelper {
 describe('Integration | Component | provider-registration-form', function () {
   setupRenderingTest();
 
-  it(
-    'renders name, domain, latitude and logitude fields in new mode',
+  it('renders name, domain, latitude and logitude fields in new mode',
     async function () {
       this.set('submit', function () {});
 
       await render(hbs `
-        <ProviderRegistrationForm @mode="new" @submit={{action submit}} />
+        <ProviderRegistrationForm @mode="new" @onSubmit={{action submit}} />
       `);
 
       const helper = new ProviderRegistrationHelper(this.element);

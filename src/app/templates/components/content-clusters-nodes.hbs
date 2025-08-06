@@ -3,7 +3,7 @@
 </div>
 
 <div class="row content-row">
-  <BsTab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|>
+  <OneBsTab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|>
     <tab.pane @title={{tt this "tabServices"}}>
       <div class="row content-row">
         <PromiseProxyContainer @proxy={{clusterHostsInfoProxy}}>
@@ -70,5 +70,5 @@
         </PromiseProxyContainer>
       </div>
     </tab.pane>
-  </BsTab>
+  </OneBsTab>
 </div>
