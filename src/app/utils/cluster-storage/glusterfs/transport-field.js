@@ -1,5 +1,5 @@
 /**
- * NFS version field of the storage.
+ * Volume transport field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,23 +8,23 @@
 
 import { StorageRadioField } from '../base/storage-radio-field';
 
-export const NfsVersionField = StorageRadioField.extend({
+export const TransportField = StorageRadioField.extend({
   /**
    * @override
    */
-  name: 'version',
+  name: 'transport',
 
   /**
    * @override
    */
   options: Object.freeze([
-    { value: '3' },
-    { value: '4' },
-
+    { value: 'tcp' },
+    { value: 'rdma' },
+    { value: 'socket' },
   ]),
 
   /**
    * @override
    */
-  defaultValue: '3',
+  defaultValue: 'tcp',
 });

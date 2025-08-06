@@ -1,5 +1,5 @@
 /**
- * Min latency field of the storage.
+ * Readahead size field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,15 +8,17 @@
 
 import { StorageNumberField } from '../base/storage-number-field';
 
-export const MinLatencyField = StorageNumberField.extend({
+export const ReadAheadField = StorageNumberField.extend({
   /**
    * @override
    */
-  name: 'latencyMin',
+  name: 'readAhead',
 
   isOptional: true,
 
-  defaultValue: null,
+  integer: true,
 
   gte: 0,
+
+  defaultValue: 0,
 });

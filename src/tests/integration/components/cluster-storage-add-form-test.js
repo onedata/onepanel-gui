@@ -3,17 +3,11 @@ import { describe, it, context } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
 import { render, click, fillIn, settled, find, findAll } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import _, { max } from 'lodash';
+import _ from 'lodash';
 import { resolve } from 'rsvp';
 import sinon from 'sinon';
 import FormHelper from '../../helpers/form';
 import { selectChoose } from 'ember-power-select/test-support/helpers';
-import { MonitorHostnameField } from '../../../app/utils/cluster-storage/ceph-rados/monitor-hostname-field';
-import { AutoReconnectAttemptsField } from '../../../app/utils/cluster-storage/nfs/auto-reconnect-attempts-field';
-import { RelativeMountpointInVolumeField } from '../../../app/utils/cluster-storage/glusterfs/relative-mountpoint-in-volume-field';
-import { type } from 'jquery';
-import { RangeWriteSupportField } from '../../../app/utils/cluster-storage/webdav/range-write-support-field';
-import { Oauth2IdpField } from '../../../app/utils/cluster-storage/webdav/oauth2-idp-field';
 
 class ClusterStorageAddHelper extends FormHelper {
   constructor(template) {
@@ -113,8 +107,8 @@ const SWIFT_STORAGE = {
   importedStorage: false,
   readonly: false,
   lumaFeed: 'local',
-  adminUsername: 'admin',
-  adminPassword: 'password',
+  username: 'admin',
+  password: 'password',
   projectName: 'name',
   userDomainName: 'Default',
   projectDomainName: 'Default',

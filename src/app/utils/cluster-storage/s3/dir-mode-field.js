@@ -1,5 +1,5 @@
 /**
- * Admin access key field of the storage.
+ * Directory mode field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,19 +8,16 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const AdminAccessKeyField = StorageTextField.extend({
+export const DirModeField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'accessKey',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
+  name: 'dirMode',
 
   /**
    * @override
    */
   isOptional: true,
+
+  regex: /^[0-7][0-7][0-7][0-7]?$/,
 });

@@ -5,6 +5,11 @@ export default {
     label: 'Endpoint',
     tip: 'Full URL of the HTTP server, including scheme (http or https) and path.',
     placeholder: 'Example: https://192.168.1.2:8080/storage',
+    regexMessage: 'This field should be a URL with http or https scheme',
+  },
+  verifyServerCertificate: {
+    label: 'Verify server certificate',
+    tip: 'Determines whether Oneprovider should verify the certificate of the HTTP server.',
   },
   credentialsType: {
     label: 'Credentials type',
@@ -22,10 +27,6 @@ export default {
   onedataAccessToken: {
     label: 'Onedata access token',
     tip: 'When registering a storage backend with the LUMA DB feed set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token. The token will be used to access the HTTP storage whenever any authorized user accesses any space supported by this storage backend. Consequently, all data access on the storage backend level will be performed on behalf of the token subject.',
-  },
-  verifyServerCertificate: {
-    label: 'Verify server certificate',
-    tip: 'Determines whether Oneprovider should verify the certificate of the HTTP server.',
   },
   authorizationHeader: {
     label: 'Authorization header',
@@ -46,6 +47,7 @@ export default {
     label: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from HTTP storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
     placeholder: 'Default: 0664',
+    regexMessage: 'This field should be octal POSIX permissions',
   },
   timeout: common.timeout,
 };

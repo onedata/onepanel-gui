@@ -17,10 +17,5 @@ export const FilterField = StorageTextField.extend({
   /**
    * @override
    */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   isOptional: true,
 });

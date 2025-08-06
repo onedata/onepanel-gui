@@ -14,10 +14,5 @@ export const EndpointField = StorageTextField.extend({
    */
   name: 'endpoint',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
-
   regex: /^https?:\/\/.*/,
 });

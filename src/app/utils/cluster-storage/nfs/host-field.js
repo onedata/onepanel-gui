@@ -1,5 +1,5 @@
 /**
- * Admin password field of the storage.
+ * Hostname field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,19 +8,14 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const AdminPasswordField = StorageTextField.extend({
+export const HostField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'adminPassword',
+  name: 'host',
 
   /**
    * @override
    */
   defaultValue: '',
-
-  /**
-   * @override
-   */
-  inputType: 'password',
 });

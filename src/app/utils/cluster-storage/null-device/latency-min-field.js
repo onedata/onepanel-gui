@@ -1,5 +1,5 @@
 /**
- * Auto-reconnect attempts field of the storage.
+ * Min latency field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,23 +8,13 @@
 
 import { StorageNumberField } from '../base/storage-number-field';
 
-export const AutoReconnectAttemptsField = StorageNumberField.extend({
+export const LatencyMinField = StorageNumberField.extend({
   /**
    * @override
    */
-  name: 'autoReconnect',
+  name: 'latencyMin',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   isOptional: true,
-
-  integer: true,
 
   gte: 0,
 });

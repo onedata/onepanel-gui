@@ -1,5 +1,5 @@
 export default {
-  hostname: {
+  host: {
     label: 'Hostname',
     tip: 'The hostname (IP address or FQDN) of NFS server.',
     placeholder: 'Example: nfs.example.com',
@@ -22,7 +22,7 @@ export default {
     tip: 'Number of simultaneous network connections that can be maintained with the NFS server.',
     placeholder: 'Default: 10',
   },
-  directoryCaching: {
+  dirCache: {
     label: 'Directory caching',
     tip: 'Enables caching of directory metadata on the client side to improve performance by reducing requests to the NFS server. May cause temporary inconsistencies if the directory content changes on the server.',
     // NOTE: there is no good explanantion of "dircache" parameter from

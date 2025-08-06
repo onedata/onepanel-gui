@@ -8,13 +8,13 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { HostnameField } from './nfs/hostname-field';
+import { HostField } from './nfs/host-field';
 import { VolumeField } from './nfs/volume-field';
 import { ConnectionPoolSizeField } from './nfs/connection-pool-size-field';
-import { DirectoryCachingField } from './nfs/directory-caching-field';
-import { ReadaheadSizeField } from './nfs/readahead-size-field';
-import { AutoReconnectAttemptsField } from './nfs/auto-reconnect-attempts-field';
-import { NfsVersionField } from './nfs/nfs-version-field';
+import { DirCacheField } from './nfs/dir-cache-field';
+import { ReadAheadField } from './nfs/read-ahead-field';
+import { AutoReconnectField } from './nfs/auto-reconnect-field';
+import { VersionField } from './nfs/version-field';
 
 export const NfsGroup = FormFieldsGroup.extend({
   /**
@@ -32,13 +32,13 @@ export const NfsGroup = FormFieldsGroup.extend({
    */
   fields: computed(function fields() {
     return [
-      HostnameField,
-      NfsVersionField,
+      HostField,
+      VersionField,
       VolumeField,
       ConnectionPoolSizeField,
-      DirectoryCachingField,
-      ReadaheadSizeField,
-      AutoReconnectAttemptsField,
+      DirCacheField,
+      ReadAheadField,
+      AutoReconnectField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));

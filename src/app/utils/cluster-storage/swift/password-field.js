@@ -1,5 +1,5 @@
 /**
- * Imported file mode field of the storage.
+ * Admin password field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,18 +8,14 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const ImportedFileModeField = StorageTextField.extend({
+export const PasswordField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'fileMode',
+  name: 'password',
 
   /**
    * @override
    */
-  isOptional: true,
-
-  regex: /^[0-7][0-7][0-7][0-7]?$/,
-
-  notEditable: true,
+  inputType: 'password',
 });

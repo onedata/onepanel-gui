@@ -1,5 +1,5 @@
 /**
- * Relative mountpoint in volume field of the storage.
+ * Volume server host field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,19 +8,9 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const RelativeMountpointInVolumeField = StorageTextField.extend({
+export const HostnameField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'mountPoint',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
-  isOptional: true,
+  name: 'hostname',
 });

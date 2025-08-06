@@ -14,9 +14,5 @@ export const TimeoutField = StorageNumberField.extend({
    */
   name: 'timeout',
 
-  // /**
-  //  * @override
-  //  */
-  // defaultValue: '300000',
   isOptional: true,
 });

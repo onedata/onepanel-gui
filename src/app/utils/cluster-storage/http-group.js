@@ -16,7 +16,7 @@ import { OnedataAccessTokenField } from './http/onedata-access-token-field';
 import { AuthorizationHeaderField } from './http/authorization-header-field';
 import { ConnectionPoolSizeField } from './http/connection-pool-size-field';
 import { MaxRequestsPerSessionField } from './http/max-requests-per-session-field';
-import { ImportedFileModeField } from './http/imported-file-mode-field';
+import { FileModeField } from './http/file-mode-field';
 import { CredentialsField } from './http/credentials-field';
 
 export const HttpGroup = FormFieldsGroup.extend({
@@ -43,7 +43,7 @@ export const HttpGroup = FormFieldsGroup.extend({
       AuthorizationHeaderField,
       ConnectionPoolSizeField,
       MaxRequestsPerSessionField,
-      ImportedFileModeField,
+      FileModeField,
       TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,

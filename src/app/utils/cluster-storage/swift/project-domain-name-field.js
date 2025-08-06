@@ -17,10 +17,5 @@ export const ProjectDomainNameField = StorageTextField.extend({
   /**
    * @override
    */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   isOptional: true,
 });

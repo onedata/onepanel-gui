@@ -1,5 +1,5 @@
 /**
- * Hostname field of the storage.
+ * Endpoint URL field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -14,8 +14,5 @@ export const HostnameField = StorageTextField.extend({
    */
   name: 'hostname',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
+  regex: /^https?:\/\/.*/,
 });

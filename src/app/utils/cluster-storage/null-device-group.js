@@ -12,8 +12,8 @@ import { TimeoutField } from './null-device/timeout-field';
 import { FilterField } from './null-device/filter-field';
 import { SimulatedFilesystemGrowSpeedField } from './null-device/simulated-filesystem-grow-speed-field';
 import { SimulatedFilesystemParametersField } from './null-device/simulated-filesystem-parameters-field';
-import { MinLatencyField } from './null-device/min-latency-field';
-import { MaxLatencyField } from './null-device/max-latency-field';
+import { LatencyMinField } from './null-device/latency-min-field';
+import { LatencyMaxField } from './null-device/latency-max-field';
 import { TimeoutProbabilityField } from './null-device/timeout-probability-field';
 
 export const NullDeviceGroup = FormFieldsGroup.extend({
@@ -32,8 +32,8 @@ export const NullDeviceGroup = FormFieldsGroup.extend({
    */
   fields: computed(function fields() {
     return [
-      MinLatencyField,
-      MaxLatencyField,
+      LatencyMinField,
+      LatencyMaxField,
       TimeoutProbabilityField,
       FilterField,
       SimulatedFilesystemParametersField,

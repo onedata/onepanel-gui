@@ -15,10 +15,7 @@ export const Oauth2IdpField = StorageTextField.extend({
    */
   name: 'oauth2IdP',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
+  isOptional: true,
 
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     const type = this.parent.value.credentialsType;

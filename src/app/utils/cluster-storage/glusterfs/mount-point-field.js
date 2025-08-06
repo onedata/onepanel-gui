@@ -1,5 +1,5 @@
 /**
- * Endpoint URL field of the storage.
+ * Relative mount point in volume field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,16 +8,14 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const EndpointUrlField = StorageTextField.extend({
+export const MountPointField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'hostname',
+  name: 'mountPoint',
 
   /**
    * @override
    */
-  defaultValue: '',
-
-  regex: /^https?:\/\/.*/,
+  isOptional: true,
 });

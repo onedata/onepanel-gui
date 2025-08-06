@@ -9,7 +9,7 @@
 import { StorageRadioField } from '../base/storage-radio-field';
 import { computed } from '@ember/object';
 
-export const PathTypeField = StorageRadioField.extend({
+export const StoragePathTypeField = StorageRadioField.extend({
   /**
    * @override
    */

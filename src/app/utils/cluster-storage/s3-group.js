@@ -9,17 +9,17 @@
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { ArchiveStorageField } from './s3/archive-storage-field';
-import { EndpointUrlField } from './s3/endpoint-url-field';
+import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
 import { BlockSizeField } from './s3/block-size-field';
 import { MaximumCanonicalObjectSizeField } from './s3/maximum-canonical-object-size-field';
-import { ImportedFileModeField } from './s3/imported-file-mode-field';
-import { ImportedDirectoryModeField } from './s3/imported-directory-mode-field';
+import { FileModeField } from './s3/file-mode-field';
+import { DirModeField } from './s3/dir-mode-field';
 import { TimeoutField } from './s3/timeout-field';
 import { BucketNameField } from './s3/bucket-name-field';
-import { VerifyServerCertField } from './s3/verify-server-cert-field';
-import { AdminAccessKeyField } from './s3/admin-access-key-field';
-import { AdminSecretKeyField } from './s3/admin-secret-key-field';
+import { VerifyServerCertificate } from './s3/verify-server-certificate-field';
+import { AccessKeyField } from './s3/access-key-field';
+import { SecretKeyField } from './s3/secret-key-field';
 
 export const S3Group = FormFieldsGroup.extend({
   /**
@@ -38,16 +38,16 @@ export const S3Group = FormFieldsGroup.extend({
   fields: computed(function fields() {
     return [
       ArchiveStorageField,
-      EndpointUrlField,
+      HostnameField,
       BucketNameField,
-      VerifyServerCertField,
+      VerifyServerCertificate,
       RegionField,
-      AdminAccessKeyField,
-      AdminSecretKeyField,
+      AccessKeyField,
+      SecretKeyField,
       BlockSizeField,
       MaximumCanonicalObjectSizeField,
-      ImportedFileModeField,
-      ImportedDirectoryModeField,
+      FileModeField,
+      DirModeField,
       TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,

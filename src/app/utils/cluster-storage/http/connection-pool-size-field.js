@@ -20,4 +20,6 @@ export const ConnectionPoolSizeField = StorageNumberField.extend({
   isOptional: true,
 
   gte: 0,
+
+  integer: true,
 });

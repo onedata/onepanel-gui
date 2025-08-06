@@ -17,10 +17,5 @@ export const UserDomainNameField = StorageTextField.extend({
   /**
    * @override
    */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   isOptional: true,
 });

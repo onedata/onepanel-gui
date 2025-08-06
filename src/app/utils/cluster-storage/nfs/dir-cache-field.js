@@ -1,5 +1,5 @@
 /**
- * Verify server cert. field of the storage.
+ * Directory caching field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,11 +8,11 @@
 
 import { StorageToggleField } from '../base/storage-toggle-field';
 
-export const VerifyServerCertField = StorageToggleField.extend({
+export const DirCacheField = StorageToggleField.extend({
   /**
    * @override
    */
-  name: 'verifyServerCert',
+  name: 'dirCache',
 
   /**
    * @override

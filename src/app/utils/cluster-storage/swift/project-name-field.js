@@ -13,9 +13,4 @@ export const ProjectNameField = StorageTextField.extend({
    * @override
    */
   name: 'projectName',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

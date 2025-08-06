@@ -8,7 +8,7 @@
 
 import { StorageToggleField } from '../base/storage-toggle-field';
 
-export const ImportedField = StorageToggleField.extend({
+export const ImportedStorageField = StorageToggleField.extend({
   /**
    * @override
    */

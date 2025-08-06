@@ -5,6 +5,7 @@ export default {
     label: 'Endpoint',
     tip: 'Full URL of the WebDAV server, e.g. https://example.com:8080/webdav',
     placeholder: 'Example: https://192.168.1.2:8080/webdav',
+    regexMessage: 'This field should be a URL with http or https scheme',
   },
   verifyServerCertificate: {
     label: 'Verify server certificate',
@@ -60,11 +61,13 @@ export default {
     label: 'Imported file mode',
     tip: 'Defines the file permissions, which files imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0664".',
     placeholder: 'Default: 0664',
+    regexMessage: 'This field should be octal POSIX permissions',
   },
   dirMode: {
     label: 'Imported directory mode',
     tip: 'Defines the directory mode which directories imported from WebDAV storage will have in Onedata. Values should be provided in octal format e.g. "0775".',
     placeholder: 'Default: 0775',
+    regexMessage: 'This field should be octal POSIX permissions',
   },
   timeout: common.timeout,
 };

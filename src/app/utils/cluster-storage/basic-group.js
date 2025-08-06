@@ -9,9 +9,9 @@
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { NameField } from './basic/name-field';
-import { PathTypeField } from './basic/path-type-field';
+import { StoragePathTypeField } from './basic/storage-path-type-field';
 import { ReadonlyField } from './basic/readonly-field';
-import { ImportedField } from './basic/imported-field';
+import { ImportedStorageField } from './basic/imported-storage-field';
 import { LUMAFeedField } from './basic/luma-feed-field';
 import { TypeField } from './basic/type-field';
 
@@ -33,8 +33,8 @@ export const BasicGroup = FormFieldsGroup.extend({
     return [
       TypeField,
       NameField,
-      PathTypeField,
-      ImportedField,
+      StoragePathTypeField,
+      ImportedStorageField,
       ReadonlyField,
       LUMAFeedField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({

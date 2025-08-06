@@ -11,8 +11,8 @@ import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields
 import { UserDomainNameField } from './swift/user-domain-name-field';
 import { ProjectNameField } from './swift/project-name-field';
 import { AuthUrlField } from './swift/auth-url-field';
-import { AdminUsernameField } from './swift/admin-username-field';
-import { AdminPasswordField } from './swift/admin-password-field';
+import { UsernameField } from './swift/username-field';
+import { PasswordField } from './swift/password-field';
 import { ProjectDomainNameField } from './swift/project-domain-name-field';
 import { ContainerNameField } from './swift/container-name-field';
 import { BlockSizeField } from './swift/block-size-field';
@@ -34,8 +34,8 @@ export const SwiftGroup = FormFieldsGroup.extend({
    */
   fields: computed(function fields() {
     return [
-      AdminUsernameField,
-      AdminPasswordField,
+      UsernameField,
+      PasswordField,
       ProjectNameField,
       UserDomainNameField,
       ProjectDomainNameField,

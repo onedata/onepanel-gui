@@ -1,5 +1,5 @@
 /**
- * Volume server host field of the storage.
+ * Custom client translator options field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,14 +8,14 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const VolumeServerHostField = StorageTextField.extend({
+export const XlatorOptionsField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'hostname',
+  name: 'xlatorOptions',
 
   /**
    * @override
    */
-  defaultValue: '',
+  isOptional: true,
 });

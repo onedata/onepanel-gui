@@ -13,9 +13,4 @@ export const VolumeField = StorageTextField.extend({
    * @override
    */
   name: 'volume',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

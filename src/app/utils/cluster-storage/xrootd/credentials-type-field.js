@@ -19,7 +19,7 @@ export const CredentialsTypeField = StorageRadioField.extend({
    */
   options: Object.freeze([
     { value: 'none' },
-    { value: 'password' },
+    { value: 'pwd' },
   ]),
 
   defaultValue: 'none',

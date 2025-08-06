@@ -17,10 +17,5 @@ export const RegionField = StorageTextField.extend({
   /**
    * @override
    */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   isOptional: true,
 });

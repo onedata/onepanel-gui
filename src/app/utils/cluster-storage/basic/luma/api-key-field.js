@@ -14,10 +14,7 @@ export const ApiKeyField = StorageTextField.extend({
    */
   name: 'lumaFeedApiKey',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
-
   isOptional: true,
+
+  regex: /^[a-z0-9_]+$/,
 });

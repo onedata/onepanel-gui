@@ -1,5 +1,5 @@
 /**
- * Custom client translator options field of the storage.
+ * Imported file mode field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,19 +8,18 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const CustomClientTranslatorOptionsField = StorageTextField.extend({
+export const FileModeField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'xlatorOptions',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
+  name: 'fileMode',
 
   /**
    * @override
    */
   isOptional: true,
+
+  regex: /^[0-7][0-7][0-7][0-7]?$/,
+
+  notEditable: true,
 });

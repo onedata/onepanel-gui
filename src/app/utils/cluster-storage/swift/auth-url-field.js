@@ -13,9 +13,4 @@ export const AuthUrlField = StorageTextField.extend({
    * @override
    */
   name: 'authUrl',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

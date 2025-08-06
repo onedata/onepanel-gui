@@ -1,11 +1,11 @@
 import common from './common';
 
 export default {
-  adminUsername: {
+  username: {
     label: 'Admin username',
     tip: 'The Keystone authentication username.',
   },
-  adminPassword: {
+  password: {
     label: 'Admin password',
     tip: 'The Keystone authentication password.',
   },

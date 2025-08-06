@@ -1,21 +1,23 @@
 /**
- * Volume server port of the storage.
+ * File mode field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { StorageNumberField } from '../base/storage-number-field';
+import { StorageTextField } from '../base/storage-text-field';
 
-export const VolumeServerPortField = StorageNumberField.extend({
+export const FileModeField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'port',
+  name: 'fileMode',
 
   /**
    * @override
    */
   isOptional: true,
+
+  regex: /^[0-7][0-7][0-7][0-7]?$/,
 });

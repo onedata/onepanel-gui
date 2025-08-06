@@ -1,5 +1,5 @@
 /**
- * Imported directory mode field of the storage.
+ * Admin secret key field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,16 +8,19 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const ImportedDirectoryModeField = StorageTextField.extend({
+export const SecretKeyField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'dirMode',
+  name: 'secretKey',
 
   /**
    * @override
    */
   isOptional: true,
 
-  regex: /^[0-7][0-7][0-7][0-7]?$/,
+  /**
+   * @override
+   */
+  inputType: 'password',
 });

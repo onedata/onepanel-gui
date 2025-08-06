@@ -14,10 +14,6 @@ export const BlockSizeField = StorageNumberField.extend({
    */
   name: 'blockSize',
 
-  // /**
-  //  * @override
-  //  */
-  // defaultValue: '300000',
   isOptional: true,
 
   notEditable: true,

@@ -14,10 +14,7 @@ export const ReadonlyField = StorageToggleField.extend({
    */
   name: 'readonly',
 
-  /**
-   * @override
-   */
-  defaultValue: false,
+  isOptional: true,
 
   valueChanged() {
     this._super(...arguments);

@@ -7,9 +7,6 @@
  */
 
 import { StorageRadioField } from '../base/storage-radio-field';
-import { computed } from '@ember/object';
-import { observer } from '@ember/object';
-import { reads } from '@ember/object/computed';
 
 export const RangeWriteSupportField = StorageRadioField.extend({
   /**
@@ -18,6 +15,8 @@ export const RangeWriteSupportField = StorageRadioField.extend({
   name: 'rangeWriteSupport',
 
   autoSettingValue: undefined,
+
+  defaultValue: 'none',
 
   /**
    * @override

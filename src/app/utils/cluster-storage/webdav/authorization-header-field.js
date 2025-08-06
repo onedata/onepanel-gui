@@ -15,10 +15,7 @@ export const AuthorizationHeaderField = StorageTextField.extend({
    */
   name: 'authorizationHeader',
 
-  /**
-   * @override
-   */
-  defaultValue: '',
+  isOptional: true,
 
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     const type = this.parent.value.credentialsType;

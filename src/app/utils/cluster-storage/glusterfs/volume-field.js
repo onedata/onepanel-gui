@@ -8,14 +8,9 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 
-export const VolumeNameField = StorageTextField.extend({
+export const VolumeField = StorageTextField.extend({
   /**
    * @override
    */
   name: 'volume',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

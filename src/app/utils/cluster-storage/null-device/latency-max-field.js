@@ -9,15 +9,13 @@
 import { StorageNumberField } from '../base/storage-number-field';
 import { computed } from '@ember/object';
 
-export const MaxLatencyField = StorageNumberField.extend({
+export const LatencyMaxField = StorageNumberField.extend({
   /**
    * @override
    */
   name: 'latencyMax',
 
   isOptional: true,
-
-  defaultValue: null,
 
   gte: computed('parent.value.latencyMin', function () {
     const latencyMin = this.parent.value.latencyMin;

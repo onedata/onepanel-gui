@@ -13,9 +13,4 @@ export const MonitorHostnameField = StorageTextField.extend({
    * @override
    */
   name: 'monitorHostname',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

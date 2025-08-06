@@ -1,5 +1,5 @@
 /**
- * Readahead size field of the storage.
+ * Auto-reconnect attempts field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,12 +8,20 @@
 
 import { StorageNumberField } from '../base/storage-number-field';
 
-export const ReadaheadSizeField = StorageNumberField.extend({
+export const AutoReconnectField = StorageNumberField.extend({
   /**
    * @override
    */
-  name: 'readAhead',
+  name: 'autoReconnect',
 
+  /**
+   * @override
+   */
+  defaultValue: 1,
+
+  /**
+   * @override
+   */
   isOptional: true,
 
   integer: true,

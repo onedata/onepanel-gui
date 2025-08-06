@@ -13,9 +13,4 @@ export const ContainerNameField = StorageTextField.extend({
    * @override
    */
   name: 'containerName',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

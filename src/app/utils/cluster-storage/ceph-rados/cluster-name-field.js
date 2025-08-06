@@ -13,9 +13,4 @@ export const ClusterNameField = StorageTextField.extend({
    * @override
    */
   name: 'clusterName',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

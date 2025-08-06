@@ -17,10 +17,5 @@ export const KeyField = StorageTextField.extend({
   /**
    * @override
    */
-  defaultValue: '',
-
-  /**
-   * @override
-   */
   inputType: 'password',
 });

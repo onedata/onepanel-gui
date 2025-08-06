@@ -13,9 +13,4 @@ export const PoolNameField = StorageTextField.extend({
    * @override
    */
   name: 'poolName',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
 });

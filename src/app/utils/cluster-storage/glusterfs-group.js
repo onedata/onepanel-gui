@@ -9,12 +9,12 @@
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { TimeoutField } from './s3/timeout-field';
-import { VolumeServerHostField } from './glusterfs/volume-server-host-field';
-import { VolumeTransportField } from './glusterfs/volume-transport-field';
-import { RelativeMountpointInVolumeField } from './glusterfs/relative-mountpoint-in-volume-field';
-import { CustomClientTranslatorOptionsField } from './glusterfs/custom-client-translator-options-field';
-import { VolumeNameField } from './glusterfs/volume-name-field';
-import { VolumeServerPortField } from './glusterfs/volume-server-port-field';
+import { HostnameField } from './glusterfs/hostname-field';
+import { TransportField } from './glusterfs/transport-field';
+import { MountPointField } from './glusterfs/mount-point-field';
+import { XlatorOptionsField } from './glusterfs/xlator-options-field';
+import { VolumeField } from './glusterfs/volume-field';
+import { PortField } from './glusterfs/port-field';
 
 export const GlusterfsGroup = FormFieldsGroup.extend({
   /**
@@ -32,12 +32,12 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
    */
   fields: computed(function fields() {
     return [
-      VolumeNameField,
-      VolumeServerHostField,
-      VolumeServerPortField,
-      VolumeTransportField,
-      RelativeMountpointInVolumeField,
-      CustomClientTranslatorOptionsField,
+      VolumeField,
+      HostnameField,
+      PortField,
+      TransportField,
+      MountPointField,
+      XlatorOptionsField,
       TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
