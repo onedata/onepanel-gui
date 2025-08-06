@@ -73,11 +73,11 @@ const NFS_STORAGE = {
   importedStorage: true,
   readonly: true,
   lumaFeed: 'auto',
-  hostname: 'nfs.example.com',
+  host: 'nfs.example.com',
   version: '3',
   volume: '/nfs/nfsvolume/',
   connectionPoolSize: '10',
-  directoryCaching: true,
+  dirCache: true,
   readAhead: '0',
   autoReconnect: '1',
 };
@@ -92,7 +92,7 @@ const S3_STORAGE = {
   archiveStorage: true,
   hostname: 'https://s3.example.com',
   bucketName: 'name',
-  verifyServerCert: true,
+  verifyServerCertificate: true,
   region: 'us-east-1',
   accessKey: 'admin',
   maximumCanonicalObjectSize: '5425231',
@@ -182,7 +182,7 @@ const XROOTD_STORAGE = {
   url: 'root://192.168.0.1//data',
   fileModeMask: '0664',
   dirModeMask: '0775',
-  credentialsType: 'password',
+  credentialsType: 'pwd',
   credentials: 'username:password',
 };
 
@@ -271,6 +271,9 @@ async function checkForStorageDetailsInShowMode(type, storage, fieldCount) {
         } else if (key === 'credentialsType' && value === 'oauth2') {
           expect(find(`.${key}-field`))
             .to.contain.text('OAuth2');
+        } else if (key === 'credentialsType' && value === 'pwd') {
+          expect(find(`.${key}-field`))
+            .to.contain.text('password');
         } else if (key === 'rangeWriteSupport' && value === 'moddav') {
           expect(find(`.${key}-field`))
             .to.contain.text('ModDAV');
@@ -289,7 +292,6 @@ async function checkForStorageDetailsInEditMode(type, storage, fieldCount) {
     await render(hbs`<ClusterStorageAddForm @storage={{storage}} @mode="edit" />`);
     expect(findAll('.form-group:has(>label)')).to.have.length(fieldCount);
     Object.entries(storage).forEach(([key, value]) => {
-
       if (key === 'type') {
         expect(find('.type-field .field-component ')).to.contain.text(type);
         expect(find('.type-field .dropdown-field').querySelectorAll('.dropdown-field-trigger'))
