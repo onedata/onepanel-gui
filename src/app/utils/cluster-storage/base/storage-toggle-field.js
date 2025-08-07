@@ -17,6 +17,12 @@ export const StorageToggleField = ToggleField.extend({
 
   notEditable: false,
 
+  addOptionalTextToLabel: computed('context.component.mode',
+    function addOptionalTextToLabel() {
+      return this.context.component.mode !== 'show';
+    }
+  ),
+
   mode: computed('context.component.mode', function mode() {
     if (this.context.component.mode === 'show' ||
       (this.context.component.mode === 'edit' &&

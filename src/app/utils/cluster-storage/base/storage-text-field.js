@@ -28,6 +28,12 @@ export const StorageTextField = TextField.extend({
     }
   }),
 
+  addOptionalTextToLabel: computed('context.component.mode',
+    function addOptionalTextToLabel() {
+      return this.context.component.mode !== 'show';
+    }
+  ),
+
   isVisible: computed('value', 'mode', function isVisible() {
     return this.mode === 'edit' ||
       (
@@ -36,4 +42,5 @@ export const StorageTextField = TextField.extend({
         this.value !== ''
       );
   }),
+
 });

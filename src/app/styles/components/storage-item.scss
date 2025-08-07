@@ -1,5 +1,6 @@
 .storage-item {
   $storage-item-padding: 1.5em;
+  $storage-view-item-padding: 1em;
   .one-collapsible-list-item-header {
     padding-right: 60px;
     transition: none;
@@ -19,21 +20,35 @@
         display: block;
       }
     }
-  }
-
-  .id-edition-label .clipboard-line-label {
-    @media (min-width: $screen-sm-min) {
-      width: 33.333333%;
+    .clipboard-line-label {
+      width: 280px;
     }
   }
+
   .cluster-storage-add-form {
     padding-top: 0;
     margin: 0 22px;
 
+    .fields-group-children {
+      .field-view-mode, .field-edit-mode {
+        border-bottom: $table-item-border;
+      }
+    }
+
+    .fields-group-children {
+      .field-view-mode:last-child, .field-edit-mode:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    .qos-params-editor.show>.row {
+      flex-direction: column;
+    }
+
     &.form-static {
       padding-bottom: 0;
     }
-    
+
     .form {
       margin: 0;
       padding: 0;
@@ -80,7 +95,7 @@
           padding-bottom: 0;
         }
       }
-      
+
       @media (min-width: $screen-sm-min) {
         .form-group {
           margin: 0;
@@ -94,10 +109,13 @@
           }
         }
         .control-label {
-          padding: $storage-item-padding 0;
+          padding: $storage-view-item-padding 0;
           padding-right: $padding-small-horizontal;
           margin: 0;
           text-align: left;
+        }
+        .field-component:has(>.text), .text-like-field, .radio-field {
+          padding: $storage-view-item-padding 0;
         }
         .form-field-right-addon {
           right: 40px;

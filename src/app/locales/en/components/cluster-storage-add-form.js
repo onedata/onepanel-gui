@@ -25,8 +25,8 @@ export default {
     nulldevice,
     nfs,
     luma,
+    optional: 'optional',
   },
-
   storageType: 'Type',
   save: 'Save',
   add: 'Add',
