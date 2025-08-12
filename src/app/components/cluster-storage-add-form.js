@@ -251,6 +251,10 @@ export default Component.extend(I18n, {
   isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
     if (this.isFormOpened) {
       this.fields.reset();
+      this.setProperties({
+        areQosParamsValid: true,
+        editedQosParams: undefined,
+      });
     }
   }),
 
@@ -267,10 +271,8 @@ export default Component.extend(I18n, {
     if (this.storage) {
       this._fillInForm();
     }
-    if (this.mode !== 'show') {
-      const type = this.selectedStorageType;
-      this.autoSettingsAll(type);
-    }
+    const type = this.selectedStorageType;
+    this.autoSettingsAll(type);
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
@@ -332,6 +334,10 @@ export default Component.extend(I18n, {
 
   storageTypeChanged(type) {
     const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    this.setProperties({
+      areQosParamsValid: true,
+      editedQosParams: undefined,
+    });
 
     this.changePathType(type);
     this.autoSettingsImportedStorage(type, pathType);
@@ -383,19 +389,9 @@ export default Component.extend(I18n, {
     if (this.mode === 'show') {
       return;
     }
-    const defaultImportedStorageValue = this.storage?.importedStorage;
-    const changedImportedStorageValue = this.basicGroup.getFieldByPath('importedStorage').value;
+
     let disabled = this.storageProvidesSupport;
-    let value;
-    // let value = this.storageProvidesSupport &&
-    //   changedImportedStorageValue !== defaultImportedStorageValue ?
-    //   defaultImportedStorageValue : changedImportedStorageValue;
-    if (this.storageProvidesSupport) {
-      value = changedImportedStorageValue !== defaultImportedStorageValue ?
-        defaultImportedStorageValue : changedImportedStorageValue;
-    } else {
-      value = changedImportedStorageValue;
-    }
+    let value = this.storage?.importedStorage;
     let lockHint = null;
 
     if (type === 'http') {
@@ -406,7 +402,10 @@ export default Component.extend(I18n, {
       disabled = true;
       value = pathType === 'canonical';
     }
-    this.basicGroup.getFieldByPath('importedStorage').valueChanged(value);
+
+    if (disabled) {
+      this.basicGroup.getFieldByPath('importedStorage').valueChanged(value);
+    }
     this.basicGroup.getFieldByPath('importedStorage').setProperties({
       isEnabled: !disabled,
     });
@@ -463,7 +462,7 @@ export default Component.extend(I18n, {
     const currentValue = this.webdavGroup.getFieldByPath('rangeWriteSupport').value;
 
     if (isReadonly) {
-      this.basicGroup.getFieldByPath('readonly').setProperties({
+      this.basicGroup.getFieldByPath('rangeWriteSupport').setProperties({
         isEnabled: false,
       });
       if (currentValue !== 'none') {
@@ -491,10 +490,10 @@ export default Component.extend(I18n, {
 
     if (pathType === 'canonical' || blockSize === 0) {
       this.s3Group.getFieldByPath('blockSize').valueChanged(
-        type === 'canonical' ? 0 : null
+        pathType === 'canonical' ? 0 : null
       );
     }
-    this.s3Group.getFieldByPath('blockSize').set('isEnabled', type !== 'canonical');
+    this.s3Group.getFieldByPath('blockSize').set('isEnabled', pathType !== 'canonical');
   },
 
   autoSettingsSimulatedFilesystem(type) {
@@ -521,7 +520,7 @@ export default Component.extend(I18n, {
 
     const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
     const maxCanonicalObjectSize = this.s3Group.getFieldByPath('maximumCanonicalObjectSize');
-    const isFieldDisabled = pathType !== 'flat';
+    const isFieldDisabled = pathType === 'flat';
     maxCanonicalObjectSize.set('isEnabled', !isFieldDisabled);
     if (isFieldDisabled) {
       maxCanonicalObjectSize.valueChanged(null);

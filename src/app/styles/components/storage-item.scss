@@ -29,15 +29,17 @@
     padding-top: 0;
     margin: 0 22px;
 
-    .fields-group-children {
-      .field-view-mode, .field-edit-mode {
-        border-bottom: $table-item-border;
+    @media (min-width: $screen-sm-min) {
+      .fields-group-children {
+        .field-view-mode, .field-edit-mode {
+          border-bottom: $table-item-border;
+        }
       }
-    }
 
-    .fields-group-children {
-      .field-view-mode:last-child, .field-edit-mode:last-child {
-        border-bottom: 0;
+      .fields-group-children {
+        .field-view-mode:last-child, .field-edit-mode:last-child {
+          border-bottom: 0;
+        }
       }
     }
 
