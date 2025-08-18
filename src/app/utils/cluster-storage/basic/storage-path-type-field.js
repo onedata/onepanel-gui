@@ -34,6 +34,6 @@ export const StoragePathTypeField = StorageRadioField.extend({
 
   valueChanged() {
     this._super(...arguments);
-    this.context.component.storagePathTypeChanged(this.value);
+    this.context.component.storagePathTypeChanged();
   },
 });

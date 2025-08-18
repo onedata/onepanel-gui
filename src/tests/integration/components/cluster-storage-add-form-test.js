@@ -290,7 +290,9 @@ async function checkForStorageDetailsInEditMode(type, storage, fieldCount) {
   it(`shows storage details for ${type} type`, async function () {
     this.set('storage', storage);
     await render(hbs`<ClusterStorageAddForm @storage={{storage}} @mode="edit" />`);
+
     expect(findAll('.form-group:has(>label)')).to.have.length(fieldCount);
+
     Object.entries(storage).forEach(([key, value]) => {
       if (key === 'type') {
         expect(find('.type-field .field-component ')).to.contain.text(type);
@@ -428,10 +430,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     it('does not submit empty values for posix', async function () {
       let submitOccurred = false;
       this.setProperties({
-        selectedStorageType: {
-          id: 'posix',
-          name: 'POSIX',
-        },
         submit: (formData) => {
           submitOccurred = true;
           expect(formData).to.have.property('name');
@@ -448,7 +446,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       await render(hbs `
         <ClusterStorageAddForm
-          @submit={{submit}}
+          @onSubmit={{submit}}
         />
       `);
       await selectChoose('.type-field .dropdown-field', POSIX_TYPE.name);
@@ -569,6 +567,133 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     );
 
     it(
+      'locks "imported storage" and "readonly" to true for S3 storage with canonical path type',
+      async function () {
+        await render(hbs`<ClusterStorageAddForm />`);
+        await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
+
+        expect(find('.storagePathType-field .one-way-radio-group')).to.not.have.class('disabled');
+        expect(find('.storagePathType-field .option-flat input')).to.have.property('checked', true);
+
+        expect(find('.importedStorage-field .one-way-toggle'))
+          .to.have.class('unselected')
+          .and.have.class('disabled');
+
+        expect(find('.readonly-field .one-way-toggle'))
+          .to.have.class('unselected')
+          .and.have.class('disabled');
+
+        await click('.storagePathType-field .option-canonical input');
+        expect(find('.storagePathType-field .option-canonical input')).to.have.property('checked', true);
+
+        expect(find('.importedStorage-field .one-way-toggle'))
+          .to.have.class('checked')
+          .and.have.class('disabled');
+
+        expect(find('.readonly-field .one-way-toggle'))
+          .to.have.class('checked')
+          .and.have.class('disabled');
+      }
+    );
+
+    it(
+      'locks grow speed and params and reset value to null for no imported null device storage',
+      async function () {
+        await render(hbs`<ClusterStorageAddForm />`);
+        await selectChoose('.type-field .dropdown-field', 'Null Device');
+
+        expect(find('.simulatedFilesystemParameters-field input'))
+          .to.have.property('disabled');
+        expect(find('.simulatedFilesystemGrowSpeed-field input'))
+          .to.have.property('disabled');
+
+        await click('.importedStorage-field .one-way-toggle');
+
+        await fillIn('.name-field input', '2-3');
+        await fillIn('.name-field input', '3');
+
+        await click('.importedStorage-field .one-way-toggle');
+
+        expect(find('.simulatedFilesystemParameters-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+        expect(find('.simulatedFilesystemGrowSpeed-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+      }
+    );
+
+    it(
+      'locks and reset value: max canonical object size, imported item mode if storage are s3 with path type flat',
+      async function () {
+        await render(hbs`<ClusterStorageAddForm />`);
+        await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
+
+        expect(find('.maximumCanonicalObjectSize-field input'))
+          .to.have.property('disabled');
+        expect(find('.fileMode-field input'))
+          .to.have.property('disabled');
+        expect(find('.dirMode-field input'))
+          .to.have.property('disabled');
+
+        await click('.storagePathType-field .option-canonical input');
+
+        await fillIn('.maximumCanonicalObjectSize-field input', 64);
+        await fillIn('.fileMode-field input', '0664');
+        await fillIn('.dirMode-field input', '0775');
+
+        await click('.storagePathType-field .option-flat input');
+
+        expect(find('.maximumCanonicalObjectSize-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+        expect(find('.fileMode-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+        expect(find('.dirMode-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+      }
+    );
+
+    it(
+      'locks “block size” for canonical s3 storage and change value to 0',
+      async function () {
+        await render(hbs`<ClusterStorageAddForm />`);
+        await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
+
+        await fillIn('.blockSize-field input', 1);
+        await click('.storagePathType-field .option-canonical input');
+
+        expect(find('.blockSize-field input'))
+          .to.have.property('disabled')
+          .and.have.value(undefined);
+      }
+    );
+
+    it(
+      'locks "range write support" and have value none for webdav storage with readonly ',
+      async function () {
+        await render(hbs`<ClusterStorageAddForm />`);
+        await selectChoose('.type-field .dropdown-field', 'WebDAV');
+
+        await click('.importedStorage-field .one-way-toggle');
+        await click('.readonly-field .one-way-toggle');
+
+        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('checked', true);
+        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('disabled');
+        expect(find('.rangeWriteSupport-field .option-sabredav input')).to.have.property('disabled');
+        expect(find('.rangeWriteSupport-field .option-moddav input')).to.have.property('disabled');
+
+        await click('.readonly-field .one-way-toggle');
+
+        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('checked', false);
+        expect(find('.rangeWriteSupport-field .option-sabredav input')).to.have.property('checked', false);
+        expect(find('.rangeWriteSupport-field .option-moddav input')).to.have.property('checked', false);
+      }
+    );
+
+    it(
       'unlocks "imported storage" when changing type from HTTP',
       async function () {
         await render(hbs `<ClusterStorageAddForm />`);
@@ -599,7 +724,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInEditMode('POSIX', POSIX_STORAGE, 12);
     checkForStorageDetailsInEditMode('Ceph RADOS', CEPH_RADOS_STORAGE, 13);
     checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 13);
-    checkForStorageDetailsInEditMode('S3', S3_STORAGE, 17);
+    checkForStorageDetailsInEditMode('S3', S3_STORAGE, 18);
     checkForStorageDetailsInEditMode('Swift', SWIFT_STORAGE, 15);
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
     checkForStorageDetailsInEditMode('WebDAV', WEBDAV_STORAGE, 17);
@@ -810,6 +935,28 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .and.have.class('disabled');
 
         this.set('mode', 'edit');
+        await settled();
+        expect(find('.importedStorage-field .one-way-toggle'))
+          .to.have.class('checked')
+          .and.have.class('disabled');
+      });
+
+    it(
+      'locks "imported storage" to true for posix after added support',
+      async function () {
+        this.setProperties({
+          storage: POSIX_STORAGE,
+          mode: 'edit',
+          storageProvidesSupport: false,
+        });
+        await render(hbs `<ClusterStorageAddForm
+          @storage={{storage}}
+          @mode={{mode}}
+          @storageProvidesSupport={{storageProvidesSupport}}
+        />`);
+
+        await click('.importedStorage-field .one-way-toggle');
+        this.set('storageProvidesSupport', true);
         await settled();
         expect(find('.importedStorage-field .one-way-toggle'))
           .to.have.class('checked')

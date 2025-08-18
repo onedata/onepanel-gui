@@ -67,13 +67,6 @@ export default Component.extend(I18n, {
 
   /**
    * @virtual
-   * @type {function}
-   * @returns {ClusterStorages}
-   */
-  submit: notImplementedThrow,
-
-  /**
-   * @virtual
    * @type {(formData: Object) => Promise<void>}
    */
   onSubmit: undefined,
@@ -261,9 +254,8 @@ export default Component.extend(I18n, {
   storageProvidesSupportObserver: observer(
     'storageProvidesSupport',
     function storageProvidesSupportObserver() {
-      const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
       const type = this.basicGroup.getFieldByPath('type').value;
-      this.autoSettingsImportedStorage(type, pathType);
+      this.autoSettingsImportedStorage(type);
     }
   ),
 
@@ -333,23 +325,19 @@ export default Component.extend(I18n, {
   },
 
   storageTypeChanged(type) {
-    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
     });
 
     this.changePathType(type);
-    this.autoSettingsImportedStorage(type, pathType);
-    this.autoSettingsReadonly(type);
-    this.autoSettingsRangeWriteSupport(type);
-    this.autoSettingsBlockSize(type);
+    this.autoSettingsAll(type);
   },
 
-  storagePathTypeChanged(pathType) {
+  storagePathTypeChanged() {
     const type = this.basicGroup.getFieldByPath('type').value;
 
-    this.autoSettingsImportedStorage(type, pathType);
+    this.autoSettingsImportedStorage(type);
     this.autoSettingsReadonly(type);
     this.autoSettingsBlockSize(type);
     this.autoSettingsMaxCanonicalObjectSize(type);
@@ -385,11 +373,12 @@ export default Component.extend(I18n, {
     });
   },
 
-  autoSettingsImportedStorage(type, pathType) {
+  autoSettingsImportedStorage(type) {
     if (this.mode === 'show') {
       return;
     }
 
+    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
     let disabled = this.storageProvidesSupport;
     let value = this.storage?.importedStorage;
     let lockHint = null;
@@ -462,7 +451,7 @@ export default Component.extend(I18n, {
     const currentValue = this.webdavGroup.getFieldByPath('rangeWriteSupport').value;
 
     if (isReadonly) {
-      this.basicGroup.getFieldByPath('rangeWriteSupport').setProperties({
+      this.webdavGroup.getFieldByPath('rangeWriteSupport').setProperties({
         isEnabled: false,
       });
       if (currentValue !== 'none') {
@@ -547,6 +536,10 @@ export default Component.extend(I18n, {
     this.autoSettingsImportedStorage(type);
     this.autoSettingsReadonly(type);
     this.autoSettingsRangeWriteSupport(type);
+    this.autoSettingsBlockSize(type);
+    this.autoSettingsMaxCanonicalObjectSize(type);
+    this.autoSettingsSimulatedFilesystem(type);
+    this.autoSettingsImportedItemMode(type);
   },
 
   willDestroyElement() {
