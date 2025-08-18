@@ -398,6 +398,11 @@ export default Component.extend(I18n, {
     this.basicGroup.getFieldByPath('importedStorage').setProperties({
       isEnabled: !disabled,
     });
+    if (lockHint) {
+      this.basicGroup.getFieldByPath('importedStorage').setProperties({
+        disabledControlTip: lockHint,
+      });
+    }
   },
 
   autoSettingsReadonly(type) {
