@@ -27,7 +27,7 @@ export const XrootdGroup = FormFieldsGroup.extend({
   name: 'xrootd',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

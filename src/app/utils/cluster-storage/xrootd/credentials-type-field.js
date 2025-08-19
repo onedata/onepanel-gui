@@ -22,5 +22,8 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'pwd' },
   ]),
 
+  /**
+   * @override
+   */
   defaultValue: 'none',
 });

@@ -27,7 +27,7 @@ export const BasicGroup = FormFieldsGroup.extend({
   name: 'basic',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

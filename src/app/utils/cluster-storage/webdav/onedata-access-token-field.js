@@ -15,12 +15,21 @@ export const OnedataAccessTokenField = StorageTextField.extend({
    */
   name: 'onedataAccessToken',
 
+  /**
+   * @override
+   */
+  isOptional: true,
+
+  /**
+   * @override
+   */
+  notEditable: true,
+
+  /**
+   * @override
+   */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     const type = this.parent.value.credentialsType;
     return type === 'token';
   }),
-
-  isOptional: true,
-
-  notEditable: true,
 });

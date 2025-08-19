@@ -20,8 +20,14 @@ export const CredentialsField = StorageTextField.extend({
    */
   defaultValue: '',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     const type = this.parent.value.credentialsType;
     return type === 'basic' || type === 'oauth2';

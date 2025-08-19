@@ -28,7 +28,7 @@ export const NfsGroup = FormFieldsGroup.extend({
   name: 'nfs',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

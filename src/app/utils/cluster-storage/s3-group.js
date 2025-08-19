@@ -33,7 +33,7 @@ export const S3Group = FormFieldsGroup.extend({
   name: 's3',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

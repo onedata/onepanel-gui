@@ -20,9 +20,14 @@ export const CredentialsField = StorageTextField.extend({
    */
   defaultValue: '',
 
-  // TODO: na pewno?
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     return this.parent.value.credentialsType === 'pwd';
   }),

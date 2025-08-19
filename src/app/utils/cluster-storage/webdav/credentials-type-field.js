@@ -24,5 +24,8 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'oauth2' },
   ]),
 
+  /**
+   * @override
+   */
   defaultValue: 'none',
 });

@@ -14,9 +14,18 @@ export const TimeoutProbabilityField = StorageNumberField.extend({
    */
   name: 'timeoutProbability',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 
+  /**
+   * @override
+   */
   lte: 1,
 });

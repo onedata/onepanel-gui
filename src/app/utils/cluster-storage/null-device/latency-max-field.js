@@ -15,9 +15,15 @@ export const LatencyMaxField = StorageNumberField.extend({
    */
   name: 'latencyMax',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
-  gte: computed('parent.value.latencyMin', function () {
+  /**
+   * @override
+   */
+  gte: computed('parent.value.latencyMin', function gte() {
     const latencyMin = this.parent.value.latencyMin;
     return latencyMin !== null ? latencyMin : 0;
   }),

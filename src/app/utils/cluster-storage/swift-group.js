@@ -30,7 +30,7 @@ export const SwiftGroup = FormFieldsGroup.extend({
   name: 'swift',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

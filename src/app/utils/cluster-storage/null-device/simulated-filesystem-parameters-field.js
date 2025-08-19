@@ -19,5 +19,8 @@ export const SimulatedFilesystemParametersField = StorageTextField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   regex: /^(\d+-\d+(:\d+-\d+)*(:\d+)?)?$/,
 });

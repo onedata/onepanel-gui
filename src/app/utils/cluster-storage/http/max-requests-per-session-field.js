@@ -19,7 +19,13 @@ export const MaxRequestsPerSessionField = StorageNumberField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 
+  /**
+   * @override
+   */
   integer: true,
 });

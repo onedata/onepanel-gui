@@ -25,7 +25,7 @@ export const PosixGroup = FormFieldsGroup.extend({
   name: 'posix',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

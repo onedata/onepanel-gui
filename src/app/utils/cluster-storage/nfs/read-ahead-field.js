@@ -14,11 +14,23 @@ export const ReadAheadField = StorageNumberField.extend({
    */
   name: 'readAhead',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   integer: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 
+  /**
+   * @override
+   */
   defaultValue: 0,
 });

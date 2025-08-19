@@ -19,5 +19,8 @@ export const MaximumUploadSizeField = StorageNumberField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 });

@@ -19,5 +19,8 @@ export const UrlField = StorageTextField.extend({
    */
   defaultValue: '',
 
+  /**
+   * @override
+   */
   regex: /^(https?|root):\/\/.*/,
 });

@@ -19,7 +19,13 @@ export const ImportedDirectoryModeMaskField = StorageTextField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   regex: /^[0-7][0-7][0-7][0-7]?$/,
 
+  /**
+   * @override
+   */
   notEditable: true,
 });

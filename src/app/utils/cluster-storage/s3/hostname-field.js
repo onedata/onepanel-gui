@@ -14,5 +14,8 @@ export const HostnameField = StorageTextField.extend({
    */
   name: 'hostname',
 
+  /**
+   * @override
+   */
   regex: /^https?:\/\/.*/,
 });

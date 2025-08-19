@@ -28,7 +28,7 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
   name: 'glusterfs',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

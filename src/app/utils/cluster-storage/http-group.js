@@ -31,7 +31,7 @@ export const HttpGroup = FormFieldsGroup.extend({
   name: 'http',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

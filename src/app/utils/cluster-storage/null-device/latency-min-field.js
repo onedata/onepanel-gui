@@ -14,7 +14,13 @@ export const LatencyMinField = StorageNumberField.extend({
    */
   name: 'latencyMin',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 });

@@ -28,7 +28,7 @@ export const CephRadosGroup = FormFieldsGroup.extend({
   name: 'cephrados',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

@@ -28,7 +28,7 @@ export const NullDeviceGroup = FormFieldsGroup.extend({
   name: 'nulldevice',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

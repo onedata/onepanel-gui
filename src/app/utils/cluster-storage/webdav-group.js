@@ -34,7 +34,7 @@ export const WebdavGroup = FormFieldsGroup.extend({
   name: 'webdav',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

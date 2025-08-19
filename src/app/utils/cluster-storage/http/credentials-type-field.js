@@ -23,5 +23,8 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'token' },
   ]),
 
+  /**
+   * @override
+   */
   defaultValue: 'none',
 });

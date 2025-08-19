@@ -24,7 +24,13 @@ export const AutoReconnectField = StorageNumberField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   integer: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 });

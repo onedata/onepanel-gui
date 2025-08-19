@@ -14,7 +14,13 @@ export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
    */
   name: 'simulatedFilesystemGrowSpeed',
 
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   gte: 0,
 });

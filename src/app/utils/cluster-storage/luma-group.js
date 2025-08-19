@@ -1,5 +1,5 @@
 /**
- * Definitions common for all fields of the cluster storage form.
+ * Definitions for external luma fields of the cluster storage form.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -23,7 +23,7 @@ export const LumaGroup = FormFieldsGroup.extend({
   name: 'luma',
 
   /**
-   * @virtual
+   * @override
    */
   fields: computed(function fields() {
     return [

@@ -19,5 +19,8 @@ export const FileModeField = StorageTextField.extend({
    */
   isOptional: true,
 
+  /**
+   * @override
+   */
   regex: /^[0-7][0-7][0-7][0-7]?$/,
 });
