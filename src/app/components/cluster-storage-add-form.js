@@ -2,7 +2,7 @@
  * A form for adding new and modifying existing storage with all storage types
  * available.
  *
- * @author Jakub Liput, Michał Borzęcki
+ * @author Jakub Liput, Michał Borzęcki, Agnieszka Warchoł
  * @copyright (C) 2017-2025 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
@@ -17,7 +17,6 @@ import EmberObject, {
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
-import { scheduleOnce } from '@ember/runloop';
 import { BasicGroup } from '../utils/cluster-storage/basic-group';
 import { CephRadosGroup } from '../utils/cluster-storage/ceph-rados-group';
 import { PosixGroup } from '../utils/cluster-storage/posix-group';
@@ -179,14 +178,6 @@ export default Component.extend(I18n, {
         isEnabled: computed('component.isSubmitting', function isEnabled() {
           return !this.component.isSubmitting;
         }),
-        onValueChange() {
-          this._super(...arguments);
-          // component.notifyAboutChange();
-          // scheduleOnce('afterRender', component, 'notifyAboutChange');
-        },
-        // isValidObserver: observer('isValid', function isValidObserver() {
-        //   this.component.notifyAboutChange();
-        // }),
       })
       .create({
         component,
@@ -285,10 +276,10 @@ export default Component.extend(I18n, {
   _fillInForm() {
     const { storage, fields } = this;
     const storageType = storage?.type;
-
     const indexOfBasicGroup = fields.fields.findIndex(
       (field) => field.name === 'basic'
     );
+
     if (indexOfBasicGroup !== -1) {
       for (const field of fields.fields[indexOfBasicGroup].fields) {
         const name = field.name;
@@ -321,7 +312,6 @@ export default Component.extend(I18n, {
         }
       }
     }
-    // this.fields.markAsNotModified();
   },
 
   storageTypeChanged(type) {
@@ -352,9 +342,6 @@ export default Component.extend(I18n, {
   },
 
   readonlyChanged() {
-    if (this.mode === 'show') {
-      return;
-    }
     const type = this.basicGroup.getFieldByPath('type').value;
 
     this.autoSettingsRangeWriteSupport(type);
@@ -364,6 +351,7 @@ export default Component.extend(I18n, {
     if (this.mode === 'show') {
       return;
     }
+
     const config = storagePathTypeConfig[type];
     if (config.defaultValue) {
       this.basicGroup.getFieldByPath('storagePathType').valueChanged(config.defaultValue);
@@ -445,6 +433,11 @@ export default Component.extend(I18n, {
     this.basicGroup.getFieldByPath('readonly').setProperties({
       isEnabled: !locked,
     });
+    if (hint) {
+      this.basicGroup.getFieldByPath('readonly').setProperties({
+        disabledControlTip: hint,
+      });
+    }
   },
 
   autoSettingsRangeWriteSupport(type) {
@@ -551,23 +544,6 @@ export default Component.extend(I18n, {
     this._super(...arguments);
     this.get('fields').destroy();
   },
-
-  // notifyAboutChange() {
-  //   if (this.isDestroyed || this.isDestroying) {
-  //     return;
-  //   }
-
-  //   const {
-  //     isValid,
-  //     invalidFields,
-  //   } = this.fields;
-
-  //   this.onChange({
-  //     values: this.fields.dumpValue(),
-  //     isValid,
-  //     invalidFields: invalidFields.map(field => field.valuePath),
-  //   });
-  // },
 
   actions: {
     qosParamsChanged({ isValid, qosParams }) {

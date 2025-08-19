@@ -8,7 +8,7 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './null-device/timeout-field';
+import { TimeoutField } from './common/timeout-field';
 import { FilterField } from './null-device/filter-field';
 import { SimulatedFilesystemGrowSpeedField } from './null-device/simulated-filesystem-grow-speed-field';
 import { SimulatedFilesystemParametersField } from './null-device/simulated-filesystem-parameters-field';
@@ -44,6 +44,9 @@ export const NullDeviceGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'nulldevice';
   }),

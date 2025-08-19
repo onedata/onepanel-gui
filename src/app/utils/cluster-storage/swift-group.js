@@ -15,8 +15,8 @@ import { UsernameField } from './swift/username-field';
 import { PasswordField } from './swift/password-field';
 import { ProjectDomainNameField } from './swift/project-domain-name-field';
 import { ContainerNameField } from './swift/container-name-field';
-import { BlockSizeField } from './swift/block-size-field';
-import { TimeoutField } from './swift/timeout-field';
+import { BlockSizeField } from './common/block-size-field';
+import { TimeoutField } from './common/timeout-field';
 
 export const SwiftGroup = FormFieldsGroup.extend({
   /**
@@ -48,6 +48,9 @@ export const SwiftGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'swift';
   }),

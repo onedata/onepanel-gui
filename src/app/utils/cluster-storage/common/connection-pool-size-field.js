@@ -8,7 +8,7 @@
 
 import { StorageNumberField } from '../base/storage-number-field';
 
-export const connectionPoolSizeField = StorageNumberField.extend({
+export const ConnectionPoolSizeField = StorageNumberField.extend({
   /**
    * @override
    */
@@ -18,4 +18,14 @@ export const connectionPoolSizeField = StorageNumberField.extend({
    * @override
    */
   isOptional: true,
+
+  /**
+   * @override
+   */
+  integer: true,
+
+  /**
+   * @override
+   */
+  gte: 0,
 });

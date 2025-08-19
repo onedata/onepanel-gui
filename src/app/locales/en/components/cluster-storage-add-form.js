@@ -1,4 +1,4 @@
-import basic from './cluster-storage-add-form/generic';
+import basic from './cluster-storage-add-form/basic';
 import cephrados from './cluster-storage-add-form/cephrados';
 import posix from './cluster-storage-add-form/posix';
 import s3 from './cluster-storage-add-form/s3';

@@ -92,16 +92,6 @@ export default Component.extend(I18n, {
    */
   showSpacesSupport: reads('hasSupportedSpaces'),
 
-  // /**
-  //  * Readable name of storage typee
-  //  * Eg. Ceph, Ceph RADOS, POSIX, S3, Swift, GlusterFS, Null Device, WebDAV
-  //  * @type {string}
-  //  */
-  // storageType: computed('storage.type', function () {
-  //   const st = this.get('storage.type');
-  //   return st && _.find(STORAGE_TYPES, s => s.id === st).name;
-  // }),
-
   /**
    * @type {Ember.ComputedProperty<Action>}
    */

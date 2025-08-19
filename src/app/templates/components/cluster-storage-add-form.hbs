@@ -1,18 +1,18 @@
 <form class="form form-horizontal form-component">
   <FormComponent::FieldRenderer @field={{fields}} />
-  {{#unless (and (eq mode "show") (not storageHasQosParameters))}}
+  {{#unless (and inShowMode (not storageHasQosParameters))}}
     <QosParamsEditor
       @showHeader={{true}}
       @mode={{mode}}
       @qosParams={{storage.qosParameters}}
       @readonlyKeys={{array "storageId" "providerId"}}
       @isFormOpened={{isFormOpened}}
-      class={{if (eq mode) "show" "form-group-static"}}
+      class={{if inShowMode "form-group-static"}}
       @onChange={{action "qosParamsChanged"}}
       @layoutConfig={{layoutConfig}}
     />
   {{/unless}}
-  {{#unless (eq mode "show")}}
+  {{#unless inShowMode}}
     <div class="form-group submit-group">
       <div class="row">
         <div>

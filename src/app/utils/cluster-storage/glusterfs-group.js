@@ -8,7 +8,7 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './s3/timeout-field';
+import { TimeoutField } from './common/timeout-field';
 import { HostnameField } from './glusterfs/hostname-field';
 import { TransportField } from './glusterfs/transport-field';
 import { MountPointField } from './glusterfs/mount-point-field';
@@ -44,6 +44,9 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'glusterfs';
   }),

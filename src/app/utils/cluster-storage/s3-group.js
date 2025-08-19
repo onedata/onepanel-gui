@@ -11,13 +11,13 @@ import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields
 import { ArchiveStorageField } from './s3/archive-storage-field';
 import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
-import { BlockSizeField } from './s3/block-size-field';
+import { BlockSizeField } from './common/block-size-field';
 import { MaximumCanonicalObjectSizeField } from './s3/maximum-canonical-object-size-field';
 import { FileModeField } from './s3/file-mode-field';
 import { DirModeField } from './s3/dir-mode-field';
-import { TimeoutField } from './s3/timeout-field';
+import { TimeoutField } from './common/timeout-field';
 import { BucketNameField } from './s3/bucket-name-field';
-import { VerifyServerCertificate } from './s3/verify-server-certificate-field';
+import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { AccessKeyField } from './s3/access-key-field';
 import { SecretKeyField } from './s3/secret-key-field';
 
@@ -40,7 +40,7 @@ export const S3Group = FormFieldsGroup.extend({
       ArchiveStorageField,
       HostnameField,
       BucketNameField,
-      VerifyServerCertificate,
+      VerifyServerCertificateField,
       RegionField,
       AccessKeyField,
       SecretKeyField,
@@ -54,6 +54,9 @@ export const S3Group = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 's3';
   }),

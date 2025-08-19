@@ -8,13 +8,13 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './http/timeout-field';
-import { EndpointField } from './http/endpoint-field';
-import { VerifyServerCertificateField } from './http/verify-server-certificate-field';
+import { TimeoutField } from './common/timeout-field';
+import { EndpointField } from './common/endpoint-field';
+import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { CredentialsTypeField } from './http/credentials-type-field';
 import { OnedataAccessTokenField } from './http/onedata-access-token-field';
 import { AuthorizationHeaderField } from './http/authorization-header-field';
-import { ConnectionPoolSizeField } from './http/connection-pool-size-field';
+import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { MaxRequestsPerSessionField } from './http/max-requests-per-session-field';
 import { FileModeField } from './http/file-mode-field';
 import { CredentialsField } from './http/credentials-field';
@@ -50,6 +50,9 @@ export const HttpGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'http';
   }),

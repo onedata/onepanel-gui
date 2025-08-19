@@ -1,5 +1,5 @@
 /**
- * Timeout field of the storage.
+ * Block size field of the storage.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -8,17 +8,24 @@
 
 import { StorageNumberField } from '../base/storage-number-field';
 
-export const TimeoutField = StorageNumberField.extend({
+export const BlockSizeField = StorageNumberField.extend({
   /**
    * @override
    */
-  name: 'timeout',
+  name: 'blockSize',
 
-  // /**
-  //  * @override
-  //  */
-  // defaultValue: '300000',
+  /**
+   * @override
+   */
   isOptional: true,
 
+  /**
+   * @override
+   */
   notEditable: true,
+
+  /**
+   * @override
+   */
+  gt: 0,
 });

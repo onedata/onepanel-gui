@@ -15,14 +15,24 @@ export const StorageDropdownField = DropdownField.extend({
    */
   context: undefined,
 
+  /**
+   * @type {boolean}
+   */
   notEditable: false,
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   addOptionalTextToLabel: computed('context.component.mode',
     function addOptionalTextToLabel() {
       return this.context.component.mode !== 'show';
     }
   ),
 
+  /**
+   * Form mode. Available values: view, edit
+   * @type {string}
+   */
   mode: computed('context.component.mode', function mode() {
     if (this.context.component.mode === 'show' ||
       (this.context.component.mode === 'edit' &&

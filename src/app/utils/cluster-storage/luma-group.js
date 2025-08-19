@@ -34,6 +34,9 @@ export const LumaGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.lumaFeed', function isVisible() {
     return this.context.component.basicGroup.value.lumaFeed === 'external';
   }),

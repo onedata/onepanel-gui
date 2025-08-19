@@ -8,7 +8,7 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './xrootd/timeout-field';
+import { TimeoutField } from './common/timeout-field';
 import { UrlField } from './xrootd/url-field';
 import { ImportedDirectoryModeMaskField } from './xrootd/imported-directory-mode-mask-field';
 import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-field';
@@ -42,6 +42,9 @@ export const XrootdGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'xrootd';
   }),

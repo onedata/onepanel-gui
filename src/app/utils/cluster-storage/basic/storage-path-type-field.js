@@ -23,6 +23,9 @@ export const StoragePathTypeField = StorageRadioField.extend({
     { value: 'canonical' },
   ]),
 
+  /**
+   * @override
+   */
   notEditable: true,
 
   /**

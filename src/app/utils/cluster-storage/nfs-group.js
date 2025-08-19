@@ -10,7 +10,7 @@ import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { HostField } from './nfs/host-field';
 import { VolumeField } from './nfs/volume-field';
-import { ConnectionPoolSizeField } from './nfs/connection-pool-size-field';
+import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { DirCacheField } from './nfs/dir-cache-field';
 import { ReadAheadField } from './nfs/read-ahead-field';
 import { AutoReconnectField } from './nfs/auto-reconnect-field';
@@ -44,6 +44,9 @@ export const NfsGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'nfs';
   }),

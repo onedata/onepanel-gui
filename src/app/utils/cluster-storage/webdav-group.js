@@ -8,15 +8,15 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './webdav/timeout-field';
-import { VerifyServerCertificateField } from './webdav/verify-server-certificate-field';
+import { TimeoutField } from './common/timeout-field';
+import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { OnedataAccessTokenField } from './webdav/onedata-access-token-field';
 import { AuthorizationHeaderField } from './webdav/authorization-header-field';
-import { ConnectionPoolSizeField } from './webdav/connection-pool-size-field';
+import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { MaximumUploadSizeField } from './webdav/maximum-upload-size-field';
 import { ImportedFileModeField } from './webdav/imported-file-mode-field';
 import { ImportedDirectoryModeField } from './webdav/imported-directory-mode-field';
-import { EndpointField } from './webdav/endpoint-field';
+import { EndpointField } from './common/endpoint-field';
 import { CredentialsTypeField } from './webdav/credentials-type-field';
 import { CredentialsField } from './webdav/credentials-field';
 import { Oauth2IdpField } from './webdav/oauth2-idp-field';
@@ -56,6 +56,9 @@ export const WebdavGroup = FormFieldsGroup.extend({
     }));
   }),
 
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
     return this.context.component.basicGroup.value.type === 'webdav';
   }),
