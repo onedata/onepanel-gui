@@ -246,8 +246,6 @@ async function checkForStorageDetailsInShowMode(type, storage, fieldCount) {
     this.set('storage', storage);
     await render(hbs `<ClusterStorageAddForm @storage={{storage}} @mode="show" />`);
 
-    const helper = new ClusterStorageAddHelper(this.element);
-
     expect(findAll('.form-group:has(>label)')).to.have.length(fieldCount);
 
     Object.entries(storage).forEach(([key, value]) => {

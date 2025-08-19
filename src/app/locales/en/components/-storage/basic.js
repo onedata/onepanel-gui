@@ -1,5 +1,3 @@
-import luma from './luma';
-
 export default {
   name: { label: 'Name' },
   storagePathType: {
