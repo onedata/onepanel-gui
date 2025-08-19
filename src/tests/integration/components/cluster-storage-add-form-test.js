@@ -202,43 +202,28 @@ const NULL_DEVICE_STORAGE = {
   timeout: '20',
 };
 
-async function testNotAllowPathTypeEdit(storageData, storageType = storageData.type) {
-  it(`does not allow to edit path type of storage with type "${storageType}"`, async function () {
-    this.setProperties({
-      storage: storageData,
-      mode: 'edit',
-    });
-    await render(hbs `<ClusterStorageAddForm
-      @storage={{storage}}
-      @mode={{mode}}
-      @storageProvidesSupport={{true}}
-    />`);
-
-    expect(find('.storagePathType-field')).to.contain.text(storageData.storagePathType);
-    expect(find('.storagePathType-field').querySelectorAll('.one-way-radio-group')).to.have.length(0);
-  });
-}
-
 async function testAllowCertainPathTypeCreate({
   allow,
   pathType,
   type,
 }) {
   const allowText = allow ? 'allows' : 'does not allow';
-  it(`${allowText} to set "${pathType}" path type of storage with type "${type}"`, async function () {
-    this.setProperties({
-      mode: 'create',
-    });
-    await render(hbs`<ClusterStorageAddForm @mode={{mode}} />`);
-    await selectChoose('.type-field .dropdown-field', type);
+  it(`${allowText} to set "${pathType}" path type of storage with type "${type}"`,
+    async function () {
+      this.set('mode', 'create');
+      await render(hbs`<ClusterStorageAddForm @mode={{mode}} />`);
+      await selectChoose('.type-field .dropdown-field', type);
 
-    if (allow) {
-      await click(`.storagePathType-field .option-${pathType} input`);
-      expect(find(`.storagePathType-field .option-${pathType} input`)).to.have.property('checked', true);
-    } else {
-      expect(find('.storagePathType-field .one-way-radio-group')).to.have.class('disabled');
+      if (allow) {
+        const pathTypeInput = `.storagePathType-field .option-${pathType} input`;
+        await click(pathTypeInput);
+        expect(find(pathTypeInput)).to.have.property('checked', true);
+      } else {
+        expect(find('.storagePathType-field .one-way-radio-group'))
+          .to.have.class('disabled');
+      }
     }
-  });
+  );
 }
 
 async function checkForStorageDetailsInShowMode(type, storage, fieldCount) {
@@ -258,27 +243,22 @@ async function checkForStorageDetailsInShowMode(type, storage, fieldCount) {
         } else {
           expect(toggle).to.have.class('unselected');
         }
-
       } else if (key !== 'id' && key !== 'qosParameters') {
+        let expectedValue = String(value);
+
         if (key === 'version') {
-          expect(find(`.${key}-field`))
-            .to.contain.text(String('v' + value));
+          expectedValue = String('v' + value);
         } else if (key === 'transport') {
-          expect(find(`.${key}-field`))
-            .to.contain.text(String(value).toUpperCase());
+          expectedValue = String(value).toUpperCase();
         } else if (key === 'credentialsType' && value === 'oauth2') {
-          expect(find(`.${key}-field`))
-            .to.contain.text('OAuth2');
+          expectedValue = 'OAuth2';
         } else if (key === 'credentialsType' && value === 'pwd') {
-          expect(find(`.${key}-field`))
-            .to.contain.text('password');
+          expectedValue = 'password';
         } else if (key === 'rangeWriteSupport' && value === 'moddav') {
-          expect(find(`.${key}-field`))
-            .to.contain.text('ModDAV');
-        } else {
-          expect(find(`.${key}-field`))
-            .to.contain.text(String(value));
+          expectedValue = 'ModDAV';
         }
+
+        expect(find(`.${key}-field`)).to.contain.text(expectedValue);
       }
     });
   });
@@ -293,35 +273,44 @@ async function checkForStorageDetailsInEditMode(type, storage, fieldCount) {
 
     Object.entries(storage).forEach(([key, value]) => {
       if (key === 'type') {
-        expect(find('.type-field .field-component ')).to.contain.text(type);
-        expect(find('.type-field .dropdown-field').querySelectorAll('.dropdown-field-trigger'))
+        expect(find('.type-field .field-component')).to.contain.text(type);
+        expect(find('.type-field .dropdown-field')
+            .querySelectorAll('.dropdown-field-trigger'))
           .to.have.length(0);
       } else if (typeof value === 'boolean') {
         const toggle = find(`.${key}-field .one-way-toggle`);
+
         if (value) {
           expect(toggle).to.have.class('checked');
         } else {
           expect(toggle).to.have.class('unselected');
         }
       } else if (key !== 'id' && key !== 'qosParameters') {
-        if ([
+        if (
+          [
             'blockSize', 'storagePathType', 'onedataAccessToken',
             'oauth2IdP', 'fileModeMask', 'dirModeMask',
-          ].includes(key) || (type !== 'S3' && (key === 'fileMode' || key === 'dirMode'))) {
+          ].includes(key) ||
+          (type !== 'S3' && (key === 'fileMode' || key === 'dirMode'))
+        ) {
           expect(find(`.${key}-field`).querySelector('input')).to.not.exist;
-          expect(find(`.${key}-field .field-component `))
+          expect(find(`.${key}-field .field-component`))
             .to.contain.text(String(value));
-        } else if (key === 'credentialsType' || key === 'lumaFeed' ||
-          key === 'rangeWriteSupport' || key === 'version' || key === 'transport') {
-          expect(find(`.${key}-field .option-${value} input`)).to.have.value(value);
-          expect(find(`.${key}-field .option-${value} input`)).to.have.property('checked',
-            true);
+        } else if (
+          key === 'credentialsType' ||
+          key === 'lumaFeed' ||
+          key === 'rangeWriteSupport' ||
+          key === 'version' ||
+          key === 'transport'
+        ) {
+          const input = find(`.${key}-field .option-${value} input`);
+          expect(input).to.have.value(value);
+          expect(input).to.have.property('checked', true);
         } else {
           const element = find(`.${key}-field`);
           expect(element).to.exist;
           expect(element.querySelector('input')).to.exist;
-          expect(find(`.${key}-field input`))
-            .to.have.value(String(value));
+          expect(find(`.${key}-field input`)).to.have.value(String(value));
         }
       }
     });
@@ -373,9 +362,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       it(
         `does not block name input by validation after immediate storage type change to ${targetStorageType.name}`,
         async function () {
-          await render(hbs `
-            <ClusterStorageAddForm />
-          `);
+          await render(hbs`<ClusterStorageAddForm />`);
           await selectChoose('.type-field .dropdown-field', CEPH_RADOS_TYPE.name);
 
           await selectChoose('.type-field .dropdown-field', targetStorageType.name);
@@ -392,9 +379,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
     it('renders fields for POSIX storage type if "posix" is selected',
       async function () {
-        await render(hbs `
-          <ClusterStorageAddForm />
-        `);
+        await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', POSIX_TYPE.name);
 
         expect(findAll('.form-group:has(>label)')).to.have.length(10);
@@ -410,18 +395,21 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           expect(element).to.exist;
           expect(element.querySelector('input')).to.exist;
         });
-        expect(find('.storagePathType-field .one-way-radio-group')).to.have.class('disabled');
-        expect(find('.storagePathType-field .option-canonical input')).to.have.property('checked', true);
+        expect(find('.storagePathType-field .one-way-radio-group'))
+          .to.have.class('disabled');
+        expect(find('.storagePathType-field .option-canonical input'))
+          .to.have.property('checked', true);
 
         expect(find('.importedStorage-field .one-way-toggle')).to.have.class('unselected');
         expect(find('.readonly-field .one-way-toggle')).to.have.class('unselected');
         expect(find('.readonly-field .one-way-toggle')).to.have.class('disabled');
 
         expect(find('.lumaFeed-field .one-way-radio-group')).to.exist;
-        expect(find('.lumaFeed-field .one-way-radio-group').querySelectorAll('input[type="radio"]')).to
-          .have
-          .length(3);
-        expect(find('.lumaFeed-field .option-auto input')).to.have.property('checked', true);
+        expect(find('.lumaFeed-field .one-way-radio-group')
+            .querySelectorAll('input[type="radio"]'))
+          .to.have.length(3);
+        expect(find('.lumaFeed-field .option-auto input'))
+          .to.have.property('checked', true);
       }
     );
 
@@ -488,9 +476,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
     it('resets fields values after change to another type and come back',
       async function () {
-        await render(hbs `
-          <ClusterStorageAddForm />
-        `);
+        await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', POSIX_TYPE.name);
 
         await fillIn('.mountPoint-field input', '/mnt/st1');
@@ -521,7 +507,9 @@ describe('Integration | Component | cluster-storage-add-form', function () {
       'sets Readonly toggle to false after setting imported storage to false',
       async function () {
         await render(hbs `
-          <ClusterStorageAddForm @mode="create" />
+          <ClusterStorageAddForm
+            @mode="create"
+          />
         `);
         await selectChoose('.type-field .dropdown-field', POSIX_TYPE.name);
 
@@ -551,8 +539,10 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', HTTP_TYPE.name);
 
-        expect(find('.storagePathType-field .one-way-radio-group')).to.have.class('disabled');
-        expect(find('.storagePathType-field .option-canonical input')).to.have.property('checked', true);
+        expect(find('.storagePathType-field .one-way-radio-group'))
+          .to.have.class('disabled');
+        expect(find('.storagePathType-field .option-canonical input'))
+          .to.have.property('checked', true);
 
         expect(find('.importedStorage-field .one-way-toggle'))
           .to.have.class('checked')
@@ -570,8 +560,10 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
 
-        expect(find('.storagePathType-field .one-way-radio-group')).to.not.have.class('disabled');
-        expect(find('.storagePathType-field .option-flat input')).to.have.property('checked', true);
+        expect(find('.storagePathType-field .one-way-radio-group'))
+          .to.not.have.class('disabled');
+        expect(find('.storagePathType-field .option-flat input'))
+          .to.have.property('checked', true);
 
         expect(find('.importedStorage-field .one-way-toggle'))
           .to.have.class('unselected')
@@ -582,7 +574,8 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .and.have.class('disabled');
 
         await click('.storagePathType-field .option-canonical input');
-        expect(find('.storagePathType-field .option-canonical input')).to.have.property('checked', true);
+        expect(find('.storagePathType-field .option-canonical input'))
+          .to.have.property('checked', true);
 
         expect(find('.importedStorage-field .one-way-toggle'))
           .to.have.class('checked')
@@ -678,16 +671,23 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         await click('.importedStorage-field .one-way-toggle');
         await click('.readonly-field .one-way-toggle');
 
-        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('checked', true);
-        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('disabled');
-        expect(find('.rangeWriteSupport-field .option-sabredav input')).to.have.property('disabled');
-        expect(find('.rangeWriteSupport-field .option-moddav input')).to.have.property('disabled');
+        expect(find('.rangeWriteSupport-field .option-none input'))
+          .to.have.property('checked', true);
+        expect(find('.rangeWriteSupport-field .option-none input'))
+          .to.have.property('disabled');
+        expect(find('.rangeWriteSupport-field .option-sabredav input'))
+          .to.have.property('disabled');
+        expect(find('.rangeWriteSupport-field .option-moddav input'))
+          .to.have.property('disabled');
 
         await click('.readonly-field .one-way-toggle');
 
-        expect(find('.rangeWriteSupport-field .option-none input')).to.have.property('checked', false);
-        expect(find('.rangeWriteSupport-field .option-sabredav input')).to.have.property('checked', false);
-        expect(find('.rangeWriteSupport-field .option-moddav input')).to.have.property('checked', false);
+        expect(find('.rangeWriteSupport-field .option-none input'))
+          .to.have.property('checked', false);
+        expect(find('.rangeWriteSupport-field .option-sabredav input'))
+          .to.have.property('checked', false);
+        expect(find('.rangeWriteSupport-field .option-moddav input'))
+          .to.have.property('checked', false);
       }
     );
 
@@ -765,13 +765,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           @onSubmit={{submit}}
         />
       `);
-      // const helper = new ClusterStorageAddHelper(this.element);
 
       await fillIn('.name-field input', storageName);
       await fillIn('.mountPoint-field input', 'someMountPoint');
       await fillIn('.mountPoint-field input', POSIX_STORAGE.mountPoint);
       await find('button[type="submit"]').click();
-      // await helper.submit();
       expect(submitOccurred).to.be.true;
     });
 
@@ -786,7 +784,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
       this.set('storage', POSIX_STORAGE);
       await render(hbs `
-        <ClusterStorageAddForm @storage={{storage}} @mode="edit" @onSubmit={{submit}} />
+        <ClusterStorageAddForm
+          @storage={{storage}}
+          @mode="edit"
+          @onSubmit={{submit}}
+        />
       `);
 
       const helper = new ClusterStorageAddHelper(this.element);
@@ -803,7 +805,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           mode: 'edit',
         });
         await render(hbs `
-          <ClusterStorageAddForm @storage={{storage}} @mode={{mode}} @onSubmit={{submit}} />
+          <ClusterStorageAddForm
+            @storage={{storage}}
+            @mode={{mode}}
+            @onSubmit={{submit}}
+          />
         `);
 
         await fillIn('.name-field input', 'someVal');
@@ -922,11 +928,13 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           storage: POSIX_STORAGE,
           mode: 'show',
         });
-        await render(hbs `<ClusterStorageAddForm
-          @storage={{storage}}
-          @mode={{mode}}
-          @storageProvidesSupport={{true}}
-        />`);
+        await render(hbs `
+          <ClusterStorageAddForm
+            @storage={{storage}}
+            @mode={{mode}}
+            @storageProvidesSupport={{true}}
+          />
+        `);
 
         expect(find('.importedStorage-field .one-way-toggle'))
           .to.have.class('checked')
@@ -947,11 +955,13 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           mode: 'edit',
           storageProvidesSupport: false,
         });
-        await render(hbs `<ClusterStorageAddForm
-          @storage={{storage}}
-          @mode={{mode}}
-          @storageProvidesSupport={{storageProvidesSupport}}
-        />`);
+        await render(hbs `
+          <ClusterStorageAddForm
+            @storage={{storage}}
+            @mode={{mode}}
+            @storageProvidesSupport={{storageProvidesSupport}}
+          />
+        `);
 
         await click('.importedStorage-field .one-way-toggle');
         this.set('storageProvidesSupport', true);
@@ -961,6 +971,22 @@ describe('Integration | Component | cluster-storage-add-form', function () {
           .and.have.class('disabled');
       });
 
-    testNotAllowPathTypeEdit(POSIX_STORAGE);
+    it('does not allow to edit path type of storage with type "POSIX"', async function () {
+      this.setProperties({
+        storage: POSIX_STORAGE,
+        mode: 'edit',
+      });
+      await render(hbs `
+        <ClusterStorageAddForm
+          @storage={{storage}}
+          @mode={{mode}}
+          @storageProvidesSupport={{true}}
+        />
+      `);
+
+      expect(find('.storagePathType-field')).to.contain.text(POSIX_STORAGE.storagePathType);
+      expect(find('.storagePathType-field').querySelectorAll('.one-way-radio-group'))
+        .to.have.length(0);
+    });
   });
 });
