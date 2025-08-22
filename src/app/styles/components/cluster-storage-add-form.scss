@@ -26,11 +26,6 @@
     width: 100%;
     justify-content: center;
   }
-  .form-optional-text {
-    opacity: $disabled-opacity;
-    font-size: 80%;
-    font-weight: normal;
-  }
   .one-label-tip ~ .form-optional-text {
     padding-right: 2.5em;
   }
