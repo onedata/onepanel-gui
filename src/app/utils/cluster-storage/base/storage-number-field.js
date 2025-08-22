@@ -21,15 +21,6 @@ export const StorageNumberField = NumberField.extend({
   notEditable: false,
 
   /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  addOptionalTextToLabel: computed('context.component.mode',
-    function addOptionalTextToLabel() {
-      return this.context.component.mode !== 'show';
-    }
-  ),
-
-  /**
    * Form mode. Available values: view, edit
    * @type {string}
    */
