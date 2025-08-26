@@ -14,27 +14,32 @@ import EmberObject, {
   set,
   observer,
 } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { reads, equal } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
-import { BasicGroup } from '../utils/cluster-storage/basic-group';
-import { CephRadosGroup } from '../utils/cluster-storage/ceph-rados-group';
-import { PosixGroup } from '../utils/cluster-storage/posix-group';
-import { NfsGroup } from '../utils/cluster-storage/nfs-group';
-import { S3Group } from '../utils/cluster-storage/s3-group';
-import { SwiftGroup } from '../utils/cluster-storage/swift-group';
-import { GlusterfsGroup } from '../utils/cluster-storage/glusterfs-group';
-import { XrootdGroup } from '../utils/cluster-storage/xrootd-group';
-import { WebdavGroup } from '../utils/cluster-storage/webdav-group';
-import { HttpGroup } from '../utils/cluster-storage/http-group';
-import { NullDeviceGroup } from '../utils/cluster-storage/null-device-group';
-import { LumaGroup } from '../utils/cluster-storage/luma-group';
+import { BasicGroup } from 'onepanel-gui/utils/cluster-storage/basic-group';
+import { CephRadosGroup } from 'onepanel-gui/utils/cluster-storage/ceph-rados-group';
+import { PosixGroup } from 'onepanel-gui/utils/cluster-storage/posix-group';
+import { NfsGroup } from 'onepanel-gui/utils/cluster-storage/nfs-group';
+import { S3Group } from 'onepanel-gui/utils/cluster-storage/s3-group';
+import { SwiftGroup } from 'onepanel-gui/utils/cluster-storage/swift-group';
+import { GlusterfsGroup } from 'onepanel-gui/utils/cluster-storage/glusterfs-group';
+import { XrootdGroup } from 'onepanel-gui/utils/cluster-storage/xrootd-group';
+import { WebdavGroup } from 'onepanel-gui/utils/cluster-storage/webdav-group';
+import { HttpGroup } from 'onepanel-gui/utils/cluster-storage/http-group';
+import { NullDeviceGroup } from 'onepanel-gui/utils/cluster-storage/null-device-group';
+import { LumaGroup } from 'onepanel-gui/utils/cluster-storage/luma-group';
 import config from 'ember-get-config';
-import { equal } from '@ember/object/computed';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import stripObject from 'onedata-gui-common/utils/strip-object';
 import _ from 'lodash';
+
+/**
+ * @typedef {EmberObject} ClusterStorageAddFormContext
+ * @property {'create'|'edit'|'show'} editorMode
+ * @property {Onepanel.StorageDetails} loadedStorage
+ */
 
 const {
   layoutConfig,
@@ -138,6 +143,11 @@ export default Component.extend(I18n, {
   selectedStorageType: reads('fields.value.basic.type'),
 
   /**
+   * @type {string}
+   */
+  lumaType: reads('fields.value.basic.lumaFeed'),
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   inEditionMode: equal('mode', 'edit'),
@@ -198,6 +208,51 @@ export default Component.extend(I18n, {
       });
   }),
 
+  // fields: computed('component.{selectedStorageType,lumaType}', function fields() {
+  //   console.log(this.component.selectedStorageType);
+  //   const fieldsList = [BasicGroup];
+  //   switch (this.component.selectedStorageType) {
+  //     case 'posix':
+  //       fieldsList.push(PosixGroup);
+  //       break;
+  //     case 'nfs':
+  //       fieldsList.push(NfsGroup);
+  //       break;
+  //     case 's3':
+  //       fieldsList.push(S3Group);
+  //       break;
+  //     case 'swift':
+  //       fieldsList.push(SwiftGroup);
+  //       break;
+  //     case 'glusterfs':
+  //       fieldsList.push(GlusterfsGroup);
+  //       break;
+  //     case 'cephrados':
+  //       fieldsList.push(CephRadosGroup);
+  //       break;
+  //     case 'http':
+  //       fieldsList.push(HttpGroup);
+  //       break;
+  //     case 'webdav':
+  //       fieldsList.push(WebdavGroup);
+  //       break;
+  //     case 'xrootd':
+  //       fieldsList.push(XrootdGroup);
+  //       break;
+  //     case 'nulldevice':
+  //       fieldsList.push(NullDeviceGroup);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   if (this.component.lumaType === 'external') {
+  //     fieldsList.push(LumaGroup);
+  //   }
+  //   return fieldsList.map(
+  //     (FieldClass) => FieldClass.create({ context: formContext })
+  //   );
+  // }),
+
   /**
    * @type {ComputedProperty<Utils.FormComponent.FormFieldsGroup>}
    */
@@ -254,8 +309,7 @@ export default Component.extend(I18n, {
     if (this.storage) {
       this._fillInForm();
     }
-    const type = this.selectedStorageType;
-    this.autoSettingsAll(type);
+    this.autoSettingsAll(this.selectedStorageType);
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
@@ -273,44 +327,34 @@ export default Component.extend(I18n, {
     }
   },
 
+  _fillInFormGroup(formGroup, storage, valuesSourceGroup) {
+    for (const field of formGroup.fields) {
+      const name = field.name;
+      if (name in storage && storage[name] !== undefined && storage[name] !== '') {
+        valuesSourceGroup.set(name, storage[name]);
+      }
+    }
+  },
+
   _fillInForm() {
     const { storage, fields } = this;
     const storageType = storage?.type;
-    const indexOfBasicGroup = fields.fields.findIndex(
-      (field) => field.name === 'basic'
-    );
 
-    if (indexOfBasicGroup !== -1) {
-      for (const field of fields.fields[indexOfBasicGroup].fields) {
-        const name = field.name;
-        if (name in storage && storage[name] !== undefined && storage[name] !== '') {
-          fields.valuesSource.basic.set(name, storage[name]);
-        }
-      }
-      if (storage.lumaFeed === 'external') {
-        const lumaGroup = fields.getFieldByPath('luma');
-        if (lumaGroup) {
-          for (const field of lumaGroup.fields) {
-            const name = field.name;
-            if (name in storage && storage[name] !== undefined && storage[name] !== '') {
-              fields.valuesSource.luma.set(name, storage[name]);
-            }
-          }
-        }
+    this._fillInFormGroup(this.basicGroup, storage, fields.valuesSource.basic);
+
+    if (storage.lumaFeed === 'external') {
+      const lumaGroup = fields.getFieldByPath('luma');
+      if (lumaGroup) {
+        this._fillInFormGroup(lumaGroup, storage, fields.valuesSource.luma);
       }
     }
 
-    const indexOfStorageTypeGroup = fields.fields.findIndex(
+    const storageTypeGroup = fields.fields.find(
       (field) => field.name === storageType
     );
 
-    if (indexOfStorageTypeGroup !== -1) {
-      for (const field of fields.fields[indexOfStorageTypeGroup].fields) {
-        const name = field.name;
-        if (name in storage && storage[name] !== undefined && storage[name] !== '') {
-          fields.valuesSource[storageType].set(name, storage[name]);
-        }
-      }
+    if (storageTypeGroup) {
+      this._fillInFormGroup(storageTypeGroup, storage, fields.valuesSource[storageType]);
     }
   },
 
@@ -353,12 +397,12 @@ export default Component.extend(I18n, {
     }
 
     const config = storagePathTypeConfig[type];
+    const storagePathType = this.basicGroup.getFieldByPath('storagePathType');
+
     if (config.defaultValue) {
-      this.basicGroup.getFieldByPath('storagePathType').valueChanged(config.defaultValue);
+      storagePathType.valueChanged(config.defaultValue);
     }
-    this.basicGroup.getFieldByPath('storagePathType').setProperties({
-      isEnabled: !config.disabled ?? true,
-    });
+    storagePathType.set('isEnabled', !config.disabled ?? true);
   },
 
   autoSettingsImportedStorage(type) {
@@ -370,6 +414,7 @@ export default Component.extend(I18n, {
     let disabled = this.storageProvidesSupport;
     let value = this.storage?.importedStorage;
     let lockHint = null;
+    const importedStorageField = this.basicGroup.getFieldByPath('importedStorage');
 
     if (type === 'http') {
       disabled = true;
@@ -381,15 +426,11 @@ export default Component.extend(I18n, {
     }
 
     if (disabled) {
-      this.basicGroup.getFieldByPath('importedStorage').valueChanged(value);
+      importedStorageField.valueChanged(value);
     }
-    this.basicGroup.getFieldByPath('importedStorage').setProperties({
-      isEnabled: !disabled,
-    });
+    importedStorageField.set('isEnabled', !disabled);
     if (lockHint) {
-      this.basicGroup.getFieldByPath('importedStorage').setProperties({
-        disabledControlTip: lockHint,
-      });
+      importedStorageField.set('disabledControlTip', lockHint);
     }
   },
 
@@ -399,6 +440,7 @@ export default Component.extend(I18n, {
     }
     const isImportedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
     const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    const readonlyField = this.basicGroup.getFieldByPath('readonly');
 
     let locked;
     let value = null;
@@ -428,15 +470,11 @@ export default Component.extend(I18n, {
       value = true;
     }
     if (value !== null) {
-      this.basicGroup.getFieldByPath('readonly').valueChanged(value);
+      readonlyField.valueChanged(value);
     }
-    this.basicGroup.getFieldByPath('readonly').setProperties({
-      isEnabled: !locked,
-    });
+    readonlyField.set('isEnabled', !locked);
     if (hint) {
-      this.basicGroup.getFieldByPath('readonly').setProperties({
-        disabledControlTip: hint,
-      });
+      readonlyField.set('disabledControlTip', hint);
     }
   },
 
@@ -446,23 +484,22 @@ export default Component.extend(I18n, {
     }
 
     const isReadonly = this.basicGroup.getFieldByPath('readonly').value;
-    const currentValue = this.webdavGroup.getFieldByPath('rangeWriteSupport').value;
+    const rangeWriteSupportField = this.webdavGroup.getFieldByPath('rangeWriteSupport');
+    const currentValue = rangeWriteSupportField.value;
 
     if (isReadonly) {
-      this.webdavGroup.getFieldByPath('rangeWriteSupport').setProperties({
-        isEnabled: false,
-      });
+      rangeWriteSupportField.set('isEnabled', false);
       if (currentValue !== 'none') {
-        this.webdavGroup.getFieldByPath('rangeWriteSupport').valueChanged('none');
+        rangeWriteSupportField.valueChanged('none');
       }
     } else {
-      this.webdavGroup.getFieldByPath('rangeWriteSupport').setProperties({
+      rangeWriteSupportField.set({
         isEnabled: true,
         defaultValue: null,
       });
-      this.webdavGroup.getFieldByPath('rangeWriteSupport').options[0].isEnabled = false;
+      rangeWriteSupportField.options[0].isEnabled = false;
       if (currentValue === 'none') {
-        this.webdavGroup.getFieldByPath('rangeWriteSupport').valueChanged(null);
+        rangeWriteSupportField.valueChanged(null);
       }
     }
   },
@@ -473,14 +510,15 @@ export default Component.extend(I18n, {
     }
 
     const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
-    const blockSize = this.s3Group.getFieldByPath('blockSize').value;
+    const blockSizeField = this.s3Group.getFieldByPath('blockSize');
+    const blockSize = blockSizeField.value;
 
     if (pathType === 'canonical' || blockSize === 0) {
-      this.s3Group.getFieldByPath('blockSize').valueChanged(
+      blockSizeField.valueChanged(
         pathType === 'canonical' ? 0 : null
       );
     }
-    this.s3Group.getFieldByPath('blockSize').set('isEnabled', pathType !== 'canonical');
+    blockSizeField.set('isEnabled', pathType !== 'canonical');
   },
 
   autoSettingsSimulatedFilesystem(type) {
@@ -542,7 +580,7 @@ export default Component.extend(I18n, {
 
   willDestroyElement() {
     this._super(...arguments);
-    this.get('fields').destroy();
+    this.fields.destroy();
   },
 
   actions: {

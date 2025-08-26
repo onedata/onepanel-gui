@@ -8,7 +8,7 @@
 
 import { StorageRadioField } from '../base/storage-radio-field';
 
-export const LUMAFeedField = StorageRadioField.extend({
+export const LumaFeedField = StorageRadioField.extend({
   /**
    * @override
    */
@@ -21,7 +21,6 @@ export const LUMAFeedField = StorageRadioField.extend({
     { value: 'auto' },
     { value: 'local' },
     { value: 'external' },
-
   ]),
 
   /**

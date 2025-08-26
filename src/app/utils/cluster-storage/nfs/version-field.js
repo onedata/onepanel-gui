@@ -20,7 +20,6 @@ export const VersionField = StorageRadioField.extend({
   options: Object.freeze([
     { value: '3' },
     { value: '4' },
-
   ]),
 
   /**

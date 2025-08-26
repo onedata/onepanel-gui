@@ -17,11 +17,6 @@ export const RangeWriteSupportField = StorageRadioField.extend({
   /**
    * @override
    */
-  autoSettingValue: undefined,
-
-  /**
-   * @override
-   */
   defaultValue: 'none',
 
   /**

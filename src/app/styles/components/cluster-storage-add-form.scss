@@ -1,3 +1,5 @@
+$cluster-storage-add-form-label-width: 20em;
+
 .cluster-storage-add-form {
   .form .checkbox-input .row {
     display: flex;
@@ -13,16 +15,43 @@
     width: 100%;
     flex-direction: column;
   }
-  @media (min-width: $screen-sm-min) {
+  @media (min-width: 951px) {
     .form-component .control-label {
-      width: 280px;
+      width: $cluster-storage-add-form-label-width;
     }
     .qos-params-editor .row {
       flex-direction: row;
     }
   }
+
+  @media (max-width: 950px) {
+    .form-group {
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      width: 100%;
+      margin-bottom: 5px;
+      text-align: left;
+      padding-top: 0;
+    }
+
+    .toggle-field-renderer,
+    .color-field-renderer {
+      flex-wrap: nowrap;
+
+      .control-label {
+        width: initial;
+        flex-grow: 1;
+      }
+
+      .field-component {
+        flex-grow: 0;
+      }
+    }
+  }
+
   .submit-group {
-    float: left;
     width: 100%;
     justify-content: center;
   }

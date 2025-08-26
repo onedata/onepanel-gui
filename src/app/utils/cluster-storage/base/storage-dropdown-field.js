@@ -7,11 +7,12 @@
  */
 
 import DropdownField from 'onedata-gui-common/utils/form-component/dropdown-field';
-import { computed } from '@ember/object';
+import computedMode from './computed-mode';
 
 export const StorageDropdownField = DropdownField.extend({
   /**
    * @virtual
+   * @type {ClusterStorageAddFormContext}
    */
   context: undefined,
 
@@ -21,17 +22,8 @@ export const StorageDropdownField = DropdownField.extend({
   notEditable: false,
 
   /**
-   * Form mode. Available values: view, edit
-   * @type {string}
+   * Form mode.
+   * @type {'view'|'edit'}
    */
-  mode: computed('context.component.mode', function mode() {
-    if (this.context.component.mode === 'show' ||
-      (this.context.component.mode === 'edit' &&
-        this.notEditable)
-    ) {
-      return 'view';
-    } else {
-      return 'edit';
-    }
-  }),
+  mode: computedMode(),
 });

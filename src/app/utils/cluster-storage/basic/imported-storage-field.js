@@ -19,6 +19,9 @@ export const ImportedStorageField = StorageToggleField.extend({
    */
   defaultValue: false,
 
+  /**
+   * @override
+   */
   valueChanged() {
     this._super(...arguments);
     this.context.component.importedStorageChanged();

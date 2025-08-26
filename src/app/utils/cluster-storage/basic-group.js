@@ -1,5 +1,5 @@
 /**
- * Definitions common for all fields of the cluster storage form.
+ * Common fields for all storage types in the cluster storage form.
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
@@ -12,7 +12,7 @@ import { NameField } from './basic/name-field';
 import { StoragePathTypeField } from './basic/storage-path-type-field';
 import { ReadonlyField } from './basic/readonly-field';
 import { ImportedStorageField } from './basic/imported-storage-field';
-import { LUMAFeedField } from './basic/luma-feed-field';
+import { LumaFeedField } from './basic/luma-feed-field';
 import { TypeField } from './basic/type-field';
 
 export const BasicGroup = FormFieldsGroup.extend({
@@ -36,7 +36,7 @@ export const BasicGroup = FormFieldsGroup.extend({
       StoragePathTypeField,
       ImportedStorageField,
       ReadonlyField,
-      LUMAFeedField,
+      LumaFeedField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));

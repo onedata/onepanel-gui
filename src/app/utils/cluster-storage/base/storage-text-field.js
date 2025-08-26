@@ -7,11 +7,13 @@
  */
 
 import TextField from 'onedata-gui-common/utils/form-component/text-field';
-import { computed } from '@ember/object';
+import computedMode from './computed-mode';
+import computedIsVisible from './computed-is-visible';
 
 export const StorageTextField = TextField.extend({
   /**
    * @virtual
+   * @type {ClusterStorageAddFormContext}
    */
   context: undefined,
 
@@ -21,29 +23,13 @@ export const StorageTextField = TextField.extend({
   notEditable: false,
 
   /**
-   * Form mode. Available values: view, edit
-   * @type {string}
+   * Form mode.
+   * @type {'view'|'edit'}
    */
-  mode: computed('context.component.mode', function mode() {
-    if (this.context.component.mode === 'show' ||
-      (this.context.component.mode === 'edit' &&
-        this.notEditable)
-    ) {
-      return 'view';
-    } else {
-      return 'edit';
-    }
-  }),
+  mode: computedMode(),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('value', 'mode', function isVisible() {
-    return this.mode === 'edit' ||
-      (
-        this.value !== null &&
-        this.value !== undefined &&
-        this.value !== ''
-      );
-  }),
+  isVisible: computedIsVisible(),
 });

@@ -45,6 +45,9 @@ export const TypeField = StorageDropdownField.extend({
    */
   defaultValue: 'cephrados',
 
+  /**
+   * @override
+   */
   valueChanged() {
     this.context.component.fields.reset();
     this._super(...arguments);

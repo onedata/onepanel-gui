@@ -1,3 +1,5 @@
+@import 'cluster-storage-add-form';
+
 .storage-item {
   $storage-item-padding: 1.5em;
   $storage-view-item-padding: 1em;
@@ -21,7 +23,7 @@
       }
     }
     .clipboard-line-label {
-      width: 280px;
+      width: $cluster-storage-add-form-label-width;
     }
   }
 
@@ -43,7 +45,7 @@
       }
     }
 
-    .qos-params-editor.show>.row {
+    .qos-params-editor.show > .row {
       flex-direction: column;
     }
 
@@ -116,7 +118,7 @@
           margin: 0;
           text-align: left;
         }
-        .field-component:has(>.text), .text-like-field, .radio-field {
+        .field-component:has(> .text), .text-like-field, .radio-field {
           padding: $storage-view-item-padding 0;
         }
         .form-field-right-addon {
