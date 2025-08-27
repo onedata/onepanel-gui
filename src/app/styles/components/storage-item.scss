@@ -33,16 +33,12 @@
 
     @media (min-width: $screen-sm-min) {
       .fields-group-children {
-        .field-view-mode, .field-edit-mode {
+        > .field-view-mode:not(.form-fields-group-renderer),
+        > .field-edit-mode:not(.form-fields-group-renderer) {
           border-bottom: $table-item-border;
         }
       }
 
-      .fields-group-children {
-        .field-view-mode:last-child, .field-edit-mode:last-child {
-          border-bottom: 0;
-        }
-      }
     }
 
     .qos-params-editor.show > .row {
@@ -118,7 +114,12 @@
           margin: 0;
           text-align: left;
         }
-        .field-component:has(> .text), .text-like-field, .radio-field {
+        .field-edit-mode {
+          &.text-like-field-renderer, &.radio-field-renderer {
+            padding: $storage-view-item-padding 0;
+          }
+        }
+        .field-view-mode .text-like-field, .radio-field, .field-component:has(> .text) {
           padding: $storage-view-item-padding 0;
         }
         .form-field-right-addon {
