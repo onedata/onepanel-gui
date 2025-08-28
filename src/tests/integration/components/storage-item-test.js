@@ -4,7 +4,7 @@ import { Promise } from 'rsvp';
 import { expect } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, find } from '@ember/test-helpers';
+import { render, find, click } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import ProviderManagerStub from '../../helpers/provider-manager-stub';
 import I18nStub from '../../helpers/i18n-stub';
@@ -100,6 +100,7 @@ describe('Integration | Component | storage-item', function () {
     </OneCollapsibleList>
     `);
 
+    await click('.one-collapsible-list-item-header');
     const header = find('.support-size');
     expect(header).to.contain.text(b2s(totalSupport));
   });

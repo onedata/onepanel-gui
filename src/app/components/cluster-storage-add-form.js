@@ -491,7 +491,7 @@ export default Component.extend(I18n, {
         rangeWriteSupportField.valueChanged('none');
       }
     } else {
-      rangeWriteSupportField.set({
+      rangeWriteSupportField.setProperties({
         isEnabled: true,
         defaultValue: null,
       });
