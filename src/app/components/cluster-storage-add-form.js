@@ -174,11 +174,6 @@ export default Component.extend(I18n, {
   fields: computed(function fields() {
     const component = this;
 
-    const formContext = EmberObject.extend({
-      editorMode: reads('component.mode'),
-      loadedStorage: reads('component.storage'),
-    }).create({ component });
-
     return FormFieldsRootGroup
       .extend({
         i18nPrefix: computed('component.i18nPrefix', function i18nPrefix() {
@@ -188,67 +183,41 @@ export default Component.extend(I18n, {
         isEnabled: computed('component.isSubmitting', function isEnabled() {
           return !this.component.isSubmitting;
         }),
-        fields: computed(function fields() {
-          const fieldsList = [BasicGroup, LumaGroup];
-          if (formContext.loadedStorage) {
-            switch (formContext.loadedStorage.type) {
-              case 'posix':
-                fieldsList.push(PosixGroup);
-                break;
-              case 'nfs':
-                fieldsList.push(NfsGroup);
-                break;
-              case 's3':
-                fieldsList.push(S3Group);
-                break;
-              case 'swift':
-                fieldsList.push(SwiftGroup);
-                break;
-              case 'glusterfs':
-                fieldsList.push(GlusterfsGroup);
-                break;
-              case 'cephrados':
-                fieldsList.push(CephRadosGroup);
-                break;
-              case 'http':
-                fieldsList.push(HttpGroup);
-                break;
-              case 'webdav':
-                fieldsList.push(WebdavGroup);
-                break;
-              case 'xrootd':
-                fieldsList.push(XrootdGroup);
-                break;
-              case 'nulldevice':
-                fieldsList.push(NullDeviceGroup);
-                break;
-              default:
-                break;
-            }
-          } else {
-            fieldsList.push(
-              CephRadosGroup,
-              PosixGroup,
-              NfsGroup,
-              S3Group,
-              SwiftGroup,
-              GlusterfsGroup,
-              WebdavGroup,
-              HttpGroup,
-              XrootdGroup,
-              NullDeviceGroup,
-            );
-
-          }
-
-          return fieldsList.map(
-            (FieldClass) => FieldClass.create({ context: formContext })
-          );
-        }),
+        fields: reads('component.fieldsArray'),
       })
       .create({
         component,
       });
+  }),
+
+  fieldsArray: computed('storage', function fieldsArray() {
+    const formContext = EmberObject.extend({
+      editorMode: reads('component.mode'),
+      loadedStorage: reads('component.storage'),
+    }).create({ component: this });
+
+    const fieldsList = [BasicGroup, LumaGroup];
+    const fieldGroupClassMapping = {
+      posix: PosixGroup,
+      nfs: NfsGroup,
+      s3: S3Group,
+      swift: SwiftGroup,
+      glusterfs: GlusterfsGroup,
+      cephrados: CephRadosGroup,
+      http: HttpGroup,
+      webdav: WebdavGroup,
+      xrootd: XrootdGroup,
+      nulldevice: NullDeviceGroup,
+    };
+    if (this.storage) {
+      fieldsList.push(fieldGroupClassMapping[this.storage.type]);
+    } else {
+      fieldsList.push(...Object.values(fieldGroupClassMapping));
+    }
+
+    return fieldsList.map(
+      (FieldClass) => FieldClass.create({ context: formContext })
+    );
   }),
 
   /**

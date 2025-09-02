@@ -1,5 +1,3 @@
-@import 'cluster-storage-add-form';
-
 .storage-item {
   $storage-item-padding: 1.5em;
   $storage-view-item-padding: 1em;
@@ -115,12 +113,15 @@
           text-align: left;
         }
         .field-edit-mode {
-          &.text-like-field-renderer, &.radio-field-renderer {
+          &.text-like-field-renderer {
             padding: $storage-view-item-padding 0;
           }
         }
-        .field-view-mode .text-like-field, .radio-field, .field-component:has(> .text) {
+        .field-view-mode > .control-label + .field-component, .radio-field {
           padding: $storage-view-item-padding 0;
+        }
+        .qos-params-editor {
+          padding-top: $storage-view-item-padding;
         }
         .form-field-right-addon {
           right: 40px;
