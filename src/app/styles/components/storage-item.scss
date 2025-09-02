@@ -1,6 +1,7 @@
 .storage-item {
   $storage-item-padding: 1.5em;
   $storage-view-item-padding: 1em;
+  $storage-form-label-width: 33%;
   .one-collapsible-list-item-header {
     padding-right: 60px;
     transition: none;
@@ -21,7 +22,7 @@
       }
     }
     .clipboard-line-label {
-      width: $cluster-storage-add-form-label-width;
+      width: $storage-form-label-width;
     }
   }
 
@@ -36,7 +37,9 @@
           border-bottom: $table-item-border;
         }
       }
-
+      .form-component .control-label {
+        width: $storage-form-label-width;
+      }
     }
 
     .qos-params-editor.show > .row {
