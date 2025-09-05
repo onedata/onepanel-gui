@@ -27,4 +27,5 @@ export default {
     },
   },
   renewingWebCert: 'renewing web certificate',
+  noS3Domain: 'This Oneprovider has S3 data access protocol support enabled, but the web certificate does not include a domain matching the "s3.*" pattern. You must include such a domain in the certificate\'s Subject Alternative Name (SAN) extension to enable the S3 data access protocol.',
 };

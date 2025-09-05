@@ -74,6 +74,15 @@ export default Component.extend(I18n, GlobalActions, {
 
   expirationTime: reads('webCert.expirationTime'),
 
+  isS3DomainValidProxy: reads('webCertManager.isS3DomainValidProxy'),
+
+  isS3DomainWarningShown: computed(
+    'isS3DomainValidProxy.content',
+    function isS3DomainWarningShown() {
+      return this.isS3DomainValidProxy.content === false;
+    }
+  ),
+
   /**
    * If false, block refresh web cert
    * @type {boolean}

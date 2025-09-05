@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12607 Added warning in web certificate view if there is no S3 domain for S3-enabled Oneprovider
 * VFS-12598 Refactored storage form to use new form components
 * VFS-12811 Upgraded Ember Bootstrap to 4.9.0
 * VFS-12765 Using updated onedata-gui-common with removed ProviderMap components

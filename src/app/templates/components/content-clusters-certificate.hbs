@@ -83,6 +83,16 @@
   </div>
 {{/if}}
 
+{{#if isS3DomainWarningShown}}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-warning alert-simple-info">
+        {{tt this "noS3Domain"}}
+      </div>
+    </div>
+  </div>
+{{/if}}
+
 <div class="row">
   {{#if shouldPollWebCert}}
     <div class="loadable-row lg">
