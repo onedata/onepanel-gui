@@ -269,6 +269,7 @@ export default Component.extend(I18n, {
           fieldsList.push(this.glusterfsGroupFields);
           break;
         case 'cephrados':
+        case 'ceph':
           fieldsList.push(this.cephRadosGroupFields);
           break;
         case 'http':
@@ -375,7 +376,10 @@ export default Component.extend(I18n, {
 
   _fillInForm() {
     const { storage, fields } = this;
-    const storageType = storage?.type;
+    let storageType = storage?.type;
+    if (storageType === 'ceph') {
+      storageType = 'cephrados';
+    }
 
     this._fillInFormGroup(this.basicGroup, storage, fields.valuesSource.basic);
 

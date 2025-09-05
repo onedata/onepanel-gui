@@ -7,6 +7,7 @@
  */
 
 import { StorageDropdownField } from '../base/storage-dropdown-field';
+import { computed } from '@ember/object';
 
 export const TypeField = StorageDropdownField.extend({
   /**
@@ -14,10 +15,7 @@ export const TypeField = StorageDropdownField.extend({
    */
   name: 'type',
 
-  /**
-   * @override
-   */
-  options: Object.freeze([
+  optionsToSelect: Object.freeze([
     { value: 'cephrados' },
     { value: 'posix' },
     { value: 'nfs' },
@@ -29,6 +27,18 @@ export const TypeField = StorageDropdownField.extend({
     { value: 'xrootd' },
     { value: 'nulldevice' },
   ]),
+
+  /**
+   * @override
+   */
+  options: computed('mode', function options() {
+    const baseOptions = this.optionsToSelect;
+    if (this.mode === 'edit') {
+      return baseOptions;
+    } else {
+      return [...baseOptions, { value: 'ceph' }];
+    }
+  }),
 
   /**
    * @override

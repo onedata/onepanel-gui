@@ -49,6 +49,9 @@ export default {
       cephrados: {
         label: 'Ceph RADOS',
       },
+      ceph: {
+        label: 'Ceph',
+      },
       posix: {
         label: 'POSIX',
       },
