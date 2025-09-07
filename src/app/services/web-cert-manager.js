@@ -18,6 +18,7 @@ import config from 'ember-get-config';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import globals from 'onedata-gui-common/utils/globals';
 import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
+import domainMatches from 'onepanel-gui/utils/domain-matches';
 
 const {
   time: {
@@ -156,6 +157,6 @@ export default Service.extend(createDataProxyMixin('webCert'), {
     if (!webCert || !serviceDomain) {
       return false;
     }
-    return webCert.dnsNames.includes(serviceDomain);
+    return webCert.dnsNames.some(dnsName => domainMatches(serviceDomain, dnsName));
   },
 });
