@@ -50,7 +50,7 @@ export default {
         label: 'Ceph RADOS',
       },
       ceph: {
-        label: 'Ceph',
+        label: 'Ceph (deprecated)',
       },
       posix: {
         label: 'POSIX',
