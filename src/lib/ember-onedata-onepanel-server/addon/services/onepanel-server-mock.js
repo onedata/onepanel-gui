@@ -114,7 +114,7 @@ const defaultWebCert = {
     'rtransfer.dev-oneprovider-krakow.default.svc.cluster.local',
     'dev-oneprovider-krakow.default.svc.cluster.local',
     // comment-out the domain below to see no-s3-domain warning
-    // 's3.dev-oneprovider-krakow.default.svc.cluster.local',
+    's3.dev-oneprovider-krakow.default.svc.cluster.local',
   ],
   issuer: 'Example Inc.',
   lastRenewalSuccess: moment().subtract(1, 'week').toISOString(),

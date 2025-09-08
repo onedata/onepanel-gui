@@ -22,6 +22,8 @@ export default {
       tip: 'List of DNS names included in certificate\'s Subject Alternative Name extension.',
       warningTip: 'None of the certificate\'s DNS names matches the configured {{currentServiceType}} domain ({{currentDomain}}). Until this problem is resolved, HTTPS connections to the service will be considered insecure and the Web UI may malfunction.',
       noneMatchWarning: 'None of the above match the service domain.',
+      noS3DomainWarningText: 'Missing the "s3.*" DNS name.',
+      noS3DomainWarningTip: 'This Oneprovider has S3 data access protocol support enabled, but the web certificate does not include a domain matching the "s3.*" pattern. You must include such a domain in the certificate\'s Subject Alternative Name (SAN) extension to enable the S3 data access protocol.',
     },
     issuer: {
       label: 'Issuer',
