@@ -24,7 +24,7 @@ export const AuthorizationHeaderField = StorageTextField.extend({
    * @override
    */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
-    const type = this.parent.value.credentialsType;
+    const type = this.parent.value?.credentialsType;
     return type === 'token';
   }),
 });

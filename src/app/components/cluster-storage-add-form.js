@@ -190,104 +190,38 @@ export default Component.extend(I18n, {
       });
   }),
 
-  context: computed(function () {
-    return EmberObject.extend({
-      editorMode: reads('component.mode'),
-      loadedStorage: reads('component.storage'),
-    }).create({ component: this });
-  }),
-
-  basicGroupFields: computed(function basicGroupFields() {
-    return BasicGroup.create({ context: this.context });
-  }),
-
-  lumaGroupFields: computed(function lumaGroupFields() {
-    return LumaGroup.create({ context: this.context });
-  }),
-
-  posixGroupFields: computed(function posixGroupFields() {
-    return PosixGroup.create({ context: this.context });
-  }),
-
-  nfsGroupFields: computed(function nfsGroupFields() {
-    return NfsGroup.create({ context: this.context });
-  }),
-
-  s3GroupFields: computed(function s3GroupFields() {
-    return S3Group.create({ context: this.context });
-  }),
-
-  swiftGroupFields: computed(function swiftGroupFields() {
-    return SwiftGroup.create({ context: this.context });
-  }),
-
-  glusterfsGroupFields: computed(function glusterfsGroupFields() {
-    return GlusterfsGroup.create({ context: this.context });
-  }),
-
-  cephRadosGroupFields: computed(function cephRadosGroupFields() {
-    return CephRadosGroup.create({ context: this.context });
-  }),
-
-  httpGroupFields: computed(function httpGroupFields() {
-    return HttpGroup.create({ context: this.context });
-  }),
-
-  webdavGroupFields: computed(function webdavGroupFields() {
-    return WebdavGroup.create({ context: this.context });
-  }),
-
-  xrootdGroupFields: computed(function xrootdGroupFields() {
-    return XrootdGroup.create({ context: this.context });
-  }),
-
-  nullDeviceGroupFields: computed(function nullDeviceGroupFields() {
-    return NullDeviceGroup.create({ context: this.context });
-  }),
-
   fieldsArray: computed(
     'storage',
-    'basicGroupFields.value.type',
     function fieldsArray() {
-      const fieldsList = [this.basicGroupFields, this.lumaGroupFields];
+      const formContext = EmberObject.extend({
+        editorMode: reads('component.mode'),
+        loadedStorage: reads('component.storage'),
+      }).create({ component: this });
 
-      const type = this.storage?.type || this.basicGroupFields?.value?.type || 'cephrados';
-      switch (type) {
-        case 'posix':
-          fieldsList.push(this.posixGroupFields);
-          break;
-        case 'nfs':
-          fieldsList.push(this.nfsGroupFields);
-          break;
-        case 's3':
-          fieldsList.push(this.s3GroupFields);
-          break;
-        case 'swift':
-          fieldsList.push(this.swiftGroupFields);
-          break;
-        case 'glusterfs':
-          fieldsList.push(this.glusterfsGroupFields);
-          break;
-        case 'cephrados':
-        case 'ceph':
-          fieldsList.push(this.cephRadosGroupFields);
-          break;
-        case 'http':
-          fieldsList.push(this.httpGroupFields);
-          break;
-        case 'webdav':
-          fieldsList.push(this.webdavGroupFields);
-          break;
-        case 'xrootd':
-          fieldsList.push(this.xrootdGroupFields);
-          break;
-        case 'nulldevice':
-          fieldsList.push(this.nullDeviceGroupFields);
-          break;
-        default:
-          break;
+      const fieldsList = [BasicGroup, LumaGroup];
+      const fieldGroupClassMapping = {
+        posix: PosixGroup,
+        nfs: NfsGroup,
+        s3: S3Group,
+        swift: SwiftGroup,
+        glusterfs: GlusterfsGroup,
+        cephrados: CephRadosGroup,
+        ceph: CephRadosGroup,
+        http: HttpGroup,
+        webdav: WebdavGroup,
+        xrootd: XrootdGroup,
+        nulldevice: NullDeviceGroup,
+      };
+      if (this.storage) {
+        fieldsList.push(fieldGroupClassMapping[this.storage.type]);
+      } else {
+        delete fieldGroupClassMapping.ceph;
+        fieldsList.push(...Object.values(fieldGroupClassMapping));
       }
-      return fieldsList;
+
+      return fieldsList.map(
+        (FieldClass) => FieldClass.create({ context: formContext })
+      );
     }
   ),
 

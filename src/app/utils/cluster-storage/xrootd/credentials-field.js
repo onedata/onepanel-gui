@@ -29,6 +29,6 @@ export const CredentialsField = StorageTextField.extend({
    * @override
    */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
-    return this.parent.value.credentialsType === 'pwd';
+    return this.parent.value?.credentialsType === 'pwd';
   }),
 });
