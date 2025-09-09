@@ -67,7 +67,7 @@ export default Service.extend(createDataProxyMixin('webCert'), {
   ),
 
   /**
-   * Checks if there is `s3.` domain included in domains if S3 is enabled.
+   * Checks if there is `s3` subdomain included in domains if S3 is enabled.
    * If there is no S3 in the cluster, it is considered as valid.
    * @type {ComputedProperty<PromiseObject<boolean>>}
    */
@@ -85,7 +85,11 @@ export default Service.extend(createDataProxyMixin('webCert'), {
           return true;
         }
         const webCert = await this.webCertProxy;
-        return webCert.dnsNames.some(dnsName => dnsName.startsWith('s3.'));
+        const serviceDomain = this.guiUtils.serviceDomain;
+        const expectedS3DnsName = `s3.${serviceDomain}`;
+        return webCert.dnsNames.some(dnsName =>
+          domainMatches(expectedS3DnsName, dnsName)
+        );
       };
       return promiseObject(resolver());
     }

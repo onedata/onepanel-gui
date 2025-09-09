@@ -131,7 +131,11 @@ export default Component.extend(I18n, {
 
   noS3DomainWarningText: computedT('fields.dnsNames.noS3DomainWarningText'),
 
-  noS3DomainWarningTip: computedT('fields.dnsNames.noS3DomainWarningTip'),
+  noS3DomainWarningTip: computed('currentDomain', function noS3DomainWarningTip() {
+    return this.t('fields.dnsNames.noS3DomainWarningTip', {
+      currentDomain: this.currentDomain,
+    });
+  }),
 
   isS3DomainWarningShown: computed(
     'webCertManager.isS3DomainValidProxy.content',
