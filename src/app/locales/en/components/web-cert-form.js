@@ -20,10 +20,10 @@ export default {
     dnsNames: {
       label: 'DNS names',
       tip: 'List of DNS names included in certificate\'s Subject Alternative Name extension.',
-      warningTip: 'None of the certificate\'s DNS names matches the configured {{currentServiceType}} domain ({{currentDomain}}). Until this problem is resolved, HTTPS connections to the service will be considered insecure and the Web UI may malfunction.',
-      noneMatchWarning: 'None of the above match the service domain.',
+      warningTip: 'None of the certificate\'s DNS names matches the configured {{currentServiceType}} domain ({{currentDomain}}). You must provide a certificate with a matching name in the Subject Alternative Name (SAN) extension. Until this problem is resolved, HTTPS connections to the service will be considered insecure and the Web UI may malfunction.',
+      noneMatchWarning: 'No DNS name matching the service domain.',
       noS3DomainWarningText: 'No DNS name matching the "s3" subdomain.',
-      noS3DomainWarningTip: 'This Oneprovider has S3 data access protocol support enabled, but the web certificate does not include a domain matching the "s3" subdomain. You must include such a domain in the certificate\'s Subject Alternative Name (SAN) extension, either as a literal DNS name (s3.{{currentDomain}}) or as a wildcard DNS name (*.{{currentDomain}}).',
+      noS3DomainWarningTip: 'This Oneprovider has S3 data access protocol support enabled, but the web certificate does not include a DNS name matching the "s3" subdomain. You must provide a certificate with a matching name in the Subject Alternative Name (SAN) extension, either as a literal DNS name (s3.{{currentDomain}}) or as a wildcard DNS name (*.{{currentDomain}}). Until this problem is resolved, S3 clients will treat this server as insecure.',
     },
     issuer: {
       label: 'Issuer',
