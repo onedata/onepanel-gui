@@ -43,38 +43,39 @@
       @actionsArray={{storageActions}}
     />
   </listItemHeader>
-
-  <listItemContent>
-    <div class="item-table row">
-      <div class="row">
-        <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
-          <div class="row content-row">
-            <ClipboardLine
-              @value={{storageId}}
-              @size="sm"
-              class={{if whileEdition "id-edition-label"}}
-              @label={{concat (tt this "generic.id") ":"}}
+  <RenderLater @triggerRender={{listItem.isActive}}>
+    <listItemContent>
+      <div class="item-table row">
+        <div class="row">
+          <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row storage-info">
+            <div class="row content-row">
+              <ClipboardLine
+                @value={{storageId}}
+                @size="sm"
+                class={{if whileEdition "id-edition-label"}}
+                @label={{concat (tt this "generic.id") ":"}}
+              />
+            </div>
+            <ClusterStorageAddForm
+              class="clearfix"
+              @onSubmit={{action "saveEdition"}}
+              @cancel={{action "cancelEdition"}}
+              @doubleClick={{action "selectText"}}
+              @mode={{if whileEdition "edit" "show"}}
+              @isFormOpened={{true}}
+              @storage={{storage}}
+              @storageProvidesSupport={{contains storage.id (map-by "storageId" spaces)}}
+              @layoutConfig={{formLayoutConfig}}
             />
           </div>
-          <ClusterStorageAddForm
-            class="clearfix"
-            @onSubmit={{action "saveEdition"}}
-            @cancel={{action "cancelEdition"}}
-            @doubleClick={{action "selectText"}}
-            @mode={{if whileEdition "edit" "show"}}
-            @isFormOpened={{true}}
-            @storage={{storage}}
-            @storageProvidesSupport={{contains storage.id (map-by "storageId" spaces)}}
-            @layoutConfig={{formLayoutConfig}}
-          />
+          {{!-- TODO: maybe a placeholder when not loaded --}}
+          {{#if showSpacesSupport}}
+            <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
+              <StorageItem::SupportedSpaces @spaces={{spaces}} @storageId={{storageId}} />
+            </div>
+          {{/if}}
         </div>
-        {{!-- TODO: maybe a placeholder when not loaded --}}
-        {{#if showSpacesSupport}}
-          <div class="col-xs-12 col-md-6 item-table-cell item-table-content-cell row">
-            <StorageItem::SupportedSpaces @spaces={{spaces}} @storageId={{storageId}} />
-          </div>
-        {{/if}}
       </div>
-    </div>
-  </listItemContent>
+    </listItemContent>
+  </RenderLater>
 {{/let}}

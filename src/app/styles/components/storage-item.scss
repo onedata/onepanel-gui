@@ -1,5 +1,7 @@
 .storage-item {
   $storage-item-padding: 1.5em;
+  $storage-view-item-padding: 1em;
+  $storage-form-label-width: 33%;
   .one-collapsible-list-item-header {
     padding-right: 60px;
     transition: none;
@@ -19,21 +21,35 @@
         display: block;
       }
     }
-  }
-
-  .id-edition-label .clipboard-line-label {
-    @media (min-width: $screen-sm-min) {
-      width: 33.333333%;
+    .clipboard-line-label {
+      width: $storage-form-label-width;
     }
   }
+
   .cluster-storage-add-form {
     padding-top: 0;
     margin: 0 22px;
 
+    @media (min-width: $screen-sm-min) {
+      .fields-group-children {
+        > .field-view-mode:not(.form-fields-group-renderer),
+        > .field-edit-mode:not(.form-fields-group-renderer) {
+          border-bottom: $table-item-border;
+        }
+      }
+      .form-component .control-label {
+        width: $storage-form-label-width;
+      }
+    }
+
+    .qos-params-editor.show > .row {
+      flex-direction: column;
+    }
+
     &.form-static {
       padding-bottom: 0;
     }
-    
+
     .form {
       margin: 0;
       padding: 0;
@@ -80,7 +96,7 @@
           padding-bottom: 0;
         }
       }
-      
+
       @media (min-width: $screen-sm-min) {
         .form-group {
           margin: 0;
@@ -94,10 +110,21 @@
           }
         }
         .control-label {
-          padding: $storage-item-padding 0;
+          padding: $storage-view-item-padding 0;
           padding-right: $padding-small-horizontal;
           margin: 0;
           text-align: left;
+        }
+        .field-edit-mode {
+          &.text-like-field-renderer {
+            padding: $storage-view-item-padding 0;
+          }
+        }
+        .field-view-mode > .control-label + .field-component, .radio-field {
+          padding: $storage-view-item-padding 0;
+        }
+        .qos-params-editor {
+          padding-top: $storage-view-item-padding;
         }
         .form-field-right-addon {
           right: 40px;

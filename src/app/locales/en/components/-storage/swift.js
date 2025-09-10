@@ -1,32 +1,40 @@
+import common from './common';
+
 export default {
   username: {
-    name: 'Admin username',
+    label: 'Admin username',
     tip: 'The Keystone authentication username.',
   },
   password: {
-    name: 'Admin password',
+    label: 'Admin password',
     tip: 'The Keystone authentication password.',
   },
   projectName: {
-    name: 'Project name',
+    label: 'Project name',
     tip: 'The Keystone project name.',
   },
   userDomainName: {
-    name: 'User domain name',
+    label: 'User domain name',
     tip: 'The Keystone user domain name.',
+    placeholder: 'Default: Default',
   },
   projectDomainName: {
-    name: 'Project domain name',
+    label: 'Project domain name',
     tip: 'The Keystone project domain name.',
+    placeholder: 'Default: Default',
   },
   authUrl: {
-    name: 'Auth URL',
+    label: 'Auth URL',
     tip: 'The URL to OpenStack Identity Service (Keystone) V3.',
+    placeholder: 'Example: https://example.com:5000/v3',
   },
   containerName: {
-    name: 'Container name',
+    label: 'Container name',
     tip: 'The name of the Swift storage container.',
   },
-  blockSize: { name: 'Block size' },
-  timeout: { name: 'Timeout [ms]' },
+  blockSize: {
+    label: 'Block size',
+    placeholder: 'Default: 10485760',
+  },
+  timeout: common.timeout,
 };

@@ -1,9 +1,27 @@
+import common from './common';
+
 export default {
-  volume: { name: 'Volume name' },
-  hostname: { name: 'Volume server host' },
-  port: { name: 'Volume server port' },
-  transport: { name: 'Volume transport' },
-  mountPoint: { name: 'Relative mountpoint in volume' },
-  xlatorOptions: { name: 'Custom client translator options' },
-  timeout: { name: 'Timeout [ms]' },
+  volume: { label: 'Volume name' },
+  hostname: { label: 'Volume server host' },
+  port: {
+    label: 'Volume server port',
+    placeholder: 'Default: 24007',
+  },
+  transport: {
+    label: 'Volume transport',
+    options: {
+      tcp: {
+        label: 'TCP',
+      },
+      rdma: {
+        label: 'RDMA',
+      },
+      socket: {
+        label: 'socket',
+      },
+    },
+  },
+  mountPoint: { label: 'Relative mountpoint in volume' },
+  xlatorOptions: { label: 'Custom client translator options' },
+  timeout: common.timeout,
 };

@@ -2,99 +2,48 @@
  * A form for adding new and modifying existing storage with all storage types
  * available.
  *
- * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2021 ACK CYFRONET AGH
+ * @author Jakub Liput, Michał Borzęcki, Agnieszka Warchoł
+ * @copyright (C) 2017-2025 ACK CYFRONET AGH
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { run } from '@ember/runloop';
-
+import Component from '@ember/component';
+import I18n from 'onedata-gui-common/mixins/i18n';
 import EmberObject, {
-  observer,
   computed,
   set,
-  get,
-  setProperties,
+  observer,
 } from '@ember/object';
-import { equal, union } from '@ember/object/computed';
+import { reads, equal } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
-import { buildValidations } from 'ember-cp-validations';
-import _ from 'lodash';
+import FormFieldsRootGroup from 'onedata-gui-common/utils/form-component/form-fields-root-group';
+import { BasicGroup } from 'onepanel-gui/utils/cluster-storage/basic-group';
+import { CephRadosGroup } from 'onepanel-gui/utils/cluster-storage/ceph-rados-group';
+import { PosixGroup } from 'onepanel-gui/utils/cluster-storage/posix-group';
+import { NfsGroup } from 'onepanel-gui/utils/cluster-storage/nfs-group';
+import { S3Group } from 'onepanel-gui/utils/cluster-storage/s3-group';
+import { SwiftGroup } from 'onepanel-gui/utils/cluster-storage/swift-group';
+import { GlusterfsGroup } from 'onepanel-gui/utils/cluster-storage/glusterfs-group';
+import { XrootdGroup } from 'onepanel-gui/utils/cluster-storage/xrootd-group';
+import { WebdavGroup } from 'onepanel-gui/utils/cluster-storage/webdav-group';
+import { HttpGroup } from 'onepanel-gui/utils/cluster-storage/http-group';
+import { NullDeviceGroup } from 'onepanel-gui/utils/cluster-storage/null-device-group';
+import { LumaGroup } from 'onepanel-gui/utils/cluster-storage/luma-group';
 import config from 'ember-get-config';
 import notImplementedThrow from 'onedata-gui-common/utils/not-implemented-throw';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import I18n from 'onedata-gui-common/mixins/i18n';
-import { resolve } from 'rsvp';
-import { or } from 'ember-awesome-macros';
 import stripObject from 'onedata-gui-common/utils/strip-object';
-import OneForm from 'onedata-gui-common/components/one-form';
-import storageTypes from 'onepanel-gui/utils/cluster-storage/storage-types';
-import GENERIC_FIELDS from 'onepanel-gui/utils/cluster-storage/generic-fields';
-import LUMA_FIELDS from 'onepanel-gui/utils/cluster-storage/luma-fields';
-import createFieldValidator from 'onedata-gui-common/utils/create-field-validator';
+import _ from 'lodash';
+
+/**
+ * @typedef {EmberObject} ClusterStorageAddFormContext
+ * @property {'create'|'edit'|'show'} editorMode
+ * @property {Onepanel.StorageDetails} loadedStorage
+ */
 
 const {
   layoutConfig,
 } = config;
-
-/**
- * Analyzes all field validators dependencies (dependent fields) and replaces
- * prefixes in their names according to given values.
- * @param {FieldType} field
- * @param {string} prefix
- * @param {string} newPrefix
- * @returns {FieldType}
- */
-function replaceDependencyPrefix(field, prefix, newPrefix) {
-  ['lt', 'lte', 'gt', 'gte'].forEach(validatorName => {
-    const validator = get(field, validatorName);
-    if (validator && typeof validator === 'object') {
-      const propertyName = get(validator, 'property');
-      if (_.startsWith(propertyName, prefix + '.')) {
-        const prefixlessPropertyName =
-          propertyName.substring(get(prefix, 'length') + 1);
-        set(validator, 'property', `${newPrefix}.${prefixlessPropertyName}`);
-      }
-    }
-  });
-  return field;
-}
-
-function createValidations(storageTypes, genericFields, lumaFields) {
-  const validations = {};
-  storageTypes.forEach(type => {
-    type.fields.forEach(field => {
-      const validator = createFieldValidator(field);
-      const prefixedField = replaceDependencyPrefix(
-        _.cloneDeep(field),
-        type.id,
-        type.id + '_editor'
-      );
-      const editorValidator = createFieldValidator(field);
-      validations['allFieldsValues.' + type.id + '.' + prefixedField.name] =
-        validator;
-      validations['allFieldsValues.' + type.id + '_editor.' + prefixedField.name] =
-        editorValidator;
-    });
-  });
-  genericFields.forEach(field => {
-    const validator = createFieldValidator(field);
-    validations['allFieldsValues.generic.' + field.name] = validator;
-    validations['allFieldsValues.generic_editor.' + field.name] = validator;
-  });
-
-  lumaFields.forEach(field => {
-    const validator = createFieldValidator(field);
-    validations['allFieldsValues.luma.' + field.name] = validator;
-    validations['allFieldsValues.luma_editor.' + field.name] = validator;
-  });
-  return validations;
-}
-
-const Validations = buildValidations(createValidations(
-  storageTypes, GENERIC_FIELDS, LUMA_FIELDS));
-
-const VISIBILITY_ANIMATION_TIME = 333;
 
 const storagePathTypeConfig = {
   posix: { defaultValue: 'canonical', disabled: true },
@@ -110,11 +59,8 @@ const storagePathTypeConfig = {
   nfs: { defaultValue: 'canonical', disabled: true },
 };
 
-export default OneForm.extend(I18n, Validations, {
+export default Component.extend(I18n, {
   classNames: ['cluster-storage-add-form'],
-  classNameBindings: [
-    'inShowMode:form-static',
-  ],
 
   i18n: service(),
 
@@ -122,11 +68,6 @@ export default OneForm.extend(I18n, Validations, {
    * @override
    */
   i18nPrefix: 'components.clusterStorageAddForm',
-
-  /**
-   * @override
-   */
-  unknownFieldErrorMsg: 'component:cluster-storage-add-form: attempt to change not known input type',
 
   /**
    * @virtual
@@ -149,13 +90,6 @@ export default OneForm.extend(I18n, Validations, {
   mode: 'create',
 
   /**
-   * If true, form is visible to user
-   * @virtual optional
-   * @type {boolean}
-   */
-  isFormOpened: false,
-
-  /**
    * If true, then edited storage already supports some spaces.
    * @virtual optional
    * @type {boolean}
@@ -163,9 +97,11 @@ export default OneForm.extend(I18n, Validations, {
   storageProvidesSupport: false,
 
   /**
+   * If true, form is visible to user
+   * @virtual optional
    * @type {boolean}
    */
-  disableStorageTypeSelector: false,
+  isFormOpened: false,
 
   /**
    * Called when user clicks "Cancel" button in edit mode
@@ -176,49 +112,10 @@ export default OneForm.extend(I18n, Validations, {
   cancel: notImplementedThrow,
 
   /**
-   * Set on init
-   * @type {Array<FieldType>}
-   */
-  genericFields: undefined,
-
-  /**
-   * Set on init
-   * @type {Array<FieldType>}
-   */
-  lumaFields: null,
-
-  /**
-   * Set on init
-   * @type {Array<FieldType>}
-   */
-  staticFields: undefined,
-
-  /**
-   * Set on init
-   * @type {Array<FieldType>}
-   */
-  editorFields: undefined,
-
-  /**
-   * @type {boolean}
-   */
-  showLumaPrefix: false,
-
-  /**
-   * @type {number}
-   */
-  showLumaPrefixTimeoutId: -1,
-
-  /**
    * Form layout config
    * @type {Object}
    */
   layoutConfig,
-
-  /**
-   * @type {boolean}
-   */
-  modifyModalVisible: false,
 
   /**
    * @type {boolean}
@@ -236,6 +133,21 @@ export default OneForm.extend(I18n, Validations, {
   isSavingStorage: false,
 
   /**
+   * @type {boolean}
+   */
+  isSubmitting: false,
+
+  /**
+   * @type {Object}
+   */
+  selectedStorageType: reads('fields.value.basic.type'),
+
+  /**
+   * @type {string}
+   */
+  lumaType: reads('fields.value.basic.lumaFeed'),
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   inEditionMode: equal('mode', 'edit'),
@@ -246,401 +158,267 @@ export default OneForm.extend(I18n, Validations, {
   inShowMode: equal('mode', 'show'),
 
   /**
-   * @type {Ember.ComputedProperty<Array<Object>>}
-   */
-  storageTypes: computed(() => storageTypes.map(type => _.assign({}, type))),
-
-  /**
-   * @type {Object}
-   */
-  selectedStorageType: undefined,
-
-  /**
-   * @type {string}
-   */
-  lastCredentialsType: undefined,
-
-  /**
-   * @type {string}
-   */
-  lastStorageTypeWithCredentials: undefined,
-
-  /**
-   * @type {String}
-   */
-  currentStorageType: or('storage.type', 'selectedStorageType.id'),
-
-  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   storageHasQosParameters: computed(
     'storage.qosParameters',
     function storageHasQosParameters() {
-      const qosParams = this.get('storage.qosParameters');
-      return !qosParams || Boolean(get(Object.keys(qosParams), 'length'));
+      const qosParams = this.storage?.qosParameters;
+      return !qosParams || Boolean(Object.keys(qosParams).length);
     }
   ),
 
   /**
-   * @override
+   * @type {ComputedProperty<Utils.FormComponent.FormFieldsRootGroup>}
    */
-  currentFieldsPrefix: computed(
-    'selectedStorageType.id',
-    'mode',
-    'lumaPrefixVisible',
-    function currentFieldsPrefix() {
-      const {
-        selectedStorageType,
-        mode,
-        lumaPrefixVisible,
-      } = this.getProperties('selectedStorageType', 'mode', 'lumaPrefixVisible');
-      if (mode === 'show') {
-        return ['meta', 'type_static', 'generic_static']
-          .concat(lumaPrefixVisible ? ['luma_static'] : [])
-          .concat(selectedStorageType ? [selectedStorageType.id + '_static'] : []);
-      } else if (mode === 'edit') {
-        return ['meta', 'type_static', 'generic_editor']
-          .concat(lumaPrefixVisible ? ['luma_editor'] : [])
-          .concat(selectedStorageType ? [selectedStorageType.id + '_editor'] : []);
-      } else {
-        return ['meta', 'generic']
-          .concat(lumaPrefixVisible ? ['luma'] : [])
-          .concat(selectedStorageType ? [selectedStorageType.id] : []);
-      }
-    }
-  ),
+  fields: computed(function fields() {
+    const component = this;
 
-  /**
-   * @override
-   */
-  allFields: union(
-    'createFields',
-    'staticFields',
-    'editorFields',
-    'storageTypeStaticField'
-  ),
-
-  /**
-   * @type {Ember.ComputedProperty<Array<FieldType>>}
-   */
-  storageTypeStaticField: computed(function storageTypeStaticField() {
-    return [EmberObject.create({
-      name: 'type_static.type',
-      type: 'static',
-      label: this.t('storageType'),
-    })];
+    return FormFieldsRootGroup
+      .extend({
+        i18nPrefix: computed('component.i18nPrefix', function i18nPrefix() {
+          return `${this.component.i18nPrefix}.fields`;
+        }),
+        ownerSource: reads('component'),
+        isEnabled: computed('component.isSubmitting', function isEnabled() {
+          return !this.component.isSubmitting;
+        }),
+        fields: reads('component.fieldsArray'),
+      })
+      .create({
+        component,
+      });
   }),
 
-  /**
-   * @type {Ember.ComputedProperty<Array<FieldType>>}
-   */
-  createFields: computed(
-    'storageTypes.@each.fields',
-    'genericFields',
-    'lumaFields',
-    function createFields() {
-      const {
-        storageTypes,
-        lumaFields,
-        genericFields,
-      } = this.getProperties('storageTypes', 'lumaFields', 'genericFields');
-      return storageTypes
-        .concat([{ fields: genericFields }, { fields: lumaFields }])
-        .map(type => type.fields)
-        .reduce((a, b) => a.concat(b));
+  fieldsArray: computed(
+    'storage',
+    function fieldsArray() {
+      const formContext = EmberObject.extend({
+        editorMode: reads('component.mode'),
+        loadedStorage: reads('component.storage'),
+      }).create({ component: this });
+
+      const fieldsList = [BasicGroup, LumaGroup];
+      const fieldGroupClassMapping = {
+        posix: PosixGroup,
+        nfs: NfsGroup,
+        s3: S3Group,
+        swift: SwiftGroup,
+        glusterfs: GlusterfsGroup,
+        cephrados: CephRadosGroup,
+        ceph: CephRadosGroup,
+        http: HttpGroup,
+        webdav: WebdavGroup,
+        xrootd: XrootdGroup,
+        nulldevice: NullDeviceGroup,
+      };
+      if (this.storage) {
+        fieldsList.push(fieldGroupClassMapping[this.storage.type]);
+      } else {
+        delete fieldGroupClassMapping.ceph;
+        fieldsList.push(...Object.values(fieldGroupClassMapping));
+      }
+
+      return fieldsList.map(
+        (FieldClass) => FieldClass.create({ context: formContext })
+      );
     }
   ),
 
   /**
-   * @override
+   * @type {ComputedProperty<Utils.FormComponent.FormFieldsGroup>}
    */
-  allFieldsValues: computed(
-    'genericFields',
-    'lumaFields',
-    'storageTypes',
-    function allFieldsValues() {
-      const {
-        storageTypes,
-        allFields,
-      } = this.getProperties('storageTypes', 'allFields');
-      const values = EmberObject.create();
-      [
-        'meta',
-        'type_static',
-        'generic',
-        'generic_static',
-        'generic_editor',
-        'luma',
-        'luma_static',
-        'luma_editor',
-      ].forEach(prefix => set(values, prefix, EmberObject.create()));
+  basicGroup: computed('fields', function basicGroup() {
+    return this.fields.getFieldByPath('basic');
+  }),
 
-      storageTypes.forEach(type => {
-        values.set(type.id, EmberObject.create());
-        values.set(type.id + '_static', EmberObject.create());
-        values.set(type.id + '_editor', EmberObject.create());
-      });
-      allFields.forEach(field => values.set(get(field, 'name'), null));
-      return values;
-    }
-  ),
+  nullDeviceGroup: computed('fields', function nullDeviceGroup() {
+    return this.fields.getFieldByPath('nulldevice');
+  }),
 
-  /**
-   * Is true if luma feed has been changed to "external" by user interaction
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  lumaExternalByEdition: computed(
-    'allFieldsValues.generic_editor.lumaFeed',
-    function lumaExternalByEdition() {
-      const lumaFeedValue =
-        this.get('allFieldsValues.generic_editor.lumaFeed');
-      const lumaFeedField =
-        this.get('allFields').findBy('name', 'generic_editor.lumaFeed');
-      return lumaFeedValue === 'external' && get(lumaFeedField, 'changed');
-    }
-  ),
+  s3Group: computed('fields', function s3Group() {
+    return this.fields.getFieldByPath('s3');
+  }),
 
-  /**
-   * @override
-   */
+  webdavGroup: computed('fields', function webdavGroup() {
+    return this.fields.getFieldByPath('webdav');
+  }),
+
   isValid: computed(
-    'errors.[]',
-    'inEditionMode',
-    'lumaExternalByEdition',
+    'fields.isValid',
     'areQosParamsValid',
     function isValid() {
-      const {
-        areQosParamsValid,
-        errors,
-        inEditionMode,
-        lumaExternalByEdition,
-      } = this.getProperties(
-        'areQosParamsValid',
-        'errors',
-        'inEditionMode',
-        'lumaExternalByEdition'
-      );
-
-      if (!areQosParamsValid) {
+      if (!this.areQosParamsValid) {
         return false;
-      } else if (inEditionMode) {
-        // If luma feed is "external" but luma fields are invalid, then the whole
-        // form is invalid
-        if (lumaExternalByEdition) {
-          const lumaErrors = errors.filter(error =>
-            _.startsWith(get(error, 'attribute'), 'allFieldsValues.luma_editor.')
-          );
-          if (get(lumaErrors, 'length')) {
-            return false;
-          }
-        }
-
-        // If all errors are because of null values, then everything is alright
-        // - empty value means no modification
-        return errors.reduce((onlyEmpty, { attribute }) => {
-          const value = this.get(attribute);
-          return onlyEmpty && (value === undefined || value === null);
-        }, true);
       } else {
-        return errors.length === 0;
+        return this.fields.isValid;
       }
     }
   ),
-
-  /**
-   * @type {Ember.ComputedProperty<Array<Object>>}
-   */
-  visibleStorageTypes: computed('storageTypes.[]', function visibleStorageTypes() {
-    // Remove ceph storage, because it is deprecated
-    return this.storageTypes.filter(({ id }) => id !== 'ceph');
-  }),
 
   /**
    * Resets field if form visibility changes (clears validation errors)
    */
   isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
-    if (this.get('isFormOpened')) {
-      this.resetFormValues();
-      this.set('lumaPrefixVisible', false);
+    if (this.isFormOpened) {
+      this.fields.reset();
+      this.setProperties({
+        areQosParamsValid: true,
+        editedQosParams: undefined,
+      });
     }
   }),
-
-  selectedStorageTypeObserver: observer(
-    'selectedStorageType',
-    function selectedStorageTypeObserver() {
-      this.resetFormValues();
-      this._toggleLumaPrefix(false, false);
-      this.autoSettingsImportedStorage();
-      this.autoSettingsReadonly();
-      this.autoSettingsRangeWriteSupport();
-      this.autoSettingsBlockSize();
-    }
-  ),
 
   storageProvidesSupportObserver: observer(
     'storageProvidesSupport',
     function storageProvidesSupportObserver() {
-      this.autoSettingsImportedStorage();
-    }
-  ),
-
-  storagePathTypeObserver: observer(
-    'formValues.generic.storagePathType',
-    'formValues.generic_editor.storagePathType',
-    function storagePathTypeObserver() {
-      this.autoSettingsImportedStorage();
-      this.autoSettingsReadonly();
-      this.autoSettingsBlockSize();
-      this.autoSettingsMaxCanonicalObjectSize();
-    }
-  ),
-
-  /**
-   * Unlock/lock readonly toggle
-   */
-  importedStorageObserver: observer(
-    'formValues.generic.importedStorage',
-    'formValues.generic_editor.importedStorage',
-    function importedStorageObserver() {
-      this.autoSettingsReadonly();
-      this.autoSettingsSimulatedFilesystem();
-      this.autoSettingsImportedItemMode();
-    }
-  ),
-
-  readonlyObserver: observer(
-    'formValues.generic.readonly',
-    'formValues.generic_editor.readonly',
-    function readonlyObserver() {
-      this.autoSettingsRangeWriteSupport();
+      const type = this.basicGroup.getFieldByPath('type').value;
+      this.autoSettingsImportedStorage(type);
     }
   ),
 
   modeObserver: observer('mode', function modeObserver() {
-    this._fillInForm();
-    this.autoSettingsAll();
+    if (this.storage) {
+      this._fillInForm();
+    }
+    this.autoSettingsAll(this.selectedStorageType);
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
     });
   }),
 
-  credentialsTypeObserver: observer(
-    'formValues.{xrootd,webdav,http}.credentialsType',
-    function credentialsTypeObserver() {
-      this.autoSettingsCredentials();
-    }
-  ),
-
   init() {
     this._super(...arguments);
 
-    const {
-      storage,
-      storageTypes,
-      selectedStorageType,
-    } = this.getProperties(
-      'storage',
-      'storageTypes',
-      'selectedStorageType',
-    );
-
-    const genericFields = GENERIC_FIELDS.map(field => EmberObject.create(field));
-    genericFields.forEach(field => {
-      field.set('name', 'generic.' + field.get('name'));
-      field.set('originPrefix', 'generic');
-    });
-    const lumaFields = LUMA_FIELDS.map(field => EmberObject.create(field));
-    lumaFields.forEach(field => {
-      field.set('name', 'luma.' + field.get('name'));
-      field.set('originPrefix', 'luma');
-    });
-    this.setProperties({
-      genericFields,
-      lumaFields,
-    });
-    storageTypes.forEach(type =>
-      type.fields = type.fields.map(field =>
-        EmberObject.create(field))
-    );
-    storageTypes.forEach(type =>
-      type.fields.forEach(field => {
-        field.set('name', type.id + '.' + field.get('name'));
-        field.set('originPrefix', type.id);
-      })
-    );
-
-    this._addFieldsLabels();
-    this._generateStaticFields();
-    this._generateEditorFields();
-
-    if (storage) {
-      this.configureStoragePathType();
+    if (this.storage) {
       this._fillInForm();
-    } else if (selectedStorageType) {
-      this.selectedStorageTypeObserver();
     }
-
-    this.storageProvidesSupportObserver();
-    this.importedStorageObserver();
-    this.readonlyObserver();
-    this.credentialsTypeObserver();
-
-    // Select default (first) storage type if it is still empty
-    if (!this.get('selectedStorageType')) {
-      this.set(
-        'selectedStorageType',
-        this.get('visibleStorageTypes.firstObject')
-      );
+    if (this.mode !== 'show' && this.selectedStorageType) {
+      this.storageTypeChanged(this.selectedStorageType);
     }
   },
 
-  autoSettingsImportedStorage() {
-    const {
-      currentStorageType,
-      storageProvidesSupport,
-    } = this.getProperties('currentStorageType', 'storageProvidesSupport');
-    const defaultImportedStorageValue = this.get('storage.importedStorage');
-    const changedImportedStorageValue =
-      this.get('allFieldsValues.generic_editor.importedStorage');
+  _fillInFormGroup(formGroup, storage, valuesSourceGroup) {
+    for (const field of formGroup.fields) {
+      const name = field.name;
+      if (name in storage && storage[name] !== undefined && storage[name] !== '') {
+        valuesSourceGroup.set(name, storage[name]);
+      }
+    }
+  },
 
-    let disabled = storageProvidesSupport;
-    let value = storageProvidesSupport &&
-      changedImportedStorageValue !== defaultImportedStorageValue ?
-      defaultImportedStorageValue : undefined;
+  _fillInForm() {
+    const { storage, fields } = this;
+    let storageType = storage?.type;
+    if (storageType === 'ceph') {
+      storageType = 'cephrados';
+    }
+
+    this._fillInFormGroup(this.basicGroup, storage, fields.valuesSource.basic);
+
+    if (storage.lumaFeed === 'external') {
+      const lumaGroup = fields.getFieldByPath('luma');
+      if (lumaGroup) {
+        this._fillInFormGroup(lumaGroup, storage, fields.valuesSource.luma);
+      }
+    }
+
+    const storageTypeGroup = fields.fields.find(
+      (field) => field.name === storageType
+    );
+
+    if (storageTypeGroup) {
+      this._fillInFormGroup(storageTypeGroup, storage, fields.valuesSource[storageType]);
+    }
+  },
+
+  storageTypeChanged(type) {
+    this.setProperties({
+      areQosParamsValid: true,
+      editedQosParams: undefined,
+    });
+
+    this.changePathType(type);
+    this.autoSettingsAll(type);
+  },
+
+  storagePathTypeChanged() {
+    const type = this.basicGroup.getFieldByPath('type').value;
+
+    this.autoSettingsImportedStorage(type);
+    this.autoSettingsReadonly(type);
+    this.autoSettingsBlockSize(type);
+    this.autoSettingsMaxCanonicalObjectSize(type);
+  },
+
+  importedStorageChanged() {
+    const type = this.basicGroup.getFieldByPath('type').value;
+
+    this.autoSettingsReadonly(type);
+    this.autoSettingsSimulatedFilesystem(type);
+    this.autoSettingsImportedItemMode(type);
+  },
+
+  readonlyChanged() {
+    const type = this.basicGroup.getFieldByPath('type').value;
+
+    this.autoSettingsRangeWriteSupport(type);
+  },
+
+  changePathType(type) {
+    if (this.mode === 'show') {
+      return;
+    }
+
+    const config = storagePathTypeConfig[type];
+    const storagePathType = this.basicGroup.getFieldByPath('storagePathType');
+
+    if (config.defaultValue) {
+      storagePathType.valueChanged(config.defaultValue);
+    }
+    storagePathType.set('isEnabled', !config.disabled ?? true);
+  },
+
+  autoSettingsImportedStorage(type) {
+    if (this.mode === 'show') {
+      return;
+    }
+
+    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    let disabled = this.storageProvidesSupport;
+    let value = this.storage?.importedStorage;
     let lockHint = null;
+    const importedStorageField = this.basicGroup.getFieldByPath('importedStorage');
 
-    if (currentStorageType === 'http') {
+    if (type === 'http') {
       disabled = true;
       value = true;
       lockHint = this.t('httpOnlyImported');
-    }
-
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    if (currentStorageType === 's3') {
+    } else if (type === 's3') {
       disabled = true;
-      value = storagePathType === 'canonical';
+      value = pathType === 'canonical';
     }
 
     if (disabled) {
-      this.lockToggle('importedStorage', value, lockHint);
-    } else {
-      this.unlockToggle('importedStorage');
+      importedStorageField.valueChanged(value);
+    }
+    importedStorageField.set('isEnabled', !disabled);
+    if (lockHint) {
+      importedStorageField.set('disabledControlTip', lockHint);
     }
   },
 
-  autoSettingsReadonly() {
-    const {
-      mode,
-      currentStorageType,
-    } = this.getProperties('mode', 'currentStorageType');
-    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
-    const isImportedStorage = this.get(`formValues.${prefix}.importedStorage`);
-    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
+  autoSettingsReadonly(type) {
+    if (this.mode === 'show') {
+      return;
+    }
+    const isImportedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
+    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    const readonlyField = this.basicGroup.getFieldByPath('readonly');
 
     let locked;
-    let value;
+    let value = null;
     let hint = null;
 
     if (isImportedStorage) {
@@ -653,555 +431,134 @@ export default OneForm.extend(I18n, Validations, {
 
     // HTTP storage type implies that storage is imported,
     // so it will be eventually locked to true
-    if (currentStorageType === 'http') {
+    if (type === 'http') {
       locked = true;
       value = true;
       hint = this.t('httpOnlyReadonly');
     }
 
-    if (currentStorageType === 's3' &&
-      storagePathType === 'canonical' &&
+    if (type === 's3' &&
+      pathType === 'canonical' &&
       isImportedStorage
     ) {
       locked = true;
       value = true;
     }
-
-    if (locked) {
-      this.lockToggle('readonly', value, hint);
-    } else {
-      this.unlockToggle('readonly');
+    if (value !== null) {
+      readonlyField.valueChanged(value);
+    }
+    readonlyField.set('isEnabled', !locked);
+    if (hint) {
+      readonlyField.set('disabledControlTip', hint);
     }
   },
 
-  autoSettingsRangeWriteSupport() {
-    if (this.mode === 'show' || this.currentStorageType !== 'webdav') {
+  autoSettingsRangeWriteSupport(type) {
+    if (this.mode === 'show' || type !== 'webdav') {
       return;
     }
 
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const isReadonly = this.get(`formValues.${prefix}.readonly`);
-    const fieldPath = 'webdav.rangeWriteSupport';
-    const field = this.getField(fieldPath);
-    const currentValue = this.get(`formValues.${fieldPath}`);
+    const isReadonly = this.basicGroup.getFieldByPath('readonly').value;
+    const rangeWriteSupportField = this.webdavGroup.getFieldByPath('rangeWriteSupport');
+    const currentValue = rangeWriteSupportField.value;
 
     if (isReadonly) {
-      set(field, 'disabled', true);
+      rangeWriteSupportField.set('isEnabled', false);
       if (currentValue !== 'none') {
-        this.send(
-          'inputChanged',
-          fieldPath,
-          'none',
-        );
+        rangeWriteSupportField.valueChanged('none');
       }
     } else {
-      setProperties(field, {
-        disabled: false,
+      rangeWriteSupportField.setProperties({
+        isEnabled: true,
         defaultValue: null,
       });
-      set(field.options[0], 'disabled', true);
+      rangeWriteSupportField.options[0].isEnabled = false;
       if (currentValue === 'none') {
-        this.send(
-          'inputChanged',
-          fieldPath,
-          null,
-        );
+        rangeWriteSupportField.valueChanged(null);
       }
     }
   },
 
-  autoSettingsBlockSize() {
-    if (this.currentStorageType !== 's3') {
+  autoSettingsBlockSize(type) {
+    if (type !== 's3' || this.mode === 'show') {
       return;
     }
 
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    const blockSize = this.get('formValues.s3.blockSize');
-    const fieldPath = 's3.blockSize';
-    if (storagePathType === 'canonical' || blockSize === 0) {
-      this.send(
-        'inputChanged',
-        fieldPath,
-        storagePathType === 'canonical' ? 0 : null,
+    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    const blockSizeField = this.s3Group.getFieldByPath('blockSize');
+    const blockSize = blockSizeField.value;
+
+    if (pathType === 'canonical' || blockSize === 0) {
+      blockSizeField.valueChanged(
+        pathType === 'canonical' ? 0 : null
       );
     }
-    set(this.getField(fieldPath), 'disabled', storagePathType === 'canonical');
+    blockSizeField.set('isEnabled', pathType !== 'canonical');
   },
 
-  autoSettingsCredentials() {
-    const currentStorageType = this.currentStorageType;
-    if (currentStorageType !== 'xrootd' &&
-      currentStorageType !== 'webdav' &&
-      currentStorageType !== 'http'
-    ) {
+  autoSettingsSimulatedFilesystem(type) {
+    if (type !== 'nulldevice' || this.mode === 'show') {
+      return;
+    }
+    const importedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
+    const growSpeedField = this.nullDeviceGroup.getFieldByPath('simulatedFilesystemGrowSpeed');
+    const paramsField = this.nullDeviceGroup.getFieldByPath('simulatedFilesystemParameters');
+
+    growSpeedField.set('isEnabled', importedStorage);
+    paramsField.set('isEnabled', importedStorage);
+
+    if (!importedStorage) {
+      growSpeedField.valueChanged(null);
+      paramsField.valueChanged(null);
+    }
+  },
+
+  autoSettingsMaxCanonicalObjectSize(type) {
+    if (type !== 's3' || this.mode === 'show') {
       return;
     }
 
-    const credentialsType = this.get(
-      `formValues.${currentStorageType}.credentialsType`
-    );
-    if (
-      !credentialsType ||
-      this.lastCredentialsType === credentialsType &&
-      this.lastStorageTypeWithCredentials === currentStorageType
-    ) {
-      return;
-    }
-    this.setProperties({
-      lastCredentialsType: credentialsType,
-      lastStorageTypeWithCredentials: currentStorageType,
-    });
-    const credentials = this.getField(`${currentStorageType}.credentials`);
-    const isCredentialsDisabled =
-      credentialsType === 'none' ||
-      credentialsType === 'token';
-    set(
-      credentials,
-      'disabled',
-      isCredentialsDisabled
-    );
-    if (isCredentialsDisabled) {
-      this.send(
-        'inputChanged',
-        `${currentStorageType}.credentials`,
-        null,
-      );
-    }
-
-    if (currentStorageType === 'webdav' || currentStorageType === 'http') {
-      const onedataAccessToken = this.getField(
-        `${currentStorageType}.onedataAccessToken`
-      );
-      const isNonTokenCredentialsType = credentialsType !== 'token';
-
-      set(onedataAccessToken, 'disabled', isNonTokenCredentialsType);
-
-      const authorizationHeader = this.getField(
-        `${currentStorageType}.authorizationHeader`
-      );
-      set(authorizationHeader, 'disabled', isNonTokenCredentialsType);
-
-      if (isNonTokenCredentialsType) {
-        this.send(
-          'inputChanged',
-          `${currentStorageType}.onedataAccessToken`,
-          null,
-        );
-        this.send(
-          'inputChanged',
-          `${currentStorageType}.authorizationHeader`,
-          null,
-        );
-      }
-    }
-    if (currentStorageType === 'webdav') {
-      const oauth2IdP = this.getField(`${currentStorageType}.oauth2IdP`);
-      const isOauth2IdPDisabled = credentialsType !== 'oauth2';
-      set(oauth2IdP, 'disabled', isOauth2IdPDisabled);
-
-      if (isOauth2IdPDisabled) {
-        this.send(
-          'inputChanged',
-          `${currentStorageType}.oauth2IdP`,
-          null,
-        );
-      }
+    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
+    const maxCanonicalObjectSize = this.s3Group.getFieldByPath('maximumCanonicalObjectSize');
+    const isFieldDisabled = pathType === 'flat';
+    maxCanonicalObjectSize.set('isEnabled', !isFieldDisabled);
+    if (isFieldDisabled) {
+      maxCanonicalObjectSize.valueChanged(null);
     }
   },
 
-  autoSettingsSimulatedFilesystem() {
-    if (this.currentStorageType !== 'nulldevice') {
-      return;
-    }
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
-    const growSpeedField = this.getField('nulldevice.simulatedFilesystemGrowSpeed');
-    const paramsField = this.getField('nulldevice.simulatedFilesystemParameters');
-    const areFieldsDisabled = !importedStorage;
-    set(growSpeedField, 'disabled', areFieldsDisabled);
-    set(paramsField, 'disabled', areFieldsDisabled);
-    if (areFieldsDisabled) {
-      this.send(
-        'inputChanged',
-        'nulldevice.simulatedFilesystemGrowSpeed',
-        null,
-      );
-      this.send(
-        'inputChanged',
-        'nulldevice.simulatedFilesystemParameters',
-        null,
-      );
-    }
-  },
-
-  autoSettingsMaxCanonicalObjectSize() {
-    if (this.currentStorageType !== 's3') {
-      return;
-    }
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-    const field = this.getField('s3.maximumCanonicalObjectSize');
-    const isMaximumCanonicalObjectSizeDisabled = storagePathType === 'flat';
-    set(field, 'disabled', isMaximumCanonicalObjectSizeDisabled);
-    if (isMaximumCanonicalObjectSizeDisabled) {
-      this.send(
-        'inputChanged',
-        's3.maximumCanonicalObjectSize',
-        null,
-      );
-    }
-  },
-
-  autoSettingsImportedItemMode() {
-    if (this.currentStorageType !== 's3') {
-      return;
-    }
-    const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-    const importedStorage = this.get(`formValues.${prefix}.importedStorage`);
-    const fileModeField = this.getField('s3.fileMode');
-    const dirModeField = this.getField('s3.dirMode');
-    const areFieldsDisabled = !importedStorage;
-    set(fileModeField, 'disabled', areFieldsDisabled);
-    set(dirModeField, 'disabled', areFieldsDisabled);
-    if (areFieldsDisabled) {
-      this.send(
-        'inputChanged',
-        's3.fileMode',
-        null,
-      );
-      this.send(
-        'inputChanged',
-        's3.dirMode',
-        null,
-      );
-    }
-  },
-
-  autoSettingsAll() {
-    this.autoSettingsImportedStorage();
-    this.autoSettingsReadonly();
-    this.autoSettingsRangeWriteSupport();
-  },
-
-  lockToggle(fieldName, state, lockHint = null) {
-    const mode = this.get('mode');
-    if (mode === 'show') {
-      return;
-    }
-    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
-    const fieldPath = `${prefix}.${fieldName}`;
-    const field = this.getField(fieldPath);
-    if (!get(field, 'disabled') || get(field, 'lockHint') !== lockHint) {
-      setProperties(field, {
-        disabled: true,
-        lockHint,
-      });
-    }
-    const current = this.get(`formValues.${fieldPath}`);
-    if (state !== undefined && Boolean(current) !== Boolean(state)) {
-      this.send(
-        'inputChanged',
-        fieldPath,
-        Boolean(state),
-      );
-    }
-  },
-
-  unlockToggle(fieldName) {
-    const mode = this.get('mode');
-    if (mode === 'show') {
+  autoSettingsImportedItemMode(type) {
+    if (type !== 's3' || this.mode === 'show') {
       return;
     }
 
-    const prefix = (mode === 'edit' ? 'generic_editor' : 'generic');
-    const field = this.getField(`${prefix}.${fieldName}`);
-
-    if (get(field, 'disabled')) {
-      setProperties(field, {
-        disabled: false,
-        lockHint: null,
-      });
+    const importedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
+    const fileModeField = this.s3Group.getFieldByPath('fileMode');
+    const dirModeField = this.s3Group.getFieldByPath('dirMode');
+    fileModeField.set('isEnabled', importedStorage);
+    dirModeField.set('isEnabled', importedStorage);
+    if (!importedStorage) {
+      fileModeField.valueChanged(null);
+      dirModeField.valueChanged(null);
     }
   },
 
-  /**
-   * Generic storage type field has different default value for various storage types
-   * and should be disabled (fixed for single value) for some.
-   */
-  configureStoragePathType() {
-    const currentStorageType = this.get('currentStorageType');
-    const currentStoragePathTypeConfig = storagePathTypeConfig[currentStorageType];
-    if (currentStoragePathTypeConfig) {
-      this.set(
-        'allFieldsValues.generic.storagePathType',
-        currentStoragePathTypeConfig.defaultValue
-      );
-      const pathTypeField = this.get('allFields')
-        .findBy('name', 'generic.storagePathType');
-      if (pathTypeField) {
-        set(
-          pathTypeField,
-          'disabled',
-          Boolean(currentStoragePathTypeConfig.disabled)
-        );
-      }
-    }
+  autoSettingsAll(type) {
+    this.autoSettingsImportedStorage(type);
+    this.autoSettingsReadonly(type);
+    this.autoSettingsRangeWriteSupport(type);
+    this.autoSettingsBlockSize(type);
+    this.autoSettingsMaxCanonicalObjectSize(type);
+    this.autoSettingsSimulatedFilesystem(type);
+    this.autoSettingsImportedItemMode(type);
   },
 
-  /**
-   * @override
-   */
-  resetFormValues() {
+  willDestroyElement() {
     this._super(...arguments);
-    this.configureStoragePathType();
-    this.resetQosFormState();
-    this.autoSettingsAll();
-  },
-
-  /**
-   * @returns {undefined}
-   */
-  resetQosFormState() {
-    this.setProperties({
-      areQosParamsValid: true,
-      editedQosParams: undefined,
-    });
-  },
-
-  /**
-   * Sets fields labels and tips translations
-   * @returns {undefined}
-   */
-  _addFieldsLabels() {
-    const {
-      storageTypes,
-      genericFields,
-      lumaFields,
-    } = this.getProperties('storageTypes', 'genericFields', 'lumaFields');
-    storageTypes.forEach(({ id: typeId, fields }) => {
-      fields.forEach(field =>
-        this._addFieldLabelTranslation(typeId, field)
-      );
-    });
-    genericFields.forEach(field =>
-      this._addFieldLabelTranslation('generic', field)
-    );
-    lumaFields.forEach(field =>
-      this._addFieldLabelTranslation('luma', field)
-    );
-  },
-
-  /**
-   * Sets field label and tip translations
-   * @param {string} typeId storage type
-   * @param {FieldType} field
-   * @returns {undefined}
-   */
-  _addFieldLabelTranslation(typeId, field) {
-    if (!field.label) {
-      field.set('label', this.t(
-        `${typeId}.${this.cutOffPrefix(field.name)}.name`
-      ));
-    }
-    if (field.tip === true) {
-      field.set('tip', this.t(
-        `${typeId}.${this.cutOffPrefix(field.name)}.tip`
-      ));
-    }
-  },
-
-  /**
-   * Creates static fields
-   * @returns {undefined}
-   */
-  _generateStaticFields() {
-    const createFields = this.get('createFields');
-
-    const staticFields = createFields.map(f => EmberObject.create(f));
-    staticFields.forEach(field => {
-      field.setProperties({
-        type: 'static',
-        name: this._addToFieldPrefix(field, '_static'),
-      });
-    });
-
-    this.set('staticFields', staticFields);
-  },
-
-  /**
-   * Creates editor fields
-   * @returns {undefined}
-   */
-  _generateEditorFields() {
-    const {
-      createFields,
-      staticFields,
-    } = this.getProperties('createFields', 'staticFields');
-
-    this.set('editorFields', createFields.map((createField, index) => {
-      const field = EmberObject.create(
-        createField.get('notEditable') ? staticFields[index] : createField
-      );
-      field.set('name', this._addToFieldPrefix(field, '_editor'));
-      return field;
-    }));
-  },
-
-  /**
-   * Sets form default values to values gathered from storage
-   * @returns {undefined}
-   */
-  _fillInForm() {
-    const {
-      storageTypes,
-      storage,
-      allFieldsValues,
-      allFields,
-    } = this.getProperties(
-      'storageTypes',
-      'storage',
-      'allFieldsValues',
-      'allFields'
-    );
-
-    this.prepareFields();
-    this.resetQosFormState();
-
-    const storageTypeId = get(storage, 'type');
-    const storageType = storageTypes.findBy('id', storageTypeId);
-    this.send('storageTypeChanged', storageType);
-
-    this._toggleLumaPrefix(storage['lumaFeed'] === 'external', false);
-
-    ['generic', 'luma', get(storageType, 'id')].forEach(prefix => {
-      _.keys(allFieldsValues[prefix]).forEach(fieldName => {
-        const editorFieldName = prefix + '_editor.' + fieldName;
-        const editorField = allFields.findBy('name', editorFieldName);
-        const fieldOptions = get(editorField, 'options');
-        let staticValue = storage[fieldName];
-        if (fieldOptions) {
-          const option = fieldOptions.findBy('value', staticValue);
-          if (option) {
-            staticValue = get(option, 'label');
-          }
-        }
-        allFieldsValues.set(prefix + '_static.' + fieldName, staticValue);
-        allFieldsValues.set(editorFieldName, storage[fieldName]);
-      });
-    });
-    allFieldsValues.set('type_static.type', get(storageType, 'name'));
-  },
-
-  /**
-   * Adds suffix to the field prefix so it changes from
-   * prefix.fieldName to prefixsuffix.fieldName.
-   * @param {FieldType} field
-   * @param {string} suffix
-   * @returns {string} new field name
-   */
-  _addToFieldPrefix(field, suffix) {
-    return field.get('originPrefix') + suffix + '.' +
-      this.cutOffPrefix(field.get('name'));
-  },
-
-  /**
-   * Shows/hides luma fields
-   * @param {boolean} isVisible
-   * @param {boolean} animate
-   */
-  _toggleLumaPrefix(isVisible, animate = true) {
-    const {
-      allFields,
-      inEditionMode,
-      lumaPrefixVisibleTimeoutId,
-    } = this.getProperties(
-      'allFields',
-      'inEditionMode',
-      'lumaPrefixVisibleTimeoutId'
-    );
-
-    const lumaFields = allFields
-      .filter(f => f.get('name').startsWith('luma.') ||
-        f.get('name').startsWith('luma_editor.'));
-
-    clearTimeout(lumaPrefixVisibleTimeoutId);
-    if (animate) {
-      if (isVisible) {
-        lumaFields.forEach(field =>
-          set(field, 'cssClass', 'transparent animated fast fadeIn')
-        );
-        this.set('lumaPrefixVisible', true);
-      } else {
-        this.set('lumaPrefixVisibleTimeoutId', setTimeout(() => {
-          run(() => safeExec(this, 'set', 'lumaPrefixVisible', false));
-        }, VISIBILITY_ANIMATION_TIME));
-        lumaFields.forEach(field =>
-          set(field, 'cssClass', 'transparent animated fast fadeOut')
-        );
-      }
-    } else {
-      lumaFields.forEach(field => set(field, 'cssClass', ''));
-      this.set('lumaPrefixVisible', isVisible);
-    }
-    // load default values for luma fields in "create" mode
-    if (isVisible && !inEditionMode) {
-      const prefix = (this.mode === 'edit' ? 'generic_editor' : 'generic');
-      const storagePathType = this.get(`formValues.${prefix}.storagePathType`);
-
-      this.resetFormValues(['luma']);
-
-      this.send(
-        'inputChanged',
-        `${prefix}.storagePathType`,
-        storagePathType,
-      );
-    }
+    this.fields.destroy();
   },
 
   actions: {
-    storageTypeChanged(type) {
-      this.set('selectedStorageType', type);
-    },
-
-    inputChanged(fieldName, value) {
-      this.changeFormValue(fieldName, value);
-      if (fieldName === 'generic.lumaFeed' ||
-        fieldName === 'generic_editor.lumaFeed') {
-        this._toggleLumaPrefix(value === 'external');
-      }
-    },
-
-    toggleChanged({ newValue, context }) {
-      const fieldName = context.get('fieldName');
-      this.send('inputChanged', fieldName, newValue);
-    },
-
-    focusOut(field) {
-      const {
-        inEditionMode,
-        lumaExternalByEdition,
-      } = this.getProperties('inEditionMode', 'lumaExternalByEdition');
-      const formValue = this.get('formValues.' + get(field, 'name'));
-
-      const isLumaEditorField =
-        _.startsWith(get(field, 'name'), 'luma_editor.') && lumaExternalByEdition;
-
-      // do not allow validation for not modified fields in edition mode
-      if (
-        !inEditionMode ||
-        ((formValue !== undefined && formValue !== null) || isLumaEditorField)
-      ) {
-        set(field, 'changed', true);
-        this.recalculateErrors();
-      }
-    },
-
-    showModifyModal() {
-      this.set('modifyModalVisible', true);
-      return resolve();
-    },
-
     qosParamsChanged({ isValid, qosParams }) {
       this.setProperties({
         areQosParamsValid: isValid,
@@ -1211,27 +568,35 @@ export default OneForm.extend(I18n, Validations, {
 
     async submit() {
       const {
-        formValues,
-        currentFields,
         selectedStorageType,
         inEditionMode,
         storage,
+        fields,
         editedQosParams,
       } = this;
 
       this.set('isSavingStorage', true);
-
+      const form = fields.dumpValue();
       let formData = {};
+      for (const [name, value] of Object.entries(form.basic)) {
+        formData[name] = value;
+      }
 
-      currentFields.forEach(({ name }) => {
-        const prefixlessName = this.cutOffPrefix(name);
-        formData[prefixlessName] = formValues.get(name);
-      });
+      if (form.basic.lumaFeed === 'external') {
+        for (const [name, value] of Object.entries(form.luma)) {
+          formData[name] = value;
+        }
+      }
+
+      for (const [name, value] of Object.entries(form[selectedStorageType])) {
+        formData[name] = value;
+      }
+
       formData = stripObject(formData, [undefined, null]);
       if (editedQosParams) {
         set(formData, 'qosParameters', editedQosParams);
       }
-      formData.type = selectedStorageType.id;
+
       if (!inEditionMode) {
         formData = stripObject(formData, ['']);
       } else {
@@ -1256,6 +621,12 @@ export default OneForm.extend(I18n, Validations, {
       } finally {
         safeExec(this, () => this.set('isSavingStorage', false));
       }
+    },
+
+    cancel() {
+      this.cancel();
+      this.fields.reset();
+      this._fillInForm();
     },
   },
 });
