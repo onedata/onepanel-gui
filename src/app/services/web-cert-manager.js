@@ -17,6 +17,8 @@ import { reject, resolve } from 'rsvp';
 import config from 'ember-get-config';
 import changeDomain from 'onepanel-gui/utils/change-domain';
 import globals from 'onedata-gui-common/utils/globals';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
+import domainMatches from 'onepanel-gui/utils/domain-matches';
 
 const {
   time: {
@@ -24,11 +26,18 @@ const {
   },
 } = config;
 
+/**
+ * @typedef {Object} Onepanel.WebCert
+ * See: https://github.com/onedata/onepanel-javascript-client/blob/develop/docs/WebCert.md
+ * for used version of onepanel-javascript-client npm package.
+ */
+
 export default Service.extend(createDataProxyMixin('webCert'), {
   onepanelServer: service(),
   guiUtils: service(),
   deploymentManager: service(),
   providerManager: service(),
+  clusterModelManager: service(),
 
   /**
    * @type {ComputedProperty<String>}
@@ -43,13 +52,48 @@ export default Service.extend(createDataProxyMixin('webCert'), {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  webCertValid: computed('webCert.status', function webCertValid() {
-    const { webCert } = this;
-    return !webCert || (
-      webCert.status === 'valid' &&
-      this.isWebCertDomainValid(webCert)
-    );
-  }),
+  webCertValid: computed(
+    'webCert.status',
+    'isS3DomainValidProxy.content',
+    function webCertValid() {
+      const { webCert } = this;
+      const isS3DomainValid = this.isS3DomainValidProxy.content;
+      return !webCert || (
+        webCert.status === 'valid' &&
+        this.isWebCertDomainValid(webCert) &&
+        isS3DomainValid !== false
+      );
+    }
+  ),
+
+  /**
+   * Checks if there is `s3` subdomain included in domains if S3 is enabled.
+   * If there is no S3 in the cluster, it is considered as valid.
+   * @type {ComputedProperty<PromiseObject<boolean>>}
+   */
+  isS3DomainValidProxy: computed(
+    'webCertProxy.content',
+    'onepanelServiceType',
+    function isS3DomainValidProxy() {
+      const resolver = async () => {
+        if (this.onepanelServiceType === 'onezone') {
+          return true;
+        }
+        const { clusterHostsInfo } = await this.deploymentManager.getClusterHostsInfo();
+        const isS3Enabled = clusterHostsInfo.some(host => host.oneS3);
+        if (!isS3Enabled) {
+          return true;
+        }
+        const webCert = await this.webCertProxy;
+        const serviceDomain = this.guiUtils.serviceDomain;
+        const expectedS3DnsName = `s3.${serviceDomain}`;
+        return webCert.dnsNames.some(dnsName =>
+          domainMatches(expectedS3DnsName, dnsName)
+        );
+      };
+      return promiseObject(resolver());
+    }
+  ),
 
   /**
    * @returns {Promise<Onepanel.WebCert>}
@@ -117,6 +161,6 @@ export default Service.extend(createDataProxyMixin('webCert'), {
     if (!webCert || !serviceDomain) {
       return false;
     }
-    return webCert.dnsNames.includes(serviceDomain);
+    return webCert.dnsNames.some(dnsName => domainMatches(serviceDomain, dnsName));
   },
 });

@@ -96,10 +96,13 @@ const mockSubdomain = (mockServiceType === 'oneprovider' ? 'oneprovider1' : 'one
  */
 const responseDelay = 100;
 
+/** @type {Onepanel.WebCert} */
 const defaultWebCert = {
-  status: 'near_expiration',
+  status: 'valid',
+  // uncomment below for near expiration warning
+  // status: 'near_expiration',
   letsEncrypt: true,
-  expirationTime: moment().subtract(2, 'months').add(4, 'years').toISOString(),
+  expirationTime: moment().add(3, 'months').toISOString(),
   creationTime: moment().subtract(2, 'months').toISOString(),
   paths: {
     cert: '/tmp/cert.pem',
@@ -110,6 +113,7 @@ const defaultWebCert = {
   dnsNames: [
     'rtransfer.dev-oneprovider-krakow.default.svc.cluster.local',
     'dev-oneprovider-krakow.default.svc.cluster.local',
+    // comment-out the domain below to see no-s3-domain warning
     's3.dev-oneprovider-krakow.default.svc.cluster.local',
   ],
   issuer: 'Example Inc.',

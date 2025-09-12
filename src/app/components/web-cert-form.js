@@ -3,12 +3,13 @@
  *
  * @author Jakub Liput, Agnieszka Warchoł
  * @copyright (C) 2018-2024 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Component from '@ember/component';
 import { computed, get } from '@ember/object';
-import { reads, not } from '@ember/object/computed';
+import { reads, not, bool } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import _ from 'lodash';
 import I18n from 'onedata-gui-common/mixins/i18n';
@@ -125,6 +126,23 @@ export default Component.extend(I18n, {
   ),
 
   domainWarningText: computedT('fields.dnsNames.noneMatchWarning'),
+
+  isDomainWarningShown: bool('domainWarningTip'),
+
+  noS3DomainWarningText: computedT('fields.dnsNames.noS3DomainWarningText'),
+
+  noS3DomainWarningTip: computed('currentDomain', function noS3DomainWarningTip() {
+    return this.t('fields.dnsNames.noS3DomainWarningTip', {
+      currentDomain: this.currentDomain,
+    });
+  }),
+
+  isS3DomainWarningShown: computed(
+    'webCertManager.isS3DomainValidProxy.content',
+    function isS3DomainWarningShown() {
+      return this.webCertManager.isS3DomainValidProxy.content === false;
+    }
+  ),
 
   /**
    * Time left until expired certificate
@@ -314,17 +332,29 @@ export default Component.extend(I18n, {
     const component = this;
     return StaticListField.extend({
       dnsNames: component.computedDefaultValueFor('dnsNames'),
-      value: computed('dnsNames', 'warningTip', function value() {
-        const items = sortDnsNames(this.dnsNames);
-        if (this.warningTip) {
-          items.push(new ListFieldComponent('web-cert-form/warning-item'));
-        }
-        return items;
-      }),
-      /** for warning-item */
-      warningTip: reads('component.domainWarningTip'),
-      /** for warning-item */
-      warningText: reads('component.domainWarningText'),
+      value: computed(
+        'dnsNames',
+        'component.{isDomainWarningShown,isS3DomainWarningShown}',
+        function value() {
+          const items = sortDnsNames(this.dnsNames);
+          if (this.component.isDomainWarningShown) {
+            items.push(
+              new ListFieldComponent(
+                'web-cert-form/warning-item',
+                new NoDnsDomainWarningOptions(this.component)
+              ),
+            );
+          }
+          if (this.component.isS3DomainWarningShown) {
+            items.push(
+              new ListFieldComponent(
+                'web-cert-form/warning-item',
+                new NoS3DomainWarningOptions(this.component)
+              ),
+            );
+          }
+          return items;
+        }),
       mode: 'view',
     }).create({
       component,
@@ -457,4 +487,48 @@ function sortDnsNames(dnsNames) {
   }));
   return _.orderBy(sortableNamesData, ['segmentsCount', 'dnsName'], ['asc', 'desc'])
     .map(({ name }) => name);
+}
+
+/**
+ * @implements {WebCertFormWarningItemOptions}
+ */
+class NoDnsDomainWarningOptions {
+  /**
+   * @param {WebCertFormComponent} webCertFormComponent
+   */
+  constructor(webCertFormComponent) {
+    this.webCertFormComponent = webCertFormComponent;
+  }
+
+  /** @type {SafeString} */
+  get warningText() {
+    return this.webCertFormComponent.domainWarningText;
+  }
+
+  /** @type {SafeString} */
+  get warningTip() {
+    return this.webCertFormComponent.domainWarningTip;
+  }
+}
+
+/**
+ * @implements {WebCertFormWarningItemOptions}
+ */
+class NoS3DomainWarningOptions {
+  /**
+   * @param {WebCertFormComponent} webCertFormComponent
+   */
+  constructor(webCertFormComponent) {
+    this.webCertFormComponent = webCertFormComponent;
+  }
+
+  /** @type {SafeString} */
+  get warningText() {
+    return this.webCertFormComponent.noS3DomainWarningText;
+  }
+
+  /** @type {SafeString} */
+  get warningTip() {
+    return this.webCertFormComponent.noS3DomainWarningTip;
+  }
 }
