@@ -172,15 +172,14 @@ export default Component.extend(I18n, GlobalActions, {
         'finishAction',
         'noStorages'
       );
-      if (noStorages) {
-        return [];
-      } else {
-        const actions = [addStorageAction];
-        if (finishButton) {
-          actions.push(finishAction);
-        }
-        return actions;
+      const actions = [];
+      if (!noStorages) {
+        actions.push(addStorageAction);
       }
+      if (finishButton) {
+        actions.push(finishAction);
+      }
+      return actions;
     }
   ),
 

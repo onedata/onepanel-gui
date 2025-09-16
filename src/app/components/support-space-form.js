@@ -99,7 +99,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   values: Object.freeze({
     token: '',
     size: '',
-    sizeUnit: 'mib',
+    sizeUnit: 'gib',
   }),
 
   /**
