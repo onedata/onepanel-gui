@@ -1,11 +1,14 @@
 .conflicting-ports-info {
   display: flex;
   align-items: center;
-  gap: 0.3em;
+
+  .info-icon + .text {
+    // determined empirically to match paddings visually
+    margin-left: 15px;
+  }
 
   .one-icon {
     font-size: 2em;
-    display: inline-block;
   }
 
   .text {

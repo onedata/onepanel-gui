@@ -2,7 +2,8 @@
  * Table with cluster hosts
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -51,6 +52,16 @@ const Validations = buildValidations(generateColumnValidations(requiredRoles));
 // as a primary cluster manager
 
 /**
+ * @typedef {'create'|'edit'|'show'} ClusterHostTableMode
+ */
+
+/**
+ * Maps hostname to object with info about readonly toggles for table row in cluster host
+ * table.
+ * @typedef {Object<string, ClusterHostTableRowReadonlyServices>} ClusterHostTableReadonlyServices
+ */
+
+/**
  * Renders a table in which roles can be set to hosts for cluster deployment
  *
  * @author Jakub Liput, Michał Borzęcki
@@ -88,6 +99,12 @@ export default BasicTable.extend(
 
     /**
      * @virtual optional
+     * @type {ClusterHostTableReadonlyServices}
+     */
+    readonlyServicesHosts: undefined,
+
+    /**
+     * @virtual optional
      */
     removeHost: notImplementedReject,
 
@@ -96,6 +113,11 @@ export default BasicTable.extend(
      * @type {Array<ClusterHostInfo>}
      */
     hosts: null,
+
+    /**
+     * @type {ClusterHostTableMode}
+     */
+    mode: 'create',
 
     /**
      * If true, do not allow to edit cluster
@@ -131,6 +153,21 @@ export default BasicTable.extend(
     removeHostAvailable: computed('removeHost', function () {
       return this.get('removeHost') !== notImplementedReject;
     }),
+
+    hostsRowData: computed(
+      'hosts.@each.hostname',
+      'blinkingHosts.[]',
+      'readonlyServicesHosts',
+      'primaryClusterManager',
+      function hostsRowData() {
+        return this.hosts.map(hostInfo => ({
+          hostInfo,
+          isPrimaryClusterManager: this.primaryClusterManager === hostInfo.hostname,
+          readonlyServices: this.readonlyServicesHosts?.[hostInfo.hostname],
+          isBlinking: this.blinkingHosts.includes(hostInfo),
+        }));
+      }
+    ),
 
     tableValidChanged: observer('allValid', function () {
       const {

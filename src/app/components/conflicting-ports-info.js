@@ -34,7 +34,7 @@ export default Component.extend(I18n, {
   hostsWithConflictedOneS3: computed(
     'hosts.@each.{clusterWorker,oneS3}',
     function hostsWithConflictedOneS3() {
-      return this.hosts.filter((host) => host.clusterWorker && host.oneS3);
+      return this.hosts?.filter((host) => host.clusterWorker && host.oneS3) ?? [];
     }
   ),
 

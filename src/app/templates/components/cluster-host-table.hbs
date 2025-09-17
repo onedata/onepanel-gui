@@ -16,18 +16,19 @@
 {{!-- TODO validation - highlight cols/rows if not valid --}}
 {{!-- TODO use checkboxes values from above --}}
 <tbody>
-  {{#each hosts as |host|}}
+  {{#each this.hostsRowData key="hostInfo" as |row|}}
     <ClusterHostTableRow
-      @host={{host}}
-      @isPrimaryClusterManager={{eq primaryClusterManager host.hostname}}
-      @isOneS3Visible={{isOneS3Visible}}
+      @host={{row.hostInfo}}
+      @isPrimaryClusterManager={{row.isPrimaryClusterManager}}
+      @isOneS3Visible={{this.isOneS3Visible}}
       @checkboxChanged={{action "checkboxChanged"}}
       @removeHost={{action "removeHost"}}
       @primaryClusterManagerChanged={{action "primaryClusterManagerChanged"}}
-      @isReadOnly={{isReadOnly}}
-      @removeAvailable={{removeHostAvailable}}
-      @isMobile={{_isMobile}}
-      @blinking={{contains host blinkingHosts}}
+      @mode={{this.mode}}
+      @readonlyServices={{row.readonlyServices}}
+      @removeAvailable={{this.removeHostAvailable}}
+      @isMobile={{this._isMobile}}
+      @blinking={{row.isBlinking}}
     />
   {{/each}}
 </tbody>

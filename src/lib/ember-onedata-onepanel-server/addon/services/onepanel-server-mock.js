@@ -4,7 +4,8 @@
  * See `REQ_HANDLER` in this file to manipulate responses
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2025 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -38,6 +39,7 @@ import { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 import globals from 'onedata-gui-common/utils/globals';
+import { S3DeploymentStep } from 'onepanel-gui/components/modals/enable-s3-modal';
 
 const {
   TaskStatus,
@@ -666,6 +668,22 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
+        /** @type {S3DeploymentTaskStatus} */
+        const s3DeploymentTaskStatus = {
+          steps: [
+            S3DeploymentStep.OneS3CreateService,
+            S3DeploymentStep.OneS3AddServiceHost,
+            S3DeploymentStep.OneproviderSetClusterIps,
+            S3DeploymentStep.OnepanelSetMarker,
+            S3DeploymentStep.OneS3Configure,
+            S3DeploymentStep.OneproviderStart,
+            S3DeploymentStep.OneproviderWaitForInit,
+            S3DeploymentStep.LetsEncryptDisable,
+          ],
+          status: 'ok',
+          totalSteps: 8,
+        };
+        this.set('addOneS3Task', s3DeploymentTaskStatus);
       } else if (mockServiceType === 'onezone') {
         this.set('__dnsCheck', {
           domain: {
@@ -789,13 +807,16 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_ClusterApi_getTaskStatus: computed('progressMock', function () {
-      const progressMock = this.get('progressMock');
+      const { progressMock } = this;
+      const serverMock = this;
       return {
         success(taskId) {
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
           } else if (taskId.startsWith('popularity')) {
             return getPopularityTask(taskId);
+          } else if (taskId === 'addOnes3') {
+            return serverMock.addOneS3Task;
           } else {
             throw new Error(
               `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
@@ -981,7 +1002,10 @@ export default OnepanelServerBase.extend(
     _req_OneproviderClusterApi_getProviderConfiguration() {
       if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
-          success: () => this.get('__configuration').plainCopy(),
+          success: () => {
+            debugger;
+            return this.get('__configuration').plainCopy();
+          },
         };
       } else {
         return {
@@ -1232,6 +1256,14 @@ export default OnepanelServerBase.extend(
       return {
         success: () => null,
         taskId: 'configure',
+      };
+    },
+
+    _req_OneproviderClusterApi_addOnes3() {
+      const taskId = 'addOnes3';
+      return {
+        success: () => ({ taskId }),
+        taskId,
       };
     },
 
@@ -1581,7 +1613,7 @@ export default OnepanelServerBase.extend(
       const configuration = {
         cluster: {
           databases: {
-            hosts: ['node1.example.com'],
+            hosts: ['node1.example.com', 'node3.example.com'],
           },
           managers: {
             mainHost: 'node2.example.com',

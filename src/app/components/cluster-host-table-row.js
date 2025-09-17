@@ -14,12 +14,26 @@ import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 import { computed, get } from '@ember/object';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import { inject as service } from '@ember/service';
+import I18n from 'onedata-gui-common/mixins/i18n';
 
-export default Component.extend({
+/**
+ * @typedef {'database'|'clusterWorker'|'clusterManager'|'primaryClusterManager'|'oneS3'} ClusterHostTableToggleId
+ */
+
+/**
+ * Maps: name of service/role (toggle ID) -> boolean if toggle is readonly or the tooltip
+ * for readonliness.
+ * @typedef {Object<ClusterHostTableToggleId, boolean|SafeString>} ClusterHostTableRowReadonlyServices
+ */
+
+export default Component.extend(I18n, {
   tagName: 'tr',
   classNames: ['cluster-host-table-row', 'animated', 'infinite'],
   classNameBindings: ['active', 'blinking:pulse-bg-mint'],
   attributeBindings: ['dataHostname:data-hostname'],
+
+  /** @override */
+  i18nPrefix: 'components.clusterHostTableRow',
 
   onepanelServer: service(),
 
@@ -28,6 +42,12 @@ export default Component.extend({
    * @type {ClusterHostInfo}
    */
   host: undefined,
+
+  /**
+   * @virtual
+   * @type {ClusterHostTableMode}
+   */
+  mode: 'create',
 
   /**
    * @virtual
@@ -58,6 +78,14 @@ export default Component.extend({
    * @type {boolean}
    */
   isMobile: undefined,
+
+  /**
+   * Custom readonly service toggles mapping if the default one (computed in
+   * createReadOnlyState) is not properly fitted.
+   * @virtual
+   * @type {ClusterHostTableRowReadonlyServices}
+   */
+  readonlyServices: undefined,
 
   /**
    * @virtual optional
@@ -130,6 +158,44 @@ export default Component.extend({
         .then(hostname => hostname === dataHostname),
     });
   }),
+
+  effReadonlyServices: computed(
+    'readonlyServices',
+    'mode',
+    function effReadonlyServices() {
+      return this.readonlyServices ?? this.createReadOnlyState(this.mode);
+    }
+  ),
+
+  togglesLockTooltip: computed('effReadonlyServices', function togglesTooltip() {
+    const tooltips = {};
+    for (const [service, readonliness] of Object.entries(this.effReadonlyServices)) {
+      if (readonliness && typeof readonliness !== 'boolean') {
+        // this is probably a tip
+        tooltips[service] = readonliness;
+      }
+    }
+    return tooltips;
+  }),
+
+  /**
+   * Creates default disabled toggles mapping for table row.
+   * @param {ClusterHostTableMode} mode
+   * @returns {ClusterHostTableRowReadonlyServices}
+   */
+  createReadOnlyState(mode) {
+    const isCreating = mode === 'create';
+    return {
+      database: !isCreating,
+      clusterWorker: !isCreating,
+      clusterManager: !isCreating,
+      primaryClusterManager: !isCreating,
+      oneS3: mode === 'show' ||
+        // Gets state of oneS3 toggle only on mode change, because we want to be able to
+        // rollback to disabled state in single edit.
+        mode === 'edit' && this.host.oneS3,
+    };
+  },
 
   actions: {
     headerClick() {

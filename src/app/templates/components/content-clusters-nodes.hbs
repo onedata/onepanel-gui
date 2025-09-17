@@ -6,12 +6,46 @@
   <OneBsTab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|>
     <tab.pane @title={{tt this "tabServices"}}>
       <div class="row content-row">
-        <PromiseProxyContainer @proxy={{clusterHostsInfoProxy}}>
-          <ConflictingPortsInfo @hosts={{clusterHostsInfoProxy.clusterHostsInfo}} />
+        <PromiseProxyContainer @proxy={{this.servicesTabProxy}}>
+          <div class="row">
+            <div class="btn-toolbar">
+              {{#if (and this.isEditingServices this.isServicesTableModified)}}
+                <OneButton
+                  @type="primary"
+                  @buttonType="submit"
+                  @size="sm"
+                  @onClick={{action "applyServicesChanges"}}
+                  class="btn-submit-cluster-nodes"
+                >
+                  {{tt this "applyChanges"}}
+                </OneButton>
+              {{/if}}
+              <OneButton
+                @onClick={{action
+                  (if this.isEditingServices "endServicesEdit" "startServicesEdit")
+                }}
+                @type={{this.servicesEditButtonType}}
+                class="btn-sm"
+              >
+                {{this.servicesEditButtonTitle}}
+              </OneButton>
+            </div>
+          </div>
+          {{#if this.isEditingServices}}
+            <div class="alert alert-info editing-unlocked-toggles-alert">
+              <OneIcon @icon="browser-rename" class="info-icon"/>
+              <span class="text">{{tt this "editingUnlockedToggles"}}</span>
+            </div>
+          {{/if}}
+          <ConflictingPortsInfo
+            @hosts={{clusterHostsInfoProxy.content.clusterHostsInfo}}
+          />
           <ClusterHostTable
-            @hosts={{clusterHostsInfoProxy.clusterHostsInfo}}
-            @primaryClusterManager={{primaryClusterManager}}
-            @isReadOnly={{true}}
+            @hosts={{this.servicesTableHosts}}
+            @primaryClusterManager={{this.servicesTablePrimaryClusterManager}}
+            @mode={{this.servicesTableMode}}
+            @hostOptionChanged={{action "hostOptionChanged"}}
+            @readonlyServicesHosts={{this.readonlyServicesHosts}}
           />
         </PromiseProxyContainer>
       </div>
@@ -27,36 +61,34 @@
           </p>
         {{/if}}
       </div>
-      <div class="row header-row">
-        <h1>
-          <div class="btn-toolbar">
-            {{#if (or ipsEdit ipsSetupProxy.isPending)}}
-              <OneButton
-                @type="primary"
-                @buttonType="submit"
-                @size="sm"
-                class={{concat "btn-setup-ips " (unless _hostsIpsFormValid "disabled")}}
-                @onClick={{action "startSetup"}}
-              >
-                <span>{{tt this "setupIpsButton"}}</span>
-                <OneTooltip
-                  @title={{t "mixins.components.clusterIpsConfigurator.configurationInvalid"}}
-                  @placement="left"
-                  class={{if _hostsIpsFormValid "hidden" ""}}
-                  @triggerElement=".btn-setup-ips"
-                />
-              </OneButton>
-            {{/if}}
+      <div class="row">
+        <div class="btn-toolbar">
+          {{#if (or ipsEdit ipsSetupProxy.isPending)}}
             <OneButton
-              @onClick={{action (if ipsEdit "cancelIpsEdit" "enableIpsEdit")}}
-              @type="default"
-              class="btn-sm"
-              @disabled={{ipsSetupProxy.isPending}}
+              @type="primary"
+              @buttonType="submit"
+              @size="sm"
+              class={{concat "btn-setup-ips " (unless _hostsIpsFormValid "disabled")}}
+              @onClick={{action "startSetup"}}
             >
-              {{tt this (if ipsEdit "cancelIpsEdit" "editIps")}}
+              <span>{{tt this "setupIpsButton"}}</span>
+              <OneTooltip
+                @title={{t "mixins.components.clusterIpsConfigurator.configurationInvalid"}}
+                @placement="left"
+                class={{if _hostsIpsFormValid "hidden" ""}}
+                @triggerElement=".btn-setup-ips"
+              />
             </OneButton>
-          </div>
-        </h1>
+          {{/if}}
+          <OneButton
+            @onClick={{action (if ipsEdit "cancelIpsEdit" "enableIpsEdit")}}
+            @type="default"
+            class="btn-sm"
+            @disabled={{ipsSetupProxy.isPending}}
+          >
+            {{tt this (if ipsEdit "cancelIpsEdit" "editIps")}}
+          </OneButton>
+        </div>
       </div>
       <div class="row content-row">
         <PromiseProxyContainer @proxy={{hostsLoadingProxy}}>

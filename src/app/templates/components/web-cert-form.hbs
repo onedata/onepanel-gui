@@ -1,7 +1,7 @@
 <div class="form form-horizontal form-component">
   <FormComponent::FieldRenderer @field={{fields}} />
 </div>
-<BsModal
+<OneModal
   @id="lets-encrypt-changed"
   @open={{showLetsEncryptChangeModal}}
   @keyboard={{true}}
@@ -42,4 +42,4 @@
       {{tt this (concat "changedModal.submitBtn." (if formLetsEncryptValue "enable" "disable"))}}
     </OneButton>
   </modal.footer>
-</BsModal>
+</OneModal>
