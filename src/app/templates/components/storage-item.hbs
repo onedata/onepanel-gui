@@ -22,6 +22,18 @@
         <OneButton
           @type="default"
           @size="sm"
+          @onClick={{action "supportSpace"}}
+        >
+          {{!-- single line to avoid spaces --}}
+          <OneIcon
+            @icon="space"
+          /> <span class="text">{{tt this "supportSpace"}}</span>
+        </OneButton>
+      </span>
+      <span class="btn-tooltip-container">
+        <OneButton
+          @type="default"
+          @size="sm"
           @disabled={{whileEdition}}
           @onClick={{action "turnOnModifyStorage"}}
         >

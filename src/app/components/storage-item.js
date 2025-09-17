@@ -16,6 +16,7 @@ import _ from 'lodash';
 import config from 'ember-get-config';
 import $ from 'jquery';
 import globals from 'onedata-gui-common/utils/globals';
+import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-state';
 
 const {
   layoutConfig,
@@ -29,6 +30,7 @@ export default Component.extend(I18n, {
   storageActionsService: service('storageActions'),
   globalNotify: service(),
   i18n: service(),
+  router: service(),
 
   /**
    * @override
@@ -110,6 +112,18 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Action>}
    */
+  addSupportSpaceAction: computed(function addSupportSpaceAction() {
+    return {
+      action: () => this.supportSpace(),
+      title: this.t('supportSpace'),
+      class: 'support-space hidden-lg hidden-md hidden-sm',
+      icon: 'space',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
   removeStorageAction: computed('hasSupportedSpaces', function () {
     const hasSupportedSpaces = this.get('hasSupportedSpaces');
     return {
@@ -124,7 +138,11 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<Action>>}
    */
-  storageActions: collect('modifyStorageAction', 'removeStorageAction'),
+  storageActions: collect(
+    'modifyStorageAction',
+    'addSupportSpaceAction',
+    'removeStorageAction'
+  ),
 
   /**
    * @type {Ember.ComputedProperty<Object>}
@@ -165,11 +183,27 @@ export default Component.extend(I18n, {
     }
   },
 
+  supportSpace() {
+    const transitionToArgs = ['onedata.sidebar.content.aspect', 'spaces', {
+      queryParams: {
+        options: serializeAspectOptions({
+          isFormOpened: 'true',
+          storageId: this.storageId,
+        }),
+      },
+    }];
+
+    this.router.transitionTo(...transitionToArgs);
+  },
+
   actions: {
     turnOnModifyStorage() {
       if (!this.get('whileEdition')) {
         this.toggleEdition();
       }
+    },
+    supportSpace() {
+      this.supportSpace();
     },
     async saveEdition(storageFormData) {
       const action = this.storageActionsService.createSaveStorageModificationAction({

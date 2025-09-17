@@ -4,6 +4,7 @@ export default {
   modifyStorageDetails: 'Modify storage backend details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage backend',
+  supportSpace: 'Support space',
   // TODO: VFS-11005 Handle single load errors
   unknown: 'unknown',
   generic: {

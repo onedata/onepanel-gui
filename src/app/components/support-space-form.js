@@ -161,6 +161,15 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
       const enabledStoragesItems = storages.rejectBy('disabled');
       if (enabledStoragesItems.length > 0) {
         safeExec(this, 'set', 'selectedStorageItem', enabledStoragesItems[0]);
+        if (this.storageId) {
+          const storageItem = storages.findBy(
+            'storage.id',
+            this.storageId
+          );
+          if (storageItem && !storageItem.disabled) {
+            safeExec(this, 'set', 'selectedStorageItem', storageItem);
+          }
+        }
       }
     });
   },
