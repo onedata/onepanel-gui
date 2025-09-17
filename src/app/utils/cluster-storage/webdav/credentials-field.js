@@ -32,4 +32,13 @@ export const CredentialsField = StorageTextField.extend({
     const type = this.parent.value?.credentialsType;
     return type === 'basic' || type === 'oauth2';
   }),
+
+  label: computed('parent.value.credentialsType', function label() {
+    const type = this.parent.value?.credentialsType;
+    if (type === 'oauth2') {
+      return this.getTranslation('labelOauth2');
+    } else {
+      return this.getTranslation('label');
+    }
+  }),
 });
