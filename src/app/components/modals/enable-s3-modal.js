@@ -143,6 +143,10 @@ export default class EnableS3ModalComponent extends Component {
     return this.currentState.stateName;
   }
 
+  get introText() {
+    return this.currentState.introText;
+  }
+
   /**
    * @param {EnableS3ModalState} stateName
    * @param {Object} context Passed as a second argument to State constructor.
@@ -166,6 +170,10 @@ class EnableS3ModalConfirmState {
     this.component = component;
   }
 
+  get locale() {
+    return this.component.locale;
+  }
+
   get stateName() {
     return EnableS3ModalState.Confirm;
   }
@@ -176,6 +184,12 @@ class EnableS3ModalConfirmState {
 
   get isCancelDisabled() {
     return false;
+  }
+
+  get introText() {
+    return this.locale.t(
+      `body.intro.${this.component.hostnames.length === 1 ? 'singular' : 'plural'}`
+    );
   }
 
   /**

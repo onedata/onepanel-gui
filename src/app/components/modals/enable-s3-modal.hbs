@@ -12,7 +12,7 @@
   </modal.header>
   <modal.body>
     {{#if (eq this.stateName EnableS3ModalState.Confirm)}}
-      <p>{{tt this "body.intro"}}</p>
+      <p>{{this.introText}}</p>
       <ul>
         {{#each this.hostnames as |hostname|}}
           <li>{{hostname}}</li>
