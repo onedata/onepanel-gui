@@ -40,6 +40,7 @@ import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 import globals from 'onedata-gui-common/utils/globals';
 import { S3DeploymentStep } from 'onepanel-gui/components/modals/enable-s3-modal';
+import { getMockGuiContext } from 'onedata-gui-common/initializers/fetch-gui-context';
 
 const {
   TaskStatus,
@@ -60,7 +61,14 @@ const MOCKED_SUPPORT = {
 const SERVICE_DOMAIN = 'dev-oneprovider-krakow.default.svc.cluster.local';
 const SERVICE_NAME = 'dev-oneprovider-krakow';
 
-const fallbackMockServiceType = 'oneprovider';
+/**
+ * Forced cluster type (onezone/oneprovider) in `ember s` mode. To change mocked cluster
+ * type, go to `onedata-gui-common/addon/initializers/fetch-gui-context` and change the
+ * `defaultMockGuiContext` const to other type of cluster.
+ * @type {'onezone'|'oneprovider'}
+ */
+const fallbackMockServiceType = getMockGuiContext().clusterType;
+
 const baseQosParameters = {
   storageId: 'e777476baf3418ed9861a97750be285ech9802',
   providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
@@ -1003,7 +1011,6 @@ export default OnepanelServerBase.extend(
       if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
           success: () => {
-            debugger;
             return this.get('__configuration').plainCopy();
           },
         };
@@ -1636,7 +1643,7 @@ export default OnepanelServerBase.extend(
       } else {
         Object.assign(configuration, {
           onezone: {
-            name: null,
+            name: 'mock-onezone',
             domainName: globals.location.hostname,
           },
         });

@@ -3,11 +3,8 @@
   .editing-unlocked-toggles-alert {
     display: flex;
     align-items: center;
-
-    .info-icon + .text {
-      // determined empirically to match paddings visually
-      margin-left: 15px;
-    }
+    // determined empirically to match paddings visually
+    gap: 15px;
 
     .one-icon {
       font-size: 2em;
@@ -15,6 +12,17 @@
 
     .text {
       min-width: 0;
+    }
+  }
+  .cluster-host-services-btn-toolbar {
+    display: flex;
+    justify-content: end;
+    gap: 0.5em;
+  }
+  .alert {
+    .cluster-host-services-btn-toolbar {
+      // determined empirically to match paddings visually
+      margin-right: 8px;
     }
   }
 }

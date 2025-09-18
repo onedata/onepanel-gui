@@ -3,7 +3,7 @@
  *
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
- * @copyrtght (C) 2025 Onedata (onedata.org)
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -11,7 +11,7 @@ import Component from '@ember/component';
 
 import { inject as service } from '@ember/service';
 import { computed, defineProperty, set } from '@ember/object';
-import { reads } from '@ember/object/computed';
+import { bool, reads } from '@ember/object/computed';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import clusterIpsConfigurator from 'onepanel-gui/mixins/components/cluster-ips-configurator';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -66,13 +66,19 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   /** @type {ClusterHostTableReadonlyServices} */
   readonlyServicesHosts: undefined,
 
+  /**
+   * Fulfills when data necessary for displaying services table tab is loaded.
+   * @type {PromiseObject}
+   */
+  servicesTabProxy: undefined,
+
   /** @type {import('./cluster-host-table').ClusterHostTableMode} */
   servicesTableMode: computed('isEditingServices', function servicesTableMode() {
     return this.isEditingServices ? 'edit' : 'show';
   }),
 
   /**
-   * @type {Ember.ComputedProperty<string>}
+   * @type {Ember.ComputedProperty<'onezone'|'oneprovider'>}
    */
   onepanelServiceType: reads('guiUtils.serviceType'),
 
@@ -86,7 +92,6 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
     }
   }),
 
-  // FIXME: to powinno mieć lepszą nazwę, bo obecnie sugeruje, że to jest prosta tablica
   /** @type {ComputedProperty<Array<Models.ClusterHostInfo>>} */
   servicesTableHosts: computed(
     'isEditingServices',
@@ -110,7 +115,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
     }
   ),
 
-  servicesEditButtonType: computed(
+  servicesCancelEditButtonType: computed(
     'isEditingServices',
     'isServicesTableModified',
     function servicesEditButtonType() {
@@ -119,25 +124,23 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
     }
   ),
 
-  servicesEditButtonTitle: computed(
-    'isEditingServices',
+  servicesCancelEditButtonTitle: computed(
     'isServicesTableModified',
     function servicesEditButtonTitle() {
-      const key = this.isEditingServices ?
-        (this.isServicesTableModified ? 'discardChanges' : 'cancelEdit') :
-        'editServices';
-      return this.t(key);
+      return this.t(this.isServicesTableModified ? 'discardChanges' : 'cancelEdit');
     }
   ),
 
   installationDetailsProxy: reads('deploymentManager.installationDetailsProxy'),
 
-  // FIXME: move
-  /**
-   * Fulfills when data necessary for displaying services table tab is loaded.
-   * @type {PromiseObject}
-   */
-  servicesTabProxy: undefined,
+  isEditServicesDisabled: bool('editServicesDisabledTip'),
+
+  editServicesDisabledTip: computed(
+    'onepanelServiceType',
+    function editServicesDisabledTip() {
+      return this.onepanelServiceType === 'onezone' ? this.t('editDisabledZone') : null;
+    }
+  ),
 
   /** @type {ComputedProperty<number>} */
   oneS3Port: reads('installationDetailsProxy.content.cluster.oneS3.port'),

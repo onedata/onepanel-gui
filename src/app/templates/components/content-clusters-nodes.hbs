@@ -7,34 +7,43 @@
     <tab.pane @title={{tt this "tabServices"}}>
       <div class="row content-row">
         <PromiseProxyContainer @proxy={{this.servicesTabProxy}}>
-          <div class="row">
-            <div class="btn-toolbar">
-              {{#if (and this.isEditingServices this.isServicesTableModified)}}
+          {{#if this.isEditingServices}}
+            <div class="alert alert-light editing-unlocked-toggles-alert">
+              <OneIcon @icon="browser-rename" class="info-icon"/>
+              <span class="text">{{tt this "editingUnlockedToggles"}}</span>
+              <div class="cluster-host-services-btn-toolbar">
                 <OneButton
                   @type="primary"
                   @buttonType="submit"
                   @size="sm"
                   @onClick={{action "applyServicesChanges"}}
+                  @disabled={{not this.isServicesTableModified}}
                   class="btn-submit-cluster-nodes"
                 >
                   {{tt this "applyChanges"}}
                 </OneButton>
-              {{/if}}
-              <OneButton
-                @onClick={{action
-                  (if this.isEditingServices "endServicesEdit" "startServicesEdit")
-                }}
-                @type={{this.servicesEditButtonType}}
-                class="btn-sm"
-              >
-                {{this.servicesEditButtonTitle}}
-              </OneButton>
+                <OneButton
+                  @onClick={{action "endServicesEdit"}}
+                  @type={{this.servicesCancelEditButtonType}}
+                  class="btn-sm"
+                >
+                  {{this.servicesCancelEditButtonTitle}}
+                </OneButton>
+              </div>
             </div>
-          </div>
-          {{#if this.isEditingServices}}
-            <div class="alert alert-info editing-unlocked-toggles-alert">
-              <OneIcon @icon="browser-rename" class="info-icon"/>
-              <span class="text">{{tt this "editingUnlockedToggles"}}</span>
+          {{else}}
+            <div class="cluster-host-services-btn-toolbar">
+              <OneButton
+                @onClick={{action "startServicesEdit"}}
+                @type="default"
+                @disabled={{bool this.isEditServicesDisabled}}
+                class="btn-sm edit-services-btn"
+              >
+                {{tt this "editServices"}}
+                {{#if this.editServicesDisabledTip}}
+                  <OneTooltip @title={{this.editServicesDisabledTip}} />
+                {{/if}}
+              </OneButton>
             </div>
           {{/if}}
           <ConflictingPortsInfo

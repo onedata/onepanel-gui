@@ -26,6 +26,12 @@ export default EmberObject.extend(
 
     /**
      * @virtual
+     * @type {string}
+     */
+    name: undefined,
+
+    /**
+     * @virtual
      * @type {string|ComputedProperty<string>}
      */
     domain: undefined,
