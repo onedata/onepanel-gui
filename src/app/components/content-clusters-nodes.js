@@ -140,9 +140,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   servicesTabProxy: undefined,
 
   /** @type {ComputedProperty<number>} */
-  // FIXME:
-  // oneS3Port: reads('installationDetailsProxy.content.cluster.oneS3.port'),
-  oneS3Port: 443,
+  oneS3Port: reads('installationDetailsProxy.content.cluster.oneS3.port'),
 
   init() {
     this._super(...arguments);
