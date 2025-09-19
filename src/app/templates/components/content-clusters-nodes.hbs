@@ -8,8 +8,10 @@
       <PromiseProxyContainer @proxy={{this.servicesTabProxy}}>
         {{#if this.isEditingServices}}
           <div class="alert alert-light editing-unlocked-toggles-alert">
-            <OneIcon @icon="browser-rename" class="info-icon"/>
-            <span class="text">{{tt this "editingUnlockedToggles"}}</span>
+            <div class="editing-unlocked-toggles-text-container">
+              <OneIcon @icon="browser-rename" class="info-icon"/>
+              <span class="text">{{tt this "editingUnlockedToggles"}}</span>
+            </div>
             <div class="cluster-host-services-btn-toolbar">
               <OneButton
                 @type="primary"
