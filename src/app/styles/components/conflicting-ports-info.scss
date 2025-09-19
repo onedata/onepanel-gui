@@ -1,21 +1,23 @@
-.conflicting-ports-info {
+// Common styles for alerts in cluster nodes views. Defined here, because it is the only
+// separate component for alert on these views.
+$cluster-nodes-alert-flex-gap: 15px;
+.cluster-nodes-alert {
   display: flex;
   align-items: center;
+  gap: $cluster-nodes-alert-flex-gap;
 
-  .info-icon + .text {
-    // determined empirically to match paddings visually
-    margin-left: 15px;
-  }
-
-  .one-icon {
-    font-size: 2em;
-  }
-
-  .text {
-    min-width: 0;
-  }
-
-  @media (max-width: $screen-sm-max) {
-    align-items: flex-start;
+  .text-icon-container {
+    display: flex;
+    align-items: center;
+    gap: $cluster-nodes-alert-flex-gap;
+    .one-icon {
+      font-size: 2em;
+    }
+    .text {
+      min-width: 0;
+    }
+    @media (max-width: $screen-sm-max) {
+      align-items: flex-start;
+    }
   }
 }

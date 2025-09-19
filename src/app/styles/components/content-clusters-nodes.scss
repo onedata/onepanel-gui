@@ -1,38 +1,14 @@
 .content-clusters-nodes {
-  // determined empirically to match paddings visually
-  $flex-gap: 15px;
-  // FIXME: ujednolicić z conflicting-ports-info
   .editing-unlocked-toggles-alert {
-    display: flex;
-    align-items: center;
-    gap: $flex-gap;
-
     .cluster-host-services-btn-toolbar {
       // determined empirically to match paddings visually
       margin-right: 8px;
     }
 
-    .editing-unlocked-toggles-text-container {
-      display: flex;
-      align-items: center;
-      // determined empirically to match paddings visually
-      gap: $flex-gap;
-      .one-icon {
-        font-size: 2em;
-      }
-      .text {
-        min-width: 0;
-      }
-    }
-
     @media (max-width: $screen-sm-max) {
-      flex-wrap: wrap;
       .cluster-host-services-btn-toolbar {
         margin-right: 0;
         flex-basis: 100%;
-      }
-      .editing-unlocked-toggles-text-container {
-        align-items: flex-start;
       }
     }
   }

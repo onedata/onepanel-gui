@@ -1,5 +1,12 @@
 /**
- * FIXME:
+ * Global modal for enabling OneS3 service on selected hosts - includes deployment
+ * implementation.
+ *
+ * Written using the State design pattern, the modal can be in two states, implemented as
+ * separate classes use by the component:
+ * - confirm - when we present the summary of changes to be done on cluster hosts,
+ * - progress - when the deployment has started and we present the progress of the
+ *   process.
  *
  * @author Jakub Liput
  * @copyright (C) 2025 Onedata (onedata.org)

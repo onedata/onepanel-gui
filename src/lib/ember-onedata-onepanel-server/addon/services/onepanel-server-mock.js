@@ -1631,6 +1631,7 @@ export default OnepanelServerBase.extend(
           },
           oneS3: {
             hosts: ['node2.example.com'],
+            port: 4443,
           },
         },
       };
