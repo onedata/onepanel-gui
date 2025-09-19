@@ -5,50 +5,50 @@
 <div class="row content-row">
   <OneBsTab class="only-tab-bar bs-tab-onedata bs-tab-modern" as |tab|>
     <tab.pane @title={{tt this "tabServices"}}>
-      <div class="row content-row">
-        <PromiseProxyContainer @proxy={{this.servicesTabProxy}}>
-          {{#if this.isEditingServices}}
-            <div class="alert alert-light editing-unlocked-toggles-alert">
-              <OneIcon @icon="browser-rename" class="info-icon"/>
-              <span class="text">{{tt this "editingUnlockedToggles"}}</span>
-              <div class="cluster-host-services-btn-toolbar">
-                <OneButton
-                  @type="primary"
-                  @buttonType="submit"
-                  @size="sm"
-                  @onClick={{action "applyServicesChanges"}}
-                  @disabled={{not this.isServicesTableModified}}
-                  class="btn-submit-cluster-nodes"
-                >
-                  {{tt this "applyChanges"}}
-                </OneButton>
-                <OneButton
-                  @onClick={{action "endServicesEdit"}}
-                  @type={{this.servicesCancelEditButtonType}}
-                  class="btn-sm"
-                >
-                  {{this.servicesCancelEditButtonTitle}}
-                </OneButton>
-              </div>
-            </div>
-          {{else}}
+      <PromiseProxyContainer @proxy={{this.servicesTabProxy}}>
+        {{#if this.isEditingServices}}
+          <div class="alert alert-light editing-unlocked-toggles-alert">
+            <OneIcon @icon="browser-rename" class="info-icon"/>
+            <span class="text">{{tt this "editingUnlockedToggles"}}</span>
             <div class="cluster-host-services-btn-toolbar">
               <OneButton
-                @onClick={{action "startServicesEdit"}}
-                @type="default"
-                @disabled={{bool this.isEditServicesDisabled}}
-                class="btn-sm edit-services-btn"
+                @type="primary"
+                @buttonType="submit"
+                @size="sm"
+                @onClick={{action "applyServicesChanges"}}
+                @disabled={{not this.isServicesTableModified}}
+                class="btn-submit-cluster-nodes"
               >
-                {{tt this "editServices"}}
-                {{#if this.editServicesDisabledTip}}
-                  <OneTooltip @title={{this.editServicesDisabledTip}} />
-                {{/if}}
+                {{tt this "applyChanges"}}
+              </OneButton>
+              <OneButton
+                @onClick={{action "endServicesEdit"}}
+                @type={{this.servicesCancelEditButtonType}}
+                class="btn-sm"
+              >
+                {{this.servicesCancelEditButtonTitle}}
               </OneButton>
             </div>
-          {{/if}}
-          <ConflictingPortsInfo
-            @hosts={{clusterHostsInfoProxy.content.clusterHostsInfo}}
-          />
+          </div>
+        {{else}}
+          <div class="cluster-host-services-btn-toolbar">
+            <OneButton
+              @onClick={{action "startServicesEdit"}}
+              @type="default"
+              @disabled={{bool this.isEditServicesDisabled}}
+              class="btn-sm edit-services-btn"
+            >
+              {{tt this "editServices"}}
+              {{#if this.editServicesDisabledTip}}
+                <OneTooltip @title={{this.editServicesDisabledTip}} />
+              {{/if}}
+            </OneButton>
+          </div>
+        {{/if}}
+        <ConflictingPortsInfo
+          @hosts={{clusterHostsInfoProxy.content.clusterHostsInfo}}
+        />
+        <div class="row content-row">
           <ClusterHostTable
             @hosts={{this.servicesTableHosts}}
             @primaryClusterManager={{this.servicesTablePrimaryClusterManager}}
@@ -56,8 +56,8 @@
             @hostOptionChanged={{action "hostOptionChanged"}}
             @readonlyServicesHosts={{this.readonlyServicesHosts}}
           />
-        </PromiseProxyContainer>
-      </div>
+        </div>
+      </PromiseProxyContainer>
     </tab.pane>
     <tab.pane @title={{tt this "tabIps"}}>
       <div class="row">
