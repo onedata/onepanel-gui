@@ -213,10 +213,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         case 'done':
           await this.initClusterHostsInfoProxy();
           this.endServicesEdit();
+          this.reloadHostData();
           break;
         case 'failed':
           await this.initClusterHostsInfoProxy();
           this.updateServicesTableModified();
+          this.reloadHostData();
           break;
         case 'cancelled':
         case 'pending':

@@ -100,13 +100,13 @@
         </div>
       </div>
       <div class="row content-row">
-        <PromiseProxyContainer @proxy={{hostsLoadingProxy}}>
+        <PromiseProxyContainer @proxy={{this.hostsLoadingProxy}}>
           <ClusterHostIpForm
-            @hostsIps={{_ipsFormData}}
-            @hostsInfo={{hostsInfoProxy.content}}
+            @hostsIps={{this._ipsFormData}}
+            @hostsInfo={{this.hostsInfoProxy.content}}
             @hostDataChanged={{action "hostsIpsDataChanged"}}
             @allValidChanged={{action "hostsIpsFormValidChanged"}}
-            @isReadOnly={{or (not ipsEdit) ipsSetupProxy.isPending}}
+            @isReadOnly={{or (not this.ipsEdit) this.ipsSetupProxy.isPending}}
           />
         </PromiseProxyContainer>
       </div>
