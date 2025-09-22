@@ -135,7 +135,7 @@ export default Component.extend(I18n, GlobalActions, {
       title: this.t(addStorageOpened ? 'cancel' : 'addStorage'),
       icon: addStorageOpened ? undefined : 'add-filled',
       class: 'btn-add-storage',
-      buttonStyle: addStorageOpened ? 'default' : 'primary',
+      buttonStyle: 'default',
     };
   }),
 
@@ -148,6 +148,19 @@ export default Component.extend(I18n, GlobalActions, {
       title: this.t('finish'),
       class: 'btn-next-step',
       buttonStyle: 'primary',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  skipStorageAction: computed(function () {
+    return {
+      action: () => this.send('next'),
+      title: this.t('nextStep'),
+      icon: 'arrow-right',
+      class: 'btn-next-step',
+      buttonStyle: 'default',
     };
   }),
 
@@ -166,18 +179,16 @@ export default Component.extend(I18n, GlobalActions, {
         finishButton,
         finishAction,
         noStorages,
-      } = this.getProperties(
-        'addStorageAction',
-        'finishButton',
-        'finishAction',
-        'noStorages'
-      );
+        skipStorageAction,
+      } = this;
       const actions = [];
-      if (!noStorages) {
+      if (noStorages) {
+        actions.push(skipStorageAction);
+      } else {
         actions.push(addStorageAction);
-      }
-      if (finishButton) {
-        actions.push(finishAction);
+        if (finishButton) {
+          actions.push(finishAction);
+        }
       }
       return actions;
     }

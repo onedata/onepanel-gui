@@ -11,5 +11,5 @@ export default {
   addingStorage: 'adding "{{storageName}}" storage backend',
   unknownError: 'Unknown error',
   loadingData: 'Loading...<br/>({{loadedStorages}} out of {{totalStorages}} storage backends)<br/>({{loadedSpaces}} out of {{totalSpaces}} spaces)',
-  nextStep: 'Skip creating storage backend',
+  nextStep: 'Skip storage configuration',
 };
