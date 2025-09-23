@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-12875 Changed UX to storages/spaces list and storage form
+* VFS-12607 Added warning in web certificate view if there is no S3 subdomain for S3-enabled Oneprovider; Added support for certificate DNS names wildcards
 * VFS-12598 Refactored storage form to use new form components
 * VFS-12811 Upgraded Ember Bootstrap to 4.9.0
 * VFS-12765 Using updated onedata-gui-common with removed ProviderMap components
