@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12875 Changed UX to storages/spaces list and storage form
 * VFS-12598 Refactored storage form to use new form components
 * VFS-12811 Upgraded Ember Bootstrap to 4.9.0
 * VFS-12765 Using updated onedata-gui-common with removed ProviderMap components
