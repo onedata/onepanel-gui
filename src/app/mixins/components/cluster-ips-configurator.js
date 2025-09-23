@@ -4,11 +4,12 @@
  *
  * @author Jakub Liput
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import Mixin from '@ember/object/mixin';
-import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
+import { promiseObject } from 'onedata-gui-common/utils/ember/promise-object';
 import { scheduleOnce } from '@ember/runloop';
 import { Promise, all as allFulfilled } from 'rsvp';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
@@ -69,27 +70,37 @@ export default Mixin.create({
   _ipsSetupPromise: undefined,
 
   /**
+   * Randomly generated ID to trigger computed properties with hosts data to be
+   * reloaded.
+   * @type {number}
+   */
+  hostsUpdateId: null,
+
+  /**
    * @type {PromiseObject}
    */
-  ipsSetupProxy: computed('_ipsSetupPromise', function () {
-    const promise = this.get('_ipsSetupPromise');
-    return promise ? PromiseObject.create({ promise }) : undefined;
+  ipsSetupProxy: computed('_ipsSetupPromise', function ipsSetupProxy() {
+    const promise = this._ipsSetupPromise;
+    return promise ? promiseObject(promise) : undefined;
   }),
 
-  hostsIpsProxy: computed(function hostsIpsProxy() {
-    const promise = this.get('deploymentManager').getClusterIps().then(({ hosts }) => {
+  hostsIpsProxy: computed('hostsUpdateId', function hostsIpsProxy() {
+    const promise = (async () => {
+      const { hosts } = await this.deploymentManager.getClusterIps();
       return this.prepareHosts(_.cloneDeep(hosts));
-    });
-    return PromiseObject.create({ promise });
+    })();
+    return promiseObject(promise);
   }),
 
   /**
    * @type {PromiseObject<Models.ClusterHostInfo>}
    */
-  hostsInfoProxy: computed(function hostsInfoProxy() {
-    const promise = this.deploymentManager.getClusterHostsInfo()
-      .then(({ clusterHostsInfo }) => clusterHostsInfo);
-    return PromiseObject.create({ promise });
+  hostsInfoProxy: computed('hostsUpdateId', function hostsInfoProxy() {
+    const promise = (async () => {
+      const { clusterHostsInfo } = await this.deploymentManager.getClusterHostsInfo();
+      return clusterHostsInfo;
+    })();
+    return promiseObject(promise);
   }),
 
   /**
@@ -99,20 +110,16 @@ export default Mixin.create({
     'hostsIpsProxy',
     'hostsInfoProxy',
     function hostsLoadingProxy() {
-      return PromiseObject.create({
-        promise: allFulfilled([
-          this.hostsIpsProxy,
-          this.hostsInfoProxy,
-        ]),
-      });
+      return promiseObject(allFulfilled([
+        this.hostsIpsProxy,
+        this.hostsInfoProxy,
+      ]));
     }
   ),
 
   init() {
+    this.reloadHostData();
     this._super(...arguments);
-    this.get('hostsIpsProxy').then(hostsIps => {
-      safeExec(this, 'set', '_ipsFormData', hostsIps);
-    });
   },
 
   _startSetup() {
@@ -135,6 +142,13 @@ export default Mixin.create({
    */
   prepareHosts(hosts) {
     return hosts;
+  },
+
+  reloadHostData() {
+    this.set('hostsUpdateId', Math.random());
+    this.hostsIpsProxy.then(hostsIps => {
+      safeExec(this, 'set', '_ipsFormData', hostsIps);
+    });
   },
 
   actions: {

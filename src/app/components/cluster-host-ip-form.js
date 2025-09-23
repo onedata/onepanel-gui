@@ -61,39 +61,36 @@ export default BasicTable.extend(I18n, {
    */
   hostDataChanged: notImplementedWarn,
 
-  /**
-   * @type {EmberArray<{ip: string, hostname: string, tags: Array<SafeString>}>}
-   */
-  _hostsData: undefined,
-
   allValid: computed('_hostsData.@each.isValid', function getAllValid() {
     return this.get('_hostsData').mapBy('isValid').every(i => i === true);
   }),
 
-  observeAllValid: observer('allValid', function notifyAllValid() {
-    this.get('allValidChanged')(this.get('allValid'));
-  }),
-
-  observeHosts: observer('hostsIps', 'hostsInfo', function observeHosts() {
-    this.set('_hostsData', A(_.sortBy(
+  /**
+   * @type {EmberArray<{ip: string, hostname: string, tags: Array<SafeString>}>}
+   */
+  _hostsData: computed('hostsIps', 'hostsInfo', function _hostsData() {
+    return A(_.sortBy(
       this.hostsInfo
       .filter(({ clusterWorker, oneS3 }) => clusterWorker || oneS3)
       .map(({ hostname, clusterWorker, oneS3 }) => ({
         hostname: hostname,
-        ip: this.hostsIps[hostname] ?? '',
+        ip: this.hostsIps?.[hostname] ?? '',
         tags: [
           (clusterWorker && this.t('tags.clusterWorker')),
           (oneS3 && this.t('tags.oneS3')),
         ].filter(Boolean),
       })),
       ['hostname']
-    )));
+    ));
+  }),
+
+  observeAllValid: observer('allValid', function notifyAllValid() {
+    this.get('allValidChanged')(this.get('allValid'));
   }),
 
   init() {
     this._super(...arguments);
 
-    this.observeHosts();
     this.observeAllValid();
   },
 

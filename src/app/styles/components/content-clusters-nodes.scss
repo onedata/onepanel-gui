@@ -1,0 +1,20 @@
+.content-clusters-nodes {
+  .editing-unlocked-toggles-alert {
+    .cluster-host-services-btn-toolbar {
+      // determined empirically to match paddings visually
+      margin-right: 8px;
+    }
+
+    @media (max-width: $screen-sm-max) {
+      .cluster-host-services-btn-toolbar {
+        margin-right: 0;
+        flex-basis: 100%;
+      }
+    }
+  }
+  .cluster-host-services-btn-toolbar {
+    display: flex;
+    justify-content: end;
+    gap: 0.5em;
+  }
+}
