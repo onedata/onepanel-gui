@@ -1,13 +1,13 @@
-import { inject as service } from '@ember/service';
 /**
  * Opens confirmation modal for enabling OneS3 on specified host of cluster and provides
- * process' exeuction and progress handling.
+ * process exeuction and progress handling.
  *
  * @author Jakub Liput
  * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { inject as service } from '@ember/service';
 import Action from 'onedata-gui-common/utils/action';
 import ActionResult from 'onedata-gui-common/utils/action-result';
 import Locale from 'onedata-gui-common/utils/locale';

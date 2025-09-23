@@ -20,4 +20,8 @@ $cluster-nodes-alert-flex-gap: 15px;
       align-items: flex-start;
     }
   }
+
+  @media (max-width: $screen-sm-max) {
+    flex-wrap: wrap;
+  }
 }

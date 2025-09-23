@@ -118,7 +118,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   servicesCancelEditButtonType: computed(
     'isEditingServices',
     'isServicesTableModified',
-    function servicesEditButtonType() {
+    function servicesCancelEditButtonType() {
       return this.isEditingServices && this.isServicesTableModified ?
         'warning' : 'default';
     }
@@ -126,7 +126,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
 
   servicesCancelEditButtonTitle: computed(
     'isServicesTableModified',
-    function servicesEditButtonTitle() {
+    function servicesCancelEditButtonTitle() {
       return this.t(this.isServicesTableModified ? 'discardChanges' : 'cancelEdit');
     }
   ),

@@ -167,7 +167,7 @@ export default Component.extend(I18n, {
     }
   ),
 
-  togglesLockTooltip: computed('effReadonlyServices', function togglesTooltip() {
+  togglesLockTooltip: computed('effReadonlyServices', function togglesLockTooltip() {
     const tooltips = {};
     for (const [service, readonliness] of Object.entries(this.effReadonlyServices)) {
       if (readonliness && typeof readonliness !== 'boolean') {
