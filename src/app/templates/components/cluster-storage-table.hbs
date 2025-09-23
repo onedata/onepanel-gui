@@ -18,7 +18,10 @@
 
 <OneCollapsibleList as |list|>
   {{#each storages key="id" as |storage|}}
-    <list.item as |listItem|>
+    <list.item
+      @isActive={{eq storage.id openedStorageId}}
+      as |listItem|
+    >
       <StorageItem
         @listItem={{listItem}}
         @storageProxy={{storage}}

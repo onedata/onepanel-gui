@@ -214,7 +214,7 @@ export default Component.extend(I18n, {
 
       if (result.status === 'done') {
         trySet(this, 'whileEdition', false);
-        this.reloadStoragesList();
+        this.reloadStoragesList(this.storageId);
       }
     },
     cancelEdition() {
