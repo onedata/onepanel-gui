@@ -9,7 +9,7 @@
  */
 import Component from '@ember/component';
 import { computed, trySet } from '@ember/object';
-import { reads, collect } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import _ from 'lodash';
