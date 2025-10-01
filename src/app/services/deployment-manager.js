@@ -2,7 +2,8 @@
  * Provides data for routes and components assoctiated with deployment of cluster
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,6 +22,12 @@ import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import { getOwner } from '@ember/application';
+
+/**
+ * @typedef {Object} ClusterDeploymentInfo
+ * @property {string} mainManagerHostname
+ * @property {Array<Models.ClusterHostInfo>} clusterHostsInfo
+ */
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -98,8 +105,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * Fetch info about deployed cluster and create ClusterHostInfo objects
-   * @returns {Promise} resolves with
-   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   * @returns {Promise<ClusterDeploymentInfo>}
    */
   getClusterHostsInfo() {
     return this.getClusterConfiguration(true)
@@ -111,8 +117,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   /**
    * Converts response data from API about clusters to array of ``ClusterHostInfo``
    * @param {object} cluster cluster attribute of GET configuration from API
-   * @returns {object}
-   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   * @returns {ClusterDeploymentInfo}
    */
   _clusterConfigurationToHostsInfo(cluster) {
     const types = ['databases', 'managers', 'workers', 'oneS3'];
