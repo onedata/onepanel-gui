@@ -39,6 +39,7 @@
         @reloadStoragesList={{action "reloadStoragesList"}}
         @removeStorage={{action (mut storageToRemove)}}
         @openedStorageId={{openedStorageId}}
+        @hideSupportSpaceButton={{this.hideSupportSpaceButton}}
       />
       {{#if someStorageIsLoading}}
         <div class="loading-more-row">

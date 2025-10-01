@@ -267,15 +267,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
                 if (dnsCheckAck) {
                   return this._checkIsAnyStorage(onepanelServer)
-                    .then(isAnyStorage => {
-                      if (isAnyStorage) {
-                        return resolve(installationStepsMap.done);
-                      } else {
-                        return resolve(
-                          installationStepsMap.oneproviderStorageAdd
-                        );
-                      }
-                    });
+                    .then(() => resolve(installationStepsMap.done));
                 } else {
                   // We have no exact indicator if earlier step -
                   // IPs configuration - has been finished, because it

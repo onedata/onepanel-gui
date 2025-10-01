@@ -30,6 +30,12 @@ export default Component.extend({
   reloadStoragesList: undefined,
 
   /**
+   * @virtual optional
+   * @type {boolean}
+   */
+  hideSupportSpaceButton: false,
+
+  /**
    * @type {string|null}
    */
   openedStorageId: null,

@@ -40,6 +40,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   storageManager: service(),
   spaceManager: service(),
   globalNotify: service(),
+  alertService: service('alert'),
 
   /**
    * @override
@@ -134,7 +135,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
    * Resets field if form visibility changes (clears validation errors)
    */
   isFormOpenedObserver: observer('isFormOpened', function () {
-    if (this.get('isFormOpened')) {
+    if (this.get('isFormOpened') && !this.storageId) {
       this.resetFormValues();
     }
   }),
@@ -168,6 +169,8 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
           );
           if (storageItem && !storageItem.disabled) {
             safeExec(this, 'set', 'selectedStorageItem', storageItem);
+          } else {
+            this.alertService.warning(this.t('storageNotFound'));
           }
         }
       }

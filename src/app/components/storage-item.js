@@ -50,6 +50,11 @@ export default Component.extend(I18n, {
   storageProxy: null,
 
   /**
+   * @type {boolean}
+   */
+  hideSupportSpaceButton: false,
+
+  /**
    * @type {() => void}
    */
   reloadStoragesList: null,
@@ -92,6 +97,16 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
+  isImportedAndUsed: computed(
+    'storage.importedStorage',
+    'hasSupportedSpaces',
+    function isImportedAndUsed() {
+      return this.storage?.importedStorage && this.hasSupportedSpaces;
+    }),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   showSpacesSupport: reads('hasSupportedSpaces'),
 
   /**
@@ -112,14 +127,19 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Action>}
    */
-  addSupportSpaceAction: computed(function addSupportSpaceAction() {
-    return {
-      action: () => this.supportSpace(),
-      title: this.t('supportSpace'),
-      class: 'support-space hidden-lg hidden-md hidden-sm',
-      icon: 'space',
-    };
-  }),
+  addSupportSpaceAction: computed(
+    'hideSupportSpaceButton',
+    'isImportedAndUsed',
+    function addSupportSpaceAction() {
+      return {
+        action: () => this.supportSpace(),
+        title: this.t('supportSpace'),
+        class: 'support-space hidden-lg hidden-md hidden-sm',
+        icon: 'space',
+        disabled: this.hideSupportSpaceButton || this.isImportedAndUsed,
+      };
+    }
+  ),
 
   /**
    * @type {Ember.ComputedProperty<Action>}
@@ -138,11 +158,13 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<Action>>}
    */
-  storageActions: collect(
-    'modifyStorageAction',
-    'addSupportSpaceAction',
-    'removeStorageAction'
-  ),
+  storageActions: computed('hideSupportSpaceButton', function storageActions() {
+    const actions = [this.modifyStorageAction, this.removeStorageAction];
+    if (!this.hideSupportSpaceButton) {
+      actions.push(this.addSupportSpaceAction);
+    }
+    return actions;
+  }),
 
   /**
    * @type {Ember.ComputedProperty<Object>}
@@ -184,16 +206,14 @@ export default Component.extend(I18n, {
   },
 
   supportSpace() {
-    const transitionToArgs = ['onedata.sidebar.content.aspect', 'spaces', {
+    this.router.transitionTo('onedata.sidebar.content.aspect', 'spaces', {
       queryParams: {
         options: serializeAspectOptions({
-          isFormOpened: 'true',
+          isFormOpened: true,
           storageId: this.storageId,
         }),
       },
-    }];
-
-    this.router.transitionTo(...transitionToArgs);
+    });
   },
 
   actions: {

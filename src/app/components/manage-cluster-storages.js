@@ -159,7 +159,7 @@ export default Component.extend(I18n, GlobalActions, {
   /**
    * @type {Ember.ComputedProperty<Action>}
    */
-  skipStorageAction: computed(function () {
+  skipStorageAction: computed(function skipStorageAction() {
     return {
       action: () => this.send('next'),
       title: this.t('nextStep'),
@@ -185,9 +185,10 @@ export default Component.extend(I18n, GlobalActions, {
         finishAction,
         noStorages,
         skipStorageAction,
+        nextStep,
       } = this;
       const actions = [];
-      if (noStorages) {
+      if (noStorages && nextStep) {
         actions.push(skipStorageAction);
       } else {
         actions.push(addStorageAction);
@@ -198,6 +199,10 @@ export default Component.extend(I18n, GlobalActions, {
       return actions;
     }
   ),
+
+  hideSupportSpaceButton: computed('nextStep', function hideSupportSpaceButton() {
+    return Boolean(this.nextStep);
+  }),
 
   spacesBatchResolver: reads('spacesBatchResolverProxy.content'),
 
@@ -270,8 +275,10 @@ export default Component.extend(I18n, GlobalActions, {
     return new Promise((resolve, reject) => {
       addingStorage.then(storage => {
         this.initStoragesBatchResolver();
-        this.set('addStorageOpened', false);
-        this.set('openedStorageId', storage.data[storageFormData.name].id);
+        this.setProperties({
+          addStorageOpened: false,
+          openedStorageId: storage.data[storageFormData.name].id,
+        });
         resolve();
       });
       addingStorage.catch(reject);

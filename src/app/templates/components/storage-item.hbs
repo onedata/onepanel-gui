@@ -18,18 +18,21 @@
       {{/if}}
     </span>
     <div class="btn-toolbar">
-      <span clas="btn-tooltip-container">
-        <OneButton
-          @type="default"
-          @size="sm"
-          @onClick={{action "supportSpace"}}
-        >
-          {{!-- single line to avoid spaces --}}
-          <OneIcon
-            @icon="space"
-          /> <span class="text">{{tt this "supportSpace"}}</span>
-        </OneButton>
-      </span>
+      {{#if (not this.hideSupportSpaceButton)}}
+        <span class="btn-tooltip-container">
+          <OneButton
+            @type="default"
+            @size="sm"
+            @onClick={{action "supportSpace"}}
+            @disabled={{or this.hideSupportSpaceButton this.isImportedAndUsed}}
+          >
+            {{!-- single line to avoid spaces --}}
+            <OneIcon
+              @icon="space"
+            /> <span class="text">{{tt this "supportSpace"}}</span>
+          </OneButton>
+        </span>
+      {{/if}}
       <span class="btn-tooltip-container">
         <OneButton
           @type="default"
