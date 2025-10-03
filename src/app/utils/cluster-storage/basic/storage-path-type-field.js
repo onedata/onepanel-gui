@@ -9,6 +9,20 @@
 import { StorageRadioField } from '../base/storage-radio-field';
 import { computed } from '@ember/object';
 
+const storagePathTypeConfig = {
+  posix: { defaultValue: 'canonical', disabled: true },
+  glusterfs: { defaultValue: 'canonical', disabled: true },
+  nulldevice: { defaultValue: 'canonical' },
+  ceph: { defaultValue: 'flat' },
+  cephrados: { defaultValue: 'flat', disabled: true },
+  s3: {},
+  swift: { defaultValue: 'flat' },
+  xrootd: { defaultValue: 'canonical', disabled: true },
+  http: { defaultValue: 'canonical', disabled: true },
+  webdav: { defaultValue: 'canonical', disabled: true },
+  nfs: { defaultValue: 'canonical', disabled: true },
+};
+
 export const StoragePathTypeField = StorageRadioField.extend({
   /**
    * @override
@@ -31,8 +45,20 @@ export const StoragePathTypeField = StorageRadioField.extend({
   /**
    * @override
    */
-  defaultValue: computed(function defaultValue() {
+  defaultValue: computed('parent.value.type', function defaultValue() {
+    const config = storagePathTypeConfig[this.parent.value?.type];
+    if (config?.defaultValue) {
+      return config.defaultValue;
+    }
     return this.options[0].value;
+  }),
+
+  isEnabled: computed('parent.value.type', function isEnabled() {
+    const config = storagePathTypeConfig[this.parent.value?.type];
+    if (config?.disabled) {
+      return false;
+    }
+    return true;
   }),
 
   /**

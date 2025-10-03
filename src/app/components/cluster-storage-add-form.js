@@ -339,7 +339,6 @@ export default Component.extend(I18n, {
       editedQosParams: undefined,
     });
 
-    this.changePathType(type);
     this.autoSettingsAll(type);
   },
 
@@ -364,20 +363,6 @@ export default Component.extend(I18n, {
     const type = this.basicGroup.getFieldByPath('type').value;
 
     this.autoSettingsRangeWriteSupport(type);
-  },
-
-  changePathType(type) {
-    if (this.mode === 'show') {
-      return;
-    }
-
-    const config = storagePathTypeConfig[type];
-    const storagePathType = this.basicGroup.getFieldByPath('storagePathType');
-
-    if (config.defaultValue) {
-      storagePathType.valueChanged(config.defaultValue);
-    }
-    storagePathType.set('isEnabled', !config.disabled ?? true);
   },
 
   autoSettingsImportedStorage(type) {

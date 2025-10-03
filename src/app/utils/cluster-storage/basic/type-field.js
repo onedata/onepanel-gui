@@ -59,6 +59,7 @@ export const TypeField = StorageDropdownField.extend({
    * @override
    */
   valueChanged() {
+    this._super(...arguments);
     this.context.component.fields.reset();
     this._super(...arguments);
     this.context.component.storageTypeChanged(this.value);
