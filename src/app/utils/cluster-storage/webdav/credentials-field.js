@@ -23,11 +23,6 @@ export const CredentialsField = StorageTextField.extend({
   /**
    * @override
    */
-  isOptional: true,
-
-  /**
-   * @override
-   */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
     const type = this.parent.value?.credentialsType;
     return type === 'basic' || type === 'oauth2';
@@ -39,6 +34,20 @@ export const CredentialsField = StorageTextField.extend({
       return this.getTranslation('labelOauth2');
     } else {
       return this.getTranslation('label');
+    }
+  }),
+
+  tip: computed('parent.value.credentialsType', function tip() {
+    const type = this.parent.value?.credentialsType;
+    switch (type) {
+      case 'oauth2':
+        return this.getTranslation('tipOauth2');
+      case 'token':
+        return this.getTranslation('tipToken');
+      case 'basic':
+        return this.getTranslation('tipBasic');
+      default:
+        return this.getTranslation('tip');
     }
   }),
 });
