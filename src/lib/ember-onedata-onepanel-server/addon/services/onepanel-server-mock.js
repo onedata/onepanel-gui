@@ -60,6 +60,7 @@ const MOCKED_SUPPORT = {
 };
 const SERVICE_DOMAIN = 'dev-oneprovider-krakow.default.svc.cluster.local';
 const SERVICE_NAME = 'dev-oneprovider-krakow';
+const addManyStorages = false;
 
 /**
  * Forced cluster type (onezone/oneprovider) in `ember s` mode. To change mocked cluster
@@ -597,15 +598,36 @@ export default OnepanelServerBase.extend(
             autoReconnect: 4,
           };
           this.set('__storages', this.get('__storages') || []);
+          const storageData = [
+            storage1,
+            storageCeph,
+            storageCephRados,
+            storage2,
+            storageHttp,
+            storageNfs,
+          ];
+          if (addManyStorages) {
+            const additionalStorages = _.range(100).map(i => ({
+              id: 'additional_storage_' + i,
+              type: 'posix',
+              name: 'Zeta-' + i,
+              importedStorage: true,
+              mountPoint: '/mnt/st1',
+              lumaFeed: 'external',
+              lumaFeedUrl: 'http://localhost:9090',
+              lumaFeedApiKey: 'some_storage',
+              readonly: true,
+              qosParameters: Object.assign({}, baseQosParameters, {
+                param1: 'abc',
+                param2: 'def',
+                param3: '123',
+              }),
+            }));
+            storageData.push(...additionalStorages);
+          }
+
           this.get('__storages').push(
-            ...[
-              storage1,
-              storageCeph,
-              storageCephRados,
-              storage2,
-              storageHttp,
-              storageNfs,
-            ].map(storage =>
+            ...storageData.map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );

@@ -4,13 +4,15 @@
       {{tt this "storage"}}:
     </label>
     <div class={{layoutConfig.formInputColumns}}>
-      <OneDropdown
+      <AdaptiveDropdown
         @loadingMessage={{tt this "storageSelectLoading"}}
         @options={{allStoragesItemsProxy}}
         @selected={{selectedStorageItem}}
         @onChange={{action "storageChanged"}}
         @renderInPlace={{false}}
         @placeholder={{tt this "storageSelectPlaceholder"}}
+        @searchEnabled={{true}}
+        @searchField="storage.content.name"
         as |storageItem|
       >
         <NameConflict @item={{storageItem.storage}} />
@@ -19,7 +21,7 @@
         {{else if storageItem.storage.importedStorage}}
           <small class="imported-storage">{{tt this "storageImported"}}</small>
         {{/if}}
-      </OneDropdown>
+      </AdaptiveDropdown>
     </div>
   </form.group>
 
