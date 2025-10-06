@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-12932 Added infinite-scrollable dropdowns
 * VFS-12608 Added support for enabling OneS3 service on cluster hosts after deployment
 * VFS-12607 Added warning in web certificate view if there is no S3 subdomain for S3-enabled Oneprovider; Added support for certificate DNS names wildcards
 * VFS-12598 Refactored storage form to use new form components
