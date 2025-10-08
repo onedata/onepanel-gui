@@ -29,6 +29,17 @@ export default Component.extend({
    */
   reloadStoragesList: undefined,
 
+  /**
+   * @virtual optional
+   * @type {boolean}
+   */
+  isSupportButtonHidden: false,
+
+  /**
+   * @type {string|null}
+   */
+  openedStorageId: null,
+
   spacesLoadError: computed('spaces.@each.isRejected', function () {
     const spaces = this.get('spaces');
     if (spaces) {
