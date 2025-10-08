@@ -52,7 +52,7 @@ export default Component.extend(I18n, {
   /**
    * @type {boolean}
    */
-  hideSupportSpaceButton: false,
+  isSupportButtonHidden: false,
 
   /**
    * @type {() => void}
@@ -128,7 +128,7 @@ export default Component.extend(I18n, {
    * @type {Ember.ComputedProperty<Action>}
    */
   addSupportSpaceAction: computed(
-    'hideSupportSpaceButton',
+    'isSupportButtonHidden',
     'isImportedAndUsed',
     function addSupportSpaceAction() {
       return {
@@ -136,7 +136,7 @@ export default Component.extend(I18n, {
         title: this.t('supportSpace'),
         class: 'support-space hidden-lg hidden-md hidden-sm',
         icon: 'space',
-        disabled: this.hideSupportSpaceButton || this.isImportedAndUsed,
+        disabled: this.isSupportButtonHidden || this.isImportedAndUsed,
       };
     }
   ),
@@ -158,9 +158,9 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<Action>>}
    */
-  storageActions: computed('hideSupportSpaceButton', function storageActions() {
+  storageActions: computed('isSupportButtonHidden', function storageActions() {
     const actions = [this.modifyStorageAction, this.removeStorageAction];
-    if (!this.hideSupportSpaceButton) {
+    if (!this.isSupportButtonHidden) {
       actions.push(this.addSupportSpaceAction);
     }
     return actions;

@@ -191,7 +191,9 @@ export default Component.extend(I18n, GlobalActions, {
       if (noStorages && nextStep) {
         actions.push(skipStorageAction);
       } else {
-        actions.push(addStorageAction);
+        if (!noStorages) {
+          actions.push(addStorageAction);
+        }
         if (finishButton) {
           actions.push(finishAction);
         }
@@ -200,7 +202,7 @@ export default Component.extend(I18n, GlobalActions, {
     }
   ),
 
-  hideSupportSpaceButton: computed('nextStep', function hideSupportSpaceButton() {
+  isSupportButtonHidden: computed('nextStep', function isSupportButtonHidden() {
     return Boolean(this.nextStep);
   }),
 
@@ -329,9 +331,9 @@ export default Component.extend(I18n, GlobalActions, {
       });
       return submitting;
     },
-    reloadStoragesList(storageId = null) {
+    reloadStoragesList(openedStorageId = null) {
       this.initStoragesBatchResolver();
-      this.set('openedStorageId', storageId);
+      this.set('openedStorageId', openedStorageId);
     },
     submitRemoveStorage() {
       const {

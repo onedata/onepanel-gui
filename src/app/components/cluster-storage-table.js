@@ -33,7 +33,7 @@ export default Component.extend({
    * @virtual optional
    * @type {boolean}
    */
-  hideSupportSpaceButton: false,
+  isSupportButtonHidden: false,
 
   /**
    * @type {string|null}

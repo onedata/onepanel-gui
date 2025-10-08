@@ -18,4 +18,5 @@ export default {
       noSpacesSupported: 'No spaces supported',
     },
   },
+  disabledSupportSpaceBtnTip: 'Cannot support another space because this storage is already in use with import enabled.',
 };
