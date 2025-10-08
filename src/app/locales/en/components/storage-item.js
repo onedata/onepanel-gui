@@ -4,6 +4,7 @@ export default {
   modifyStorageDetails: 'Modify storage backend details',
   cancelStorageModification: 'Cancel modification',
   removeStorage: 'Remove storage backend',
+  supportSpace: 'Support space',
   // TODO: VFS-11005 Handle single load errors
   unknown: 'unknown',
   generic: {
@@ -17,4 +18,5 @@ export default {
       noSpacesSupported: 'No spaces supported',
     },
   },
+  disabledSupportSpaceBtnTip: 'Cannot support another space because this storage is already in use with import enabled.',
 };

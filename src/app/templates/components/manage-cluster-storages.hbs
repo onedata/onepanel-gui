@@ -38,6 +38,8 @@
         @spaces={{spacesProxy.content}}
         @reloadStoragesList={{action "reloadStoragesList"}}
         @removeStorage={{action (mut storageToRemove)}}
+        @openedStorageId={{openedStorageId}}
+        @isSupportButtonHidden={{this.isSupportButtonHidden}}
       />
       {{#if someStorageIsLoading}}
         <div class="loading-more-row">
