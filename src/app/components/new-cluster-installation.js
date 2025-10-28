@@ -6,6 +6,7 @@
  *
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -74,6 +75,18 @@ export default Component.extend(I18n, {
    * @type {Utils/NewClusterDeployProcess}
    */
   clusterDeployProcess: undefined,
+
+  oneS3PortValue: undefined,
+
+  isOneS3PortValueModified: false,
+
+  defaultOneS3Port: 443,
+
+  fallbackOneS3Port: 4443,
+
+  oneS3Port: computed('oneS3PortValue', function oneS3Port() {
+    return Number(this.oneS3PortValue);
+  }),
 
   /**
    * @type {Ember.ComputedProperty<string>}
@@ -196,12 +209,7 @@ export default Component.extend(I18n, {
       onepanelServiceType,
       deploymentManager,
       stepData,
-    } = this.getProperties(
-      'deploymentTaskId',
-      'onepanelServiceType',
-      'deploymentManager',
-      'stepData',
-    );
+    } = this;
 
     const hostsProxy = PromiseObject.create({
       promise: deploymentManager.getHosts()
@@ -211,6 +219,7 @@ export default Component.extend(I18n, {
     this.setProperties({
       hostsProxy,
       newHosts: A(),
+      oneS3PortValue: String(this.defaultOneS3Port),
     });
 
     if (onepanelServiceType === 'oneprovider') {
@@ -305,6 +314,7 @@ export default Component.extend(I18n, {
         },
         oneS3: {
           nodes: getHostnamesOfType(hostsUsed, 'oneS3'),
+          port: this.oneS3PortValue,
         },
       },
       onepanel: {
@@ -401,6 +411,10 @@ export default Component.extend(I18n, {
     });
   },
 
+  findWorkerOneS3ConflictingHost() {
+    return this.hosts.find(hostInfo => hostInfo.clusterWorker && hostInfo.oneS3);
+  },
+
   actions: {
     zoneFormChanged(fieldName, value) {
       switch (fieldName) {
@@ -416,13 +430,27 @@ export default Component.extend(I18n, {
     },
 
     hostOptionChanged(hostname, option, value) {
-      const hosts = this.get('hosts');
-      const host = hosts.find(h => get(h, 'hostname') === hostname);
+      const clusterHostInfo = this.hosts.find(h => get(h, 'hostname') === hostname);
       assert(
-        host,
+        clusterHostInfo,
         'host for which option was changed, must be present in collection'
       );
-      set(host, option, value);
+      set(clusterHostInfo, option, value);
+      if (
+        !this.isOneS3PortValueModified &&
+        (option === 'oneS3' || option === 'clusterWorker')
+      ) {
+        // FIXME: redundancja kodu z ContentClustersNodes
+        // FIXME: obsługa także jeśli jest już oneS3 i zmieniamy stan clusterWorkera
+        // Auto port change if not modified by user.
+
+        // FIXME: test innych hostów; tutaj jest za dużo tych ifów
+        const targetPort = this.findWorkerOneS3ConflictingHost() ?
+          this.fallbackOneS3Port : this.defaultOneS3Port;
+        if (targetPort !== this.oneS3Port) {
+          this.set('oneS3PortValue', String(targetPort));
+        }
+      }
     },
 
     primaryClusterManagerChanged(hostname) {
@@ -510,6 +538,13 @@ export default Component.extend(I18n, {
           globalNotify.backendError(this.t('removingHost'), error);
           throw error;
         });
+    },
+
+    changeOneS3PortValue(portValue) {
+      this.setProperties({
+        oneS3PortValue: portValue,
+        isOneS3PortValueModified: true,
+      });
     },
   },
 });

@@ -45,6 +45,9 @@
       @removeHost={{action "removeHost"}}
       @blinkingHosts={{newHosts}}
       @mode="create"
+      @isOneS3PortValueModified={{this.isOneS3PortValueModified}}
+      @onOneS3PortValueChange={{action "changeOneS3PortValue"}}
+      @oneS3PortValue={{this.oneS3PortValue}}
     />
     {{#if addingNewHost}}
       <div class="row row-new-host pseudo-table-row cluster-host-table-row">

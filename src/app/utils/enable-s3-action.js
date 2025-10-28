@@ -15,6 +15,8 @@ import Locale from 'onedata-gui-common/utils/locale';
 /**
  * @typedef {Object} EnableS3ActionContext
  * @param {string} hostnames Hostnames to enable OneS3 on the cluster.
+ * @param {number} port Port on which OneS3 will function. Respected by backend only if
+ *   this is first OneS3 deployment on this cluster.
  */
 
 export default class EnableS3Action extends Action {
@@ -31,10 +33,18 @@ export default class EnableS3Action extends Action {
 
   /**
    * @private
-   * @type {ComputedProperty<EnableS3ActionContext['hostnames']>}
+   * @type {EnableS3ActionContext['hostnames']}
    */
   get hostnames() {
     return this.context.hostnames;
+  }
+
+  /**
+   * @private
+   * @type {EnableS3ActionContext['port']}
+   */
+  get port() {
+    return this.context.port;
   }
 
   /**
@@ -45,6 +55,7 @@ export default class EnableS3Action extends Action {
 
     const modal = this.modalManager.show('enable-s3-modal', {
       hostnames: this.hostnames,
+      port: this.port,
       onSuccess: () => {
         result.set('status', 'done');
         modal.api.close();

@@ -1,3 +1,5 @@
+import oneS3Port from './cluster-host-table/one-s3-port';
+
 export default {
   headers: {
     hosts: 'Hosts',
@@ -9,4 +11,7 @@ export default {
     optional: '(optional)',
   },
   removingHost: 'removing host from list',
+  mobileOneS3Port: 'OneS3 port:',
+  // przenieść do osobnego pliku
+  oneS3Port,
 };

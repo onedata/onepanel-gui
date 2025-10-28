@@ -8,7 +8,7 @@
     @media (max-width: 1201px) {
       padding-left: 5em;
       position: relative;
-      
+
       .new-host-icon.item-icon-container {
         position: absolute;
         margin-top: 5px;
@@ -20,12 +20,18 @@
       }
     }
   }
+  // The mobile table does not use margins like in content-clusters-nodes
+  // but the OneS3PortContainer needs one to look good.
+  .mobile-one-s3-port-container {
+    // Empirical value to match visually compact collapsed table of hosts.
+    padding-right: 20px;
+  }
   .form-group-new-host {
     display: inline-block;
     width: 400px;
     max-width: 55%;
     margin-bottom: $padding-base-vertical;
-    
+
     @media (max-width: 841px) {
       max-width: 40%;
     }

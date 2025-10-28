@@ -1,3 +1,19 @@
+{{#if (and this._isMobile this.oneS3PortIsShown)}}
+  <div class="mobile-one-s3-port-container">
+    <div class="mobile-one-s3-port-label">
+      {{tt this "mobileOneS3Port"}}
+    </div>
+    <ClusterHostTable::OneS3Port
+      @initialHosts={{this.editInitialHosts}}
+      @currentHosts={{this.hosts}}
+      @tableMode={{this.mode}}
+      @portValue={{this.oneS3PortValue}}
+      @validator={{this.oneS3ClusterValidator}}
+      @isPortValueModified={{this.isOneS3PortValueModified}}
+      @onChange={{action "changeOneS3Port"}}
+    />
+  </div>
+{{/if}}
 <thead>
   <tr>
     <th>{{tt this "headers.hosts"}}</th>
@@ -6,7 +22,22 @@
     <th class="text-center column toggle-column">{{tt this "headers.clusterManager"}}</th>
     <th class="text-center column toggle-column">{{tt this "headers.primaryClusterManager"}}</th>
     {{#if isOneS3Visible}}
-      <th class="text-center column toggle-column">{{tt this "headers.oneS3"}}</th>
+      <th class="text-center column toggle-column">
+        <div class="one-s3-header-container">
+          <span class="column-title">{{tt this "headers.oneS3"}}</span>
+          {{#unless this._isMobile}}
+            <ClusterHostTable::OneS3Port
+              @initialHosts={{this.editInitialHosts}}
+              @currentHosts={{this.hosts}}
+              @tableMode={{this.mode}}
+              @portValue={{this.oneS3PortValue}}
+              @validator={{this.oneS3ClusterValidator}}
+              @isPortValueModified={{this.isOneS3PortValueModified}}
+              @onChange={{action "changeOneS3Port"}}
+            />
+          {{/unless}}
+        </div>
+      </th>
     {{/if}}
     {{#if removeHostAvailable}}
       <th class="text-center column btn-column"></th>

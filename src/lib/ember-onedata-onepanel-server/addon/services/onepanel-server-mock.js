@@ -1649,10 +1649,13 @@ export default OnepanelServerBase.extend(
             hosts: ['node1.example.com', 'node2.example.com'],
           },
           workers: {
-            hosts: ['node2.example.com'],
+            hosts: ['node1.example.com'],
           },
           oneS3: {
-            hosts: ['node2.example.com'],
+            // hosts: ['node1.example.com'],
+            // port: 4443,
+            // Like in the backend, when no OneS3 is deployed:
+            hosts: [],
             port: 4443,
           },
         },

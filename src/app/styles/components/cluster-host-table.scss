@@ -4,7 +4,7 @@
 
   &:not(.bt) {
     .column {
-      // toggles are a little bigger than a normal text 
+      // toggles are a little bigger than a normal text
       // so padding must be smaller to preserve row height
       padding: $table-cell-padding * 0.75 $table-cell-padding * 0.75;
     }
@@ -20,10 +20,22 @@
     }
   }
 
-  thead tr th {
-    padding-bottom: 12px;
-    padding-top: 12px;
-    vertical-align: middle;
+  thead {
+    // be prepared for optional OneS3 port input
+    height: 64px;
+    tr th {
+      padding-bottom: 12px;
+      padding-top: 12px;
+      vertical-align: middle;
+    }
+  }
+
+  .one-s3-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
   }
 
   &.bt tbody tr {
@@ -64,7 +76,7 @@
       }
     }
   }
-  
+
   &.with-form.bt {
     form {
       display: block;
@@ -88,11 +100,20 @@
       }
     }
   }
-  
+
   .btn-remove-node {
     &.remove-icon {
       font-size: 2em;
     }
+  }
+
+  .mobile-one-s3-port-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 1.5em;
+    gap: 0.6em;
+    @include font-bold();
   }
 }
 
@@ -104,3 +125,5 @@
   vertical-align: top;
   border-top: 1px solid #ddd;
 }
+
+@import './cluster-hosts-table/one-s3-port';
