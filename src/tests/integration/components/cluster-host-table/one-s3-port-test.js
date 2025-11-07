@@ -4,7 +4,6 @@ import { setupRenderingTest } from 'ember-mocha';
 import { render, find } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { tracked } from '@glimmer/tracking';
-import { lookupService } from '../../../helpers/stub-service';
 import { BoundOneS3ClusterValidator } from 'onepanel-gui/components/cluster-host-table';
 import EmberObject from '@ember/object';
 

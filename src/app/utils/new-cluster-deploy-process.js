@@ -7,6 +7,7 @@
  *
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 

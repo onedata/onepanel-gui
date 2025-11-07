@@ -12,6 +12,5 @@ export default {
   },
   removingHost: 'removing host from list',
   mobileOneS3Port: 'OneS3 port:',
-  // przenieść do osobnego pliku
   oneS3Port,
 };

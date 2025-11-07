@@ -30,7 +30,6 @@ import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import safeExec from 'onedata-gui-common/utils/safe-method-execution';
-import notImplementedIgnore from 'onedata-gui-common/utils/not-implemented-ignore';
 import NewClusterDeployProcess from 'onepanel-gui/utils/new-cluster-deploy-process';
 import { getOwner } from '@ember/application';
 

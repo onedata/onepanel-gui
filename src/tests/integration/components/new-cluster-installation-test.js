@@ -1,13 +1,10 @@
 import { expect } from 'chai';
 import { it, describe, context } from 'mocha';
 import { setupRenderingTest } from 'ember-mocha';
-import { render, click, fillIn, find } from '@ember/test-helpers';
+import { render, click, fillIn } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 import { tracked } from '@glimmer/tracking';
-import Cluster from 'onepanel-gui/models/cluster';
 import { lookupService } from '../../helpers/stub-service';
-import { computed } from '@ember/object';
-import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import sinon from 'sinon';
 import { htmlSafe } from '@ember/string';
 
