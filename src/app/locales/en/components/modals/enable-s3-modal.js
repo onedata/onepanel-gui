@@ -1,5 +1,5 @@
 const generateIntro = (s = '') =>
-  `You are going to enable S3 data access protocol on the following host${s}:`;
+  `You are about to enable the S3 data access protocol on the following host${s}:`;
 
 export default {
   title: 'Enable S3 data access protocol',
@@ -8,7 +8,7 @@ export default {
       singular: generateIntro(),
       plural: generateIntro('s'),
     },
-    oneS3Deployment: 'This will be done through the OneS3 service deployment.',
+    oneS3Deployment: 'Each OneS3 service will listen on port <strong>{{port}}</strong>.',
     deploying: '<strong>Deploying a OneS3 service on the selected hosts:</strong> {{step}}...',
   },
   buttons: {
