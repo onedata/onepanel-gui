@@ -250,7 +250,7 @@ export default Component.extend(I18n, {
 
   willDestroyElement() {
     try {
-      this.set('clusterDeployProcess.onFinish', notImplementedIgnore);
+      this.clusterDeployProcess?.destroy();
     } finally {
       this._super(...arguments);
     }
@@ -440,11 +440,7 @@ export default Component.extend(I18n, {
         !this.isOneS3PortValueModified &&
         (option === 'oneS3' || option === 'clusterWorker')
       ) {
-        // FIXME: redundancja kodu z ContentClustersNodes
-        // FIXME: obsługa także jeśli jest już oneS3 i zmieniamy stan clusterWorkera
         // Auto port change if not modified by user.
-
-        // FIXME: test innych hostów; tutaj jest za dużo tych ifów
         const targetPort = this.findWorkerOneS3ConflictingHost() ?
           this.fallbackOneS3Port : this.defaultOneS3Port;
         if (targetPort !== this.oneS3Port) {

@@ -11,6 +11,7 @@ import { inject as service } from '@ember/service';
 import Action from 'onedata-gui-common/utils/action';
 import ActionResult from 'onedata-gui-common/utils/action-result';
 import Locale from 'onedata-gui-common/utils/locale';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 /**
  * @typedef {Object} EnableS3ActionContext
@@ -57,17 +58,21 @@ export default class EnableS3Action extends Action {
       hostnames: this.hostnames,
       port: this.port,
       onSuccess: () => {
-        result.set('status', 'done');
         modal.api.close();
-        this.globalNotify.success(this.locale.t('deployedSuccessfully'));
+        safeExec(this, () => {
+          result.set('status', 'done');
+          this.globalNotify.success(this.locale.t('deployedSuccessfully'));
+        });
       },
       onFailure: (error) => {
-        result.setProperties({
-          status: 'failed',
-          error,
-        });
         modal.api.close();
-        this.globalNotify.backendError(this.locale.t('deployingOneS3'), error);
+        safeExec(this, () => {
+          result.setProperties({
+            status: 'failed',
+            error,
+          });
+          this.globalNotify.backendError(this.locale.t('deployingOneS3'), error);
+        });
       },
     });
 

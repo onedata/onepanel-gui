@@ -111,85 +111,47 @@ describe('Integration | Component | content-clusters-nodes', function () {
     );
   });
 
-  // FIXME: zmienić na context
-  //#region auto default and fallback port
-
-  it('renders OneS3 port input with default value if OneS3 is enabled on host without worker', async function () {
-    // given
-    const helper = new Helper(this);
-    helper.mockExampleCluster();
-    helper.mockSingleClusterDeploymentInfo({
-      database: false,
-      clusterWorker: false,
-      clusterManager: false,
-      oneS3: false,
-    });
-
-    // when
-    await helper.render();
-    await click(helper.getEditServicesButton());
-    await click('[data-option=oneS3] .one-way-toggle');
-
-    // then
-    expect(
-      helper
-      .getClusterHostTable()
-      .querySelector('.one-s3-port .one-s3-port-input')
-      .value
-    ).to.equal('443');
-  });
-
-  it('renders OneS3 port input with fallback value if OneS3 is enabled on host with worker', async function () {
-    // given
-    const helper = new Helper(this);
-    helper.mockExampleCluster();
-    helper.mockSingleClusterDeploymentInfo({
-      database: true,
-      clusterWorker: true,
-      clusterManager: true,
-      oneS3: false,
-    });
-
-    // when
-    await helper.render();
-    await click(helper.getEditServicesButton());
-    await click('[data-option=oneS3] .one-way-toggle');
-
-    // then
-    expect(
-      helper
-      .getClusterHostTable()
-      .querySelector('.one-s3-port .one-s3-port-input')
-      .value
-    ).to.equal('4443');
-  });
-
-  // FIXME: Can not call `.lookup` after the owner has been destroyed
-  it('keeps OneS3 port input fallback value if there is OneS3-Worker conflict on host another than changed',
-    async function () {
+  context('automatically sets OneS3 port value', async function () {
+    it('using default, if OneS3 is enabled on host without worker', async function () {
       // given
       const helper = new Helper(this);
       helper.mockExampleCluster();
-      helper.mockDoubleClusterDeploymentInfo([{
-        database: true,
-        clusterWorker: true,
-        clusterManager: true,
-        oneS3: false,
-      }, {
+      helper.mockSingleClusterDeploymentInfo({
         database: false,
         clusterWorker: false,
         clusterManager: false,
         oneS3: false,
-      }]);
+      });
 
       // when
       await helper.render();
       await click(helper.getEditServicesButton());
-      const rows = helper.getClusterHostTable().querySelectorAll('tbody tr');
-      await click(rows[0].querySelector('[data-option=oneS3] .one-way-toggle'));
-      await click(rows[1].querySelector('[data-option=oneS3] .one-way-toggle'));
-      // disable OneS3 on non-conflicting host
-      await click(rows[1].querySelector('[data-option=oneS3] .one-way-toggle'));
+      await click('[data-option=oneS3] .one-way-toggle');
+
+      // then
+      expect(
+        helper
+        .getClusterHostTable()
+        .querySelector('.one-s3-port .one-s3-port-input')
+        .value
+      ).to.equal('443');
+    });
+
+    it('using fallback, if OneS3 is enabled on host with worker', async function () {
+      // given
+      const helper = new Helper(this);
+      helper.mockExampleCluster();
+      helper.mockSingleClusterDeploymentInfo({
+        database: true,
+        clusterWorker: true,
+        clusterManager: true,
+        oneS3: false,
+      });
+
+      // when
+      await helper.render();
+      await click(helper.getEditServicesButton());
+      await click('[data-option=oneS3] .one-way-toggle');
 
       // then
       expect(
@@ -198,8 +160,44 @@ describe('Integration | Component | content-clusters-nodes', function () {
         .querySelector('.one-s3-port .one-s3-port-input')
         .value
       ).to.equal('4443');
-    }
-  );
+    });
+
+    it('keeping OneS3 port input fallback value if there is OneS3-Worker conflict on host another than changed',
+      async function () {
+        // given
+        const helper = new Helper(this);
+        helper.mockExampleCluster();
+        helper.mockDoubleClusterDeploymentInfo([{
+          database: true,
+          clusterWorker: true,
+          clusterManager: true,
+          oneS3: false,
+        }, {
+          database: false,
+          clusterWorker: false,
+          clusterManager: false,
+          oneS3: false,
+        }]);
+
+        // when
+        await helper.render();
+        await click(helper.getEditServicesButton());
+        const rows = helper.getClusterHostTable().querySelectorAll('tbody tr');
+        await click(rows[0].querySelector('[data-option=oneS3] .one-way-toggle'));
+        await click(rows[1].querySelector('[data-option=oneS3] .one-way-toggle'));
+        // disable OneS3 on non-conflicting host
+        await click(rows[1].querySelector('[data-option=oneS3] .one-way-toggle'));
+
+        // then
+        expect(
+          helper
+          .getClusterHostTable()
+          .querySelector('.one-s3-port .one-s3-port-input')
+          .value
+        ).to.equal('4443');
+      }
+    );
+  });
 
   //#endregion
 

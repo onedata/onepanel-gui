@@ -19,6 +19,10 @@ const {
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
+  if (onepanelServer.isDestroyed) {
+    deferred.reject({ id: 'custom-onepanel-server-detroyed' });
+    return;
+  }
   const gettingTaskStatus = onepanelServer.request('ClusterApi', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({

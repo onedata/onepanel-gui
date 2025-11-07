@@ -1,4 +1,13 @@
-// FIXME: jsdoc
+/**
+ * OneS3 port settings for cluster hosts configuration.
+ *
+ * Must be fed by with some external information about modification state of cluster hosts
+ * editor.
+ *
+ * @author Jakub Liput
+ * @copyright (C) 2025 Onedata (onedata.org)
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 
 import { action, computed } from '@ember/object';
 import Component from '@glimmer/component';
@@ -17,13 +26,18 @@ import { htmlSafe } from '@ember/string';
 
 /**
  * @typedef {Object} OneS3PortArgs
- * @property {Array<ClusterHostInfo>} currentHosts
- * @property {Array<ClusterHostInfo>} initialHosts
+ * @property {Array<ClusterHostInfo>} currentHosts Current state of cluster hosts table.
+ * @property {Array<ClusterHostInfo>} initialHosts Initial state of cluster hosts table
+ *   for comparison with the current state. This state should be set on the load/save and
+ *   should stay unmodified when user can edit hosts.
  * @property {ClusterHostTableMode} tableMode
- * @property {string} portValue
- * @property {OneS3ClusterValidator} validator
- * @property {boolean} isPortValueModified
- * @property {(portValue: string) => void} onChange
+ * @property {string} portValue Current string value in the input.
+ * @property {OneS3ClusterValidator} validator External validator is needed to cooperate
+ *   with parent components in field of hosts validation.
+ * @property {boolean} isPortValueModified Should be set to true by external context if
+ *   user changed the port value between save/load.
+ * @property {(portValue: string) => void} onChange Updates string port value of the
+ *   context.
  */
 
 /** @enum */
@@ -36,19 +50,6 @@ const OneS3PortState = Object.freeze({
   CustomValid: 'CustomValid',
   CustomInvalid: 'CustomInvalid',
 });
-
-// FIXME: niepotrzebne?
-// /**
-//  * @param {OneS3PortState} state
-//  * @returns {boolean}
-//  */
-// function isOneS3PortStateValid(state) {
-//   return [
-//     OneS3PortState.AutoColliding,
-//     OneS3PortState.AutoDefault,
-//     OneS3PortState.CustomValid,
-//   ].includes(state);
-// }
 
 /**
  * @extends {Component<OneS3PortSignature>}
@@ -70,7 +71,6 @@ export default class ClusterHostTableOneS3PortComponent extends Component {
       return this.tableMode === 'show' ?
         OneS3PortState.ExistingShowing : OneS3PortState.ExistingEditing;
     }
-    // FIXME: refactor - użyć ternary operator
     if (this.willAddNewOneS3) {
       if (!this.valid) {
         return OneS3PortState.CustomInvalid;
@@ -121,17 +121,6 @@ export default class ClusterHostTableOneS3PortComponent extends Component {
   get isPortValueModified() {
     return this.args.isPortValueModified;
   }
-
-  // FIXME: trzeba computed? usunąć?
-  // /**
-  //  * Currently OneS3 can be only added, not removed, so only check if new hosts are
-  //  * enabled.
-  //  * @type {boolean}
-  //  */
-  // // ???
-  // get isModified() {
-  //   return this.willAddNewOneS3;
-  // }
 
   @computed('currentHosts.@each.oneS3', 'initialHosts')
   get willAddNewOneS3() {

@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13021 Added OneS3 port settings
 * VFS-12932 Added infinite-scrollable dropdowns
 * VFS-12875 Changed UX of storage/space list and storage form — deployments are no longer blocked if no storage is added
 * VFS-12608 Added support for enabling OneS3 service on cluster hosts after deployment

@@ -84,6 +84,10 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    */
   servicesTabProxy: undefined,
 
+  defaultOneS3Port: 443,
+
+  fallbackOneS3Port: 4443,
+
   /** @type {import('./cluster-host-table').ClusterHostTableMode} */
   servicesTableMode: computed('isEditingServices', function servicesTableMode() {
     return this.isEditingServices ? 'edit' : 'show';
@@ -223,7 +227,8 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       // It should be 443 in future.
       const isOneS3OnCluster =
         clusterDeploymentInfo.clusterHostsInfo.some(hostInfo => hostInfo.oneS3);
-      const port = isOneS3OnCluster ? String(clusterDeploymentInfo.oneS3Port) : '443';
+      const port = isOneS3OnCluster ?
+        String(clusterDeploymentInfo.oneS3Port) : String(this.defaultOneS3Port);
       this.set('oneS3PortValue', String(port));
     });
     await promise;
@@ -383,7 +388,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       oneS3: hostInfo.oneS3,
       isUsed: hostInfo.isUsed,
     })));
+  },
 
+  findWorkerOneS3ConflictingHost() {
+    return this.servicesTableHosts.find(hostInfo =>
+      hostInfo.clusterWorker && hostInfo.oneS3
+    );
   },
 
   actions: {
@@ -422,26 +432,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         this.editedClusterDeploymentInfo.clusterHostsInfo.find(hostInfo =>
           hostInfo.hostname === hostname
         );
-      // FIXME: 443 i 4443 - dwie stałe konfigurowalne jako parametr klasy
-      // FIXME: raczej refaktor na wzór new-cluster-installation
       if (clusterHostInfo) {
         set(clusterHostInfo, 'oneS3', value);
-
-        // Auto port change if not modified by user.
-        if (!this.isOneS3PortValueModified) {
-          if (
-            clusterHostInfo.clusterWorker &&
-            value &&
-            this.oneS3PortValue === '443'
-          ) {
-            this.set('oneS3PortValue', '4443');
-          } else if (
-            clusterHostInfo.clusterWorker &&
-            !value &&
-            this.oneS3PortValue === '4443'
-          ) {
-            this.set('oneS3PortValue', '443');
-          }
+        const targetPort = this.findWorkerOneS3ConflictingHost() ?
+          this.fallbackOneS3Port : this.defaultOneS3Port;
+        if (targetPort !== this.oneS3Port) {
+          this.set('oneS3PortValue', String(targetPort));
         }
       }
       this.updateServicesTableModified();

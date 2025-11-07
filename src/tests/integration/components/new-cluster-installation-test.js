@@ -47,43 +47,77 @@ describe('Integration | Component | new-cluster-installation', function () {
     ).to.not.exist;
   });
 
-  //#region auto default and fallback port
+  context('automatically sets OneS3 port value', async function () {
+    it('using default, if OneS3 is enabled on host without worker',
+      async function () {
+        // given
+        const helper = new Helper(this);
+        helper.mockHosts();
 
-  it('renders OneS3 port input with default value if OneS3 is enabled on host without worker', async function () {
-    // given
-    const helper = new Helper(this);
-    helper.mockHosts();
+        // when
+        await helper.render();
+        await click('[data-option=oneS3] .one-way-toggle');
 
-    // when
-    await helper.render();
-    await click('[data-option=oneS3] .one-way-toggle');
+        // then
+        expect(
+          helper
+          .getClusterHostTable()
+          .querySelector('.one-s3-port .one-s3-port-input')
+          .value
+        ).to.equal('443');
+      });
 
-    // then
-    expect(
-      helper
-      .getClusterHostTable()
-      .querySelector('.one-s3-port .one-s3-port-input')
-      .value
-    ).to.equal('443');
-  });
+    it('using fallback, if OneS3 is enabled on host with worker',
+      async function () {
+        // given
+        const helper = new Helper(this);
+        helper.mockHosts();
 
-  it('renders OneS3 port input with fallback value if OneS3 is enabled on host with worker', async function () {
-    // given
-    const helper = new Helper(this);
-    helper.mockHosts();
+        // when
+        await helper.render();
+        await click('[data-option=clusterWorker] .one-way-toggle');
+        await click('[data-option=oneS3] .one-way-toggle');
 
-    // when
-    await helper.render();
-    await click('[data-option=clusterWorker] .one-way-toggle');
-    await click('[data-option=oneS3] .one-way-toggle');
+        // then
+        expect(
+          helper
+          .getClusterHostTable()
+          .querySelector('.one-s3-port .one-s3-port-input')
+          .value
+        ).to.equal('4443');
+      });
 
-    // then
-    expect(
-      helper
-      .getClusterHostTable()
-      .querySelector('.one-s3-port .one-s3-port-input')
-      .value
-    ).to.equal('4443');
+    it('keeping OneS3 port input fallback value if there is OneS3-Worker conflict on host another than changed',
+      async function () {
+        // given
+        const helper = new Helper(this);
+        helper.mockHosts(['a.example.com', 'b.example.com']);
+
+        // when
+        await helper.render();
+        const firstRowToggles = helper
+          .getClusterHostTable()
+          .querySelector('tbody tr')
+          .querySelectorAll('.one-way-toggle');
+        // cause conflict in first row
+        for (const toggle of firstRowToggles) {
+          await click(toggle);
+        }
+        // cause and clear conflict in second row
+        const secondRow = helper.getClusterHostTable().querySelectorAll('tbody tr')[1];
+        await click(secondRow.querySelector('[data-option=clusterWorker] .one-way-toggle'));
+        await click(secondRow.querySelector('[data-option=oneS3] .one-way-toggle'));
+        await click(secondRow.querySelector('[data-option=clusterWorker] .one-way-toggle'));
+
+        // then
+        expect(
+          helper
+          .getClusterHostTable()
+          .querySelector('.one-s3-port .one-s3-port-input')
+          .value
+        ).to.equal('4443');
+      }
+    );
   });
 
   it('changes OneS3 port input value to fallback value if OneS3 is enabled and worker gets enabled',
@@ -129,42 +163,6 @@ describe('Integration | Component | new-cluster-installation', function () {
     }
   );
 
-  it('keeps OneS3 port input fallback value if there is OneS3-Worker conflict on host another than changed',
-    async function () {
-      // given
-      const helper = new Helper(this);
-      helper.mockHosts(['a.example.com', 'b.example.com']);
-
-      // when
-      await helper.render();
-      const firstRowToggles = helper
-        .getClusterHostTable()
-        .querySelector('tbody tr')
-        .querySelectorAll('.one-way-toggle');
-      // cause conflict in first row
-      for (const toggle of firstRowToggles) {
-        await click(toggle);
-      }
-      // cause and clear conflict in second row
-      const secondRow = helper.getClusterHostTable().querySelectorAll('tbody tr')[1];
-      await click(secondRow.querySelector('[data-option=clusterWorker] .one-way-toggle'));
-      await click(secondRow.querySelector('[data-option=oneS3] .one-way-toggle'));
-      await click(secondRow.querySelector('[data-option=clusterWorker] .one-way-toggle'));
-
-      // then
-      expect(
-        helper
-        .getClusterHostTable()
-        .querySelector('.one-s3-port .one-s3-port-input')
-        .value
-      ).to.equal('4443');
-    }
-  );
-
-  //#endregion
-
-  // FIXME: po prawidłowym wykonaniu testu jest błąd w konsoli JS: Can not call .lookup
-  // after owner destroyed spowodowany tym, że w tle działa watcher
   it('can start deployment with custom OneS3 port', async function () {
     // given
     const helper = new Helper(this);

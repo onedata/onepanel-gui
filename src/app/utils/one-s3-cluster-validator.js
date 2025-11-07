@@ -1,4 +1,12 @@
-// FIXME: jsdoc
+/**
+ * Provides validation of OneS3 configuration in context of:
+ * - port
+ * - other enabled/disabled services on cluster host
+ *
+ * @author Jakub Liput
+ * @copyright (C) 2025 Onedata (onedata.org)
+ * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ */
 
 import { computed } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
