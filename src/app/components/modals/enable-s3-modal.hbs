@@ -15,10 +15,10 @@
       <p>{{this.introText}}</p>
       <ul>
         {{#each this.hostnames as |hostname|}}
-          <li>{{hostname}}</li>
+          <li><strong>{{hostname}}</strong></li>
         {{/each}}
       </ul>
-      <p>{{tt this "body.oneS3Deployment"}}</p>
+      <p>{{tt this "body.oneS3Deployment" port=this.port}}</p>
     {{else if (eq this.stateName EnableS3ModalState.Progress)}}
       <p>{{tt this "body.deploying" step=this.currentState.stepText}}</p>
       <BsProgress as |bsProgress|>

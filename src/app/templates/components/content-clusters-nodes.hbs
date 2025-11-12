@@ -18,7 +18,7 @@
                 @buttonType="submit"
                 @size="sm"
                 @onClick={{action "applyServicesChanges"}}
-                @disabled={{not this.isServicesTableModified}}
+                @disabled={{this.isApplyDisabled}}
                 class="btn-submit-cluster-nodes"
               >
                 {{tt this "applyChanges"}}
@@ -48,15 +48,20 @@
           </div>
         {{/if}}
         <ConflictingPortsInfo
-          @hosts={{clusterHostsInfoProxy.content.clusterHostsInfo}}
+          @hosts={{clusterDeploymentInfoProxy.content.clusterHostsInfo}}
         />
         <div class="row content-row">
           <ClusterHostTable
+            @editInitialHosts={{this.editInitialHosts}}
             @hosts={{this.servicesTableHosts}}
             @primaryClusterManager={{this.servicesTablePrimaryClusterManager}}
             @mode={{this.servicesTableMode}}
-            @hostOptionChanged={{action "hostOptionChanged"}}
             @readonlyServicesHosts={{this.readonlyServicesHosts}}
+            @oneS3PortValue={{this.oneS3PortValue}}
+            @isOneS3PortValueModified={{this.isOneS3PortValueModified}}
+            @hostOptionChanged={{action "hostOptionChanged"}}
+            @allValidChanged={{action "changeHostTableValid"}}
+            @onOneS3PortValueChange={{action "changeOneS3PortValue"}}
           />
         </div>
       </PromiseProxyContainer>

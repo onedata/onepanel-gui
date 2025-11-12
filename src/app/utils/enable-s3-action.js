@@ -11,10 +11,13 @@ import { inject as service } from '@ember/service';
 import Action from 'onedata-gui-common/utils/action';
 import ActionResult from 'onedata-gui-common/utils/action-result';
 import Locale from 'onedata-gui-common/utils/locale';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 /**
  * @typedef {Object} EnableS3ActionContext
  * @param {string} hostnames Hostnames to enable OneS3 on the cluster.
+ * @param {number} port Port on which OneS3 will function. Respected by backend only if
+ *   this is first OneS3 deployment on this cluster.
  */
 
 export default class EnableS3Action extends Action {
@@ -31,10 +34,18 @@ export default class EnableS3Action extends Action {
 
   /**
    * @private
-   * @type {ComputedProperty<EnableS3ActionContext['hostnames']>}
+   * @type {EnableS3ActionContext['hostnames']}
    */
   get hostnames() {
     return this.context.hostnames;
+  }
+
+  /**
+   * @private
+   * @type {EnableS3ActionContext['port']}
+   */
+  get port() {
+    return this.context.port;
   }
 
   /**
@@ -45,18 +56,23 @@ export default class EnableS3Action extends Action {
 
     const modal = this.modalManager.show('enable-s3-modal', {
       hostnames: this.hostnames,
+      port: this.port,
       onSuccess: () => {
-        result.set('status', 'done');
         modal.api.close();
-        this.globalNotify.success(this.locale.t('deployedSuccessfully'));
+        safeExec(this, () => {
+          result.set('status', 'done');
+          this.globalNotify.success(this.locale.t('deployedSuccessfully'));
+        });
       },
       onFailure: (error) => {
-        result.setProperties({
-          status: 'failed',
-          error,
-        });
         modal.api.close();
-        this.globalNotify.backendError(this.locale.t('deployingOneS3'), error);
+        safeExec(this, () => {
+          result.setProperties({
+            status: 'failed',
+            error,
+          });
+          this.globalNotify.backendError(this.locale.t('deployingOneS3'), error);
+        });
       },
     });
 

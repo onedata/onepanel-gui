@@ -55,22 +55,38 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
    */
   editedClusterDeploymentInfo: null,
 
+  /**
+   * Snapshot of hosts made when view turns into edit mode.
+   * @type {Array<Object>}
+   */
+  editInitialHosts: null,
+
   _ipsFormData: undefined,
 
   _origIpsFormData: undefined,
 
   isServicesTableModified: false,
 
-  clusterHostsInfoProxy: undefined,
+  clusterDeploymentInfoProxy: undefined,
 
   /** @type {ClusterHostTableReadonlyServices} */
   readonlyServicesHosts: undefined,
+
+  isHostTableValid: true,
+
+  oneS3PortValue: undefined,
+
+  isOneS3PortValueModified: false,
 
   /**
    * Fulfills when data necessary for displaying services table tab is loaded.
    * @type {PromiseObject}
    */
   servicesTabProxy: undefined,
+
+  defaultOneS3Port: 443,
+
+  fallbackOneS3Port: 4443,
 
   /** @type {import('./cluster-host-table').ClusterHostTableMode} */
   servicesTableMode: computed('isEditingServices', function servicesTableMode() {
@@ -96,22 +112,22 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   servicesTableHosts: computed(
     'isEditingServices',
     'editedClusterDeploymentInfo.clusterHostsInfo',
-    'clusterHostsInfoProxy.content.clusterHostsInfo',
+    'clusterDeploymentInfoProxy.content.clusterHostsInfo',
     function servicesTableHosts() {
       return this.isEditingServices ?
         this.editedClusterDeploymentInfo.clusterHostsInfo :
-        this.clusterHostsInfoProxy.content.clusterHostsInfo;
+        this.clusterDeploymentInfoProxy.content.clusterHostsInfo;
     }
   ),
 
   servicesTablePrimaryClusterManager: computed(
     'isEditingServices',
     'editedClusterDeploymentInfo.mainManagerHostname',
-    'clusterHostsInfoProxy.content.mainManagerHostname',
+    'clusterDeploymentInfoProxy.content.mainManagerHostname',
     function servicesTablePrimaryClusterManager() {
       return this.isEditingServices ?
         this.editedClusterDeploymentInfo.mainManagerHostname :
-        this.clusterHostsInfoProxy.content.mainManagerHostname;
+        this.clusterDeploymentInfoProxy.content.mainManagerHostname;
     }
   ),
 
@@ -143,21 +159,31 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   ),
 
   /** @type {ComputedProperty<number>} */
-  oneS3Port: reads('installationDetailsProxy.content.cluster.oneS3.port'),
+  oneS3Port: computed('oneS3PortValue', function oneS3Port() {
+    return Number(this.oneS3PortValue);
+  }),
+
+  isApplyDisabled: computed(
+    'isHostTableValid',
+    'isServicesTableModified',
+    function isApplyDisabled() {
+      return !this.isServicesTableModified || !this.isHostTableValid;
+    }
+  ),
 
   init() {
     this._super(...arguments);
     (async () => {
-      await this.initClusterHostsInfoProxy();
+      await this.initClusterDeploymentInfoProxy();
       defineProperty(
         this,
         'servicesTabProxy',
         computed(
-          'initClusterHostsInfoProxy',
+          'initClusterDeploymentInfoProxy',
           'installationDetailsProxy',
           function servicesTabProxy() {
             const promise = allFulfilled([
-              this.initClusterHostsInfoProxy,
+              this.initClusterDeploymentInfoProxy,
               this.installationDetailsProxy,
             ]);
             return promiseObject(promise);
@@ -165,7 +191,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         )
       );
       this.notifyPropertyChange('servicesTabProxy');
-      this.updateReadonlyServicesHosts(null, this.servicesTableMode);
+
+      if (this.isEditingServices) {
+        this.startServicesEdit();
+      } else {
+        this.endServicesEdit();
+      }
     })();
   },
 
@@ -178,14 +209,33 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
     });
   },
 
-  async initClusterHostsInfoProxy() {
+  async initClusterDeploymentInfoProxy() {
     const promise = this.deploymentManager.getClusterHostsInfo();
-    this.set('clusterHostsInfoProxy', promiseObject(promise));
+    const clusterDeploymentInfoProxy = promiseObject(promise);
+    this.set('clusterDeploymentInfoProxy', clusterDeploymentInfoProxy);
+    clusterDeploymentInfoProxy.then(clusterDeploymentInfo => {
+      // Check if this.clusterDeploymentInfoProxy was not replaced in the meantime.
+      if (this.clusterDeploymentInfoProxy !== clusterDeploymentInfoProxy) {
+        return;
+      }
+      // This is not cluster with OneS3 capabilities.
+      if (typeof clusterDeploymentInfo.oneS3Port !== 'number') {
+        this.set('oneS3PortValue', null);
+        return;
+      }
+      // Workaround for current backend default OneS3 port, when none OneS3 is deployed.
+      // It should be 443 in future.
+      const isOneS3OnCluster =
+        clusterDeploymentInfo.clusterHostsInfo.some(hostInfo => hostInfo.oneS3);
+      const port = isOneS3OnCluster ?
+        String(clusterDeploymentInfo.oneS3Port) : String(this.defaultOneS3Port);
+      this.set('oneS3PortValue', String(port));
+    });
     await promise;
   },
 
   getModifiedEnabledS3Hosts() {
-    const prevHostsInfo = this.clusterHostsInfoProxy.content.clusterHostsInfo;
+    const prevHostsInfo = this.clusterDeploymentInfoProxy.content.clusterHostsInfo;
     const newHostsInfo = this.editedClusterDeploymentInfo.clusterHostsInfo;
     const diffHostsInfo = _.zip(prevHostsInfo, newHostsInfo);
     const newlyEnabledS3Hosts = [];
@@ -204,6 +254,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       ownerSource: this,
       context: {
         hostnames,
+        port: this.oneS3Port,
       },
     });
     try {
@@ -211,12 +262,12 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
 
       switch (result.status) {
         case 'done':
-          await this.initClusterHostsInfoProxy();
+          await this.initClusterDeploymentInfoProxy();
           this.endServicesEdit();
           this.reloadHostData();
           break;
         case 'failed':
-          await this.initClusterHostsInfoProxy();
+          await this.initClusterDeploymentInfoProxy();
           this.updateServicesTableModified();
           this.reloadHostData();
           break;
@@ -275,25 +326,26 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
   },
 
   startServicesEdit() {
-    const clusterHostsInfo = this.clusterHostsInfoProxy.content;
-    const editedClusterHostsInfo = clusterHostsInfo.clusterHostsInfo.map(hostInfo => {
-      const {
-        hostname,
-        database,
-        clusterWorker,
-        clusterManager,
-        oneS3,
-      } = hostInfo;
-      return ClusterHostInfo.create({
-        hostname,
-        database,
-        clusterWorker,
-        clusterManager,
-        oneS3,
+    const clusterDeploymentInfo = this.clusterDeploymentInfoProxy.content;
+    const editedClusterHostsInfo =
+      clusterDeploymentInfo.clusterHostsInfo.map(hostInfo => {
+        const {
+          hostname,
+          database,
+          clusterWorker,
+          clusterManager,
+          oneS3,
+        } = hostInfo;
+        return ClusterHostInfo.create({
+          hostname,
+          database,
+          clusterWorker,
+          clusterManager,
+          oneS3,
+        });
       });
-    });
     const editedClusterDeploymentInfo = {
-      mainManagerHostname: clusterHostsInfo.mainManagerHostname,
+      mainManagerHostname: clusterDeploymentInfo.mainManagerHostname,
       clusterHostsInfo: editedClusterHostsInfo,
     };
     this.updateReadonlyServicesHosts('show', 'edit');
@@ -301,6 +353,9 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       isEditingServices: true,
       editedClusterDeploymentInfo,
       isServicesTableModified: false,
+      isHostTableValid: true,
+      editInitialHosts: this.getHostsSnapshot(),
+      isOneS3PortValueModified: false,
     });
   },
 
@@ -310,7 +365,35 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
       isEditingServices: false,
       editedClusterDeploymentInfo: null,
       isServicesTableModified: false,
+      isHostTableValid: true,
+      editInitialHosts: this.getHostsSnapshot(),
+      isOneS3PortValueModified: false,
     });
+  },
+
+  /**
+   * Creates freezed array of freezed objects with current ClusterHostInfo data.
+   * @returns {Array<Object>|null} array of ClusterHostInfo-like objects
+   */
+  getHostsSnapshot() {
+    const hosts = this.clusterDeploymentInfoProxy?.content?.clusterHostsInfo;
+    if (!hosts) {
+      return null;
+    }
+    return Object.freeze(hosts.map(hostInfo => Object.freeze({
+      hostname: hostInfo.hostname,
+      database: hostInfo.database,
+      clusterWorker: hostInfo.clusterWorker,
+      clusterManager: hostInfo.clusterManager,
+      oneS3: hostInfo.oneS3,
+      isUsed: hostInfo.isUsed,
+    })));
+  },
+
+  findWorkerOneS3ConflictingHost() {
+    return this.servicesTableHosts.find(hostInfo =>
+      hostInfo.clusterWorker && hostInfo.oneS3
+    );
   },
 
   actions: {
@@ -351,8 +434,24 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
         );
       if (clusterHostInfo) {
         set(clusterHostInfo, 'oneS3', value);
+        const targetPort = this.findWorkerOneS3ConflictingHost() ?
+          this.fallbackOneS3Port : this.defaultOneS3Port;
+        if (targetPort !== this.oneS3Port) {
+          this.set('oneS3PortValue', String(targetPort));
+        }
       }
       this.updateServicesTableModified();
+    },
+
+    changeHostTableValid(isValid) {
+      this.set('isHostTableValid', isValid);
+    },
+
+    changeOneS3PortValue(portValue) {
+      this.setProperties({
+        oneS3PortValue: portValue,
+        isOneS3PortValueModified: true,
+      });
     },
   },
 });

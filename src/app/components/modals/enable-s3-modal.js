@@ -35,6 +35,7 @@ import getTaskId from 'ember-onedata-onepanel-server/utils/get-task-id';
 /**
  * @typedef {Object} EnableS3ModalOptions
  * @property {Array<string>} hostnames
+ * @property {number} port
  * @property {() => void} onSuccess
  * @property {() => void} onFailure
  * @property {string} [modalClass]
@@ -137,6 +138,10 @@ export default class EnableS3ModalComponent extends Component {
     return this.modalOptions.hostnames;
   }
 
+  get port() {
+    return this.modalOptions.port;
+  }
+
   get onSuccess() {
     return this.modalOptions.onSuccess;
   }
@@ -203,7 +208,7 @@ class EnableS3ModalConfirmState {
    * @param {number} [port]
    * @returns {Promise<string>} Task ID of OneS3 deployment process.
    */
-  async deployOneS3(port) {
+  async deployOneS3() {
     if (this.isDeployDisabled) {
       return;
     }
@@ -211,10 +216,8 @@ class EnableS3ModalConfirmState {
     /** @type {Onepanel.ServiceOnes3} */
     const options = {
       hosts: this.component.hostnames,
+      port: this.component.port,
     };
-    if (typeof port === 'number') {
-      options.port = port;
-    }
     const { response } = await this.component.onepanelServer.request(
       'OneproviderClusterApi',
       'addOnes3',

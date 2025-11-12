@@ -27,6 +27,7 @@ import { getOwner } from '@ember/application';
  * @typedef {Object} ClusterDeploymentInfo
  * @property {string} mainManagerHostname
  * @property {Array<Models.ClusterHostInfo>} clusterHostsInfo
+ * @property {number} [oneS3Port]
  */
 
 const _ROLE_COLLECTIONS = {
@@ -143,6 +144,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
     return {
       mainManagerHostname: cluster.managers.mainHost,
+      oneS3Port: cluster.oneS3?.port,
       clusterHostsInfo: clusterHostsInfoArray,
     };
   },
@@ -296,7 +298,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * @param {string} type
-   * @returns {Promise} resolves with Array.{ hostname: string }
+   * @returns {Promise<Array<{ hostname: string }>>}
    */
   getHosts(type = 'known') {
     return this.getHostNames(type).then(({ data: hostnames }) => {
