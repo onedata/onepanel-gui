@@ -96,7 +96,7 @@ export default BasicTable.extend(
     oneS3PortValue: undefined,
 
     /**
-     * @virtual optional
+     * @virtual
      * @type {(portValue: string) => void}
      */
     onOneS3PortValueChange: undefined,

@@ -158,7 +158,7 @@ export default Component.extend(I18n, clusterIpsConfigurator, {
     }
   ),
 
-  // /** @type {ComputedProperty<number>} */
+  /** @type {ComputedProperty<number>} */
   oneS3Port: computed('oneS3PortValue', function oneS3Port() {
     return Number(this.oneS3PortValue);
   }),
