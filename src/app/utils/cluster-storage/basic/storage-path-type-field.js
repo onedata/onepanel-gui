@@ -47,8 +47,8 @@ export const StoragePathTypeField = StorageRadioField.extend({
    */
   defaultValue: computed('parent.value.type', function defaultValue() {
     const config = storagePathTypeConfig[this.parent.value?.type];
-    if (config?.defaultValue) {
-      return config.defaultValue;
+    if (config) {
+      return config.defaultValue ?? null;
     }
     return this.options[0].value;
   }),
