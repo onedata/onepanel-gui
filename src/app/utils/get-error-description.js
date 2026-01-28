@@ -19,6 +19,8 @@ export default function getErrorDescription(error, i18n) {
   const responseError = get(body || {}, 'error');
   if (responseError) {
     return commonGetErrorDescription(responseError, i18n);
+  } else if (error?.id === 'storageTestFailed') {
+    return commonGetErrorDescription(error, i18n);
   }
 
   // Fallback, old code which handles errors with undefined body.error.

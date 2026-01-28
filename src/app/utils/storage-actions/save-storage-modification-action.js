@@ -92,7 +92,7 @@ export default Action.extend({
       });
 
       if (result.result.verificationPassed === false) {
-        this.globalNotify.warningAlert(this.t('warningStorageCheckFailed', {
+        this.globalNotify.errorAlert(this.t('warningStorageCheckFailed', {
           name: storageBeforeModification.name,
         }));
       }

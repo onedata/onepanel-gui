@@ -161,9 +161,9 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         .to.be.calledWith(htmlSafe(
           'Storage backend "my-storage" has been modified successfully.'
         ));
-      expect(this.globalNotifyMock.warningAlert)
+      expect(this.globalNotifyMock.errorAlert)
         .to.be.calledWith(htmlSafe(
-          'File read/write test has failed after "my-storage" storage backend modification. Please make sure that the storage backend configuration is correct.'
+          'Cannot modify the "my-storage" storage backend: the file read/write test failed. Make sure that the configuration is correct and the storage backend is reachable and operational.'
         ));
     });
 
