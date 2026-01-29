@@ -66,6 +66,10 @@ export const StoragePathTypeField = StorageRadioField.extend({
    */
   valueChanged() {
     this._super(...arguments);
-    this.context.component.storagePathTypeChanged();
+    const component = this.context.component;
+    component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
+    component.basicGroup.getFieldByPath('readonly')?.autoSettings();
+    component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
+    component.s3Group?.getFieldByPath('maximumCanonicalObjectSize')?.autoSettings();
   },
 });

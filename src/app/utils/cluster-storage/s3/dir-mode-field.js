@@ -6,6 +6,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { reads } from '@ember/object/computed';
 import { StorageTextField } from '../base/storage-text-field';
 
 export const DirModeField = StorageTextField.extend({
@@ -23,4 +24,20 @@ export const DirModeField = StorageTextField.extend({
    * @override
    */
   regex: /^[0-7][0-7][0-7][0-7]?$/,
+
+  /**
+   * @type {boolean}
+   */
+  importedStorage: reads('parent.parent.value.basic.importedStorage'),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabled: reads('importedStorage'),
+
+  autoSettings() {
+    if (!this.importedStorage) {
+      this.valueChanged(null);
+    }
+  },
 });

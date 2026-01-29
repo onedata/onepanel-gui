@@ -18,10 +18,13 @@ export default {
   readonly: {
     label: 'Readonly',
     tip: 'Defines whether the storage backend is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage backend. Such storage backend can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
+    httpOnlyReadonlyTip: 'HTTP storages are limited to readonly mode.',
+    cannotReadonlyNotImportedTip: 'This option is available only for imported storage backends.',
   },
   importedStorage: {
     label: 'Imported storage',
     tip: 'Indicates that the existing data on this storage backend is intended for import. Actual data import will happen when the storage backend is used to support a space. Only one space can be supported by such storage backend.',
+    httpOnlyImported: 'HTTP storages are always treated as imported due to their readonly limitation.',
   },
   lumaFeed: {
     label: 'LUMA feed',

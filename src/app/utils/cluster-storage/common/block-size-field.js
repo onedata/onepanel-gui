@@ -28,4 +28,8 @@ export const BlockSizeField = StorageNumberField.extend({
    * @override
    */
   gt: 0,
+
+  autoSettings() {
+    return;
+  },
 });

@@ -7,6 +7,8 @@
  */
 
 import { StorageRadioField } from '../base/storage-radio-field';
+import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export const RangeWriteSupportField = StorageRadioField.extend({
   /**
@@ -27,4 +29,30 @@ export const RangeWriteSupportField = StorageRadioField.extend({
     { value: 'sabredav' },
     { value: 'moddav' },
   ]),
+
+  /**
+   * @type {boolean}
+   */
+  readOnly: reads('parent.parent.value.basic.readonly'),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabled: computed('readOnly', function isEnabled() {
+    return !this.readOnly;
+  }),
+
+  autoSettings() {
+    if (this.readOnly) {
+      if (this.value !== 'none') {
+        this.valueChanged('none');
+      }
+    } else {
+      this.set('defaultValue', null);
+      this.options[0].disabled = true;
+      if (this.value === 'none') {
+        this.valueChanged(null);
+      }
+    }
+  },
 });

@@ -45,20 +45,6 @@ const {
   layoutConfig,
 } = config;
 
-const storagePathTypeConfig = {
-  posix: { defaultValue: 'canonical', disabled: true },
-  glusterfs: { defaultValue: 'canonical', disabled: true },
-  nulldevice: { defaultValue: 'canonical' },
-  ceph: { defaultValue: 'flat' },
-  cephrados: { defaultValue: 'flat', disabled: true },
-  s3: {},
-  swift: { defaultValue: 'flat' },
-  xrootd: { defaultValue: 'canonical', disabled: true },
-  http: { defaultValue: 'canonical', disabled: true },
-  webdav: { defaultValue: 'canonical', disabled: true },
-  nfs: { defaultValue: 'canonical', disabled: true },
-};
-
 export default Component.extend(I18n, {
   classNames: ['cluster-storage-add-form'],
 
@@ -262,18 +248,14 @@ export default Component.extend(I18n, {
   isFormOpenedObserver: observer('isFormOpened', function isFormOpenedObserver() {
     if (this.isFormOpened) {
       this.fields.reset();
-      this.setProperties({
-        areQosParamsValid: true,
-        editedQosParams: undefined,
-      });
+      this.setDefaultQosParams();
     }
   }),
 
   storageProvidesSupportObserver: observer(
     'storageProvidesSupport',
     function storageProvidesSupportObserver() {
-      const type = this.basicGroup.getFieldByPath('type').value;
-      this.autoSettingsImportedStorage(type);
+      this.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
     }
   ),
 
@@ -281,11 +263,8 @@ export default Component.extend(I18n, {
     if (this.storage) {
       this._fillInForm();
     }
-    this.autoSettingsAll(this.selectedStorageType);
-    this.setProperties({
-      areQosParamsValid: true,
-      editedQosParams: undefined,
-    });
+    this.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
+    this.setDefaultQosParams();
   }),
 
   init() {
@@ -295,7 +274,8 @@ export default Component.extend(I18n, {
       this._fillInForm();
     }
     if (this.mode !== 'show' && this.selectedStorageType) {
-      this.storageTypeChanged(this.selectedStorageType);
+      this.setDefaultQosParams();
+      this.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
     }
   },
 
@@ -333,209 +313,11 @@ export default Component.extend(I18n, {
     }
   },
 
-  storageTypeChanged(type) {
+  setDefaultQosParams() {
     this.setProperties({
       areQosParamsValid: true,
       editedQosParams: undefined,
     });
-
-    this.autoSettingsAll(type);
-  },
-
-  storagePathTypeChanged() {
-    const type = this.basicGroup.getFieldByPath('type').value;
-
-    this.autoSettingsImportedStorage(type);
-    this.autoSettingsReadonly(type);
-    this.autoSettingsBlockSize(type);
-    this.autoSettingsMaxCanonicalObjectSize(type);
-  },
-
-  importedStorageChanged() {
-    const type = this.basicGroup.getFieldByPath('type').value;
-
-    this.autoSettingsReadonly(type);
-    this.autoSettingsSimulatedFilesystem(type);
-    this.autoSettingsImportedItemMode(type);
-  },
-
-  readonlyChanged() {
-    const type = this.basicGroup.getFieldByPath('type').value;
-
-    this.autoSettingsRangeWriteSupport(type);
-  },
-
-  autoSettingsImportedStorage(type) {
-    if (this.mode === 'show') {
-      return;
-    }
-
-    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
-    let disabled = this.storageProvidesSupport;
-    let value = this.storage?.importedStorage;
-    let lockHint = null;
-    const importedStorageField = this.basicGroup.getFieldByPath('importedStorage');
-
-    if (type === 'http') {
-      disabled = true;
-      value = true;
-      lockHint = this.t('httpOnlyImported');
-    } else if (type === 's3') {
-      disabled = true;
-      value = pathType === 'canonical';
-    }
-
-    if (disabled) {
-      importedStorageField.valueChanged(value);
-    }
-    importedStorageField.set('isEnabled', !disabled);
-    if (lockHint) {
-      importedStorageField.set('disabledControlTip', lockHint);
-    }
-  },
-
-  autoSettingsReadonly(type) {
-    if (this.mode === 'show') {
-      return;
-    }
-    const isImportedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
-    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
-    const readonlyField = this.basicGroup.getFieldByPath('readonly');
-
-    let locked;
-    let value = null;
-    let hint = null;
-
-    if (isImportedStorage) {
-      locked = false;
-    } else {
-      locked = true;
-      value = false;
-      hint = this.t('cannotReadonlyNotImported');
-    }
-
-    // HTTP storage type implies that storage is imported,
-    // so it will be eventually locked to true
-    if (type === 'http') {
-      locked = true;
-      value = true;
-      hint = this.t('httpOnlyReadonly');
-    }
-
-    if (type === 's3' &&
-      pathType === 'canonical' &&
-      isImportedStorage
-    ) {
-      locked = true;
-      value = true;
-    }
-    if (value !== null) {
-      readonlyField.valueChanged(value);
-    }
-    readonlyField.set('isEnabled', !locked);
-    if (hint) {
-      readonlyField.set('disabledControlTip', hint);
-    }
-  },
-
-  autoSettingsRangeWriteSupport(type) {
-    if (this.mode === 'show' || type !== 'webdav') {
-      return;
-    }
-
-    const isReadonly = this.basicGroup.getFieldByPath('readonly').value;
-    const rangeWriteSupportField = this.webdavGroup.getFieldByPath('rangeWriteSupport');
-    const currentValue = rangeWriteSupportField.value;
-
-    if (isReadonly) {
-      rangeWriteSupportField.set('isEnabled', false);
-      if (currentValue !== 'none') {
-        rangeWriteSupportField.valueChanged('none');
-      }
-    } else {
-      rangeWriteSupportField.setProperties({
-        isEnabled: true,
-        defaultValue: null,
-      });
-      rangeWriteSupportField.options[0].isEnabled = false;
-      if (currentValue === 'none') {
-        rangeWriteSupportField.valueChanged(null);
-      }
-    }
-  },
-
-  autoSettingsBlockSize(type) {
-    if (type !== 's3' || this.mode === 'show') {
-      return;
-    }
-
-    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
-    const blockSizeField = this.s3Group.getFieldByPath('blockSize');
-    const blockSize = blockSizeField.value;
-
-    if (pathType === 'canonical' || blockSize === 0) {
-      blockSizeField.valueChanged(
-        pathType === 'canonical' ? 0 : null
-      );
-    }
-    blockSizeField.set('isEnabled', pathType !== 'canonical');
-  },
-
-  autoSettingsSimulatedFilesystem(type) {
-    if (type !== 'nulldevice' || this.mode === 'show') {
-      return;
-    }
-    const importedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
-    const growSpeedField = this.nullDeviceGroup.getFieldByPath('simulatedFilesystemGrowSpeed');
-    const paramsField = this.nullDeviceGroup.getFieldByPath('simulatedFilesystemParameters');
-
-    growSpeedField.set('isEnabled', importedStorage);
-    paramsField.set('isEnabled', importedStorage);
-
-    if (!importedStorage) {
-      growSpeedField.valueChanged(null);
-      paramsField.valueChanged(null);
-    }
-  },
-
-  autoSettingsMaxCanonicalObjectSize(type) {
-    if (type !== 's3' || this.mode === 'show') {
-      return;
-    }
-
-    const pathType = this.basicGroup.getFieldByPath('storagePathType').value;
-    const maxCanonicalObjectSize = this.s3Group.getFieldByPath('maximumCanonicalObjectSize');
-    const isFieldDisabled = pathType === 'flat';
-    maxCanonicalObjectSize.set('isEnabled', !isFieldDisabled);
-    if (isFieldDisabled) {
-      maxCanonicalObjectSize.valueChanged(null);
-    }
-  },
-
-  autoSettingsImportedItemMode(type) {
-    if (type !== 's3' || this.mode === 'show') {
-      return;
-    }
-
-    const importedStorage = this.basicGroup.getFieldByPath('importedStorage').value;
-    const fileModeField = this.s3Group.getFieldByPath('fileMode');
-    const dirModeField = this.s3Group.getFieldByPath('dirMode');
-    fileModeField.set('isEnabled', importedStorage);
-    dirModeField.set('isEnabled', importedStorage);
-    if (!importedStorage) {
-      fileModeField.valueChanged(null);
-      dirModeField.valueChanged(null);
-    }
-  },
-
-  autoSettingsAll(type) {
-    this.autoSettingsImportedStorage(type);
-    this.autoSettingsReadonly(type);
-    this.autoSettingsRangeWriteSupport(type);
-    this.autoSettingsBlockSize(type);
-    this.autoSettingsMaxCanonicalObjectSize(type);
-    this.autoSettingsSimulatedFilesystem(type);
-    this.autoSettingsImportedItemMode(type);
   },
 
   willDestroyElement() {

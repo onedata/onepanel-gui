@@ -6,6 +6,7 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
+import { reads } from '@ember/object/computed';
 import { StorageNumberField } from '../base/storage-number-field';
 
 export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
@@ -23,4 +24,20 @@ export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
    * @override
    */
   gte: 0,
+
+  /**
+   * @type {boolean}
+   */
+  importedStorage: reads('parent.parent.value.basic.importedStorage'),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabled: reads('importedStorage'),
+
+  autoSettings() {
+    if (!this.importedStorage) {
+      this.valueChanged(null);
+    }
+  },
 });

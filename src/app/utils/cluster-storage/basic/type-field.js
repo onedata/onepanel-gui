@@ -60,8 +60,19 @@ export const TypeField = StorageDropdownField.extend({
    */
   valueChanged() {
     this._super(...arguments);
-    this.context.component.fields.reset();
+    const component = this.context.component;
+    component.fields.reset();
     this._super(...arguments);
-    this.context.component.storageTypeChanged(this.value);
+    component.storageTypeChanged(this.value);
+    component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
+    component.basicGroup.getFieldByPath('readonly')?.autoSettings();
+    component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
+    component.s3Group?.getFieldByPath('maximumCanonicalObjectSize')?.autoSettings();
+    component.s3Group?.getFieldByPath('fileMode')?.autoSettings();
+    component.s3Group?.getFieldByPath('dirMode')?.autoSettings();
+    component.nullDeviceGroup?.getFieldByPath('simulatedFilesystemGrowSpeed')?.autoSettings();
+    component.nullDeviceGroup?.getFieldByPath('simulatedFilesystemParameters')?.autoSettings();
+    component.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
+    component.setDefaultQosParams();
   },
 });

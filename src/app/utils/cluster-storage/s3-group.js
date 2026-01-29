@@ -11,7 +11,7 @@ import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields
 import { ArchiveStorageField } from './s3/archive-storage-field';
 import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
-import { BlockSizeField } from './common/block-size-field';
+import { S3BlockSizeField } from './s3/block-size-field';
 import { MaximumCanonicalObjectSizeField } from './s3/maximum-canonical-object-size-field';
 import { FileModeField } from './s3/file-mode-field';
 import { DirModeField } from './s3/dir-mode-field';
@@ -44,7 +44,7 @@ export const S3Group = FormFieldsGroup.extend({
       RegionField,
       AccessKeyField,
       SecretKeyField,
-      BlockSizeField,
+      S3BlockSizeField,
       MaximumCanonicalObjectSizeField,
       FileModeField,
       DirModeField,

@@ -7,6 +7,7 @@
  */
 
 import { StorageTextField } from '../base/storage-text-field';
+import { reads } from '@ember/object/computed';
 
 export const SimulatedFilesystemParametersField = StorageTextField.extend({
   /**
@@ -23,4 +24,20 @@ export const SimulatedFilesystemParametersField = StorageTextField.extend({
    * @override
    */
   regex: /^(\d+-\d+(:\d+-\d+)*(:\d+)?)?$/,
+
+  /**
+   * @type {boolean}
+   */
+  importedStorage: reads('parent.parent.value.basic.importedStorage'),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabled: reads('importedStorage'),
+
+  autoSettings() {
+    if (!this.importedStorage) {
+      this.valueChanged(null);
+    }
+  },
 });
