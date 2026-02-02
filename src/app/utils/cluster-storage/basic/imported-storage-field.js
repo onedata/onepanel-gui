@@ -67,7 +67,7 @@ export const ImportedStorageField = StorageToggleField.extend({
     if (this.storageType === 'http') {
       this.valueChanged(true);
     } else if (this.storageType === 's3') {
-      this.valueChanged(this.parent.parent.value.basic.storagePathType !== 'canonical');
+      this.valueChanged(this.parent.parent.value.basic.storagePathType === 'canonical');
     } else if (this.context.component.storageProvidesSupport) {
       this.valueChanged(this.context.component.storage?.importedStorage);
     }

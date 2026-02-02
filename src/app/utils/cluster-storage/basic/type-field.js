@@ -63,7 +63,6 @@ export const TypeField = StorageDropdownField.extend({
     const component = this.context.component;
     component.fields.reset();
     this._super(...arguments);
-    component.storageTypeChanged(this.value);
     component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
     component.basicGroup.getFieldByPath('readonly')?.autoSettings();
     component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
