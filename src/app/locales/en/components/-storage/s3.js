@@ -1,10 +1,6 @@
 import common from './common';
 
 export default {
-  archiveStorage: {
-    label: 'Archive storage',
-    tip: 'Defines whether storage supports long-term dataset archiving.',
-  },
   hostname: {
     label: 'Endpoint URL',
     tip: 'The URL of the S3 service endpoint, including the scheme (http or https) and optionally a port (after a colon).',
@@ -27,11 +23,6 @@ export default {
     label: 'Block size [bytes]',
     tip: 'Storage block size in bytes i.e. the maximum object size. Files larger than one block will stripped and stored in a series of objects. Must be more than zero for non-imported storage. To enable import from an S3 storage, block size must be set to zero, together with "canonical" path type and the read-only mode.',
     placeholder: 'Default: 10485760',
-  },
-  maximumCanonicalObjectSize: {
-    label: 'Maximum canonical object size',
-    tip: 'Defines the maximum size for objects, which can be modified on the S3 storage in "canonical" path mode. In this mode, entire file needs to be downloaded to memory, modified and uploaded back, which is impractical for large files (default 64 MiB).',
-    placeholder: 'Default: 67108864',
   },
   fileMode: {
     label: 'Imported file mode',

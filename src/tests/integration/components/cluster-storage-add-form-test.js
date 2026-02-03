@@ -89,13 +89,11 @@ const S3_STORAGE = {
   importedStorage: true,
   readonly: true,
   lumaFeed: 'local',
-  archiveStorage: true,
   hostname: 'https://s3.example.com',
   bucketName: 'name',
   verifyServerCertificate: true,
   region: 'us-east-1',
   accessKey: 'admin',
-  maximumCanonicalObjectSize: '5425231',
   fileMode: '0664',
   dirMode: '0775',
 };
@@ -615,13 +613,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     );
 
     it(
-      'locks and reset value: max canonical object size, imported item mode if storage are s3 with path type flat',
+      'locks and reset value: imported item mode if storage are s3 with path type flat',
       async function () {
         await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
 
-        expect(find('.maximumCanonicalObjectSize-field input'))
-          .to.have.property('disabled');
         expect(find('.fileMode-field input'))
           .to.have.property('disabled');
         expect(find('.dirMode-field input'))
@@ -629,15 +625,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
         await click('.storagePathType-field .option-canonical input');
 
-        await fillIn('.maximumCanonicalObjectSize-field input', 64);
         await fillIn('.fileMode-field input', '0664');
         await fillIn('.dirMode-field input', '0775');
 
         await click('.storagePathType-field .option-flat input');
 
-        expect(find('.maximumCanonicalObjectSize-field input'))
-          .to.have.property('disabled')
-          .and.have.value(undefined);
         expect(find('.fileMode-field input'))
           .to.have.property('disabled')
           .and.have.value(undefined);

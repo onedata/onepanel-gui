@@ -66,7 +66,6 @@ export const TypeField = StorageDropdownField.extend({
     component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
     component.basicGroup.getFieldByPath('readonly')?.autoSettings();
     component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
-    component.s3Group?.getFieldByPath('maximumCanonicalObjectSize')?.autoSettings();
     component.s3Group?.getFieldByPath('fileMode')?.autoSettings();
     component.s3Group?.getFieldByPath('dirMode')?.autoSettings();
     component.nullDeviceGroup?.getFieldByPath('simulatedFilesystemGrowSpeed')?.autoSettings();
