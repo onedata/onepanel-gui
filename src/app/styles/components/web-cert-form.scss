@@ -1,12 +1,6 @@
 .web-cert-form {
   @extend .center-block;
   padding-left: $padding-base-horizontal;
-  @media (max-width: $screen-xs-max) {
-    max-width: 100%;
-  }
-  @media (min-width: $screen-sm-min) {
-    max-width: 800px;
-  }
 
   .warning-icon-container {
     .warning-icon {
@@ -29,10 +23,12 @@
     }
   }
 
+  .web-cert-field-renderer {
+    justify-content: center;
+  }
+
   .form-component .control-label {
-    @media (min-width: $screen-sm-min) {
-      width: 40%;
-    }
+    min-width: 14.5em;
   }
 
   .field-component {

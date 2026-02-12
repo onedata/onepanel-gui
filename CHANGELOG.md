@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13272 Fixed ugly layout of Web Certificate form
 * VFS-13221 Added support for Calendar Versioning of Onedata
 * VFS-13021 Added OneS3 port settings
 * VFS-12932 Added infinite-scrollable dropdowns
