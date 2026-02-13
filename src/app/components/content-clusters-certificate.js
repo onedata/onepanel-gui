@@ -3,6 +3,7 @@
  *
  * @author Jakub Liput
  * @copyright (C) 2018-2019 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -27,6 +28,8 @@ import Looper from 'onedata-gui-common/utils/looper';
 const webCertPollInterval = 2000;
 
 export default Component.extend(I18n, GlobalActions, {
+  classNames: ['content-clusters-certificate'],
+
   webCertManager: service(),
   onepanelServer: service(),
   globalNotify: service(),

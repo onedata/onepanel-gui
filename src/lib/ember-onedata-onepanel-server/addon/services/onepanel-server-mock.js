@@ -118,7 +118,7 @@ const defaultWebCert = {
   paths: {
     cert: '/tmp/cert.pem',
     key: '/tmp/key.pem',
-    chain: '/tmp/very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain.ca',
+    chain: '/tmp/very_long_name/of_chain_very_long/name_of_chain_very.ca',
   },
   // names are not ordered to test-out sorting in GUI
   dnsNames: [
