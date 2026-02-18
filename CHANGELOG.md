@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13042 Added page control to supported items table and added conflict label in spaces table
 * VFS-13272 Fixed ugly layout of Web Certificate form
 * VFS-13221 Added support for Calendar Versioning of Onedata
 * VFS-13021 Added OneS3 port settings
