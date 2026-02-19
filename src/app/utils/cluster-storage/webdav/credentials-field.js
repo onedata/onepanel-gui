@@ -28,6 +28,9 @@ export const CredentialsField = StorageTextField.extend({
     return type === 'basic' || type === 'oauth2';
   }),
 
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
   label: computed('parent.value.credentialsType', function label() {
     const type = this.parent.value?.credentialsType;
     if (type === 'oauth2') {
@@ -37,6 +40,9 @@ export const CredentialsField = StorageTextField.extend({
     }
   }),
 
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
   tip: computed('parent.value.credentialsType', function tip() {
     const type = this.parent.value?.credentialsType;
     switch (type) {

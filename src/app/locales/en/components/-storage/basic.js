@@ -19,12 +19,15 @@ export default {
     label: 'Readonly',
     tip: 'Defines whether the storage backend is readonly. If enabled, Oneprovider will block any operation that writes, modifies or deletes data on the storage backend. Such storage backend can only be used to import data into the space. Mandatory to ensure proper behaviour if the backend storage is actually configured as readonly.',
     httpOnlyReadonlyTip: 'HTTP storages are limited to readonly mode.',
-    cannotReadonlyNotImportedTip: 'This option is available only for imported storage backends.',
+    cannotReadonlyNotImportedTip: 'S3 storage with flat object names cannot be imported (which would imply mode), as no file/directory structure can be inferred.',
+    readonlyImportedTip: 'S3 storage with canonical paths as object names can only be used in readonly mode for import, since S3 does not support random access writes, which is required to support Onedata writes. On S3, each write has to replace the entire object.',
   },
   importedStorage: {
     label: 'Imported storage',
     tip: 'Indicates that the existing data on this storage backend is intended for import. Actual data import will happen when the storage backend is used to support a space. Only one space can be supported by such storage backend.',
     httpOnlyImported: 'HTTP storages are always treated as imported due to their readonly limitation.',
+    s3LockedFalseTip: 'S3 storage with flat object names cannot be imported (which would imply readonly mode), as no file/directory structure can be inferred.',
+    s3LockedTrueTip: 'S3 storage with canonical paths as object names can only be used in readonly mode for import, since S3 does not support random access writes, which is required to support Onedata writes. On S3, each write has to replace the entire object.',
   },
   lumaFeed: {
     label: 'LUMA feed',

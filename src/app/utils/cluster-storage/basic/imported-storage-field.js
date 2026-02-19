@@ -21,7 +21,15 @@ export const ImportedStorageField = StorageToggleField.extend({
    */
   defaultValue: false,
 
+  /**
+   * @type {string}
+   */
   storageType: reads('parent.parent.value.basic.type'),
+
+  /**
+   * @type {'flat'|'canonical'|null}
+   */
+  storagePathType: reads('parent.parent.value.basic.storagePathType'),
 
   /**
    * @override
@@ -43,7 +51,11 @@ export const ImportedStorageField = StorageToggleField.extend({
   isEnabled: computed(
     'storageType',
     'context.component.storageProvidesSupport',
+    'storagePathType',
     function isEnabled() {
+      if (this.storagePathType === null) {
+        return true;
+      }
       return this.storageType !== 'http' &&
         this.storageType !== 's3' &&
         !this.context.component.storageProvidesSupport;
@@ -55,9 +67,14 @@ export const ImportedStorageField = StorageToggleField.extend({
    */
   disabledControlTip: computed(
     'storageType',
+    'storagePathType',
     function disabledControlTip() {
       if (this.storageType === 'http') {
         return this.t('basic.importedStorage.httpOnlyImported');
+      } else if (this.storageType === 's3' && this.storagePathType === 'flat') {
+        return this.t('basic.importedStorage.s3LockedFalseTip');
+      } else if (this.storageType === 's3' && this.storagePathType === 'canonical') {
+        return this.t('basic.importedStorage.s3LockedTrueTip');
       }
       return null;
     }

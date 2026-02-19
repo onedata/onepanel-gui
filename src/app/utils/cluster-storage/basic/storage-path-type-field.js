@@ -53,6 +53,9 @@ export const StoragePathTypeField = StorageRadioField.extend({
     return this.options[0].value;
   }),
 
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
   isEnabled: computed('parent.value.type', function isEnabled() {
     const config = storagePathTypeConfig[this.parent.value?.type];
     if (config?.disabled) {

@@ -37,13 +37,16 @@ export const ReadonlyField = StorageToggleField.extend({
   storageType: reads('parent.parent.value.basic.type'),
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   isEnabled: computed(
     'importedStorage',
     'storagePathType',
     'storageType',
     function isEnabled() {
+      if (this.storagePathType === null) {
+        return true;
+      }
       const locked = !this.importedStorage ||
         this.storageType === 'http' ||
         (
@@ -51,7 +54,6 @@ export const ReadonlyField = StorageToggleField.extend({
           this.storagePathType === 'canonical' &&
           this.importedStorage
         );
-
       return !locked;
     }
   ),
@@ -65,8 +67,10 @@ export const ReadonlyField = StorageToggleField.extend({
     function disabledControlTip() {
       if (this.storageType === 'http') {
         return this.t('basic.readonly.httpOnlyReadonlyTip');
-      } else if (!this.importedStorage) {
+      } else if (this.storageType === 's3' && !this.importedStorage) {
         return this.t('basic.readonly.cannotReadonlyNotImportedTip');
+      } else if (this.storageType === 's3' && this.importedStorage) {
+        return this.t('basic.readonly.readonlyImportedTip');
       }
       return null;
     }
