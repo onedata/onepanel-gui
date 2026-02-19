@@ -7,11 +7,12 @@
  *
  * @author Jakub Liput, Michał Borzęcki
  * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { assert } from '@ember/debug';
-import EmberObject, { computed } from '@ember/object';
+import EmberObject, { computed, trySet } from '@ember/object';
 import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { camelize, capitalize } from '@ember/string';
@@ -21,6 +22,7 @@ import Onepanel from 'onepanel';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import { Promise } from 'rsvp';
+import safeExec from 'onedata-gui-common/utils/safe-method-execution';
 
 const {
   ProviderConfiguration,
@@ -150,7 +152,7 @@ export default EmberObject.extend(I18n, {
       }
     });
     task.fail(error => this.failed({ error }));
-    task.always(() => this.set('deploymentPromise', null));
+    task.always(() => trySet(this, 'deploymentPromise', null));
   },
 
   /**
@@ -159,10 +161,12 @@ export default EmberObject.extend(I18n, {
    * @returns {undefined}
    */
   failed(taskStatus) {
-    this.get('globalNotify').backendError(
-      this.t('clusterDeployment'),
-      taskStatus.error
-    );
+    safeExec(this, () => {
+      this.globalNotify.backendError(
+        this.t('clusterDeployment'),
+        taskStatus.error
+      );
+    });
   },
 
   /**
@@ -170,8 +174,10 @@ export default EmberObject.extend(I18n, {
    * @returns {undefined}
    */
   finished() {
-    this.get('globalNotify').info(this.t('clusterDeploySuccess'));
-    this.get('onFinish')();
+    safeExec(this, () => {
+      this.globalNotify.info(this.t('clusterDeploySuccess'));
+      this.onFinish();
+    });
   },
 
   /**

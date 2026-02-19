@@ -74,6 +74,11 @@ export default Component.extend(I18n, GlobalActions, {
    */
   isRemovingStorage: false,
 
+  /**
+   * @type {string|null}
+   */
+  openedStorageId: null,
+
   storages: reads('storagesProxy.content'),
 
   /**
@@ -135,7 +140,7 @@ export default Component.extend(I18n, GlobalActions, {
       title: this.t(addStorageOpened ? 'cancel' : 'addStorage'),
       icon: addStorageOpened ? undefined : 'add-filled',
       class: 'btn-add-storage',
-      buttonStyle: addStorageOpened ? 'default' : 'primary',
+      buttonStyle: 'default',
     };
   }),
 
@@ -148,6 +153,19 @@ export default Component.extend(I18n, GlobalActions, {
       title: this.t('finish'),
       class: 'btn-next-step',
       buttonStyle: 'primary',
+    };
+  }),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
+  skipStorageAction: computed(function skipStorageAction() {
+    return {
+      action: () => this.send('next'),
+      title: this.t('nextStep'),
+      icon: 'arrow-right',
+      class: 'btn-next-step',
+      buttonStyle: 'default',
     };
   }),
 
@@ -166,23 +184,27 @@ export default Component.extend(I18n, GlobalActions, {
         finishButton,
         finishAction,
         noStorages,
-      } = this.getProperties(
-        'addStorageAction',
-        'finishButton',
-        'finishAction',
-        'noStorages'
-      );
-      if (noStorages) {
-        return [];
+        skipStorageAction,
+        nextStep,
+      } = this;
+      const actions = [];
+      if (noStorages && nextStep) {
+        actions.push(skipStorageAction);
       } else {
-        const actions = [addStorageAction];
+        if (!noStorages) {
+          actions.push(addStorageAction);
+        }
         if (finishButton) {
           actions.push(finishAction);
         }
-        return actions;
       }
+      return actions;
     }
   ),
+
+  isSupportButtonHidden: computed('nextStep', function isSupportButtonHidden() {
+    return Boolean(this.nextStep);
+  }),
 
   spacesBatchResolver: reads('spacesBatchResolverProxy.content'),
 
@@ -192,11 +214,30 @@ export default Component.extend(I18n, GlobalActions, {
     return this.addStorageOpened ? this.t('cancel') : this.t('addStorage');
   }),
 
+  activePageNumber: computed(
+    'storagesSorted',
+    'pageSize',
+    'openedStorageId',
+    function activePageNumber() {
+      if (this.openedStorageId && this.storagesSorted) {
+        const index = this.storagesSorted.findIndex(
+          (storage) => storage.content.id === this.openedStorageId
+        );
+        if (index > -1) {
+          return Math.floor(index / this.pageSize) + 1;
+        }
+      } else {
+        return 1;
+      }
+    }
+  ),
+
   init() {
     this._super(...arguments);
     this.set('paginator', ArrayPaginator.extend({
       array: or('parent.storagesSorted', raw([])),
       pageSize: reads('parent.pageSize'),
+      activePageNumber: reads('parent.activePageNumber'),
     }).create({
       parent: this,
     }));
@@ -234,9 +275,12 @@ export default Component.extend(I18n, GlobalActions, {
     const addingStorage = storageManager.createStorage(cs);
 
     return new Promise((resolve, reject) => {
-      addingStorage.then(() => {
+      addingStorage.then(storage => {
         this.initStoragesBatchResolver();
-        this.set('addStorageOpened', false);
+        this.setProperties({
+          addStorageOpened: false,
+          openedStorageId: storage.data[storageFormData.name].id,
+        });
         resolve();
       });
       addingStorage.catch(reject);
@@ -287,8 +331,9 @@ export default Component.extend(I18n, GlobalActions, {
       });
       return submitting;
     },
-    reloadStoragesList() {
+    reloadStoragesList(openedStorageId = null) {
       this.initStoragesBatchResolver();
+      this.set('openedStorageId', openedStorageId);
     },
     submitRemoveStorage() {
       const {

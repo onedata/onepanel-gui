@@ -85,6 +85,8 @@ import onedata from './routes/onedata';
 
 import utilsStorageActions from './utils/storage-actions';
 import newClusterDeployProcess from './utils/new-cluster-deploy-process';
+import enableS3Action from './utils/enable-s3-action';
+import oneS3ClusterValidator from './utils/one-s3-cluster-validator';
 
 import _ from 'lodash';
 import onedataCommonTranslations from './onedata-gui-common';
@@ -190,6 +192,8 @@ const translations = {
   utils: {
     storageActions: utilsStorageActions,
     newClusterDeployProcess,
+    enableS3Action,
+    oneS3ClusterValidator,
   },
 };
 

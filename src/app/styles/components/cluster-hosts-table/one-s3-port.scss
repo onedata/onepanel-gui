@@ -1,0 +1,28 @@
+.one-s3-port {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  .one-s3-port-input {
+    width: 4.4em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+  }
+  .one-s3-port-static-text {
+    margin-left: 0.6em;
+    color: $main-text-color-disabled;
+  }
+  .one-s3-port-icon {
+    font-size: 1.6em;
+    margin-left: 0.4rem;
+    color: $main-text-color-disabled;
+  }
+  .one-s3-feedback-icon + .one-s3-hint-icon {
+    // icons have internal padding in font, so no need for additional margin
+    margin-left: 0;
+  }
+  &.has-error {
+    .one-s3-feedback-icon {
+      color: $color-one-danger;
+    }
+  }
+}

@@ -9,13 +9,14 @@
  */
 import Component from '@ember/component';
 import { computed, trySet } from '@ember/object';
-import { reads, collect } from '@ember/object/computed';
+import { reads } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import _ from 'lodash';
 import config from 'ember-get-config';
 import $ from 'jquery';
 import globals from 'onedata-gui-common/utils/globals';
+import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-state';
 
 const {
   layoutConfig,
@@ -29,6 +30,7 @@ export default Component.extend(I18n, {
   storageActionsService: service('storageActions'),
   globalNotify: service(),
   i18n: service(),
+  router: service(),
 
   /**
    * @override
@@ -46,6 +48,11 @@ export default Component.extend(I18n, {
    * @type {ObjectProxy<Onepanel.StorageDetails>}
    */
   storageProxy: null,
+
+  /**
+   * @type {boolean}
+   */
+  isSupportButtonHidden: false,
 
   /**
    * @type {() => void}
@@ -90,6 +97,16 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
+  isImportedAndUsed: computed(
+    'storage.importedStorage',
+    'hasSupportedSpaces',
+    function isImportedAndUsed() {
+      return this.storage?.importedStorage && this.hasSupportedSpaces;
+    }),
+
+  /**
+   * @type {Ember.ComputedProperty<boolean>}
+   */
   showSpacesSupport: reads('hasSupportedSpaces'),
 
   /**
@@ -110,6 +127,23 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Action>}
    */
+  addSupportSpaceAction: computed(
+    'isSupportButtonHidden',
+    'isImportedAndUsed',
+    function addSupportSpaceAction() {
+      return {
+        action: () => this.supportSpace(),
+        title: this.t('supportSpace'),
+        class: 'support-space hidden-lg hidden-md hidden-sm',
+        icon: 'space',
+        disabled: this.isSupportButtonHidden || this.isImportedAndUsed,
+      };
+    }
+  ),
+
+  /**
+   * @type {Ember.ComputedProperty<Action>}
+   */
   removeStorageAction: computed('hasSupportedSpaces', function () {
     const hasSupportedSpaces = this.get('hasSupportedSpaces');
     return {
@@ -124,7 +158,13 @@ export default Component.extend(I18n, {
   /**
    * @type {Ember.ComputedProperty<Array<Action>>}
    */
-  storageActions: collect('modifyStorageAction', 'removeStorageAction'),
+  storageActions: computed('isSupportButtonHidden', function storageActions() {
+    const actions = [this.modifyStorageAction, this.removeStorageAction];
+    if (!this.isSupportButtonHidden) {
+      actions.push(this.addSupportSpaceAction);
+    }
+    return actions;
+  }),
 
   /**
    * @type {Ember.ComputedProperty<Object>}
@@ -165,11 +205,25 @@ export default Component.extend(I18n, {
     }
   },
 
+  supportSpace() {
+    this.router.transitionTo('onedata.sidebar.content.aspect', 'spaces', {
+      queryParams: {
+        options: serializeAspectOptions({
+          isFormOpened: true,
+          storageId: this.storageId,
+        }),
+      },
+    });
+  },
+
   actions: {
     turnOnModifyStorage() {
       if (!this.get('whileEdition')) {
         this.toggleEdition();
       }
+    },
+    supportSpace() {
+      this.supportSpace();
     },
     async saveEdition(storageFormData) {
       const action = this.storageActionsService.createSaveStorageModificationAction({
@@ -180,7 +234,7 @@ export default Component.extend(I18n, {
 
       if (result.status === 'done') {
         trySet(this, 'whileEdition', false);
-        this.reloadStoragesList();
+        this.reloadStoragesList(this.storageId);
       }
     },
     cancelEdition() {

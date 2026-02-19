@@ -6,6 +6,13 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13042 Added page control to supported items table and added conflict label in spaces table
+* VFS-13272 Fixed ugly layout of Web Certificate form
+* VFS-13221 Added support for Calendar Versioning of Onedata
+* VFS-13021 Added OneS3 port settings
+* VFS-12932 Added infinite-scrollable dropdowns
+* VFS-12875 Changed UX of storage/space list and storage form — deployments are no longer blocked if no storage is added
+* VFS-12608 Added support for enabling OneS3 service on cluster hosts after deployment
 * VFS-12607 Added warning in web certificate view if there is no S3 subdomain for S3-enabled Oneprovider; Added support for certificate DNS names wildcards
 * VFS-12598 Refactored storage form to use new form components
 * VFS-12811 Upgraded Ember Bootstrap to 4.9.0

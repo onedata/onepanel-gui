@@ -2,7 +2,8 @@
  * Provides data for routes and components assoctiated with deployment of cluster
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2020 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -21,6 +22,13 @@ import ClusterHostInfo from 'onepanel-gui/models/cluster-host-info';
 import createDataProxyMixin from 'onedata-gui-common/utils/create-data-proxy-mixin';
 import shortServiceType from 'onepanel-gui/utils/short-service-type';
 import { getOwner } from '@ember/application';
+
+/**
+ * @typedef {Object} ClusterDeploymentInfo
+ * @property {string} mainManagerHostname
+ * @property {Array<Models.ClusterHostInfo>} clusterHostsInfo
+ * @property {number} [oneS3Port]
+ */
 
 const _ROLE_COLLECTIONS = {
   databases: 'database',
@@ -98,8 +106,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * Fetch info about deployed cluster and create ClusterHostInfo objects
-   * @returns {Promise} resolves with
-   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   * @returns {Promise<ClusterDeploymentInfo>}
    */
   getClusterHostsInfo() {
     return this.getClusterConfiguration(true)
@@ -111,8 +118,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
   /**
    * Converts response data from API about clusters to array of ``ClusterHostInfo``
    * @param {object} cluster cluster attribute of GET configuration from API
-   * @returns {object}
-   *  { mainManagerHostname: string, clusterHostsInfo: Array.ClusterHostInfo }
+   * @returns {ClusterDeploymentInfo}
    */
   _clusterConfigurationToHostsInfo(cluster) {
     const types = ['databases', 'managers', 'workers', 'oneS3'];
@@ -138,6 +144,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
     return {
       mainManagerHostname: cluster.managers.mainHost,
+      oneS3Port: cluster.oneS3?.port,
       clusterHostsInfo: clusterHostsInfoArray,
     };
   },
@@ -267,15 +274,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
               return this._checkIsDnsCheckAcknowledged().then(dnsCheckAck => {
                 if (dnsCheckAck) {
                   return this._checkIsAnyStorage(onepanelServer)
-                    .then(isAnyStorage => {
-                      if (isAnyStorage) {
-                        return resolve(installationStepsMap.done);
-                      } else {
-                        return resolve(
-                          installationStepsMap.oneproviderStorageAdd
-                        );
-                      }
-                    });
+                    .then(() => resolve(installationStepsMap.done));
                 } else {
                   // We have no exact indicator if earlier step -
                   // IPs configuration - has been finished, because it
@@ -299,7 +298,7 @@ export default Service.extend(createDataProxyMixin('installationDetails'), {
 
   /**
    * @param {string} type
-   * @returns {Promise} resolves with Array.{ hostname: string }
+   * @returns {Promise<Array<{ hostname: string }>>}
    */
   getHosts(type = 'known') {
     return this.getHostNames(type).then(({ data: hostnames }) => {

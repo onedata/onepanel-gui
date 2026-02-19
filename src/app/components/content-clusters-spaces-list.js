@@ -61,6 +61,11 @@ export default Component.extend(
     supportSpaceOpened: false,
 
     /**
+     * @type {boolean}
+     */
+    isSupportSpaceInitiallyOpen: false,
+
+    /**
      * @type {Utils.ArrayPaginator}
      */
     paginator: undefined,
@@ -123,6 +128,9 @@ export default Component.extend(
 
     init() {
       this._super(...arguments);
+      if (this.isSupportSpaceInitiallyOpen !== undefined) {
+        this.set('supportSpaceOpened', this.isSupportSpaceInitiallyOpen);
+      }
       this.set('paginator', ArrayPaginator.extend({
         array: or('parent.spacesSorted', raw([])),
         pageSize: reads('parent.pageSize'),

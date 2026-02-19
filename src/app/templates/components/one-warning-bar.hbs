@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<BsModal
+<OneModal
   @id="one-warning-bar"
   @open={{infoOpened}}
   @onHide={{action "toggleInfoModal" false}}
@@ -14,4 +14,4 @@
   as |modal|
 >
   {{yield (hash modal=modal)}}
-</BsModal>
+</OneModal>

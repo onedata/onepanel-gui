@@ -14,4 +14,5 @@ export default {
     },
   },
   submitButton: 'Support space',
+  storageNotFound: 'Selected storage backend is not enabled or does not exist.',
 };

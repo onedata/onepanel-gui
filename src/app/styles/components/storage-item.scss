@@ -125,6 +125,10 @@
         }
         .qos-params-editor {
           padding-top: $storage-view-item-padding;
+          .readonly-key .label-column {
+            display: flex;
+            align-items: center;
+          }
         }
         .form-field-right-addon {
           right: 40px;

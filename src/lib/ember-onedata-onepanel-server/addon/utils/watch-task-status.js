@@ -3,6 +3,7 @@
  *
  * @author Jakub Liput
  * @copyright (C) 2017-2018 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -19,6 +20,10 @@ const {
 } = $;
 
 function getAndHandleTaskStatus(onepanelServer, taskId, deferred, scheduleSelf) {
+  if (onepanelServer.isDestroyed) {
+    deferred.reject({ id: 'custom-onepanel-server-detroyed' });
+    return;
+  }
   const gettingTaskStatus = onepanelServer.request('ClusterApi', 'getTaskStatus', taskId);
 
   gettingTaskStatus.then(({

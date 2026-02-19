@@ -4,7 +4,8 @@
  * See `REQ_HANDLER` in this file to manipulate responses
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2025 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -38,6 +39,8 @@ import { installationStepsMap } from 'onepanel-gui/models/installation-details';
 import Onepanel from 'onepanel';
 import { onepanelAbbrev } from 'onedata-gui-common/utils/onedata-urls';
 import globals from 'onedata-gui-common/utils/globals';
+import { S3DeploymentStep } from 'onepanel-gui/components/modals/enable-s3-modal';
+import { getMockGuiContext } from 'onedata-gui-common/initializers/fetch-gui-context';
 
 const {
   TaskStatus,
@@ -57,8 +60,16 @@ const MOCKED_SUPPORT = {
 };
 const SERVICE_DOMAIN = 'dev-oneprovider-krakow.default.svc.cluster.local';
 const SERVICE_NAME = 'dev-oneprovider-krakow';
+const addManyStorages = false;
 
-const fallbackMockServiceType = 'oneprovider';
+/**
+ * Forced cluster type (onezone/oneprovider) in `ember s` mode. To change mocked cluster
+ * type, go to `onedata-gui-common/addon/initializers/fetch-gui-context` and change the
+ * `defaultMockGuiContext` const to other type of cluster.
+ * @type {'onezone'|'oneprovider'}
+ */
+const fallbackMockServiceType = getMockGuiContext().clusterType;
+
 const baseQosParameters = {
   storageId: 'e777476baf3418ed9861a97750be285ech9802',
   providerId: '94ba8a6cf8d6c598c856c4ee78d506f0ch487e',
@@ -107,7 +118,7 @@ const defaultWebCert = {
   paths: {
     cert: '/tmp/cert.pem',
     key: '/tmp/key.pem',
-    chain: '/tmp/very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain_very_long_name_of_chain.ca',
+    chain: '/tmp/very_long_name/of_chain_very_long/name_of_chain_very.ca',
   },
   // names are not ordered to test-out sorting in GUI
   dnsNames: [
@@ -587,15 +598,36 @@ export default OnepanelServerBase.extend(
             autoReconnect: 4,
           };
           this.set('__storages', this.get('__storages') || []);
+          const storageData = [
+            storage1,
+            storageCeph,
+            storageCephRados,
+            storage2,
+            storageHttp,
+            storageNfs,
+          ];
+          if (addManyStorages) {
+            const additionalStorages = _.range(100).map(i => ({
+              id: 'additional_storage_' + i,
+              type: 'posix',
+              name: 'Zeta-' + i,
+              importedStorage: true,
+              mountPoint: '/mnt/st1',
+              lumaFeed: 'external',
+              lumaFeedUrl: 'http://localhost:9090',
+              lumaFeedApiKey: 'some_storage',
+              readonly: true,
+              qosParameters: Object.assign({}, baseQosParameters, {
+                param1: 'abc',
+                param2: 'def',
+                param3: '123',
+              }),
+            }));
+            storageData.push(...additionalStorages);
+          }
+
           this.get('__storages').push(
-            ...[
-              storage1,
-              storageCeph,
-              storageCephRados,
-              storage2,
-              storageHttp,
-              storageNfs,
-            ].map(storage =>
+            ...storageData.map(storage =>
               clusterStorageClass(storage.type).constructFromObject(storage)
             )
           );
@@ -666,6 +698,22 @@ export default OnepanelServerBase.extend(
         } else {
           this.set('__storages', []);
         }
+        /** @type {S3DeploymentTaskStatus} */
+        const s3DeploymentTaskStatus = {
+          steps: [
+            S3DeploymentStep.OneS3CreateService,
+            S3DeploymentStep.OneS3AddServiceHost,
+            S3DeploymentStep.OneproviderSetClusterIps,
+            S3DeploymentStep.OnepanelSetMarker,
+            S3DeploymentStep.OneS3Configure,
+            S3DeploymentStep.OneproviderStart,
+            S3DeploymentStep.OneproviderWaitForInit,
+            S3DeploymentStep.LetsEncryptDisable,
+          ],
+          status: 'ok',
+          totalSteps: 8,
+        };
+        this.set('addOneS3Task', s3DeploymentTaskStatus);
       } else if (mockServiceType === 'onezone') {
         this.set('__dnsCheck', {
           domain: {
@@ -789,13 +837,16 @@ export default OnepanelServerBase.extend(
     }),
 
     _req_ClusterApi_getTaskStatus: computed('progressMock', function () {
-      const progressMock = this.get('progressMock');
+      const { progressMock } = this;
+      const serverMock = this;
       return {
         success(taskId) {
           if (taskId === 'configure') {
             return progressMock.getTaskStatusConfiguration();
           } else if (taskId.startsWith('popularity')) {
             return getPopularityTask(taskId);
+          } else if (taskId === 'addOnes3') {
+            return serverMock.addOneS3Task;
           } else {
             throw new Error(
               `service:onepanel-server-mock: task status not implmeneted for id: ${taskId}`
@@ -981,7 +1032,9 @@ export default OnepanelServerBase.extend(
     _req_OneproviderClusterApi_getProviderConfiguration() {
       if (this.get('mockStep').gt(installationStepsMap.deploy)) {
         return {
-          success: () => this.get('__configuration').plainCopy(),
+          success: () => {
+            return this.get('__configuration').plainCopy();
+          },
         };
       } else {
         return {
@@ -1232,6 +1285,14 @@ export default OnepanelServerBase.extend(
       return {
         success: () => null,
         taskId: 'configure',
+      };
+    },
+
+    _req_OneproviderClusterApi_addOnes3() {
+      const taskId = 'addOnes3';
+      return {
+        success: () => ({ taskId }),
+        taskId,
       };
     },
 
@@ -1581,17 +1642,27 @@ export default OnepanelServerBase.extend(
       const configuration = {
         cluster: {
           databases: {
-            hosts: ['node1.example.com'],
+            hosts: ['node1.example.com', 'node3.example.com'],
           },
           managers: {
             mainHost: 'node2.example.com',
             hosts: ['node1.example.com', 'node2.example.com'],
           },
           workers: {
-            hosts: ['node2.example.com'],
+            hosts: ['node1.example.com'],
           },
           oneS3: {
-            hosts: ['node2.example.com'],
+            // Like in the backend, when no OneS3 is deployed:
+            hosts: [],
+            port: 4443,
+
+            // OneS3 deployed on single host with Worker:
+            // hosts: ['node1.example.com'],
+            // port: 443,
+
+            // OneS3 deployed on single host w/o Worker:
+            // hosts: ['node2.example.com'],
+            // port: 4443,
           },
         },
       };
@@ -1604,7 +1675,7 @@ export default OnepanelServerBase.extend(
       } else {
         Object.assign(configuration, {
           onezone: {
-            name: null,
+            name: 'mock-onezone',
             domainName: globals.location.hostname,
           },
         });

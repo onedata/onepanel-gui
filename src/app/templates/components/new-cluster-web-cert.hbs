@@ -3,7 +3,7 @@
     <div class="btn-toolbar">
       {{#if (not _redirectPage)}}
         <OneButton
-          @type="primary"
+          @type={{if this.letsEncrypt "primary" "default"}}
           @buttonType="submit"
           @size="sm"
           class={{concat "btn-cert-next " btnClass}}

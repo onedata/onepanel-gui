@@ -1,20 +1,24 @@
 /**
- * Table with cluster hosts
+ * Renders a table in which roles can be set to hosts for cluster deployment.
  *
  * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
+ * @copyright (C) 2017-2023 ACK CYFRONET AGH
+ * @copyright (C) 2025 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { readOnly } from '@ember/object/computed';
-import { observer, computed } from '@ember/object';
+import { readOnly, reads } from '@ember/object/computed';
+import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { eq, raw } from 'ember-awesome-macros';
+import { asyncObserver } from 'onedata-gui-common/utils/observer';
 import BasicTable from 'onedata-gui-common/components/basic-table';
 import I18n from 'onedata-gui-common/mixins/i18n';
 import { validator, buildValidations } from 'ember-cp-validations';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
 import { scheduleOnce } from '@ember/runloop';
+import OneS3ClusterValidator from '../utils/one-s3-cluster-validator';
+import { tracked } from '@glimmer/tracking';
 
 const requiredRoles = ['database', 'clusterWorker', 'clusterManager'];
 
@@ -51,12 +55,15 @@ const Validations = buildValidations(generateColumnValidations(requiredRoles));
 // as a primary cluster manager
 
 /**
- * Renders a table in which roles can be set to hosts for cluster deployment
- *
- * @author Jakub Liput, Michał Borzęcki
- * @copyright (C) 2017-2019 ACK CYFRONET AGH
- * @license This software is released under the MIT license cited in 'LICENSE.txt'.
+ * @typedef {'create'|'edit'|'show'} ClusterHostTableMode
  */
+
+/**
+ * Maps hostname to object with info about readonly toggles for table row in cluster host
+ * table.
+ * @typedef {Object<string, ClusterHostTableRowReadonlyServices>} ClusterHostTableReadonlyServices
+ */
+
 export default BasicTable.extend(
   I18n,
   hostColumnComputedProperties(requiredRoles),
@@ -67,6 +74,32 @@ export default BasicTable.extend(
     guiUtils: service(),
 
     i18nPrefix: 'components.clusterHostTable',
+
+    //#region interface
+
+    /**
+     * @virtual
+     * @type {Array<ClusterHostInfo>}
+     */
+    hosts: null,
+
+    /**
+     * @virtual
+     * @type {Array<ClusterHostInfo>}
+     */
+    editInitialHosts: null,
+
+    /**
+     * @virtual
+     * @type {string}
+     */
+    oneS3PortValue: undefined,
+
+    /**
+     * @virtual
+     * @type {(portValue: string) => void}
+     */
+    onOneS3PortValueChange: undefined,
 
     /**
      * @virtual optional
@@ -88,20 +121,38 @@ export default BasicTable.extend(
 
     /**
      * @virtual optional
+     * @type {ClusterHostTableReadonlyServices}
+     */
+    readonlyServicesHosts: undefined,
+
+    /**
+     * @virtual optional
      */
     removeHost: notImplementedReject,
 
     /**
-     * To inject.
-     * @type {Array<ClusterHostInfo>}
+     * @virtual optional
+     * @type {boolean}
      */
-    hosts: null,
+    isOneS3PortValueModified: undefined,
+
+    //#endregion
+
+    /**
+     * @type {ClusterHostTableMode}
+     */
+    mode: 'create',
 
     /**
      * If true, do not allow to edit cluster
      * @type {boolean}
      */
     isReadOnly: false,
+
+    /**
+     * @type {number}
+     */
+    defaultOneS3Port: 443,
 
     primaryClusterManager: null,
 
@@ -121,7 +172,20 @@ export default BasicTable.extend(
      */
     isOneS3Visible: eq('onepanelServiceType', raw('oneprovider')),
 
-    allValid: readOnly('validations.isValid'),
+    oneS3ClusterValidator: computed('isOneS3Visible', function oneS3ClusterValidator() {
+      return new BoundOneS3ClusterValidator(this);
+    }),
+
+    oneS3PortValid: reads('oneS3ClusterValidator.isValid'),
+
+    allValid: computed(
+      'validations.isValid',
+      'oneS3PortValid',
+      'isOneS3Visible',
+      function allValid() {
+        return this.validations.isValid && (!this.isOneS3Visible || this.oneS3PortValid);
+      }
+    ),
     // TODO make/use valid properties for each column
     // databaseHostsValid: computed.readOnly('validations.attrs.databaseHosts.isValid'),
 
@@ -132,19 +196,41 @@ export default BasicTable.extend(
       return this.get('removeHost') !== notImplementedReject;
     }),
 
-    tableValidChanged: observer('allValid', function () {
-      const {
-        allValidChanged,
-        allValid,
-      } = this.getProperties('allValidChanged', 'allValid');
-      if (allValidChanged) {
-        allValidChanged(allValid === true);
+    hostsRowData: computed(
+      'hosts.@each.hostname',
+      'blinkingHosts.[]',
+      'readonlyServicesHosts',
+      'primaryClusterManager',
+      function hostsRowData() {
+        return this.hosts.map(hostInfo => ({
+          hostInfo,
+          isPrimaryClusterManager: this.primaryClusterManager === hostInfo.hostname,
+          readonlyServices: this.readonlyServicesHosts?.[hostInfo.hostname],
+          isBlinking: this.blinkingHosts.includes(hostInfo),
+        }));
       }
+    ),
+
+    tableValidChanged: asyncObserver('allValid', function tableValidChanged() {
+      this.allValidChanged?.(this.allValid === true);
     }),
 
-    hostsChanged: observer('hosts.[]', function () {
+    hostsChanged: asyncObserver('hosts.[]', function hostsChanged() {
       scheduleOnce('afterRender', this, '_reinitializeBasictable');
     }),
+
+    oneS3AlreadyDeployed: computed('hosts.@each.oneS3', function oneS3AlreadyDeployed() {
+      return this.hosts.some(hostInfo => hostInfo.oneS3);
+    }),
+
+    oneS3PortIsShown: computed(
+      'model',
+      'oneS3AlreadyDeployed',
+      'isOneS3Visible',
+      function oneS3PortIsShown() {
+        return this.isOneS3Visible && this.oneS3AlreadyDeployed;
+      }
+    ),
 
     init() {
       this._super(...arguments);
@@ -156,10 +242,8 @@ export default BasicTable.extend(
 
     actions: {
       checkboxChanged(hostname, option, newValue) {
-        const hostOptionChanged = this.get('hostOptionChanged');
-        if (hostOptionChanged) {
-          hostOptionChanged(hostname, option, newValue);
-        }
+
+        this.hostOptionChanged?.(hostname, option, newValue);
       },
 
       primaryClusterManagerChanged(hostname, isSet) {
@@ -172,6 +256,35 @@ export default BasicTable.extend(
       removeHost(hostname) {
         return this.get('removeHost')(hostname);
       },
+
+      /**
+       * @param {string} portValue
+       */
+      changeOneS3Port(portValue) {
+        this.onOneS3PortValueChange(portValue);
+      },
     },
   }
 );
+
+export class BoundOneS3ClusterValidator extends OneS3ClusterValidator {
+  @tracked
+  dataSource;
+
+  constructor(dataSource) {
+    super();
+    this.dataSource = dataSource;
+  }
+
+  /** @override */
+  @computed('dataSource.hosts')
+  get hosts() {
+    return this.dataSource.hosts;
+  }
+
+  /** @override */
+  @computed('dataSource.oneS3PortValue')
+  get portValue() {
+    return this.dataSource.oneS3PortValue;
+  }
+}
