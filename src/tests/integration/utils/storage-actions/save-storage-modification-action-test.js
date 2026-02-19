@@ -49,7 +49,7 @@ const StorageManagerServiceMock = Service.extend({
 });
 
 const GlobalNotifyServiceMock = Service.extend({
-  warningAlert: sinon.spy(),
+  errorAlert: sinon.spy(),
   success: sinon.spy(),
   backendError: sinon.spy(),
 });
