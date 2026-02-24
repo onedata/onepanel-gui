@@ -1,0 +1,11 @@
+.content-clusters-spaces-list {
+  .search-group {
+    margin-right: 7em;
+  }
+
+  @media (max-width: $screen-sm-max) {
+    .search-group {
+      margin-right: 10em;
+    }
+  }
+}

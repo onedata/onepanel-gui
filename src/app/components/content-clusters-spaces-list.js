@@ -61,6 +61,11 @@ export default Component.extend(
     supportSpaceOpened: false,
 
     /**
+     * @type {string}
+     */
+    searchString: '',
+
+    /**
      * @type {boolean}
      */
     isSupportSpaceInitiallyOpen: false,
@@ -74,7 +79,21 @@ export default Component.extend(
 
     sorting: Object.freeze(['name:asc']),
 
-    spacesSorted: sort('spaces', 'sorting'),
+    spacesFiltered: computed(
+      'spaces.@each.name',
+      'searchString',
+      function spacesFiltered() {
+        const searchString = this.searchString.toLowerCase();
+        if (!searchString) {
+          return this.spaces;
+        }
+        return this.spaces.filter((space) =>
+          space.name.toLowerCase().includes(searchString)
+        );
+      }
+    ),
+
+    spacesSorted: sort('spacesFiltered', 'sorting'),
 
     spacesListLoading: reads('spacesBatchResolver.promiseObject.isPending'),
 

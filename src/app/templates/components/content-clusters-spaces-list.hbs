@@ -10,6 +10,16 @@
         @onPageChange={{paginator.changeActivePageNumber}}
       />
     {{/if}}
+    <div
+      class="form-group form-group-sm form-group-light search-group content-search"
+    >
+      <div class="input-group with-icon-addon">
+        <SearchBar @search={{action (mut searchString)}} class="form-control" />
+        <div class="input-group-addon">
+          <OneIcon @icon="search" />
+        </div>
+      </div>
+    </div>
     <ActionsToolbar @actionsArray={{globalActions}} />
   </h1>
 </div>
