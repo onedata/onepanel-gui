@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13019 Improved storage form
 * VFS-13310 Added validation to pages control
 * VFS-13042 Added page control to supported items table and added conflict label in spaces table
 * VFS-13272 Fixed ugly layout of Web Certificate form
