@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -22,17 +23,17 @@ export const ReadonlyField = StorageToggleField.extend({
   isOptional: true,
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   importedStorage: reads('parent.parent.value.basic.importedStorage'),
 
   /**
-   * @type {'flat'|'canonical'|null}
+   * @type {ComputedProperty<'flat'|'canonical'|null>}
    */
   storagePathType: reads('parent.parent.value.basic.storagePathType'),
 
   /**
-   * @type {string}
+   * @type {ComputedProperty<string>}
    */
   storageType: reads('parent.parent.value.basic.type'),
 
@@ -68,9 +69,11 @@ export const ReadonlyField = StorageToggleField.extend({
       if (this.storageType === 'http') {
         return this.t('basic.readonly.httpOnlyReadonlyTip');
       } else if (this.storageType === 's3' && !this.importedStorage) {
-        return this.t('basic.readonly.cannotReadonlyNotImportedTip');
+        return this.t('basic.readonly.s3LockedFlatTip');
       } else if (this.storageType === 's3' && this.importedStorage) {
-        return this.t('basic.readonly.readonlyImportedTip');
+        return this.t('basic.readonly.s3LockedCanonicalTip');
+      } else if (!this.isEnabled) {
+        return this.t('basic.readonly.lockedTip');
       }
       return null;
     }
@@ -81,7 +84,9 @@ export const ReadonlyField = StorageToggleField.extend({
    */
   valueChanged() {
     this._super(...arguments);
-    this.context.component.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
+    this.context.component.webdavGroup
+      ?.getFieldByPath('rangeWriteSupport')
+      ?.autoSettings();
   },
 
   autoSettings() {
@@ -91,11 +96,13 @@ export const ReadonlyField = StorageToggleField.extend({
       value = false;
     }
 
-    if (this.storageType === 'http' ||
-      (this.storageType === 's3' &&
+    if (
+      this.storageType === 'http' || (
+        this.storageType === 's3' &&
         this.storagePathType === 'canonical' &&
         this.importedStorage
-      )) {
+      )
+    ) {
       value = true;
     }
 

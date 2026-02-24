@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -26,12 +27,12 @@ export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
   gte: 0,
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   importedStorage: reads('parent.parent.value.basic.importedStorage'),
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   isEnabled: reads('importedStorage'),
 

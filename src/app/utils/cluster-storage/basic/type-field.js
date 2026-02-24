@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -68,8 +69,12 @@ export const TypeField = StorageDropdownField.extend({
     component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
     component.s3Group?.getFieldByPath('fileMode')?.autoSettings();
     component.s3Group?.getFieldByPath('dirMode')?.autoSettings();
-    component.nullDeviceGroup?.getFieldByPath('simulatedFilesystemGrowSpeed')?.autoSettings();
-    component.nullDeviceGroup?.getFieldByPath('simulatedFilesystemParameters')?.autoSettings();
+    component.nullDeviceGroup
+      ?.getFieldByPath('simulatedFilesystemGrowSpeed')
+      ?.autoSettings();
+    component.nullDeviceGroup
+      ?.getFieldByPath('simulatedFilesystemParameters')
+      ?.autoSettings();
     component.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
     component.setDefaultQosParams();
   },

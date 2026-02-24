@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -25,18 +26,18 @@ export const RangeWriteSupportField = StorageRadioField.extend({
    * @override
    */
   options: Object.freeze([
-    { value: 'none' },
+    { value: 'none', disabled: true },
     { value: 'sabredav' },
     { value: 'moddav' },
   ]),
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   readOnly: reads('parent.parent.value.basic.readonly'),
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   isEnabled: computed('readOnly', function isEnabled() {
     return !this.readOnly;
@@ -49,7 +50,6 @@ export const RangeWriteSupportField = StorageRadioField.extend({
       }
     } else {
       this.set('defaultValue', null);
-      this.options[0].disabled = true;
       if (this.value === 'none') {
         this.valueChanged(null);
       }

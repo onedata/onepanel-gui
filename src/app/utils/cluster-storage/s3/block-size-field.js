@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -22,12 +23,12 @@ export const S3BlockSizeField = BlockSizeField.extend({
   gt: null,
 
   /**
-   * @type {'flat'|'canonical'|null}
+   * @type {ComputedProperty<'flat'|'canonical'|null>}
    */
   storagePathType: reads('parent.parent.value.basic.storagePathType'),
 
   /**
-   * @type {boolean}
+   * @type {ComputedProperty<boolean>}
    */
   isEnabled: computed('storagePathType', function isEnabled() {
     return this.storagePathType !== 'canonical';

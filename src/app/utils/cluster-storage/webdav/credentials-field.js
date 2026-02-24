@@ -3,6 +3,7 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -45,15 +46,20 @@ export const CredentialsField = StorageTextField.extend({
    */
   tip: computed('parent.value.credentialsType', function tip() {
     const type = this.parent.value?.credentialsType;
+    let translationId;
     switch (type) {
       case 'oauth2':
-        return this.getTranslation('tipOauth2');
+        translationId = 'tipOauth2';
+        break;
       case 'token':
-        return this.getTranslation('tipToken');
+        translationId = 'tipToken';
+        break;
       case 'basic':
-        return this.getTranslation('tipBasic');
+        translationId = 'tipBasic';
+        break;
       default:
-        return this.getTranslation('tip');
+        translationId = 'tip';
     }
+    return this.getTranslation(translationId);
   }),
 });
