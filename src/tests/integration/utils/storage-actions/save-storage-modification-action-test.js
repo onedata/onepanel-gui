@@ -49,7 +49,7 @@ const StorageManagerServiceMock = Service.extend({
 });
 
 const GlobalNotifyServiceMock = Service.extend({
-  errorAlert: sinon.spy(),
+  error: sinon.spy(),
   success: sinon.spy(),
   backendError: sinon.spy(),
 });
@@ -161,7 +161,7 @@ describe('Integration | Utility | storage-actions/save-storage-modification-acti
         .to.be.calledWith(htmlSafe(
           'Storage backend "my-storage" has been modified successfully.'
         ));
-      expect(this.globalNotifyMock.errorAlert)
+      expect(this.globalNotifyMock.error)
         .to.be.calledWith(htmlSafe(
           'Cannot modify the "my-storage" storage backend: the file read/write test failed. Make sure that the configuration is correct and the storage backend is reachable and operational.'
         ));
