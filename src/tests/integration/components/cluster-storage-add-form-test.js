@@ -89,15 +89,14 @@ const S3_STORAGE = {
   importedStorage: true,
   readonly: true,
   lumaFeed: 'local',
-  archiveStorage: true,
   hostname: 'https://s3.example.com',
   bucketName: 'name',
   verifyServerCertificate: true,
   region: 'us-east-1',
   accessKey: 'admin',
-  maximumCanonicalObjectSize: '5425231',
   fileMode: '0664',
   dirMode: '0775',
+  blockSize: '10485760',
 };
 
 const SWIFT_STORAGE = {
@@ -332,7 +331,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInShowMode('POSIX', POSIX_STORAGE, 12);
     checkForStorageDetailsInShowMode('Ceph RADOS', CEPH_RADOS_STORAGE, 12);
     checkForStorageDetailsInShowMode('NFS', NFS_STORAGE, 13);
-    checkForStorageDetailsInShowMode('S3', S3_STORAGE, 15);
+    checkForStorageDetailsInShowMode('S3', S3_STORAGE, 14);
     checkForStorageDetailsInShowMode('Swift', SWIFT_STORAGE, 14);
     checkForStorageDetailsInShowMode('GlusterFS', GLUSTERFS_STORAGE, 12);
     checkForStorageDetailsInShowMode('WebDAV', WEBDAV_STORAGE, 16);
@@ -346,7 +345,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInCreateMode('POSIX', 10);
     checkForStorageDetailsInCreateMode('Ceph RADOS', 13);
     checkForStorageDetailsInCreateMode('NFS', 13);
-    checkForStorageDetailsInCreateMode('S3', 18);
+    checkForStorageDetailsInCreateMode('S3', 16);
     checkForStorageDetailsInCreateMode('Swift', 15);
     checkForStorageDetailsInCreateMode('GlusterFS', 13);
     checkForStorageDetailsInCreateMode('WebDAV', 15);
@@ -560,19 +559,6 @@ describe('Integration | Component | cluster-storage-add-form', function () {
         await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
 
-        expect(find('.storagePathType-field .one-way-radio-group'))
-          .to.not.have.class('disabled');
-        expect(find('.storagePathType-field .option-flat input'))
-          .to.have.property('checked', true);
-
-        expect(find('.importedStorage-field .one-way-toggle'))
-          .to.have.class('unselected')
-          .and.have.class('disabled');
-
-        expect(find('.readonly-field .one-way-toggle'))
-          .to.have.class('unselected')
-          .and.have.class('disabled');
-
         await click('.storagePathType-field .option-canonical input');
         expect(find('.storagePathType-field .option-canonical input'))
           .to.have.property('checked', true);
@@ -615,13 +601,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     );
 
     it(
-      'locks and reset value: max canonical object size, imported item mode if storage are s3 with path type flat',
+      'locks and reset value: imported item mode if storage are s3 with path type flat',
       async function () {
         await render(hbs`<ClusterStorageAddForm />`);
         await selectChoose('.type-field .dropdown-field', S3_TYPE.name);
 
-        expect(find('.maximumCanonicalObjectSize-field input'))
-          .to.have.property('disabled');
         expect(find('.fileMode-field input'))
           .to.have.property('disabled');
         expect(find('.dirMode-field input'))
@@ -629,15 +613,11 @@ describe('Integration | Component | cluster-storage-add-form', function () {
 
         await click('.storagePathType-field .option-canonical input');
 
-        await fillIn('.maximumCanonicalObjectSize-field input', 64);
         await fillIn('.fileMode-field input', '0664');
         await fillIn('.dirMode-field input', '0775');
 
         await click('.storagePathType-field .option-flat input');
 
-        expect(find('.maximumCanonicalObjectSize-field input'))
-          .to.have.property('disabled')
-          .and.have.value(undefined);
         expect(find('.fileMode-field input'))
           .to.have.property('disabled')
           .and.have.value(undefined);
@@ -722,7 +702,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInEditMode('POSIX', POSIX_STORAGE, 12);
     checkForStorageDetailsInEditMode('Ceph RADOS', CEPH_RADOS_STORAGE, 13);
     checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 13);
-    checkForStorageDetailsInEditMode('S3', S3_STORAGE, 18);
+    checkForStorageDetailsInEditMode('S3', S3_STORAGE, 16);
     checkForStorageDetailsInEditMode('Swift', SWIFT_STORAGE, 15);
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
     checkForStorageDetailsInEditMode('WebDAV', WEBDAV_STORAGE, 17);

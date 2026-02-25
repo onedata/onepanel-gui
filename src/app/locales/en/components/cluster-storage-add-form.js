@@ -31,8 +31,5 @@ export default {
   save: 'Save',
   add: 'Add',
   cancel: 'Cancel',
-  cannotReadonlyNotImported: 'This option is available only for imported storage backends.',
   cannotStorageDetectionReadonly: 'Storage detection is always skipped on readonly storage backends.',
-  httpOnlyReadonly: 'HTTP storages are limited to readonly mode.',
-  httpOnlyImported: 'HTTP storages are always treated as imported due to their readonly limitation.',
 };

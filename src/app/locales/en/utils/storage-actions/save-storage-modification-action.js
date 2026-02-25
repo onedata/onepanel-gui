@@ -1,5 +1,5 @@
 export default {
   successNotificationText: 'Storage backend "{{storageBeforeModification.name}}" has been modified successfully.',
   failureNotificationActionName: 'modifying storage backend',
-  warningStorageCheckFailed: 'File read/write test has failed after "{{name}}" storage backend modification. Please make sure that the storage backend configuration is correct.',
+  warningStorageCheckFailed: 'Cannot modify the "{{name}}" storage backend: the file read/write test failed. Make sure that the configuration is correct and the storage backend is reachable and operational.',
 };
