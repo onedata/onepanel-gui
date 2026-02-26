@@ -3,11 +3,26 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { StorageRadioField } from '../base/storage-radio-field';
 import { computed } from '@ember/object';
+
+const storagePathTypeConfig = {
+  posix: { defaultValue: 'canonical', disabled: true },
+  glusterfs: { defaultValue: 'canonical', disabled: true },
+  nulldevice: { defaultValue: 'canonical' },
+  ceph: { defaultValue: 'flat' },
+  cephrados: { defaultValue: 'flat', disabled: true },
+  s3: {},
+  swift: { defaultValue: 'flat' },
+  xrootd: { defaultValue: 'canonical', disabled: true },
+  http: { defaultValue: 'canonical', disabled: true },
+  webdav: { defaultValue: 'canonical', disabled: true },
+  nfs: { defaultValue: 'canonical', disabled: true },
+};
 
 export const StoragePathTypeField = StorageRadioField.extend({
   /**
@@ -31,8 +46,23 @@ export const StoragePathTypeField = StorageRadioField.extend({
   /**
    * @override
    */
-  defaultValue: computed(function defaultValue() {
+  defaultValue: computed('parent.value.type', function defaultValue() {
+    const config = storagePathTypeConfig[this.parent.value?.type];
+    if (config) {
+      return config.defaultValue ?? null;
+    }
     return this.options[0].value;
+  }),
+
+  /**
+   * @type {ComputedProperty<boolean>}
+   */
+  isEnabled: computed('parent.value.type', function isEnabled() {
+    const config = storagePathTypeConfig[this.parent.value?.type];
+    if (config?.disabled) {
+      return false;
+    }
+    return true;
   }),
 
   /**
@@ -40,6 +70,9 @@ export const StoragePathTypeField = StorageRadioField.extend({
    */
   valueChanged() {
     this._super(...arguments);
-    this.context.component.storagePathTypeChanged();
+    const component = this.context.component;
+    component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
+    component.basicGroup.getFieldByPath('readonly')?.autoSettings();
+    component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
   },
 });

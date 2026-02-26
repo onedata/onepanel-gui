@@ -23,7 +23,10 @@ export default {
   },
   credentials: {
     label: 'Credentials',
-    tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "userlabel:password", for "token" just the token. In case of "oauth2", this field should contain the userlabel for the WebDAV, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
+    labelOauth2: 'Username',
+    tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "username:password", for "token" just the token. In case of "oauth2", this field should contain the userlabel for the WebDAV, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
+    tipBasic: 'The credentials to authenticate with the WebDAV server. Credentials should be provided in the form "username:password".',
+    tipOauth2: 'The credentials to authenticate with the WebDAV server. This field should contain the username for the WebDAV, while the token will be obtained and refreshed automatically in the background.',
   },
   oauth2IdP: {
     label: 'OAuth2 IdP',

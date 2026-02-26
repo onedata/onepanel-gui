@@ -3,16 +3,15 @@
  *
  * @author Agnieszka Warchoł
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { ArchiveStorageField } from './s3/archive-storage-field';
 import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
-import { BlockSizeField } from './common/block-size-field';
-import { MaximumCanonicalObjectSizeField } from './s3/maximum-canonical-object-size-field';
+import { S3BlockSizeField } from './s3/block-size-field';
 import { FileModeField } from './s3/file-mode-field';
 import { DirModeField } from './s3/dir-mode-field';
 import { TimeoutField } from './common/timeout-field';
@@ -37,15 +36,13 @@ export const S3Group = FormFieldsGroup.extend({
    */
   fields: computed(function fields() {
     return [
-      ArchiveStorageField,
       HostnameField,
       BucketNameField,
       VerifyServerCertificateField,
       RegionField,
       AccessKeyField,
       SecretKeyField,
-      BlockSizeField,
-      MaximumCanonicalObjectSizeField,
+      S3BlockSizeField,
       FileModeField,
       DirModeField,
       TimeoutField,
