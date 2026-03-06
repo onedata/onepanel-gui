@@ -46,6 +46,11 @@
         totalCount=spacesBatchResolver.totalFunctionsCount
       }}
     >
+      {{#if (and (gt spaces.length 0) (eq spacesFiltered.length 0))}}
+        <div class="no-results-to-show">
+          {{tt this "noResultsFound"}}
+        </div>
+      {{/if}}
       <ClusterSpacesTable
         @spaces={{paginator.activePageArray}}
         @provider={{providerProxy.content}}
