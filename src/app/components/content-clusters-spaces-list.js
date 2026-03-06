@@ -20,6 +20,7 @@ import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
 import { raw, or } from 'ember-awesome-macros';
 import { sort } from '@ember/object/computed';
+import { getNameWithConflictLabel } from 'onedata-gui-common/components/name-conflict';
 
 export default Component.extend(
   I18n,
@@ -88,7 +89,10 @@ export default Component.extend(
           return this.spaces;
         }
         return this.spaces.filter((space) =>
-          space.name.toLowerCase().includes(searchString)
+          getNameWithConflictLabel(
+            space.name,
+            space.conflictLabel,
+          ).toLowerCase().includes(searchString)
         );
       }
     ),
