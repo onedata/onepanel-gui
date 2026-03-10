@@ -20,6 +20,7 @@ import GlobalActions from 'onedata-gui-common/mixins/components/global-actions';
 import ArrayPaginator from 'onedata-gui-common/utils/array-paginator';
 import { raw, or } from 'ember-awesome-macros';
 import { sort } from '@ember/object/computed';
+import { getNameWithConflictLabel } from 'onedata-gui-common/components/name-conflict';
 
 export default Component.extend(
   I18n,
@@ -61,6 +62,11 @@ export default Component.extend(
     supportSpaceOpened: false,
 
     /**
+     * @type {string}
+     */
+    searchString: '',
+
+    /**
      * @type {boolean}
      */
     isSupportSpaceInitiallyOpen: false,
@@ -74,7 +80,24 @@ export default Component.extend(
 
     sorting: Object.freeze(['name:asc']),
 
-    spacesSorted: sort('spaces', 'sorting'),
+    spacesFiltered: computed(
+      'spaces.@each.name',
+      'searchString',
+      function spacesFiltered() {
+        const searchString = this.searchString.toLowerCase();
+        if (!searchString) {
+          return this.spaces;
+        }
+        return this.spaces.filter((space) =>
+          getNameWithConflictLabel(
+            space.name,
+            space.conflictLabel,
+          ).toLowerCase().includes(searchString)
+        );
+      }
+    ),
+
+    spacesSorted: sort('spacesFiltered', 'sorting'),
 
     spacesListLoading: reads('spacesBatchResolver.promiseObject.isPending'),
 

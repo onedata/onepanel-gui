@@ -48,6 +48,7 @@ export default Component.extend(I18n, {
       label: supporter.name,
       value: supporter.size,
       color: colorGenerator.generateColorForKey(supporter.providerId),
+      providerId: supporter.providerId,
     })));
   }),
 

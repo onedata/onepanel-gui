@@ -5,4 +5,5 @@ export default {
   supportSpace: 'Support space',
   supportSuccess: 'Added a new support for space',
   loadingSpaces: 'Loading space data...<br/>({{loadedCount}} out of {{totalCount}})',
+  noResultsFound: 'No results found',
 };
