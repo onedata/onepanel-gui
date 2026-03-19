@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13324 Added basic sidebar whitelabeling
 * VFS-12570 Added spaces search box on spaces page and storage backends page
 * VFS-13019 Improved storage form
 * VFS-13310 Added validation to pages control
