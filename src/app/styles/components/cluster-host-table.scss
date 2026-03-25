@@ -41,7 +41,7 @@
   &.bt tbody tr {
     &.active td:after {
       @include left-line(
-        $one-list-item-active-left-border-width solid $color-one-main
+        $one-list-item-active-left-border-width solid var(--color-one-main)
       );
     }
     &.active td {
