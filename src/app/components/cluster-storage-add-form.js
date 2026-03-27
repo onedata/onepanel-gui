@@ -227,6 +227,10 @@ export default Component.extend(I18n, {
     return this.fields.getFieldByPath('s3');
   }),
 
+  swiftGroup: computed('fields', function swiftGroup() {
+    return this.fields.getFieldByPath('swift');
+  }),
+
   webdavGroup: computed('fields', function webdavGroup() {
     return this.fields.getFieldByPath('webdav');
   }),
@@ -357,7 +361,21 @@ export default Component.extend(I18n, {
       }
 
       for (const [name, value] of Object.entries(form[selectedStorageType])) {
-        formData[name] = value;
+        if ((selectedStorageType === 'webdav' ||
+            selectedStorageType === 'http' ||
+            selectedStorageType === 'xrootd') &&
+          (form[selectedStorageType].credentialsType === 'basic' ||
+            form[selectedStorageType].credentialsType === 'pwd') &&
+          (name === 'password' || name === 'username')
+        ) {
+          if (name === 'password') {
+            continue;
+          } else {
+            formData.credentials = `${form[selectedStorageType].username}:${value}`;
+          }
+        } else {
+          formData[name] = value;
+        }
       }
 
       formData = stripObject(formData, [undefined, null]);

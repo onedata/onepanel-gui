@@ -31,10 +31,11 @@ export default {
       },
     },
   },
-  credentials: {
-    label: 'Credentials',
-    tip: 'The credentials to authenticate with the XRootD server. For "password" credentials type, this field should contain simply user and password, e.g. "admin:password". For "none" this field is ignored.',
-    placeholder: 'Example: username:password',
+  username: {
+    label: 'Username',
+  },
+  password: {
+    label: 'Password',
   },
   timeout: common.timeout,
 };

@@ -1,19 +1,19 @@
 /**
- * Credentials of the storage.
+ * Username of the storage.
  *
- * @author Agnieszka Warchoł
- * @copyright (C) 2025 ACK CYFRONET AGH
+ * @author Agnieszka Raczek
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
 import { StorageTextField } from '../base/storage-text-field';
 import { computed } from '@ember/object';
 
-export const CredentialsField = StorageTextField.extend({
+export const UsernameField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'credentials',
+  name: 'username',
 
   /**
    * @override
@@ -23,12 +23,8 @@ export const CredentialsField = StorageTextField.extend({
   /**
    * @override
    */
-  isOptional: true,
-
-  /**
-   * @override
-   */
   isVisible: computed('parent.value.credentialsType', function isVisible() {
-    return this.parent.value?.credentialsType === 'pwd';
+    const type = this.parent.value?.credentialsType;
+    return type === 'basic';
   }),
 });

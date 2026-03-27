@@ -51,7 +51,8 @@ export const ReadonlyField = StorageToggleField.extend({
       const locked = !this.importedStorage ||
         this.storageType === 'http' ||
         (
-          this.storageType === 's3' &&
+
+          (this.storageType === 's3' || this.storageType === 'swift') &&
           this.storagePathType === 'canonical' &&
           this.importedStorage
         );
@@ -98,7 +99,7 @@ export const ReadonlyField = StorageToggleField.extend({
 
     if (
       this.storageType === 'http' || (
-        this.storageType === 's3' &&
+        (this.storageType === 's3' || this.storageType === 'swift') &&
         this.storagePathType === 'canonical' &&
         this.importedStorage
       )

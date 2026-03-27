@@ -2,12 +2,12 @@ import common from './common';
 
 export default {
   latencyMin: {
-    label: 'Min. latency [ms]',
+    label: 'Min. simulated latency [ms]',
     tip: 'Minimum latency in milliseconds, which should be simulated for ' +
       'selected operations.',
   },
   latencyMax: {
-    label: 'Max. latency [ms]',
+    label: 'Max. simulated latency [ms]',
     tip: 'Maximum latency in milliseconds, which should be simulated for ' +
       'selected operations.',
   },

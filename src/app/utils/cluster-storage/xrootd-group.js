@@ -13,7 +13,8 @@ import { UrlField } from './xrootd/url-field';
 import { ImportedDirectoryModeMaskField } from './xrootd/imported-directory-mode-mask-field';
 import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-field';
 import { CredentialsTypeField } from './xrootd/credentials-type-field';
-import { CredentialsField } from './xrootd/credentials-field';
+import { UsernameField } from './xrootd/username-field';
+import { PasswordField } from './xrootd/password-field';
 
 export const XrootdGroup = FormFieldsGroup.extend({
   /**
@@ -35,7 +36,8 @@ export const XrootdGroup = FormFieldsGroup.extend({
       ImportedFileModeMaskField,
       ImportedDirectoryModeMaskField,
       CredentialsTypeField,
-      CredentialsField,
+      UsernameField,
+      PasswordField,
       TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,

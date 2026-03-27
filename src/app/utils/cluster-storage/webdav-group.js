@@ -21,6 +21,8 @@ import { CredentialsTypeField } from './webdav/credentials-type-field';
 import { CredentialsField } from './webdav/credentials-field';
 import { Oauth2IdpField } from './webdav/oauth2-idp-field';
 import { RangeWriteSupportField } from './webdav/range-write-support-field';
+import { UsernameField } from './webdav/username-field';
+import { PasswordField } from './webdav/password-field';
 
 export const WebdavGroup = FormFieldsGroup.extend({
   /**
@@ -42,6 +44,8 @@ export const WebdavGroup = FormFieldsGroup.extend({
       VerifyServerCertificateField,
       CredentialsTypeField,
       CredentialsField,
+      UsernameField,
+      PasswordField,
       Oauth2IdpField,
       OnedataAccessTokenField,
       AuthorizationHeaderField,

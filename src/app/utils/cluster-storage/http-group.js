@@ -17,7 +17,8 @@ import { AuthorizationHeaderField } from './http/authorization-header-field';
 import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { MaxRequestsPerSessionField } from './http/max-requests-per-session-field';
 import { FileModeField } from './http/file-mode-field';
-import { CredentialsField } from './http/credentials-field';
+import { UsernameField } from './http/username-field';
+import { PasswordField } from './http/password-field';
 
 export const HttpGroup = FormFieldsGroup.extend({
   /**
@@ -38,7 +39,8 @@ export const HttpGroup = FormFieldsGroup.extend({
       EndpointField,
       VerifyServerCertificateField,
       CredentialsTypeField,
-      CredentialsField,
+      UsernameField,
+      PasswordField,
       OnedataAccessTokenField,
       AuthorizationHeaderField,
       ConnectionPoolSizeField,

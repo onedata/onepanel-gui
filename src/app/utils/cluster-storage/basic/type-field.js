@@ -17,15 +17,15 @@ export const TypeField = StorageDropdownField.extend({
   name: 'type',
 
   optionsToSelect: Object.freeze([
+    { value: 's3' },
     { value: 'cephrados' },
     { value: 'posix' },
     { value: 'nfs' },
-    { value: 's3' },
+    { value: 'http' },
+    { value: 'webdav' },
+    { value: 'xrootd' },
     { value: 'swift' },
     { value: 'glusterfs' },
-    { value: 'webdav' },
-    { value: 'http' },
-    { value: 'xrootd' },
     { value: 'nulldevice' },
   ]),
 
@@ -54,7 +54,7 @@ export const TypeField = StorageDropdownField.extend({
   /**
    * @override
    */
-  defaultValue: 'cephrados',
+  defaultValue: 's3',
 
   /**
    * @override

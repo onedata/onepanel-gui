@@ -20,9 +20,11 @@ export default {
       token: { label: 'token' },
     },
   },
-  credentials: {
-    label: 'Credentials',
-    tip: 'The credentials to authenticate with the HTTP server. "basic" credentials should be provided in the form "username:password", for "token" just the token. In case of "oauth2", this field should contain the username for the HTTP, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
+  username: {
+    label: 'Username',
+  },
+  password: {
+    label: 'Password',
   },
   onedataAccessToken: {
     label: 'Onedata access token',

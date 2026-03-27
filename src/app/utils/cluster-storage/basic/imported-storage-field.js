@@ -64,6 +64,8 @@ export const ImportedStorageField = StorageToggleField.extend({
       }
       return this.storageType !== 'http' &&
         this.storageType !== 's3' &&
+        this.storageType !== 'swift' &&
+        this.storageType !== 'cephrados' &&
         !this.context.component.storageProvidesSupport;
     }
   ),
@@ -89,7 +91,7 @@ export const ImportedStorageField = StorageToggleField.extend({
   autoSettings() {
     if (this.storageType === 'http') {
       this.valueChanged(true);
-    } else if (this.storageType === 's3') {
+    } else if (this.storageType === 's3' || this.storageType === 'swift') {
       this.valueChanged(this.storagePathType === 'canonical');
     } else if (this.context.component.storageProvidesSupport) {
       this.valueChanged(this.context.component.storage?.importedStorage);
