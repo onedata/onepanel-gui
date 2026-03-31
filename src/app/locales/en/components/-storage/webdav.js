@@ -44,7 +44,7 @@ export default {
   },
   rangeWriteSupport: {
     label: 'Range write support',
-    tip: 'The type of partial write support enabled in the WebDAV server. Currently two types are supported: "sabredav" which assumes the server supports the SabreDAV PartialUpdate extension via PATCH method, and "moddav" which assumes server supports partial PUT requests with Content-Range header. If "none" is selected no write support is available for this WebDAV storage.',
+    tip: 'Required for write-enabled supports; the storage backend must support at least one range write method. The baseline WebDAV protocol does not support range writes and only allows a write-once approach, which is incompatible with the Onedata filesystem, as it permits partial file modifications.',
     options: {
       none: { label: 'none' },
       sabredav: { label: 'SabreDAV' },

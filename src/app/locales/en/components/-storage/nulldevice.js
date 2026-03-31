@@ -22,7 +22,7 @@ export default {
   },
   simulatedFilesystemParameters: {
     label: 'Simulated filesystem parameters',
-    tip: '<p>Specifies files tree structure for a simulated null device filesystem.</p><p>For example "2-3:4-5:512" will generate a filesystem tree which has 2 directories and 3 files in the root of the filesystem. Each of these directories will have 4 subdirectories and 5 files. Suffix ":512" (which is optional) will specify the size of generated files to 512 bytes.</p>Default empty string disables the simulated filesystem feature.',
+    tip: '<p>Allows simulating a preexisting file/directory tree structure for a null device file-system.</p><p>For example "2-3:4-5:512" will generate a filesystem tree which has 2 directories and 3 files in the root of the filesystem. Each of these directories will have 4 subdirectories and 5 files. Suffix ":512" (which is optional) will specify the size of generated files to 512 bytes.</p>Default empty string disables the simulated filesystem feature.',
     regexMessage: 'This field should be in format described in the hint',
   },
   simulatedFilesystemGrowSpeed: {
