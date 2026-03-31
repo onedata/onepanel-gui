@@ -47,9 +47,17 @@ export default {
     tip: 'Required for write-enabled supports; the storage backend must support at least one range write method. The baseline WebDAV protocol does not support range writes and only allows a write-once approach, which is incompatible with the Onedata filesystem, as it permits partial file modifications.',
     options: {
       none: { label: 'none' },
-      sabredav: { label: 'SabreDAV' },
-      moddav: { label: 'ModDAV' },
+      sabredav: {
+        label: 'SabreDAV',
+        tip: 'Assumes the server supports the SabreDAV PartialUpdate extension via PATCH method.',
+      },
+      moddav: {
+        label: 'ModDAV',
+        tip: 'Assumes the server supports partial PUT requests with Content-Range header.',
+      },
     },
+    lockHintNoneDisabled: 'Write support requires specifying the range write method for the storage backend; otherwise, the storage must be configured as readonly.',
+    lockHintAllDisabled: 'Range writes are not applicable for read-only storage backends.',
   },
   connectionPoolSize: {
     label: 'Connection pool size',

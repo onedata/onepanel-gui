@@ -19,6 +19,8 @@ export default {
       'are based solely on unique identifiers internal to Onedata and do not ' +
       'require modification for rename operations, canonical paths resemble ' +
       'POSIX-style directory structure reflecting the logical space directory tree.',
+    lockedCanonicalTip: 'Flat storage path type is not supported for {{type}} storage — it relies on a hierarchical filesystem with canonical paths.',
+    lockedFlatTip: '{{type}} does not support canonical filesystem paths.',
   },
   readonly: {
     label: 'Readonly',
