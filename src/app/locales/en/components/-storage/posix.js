@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   mountPoint: {
     label: 'Mount point',
@@ -15,5 +13,4 @@ export default {
     tip: 'GID of the group on whose behalf operations in the admin context will be performed on the storage.',
     placeholder: 'Default: 0',
   },
-  timeout: common.timeout,
 };

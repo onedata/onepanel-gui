@@ -13,7 +13,6 @@ import { UsernameField } from './ceph-rados/username-field';
 import { MonitorHostnameField } from './ceph-rados/monitor-hostname-field';
 import { ClusterNameField } from './ceph-rados/cluster-name-field';
 import { PoolNameField } from './ceph-rados/pool-name-field';
-import { TimeoutField } from './common/timeout-field';
 import { BlockSizeField } from './common/block-size-field';
 
 export const CephRadosGroup = FormFieldsGroup.extend({
@@ -38,10 +37,16 @@ export const CephRadosGroup = FormFieldsGroup.extend({
       ClusterNameField,
       PoolNameField,
       BlockSizeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

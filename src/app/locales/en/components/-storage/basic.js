@@ -55,6 +55,11 @@ export default {
       },
     },
   },
+  timeout: {
+    label: 'Timeout [ms]',
+    placeholder: 'Default: 300000',
+    tip: 'Maximum time to wait for a response from the storage service before the request is aborted.',
+  },
   type: {
     label: 'Type',
     options: {

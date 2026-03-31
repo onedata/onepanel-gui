@@ -35,6 +35,13 @@ export const LumaGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
+  }),
+
+  /**
    * @type {Ember.ComputedProperty<boolean>}
    */
   isVisible: computed('context.component.basicGroup.value.lumaFeed', function isVisible() {

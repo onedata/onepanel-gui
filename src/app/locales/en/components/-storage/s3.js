@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   hostname: {
     label: 'Endpoint URL',
@@ -36,5 +34,4 @@ export default {
     placeholder: 'Default: 0775',
     regexMessage: 'This field should be octal POSIX permissions',
   },
-  timeout: common.timeout,
 };

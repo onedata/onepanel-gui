@@ -9,7 +9,10 @@
   .radio-group-input.has-message .form-message {
     color: $state-danger-text;
   }
-
+  .field-view-mode .form-view-section-title {
+    @include font-semibold();
+    padding-top: 1em;
+  }
   .qos-params-editor .row {
     display: flex;
     width: 100%;

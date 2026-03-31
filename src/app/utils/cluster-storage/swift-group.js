@@ -16,7 +16,6 @@ import { PasswordField } from './swift/password-field';
 import { ProjectDomainNameField } from './swift/project-domain-name-field';
 import { ContainerNameField } from './swift/container-name-field';
 import { SwiftBlockSizeField } from './swift/block-size-field';
-import { TimeoutField } from './common/timeout-field';
 
 export const SwiftGroup = FormFieldsGroup.extend({
   /**
@@ -42,10 +41,16 @@ export const SwiftGroup = FormFieldsGroup.extend({
       AuthUrlField,
       ContainerNameField,
       SwiftBlockSizeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

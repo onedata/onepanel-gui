@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   host: {
     label: 'Hostname',
@@ -41,5 +39,4 @@ export default {
     tip: 'The number of automatic reconnect attempts to the server. Setting `-1` enables infinite number of reconnects.',
     placeholder: 'Default: 1',
   },
-  timeout: common.timeout,
 };

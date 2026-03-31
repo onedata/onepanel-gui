@@ -8,7 +8,6 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { OnedataAccessTokenField } from './webdav/onedata-access-token-field';
 import { AuthorizationHeaderField } from './webdav/authorization-header-field';
@@ -54,10 +53,16 @@ export const WebdavGroup = FormFieldsGroup.extend({
       MaximumUploadSizeField,
       ImportedFileModeField,
       ImportedDirectoryModeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   endpoint: {
     label: 'Endpoint',
@@ -51,5 +49,4 @@ export default {
     placeholder: 'Default: 0664',
     regexMessage: 'This field should be octal POSIX permissions',
   },
-  timeout: common.timeout,
 };

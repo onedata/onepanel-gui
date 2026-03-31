@@ -15,7 +15,6 @@ import { DirCacheField } from './nfs/dir-cache-field';
 import { ReadAheadField } from './nfs/read-ahead-field';
 import { AutoReconnectField } from './nfs/auto-reconnect-field';
 import { VersionField } from './nfs/version-field';
-import { TimeoutField } from './common/timeout-field';
 
 export const NfsGroup = FormFieldsGroup.extend({
   /**
@@ -40,10 +39,16 @@ export const NfsGroup = FormFieldsGroup.extend({
       DirCacheField,
       ReadAheadField,
       AutoReconnectField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

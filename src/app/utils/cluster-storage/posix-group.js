@@ -8,7 +8,6 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { MountPointField } from './posix/mount-point-field';
 import { RootUidField } from './posix/root-uid-field';
 import { RootGidField } from './posix/root-gid-field';
@@ -32,10 +31,16 @@ export const PosixGroup = FormFieldsGroup.extend({
       MountPointField,
       RootUidField,
       RootGidField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

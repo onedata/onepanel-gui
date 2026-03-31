@@ -14,7 +14,6 @@ import { RegionField } from './s3/region-field';
 import { S3BlockSizeField } from './s3/block-size-field';
 import { FileModeField } from './s3/file-mode-field';
 import { DirModeField } from './s3/dir-mode-field';
-import { TimeoutField } from './common/timeout-field';
 import { BucketNameField } from './s3/bucket-name-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { AccessKeyField } from './s3/access-key-field';
@@ -45,10 +44,16 @@ export const S3Group = FormFieldsGroup.extend({
       S3BlockSizeField,
       FileModeField,
       DirModeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

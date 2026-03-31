@@ -8,7 +8,6 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { HostnameField } from './glusterfs/hostname-field';
 import { TransportField } from './glusterfs/transport-field';
 import { MountPointField } from './glusterfs/mount-point-field';
@@ -38,10 +37,16 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
       TransportField,
       MountPointField,
       XlatorOptionsField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

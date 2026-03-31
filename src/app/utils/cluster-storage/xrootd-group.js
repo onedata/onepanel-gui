@@ -8,7 +8,6 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { UrlField } from './xrootd/url-field';
 import { ImportedDirectoryModeMaskField } from './xrootd/imported-directory-mode-mask-field';
 import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-field';
@@ -38,10 +37,16 @@ export const XrootdGroup = FormFieldsGroup.extend({
       CredentialsTypeField,
       UsernameField,
       PasswordField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

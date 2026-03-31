@@ -8,7 +8,6 @@
 
 import { computed } from '@ember/object';
 import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { EndpointField } from './common/endpoint-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { CredentialsTypeField } from './http/credentials-type-field';
@@ -46,10 +45,16 @@ export const HttpGroup = FormFieldsGroup.extend({
       ConnectionPoolSizeField,
       MaxRequestsPerSessionField,
       FileModeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  title: computed(function title() {
+    return this.t('sectionTitle');
   }),
 
   /**

@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   username: {
     label: 'Admin username',
@@ -36,5 +34,4 @@ export default {
     label: 'Block size',
     placeholder: 'Default: 10485760',
   },
-  timeout: common.timeout,
 };

@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   url: {
     label: 'URL',
@@ -37,5 +35,4 @@ export default {
   password: {
     label: 'Password',
   },
-  timeout: common.timeout,
 };

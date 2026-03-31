@@ -14,6 +14,7 @@ import { ReadonlyField } from './basic/readonly-field';
 import { ImportedStorageField } from './basic/imported-storage-field';
 import { LumaFeedField } from './basic/luma-feed-field';
 import { TypeField } from './basic/type-field';
+import { TimeoutField } from './basic/timeout-field';
 
 export const BasicGroup = FormFieldsGroup.extend({
   /**
@@ -37,6 +38,7 @@ export const BasicGroup = FormFieldsGroup.extend({
       ImportedStorageField,
       ReadonlyField,
       LumaFeedField,
+      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));

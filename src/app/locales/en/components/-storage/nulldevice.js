@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   latencyMin: {
     label: 'Min. simulated latency [ms]',
@@ -36,5 +34,4 @@ export default {
       'while 100.0 will increase it by 100 files per second.',
 
   },
-  timeout: common.timeout,
 };
