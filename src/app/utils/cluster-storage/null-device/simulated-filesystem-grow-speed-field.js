@@ -9,6 +9,7 @@
 
 import { reads } from '@ember/object/computed';
 import { StorageNumberField } from '../base/storage-number-field';
+import { computed } from '@ember/object';
 
 export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
   /**
@@ -35,6 +36,13 @@ export const SimulatedFilesystemGrowSpeedField = StorageNumberField.extend({
    * @type {ComputedProperty<boolean>}
    */
   isEnabled: reads('importedStorage'),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  lockHint: computed(function lockHint() {
+    return this.t('nulldevice.simulatedFilesystemGrowSpeed.lockHint');
+  }),
 
   autoSettings() {
     if (!this.importedStorage) {

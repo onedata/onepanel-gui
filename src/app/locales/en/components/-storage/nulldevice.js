@@ -1,3 +1,5 @@
+const simulatedLockHint = 'Supported only if storage import is enabled.';
+
 export default {
   latencyMin: {
     label: 'Min. simulated latency [ms]',
@@ -24,6 +26,7 @@ export default {
     label: 'Simulated filesystem parameters',
     tip: '<p>Allows simulating a preexisting file/directory tree structure for a null device file-system.</p><p>For example "2-3:4-5:512" will generate a filesystem tree which has 2 directories and 3 files in the root of the filesystem. Each of these directories will have 4 subdirectories and 5 files. Suffix ":512" (which is optional) will specify the size of generated files to 512 bytes.</p>Default empty string disables the simulated filesystem feature.',
     regexMessage: 'This field should be in format described in the hint',
+    lockHint: simulatedLockHint,
   },
   simulatedFilesystemGrowSpeed: {
     label: 'Simulated filesystem grow speed',
@@ -32,6 +35,6 @@ export default {
       'specification to be visible immediately. For example value of 0.01 will ' +
       'increase the number of the visible filesystem entries by 1 file per 100 seconds, ' +
       'while 100.0 will increase it by 100 files per second.',
-
+    lockHint: simulatedLockHint,
   },
 };
