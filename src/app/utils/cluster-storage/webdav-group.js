@@ -22,6 +22,7 @@ import { Oauth2IdpField } from './webdav/oauth2-idp-field';
 import { RangeWriteSupportField } from './webdav/range-write-support-field';
 import { UsernameField } from './webdav/username-field';
 import { PasswordField } from './webdav/password-field';
+import { reads } from '@ember/object/computed';
 
 export const WebdavGroup = FormFieldsGroup.extend({
   /**
@@ -59,16 +60,23 @@ export const WebdavGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'webdav';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'webdav';
   }),
 });

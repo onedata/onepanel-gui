@@ -26,7 +26,7 @@ export default {
     nfs,
     luma,
     optional: 'optional',
-    sectionTitle: 'Storage specific configuration',
+    sectionTitle: '{{type}} storage configuration',
   },
   storageType: 'Type',
   save: 'Save',

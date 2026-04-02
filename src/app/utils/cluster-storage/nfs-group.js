@@ -15,6 +15,7 @@ import { DirCacheField } from './nfs/dir-cache-field';
 import { ReadAheadField } from './nfs/read-ahead-field';
 import { AutoReconnectField } from './nfs/auto-reconnect-field';
 import { VersionField } from './nfs/version-field';
+import { reads } from '@ember/object/computed';
 
 export const NfsGroup = FormFieldsGroup.extend({
   /**
@@ -45,16 +46,23 @@ export const NfsGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'nfs';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'nfs';
   }),
 });

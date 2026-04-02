@@ -14,6 +14,7 @@ import { MountPointField } from './glusterfs/mount-point-field';
 import { XlatorOptionsField } from './glusterfs/xlator-options-field';
 import { VolumeField } from './glusterfs/volume-field';
 import { PortField } from './glusterfs/port-field';
+import { reads } from '@ember/object/computed';
 
 export const GlusterfsGroup = FormFieldsGroup.extend({
   /**
@@ -43,16 +44,22 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
-
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'glusterfs';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'glusterfs';
   }),
 });

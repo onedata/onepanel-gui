@@ -9,6 +9,9 @@
   .radio-group-input.has-message .form-message {
     color: $state-danger-text;
   }
+  .radio-inline.disabled {
+    opacity: $disabled-opacity;
+  }
   .field-view-mode .form-view-section-title {
     @include font-semibold();
     padding-top: 1em;

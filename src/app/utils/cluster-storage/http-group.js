@@ -18,6 +18,7 @@ import { MaxRequestsPerSessionField } from './http/max-requests-per-session-fiel
 import { FileModeField } from './http/file-mode-field';
 import { UsernameField } from './http/username-field';
 import { PasswordField } from './http/password-field';
+import { reads } from '@ember/object/computed';
 
 export const HttpGroup = FormFieldsGroup.extend({
   /**
@@ -51,16 +52,22 @@ export const HttpGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
-
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'http';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'http';
   }),
 });

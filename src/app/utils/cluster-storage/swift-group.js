@@ -16,6 +16,7 @@ import { PasswordField } from './swift/password-field';
 import { ProjectDomainNameField } from './swift/project-domain-name-field';
 import { ContainerNameField } from './swift/container-name-field';
 import { SwiftBlockSizeField } from './swift/block-size-field';
+import { reads } from '@ember/object/computed';
 
 export const SwiftGroup = FormFieldsGroup.extend({
   /**
@@ -47,16 +48,22 @@ export const SwiftGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
-
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'swift';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'swift';
   }),
 });

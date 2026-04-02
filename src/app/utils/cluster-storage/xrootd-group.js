@@ -14,6 +14,7 @@ import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-fiel
 import { CredentialsTypeField } from './xrootd/credentials-type-field';
 import { UsernameField } from './xrootd/username-field';
 import { PasswordField } from './xrootd/password-field';
+import { reads } from '@ember/object/computed';
 
 export const XrootdGroup = FormFieldsGroup.extend({
   /**
@@ -43,16 +44,23 @@ export const XrootdGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'xrootd';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'xrootd';
   }),
 });

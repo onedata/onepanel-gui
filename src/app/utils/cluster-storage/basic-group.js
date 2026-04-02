@@ -37,8 +37,8 @@ export const BasicGroup = FormFieldsGroup.extend({
       StoragePathTypeField,
       ImportedStorageField,
       ReadonlyField,
-      LumaFeedField,
       TimeoutField,
+      LumaFeedField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));

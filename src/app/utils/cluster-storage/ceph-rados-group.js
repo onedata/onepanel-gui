@@ -14,6 +14,7 @@ import { MonitorHostnameField } from './ceph-rados/monitor-hostname-field';
 import { ClusterNameField } from './ceph-rados/cluster-name-field';
 import { PoolNameField } from './ceph-rados/pool-name-field';
 import { BlockSizeField } from './common/block-size-field';
+import { reads } from '@ember/object/computed';
 
 export const CephRadosGroup = FormFieldsGroup.extend({
   /**
@@ -43,17 +44,23 @@ export const CephRadosGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    const type = this.context.component.basicGroup.value.type;
-    return type === 'cephrados' || type === 'ceph';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'cephrados' || this.type === 'ceph';
   }),
 });

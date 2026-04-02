@@ -182,7 +182,8 @@ const XROOTD_STORAGE = {
   fileModeMask: '0664',
   dirModeMask: '0775',
   credentialsType: 'pwd',
-  credentials: 'username:password',
+  username: 'username',
+  password: 'password',
 };
 
 const NULL_DEVICE_STORAGE = {
@@ -336,7 +337,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInShowMode('GlusterFS', GLUSTERFS_STORAGE, 12);
     checkForStorageDetailsInShowMode('WebDAV', WEBDAV_STORAGE, 16);
     checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 13);
-    checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 11);
+    checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 12);
     checkForStorageDetailsInShowMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
   });
@@ -707,7 +708,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
     checkForStorageDetailsInEditMode('WebDAV', WEBDAV_STORAGE, 17);
     checkForStorageDetailsInEditMode('HTTP', HTTP_STORAGE, 14);
-    checkForStorageDetailsInEditMode('XRootD', XROOTD_STORAGE, 12);
+    checkForStorageDetailsInEditMode('XRootD', XROOTD_STORAGE, 13);
     checkForStorageDetailsInEditMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
     it('luma enabled toggle does not change luma fields values', async function () {

@@ -14,6 +14,7 @@ import { SimulatedFilesystemParametersField } from './null-device/simulated-file
 import { LatencyMinField } from './null-device/latency-min-field';
 import { LatencyMaxField } from './null-device/latency-max-field';
 import { TimeoutProbabilityField } from './null-device/timeout-probability-field';
+import { reads } from '@ember/object/computed';
 
 export const NullDeviceGroup = FormFieldsGroup.extend({
   /**
@@ -43,16 +44,22 @@ export const NullDeviceGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
-
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'nulldevice';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'nulldevice';
   }),
 });

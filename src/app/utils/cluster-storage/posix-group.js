@@ -11,6 +11,7 @@ import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields
 import { MountPointField } from './posix/mount-point-field';
 import { RootUidField } from './posix/root-uid-field';
 import { RootGidField } from './posix/root-gid-field';
+import { reads } from '@ember/object/computed';
 
 export const PosixGroup = FormFieldsGroup.extend({
   /**
@@ -37,16 +38,23 @@ export const PosixGroup = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'posix';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 'posix';
   }),
 });

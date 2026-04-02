@@ -18,6 +18,7 @@ import { BucketNameField } from './s3/bucket-name-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { AccessKeyField } from './s3/access-key-field';
 import { SecretKeyField } from './s3/secret-key-field';
+import { reads } from '@ember/object/computed';
 
 export const S3Group = FormFieldsGroup.extend({
   /**
@@ -50,16 +51,23 @@ export const S3Group = FormFieldsGroup.extend({
   }),
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  type: reads('context.component.basicGroup.value.type'),
+
+  /**
    * @type {ComputedProperty<SafeString>}
    */
-  title: computed(function title() {
-    return this.t('sectionTitle');
+  title: computed('type', function title() {
+    return this.t('sectionTitle', {
+      type: this.t(`basic.type.options.${this.type}.label`),
+    });
   }),
 
   /**
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 's3';
+  isVisible: computed('type', function isVisible() {
+    return this.type === 's3';
   }),
 });
