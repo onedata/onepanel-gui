@@ -345,7 +345,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
   context('in create mode', function () {
     checkForStorageDetailsInCreateMode('POSIX', 10);
     checkForStorageDetailsInCreateMode('Ceph RADOS', 13);
-    checkForStorageDetailsInCreateMode('NFS', 13);
+    checkForStorageDetailsInCreateMode('NFS', 14);
     checkForStorageDetailsInCreateMode('S3', 16);
     checkForStorageDetailsInCreateMode('Swift', 15);
     checkForStorageDetailsInCreateMode('GlusterFS', 13);
@@ -702,7 +702,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
   context('in edit mode', function () {
     checkForStorageDetailsInEditMode('POSIX', POSIX_STORAGE, 12);
     checkForStorageDetailsInEditMode('Ceph RADOS', CEPH_RADOS_STORAGE, 13);
-    checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 13);
+    checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 14);
     checkForStorageDetailsInEditMode('S3', S3_STORAGE, 16);
     checkForStorageDetailsInEditMode('Swift', SWIFT_STORAGE, 15);
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
