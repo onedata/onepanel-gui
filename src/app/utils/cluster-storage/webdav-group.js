@@ -20,8 +20,8 @@ import { CredentialsTypeField } from './webdav/credentials-type-field';
 import { CredentialsField } from './webdav/credentials-field';
 import { Oauth2IdpField } from './webdav/oauth2-idp-field';
 import { RangeWriteSupportField } from './webdav/range-write-support-field';
-import { UsernameField } from './webdav/username-field';
-import { PasswordField } from './webdav/password-field';
+import { UsernameField } from './common/username-field';
+import { PasswordField } from './common/password-field';
 import { reads } from '@ember/object/computed';
 
 export const WebdavGroup = FormFieldsGroup.extend({

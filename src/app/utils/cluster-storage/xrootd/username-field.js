@@ -6,20 +6,10 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { StorageTextField } from '../base/storage-text-field';
 import { computed } from '@ember/object';
+import { UsernameField as CommonUsernameField } from '../common/username-field';
 
-export const UsernameField = StorageTextField.extend({
-  /**
-   * @override
-   */
-  name: 'username',
-
-  /**
-   * @override
-   */
-  defaultValue: '',
-
+export const UsernameField = CommonUsernameField.extend({
   /**
    * @override
    */
