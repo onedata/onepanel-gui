@@ -26,11 +26,11 @@ export default {
   },
   onedataAccessToken: {
     label: 'Access/Api token',
-    tip: 'When registering a storage backend with the LUMA DB feed set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token. The token will be used to access the HTTP storage whenever any authorized user accesses any space supported by this storage backend. Consequently, all data access on the storage backend level will be performed on behalf of the token subject.',
+    tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
     label: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
+    tip: 'The authorization header to be used for passing the access token – the token will be inserted in place of "{}". Use a colon to separate the header name from the header value, e.g. "X-API-Token: {}".',
     placeholder: 'Default: Authorization: Bearer {}',
   },
   connectionPoolSize: {

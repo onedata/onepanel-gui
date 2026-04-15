@@ -21,7 +21,6 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'none' },
     { value: 'basic' },
     { value: 'token' },
-    { value: 'oauth2' },
   ]),
 
   /**

@@ -11,12 +11,11 @@ export default {
   },
   credentialsType: {
     label: 'Credentials type',
-    tip: 'Determines the types of credentials provided in the credentials field. Default: none.',
+    tip: 'Determines what credentials will be used to authorize access to the WebDAV storage backend. For public endpoints, select "none".',
     options: {
       none: { label: 'none' },
       basic: { label: 'basic' },
       token: { label: 'token' },
-      oauth2: { label: 'OAuth2' },
     },
   },
   credentials: {
@@ -29,17 +28,13 @@ export default {
   password: {
     label: 'Password',
   },
-  oauth2IdP: {
-    label: 'OAuth2 IdP',
-    tip: 'In case "oauth2" credential type is selected and Onezone is configured with support for multiple external IdP\'s, this field must contain the label of the IdP which authenticates requests to the WebDAV endpoint. If Onezone has only one external IdP, it will be selected automatically.',
-  },
   onedataAccessToken: {
     label: 'Access/Api token',
-    tip: 'When registering a storage backend with the LUMA DB feed set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token. The token will be used to access the WebDAV storage whenever any authorized user accesses any space supported by this storage backend. Consequently, all data access on the storage backend level will be performed on behalf of the token subject.',
+    tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
     label: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
+    tip: 'The authorization header to be used for passing the access token – the token will be inserted in place of "{}". Use a colon to separate the header name from the header value, e.g. "X-API-Token: {}".',
     placeholder: 'Default: Authorization: Bearer {}',
   },
   rangeWriteSupport: {
