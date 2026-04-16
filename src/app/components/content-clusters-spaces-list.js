@@ -177,6 +177,13 @@ export default Component.extend(
       startRevokeSpace(space) {
         return this.get('startRevokeSpace')(space);
       },
+      /**
+       * @param {Object} supportSpaceData
+       * @param {string} supportSpaceData.storageId
+       * @param {string} supportSpaceData.token
+       * @param {number} supportSpaceData.size
+       * @returns {Promise<{Onepanel.Id}>} ID of the supported space
+       */
       submitSupportSpace(supportSpaceData) {
         const globalNotify = this.get('globalNotify');
         return this.supportSpace(supportSpaceData)
