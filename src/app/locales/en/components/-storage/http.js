@@ -30,7 +30,7 @@ export default {
   },
   authorizationHeader: {
     label: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token – the token will be inserted in place of "{}". Use a colon to separate the header name from the header value, e.g. "X-API-Token: {}".',
+    tip: 'Header format for passing the API/access token to the backend storage server. The token will be inserted in place of "{}". Use a colon to separate the header name and value, e.g. "X-API-Token: {}".',
     placeholder: 'Default: Authorization: Bearer {}',
   },
   connectionPoolSize: {

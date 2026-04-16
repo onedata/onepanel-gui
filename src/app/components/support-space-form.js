@@ -41,7 +41,6 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   spaceManager: service(),
   globalNotify: service(),
   alertService: service('alert'),
-  router: service(),
 
   /**
    * @override
@@ -262,12 +261,10 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         supportRequestBody.storageImport = storageImport;
       }
 
-      return submitSupportSpace(supportRequestBody)
-        .then(() => this.router.transitionTo('onedata.sidebar.content.aspect', 'spaces'))
-        .catch(error => {
-          globalNotify.backendError('space supporting', error);
-          throw error;
-        });
+      return submitSupportSpace(supportRequestBody).catch(error => {
+        globalNotify.backendError('space supporting', error);
+        throw error;
+      });
     },
     storageChanged(storageItem) {
       this.set('selectedStorageItem', storageItem);
