@@ -182,7 +182,7 @@ export default Component.extend(
        * @param {string} supportSpaceData.storageId
        * @param {string} supportSpaceData.token
        * @param {number} supportSpaceData.size
-       * @returns {Promise<{Onepanel.Id}>} ID of the supported space
+       * @returns {Promise<{Onepanel.Id}>} Object with ID of the supported space
        */
       submitSupportSpace(supportSpaceData) {
         const globalNotify = this.get('globalNotify');
