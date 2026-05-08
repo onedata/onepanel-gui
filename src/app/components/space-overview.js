@@ -205,7 +205,8 @@ export default Component.extend(I18n, spaceItemSupports, {
 
   updateSpace() {
     const spaceId = this.get('space.id');
-    this.get('spaceManager').updateSpaceDetailsCache(spaceId);
+    this.get('spaceManager').updateSpaceDetailsCache(spaceId)
+      .then(result => safeExec(this, 'set', 'space', result));
   },
 
   actions: {
