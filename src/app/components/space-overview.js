@@ -203,10 +203,10 @@ export default Component.extend(I18n, spaceItemSupports, {
     }
   },
 
-  updateSpace() {
+  async updateSpace() {
     const spaceId = this.get('space.id');
-    this.get('spaceManager').updateSpaceDetailsCache(spaceId)
-      .then(result => safeExec(this, 'set', 'space', result));
+    const space = await this.get('spaceManager').updateSpaceDetailsCache(spaceId);
+    safeExec(this, 'set', 'space', space);
   },
 
   actions: {
