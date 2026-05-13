@@ -267,17 +267,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         .catch(error => {
           globalNotify.backendError('space supporting', error);
           throw error;
-        })
-        .then(result =>
-          this.router.transitionTo('onedata.sidebar.content.aspect', 'spaces', {
-            queryParams: {
-              options: serializeAspectOptions({
-                space: result?.data?.id,
-                tab: 'overview',
-              }),
-            },
-          })
-        );
+        });
     },
     storageChanged(storageItem) {
       this.set('selectedStorageItem', storageItem);

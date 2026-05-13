@@ -203,10 +203,9 @@ export default Component.extend(I18n, spaceItemSupports, {
     }
   },
 
-  async updateSpace() {
+  updateSpace() {
     const spaceId = this.get('space.id');
-    const space = await this.get('spaceManager').updateSpaceDetailsCache(spaceId);
-    safeExec(this, 'set', 'space', space);
+    this.get('spaceManager').updateSpaceDetailsCache(spaceId);
   },
 
   actions: {
