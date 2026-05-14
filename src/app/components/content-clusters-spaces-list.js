@@ -32,7 +32,6 @@ export default Component.extend(
     spaceManager: service(),
     globalNotify: service(),
     i18n: service(),
-    navigationState: service(),
 
     /**
      * @virtual
@@ -189,19 +188,10 @@ export default Component.extend(
         return this.supportSpace(supportSpaceData)
           .then(result => {
             safeExec(this, 'set', 'supportSpaceOpened', false);
+            this.updateSpacesData();
             globalNotify.info(
               this.t('supportSuccess')
             );
-            return result;
-          })
-          .then(result => {
-            this.get('navigationState').changeRouteAspectOptions({
-              space: result?.data?.id,
-              tab: 'overview',
-              storageId: null,
-              isFormOpened: null,
-            });
-            this.updateSpacesData();
             return result;
           });
       },

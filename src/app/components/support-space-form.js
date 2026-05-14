@@ -24,7 +24,6 @@ import { and, or, not, isEmpty } from 'ember-awesome-macros';
 import trimToken from 'onedata-gui-common/utils/trim-token';
 import PromiseObject from 'onedata-gui-common/utils/ember/promise-object';
 import notImplementedReject from 'onedata-gui-common/utils/not-implemented-reject';
-import { serializeAspectOptions } from 'onedata-gui-common/services/navigation-state';
 
 const units = _.find(formFields, { name: 'sizeUnit' }).options;
 
@@ -43,6 +42,7 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
   globalNotify: service(),
   alertService: service('alert'),
   router: service(),
+  navigationState: service(),
 
   /**
    * @override
@@ -267,6 +267,14 @@ export default OneFormSimple.extend(I18n, buildValidations(valdiationsProto), {
         .catch(error => {
           globalNotify.backendError('space supporting', error);
           throw error;
+        })
+        .then(result => {
+          this.get('navigationState').changeRouteAspectOptions({
+            space: result?.data?.id,
+            tab: 'overview',
+            storageId: null,
+            isFormOpened: null,
+          });
         });
     },
     storageChanged(storageItem) {
