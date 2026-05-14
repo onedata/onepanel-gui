@@ -7,21 +7,15 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { UrlField } from './xrootd/url-field';
 import { ImportedDirectoryModeMaskField } from './xrootd/imported-directory-mode-mask-field';
 import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-field';
 import { CredentialsTypeField } from './xrootd/credentials-type-field';
 import { UsernameField } from './xrootd/username-field';
 import { PasswordField } from './xrootd/password-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const XrootdGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const XrootdGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -41,26 +35,5 @@ export const XrootdGroup = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 'xrootd';
   }),
 });

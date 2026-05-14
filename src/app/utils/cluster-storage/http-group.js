@@ -7,7 +7,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { EndpointField } from './common/endpoint-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { CredentialsTypeField } from './http/credentials-type-field';
@@ -18,14 +17,9 @@ import { MaxRequestsPerSessionField } from './http/max-requests-per-session-fiel
 import { FileModeField } from './http/file-mode-field';
 import { UsernameField } from './common/username-field';
 import { PasswordField } from './common/password-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const HttpGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const HttpGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -49,25 +43,5 @@ export const HttpGroup = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 'http';
   }),
 });

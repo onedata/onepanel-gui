@@ -7,7 +7,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { UserDomainNameField } from './swift/user-domain-name-field';
 import { ProjectNameField } from './swift/project-name-field';
 import { AuthUrlField } from './swift/auth-url-field';
@@ -16,14 +15,9 @@ import { PasswordField } from './swift/password-field';
 import { ProjectDomainNameField } from './swift/project-domain-name-field';
 import { ContainerNameField } from './swift/container-name-field';
 import { SwiftBlockSizeField } from './swift/block-size-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const SwiftGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const SwiftGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -45,25 +39,5 @@ export const SwiftGroup = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 'swift';
   }),
 });

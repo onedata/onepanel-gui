@@ -7,7 +7,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { HostField } from './nfs/host-field';
 import { VolumeField } from './nfs/volume-field';
 import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
@@ -15,14 +14,9 @@ import { DirCacheField } from './nfs/dir-cache-field';
 import { ReadAheadField } from './nfs/read-ahead-field';
 import { AutoReconnectField } from './nfs/auto-reconnect-field';
 import { VersionField } from './nfs/version-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const NfsGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const NfsGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -43,26 +37,5 @@ export const NfsGroup = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 'nfs';
   }),
 });

@@ -7,7 +7,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { OnedataAccessTokenField } from './webdav/onedata-access-token-field';
 import { AuthorizationHeaderField } from './webdav/authorization-header-field';
@@ -21,14 +20,9 @@ import { CredentialsField } from './webdav/credentials-field';
 import { RangeWriteSupportField } from './webdav/range-write-support-field';
 import { UsernameField } from './common/username-field';
 import { PasswordField } from './common/password-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const WebdavGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const WebdavGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -55,26 +49,5 @@ export const WebdavGroup = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 'webdav';
   }),
 });

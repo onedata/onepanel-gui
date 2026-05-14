@@ -8,7 +8,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
 import { S3BlockSizeField } from './s3/block-size-field';
@@ -18,14 +17,9 @@ import { BucketNameField } from './s3/bucket-name-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { AccessKeyField } from './s3/access-key-field';
 import { SecretKeyField } from './s3/secret-key-field';
-import { reads } from '@ember/object/computed';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const S3Group = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const S3Group = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -48,26 +42,5 @@ export const S3Group = FormFieldsGroup.extend({
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {ComputedProperty<string>}
-   */
-  type: reads('context.component.basicGroup.value.type'),
-
-  /**
-   * @type {ComputedProperty<SafeString>}
-   */
-  title: computed('type', function title() {
-    return this.t('sectionTitle', {
-      type: this.t(`basic.type.options.${this.type}.label`),
-    });
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('type', function isVisible() {
-    return this.type === 's3';
   }),
 });
