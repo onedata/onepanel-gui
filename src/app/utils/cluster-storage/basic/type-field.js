@@ -9,6 +9,7 @@
 
 import { StorageDropdownField } from '../base/storage-dropdown-field';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export const TypeField = StorageDropdownField.extend({
   /**
@@ -54,7 +55,7 @@ export const TypeField = StorageDropdownField.extend({
   /**
    * @override
    */
-  defaultValue: 's3',
+  defaultValue: reads('options.firstObject.value'),
 
   /**
    * @override

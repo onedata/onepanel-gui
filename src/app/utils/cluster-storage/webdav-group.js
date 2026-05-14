@@ -16,7 +16,6 @@ import { ImportedFileModeField } from './webdav/imported-file-mode-field';
 import { ImportedDirectoryModeField } from './webdav/imported-directory-mode-field';
 import { EndpointField } from './common/endpoint-field';
 import { CredentialsTypeField } from './webdav/credentials-type-field';
-import { CredentialsField } from './webdav/credentials-field';
 import { RangeWriteSupportField } from './webdav/range-write-support-field';
 import { UsernameField } from './common/username-field';
 import { PasswordField } from './common/password-field';
@@ -36,7 +35,6 @@ export const WebdavGroup = StorageFieldsGroup.extend({
       EndpointField,
       VerifyServerCertificateField,
       CredentialsTypeField,
-      CredentialsField,
       UsernameField,
       PasswordField,
       OnedataAccessTokenField,

@@ -69,22 +69,25 @@ export const ReadonlyField = StorageToggleField.extend({
     function disabledControlTip() {
       if (this.storageType === 'http') {
         return this.t('basic.readonly.httpOnlyReadonlyTip');
-      } else if (
+      }
+      const typeLabel = this.t(`basic.type.options.${this.storageType}.label`);
+      if (
         ['s3', 'cephrados', 'swift'].includes(this.storageType) &&
         this.storagePathType === 'flat'
       ) {
         return this.t(
           'basic.readonly.lockedFlatTip', {
-            type: this.t(`basic.type.options.${this.storageType}.label`),
+            type: typeLabel,
           }
         );
-      } else if (
+      }
+      if (
         ['s3', 'swift'].includes(this.storageType) &&
         this.storagePathType === 'canonical'
       ) {
         return this.t(
           'basic.readonly.lockedCanonicalTip', {
-            type: this.t(`basic.type.options.${this.storageType}.label`),
+            type: typeLabel,
           }
         );
       }

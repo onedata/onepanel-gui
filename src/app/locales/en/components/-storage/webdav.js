@@ -29,7 +29,7 @@ export default {
     label: 'Password',
   },
   onedataAccessToken: {
-    label: 'Access/Api token',
+    label: 'Access/API token',
     tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
