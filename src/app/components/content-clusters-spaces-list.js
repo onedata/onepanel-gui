@@ -9,7 +9,6 @@
 import Component from '@ember/component';
 import { observer, computed } from '@ember/object';
 import { isArray } from '@ember/array';
-import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { reads, equal } from '@ember/object/computed';
 import addConflictLabels from 'onedata-gui-common/utils/add-conflict-labels';
@@ -189,7 +188,7 @@ export default Component.extend(
         return this.supportSpace(supportSpaceData)
           .then(result => {
             safeExec(this, 'set', 'supportSpaceOpened', false);
-            scheduleOnce('afterRender', () => this.get('updateSpacesData')());
+            this.updateSpacesData();
             globalNotify.info(
               this.t('supportSuccess')
             );
