@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13395 Changed sidebar search text
 * VFS-13511 Fixed docs and API links for new homepage
 * VFS-13521 Fixed storage sync import configuration changes not showing
 * VFS-13466 Fixed showing error while support space with http storage
