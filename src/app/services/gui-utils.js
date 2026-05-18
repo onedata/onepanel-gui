@@ -108,6 +108,11 @@ export default GuiUtils.extend(
 
     /**
      * @override
+     */
+    productTypeId: 'onepanel',
+
+    /**
+     * @override
      * One of: Oneprovider Panel, Onezone Panel
      */
     guiType: computed('serviceType', function () {
