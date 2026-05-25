@@ -235,6 +235,10 @@ export default Component.extend(I18n, {
     return this.fields.getFieldByPath('webdav');
   }),
 
+  httpGroup: computed('fields', function httpGroup() {
+    return this.fields.getFieldByPath('http');
+  }),
+
   isValid: computed(
     'fields.isValid',
     'areQosParamsValid',
@@ -287,8 +291,21 @@ export default Component.extend(I18n, {
   _fillInFormGroup(formGroup, storage, valuesSourceGroup) {
     for (const field of formGroup.fields) {
       const name = field.name;
+
       if (name in storage && storage[name] !== undefined && storage[name] !== '') {
         valuesSourceGroup.set(name, storage[name]);
+      } else {
+        if ((storage.type === 'webdav' ||
+            storage.type === 'http' ||
+            storage.type === 'xrootd') &&
+          (storage.credentialsType === 'basic' ||
+            storage.credentialsType === 'pwd') &&
+          (name === 'password' || name === 'username')
+        ) {
+          valuesSourceGroup.set(name, storage.credentials);
+        } else {
+          valuesSourceGroup.set(name, storage[name]);
+        }
       }
     }
   },

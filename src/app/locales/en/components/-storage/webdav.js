@@ -29,7 +29,7 @@ export default {
     label: 'Password',
   },
   onedataAccessToken: {
-    label: 'Access/API token',
+    label: 'API/access token',
     tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
@@ -39,7 +39,7 @@ export default {
   },
   rangeWriteSupport: {
     label: 'Range write support',
-    tip: 'Required for write-enabled supports; the storage backend must support at least one range write method. The baseline WebDAV protocol does not support range writes and only allows a write-once approach, which is incompatible with the Onedata filesystem, as it permits partial file modifications.',
+    tip: 'Select the mechanism used for range writes (partial/random-access writes). Since the Onedata file system permits partial file modifications, writable supports require a storage backend that implements the selected method. Standard WebDAV does not support range writes and only provides write-once semantics.',
     options: {
       none: { label: 'none' },
       sabredav: {
@@ -51,7 +51,7 @@ export default {
         tip: 'Assumes the server supports partial PUT requests with Content-Range header.',
       },
     },
-    lockHintNoneDisabled: 'Write support requires specifying the range write method for the storage backend; otherwise, the storage must be configured as readonly.',
+    lockHintNoneDisabled: 'Writable storage backends require a range write method to support partial file modifications. Otherwise, the storage backend must be configured as read-only.',
     lockHintAllDisabled: 'Range writes are not applicable for read-only storage backends.',
   },
   connectionPoolSize: {

@@ -18,11 +18,6 @@ export const OnedataAccessTokenField = StorageTextField.extend({
   /**
    * @override
    */
-  notEditable: true,
-
-  /**
-   * @override
-   */
   isOptional: true,
 
   /**
