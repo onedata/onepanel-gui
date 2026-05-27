@@ -18,7 +18,7 @@ export default {
     regexMessage: 'This field should be octal POSIX permissions',
   },
   credentialsType: {
-    label: 'Credentials type',
+    label: 'Credentials',
     tip: 'Determines the types of credentials provided in the credentials field. Default: none.',
     options: {
       none: {

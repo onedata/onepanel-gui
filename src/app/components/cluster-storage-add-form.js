@@ -130,6 +130,11 @@ export default Component.extend(I18n, {
   selectedStorageType: reads('fields.value.basic.type'),
 
   /**
+   * @type {boolean}
+   */
+  isCredentialsEnabled: false,
+
+  /**
    * @type {string}
    */
   lumaType: reads('fields.value.basic.lumaFeed'),

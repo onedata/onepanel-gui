@@ -7,6 +7,8 @@
  */
 
 import { StorageRadioField } from '../base/storage-radio-field';
+import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export const CredentialsTypeField = StorageRadioField.extend({
   /**
@@ -27,4 +29,39 @@ export const CredentialsTypeField = StorageRadioField.extend({
    * @override
    */
   defaultValue: 'none',
+
+  /**
+   * @type {boolean}
+   */
+  hasAdditionalButton: true,
+
+  /**
+   * @override
+   */
+  isEnabled: computed('mode', 'isEnabledForAdditionalButton', function isEnabled() {
+    return this.isEnabledForAdditionalButton || this.mode !== 'edit';
+  }),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabledForAdditionalButton: reads('context.component.isCredentialsEnabled'),
+
+  /**
+   * @type {ComputedProperty<Object>}
+   */
+  additionalButtonConfig: computed(function additionalButtonConfig() {
+    return {
+      name: this.t('http.credentialsType.additionalButton.name'),
+      tooltip: this.t('http.credentialsType.additionalButton.tooltip'),
+      icon: 'browser-rename',
+      buttonAction: () => this.onEditCredentials(),
+    };
+  }),
+
+  onEditCredentials() {
+    this.set('context.component.isCredentialsEnabled', true);
+    this.context.component.httpGroup.getFieldByPath('username')?.resetValue();
+    this.context.component.httpGroup.getFieldByPath('password')?.resetValue();
+  },
 });

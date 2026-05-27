@@ -10,12 +10,16 @@ export default {
     tip: 'Determines whether Oneprovider should verify the certificate of the HTTP server.',
   },
   credentialsType: {
-    label: 'Credentials type',
+    label: 'Credentials',
     tip: 'Determines the types of credentials provided in the credentials field.',
     options: {
       none: { label: 'none' },
       basic: { label: 'basic' },
       token: { label: 'token' },
+    },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
     },
   },
   username: {

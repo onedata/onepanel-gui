@@ -10,7 +10,7 @@ export default {
     tip: 'Determines whether Oneprovider should verify the certificate of the WebDAV server. Default: true.',
   },
   credentialsType: {
-    label: 'Credentials type',
+    label: 'Credentials',
     tip: 'Determines what credentials will be used to authorize access to the WebDAV storage backend. For public endpoints, select "none".',
     options: {
       none: { label: 'none' },

@@ -60,4 +60,10 @@
   .one-label-tip ~ .form-optional-text {
     padding-right: 2.5em;
   }
+
+  .credentialsType-field .field-component {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
