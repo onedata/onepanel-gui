@@ -168,7 +168,7 @@ const HTTP_STORAGE = {
   maxRequestsPerSession: 3,
   connectionPoolSize: 150,
   authorizationHeader: 'Authorization: Bearer {}',
-  onedataAccessToken: '1234567890abcdef',
+  credentials: '1234567890abcdef',
 };
 
 const XROOTD_STORAGE = {
@@ -288,7 +288,7 @@ async function checkForStorageDetailsInEditMode(type, storage, fieldCount) {
       } else if (key !== 'id' && key !== 'qosParameters') {
         if (
           [
-            'blockSize', 'storagePathType', 'onedataAccessToken',
+            'blockSize', 'storagePathType',
             'oauth2IdP', 'fileModeMask', 'dirModeMask',
           ].includes(key) ||
           (type !== 'S3' && (key === 'fileMode' || key === 'dirMode'))
