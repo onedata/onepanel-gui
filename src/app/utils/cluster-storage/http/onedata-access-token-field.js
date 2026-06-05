@@ -13,7 +13,7 @@ export const OnedataAccessTokenField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'onedataAccessToken',
+  name: 'credentials',
 
   /**
    * @override

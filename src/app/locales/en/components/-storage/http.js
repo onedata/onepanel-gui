@@ -28,7 +28,7 @@ export default {
   password: {
     label: 'Password',
   },
-  onedataAccessToken: {
+  credentials: {
     label: 'API/access token',
     tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },

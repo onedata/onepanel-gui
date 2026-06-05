@@ -33,14 +33,20 @@ export const CredentialsTypeField = StorageRadioField.extend({
   /**
    * @type {boolean}
    */
-  hasAdditionalButton: true,
+  hasAdditionalButton: computed('context.component.mode', function hasAdditionalButton() {
+    return this.context.component.mode === 'edit';
+  }),
 
   /**
    * @override
    */
-  isEnabled: computed('mode', 'isEnabledForAdditionalButton', function isEnabled() {
-    return this.isEnabledForAdditionalButton || this.mode !== 'edit';
-  }),
+  isEnabled: computed(
+    'context.component.mode',
+    'isEnabledForAdditionalButton',
+    function isEnabled() {
+      return this.isEnabledForAdditionalButton || this.context.component.mode !== 'edit';
+    }
+  ),
 
   /**
    * @type {boolean}
