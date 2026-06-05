@@ -9,6 +9,7 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export const UsernameField = StorageTextField.extend({
   /**
@@ -28,4 +29,28 @@ export const UsernameField = StorageTextField.extend({
     const type = this.parent.value?.credentialsType;
     return type === 'basic';
   }),
+
+  /**
+   * @override
+   */
+  isEnabled: computed(
+    'context.component.mode',
+    'isEnabledForAdditionalButton',
+    function isEnabled() {
+      return this.isEnabledForAdditionalButton || this.context.component.mode !== 'edit';
+    }
+  ),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabledForAdditionalButton: reads('context.component.isCredentialsEnabled'),
+
+  inputType: computed('isEnabled', function inputType() {
+    return this.isEnabled ? 'text' : 'password';
+  }),
+
+  resetValue() {
+    this.valueChanged(null);
+  },
 });

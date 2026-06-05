@@ -244,6 +244,10 @@ export default Component.extend(I18n, {
     return this.fields.getFieldByPath('http');
   }),
 
+  xrootdGroup: computed('fields', function xrootdGroup() {
+    return this.fields.getFieldByPath('xrootd');
+  }),
+
   isValid: computed(
     'fields.isValid',
     'areQosParamsValid',
@@ -383,23 +387,31 @@ export default Component.extend(I18n, {
       }
 
       for (const [name, value] of Object.entries(form[selectedStorageType])) {
-        if ((selectedStorageType === 'webdav' ||
+        if (
+          (
+            selectedStorageType === 'webdav' ||
             selectedStorageType === 'http' ||
-            selectedStorageType === 'xrootd') &&
-          (form[selectedStorageType].credentialsType === 'basic' ||
-            form[selectedStorageType].credentialsType === 'pwd') &&
-          (name === 'password' || name === 'username')
+            selectedStorageType === 'xrootd'
+          ) &&
+          (
+            form[selectedStorageType].credentialsType === 'basic' ||
+            form[selectedStorageType].credentialsType === 'pwd'
+          ) &&
+          (
+            name === 'password' ||
+            name === 'username' ||
+            name === 'credentials'
+          )
         ) {
-          if (name === 'password') {
+          if (name === 'password' || name === 'credentials') {
             continue;
           } else {
-            formData.credentials = `${form[selectedStorageType].username}:${value}`;
+            formData['credentials'] = `${value}:${form[selectedStorageType].password}`;
           }
         } else {
           formData[name] = value;
         }
       }
-
       formData = stripObject(formData, [undefined, null]);
       if (editedQosParams) {
         set(formData, 'qosParameters', editedQosParams);

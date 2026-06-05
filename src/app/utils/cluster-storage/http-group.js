@@ -15,8 +15,8 @@ import { AuthorizationHeaderField } from './http/authorization-header-field';
 import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { MaxRequestsPerSessionField } from './http/max-requests-per-session-field';
 import { FileModeField } from './http/file-mode-field';
-import { UsernameField } from './http/username-field';
-import { PasswordField } from './http/password-field';
+import { UsernameField } from './common/username-field';
+import { PasswordField } from './common/password-field';
 import { StorageFieldsGroup } from './base/storage-fields-group';
 
 export const HttpGroup = StorageFieldsGroup.extend({

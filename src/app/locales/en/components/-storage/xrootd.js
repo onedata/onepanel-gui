@@ -28,6 +28,10 @@ export default {
         label: 'password',
       },
     },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
+    },
   },
   username: {
     label: 'Username',

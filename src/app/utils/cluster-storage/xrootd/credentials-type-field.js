@@ -6,14 +6,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { StorageRadioField } from '../base/storage-radio-field';
+import { CredentialsTypeField as CommonCredentialsTypeField } from '../common/credentials-type-field';
 
-export const CredentialsTypeField = StorageRadioField.extend({
-  /**
-   * @override
-   */
-  name: 'credentialsType',
-
+export const CredentialsTypeField = CommonCredentialsTypeField.extend({
   /**
    * @override
    */
@@ -22,8 +17,9 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'pwd' },
   ]),
 
-  /**
-   * @override
-   */
-  defaultValue: 'none',
+  onEditCredentials() {
+    this.set('context.component.isCredentialsEnabled', true);
+    this.context.component.xrootdGroup.getFieldByPath('username')?.resetValue();
+    this.context.component.xrootdGroup.getFieldByPath('password')?.resetValue();
+  },
 });

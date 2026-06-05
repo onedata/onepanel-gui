@@ -17,6 +17,10 @@ export default {
       basic: { label: 'basic' },
       token: { label: 'token' },
     },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
+    },
   },
   credentials: {
     label: 'Username',
@@ -39,7 +43,7 @@ export default {
   },
   rangeWriteSupport: {
     label: 'Range write support',
-    tip: 'Select the mechanism used for range writes (partial/random-access writes). Since the Onedata file system permits partial file modifications, writable supports require a storage backend that implements the selected method. Standard WebDAV does not support range writes and only provides write-once semantics.',
+    tip: 'Select the mechanism used for range writes (partial/random-access writes). Since the Onedata filesystem permits partial file modifications, writable supports require a storage backend that implements the selected method. Standard WebDAV does not support range writes and only provides write-once semantics.',
     options: {
       none: { label: 'none' },
       sabredav: {
