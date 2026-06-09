@@ -61,9 +61,14 @@
     padding-right: 2.5em;
   }
 
-  .credentialsType-field .field-component {
-    display: flex;
+  .credentialsType-field {
     align-items: center;
-    justify-content: space-between;
+
+    .field-component {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      column-gap: $padding-base-horizontal;
+    }
   }
 }
