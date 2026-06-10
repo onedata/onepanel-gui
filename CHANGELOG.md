@@ -6,6 +6,11 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13513 Fixed wrong color of subitem option in sidebar when user has no privileges
+* VFS-13395 Changed sidebar search text
+* VFS-13511 Fixed docs and API links for new homepage
+* VFS-13521 Fixed storage sync import configuration changes not showing
+* VFS-13466 Fixed showing error while support space with http storage
 * VFS-13324 Added basic sidebar whitelabeling
 * VFS-12570 Added spaces search box on spaces page and storage backends page
 * VFS-13019 Improved storage form

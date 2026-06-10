@@ -1,6 +1,7 @@
 export default {
   menuItem: 'Clusters',
   menuItemEmergency: 'Cluster',
+  searchPlaceholder: 'Search by cluster name...',
   aspects: {
     overview: 'Overview',
     index: 'Cluster',
