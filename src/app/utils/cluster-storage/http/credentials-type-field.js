@@ -23,5 +23,6 @@ export const CredentialsTypeField = CommonCredentialsTypeField.extend({
     for (const field of ['username', 'password', 'credentials']) {
       this.context.component.httpGroup.getFieldByPath(field)?.resetValue();
     }
+    this.set('isAdditionalButtonClicked', true);
   },
 });

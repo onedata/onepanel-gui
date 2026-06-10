@@ -24,9 +24,18 @@ export const CredentialsTypeField = StorageRadioField.extend({
   /**
    * @type {boolean}
    */
-  hasAdditionalButton: computed('context.component.mode', function hasAdditionalButton() {
-    return this.context.component.mode === 'edit';
-  }),
+  isAdditionalButtonClicked: false,
+
+  /**
+   * @type {boolean}
+   */
+  hasAdditionalButton: computed(
+    'context.component.mode',
+    'isAdditionalButtonClicked',
+    function hasAdditionalButton() {
+      return this.context.component.mode === 'edit' && !this.isAdditionalButtonClicked;
+    }
+  ),
 
   /**
    * @override
@@ -59,4 +68,8 @@ export const CredentialsTypeField = StorageRadioField.extend({
       };
     }
   ),
+
+  onResetMode() {
+    this.set('isAdditionalButtonClicked', false);
+  },
 });

@@ -23,5 +23,6 @@ export const CredentialsTypeField = CommonCredentialsTypeField.extend({
     for (const field of ['username', 'password', 'onedataAccessToken']) {
       this.context.component.webdavGroup.getFieldByPath(field)?.resetValue();
     }
+    this.set('isAdditionalButtonClicked', true);
   },
 });

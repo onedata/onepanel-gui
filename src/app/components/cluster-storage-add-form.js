@@ -282,6 +282,10 @@ export default Component.extend(I18n, {
       this._fillInForm();
     }
     this.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
+    this.httpGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.webdavGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.xrootdGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.set('isCredentialsEnabled', false);
     this.setDefaultQosParams();
   }),
 

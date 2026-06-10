@@ -32,7 +32,7 @@
 
     @media (min-width: $screen-sm-min) {
       .fields-group-children {
-        > .field-view-mode:not(.form-fields-group-renderer),
+        > .field-view-mode:not(.form-fields-group-renderer):not(:last-child),
         > .field-edit-mode:not(.form-fields-group-renderer) {
           border-bottom: $table-item-border;
         }
