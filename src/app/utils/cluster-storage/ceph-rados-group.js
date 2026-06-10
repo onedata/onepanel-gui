@@ -38,6 +38,7 @@ export const CephRadosGroup = StorageFieldsGroup.extend({
   }),
 
   /**
+   * @override
    * @type {Ember.ComputedProperty<boolean>}
    */
   isVisible: computed('selectedType', function isVisible() {

@@ -298,22 +298,25 @@ export default Component.extend(I18n, {
   },
 
   _fillInFormGroup(formGroup, storage, valuesSourceGroup) {
+    const isCombiningCredentialsFieldOccured = this._isCombiningCredentialsFieldOccured(
+      storage.credentialsType
+    );
     for (const field of formGroup.fields) {
       const name = field.name;
 
       if (name in storage && storage[name] !== undefined && storage[name] !== '') {
         valuesSourceGroup.set(name, storage[name]);
       } else {
-        if ((storage.type === 'webdav' ||
-            storage.type === 'http' ||
-            storage.type === 'xrootd') &&
-          (storage.credentialsType === 'basic' ||
-            storage.credentialsType === 'pwd') &&
+        if (
+          isCombiningCredentialsFieldOccured &&
           (name === 'password' || name === 'username')
         ) {
+          // In some storage types the backend returns a special placeholder
+          // string in storage.credentials to represent secret values.
+          // Since password/username fields are displayed as secret values too,
+          // and they are combined from a single credentials field provided by the backend,
+          // we need to preserve that same placeholder.
           valuesSourceGroup.set(name, storage.credentials);
-        } else {
-          valuesSourceGroup.set(name, storage[name]);
         }
       }
     }
@@ -342,6 +345,17 @@ export default Component.extend(I18n, {
     if (storageTypeGroup) {
       this._fillInFormGroup(storageTypeGroup, storage, fields.valuesSource[storageType]);
     }
+  },
+
+  _isCombiningCredentialsFieldOccured(credentialsType) {
+    return (
+      (
+        this.selectedStorageType === 'webdav' ||
+        this.selectedStorageType === 'http' ||
+        this.selectedStorageType === 'xrootd'
+      ) &&
+      (credentialsType === 'basic' || credentialsType === 'pwd')
+    );
   },
 
   setDefaultQosParams() {
@@ -385,18 +399,12 @@ export default Component.extend(I18n, {
           formData[name] = value;
         }
       }
-
+      const isCombiningCredentialsFieldOccured = this._isCombiningCredentialsFieldOccured(
+        form[selectedStorageType].credentialsType
+      );
       for (const [name, value] of Object.entries(form[selectedStorageType])) {
         if (
-          (
-            selectedStorageType === 'webdav' ||
-            selectedStorageType === 'http' ||
-            selectedStorageType === 'xrootd'
-          ) &&
-          (
-            form[selectedStorageType].credentialsType === 'basic' ||
-            form[selectedStorageType].credentialsType === 'pwd'
-          ) &&
+          isCombiningCredentialsFieldOccured &&
           (
             name === 'password' ||
             name === 'username' ||
@@ -406,6 +414,7 @@ export default Component.extend(I18n, {
           if (name === 'password' || name === 'credentials') {
             continue;
           } else {
+            // backend expects a single credentials field combining username and password
             formData['credentials'] = `${value}:${form[selectedStorageType].password}`;
           }
         } else {

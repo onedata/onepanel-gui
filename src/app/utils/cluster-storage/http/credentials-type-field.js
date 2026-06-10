@@ -20,8 +20,8 @@ export const CredentialsTypeField = CommonCredentialsTypeField.extend({
 
   onEditCredentials() {
     this.set('context.component.isCredentialsEnabled', true);
-    this.context.component.httpGroup.getFieldByPath('username')?.resetValue();
-    this.context.component.httpGroup.getFieldByPath('password')?.resetValue();
-    this.context.component.httpGroup.getFieldByPath('credentials')?.resetValue();
+    for (const field of ['username', 'password', 'credentials']) {
+      this.context.component.httpGroup.getFieldByPath(field)?.resetValue();
+    }
   },
 });
