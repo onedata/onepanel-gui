@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13507 Fixed showing support space button on spaces list
 * VFS-13513 Fixed wrong color of subitem option in sidebar when user has no privileges
 * VFS-13395 Changed sidebar search text
 * VFS-13511 Fixed docs and API links for new homepage

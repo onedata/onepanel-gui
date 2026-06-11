@@ -22,7 +22,11 @@
         </div>
       </div>
     </PromiseProxyContainer>
-    <ActionsToolbar @actionsArray={{globalActions}} @minimumFullWindowSize={{1000}}/>
+    <ActionsToolbar
+      @actionsArray={{globalActions}}
+      @minimumFullWindowSize={{1000}}
+      @isMinimizedDetectFromSiblings={{false}}
+    />
   </h1>
 </div>
 
