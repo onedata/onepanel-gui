@@ -7,8 +7,6 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { EndpointField } from './common/endpoint-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { CredentialsTypeField } from './http/credentials-type-field';
@@ -17,14 +15,11 @@ import { AuthorizationHeaderField } from './http/authorization-header-field';
 import { ConnectionPoolSizeField } from './common/connection-pool-size-field';
 import { MaxRequestsPerSessionField } from './http/max-requests-per-session-field';
 import { FileModeField } from './http/file-mode-field';
-import { CredentialsField } from './http/credentials-field';
+import { UsernameField } from './common/username-field';
+import { PasswordField } from './common/password-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const HttpGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const HttpGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -38,22 +33,15 @@ export const HttpGroup = FormFieldsGroup.extend({
       EndpointField,
       VerifyServerCertificateField,
       CredentialsTypeField,
-      CredentialsField,
+      UsernameField,
+      PasswordField,
       OnedataAccessTokenField,
       AuthorizationHeaderField,
       ConnectionPoolSizeField,
       MaxRequestsPerSessionField,
       FileModeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'http';
   }),
 });

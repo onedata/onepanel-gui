@@ -51,7 +51,8 @@ export const ReadonlyField = StorageToggleField.extend({
       const locked = !this.importedStorage ||
         this.storageType === 'http' ||
         (
-          this.storageType === 's3' &&
+
+          (this.storageType === 's3' || this.storageType === 'swift') &&
           this.storagePathType === 'canonical' &&
           this.importedStorage
         );
@@ -68,12 +69,27 @@ export const ReadonlyField = StorageToggleField.extend({
     function disabledControlTip() {
       if (this.storageType === 'http') {
         return this.t('basic.readonly.httpOnlyReadonlyTip');
-      } else if (this.storageType === 's3' && !this.importedStorage) {
-        return this.t('basic.readonly.s3LockedFlatTip');
-      } else if (this.storageType === 's3' && this.importedStorage) {
-        return this.t('basic.readonly.s3LockedCanonicalTip');
-      } else if (!this.isEnabled) {
-        return this.t('basic.readonly.lockedTip');
+      }
+      const typeLabel = this.t(`basic.type.options.${this.storageType}.label`);
+      if (
+        ['s3', 'cephrados', 'swift'].includes(this.storageType) &&
+        this.storagePathType === 'flat'
+      ) {
+        return this.t(
+          'basic.readonly.lockedFlatTip', {
+            type: typeLabel,
+          }
+        );
+      }
+      if (
+        ['s3', 'swift'].includes(this.storageType) &&
+        this.storagePathType === 'canonical'
+      ) {
+        return this.t(
+          'basic.readonly.lockedCanonicalTip', {
+            type: typeLabel,
+          }
+        );
       }
       return null;
     }
@@ -98,7 +114,7 @@ export const ReadonlyField = StorageToggleField.extend({
 
     if (
       this.storageType === 'http' || (
-        this.storageType === 's3' &&
+        (this.storageType === 's3' || this.storageType === 'swift') &&
         this.storagePathType === 'canonical' &&
         this.importedStorage
       )

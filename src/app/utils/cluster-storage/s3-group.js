@@ -8,24 +8,18 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { HostnameField } from './s3/hostname-field';
 import { RegionField } from './s3/region-field';
 import { S3BlockSizeField } from './s3/block-size-field';
 import { FileModeField } from './s3/file-mode-field';
 import { DirModeField } from './s3/dir-mode-field';
-import { TimeoutField } from './common/timeout-field';
 import { BucketNameField } from './s3/bucket-name-field';
 import { VerifyServerCertificateField } from './common/verify-server-certificate-field';
 import { AccessKeyField } from './s3/access-key-field';
 import { SecretKeyField } from './s3/secret-key-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const S3Group = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const S3Group = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -45,16 +39,8 @@ export const S3Group = FormFieldsGroup.extend({
       S3BlockSizeField,
       FileModeField,
       DirModeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 's3';
   }),
 });

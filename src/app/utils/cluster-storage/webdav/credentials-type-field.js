@@ -6,14 +6,9 @@
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
-import { StorageRadioField } from '../base/storage-radio-field';
+import { CredentialsTypeField as CommonCredentialsTypeField } from '../common/credentials-type-field';
 
-export const CredentialsTypeField = StorageRadioField.extend({
-  /**
-   * @override
-   */
-  name: 'credentialsType',
-
+export const CredentialsTypeField = CommonCredentialsTypeField.extend({
   /**
    * @override
    */
@@ -21,11 +16,13 @@ export const CredentialsTypeField = StorageRadioField.extend({
     { value: 'none' },
     { value: 'basic' },
     { value: 'token' },
-    { value: 'oauth2' },
   ]),
 
-  /**
-   * @override
-   */
-  defaultValue: 'none',
+  onEditCredentials() {
+    this.set('context.component.isCredentialsEnabled', true);
+    for (const field of ['username', 'password', 'onedataAccessToken']) {
+      this.context.component.webdavGroup.getFieldByPath(field)?.resetValue();
+    }
+    this.set('isAdditionalButtonClicked', true);
+  },
 });

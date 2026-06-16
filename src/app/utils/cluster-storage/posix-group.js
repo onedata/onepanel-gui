@@ -7,18 +7,12 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { MountPointField } from './posix/mount-point-field';
 import { RootUidField } from './posix/root-uid-field';
 import { RootGidField } from './posix/root-gid-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const PosixGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const PosixGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -32,16 +26,8 @@ export const PosixGroup = FormFieldsGroup.extend({
       MountPointField,
       RootUidField,
       RootGidField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'posix';
   }),
 });

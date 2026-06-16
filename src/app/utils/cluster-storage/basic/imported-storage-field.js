@@ -64,6 +64,8 @@ export const ImportedStorageField = StorageToggleField.extend({
       }
       return this.storageType !== 'http' &&
         this.storageType !== 's3' &&
+        this.storageType !== 'swift' &&
+        this.storageType !== 'cephrados' &&
         !this.context.component.storageProvidesSupport;
     }
   ),
@@ -77,10 +79,27 @@ export const ImportedStorageField = StorageToggleField.extend({
     function disabledControlTip() {
       if (this.storageType === 'http') {
         return this.t('basic.importedStorage.httpOnlyImported');
-      } else if (this.storageType === 's3' && this.storagePathType === 'flat') {
-        return this.t('basic.importedStorage.s3LockedFlatTip');
-      } else if (this.storageType === 's3' && this.storagePathType === 'canonical') {
-        return this.t('basic.importedStorage.s3LockedCanonicalTip');
+      }
+      const typeLabel = this.t(`basic.type.options.${this.storageType}.label`);
+      if (
+        ['s3', 'cephrados', 'swift'].includes(this.storageType) &&
+        this.storagePathType === 'flat'
+      ) {
+        return this.t(
+          'basic.importedStorage.lockedFlatTip', {
+            type: typeLabel,
+          }
+        );
+      }
+      if (
+        ['s3', 'swift'].includes(this.storageType) &&
+        this.storagePathType === 'canonical'
+      ) {
+        return this.t(
+          'basic.importedStorage.lockedCanonicalTip', {
+            type: typeLabel,
+          }
+        );
       }
       return null;
     }
@@ -89,7 +108,7 @@ export const ImportedStorageField = StorageToggleField.extend({
   autoSettings() {
     if (this.storageType === 'http') {
       this.valueChanged(true);
-    } else if (this.storageType === 's3') {
+    } else if (this.storageType === 's3' || this.storageType === 'swift') {
       this.valueChanged(this.storagePathType === 'canonical');
     } else if (this.context.component.storageProvidesSupport) {
       this.valueChanged(this.context.component.storage?.importedStorage);

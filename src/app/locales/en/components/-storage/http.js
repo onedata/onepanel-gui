@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   endpoint: {
     label: 'Endpoint',
@@ -12,25 +10,31 @@ export default {
     tip: 'Determines whether Oneprovider should verify the certificate of the HTTP server.',
   },
   credentialsType: {
-    label: 'Credentials type',
+    label: 'Credentials',
     tip: 'Determines the types of credentials provided in the credentials field.',
     options: {
       none: { label: 'none' },
       basic: { label: 'basic' },
       token: { label: 'token' },
     },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
+    },
+  },
+  username: {
+    label: 'Username',
+  },
+  password: {
+    label: 'Password',
   },
   credentials: {
-    label: 'Credentials',
-    tip: 'The credentials to authenticate with the HTTP server. "basic" credentials should be provided in the form "username:password", for "token" just the token. In case of "oauth2", this field should contain the username for the HTTP, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
-  },
-  onedataAccessToken: {
-    label: 'Onedata access token',
-    tip: 'When registering a storage backend with the LUMA DB feed set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token. The token will be used to access the HTTP storage whenever any authorized user accesses any space supported by this storage backend. Consequently, all data access on the storage backend level will be performed on behalf of the token subject.',
+    label: 'API/access token',
+    tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
     label: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
+    tip: 'Header format for passing the API/access token to the backend storage server. The token will be inserted in place of "{}". Use a colon to separate the header name and value, e.g. "X-API-Token: {}".',
     placeholder: 'Default: Authorization: Bearer {}',
   },
   connectionPoolSize: {
@@ -49,5 +53,4 @@ export default {
     placeholder: 'Default: 0664',
     regexMessage: 'This field should be octal POSIX permissions',
   },
-  timeout: common.timeout,
 };

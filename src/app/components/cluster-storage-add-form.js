@@ -130,6 +130,11 @@ export default Component.extend(I18n, {
   selectedStorageType: reads('fields.value.basic.type'),
 
   /**
+   * @type {boolean}
+   */
+  isCredentialsEnabled: false,
+
+  /**
    * @type {string}
    */
   lumaType: reads('fields.value.basic.lumaFeed'),
@@ -227,8 +232,20 @@ export default Component.extend(I18n, {
     return this.fields.getFieldByPath('s3');
   }),
 
+  swiftGroup: computed('fields', function swiftGroup() {
+    return this.fields.getFieldByPath('swift');
+  }),
+
   webdavGroup: computed('fields', function webdavGroup() {
     return this.fields.getFieldByPath('webdav');
+  }),
+
+  httpGroup: computed('fields', function httpGroup() {
+    return this.fields.getFieldByPath('http');
+  }),
+
+  xrootdGroup: computed('fields', function xrootdGroup() {
+    return this.fields.getFieldByPath('xrootd');
   }),
 
   isValid: computed(
@@ -265,6 +282,10 @@ export default Component.extend(I18n, {
       this._fillInForm();
     }
     this.webdavGroup?.getFieldByPath('rangeWriteSupport')?.autoSettings();
+    this.httpGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.webdavGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.xrootdGroup?.getFieldByPath('credentialsType')?.onResetMode();
+    this.set('isCredentialsEnabled', false);
     this.setDefaultQosParams();
   }),
 
@@ -281,10 +302,26 @@ export default Component.extend(I18n, {
   },
 
   _fillInFormGroup(formGroup, storage, valuesSourceGroup) {
+    const isCombiningCredentialsFieldOccured = this._isCombiningCredentialsFieldOccured(
+      storage.credentialsType
+    );
     for (const field of formGroup.fields) {
       const name = field.name;
+
       if (name in storage && storage[name] !== undefined && storage[name] !== '') {
         valuesSourceGroup.set(name, storage[name]);
+      } else {
+        if (
+          isCombiningCredentialsFieldOccured &&
+          (name === 'password' || name === 'username')
+        ) {
+          // In some storage types the backend returns a special placeholder
+          // string in storage.credentials to represent secret values.
+          // Since password/username fields are displayed as secret values too,
+          // and they are combined from a single credentials field provided by the backend,
+          // we need to preserve that same placeholder.
+          valuesSourceGroup.set(name, storage.credentials);
+        }
       }
     }
   },
@@ -312,6 +349,17 @@ export default Component.extend(I18n, {
     if (storageTypeGroup) {
       this._fillInFormGroup(storageTypeGroup, storage, fields.valuesSource[storageType]);
     }
+  },
+
+  _isCombiningCredentialsFieldOccured(credentialsType) {
+    return (
+      (
+        this.selectedStorageType === 'webdav' ||
+        this.selectedStorageType === 'http' ||
+        this.selectedStorageType === 'xrootd'
+      ) &&
+      (credentialsType === 'basic' || credentialsType === 'pwd')
+    );
   },
 
   setDefaultQosParams() {
@@ -355,11 +403,28 @@ export default Component.extend(I18n, {
           formData[name] = value;
         }
       }
-
+      const isCombiningCredentialsFieldOccured = this._isCombiningCredentialsFieldOccured(
+        form[selectedStorageType].credentialsType
+      );
       for (const [name, value] of Object.entries(form[selectedStorageType])) {
-        formData[name] = value;
+        if (
+          isCombiningCredentialsFieldOccured &&
+          (
+            name === 'password' ||
+            name === 'username' ||
+            name === 'credentials'
+          )
+        ) {
+          if (name === 'password' || name === 'credentials') {
+            continue;
+          } else {
+            // backend expects a single credentials field combining username and password
+            formData['credentials'] = `${value}:${form[selectedStorageType].password}`;
+          }
+        } else {
+          formData[name] = value;
+        }
       }
-
       formData = stripObject(formData, [undefined, null]);
       if (editedQosParams) {
         set(formData, 'qosParameters', editedQosParams);

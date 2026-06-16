@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   username: {
     label: 'Admin username',
@@ -33,8 +31,8 @@ export default {
     tip: 'The name of the Swift storage container.',
   },
   blockSize: {
-    label: 'Block size',
+    label: 'Block size [bytes]',
     placeholder: 'Default: 10485760',
+    tip: 'Storage block size in bytes i.e. the maximum object size. Files larger than one block will stripped and stored in a series of objects. Must be more than zero for non-imported storage. To enable import from an Swift storage, block size must be set to zero, together with "canonical" path type and the read-only mode.',
   },
-  timeout: common.timeout,
 };

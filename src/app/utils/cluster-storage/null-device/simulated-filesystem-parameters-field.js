@@ -9,6 +9,7 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 import { reads } from '@ember/object/computed';
+import { computed } from '@ember/object';
 
 export const SimulatedFilesystemParametersField = StorageTextField.extend({
   /**
@@ -35,6 +36,13 @@ export const SimulatedFilesystemParametersField = StorageTextField.extend({
    * @type {boolean}
    */
   isEnabled: reads('importedStorage'),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  lockHint: computed(function lockHint() {
+    return this.t('nulldevice.simulatedFilesystemParameters.lockHint');
+  }),
 
   autoSettings() {
     if (!this.importedStorage) {

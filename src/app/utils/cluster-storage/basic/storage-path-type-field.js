@@ -66,6 +66,19 @@ export const StoragePathTypeField = StorageRadioField.extend({
   }),
 
   /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  lockHint: computed('isEnabled', 'value', function lockHint() {
+    const type = this.t('basic.type.options.' + this.parent.value?.type + '.label');
+    if (!this.isEnabled && this.value === 'flat') {
+      return this.t('basic.storagePathType.lockedFlatTip', { type });
+    } else if (!this.isEnabled && this.value === 'canonical') {
+      return this.t('basic.storagePathType.lockedCanonicalTip', { type });
+    }
+    return '';
+  }),
+
+  /**
    * @override
    */
   valueChanged() {
@@ -74,5 +87,6 @@ export const StoragePathTypeField = StorageRadioField.extend({
     component.basicGroup.getFieldByPath('importedStorage')?.autoSettings();
     component.basicGroup.getFieldByPath('readonly')?.autoSettings();
     component.s3Group?.getFieldByPath('blockSize')?.autoSettings();
+    component.swiftGroup?.getFieldByPath('blockSize')?.autoSettings();
   },
 });

@@ -32,18 +32,64 @@
 
     @media (min-width: $screen-sm-min) {
       .fields-group-children {
-        > .field-view-mode:not(.form-fields-group-renderer),
-        > .field-edit-mode:not(.form-fields-group-renderer) {
-          border-bottom: $table-item-border;
+        > .field-view-mode, > .field-edit-mode {
+          &:not(.form-fields-group-renderer):not(:last-child) {
+            border-bottom: $table-item-border;
+          }
         }
       }
-      .form-component .control-label {
+      .form-component .control-label,
+      .qos-params-editor .nested-row .property-label {
         width: $storage-form-label-width;
+      }
+      .qos-params-editor.show .nested-row:not(:last-child) {
+        border-bottom: $table-item-border;
+        padding-top: 1em;
+        padding-bottom: 1em;
       }
     }
 
     .qos-params-editor.show > .row {
       flex-direction: column;
+
+      > .property-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: $padding-base-vertical;
+        margin-bottom: 2 * $padding-base-vertical;
+        text-transform: uppercase;
+        padding-right: 0;
+
+        &::before, &::after {
+          flex-grow: 1;
+          content: ' ';
+          height: 1px;
+          border-bottom: $table-item-border;
+        }
+        &::before {
+          margin-right: 3em;
+          @media (max-width: $screen-xs-max) {
+            margin-right: 1.5em;
+          }
+        }
+        &::after {
+          margin-left: 3em;
+          @media (max-width: $screen-xs-max) {
+            margin-left: 1.5em;
+          }
+        }
+      }
+      .content-row {
+        padding-left: 0;
+        margin-left: 0;
+
+        &.nested-row {
+          &:first-of-type {
+            margin-top: 0;
+          }
+        }
+      }
     }
 
     &.form-static {

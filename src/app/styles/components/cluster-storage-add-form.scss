@@ -9,15 +9,24 @@
   .radio-group-input.has-message .form-message {
     color: $state-danger-text;
   }
-
+  .radio-inline.disabled {
+    opacity: $disabled-opacity;
+  }
   .qos-params-editor .row {
     display: flex;
     width: 100%;
     flex-direction: column;
   }
+  .qos-params-editor.show {
+    .row .control-label {
+      padding-right: 0;
+    }
+  }
+
   @media (min-width: $cluster-storage-form-breakpoint + 1) {
     .form-component .control-label {
       width: 20em;
+      padding-right: $padding-large-horizontal;
     }
     .qos-params-editor .row {
       flex-direction: row;
@@ -34,6 +43,7 @@
       margin-bottom: 5px;
       text-align: left;
       padding-top: 0;
+      padding-right: 0;
     }
 
     .toggle-field-renderer,
@@ -57,5 +67,16 @@
   }
   .one-label-tip ~ .form-optional-text {
     padding-right: 2.5em;
+  }
+
+  .credentialsType-field {
+    align-items: center;
+
+    .field-component {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      column-gap: $padding-base-horizontal;
+    }
   }
 }

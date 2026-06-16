@@ -140,9 +140,9 @@ const WEBDAV_STORAGE = {
   lumaFeed: 'local',
   endpoint: 'https://192.168.1.2:8080/webdav',
   verifyServerCertificate: true,
-  credentialsType: 'oauth2',
-  credentials: 'username:password',
-  oauth2IdP: 'fds',
+  credentialsType: 'token',
+  onedataAccessToken: 'ASFDGDVDSFASDF',
+  authorizationHeader: 'Authorization: Bearer {}',
   rangeWriteSupport: 'moddav',
   connectionPoolSize: '10',
   maximumUploadSize: '0',
@@ -168,7 +168,7 @@ const HTTP_STORAGE = {
   maxRequestsPerSession: 3,
   connectionPoolSize: 150,
   authorizationHeader: 'Authorization: Bearer {}',
-  onedataAccessToken: '1234567890abcdef',
+  credentials: '1234567890abcdef',
 };
 
 const XROOTD_STORAGE = {
@@ -182,7 +182,8 @@ const XROOTD_STORAGE = {
   fileModeMask: '0664',
   dirModeMask: '0775',
   credentialsType: 'pwd',
-  credentials: 'username:password',
+  username: 'username',
+  password: 'password',
 };
 
 const NULL_DEVICE_STORAGE = {
@@ -287,7 +288,7 @@ async function checkForStorageDetailsInEditMode(type, storage, fieldCount) {
       } else if (key !== 'id' && key !== 'qosParameters') {
         if (
           [
-            'blockSize', 'storagePathType', 'onedataAccessToken',
+            'blockSize', 'storagePathType',
             'oauth2IdP', 'fileModeMask', 'dirModeMask',
           ].includes(key) ||
           (type !== 'S3' && (key === 'fileMode' || key === 'dirMode'))
@@ -336,7 +337,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInShowMode('GlusterFS', GLUSTERFS_STORAGE, 12);
     checkForStorageDetailsInShowMode('WebDAV', WEBDAV_STORAGE, 16);
     checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 13);
-    checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 11);
+    checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 12);
     checkForStorageDetailsInShowMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
   });
@@ -344,7 +345,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
   context('in create mode', function () {
     checkForStorageDetailsInCreateMode('POSIX', 10);
     checkForStorageDetailsInCreateMode('Ceph RADOS', 13);
-    checkForStorageDetailsInCreateMode('NFS', 13);
+    checkForStorageDetailsInCreateMode('NFS', 14);
     checkForStorageDetailsInCreateMode('S3', 16);
     checkForStorageDetailsInCreateMode('Swift', 15);
     checkForStorageDetailsInCreateMode('GlusterFS', 13);
@@ -701,13 +702,13 @@ describe('Integration | Component | cluster-storage-add-form', function () {
   context('in edit mode', function () {
     checkForStorageDetailsInEditMode('POSIX', POSIX_STORAGE, 12);
     checkForStorageDetailsInEditMode('Ceph RADOS', CEPH_RADOS_STORAGE, 13);
-    checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 13);
+    checkForStorageDetailsInEditMode('NFS', NFS_STORAGE, 14);
     checkForStorageDetailsInEditMode('S3', S3_STORAGE, 16);
     checkForStorageDetailsInEditMode('Swift', SWIFT_STORAGE, 15);
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
     checkForStorageDetailsInEditMode('WebDAV', WEBDAV_STORAGE, 17);
     checkForStorageDetailsInEditMode('HTTP', HTTP_STORAGE, 14);
-    checkForStorageDetailsInEditMode('XRootD', XROOTD_STORAGE, 12);
+    checkForStorageDetailsInEditMode('XRootD', XROOTD_STORAGE, 13);
     checkForStorageDetailsInEditMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
     it('luma enabled toggle does not change luma fields values', async function () {

@@ -7,21 +7,15 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { HostnameField } from './glusterfs/hostname-field';
 import { TransportField } from './glusterfs/transport-field';
 import { MountPointField } from './glusterfs/mount-point-field';
 import { XlatorOptionsField } from './glusterfs/xlator-options-field';
 import { VolumeField } from './glusterfs/volume-field';
 import { PortField } from './glusterfs/port-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const GlusterfsGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const GlusterfsGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -38,16 +32,8 @@ export const GlusterfsGroup = FormFieldsGroup.extend({
       TransportField,
       MountPointField,
       XlatorOptionsField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'glusterfs';
   }),
 });

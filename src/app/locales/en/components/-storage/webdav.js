@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   endpoint: {
     label: 'Endpoint',
@@ -12,43 +10,53 @@ export default {
     tip: 'Determines whether Oneprovider should verify the certificate of the WebDAV server. Default: true.',
   },
   credentialsType: {
-    label: 'Credentials type',
-    tip: 'Determines the types of credentials provided in the credentials field. Default: none.',
+    label: 'Credentials',
+    tip: 'Determines what credentials will be used to authorize access to the WebDAV storage backend. For public endpoints, select "none".',
     options: {
       none: { label: 'none' },
       basic: { label: 'basic' },
       token: { label: 'token' },
-      oauth2: { label: 'OAuth2' },
+    },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
     },
   },
   credentials: {
-    label: 'Credentials',
-    labelOauth2: 'Username',
-    tip: 'The credentials to authenticate with the WebDAV server. "basic" credentials should be provided in the form "username:password", for "token" just the token. In case of "oauth2", this field should contain the userlabel for the WebDAV, while the token will be obtained and refreshed automatically in the background. For "none" this field is ignored.',
-    tipBasic: 'The credentials to authenticate with the WebDAV server. Credentials should be provided in the form "username:password".',
-    tipOauth2: 'The credentials to authenticate with the WebDAV server. This field should contain the username for the WebDAV, while the token will be obtained and refreshed automatically in the background.',
+    label: 'Username',
+    tip: 'The credentials to authenticate with the WebDAV server. This field should contain the username for the WebDAV, while the token will be obtained and refreshed automatically in the background.',
   },
-  oauth2IdP: {
-    label: 'OAuth2 IdP',
-    tip: 'In case "oauth2" credential type is selected and Onezone is configured with support for multiple external IdP\'s, this field must contain the label of the IdP which authenticates requests to the WebDAV endpoint. If Onezone has only one external IdP, it will be selected automatically.',
+  username: {
+    label: 'Username',
+  },
+  password: {
+    label: 'Password',
   },
   onedataAccessToken: {
-    label: 'Onedata access token',
-    tip: 'When registering a storage backend with the LUMA DB feed set to "auto" and with "OAuth2" external IdP, this field must contain a valid Onedata access token. The token will be used to access the WebDAV storage whenever any authorized user accesses any space supported by this storage backend. Consequently, all data access on the storage backend level will be performed on behalf of the token subject.',
+    label: 'API/access token',
+    tip: 'A token specific for this storage backend that will be used to authorize data access operations.',
   },
   authorizationHeader: {
     label: 'Authorization header',
-    tip: 'The authorization header to be used for passing the access token. This field can contain any prefix that should be added to the header value. The token will be placed where "{}" is provided.',
+    tip: 'Header format for passing the API/access token to the backend storage server. The token will be inserted in place of "{}". Use a colon to separate the header name and value, e.g. "X-API-Token: {}".',
     placeholder: 'Default: Authorization: Bearer {}',
   },
   rangeWriteSupport: {
     label: 'Range write support',
-    tip: 'The type of partial write support enabled in the WebDAV server. Currently two types are supported: "sabredav" which assumes the server supports the SabreDAV PartialUpdate extension via PATCH method, and "moddav" which assumes server supports partial PUT requests with Content-Range header. If "none" is selected no write support is available for this WebDAV storage.',
+    tip: 'Select the mechanism used for range writes (partial/random-access writes). Since the Onedata filesystem permits partial file modifications, writable supports require a storage backend that implements the selected method. Standard WebDAV does not support range writes and only provides write-once semantics.',
     options: {
       none: { label: 'none' },
-      sabredav: { label: 'SabreDAV' },
-      moddav: { label: 'ModDAV' },
+      sabredav: {
+        label: 'SabreDAV',
+        tip: 'Assumes the server supports the SabreDAV PartialUpdate extension via PATCH method.',
+      },
+      moddav: {
+        label: 'ModDAV',
+        tip: 'Assumes the server supports partial PUT requests with Content-Range header.',
+      },
     },
+    lockHintNoneDisabled: 'Writable storage backends require a range write method to support partial file modifications. Otherwise, the storage backend must be configured as read-only.',
+    lockHintAllDisabled: 'Range writes are not applicable for read-only storage backends.',
   },
   connectionPoolSize: {
     label: 'Connection pool size',
@@ -72,5 +80,4 @@ export default {
     placeholder: 'Default: 0775',
     regexMessage: 'This field should be octal POSIX permissions',
   },
-  timeout: common.timeout,
 };

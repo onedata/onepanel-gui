@@ -8,6 +8,7 @@
 
 import { StorageTextField } from '../base/storage-text-field';
 import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 
 export const OnedataAccessTokenField = StorageTextField.extend({
   /**
@@ -23,7 +24,18 @@ export const OnedataAccessTokenField = StorageTextField.extend({
   /**
    * @override
    */
-  notEditable: true,
+  isEnabled: computed(
+    'context.component.mode',
+    'isEnabledForAdditionalButton',
+    function isEnabled() {
+      return this.isEnabledForAdditionalButton || this.context.component.mode !== 'edit';
+    }
+  ),
+
+  /**
+   * @type {boolean}
+   */
+  isEnabledForAdditionalButton: reads('context.component.isCredentialsEnabled'),
 
   /**
    * @override
@@ -32,4 +44,8 @@ export const OnedataAccessTokenField = StorageTextField.extend({
     const type = this.parent.value?.credentialsType;
     return type === 'token';
   }),
+
+  resetValue() {
+    this.valueChanged(null);
+  },
 });

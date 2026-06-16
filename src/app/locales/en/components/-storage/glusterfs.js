@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   volume: { label: 'Volume name' },
   hostname: { label: 'Volume server host' },
@@ -23,5 +21,4 @@ export default {
   },
   mountPoint: { label: 'Relative mountpoint in volume' },
   xlatorOptions: { label: 'Custom client translator options' },
-  timeout: common.timeout,
 };

@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   username: { label: 'Username' },
   key: { label: 'Key' },
@@ -16,7 +14,6 @@ export default {
     label: 'Pool name',
     tip: 'The name of the Ceph pool – the logical partition for object storage.',
   },
-  timeout: common.timeout,
   blockSize: {
     label: 'Block size [bytes]',
     tip: 'Each file will be split across a number of Ceph RADOS objects of the specified size. For optimal performance, this value should be equal to the object size configured in a given Ceph Storage Cluster (default 4 MiB – 4194304 bytes).',

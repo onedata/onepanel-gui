@@ -7,21 +7,15 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
 import { KeyField } from './ceph-rados/key-field';
 import { UsernameField } from './ceph-rados/username-field';
 import { MonitorHostnameField } from './ceph-rados/monitor-hostname-field';
 import { ClusterNameField } from './ceph-rados/cluster-name-field';
 import { PoolNameField } from './ceph-rados/pool-name-field';
-import { TimeoutField } from './common/timeout-field';
 import { BlockSizeField } from './common/block-size-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const CephRadosGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const CephRadosGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -38,17 +32,16 @@ export const CephRadosGroup = FormFieldsGroup.extend({
       ClusterNameField,
       PoolNameField,
       BlockSizeField,
-      TimeoutField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
   }),
 
   /**
+   * @override
    * @type {Ember.ComputedProperty<boolean>}
    */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    const type = this.context.component.basicGroup.value.type;
-    return type === 'cephrados' || type === 'ceph';
+  isVisible: computed('selectedType', function isVisible() {
+    return this.selectedType === 'cephrados' || this.selectedType === 'ceph';
   }),
 });

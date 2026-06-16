@@ -7,20 +7,15 @@
  */
 
 import { computed } from '@ember/object';
-import FormFieldsGroup from 'onedata-gui-common/utils/form-component/form-fields-group';
-import { TimeoutField } from './common/timeout-field';
 import { UrlField } from './xrootd/url-field';
 import { ImportedDirectoryModeMaskField } from './xrootd/imported-directory-mode-mask-field';
 import { ImportedFileModeMaskField } from './xrootd/imported-file-mode-mask-field';
 import { CredentialsTypeField } from './xrootd/credentials-type-field';
-import { CredentialsField } from './xrootd/credentials-field';
+import { UsernameField } from './xrootd/username-field';
+import { PasswordField } from './xrootd/password-field';
+import { StorageFieldsGroup } from './base/storage-fields-group';
 
-export const XrootdGroup = FormFieldsGroup.extend({
-  /**
-   * @virtual
-   */
-  context: undefined,
-
+export const XrootdGroup = StorageFieldsGroup.extend({
   /**
    * @override
    */
@@ -35,17 +30,10 @@ export const XrootdGroup = FormFieldsGroup.extend({
       ImportedFileModeMaskField,
       ImportedDirectoryModeMaskField,
       CredentialsTypeField,
-      CredentialsField,
-      TimeoutField,
+      UsernameField,
+      PasswordField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
-  }),
-
-  /**
-   * @type {Ember.ComputedProperty<boolean>}
-   */
-  isVisible: computed('context.component.basicGroup.value.type', function isVisible() {
-    return this.context.component.basicGroup.value.type === 'xrootd';
   }),
 });

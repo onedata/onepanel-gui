@@ -25,11 +25,27 @@ export const RangeWriteSupportField = StorageRadioField.extend({
   /**
    * @override
    */
-  options: Object.freeze([
-    { value: 'none', disabled: true },
-    { value: 'sabredav' },
-    { value: 'moddav' },
-  ]),
+  options: computed(function options() {
+    return [
+      { value: 'none', disabled: true },
+      { value: 'sabredav', tip: this.sabredavTip },
+      { value: 'moddav', tip: this.moddavTip },
+    ];
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  sabredavTip: computed(function sabredavTip() {
+    return this.t('webdav.rangeWriteSupport.options.sabredav.tip');
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  moddavTip: computed(function moddavTip() {
+    return this.t('webdav.rangeWriteSupport.options.moddav.tip');
+  }),
 
   /**
    * @type {ComputedProperty<boolean>}
@@ -41,6 +57,19 @@ export const RangeWriteSupportField = StorageRadioField.extend({
    */
   isEnabled: computed('readOnly', function isEnabled() {
     return !this.readOnly;
+  }),
+
+  /**
+   * @type {ComputedProperty<SafeString>}
+   */
+  lockHint: computed('value', 'isEnabled', function lockHint() {
+    if (!this.isEnabled && this.value === 'none') {
+      return this.t('webdav.rangeWriteSupport.lockHintAllDisabled');
+    }
+    if (this.isEnabled) {
+      return this.t('webdav.rangeWriteSupport.lockHintNoneDisabled');
+    }
+    return null;
   }),
 
   autoSettings() {

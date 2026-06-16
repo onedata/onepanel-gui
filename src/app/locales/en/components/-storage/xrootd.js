@@ -1,5 +1,3 @@
-import common from './common';
-
 export default {
   url: {
     label: 'URL',
@@ -20,7 +18,7 @@ export default {
     regexMessage: 'This field should be octal POSIX permissions',
   },
   credentialsType: {
-    label: 'Credentials type',
+    label: 'Credentials',
     tip: 'Determines the types of credentials provided in the credentials field. Default: none.',
     options: {
       none: {
@@ -30,11 +28,15 @@ export default {
         label: 'password',
       },
     },
+    additionalButton: {
+      name: 'Overwrite',
+      tooltip: 'Lets you provide new credentials (the type and values), while the previous credentials are cleared. The change is not applied until you save the whole form.',
+    },
   },
-  credentials: {
-    label: 'Credentials',
-    tip: 'The credentials to authenticate with the XRootD server. For "password" credentials type, this field should contain simply user and password, e.g. "admin:password". For "none" this field is ignored.',
-    placeholder: 'Example: username:password',
+  username: {
+    label: 'Username',
   },
-  timeout: common.timeout,
+  password: {
+    label: 'Password',
+  },
 };

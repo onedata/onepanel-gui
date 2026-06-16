@@ -1,8 +1,9 @@
 /**
- * Onedata access token of the storage.
+ * Username of the storage.
  *
- * @author Agnieszka Warchoł
+ * @author Agnieszka Raczek
  * @copyright (C) 2025 ACK CYFRONET AGH
+ * @copyright (C) 2026 Onedata (onedata.org)
  * @license This software is released under the MIT license cited in 'LICENSE.txt'.
  */
 
@@ -10,11 +11,24 @@ import { StorageTextField } from '../base/storage-text-field';
 import { computed } from '@ember/object';
 import { reads } from '@ember/object/computed';
 
-export const OnedataAccessTokenField = StorageTextField.extend({
+export const UsernameField = StorageTextField.extend({
   /**
    * @override
    */
-  name: 'credentials',
+  name: 'username',
+
+  /**
+   * @override
+   */
+  defaultValue: '',
+
+  /**
+   * @override
+   */
+  isVisible: computed('parent.value.credentialsType', function isVisible() {
+    const type = this.parent.value?.credentialsType;
+    return type === 'basic';
+  }),
 
   /**
    * @override
@@ -32,12 +46,8 @@ export const OnedataAccessTokenField = StorageTextField.extend({
    */
   isEnabledForAdditionalButton: reads('context.component.isCredentialsEnabled'),
 
-  /**
-   * @override
-   */
-  isVisible: computed('parent.value.credentialsType', function isVisible() {
-    const type = this.parent.value?.credentialsType;
-    return type === 'token';
+  inputType: computed('isEnabled', function inputType() {
+    return this.isEnabled ? 'text' : 'password';
   }),
 
   resetValue() {
