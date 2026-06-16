@@ -32,9 +32,10 @@
 
     @media (min-width: $screen-sm-min) {
       .fields-group-children {
-        > .field-view-mode:not(.form-fields-group-renderer):not(:last-child),
-        > .field-edit-mode:not(.form-fields-group-renderer):not(:last-child) {
-          border-bottom: $table-item-border;
+        > .field-view-mode, > .field-edit-mode {
+          &:not(.form-fields-group-renderer):not(:last-child) {
+            border-bottom: $table-item-border;
+          }
         }
       }
       .form-component .control-label,
