@@ -16,6 +16,17 @@
     display: flex;
     width: 100%;
     flex-direction: column;
+    column-gap: 22px;
+    justify-content: space-between;
+
+    &::before, &::after {
+      // remove bootstrap clearfix
+      display: none;
+    }
+
+    .control-label {
+      padding-right: 0;
+    }
   }
   @media (min-width: $cluster-storage-form-breakpoint + 1) {
     .form-component .control-label {

@@ -33,12 +33,18 @@
     @media (min-width: $screen-sm-min) {
       .fields-group-children {
         > .field-view-mode:not(.form-fields-group-renderer):not(:last-child),
-        > .field-edit-mode:not(.form-fields-group-renderer) {
+        > .field-edit-mode:not(.form-fields-group-renderer):not(:last-child) {
           border-bottom: $table-item-border;
         }
       }
-      .form-component .control-label {
+      .form-component .control-label,
+      .qos-params-editor .nested-row .property-label {
         width: $storage-form-label-width;
+      }
+      .qos-params-editor.show .nested-row:not(:last-child) {
+        border-bottom: $table-item-border;
+        padding-top: 1em;
+        padding-bottom: 1em;
       }
     }
 
@@ -52,13 +58,13 @@
         margin-top: $padding-base-vertical;
         margin-bottom: 2 * $padding-base-vertical;
         text-transform: uppercase;
+        padding-right: 0;
 
         &::before, &::after {
           flex-grow: 1;
           content: ' ';
           height: 1px;
-          border-bottom: 1px solid transparent;
-          border-bottom-color: $color-one-gray-sand;
+          border-bottom: $table-item-border;
         }
         &::before {
           margin-right: 3em;
