@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13628 Added basic button whitelabeling
 * VFS-13348 Improved texts and credentails in storage backend form
 * VFS-13507 Fixed showing support space button on spaces list
 * VFS-13513 Fixed wrong color of subitem option in sidebar when user has no privileges
