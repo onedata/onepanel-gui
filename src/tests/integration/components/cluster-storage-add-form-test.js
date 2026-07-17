@@ -336,7 +336,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInShowMode('Swift', SWIFT_STORAGE, 14);
     checkForStorageDetailsInShowMode('GlusterFS', GLUSTERFS_STORAGE, 12);
     checkForStorageDetailsInShowMode('WebDAV', WEBDAV_STORAGE, 16);
-    checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 13);
+    checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 14);
     checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 12);
     checkForStorageDetailsInShowMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
@@ -350,7 +350,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInCreateMode('Swift', 15);
     checkForStorageDetailsInCreateMode('GlusterFS', 13);
     checkForStorageDetailsInCreateMode('WebDAV', 15);
-    checkForStorageDetailsInCreateMode('HTTP', 13);
+    checkForStorageDetailsInCreateMode('HTTP', 15);
     checkForStorageDetailsInCreateMode('XRootD', 11);
     checkForStorageDetailsInCreateMode('Null Device', 13);
 
@@ -707,7 +707,7 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInEditMode('Swift', SWIFT_STORAGE, 15);
     checkForStorageDetailsInEditMode('GlusterFS', GLUSTERFS_STORAGE, 13);
     checkForStorageDetailsInEditMode('WebDAV', WEBDAV_STORAGE, 17);
-    checkForStorageDetailsInEditMode('HTTP', HTTP_STORAGE, 14);
+    checkForStorageDetailsInEditMode('HTTP', HTTP_STORAGE, 16);
     checkForStorageDetailsInEditMode('XRootD', XROOTD_STORAGE, 13);
     checkForStorageDetailsInEditMode('Null Device', NULL_DEVICE_STORAGE, 13);
 
