@@ -59,6 +59,6 @@ export default {
   },
   maxEmulatedRangeReadFileSize: {
     label: 'Max emulated range read file size',
-    tip: 'Maximum file size in bytes eligible for emulated range reads. Files exceeding this limit cannot be accessed from servers that lack native range read support.Has no effect unless "emulateRangeRead" is "true".',
+    tip: 'Maximum file size in bytes eligible for emulated range reads. Files exceeding this limit cannot be accessed from servers that lack native range read support. Has no effect unless "emulateRangeRead" is "true".',
   },
 };
