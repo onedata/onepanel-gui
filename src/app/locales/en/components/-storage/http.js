@@ -1,7 +1,7 @@
 export default {
   endpoint: {
     label: 'Endpoint',
-    tip: 'Base URL of the HTTP server, including scheme ("http" or "https") and optional path prefix. When registering files by relative path in "storageFileId", that path is appended to this URL. <strong> Note: </strong> A full URI supplied as "storageFileId" always takes precedence and bypasses this endpoint, allowing files from any HTTP server reachable by the Oneprovider to be registered.',
+    tip: 'Base URL of the HTTP server, including scheme ("http" or "https") and optional path prefix. When registering files by relative path in "storageFileId", that path is appended to this URL. <br><strong> Note: </strong> A full URI supplied as "storageFileId" always takes precedence and bypasses this endpoint, allowing files from any HTTP server reachable by the Oneprovider to be registered.',
     placeholder: 'Example: https://192.168.1.2:8080/storage',
     regexMessage: 'This field should be a URL with http or https scheme',
   },
@@ -55,7 +55,7 @@ export default {
   },
   emulateRangeRead: {
     label: 'Emulate range read',
-    tip: 'Enables fallback emulation of range reads for HTTP servers that do not support the "Range" header. When active, the full file content is downloaded and only the requested byte range is returned to the caller. Has no effect on servers that support range reads natively. <strong>Warning:</strong> Emulation causes significant performance degradation and increased memory usage; enable only as a last resort.',
+    tip: 'Enables fallback emulation of range reads for HTTP servers that do not support the "Range" header. When active, the full file content is downloaded and only the requested byte range is returned to the caller. Has no effect on servers that support range reads natively. <br><strong>Warning:</strong> Emulation causes significant performance degradation and increased memory usage; enable only as a last resort.',
   },
   maxEmulatedRangeReadFileSize: {
     label: 'Max emulated range read file size',

@@ -169,6 +169,8 @@ const HTTP_STORAGE = {
   connectionPoolSize: 150,
   authorizationHeader: 'Authorization: Bearer {}',
   credentials: '1234567890abcdef',
+  emulateRangeRead: true,
+  maxEmulatedRangeReadFileSize: 10485760,
 };
 
 const XROOTD_STORAGE = {
@@ -336,10 +338,9 @@ describe('Integration | Component | cluster-storage-add-form', function () {
     checkForStorageDetailsInShowMode('Swift', SWIFT_STORAGE, 14);
     checkForStorageDetailsInShowMode('GlusterFS', GLUSTERFS_STORAGE, 12);
     checkForStorageDetailsInShowMode('WebDAV', WEBDAV_STORAGE, 16);
-    checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 14);
+    checkForStorageDetailsInShowMode('HTTP', HTTP_STORAGE, 15);
     checkForStorageDetailsInShowMode('XRootD', XROOTD_STORAGE, 12);
     checkForStorageDetailsInShowMode('Null Device', NULL_DEVICE_STORAGE, 13);
-
   });
 
   context('in create mode', function () {
