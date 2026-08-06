@@ -18,6 +18,8 @@ import { FileModeField } from './http/file-mode-field';
 import { UsernameField } from './common/username-field';
 import { PasswordField } from './common/password-field';
 import { StorageFieldsGroup } from './base/storage-fields-group';
+import { EmulateRangeReadField } from './http/emulate-range-read-field';
+import { MaxEmulatedRangeReadFileSizeField } from './http/max-emulated-range-read-file-size';
 
 export const HttpGroup = StorageFieldsGroup.extend({
   /**
@@ -40,6 +42,8 @@ export const HttpGroup = StorageFieldsGroup.extend({
       ConnectionPoolSizeField,
       MaxRequestsPerSessionField,
       FileModeField,
+      EmulateRangeReadField,
+      MaxEmulatedRangeReadFileSizeField,
     ].map((caveatsGroupClass) => caveatsGroupClass.create({
       context: this.context,
     }));
