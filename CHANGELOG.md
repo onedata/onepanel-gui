@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13560 Added new development scripts; removed space between subdomain and domain in provider details
 * VFS-13490 Added new HTTP storage options: Emulate range read and Max emulated range read file size
 * VFS-13348 Improved texts and credentails in storage backend form
 * VFS-13507 Fixed showing support space button on spaces list
