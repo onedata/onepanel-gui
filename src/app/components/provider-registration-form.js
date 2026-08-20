@@ -521,7 +521,10 @@ export default OneForm.extend(Validations, I18n, {
     const name = preparedField.get('name');
 
     if (name === 'subdomain') {
-      preparedField.set('rightText', '.' + this.get('onezoneDomain'));
+      preparedField.setProperties({
+        rightText: '.' + this.onezoneDomain,
+        noRightTextSpacing: true,
+      });
     }
     if (provider) {
       const subdomainDelegation = get(provider, 'subdomainDelegation');
