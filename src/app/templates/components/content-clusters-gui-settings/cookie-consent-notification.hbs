@@ -11,7 +11,7 @@
       @update={{action "isEnabledChanged"}}
     />
     <button
-      class="btn btn-sm btn-default pull-right insert-privacy-policy-link"
+      class="btn btn-sm btn-default pull-right insert-privacy-policy-link one-button"
       disabled={{or isSaving (not isEnabled)}}
       {{action "insertPrivacyPolicyLink"}}
     >
@@ -19,7 +19,7 @@
       {{tt this "insertPrivacyPolicyLink"}}
     </button>
     <button
-      class="btn btn-sm btn-default pull-right insert-terms-of-use-link"
+      class="btn btn-sm btn-default pull-right insert-terms-of-use-link one-button"
       disabled={{or isSaving (not isEnabled)}}
       {{action "insertTermsOfUseLink"}}
     >

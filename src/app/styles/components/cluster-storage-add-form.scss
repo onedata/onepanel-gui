@@ -12,14 +12,19 @@
   .radio-inline.disabled {
     opacity: $disabled-opacity;
   }
-  .qos-params-editor .row {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-  }
-  .qos-params-editor.show {
-    .row .control-label {
-      padding-right: 0;
+  .qos-params-editor {
+    .row {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+    }
+    .form-control-column {
+      width: 100%;
+    }
+    &.show {
+      .row .control-label {
+        padding-right: 0;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 <OneButton
-  @type={{if showScanStop "danger" "success"}}
+  @type={{if showScanStop "danger" "primary"}}
   @buttonType="submit"
   @size="sm"
   @disabled={{if showScanStop (not allowScanStop) (not allowScanStart)}}
