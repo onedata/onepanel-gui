@@ -464,6 +464,7 @@ export default Component.extend(I18n, {
           error,
           ''
         );
+        this.set('fields.value.letsEncrypt', letsEncrypt);
       } finally {
         safeExec(this, 'setProperties', {
           disabled: false,
