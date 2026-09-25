@@ -1,7 +1,7 @@
 <h1>{{tt this "deregisterProviderHeaderEmergency"}}</h1>
 <p>{{tt this "deregistrationResults"}}</p>
 <div class="btn-toolbar">
-  <OneButton class="btn btn-sm" @type="info" @onClick={{closeAction}}>
+  <OneButton class="btn btn-sm" @type="default" @onClick={{closeAction}}>
     {{tt this "keepItRegistered"}}
   </OneButton>
   <OneButton @type="danger" @buttonType="submit" @size="sm" @onClick={{submitAction}}>
