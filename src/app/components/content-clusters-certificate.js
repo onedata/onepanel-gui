@@ -184,12 +184,14 @@ export default Component.extend(I18n, GlobalActions, {
             );
           });
         })
-        .finally(() => {
+        .catch((error) => {
+          this.updateWebCertProxy();
+          throw error;
+        })
+        .then(() => {
           if (this.get('refreshCert')) {
             this.updateWebCertProxy();
           }
-        })
-        .then(() => {
           safeExec(this, 'set', '_editing', false);
           if (shouldReload) {
             this.schedulePageReload();
