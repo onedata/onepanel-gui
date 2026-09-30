@@ -7,6 +7,7 @@ CHANGELOG
 ### Latest changes
 
 * VFS-13750 Removed btn-info class from styles
+* VFS-13071 Fixed Let's Encrypt toggle state after failure
 * VFS-13628 Added basic button whitelabeling
 * VFS-13773 Removed enter when copy from clipboard line
 * VFS-13560 Added new development scripts; removed space between subdomain and domain in provider details
