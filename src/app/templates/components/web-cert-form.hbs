@@ -35,7 +35,7 @@
     {{/if}}
   </modal.body>
   <modal.footer class="btn-toolbar">
-    <OneButton @type="default" @onClick={{modal.close}}>
+    <OneButton @onClick={{modal.close}}>
       {{tt this "changedModal.cancel"}}
     </OneButton>
     <OneButton @type="primary" @buttonType="submit" @onClick={{action "submit"}}>
