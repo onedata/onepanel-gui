@@ -79,7 +79,6 @@
           <OneButton
             class="btn-cancel-new-host"
             @size="sm"
-            @type="default"
             @onClick={{action (mut addingNewHost) false}}
           >
             {{tt this "cancel"}}
@@ -109,7 +108,6 @@
     {{else}}
       <div class="row inner-row-content">
         <OneButton
-          @type="default"
           @size="sm"
           @onClick={{action (mut addingNewHost) true}}
         >

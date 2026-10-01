@@ -21,7 +21,6 @@
       {{#if (not this.isSupportButtonHidden)}}
         <span class="btn-tooltip-container">
           <OneButton
-            @type="default"
             @size="sm"
             @onClick={{action "supportSpace"}}
             @disabled={{or this.isSupportButtonHidden this.isImportedAndUsed}}
@@ -38,7 +37,6 @@
       {{/if}}
       <span class="btn-tooltip-container">
         <OneButton
-          @type="default"
           @size="sm"
           @disabled={{whileEdition}}
           @onClick={{action "turnOnModifyStorage"}}

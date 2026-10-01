@@ -37,7 +37,7 @@
     {{/if}}
   </bar.modal.body>
   <bar.modal.footer class="btn-toolbar">
-    <OneButton @type="default" @onClick={{action bar.modal.close}}>
+    <OneButton @onClick={{action bar.modal.close}}>
       {{tt this "modal.close"}}
     </OneButton>
     {{#unless workerIsUnavailable}}
