@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13902 Added mandatory region field when endpoint AWS in S3 storage
 * VFS-13071 Fixed Let's Encrypt toggle state after failure
 * VFS-13628 Added basic button whitelabeling
 * VFS-13773 Removed enter when copy from clipboard line
