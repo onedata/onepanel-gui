@@ -25,6 +25,7 @@ export const RegionField = StorageTextField.extend({
    * @override
    */
   isOptional: computed('hostname', function isOptional() {
+    // ensure URL has protocol before passing it to URL constructor
     if (
       !this.hostname ||
       (!this.hostname.startsWith('https://') && !this.hostname.startsWith('http://'))
