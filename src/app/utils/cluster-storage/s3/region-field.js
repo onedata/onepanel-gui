@@ -7,6 +7,8 @@
  */
 
 import { StorageTextField } from '../base/storage-text-field';
+import { reads } from '@ember/object/computed';
+import { computed } from '@ember/object';
 
 export const RegionField = StorageTextField.extend({
   /**
@@ -15,7 +17,26 @@ export const RegionField = StorageTextField.extend({
   name: 'region',
 
   /**
+   * @type {ComputedProperty<string>}
+   */
+  hostname: reads('parent.parent.value.s3.hostname'),
+
+  /**
    * @override
    */
-  isOptional: true,
+  isOptional: computed('hostname', function isOptional() {
+    // ensure URL has protocol before passing it to URL constructor
+    if (
+      !this.hostname ||
+      (!this.hostname.startsWith('https://') && !this.hostname.startsWith('http://'))
+    ) {
+      return true;
+    }
+    try {
+      const url = new URL(this.hostname);
+      return url.hostname.toLowerCase() !== 's3.amazonaws.com';
+    } catch {
+      return true;
+    }
+  }),
 });
