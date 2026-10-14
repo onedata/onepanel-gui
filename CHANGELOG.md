@@ -6,6 +6,7 @@ CHANGELOG
 
 ### Latest changes
 
+* VFS-13902 Changed region field to mandatory for AWS endpoints in S3 storage
 * VFS-13750 Removed btn-info class from styles
 * VFS-13071 Fixed Let's Encrypt toggle state after failure
 * VFS-13628 Added basic button whitelabeling

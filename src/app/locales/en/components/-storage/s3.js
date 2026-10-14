@@ -1,7 +1,7 @@
 export default {
   hostname: {
     label: 'Endpoint URL',
-    tip: 'The URL of the S3 service endpoint, including the scheme (http or https) and optionally a port (after a colon).',
+    tip: 'The URL of the S3 service endpoint. It must include the scheme (http or https) and may optionally include a port (after a colon). If the hostname is s3.amazonaws.com, the "Region" field becomes mandatory; the region is then automatically prepended to the hostname (e.g. providing eu-west-3 for https://s3.amazonaws.com results in https://eu-west-3.s3.amazonaws.com).',
     placeholder: 'Example: https://s3.example.com',
     regexMessage: 'This field should be a URL with http or https scheme',
   },
@@ -12,7 +12,7 @@ export default {
   },
   region: {
     label: 'Region',
-    tip: 'Allows to specify a custom S3 region, which will be send with each request to the S3 server.',
+    tip: 'The S3 region, sent with each request to the S3 server. Required if the endpoint hostname is s3.amazonaws.com, in which case the region is also prepended to the hostname. For other S3 providers it is optional and defaults to us-east-1.',
     placeholder: 'Default: us-east-1',
   },
   accessKey: { label: 'Admin access key' },
