@@ -36,7 +36,6 @@
           <div class="cluster-host-services-btn-toolbar">
             <OneButton
               @onClick={{action "startServicesEdit"}}
-              @type="default"
               @disabled={{bool this.isEditServicesDisabled}}
               class="btn-sm edit-services-btn"
             >
@@ -98,7 +97,6 @@
           {{/if}}
           <OneButton
             @onClick={{action (if ipsEdit "cancelIpsEdit" "enableIpsEdit")}}
-            @type="default"
             class="btn-sm"
             @disabled={{ipsSetupProxy.isPending}}
           >
