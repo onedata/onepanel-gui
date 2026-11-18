@@ -1,7 +1,7 @@
 export default {
   hostname: {
     label: 'Endpoint URL',
-    tip: 'URL of the S3 endpoint. It must include the scheme (http or https) and may include a port after a colon. For the global AWS endpoint (s3.amazonaws.com), the `region` field is required, and requests go to that region\'s endpoint (e.g. for `eu-west-3`, `https://s3.eu-west-3.amazonaws.com`).',
+    tip: 'URL of the S3 endpoint. It must include the scheme (http or https) and may include a port after a colon. For the global AWS endpoint (s3.amazonaws.com), the "region" field is required, and requests go to that region\'s endpoint (e.g. for "eu-west-3", "https://s3.eu-west-3.amazonaws.com").',
     placeholder: 'Example: https://s3.example.com',
     regexMessage: 'This field should be a URL with http or https scheme',
   },
