@@ -12,7 +12,7 @@ export default {
   },
   region: {
     label: 'Region',
-    tip: 'Region of the bucket. Required for the global AWS endpoint (s3.amazonaws.com), so that requests go straight to the right region without an extra lookup. Optional for other endpoints; defaults to us-east-1. A region in the hostname (e.g. s3.eu-west-3.amazonaws.com) takes precedence over this field. Must be at least 5 characters long.',
+    tip: 'Region of the bucket. Required for the global AWS endpoint (s3.amazonaws.com), so that requests go straight to the right region without an extra lookup. Optional for other endpoints; defaults to us-east-1. A region in the hostname (e.g. s3.eu-west-3.amazonaws.com) takes precedence over this field.',
     placeholder: 'Default: us-east-1',
   },
   accessKey: { label: 'Admin access key' },
